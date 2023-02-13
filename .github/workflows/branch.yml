@@ -1,0 +1,93 @@
+name: branch
+
+on:
+  push:
+    branches-ignore: [ main, develop, release ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  APP_SIGN_KEYSTORE_PATH: /tmp/keystore
+  CACHE_BUNDLER: ~/.bundler
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write key file
+        env:
+          AUTH: ${{ secrets.KEYSTORE }}
+        run: echo $AUTH | base64 --decode > /tmp/keystore
+
+      - name: Checkout the Repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Cache gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Bundler cache
+        uses: actions/cache@v1
+        with:
+          path: $CACHE_BUNDLER
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+
+      - name: Install Dependencies
+        run: gem install bundler && bundle install
+
+      - name: Run ktlintFormat
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: ktlintFormat
+          skip-tracking: false
+          subdirectory: fastlane
+          bundle-install-path: CACHE_BUNDLER
+
+      - name: Run ktlintCheck
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: ktlintCheck
+          skip-tracking: false
+          subdirectory: fastlane
+          bundle-install-path: CACHE_BUNDLER
+
+      - name: Run detekt
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: detekt
+          skip-tracking: false
+          subdirectory: fastlane
+          bundle-install-path: CACHE_BUNDLER
+
+      - name: Run tests
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: test
+          skip-tracking: false
+          subdirectory: fastlane
+          bundle-install-path: CACHE_BUNDLER
+
+      - name: Run Debug Build
+        uses: maierj/fastlane-action@v2.0.0
+        with:
+          lane: branch
+          options: '{ "conf": "debug" }'
+          skip-tracking: false
+          subdirectory: fastlane
+          bundle-install-path: CACHE_BUNDLER
