@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "181567258682",
+    "project_id": "droidconke2023",
+    "storage_bucket": "droidconke2023.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181567258682:android:c03a823be9ce47aceeb503",
+        "android_client_info": {
+          "package_name": "com.android254.droidconKE2023"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181567258682-g2tqet9t80gpdfq7d274i2b9ongpe4i7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCNfabdZXZgVfcgXCJ2KhNP-GHwXu5cl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "181567258682-g2tqet9t80gpdfq7d274i2b9ongpe4i7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
