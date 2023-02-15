@@ -47,6 +47,7 @@ subprojects {
     spotless {
         kotlin {
             target("**/*.kt")
+            targetExclude("${project.rootDir}/build-logic/**/*.kt")
             licenseHeaderFile(
                 rootProject.file("${project.rootDir}/spotless/copyright.kt"),
                 "^(package|object|import|interface)"
