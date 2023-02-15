@@ -120,6 +120,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Evans Chepsiror</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/wangerekaharun">
+            <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
+            <br />
+            <sub><b>Harun Wangereka</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->

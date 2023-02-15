@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
+    id("org.jlleitschuh.gradle.ktlint")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -63,6 +65,13 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
+    }
+
+    /**
+     * Excluding the folder as it has classes from Google AOSP which don't pass most rules
+     */
+    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+        exclude("**/com/android254/presentation/common/bottomsheet/**")
     }
 }
 
