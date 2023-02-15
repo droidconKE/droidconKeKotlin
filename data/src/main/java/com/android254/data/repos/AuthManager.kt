@@ -25,7 +25,10 @@ import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
 import javax.inject.Inject
 
-class AuthManager @Inject constructor(private val api: AuthApi, private val tokenProvider: TokenProvider) : AuthRepo {
+class AuthManager @Inject constructor(
+    private val api: AuthApi,
+    private val tokenProvider: TokenProvider
+) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
         return try {
             val result = api.googleLogin(GoogleToken(idToken))

@@ -192,34 +192,32 @@ class SessionsViewModel @Inject constructor(
             }
     }
 
-    private fun getQuery(): String {
-/*        var query = Query().fields("*").from("sessions")
-        if (_filterState.value!!.rooms.isNotEmpty()) {
-            val rooms = _filterState.value!!.rooms.joinToString(",")
-            query = query.where("rooms LIKE '%$rooms%'")
-        }
+    private fun getQuery(): String = listOf("1", "2",).random()
 
-        if (_filterState.value!!.levels.isNotEmpty()) {
-            val sessionLevels = _filterState.value!!.levels.joinToString("','", "'", "'")
-            query.where("sessionLevel IN ($sessionLevels)")
-        }
-
-        if (_filterState.value!!.sessionTypes.isNotEmpty()) {
-            val sessionTypes = _filterState.value!!.sessionTypes.joinToString("','", "'", "'")
-            query.where("sessionFormat IN ($sessionTypes)")
-        }
-
-        if (_filterState.value!!.isBookmarked) {
-            val isBookmarked = _filterState.value!!.isBookmarked
-            query.where("isBookmarked = '${if (isBookmarked) '1' else '0'}'")
-        }
-
-        query.orderAsc("startTimestamp")
-
-        return query.toSql()*/
-        return ""
-    }
-
+    //       var query = Query().fields("*").from("sessions")
+//        if (_filterState.value!!.rooms.isNotEmpty()) {
+//            val rooms = _filterState.value!!.rooms.joinToString(",")
+//            query = query.where("rooms LIKE '%$rooms%'")
+//        }
+//
+//        if (_filterState.value!!.levels.isNotEmpty()) {
+//            val sessionLevels = _filterState.value!!.levels.joinToString("','", "'", "'")
+//            query.where("sessionLevel IN ($sessionLevels)")
+//        }
+//
+//        if (_filterState.value!!.sessionTypes.isNotEmpty()) {
+//            val sessionTypes = _filterState.value!!.sessionTypes.joinToString("','", "'", "'")
+//            query.where("sessionFormat IN ($sessionTypes)")
+//        }
+//
+//        if (_filterState.value!!.isBookmarked) {
+//            val isBookmarked = _filterState.value!!.isBookmarked
+//            query.where("isBookmarked = '${if (isBookmarked) '1' else '0'}'")
+//        }
+//
+//        query.orderAsc("startTimestamp")
+//
+//        return query.toSql()
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
             fetchSessions(query = getQuery())

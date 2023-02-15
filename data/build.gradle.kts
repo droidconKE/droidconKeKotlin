@@ -4,7 +4,9 @@ plugins {
     id("com.google.devtools.ksp")
     kotlin("kapt")
     kotlin("plugin.serialization")
-    id ("com.google.dagger.hilt.android")
+    id("com.google.dagger.hilt.android")
+    id("org.jlleitschuh.gradle.ktlint")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
