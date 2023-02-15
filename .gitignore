@@ -14,3 +14,6 @@
 .cxx
 local.properties
 /.idea/
+build-logic/.gradle
+build-logic/build
+build-logic/convention/build
