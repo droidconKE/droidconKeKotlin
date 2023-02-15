@@ -75,7 +75,7 @@ dependencies {
     androidTestImplementation(libs.android.hilt.testing)
     kaptAndroidTest(libs.android.hilt.compiler)
 
-    testImplementation(libs.test.junit4)
+    testImplementation(libs.bundles.test)
     testImplementation(libs.android.hilt.compiler)
     kaptTest(libs.android.hilt.compiler)
 

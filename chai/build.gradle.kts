@@ -76,7 +76,7 @@ dependencies {
     androidTestImplementation(libs.android.test.espresso)
     androidTestImplementation(libs.compose.ui.test.junit)
 
-    testImplementation(libs.test.junit4)
+    testImplementation(libs.bundles.test)
     testImplementation(libs.test.robolectric)
     testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
