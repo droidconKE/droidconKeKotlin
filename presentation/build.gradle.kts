@@ -1,6 +1,5 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("droidconke.android.library")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("org.jlleitschuh.gradle.ktlint")
@@ -8,27 +7,11 @@ plugins {
 }
 
 android {
-    compileSdk = 33
     namespace = "com.android254.droidconKE2023.presentation"
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true
-        }
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
@@ -38,13 +21,7 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
     kotlinOptions {
-        jvmTarget = "11"
         freeCompilerArgs + "-Xjvm-default=all"
     }
 
@@ -79,7 +56,6 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":chai"))
 
-    implementation(libs.android.coreKtx)
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     implementation(libs.bundles.compose)
@@ -100,11 +76,6 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 
-    androidTestImplementation(libs.android.test.junit4)
-    androidTestImplementation(libs.android.test.espresso)
-    androidTestImplementation(libs.compose.ui.test.junit)
-
-    testImplementation(libs.test.junit4)
     testImplementation(libs.test.robolectric)
     testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
