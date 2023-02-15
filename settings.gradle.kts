@@ -1,10 +1,12 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,6 +14,13 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "DroidconKE2023"
-include ':app'
-include(":data", ":domain", ":presentation", ":chai")
+
+include(":app")
+
+include(":chai")
+
+include(":data")
+include(":domain")
+include(":presentation")

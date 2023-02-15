@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 DroidconKE
+ * Copyright $YEAR DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    id("droidconke.android.library")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
-}
-
-android {
-    namespace = "com.android254.droidconKE2023.domain"
-}
-
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-}

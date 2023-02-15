@@ -1,6 +1,20 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("droidconke.android.library")
     id("com.google.devtools.ksp")
     kotlin("kapt")
     kotlin("plugin.serialization")
@@ -10,15 +24,9 @@ plugins {
 }
 
 android {
-    compileSdk = 33
     namespace = "com.android254.droidconKE2023.data"
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
 
         if (File("api_key.txt").exists()) {
             buildConfigField("String", "API_KEY", "\"${File("api_key.txt").readText().trim()}\"")
@@ -37,34 +45,17 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
     buildFeatures {
         buildConfig = true
     }
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = "11"
     }
 }
 
 dependencies {
     implementation(project(":domain"))
-    implementation(libs.android.coreKtx)
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     api(libs.kotlin.coroutines.datetime)
@@ -83,11 +74,6 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
 
-    androidTestImplementation(libs.android.test.junit4)
-    androidTestImplementation(libs.android.test.espresso)
-
-    testImplementation(libs.test.junit.ktx)
-    testImplementation(libs.test.junit4)
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.androidx.core)
     testImplementation(libs.test.robolectric)

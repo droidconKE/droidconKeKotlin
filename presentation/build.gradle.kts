@@ -1,6 +1,20 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("droidconke.android.library")
     id("dagger.hilt.android.plugin")
     kotlin("kapt")
     id("org.jlleitschuh.gradle.ktlint")
@@ -8,27 +22,11 @@ plugins {
 }
 
 android {
-    compileSdk = 33
     namespace = "com.android254.droidconKE2023.presentation"
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
         vectorDrawables {
             useSupportLibrary = true
-        }
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
         }
     }
 
@@ -38,13 +36,7 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
     kotlinOptions {
-        jvmTarget = "11"
         freeCompilerArgs + "-Xjvm-default=all"
     }
 
@@ -79,19 +71,18 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":chai"))
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation(libs.android.appCompat)
+    implementation(libs.android.material)
     implementation(libs.bundles.compose)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
     implementation(libs.android.hilt)
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
-    implementation("com.google.android.gms:play-services-auth:20.4.1")
+    implementation(libs.gms.play.services.auth)
     implementation(libs.accompanist.flowlayout)
-    implementation("com.airbnb.android:lottie-compose:6.0.0")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.lottie.compose)
+    implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
     kapt(libs.android.hilt.compiler)
@@ -100,16 +91,11 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation(libs.android.test.espresso)
-    androidTestImplementation(libs.compose.ui.test.junit)
-
-    testImplementation(libs.test.junit4)
-    testImplementation("org.robolectric:robolectric:4.9.2")
+    testImplementation(libs.test.robolectric)
     testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
-    testImplementation("androidx.navigation:navigation-testing:2.5.3")
-    testImplementation("io.mockk:mockk:1.13.4")
+    testImplementation(libs.test.navigation)
+    testImplementation(libs.test.mockk)
 }
 
 kotlin {
