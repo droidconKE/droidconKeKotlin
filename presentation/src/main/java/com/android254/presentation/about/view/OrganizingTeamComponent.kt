@@ -17,7 +17,11 @@ package com.android254.presentation.about.view
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,13 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2022Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.ChaiDarkerGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratRegular
-import com.android254.droidconKE2023.presentation.R
 
 @Composable
 fun OrganizingTeamComponent(
@@ -49,8 +53,10 @@ fun OrganizingTeamComponent(
     teamMember: OrganizingTeamMember,
     onClickMember: (Int) -> Unit,
 ) {
-    Column(modifier = modifier.clickable(onClick = { onClickMember(teamMember.id) }),
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier.clickable(onClick = { onClickMember(teamMember.id) }),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
@@ -99,10 +105,14 @@ fun OrganizingTeamComponent(
 @Composable
 fun Preview() {
     DroidconKE2022Theme {
-        OrganizingTeamComponent(modifier = Modifier, teamMember = OrganizingTeamMember(
-            name = "Frank Tamre",
-            desc = "Main Man",
-            image = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
-        ), onClickMember = {})
+        OrganizingTeamComponent(
+            modifier = Modifier,
+            teamMember = OrganizingTeamMember(
+                name = "Frank Tamre",
+                desc = "Main Man",
+                image = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
+            ),
+            onClickMember = {}
+        )
     }
 }
