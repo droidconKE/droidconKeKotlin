@@ -1,0 +1,48 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs ktlintFormat on the codebase"
+  lane :ktlintFormat do
+    gradle(task: "ktlintFormat")
+  end
+
+  desc "Runs ktlintCheck on the codebase"
+  lane :ktlintCheck do
+    gradle(task: "ktlintCheck")
+  end
+
+  desc "Runs detekt on the codebase"
+  lane :detekt do
+    gradle(task: "detekt")
+  end
+
+desc "Runs tests on the codebase"
+lane :test do
+  gradle(task: "testDebug")
+end
+
+  desc "Builds on all branches"
+  lane :branch do
+    gradle(task: "buildDebug")
+  end
+
+  desc "Runs on main branch"
+  lane :main do
+    gradle(task: "clean buildDebug")
+  end
+end
