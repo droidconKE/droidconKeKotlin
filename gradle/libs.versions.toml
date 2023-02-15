@@ -84,7 +84,7 @@ firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 espresso = "androidx.test.espresso:espresso-core:3.5.1"
 junit-androidx = "androidx.test.ext:junit:1.1.5"
 junit-androidx-ktx = "androidx.test.ext:junit-ktx:1.1.5"
-
+test-junit-ktx = "androidx.test.ext:junit-ktx:1.1.3"
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 
 # Dependencies of the included build-logic
@@ -97,7 +97,7 @@ lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmod
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation"]
 firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance"]
-test = ["junit4"]
+test = ["junit4", "test-junit-ktx"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradleplugin" }
