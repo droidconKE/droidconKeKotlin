@@ -62,20 +62,20 @@ android {
 }
 
 dependencies {
-    implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
     implementation(libs.bundles.compose)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
     implementation(libs.android.hilt)
 
-    androidTestImplementation(libs.android.test.junit4)
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation(libs.android.test.espresso)
     androidTestImplementation(libs.compose.ui.test.junit)
 
     testImplementation(libs.test.junit4)
-    testImplementation(libs.test.robolectric)
+    testImplementation("org.robolectric:robolectric:4.9.2")
     testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
 }

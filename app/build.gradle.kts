@@ -59,16 +59,16 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":presentation"))
 
-    implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
+    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.8.0")
 
     implementation(libs.android.hilt)
     kapt(libs.android.hilt.compiler)
 
     implementation(libs.timber)
 
-    androidTestImplementation(libs.android.test.junit4)
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation(libs.android.test.espresso)
     androidTestImplementation(libs.android.hilt.testing)
     kaptAndroidTest(libs.android.hilt.compiler)
@@ -77,6 +77,6 @@ dependencies {
     testImplementation(libs.android.hilt.compiler)
     kaptTest(libs.android.hilt.compiler)
 
-    implementation(platform(libs.firebase.bom))
+    implementation(platform("com.google.firebase:firebase-bom:31.2.1"))
     implementation(libs.bundles.firebase)
 }
