@@ -20,43 +20,6 @@ and is optimized for phones and tablets of all shapes and sizes.
 
 The proposed architecture is as follows;
 
-### Data
-
-This layer will include;
-
-1. Network Calls
-2. Caching
-3. Storing and fetching Preferences.
-4. The repository implementation
-5. The relevant data models
-6. Relevant Mappers
-
-### Domain
-
-This layer will contain;
-
-1. The repository
-2. The relevant domain models.
-
-### Presentation
-
-1. View
-2. ViewModels
-3. Relevant Mappers
-4. Relevant Models.
-
-## Features
-
-App will have the following features:
-
-- Sessions
-- Feed
-- About
-- Home
-- Speakers
-- Sponsors
-- Authentication
-- Feedback
 
 ## Designs
 
@@ -80,7 +43,7 @@ To add a dependency, navigate to **gradle/libs.versions.toml*** file, which has 
 [plugins] Used to define plugins.
 
 You need to add your dependency version in [versions]. This is unnecessary if you are not sharing the version across different dependencies. After defining the version, add your library in the [libraries] section as:
-
+In addiition to this we are also using buildLogic replacing buildSrc
 ```toml
 compose-activity = "androidx.activity:activity-compose:1.5.0"
 ```
