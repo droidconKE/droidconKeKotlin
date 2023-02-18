@@ -1,4 +1,4 @@
-# droidcon KE 22 🔥🔨
+# droidcon KE 23 🔥🔨
 
 Android app for the 3rd Android Developer conference- droidcon to be held in Nairobi from November
 16-18th 2022.
