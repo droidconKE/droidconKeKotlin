@@ -114,17 +114,17 @@ We would endlessly like to thank the following contributors
 <table>
 <tr>
     <td align="center">
-        <a href="https://github.com/jumaallan">
-            <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
-            <br />
-            <sub><b>Juma Allan</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/chepsi">
             <img src="https://avatars.githubusercontent.com/u/61404564?v=4" width="100;" alt="chepsi"/>
             <br />
             <sub><b>Evans Chepsiror</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/jumaallan">
+            <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
+            <br />
+            <sub><b>Juma Allan</b></sub>
         </a>
     </td>
     <td align="center">
