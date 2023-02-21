@@ -17,7 +17,7 @@ package com.android254.data.dao
 
 import androidx.room.Delete
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy.Companion.REPLACE
 import androidx.room.Update
 
 /**
