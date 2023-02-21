@@ -47,10 +47,10 @@ fun FeedBackScreen(
         mutableStateOf("")
     }
     val decayAnimationSpec = rememberSplineBasedDecay<Float>()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+/*    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
         decayAnimationSpec,
         rememberTopAppBarScrollState()
-    )
+    )*/
     Scaffold(
         topBar = {
             Box {
@@ -79,7 +79,7 @@ fun FeedBackScreen(
                             )
                         }
                     },
-                    scrollBehavior = scrollBehavior,
+                    // scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.largeTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = if (darkTheme) Color(0xFFF2F0F4) else MaterialTheme.colorScheme.onPrimary,
