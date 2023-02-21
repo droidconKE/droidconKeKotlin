@@ -1,7 +1,7 @@
 ## Contributing
 
-- Find an issue in the [Trello Board](https://trello.com/b/DNGPH3Ui/droidconke22-android-app) and
-  assign it to yourself. You can also create an issue if it doesn't exist.
+- Find an issue in the [Issues Tab](https://github.com/droidconKE/droidconKE2023Android/issues) and
+  assign it to yourself. Feel free to create one if it doesn't exist.
 - Fork the repository. This means that you will have a copy of the repository
   under `your-GitHub-username/repository-name`.
 - Clone the repository to your local machine using git
