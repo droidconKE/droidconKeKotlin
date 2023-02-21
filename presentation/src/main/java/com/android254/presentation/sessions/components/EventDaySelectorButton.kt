@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,10 +64,15 @@ fun EventDaySelectorButton(
     ),
     content: @Composable RowScope.() -> Unit
 ) {
-    val containerColor = colors.containerColor(enabled).value
+    /*val containerColor = colors.containerColor(enabled).value
     val contentColor = colors.contentColor(enabled).value
     val shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
     val tonalElevation = elevation?.tonalElevation(enabled, interactionSource)?.value ?: 0.dp
+*/
+    val containerColor = Color.Black
+    val contentColor = Color.Red
+    val shadowElevation =  0.dp
+    val tonalElevation =  0.dp
 
     Surface(
         onClick = onClick,
