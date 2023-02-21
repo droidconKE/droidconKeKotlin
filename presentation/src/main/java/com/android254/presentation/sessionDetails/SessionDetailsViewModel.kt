@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessionDetails
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,7 +37,6 @@ class SessionDetailsViewModel @Inject constructor(
 
     var sessionDetails: LiveData<SessionDetailsPresentationModel> = _sessionDetails
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getSessionDetailsById(sessionId: String) {
         viewModelScope.launch {
             sessionsRepo.fetchSessionById(sessionId).collectLatest { result ->

@@ -15,18 +15,15 @@
  */
 package com.android254.presentation.sessions.mappers
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.android254.domain.models.Session
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.Speaker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun Session.toPresentationModel(): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val gson = Gson()
@@ -55,7 +52,6 @@ fun Session.toPresentationModel(): SessionPresentationModel {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val gson = Gson()
@@ -89,13 +85,12 @@ fun getTwitterHandle(speakers: List<Speaker>): String {
         .toTypedArray().last()
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getTimePeriod(time: String): FormattedTime {
-    val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    LocalDateTime.parse(time, pattern).toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val date: Date = format.parse(time) ?: Date()
     return FormattedTime(
-        LocalDateTime.parse(time, pattern).toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm")),
-        LocalDateTime.parse(time, pattern).toLocalTime().format(DateTimeFormatter.ofPattern("a")),
+        time = SimpleDateFormat("hh:mm", Locale.getDefault()).format(date),
+        period = SimpleDateFormat("a", Locale.getDefault()).format(date),
     )
 }
 
