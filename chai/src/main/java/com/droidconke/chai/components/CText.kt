@@ -16,11 +16,13 @@
 package com.droidconke.chai.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
@@ -66,7 +68,7 @@ fun CPageTitle(pageTitle: String) {
             fontWeight = FontWeight.W300,
             fontFamily = MontserratThin,
 
-        ),
+            ),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -81,7 +83,7 @@ fun CSubtitle(dSubtitle: String) {
             fontWeight = FontWeight.W700,
             fontFamily = MontserratRegular,
 
-        ),
+            ),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -96,7 +98,16 @@ fun CActionText(cAction: String) {
             fontWeight = FontWeight.W700,
             fontFamily = MontserratRegular,
 
-        ),
+            ),
         modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun CPrimaryButtonText(text: String, textAllCaps: Boolean = false) {
+    Text(
+        text = if (textAllCaps) text.uppercase() else text,
+        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+        textAlign = TextAlign.Center
     )
 }
