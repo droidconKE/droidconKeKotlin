@@ -16,9 +16,9 @@
 package com.android254.data.network
 
 object Constants {
-    const val BASE_URL = "https://droidcon-erp.herokuapp.com/api/v1"
+    const val TEST_BASE_URL = "https://dev.droidcon.co.ke/api/v1"
     const val LIVE_BASE_URL = "https://api.droidcon.co.ke/v1"
-    const val EVENT_SLUG = "droidconke-2022-281"
+    private const val EVENT_SLUG = "droidconke-2022-281"
     const val ORG_SLUG = "droidcon-ke-645"
     const val EVENT_BASE_URL = "$LIVE_BASE_URL/events/$EVENT_SLUG"
 }

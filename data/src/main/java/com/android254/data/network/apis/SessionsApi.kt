@@ -15,8 +15,8 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.Constants
 import com.android254.data.network.models.responses.EventScheduleGroupedResponse
+import com.android254.data.network.util.provideBaseUrl
 import com.android254.data.network.util.safeApiCall
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -27,7 +27,7 @@ class SessionsApi @Inject constructor(
     private val client: HttpClient
 ) {
     suspend fun fetchSessions(): EventScheduleGroupedResponse = safeApiCall {
-        return@safeApiCall client.get("${Constants.EVENT_BASE_URL}/schedule") {
+        return@safeApiCall client.get("${provideBaseUrl()}/schedule") {
             url {
                 parameters.append("grouped", "true")
             }

@@ -18,6 +18,7 @@ package com.android254.data.network.apis
 import com.android254.data.network.Constants
 import com.android254.data.network.models.responses.OrganizersPagedResponse
 import com.android254.data.network.util.dataResultSafeApiCall
+import com.android254.data.network.util.provideBaseUrl
 import com.android254.domain.models.DataResult
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -28,9 +29,10 @@ class OrganizersApi @Inject constructor(
     private val client: HttpClient
 ) {
 
-    private val organizersUrl = "${Constants.LIVE_BASE_URL}/organizers/${Constants.ORG_SLUG}/team?"
+    private val organizersUrl = "${provideBaseUrl()}/organizers/${Constants.ORG_SLUG}/team?"
 
-    suspend fun fetchOrganizers(type: String): DataResult<OrganizersPagedResponse> = dataResultSafeApiCall {
-        client.get("${organizersUrl}type=$type&per_page=100&page").body()
-    }
+    suspend fun fetchOrganizers(type: String): DataResult<OrganizersPagedResponse> =
+        dataResultSafeApiCall {
+            client.get("${organizersUrl}type=$type&per_page=100&page").body()
+        }
 }
