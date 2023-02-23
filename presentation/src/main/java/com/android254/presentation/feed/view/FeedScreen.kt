@@ -36,6 +36,7 @@ import com.android254.presentation.common.bottomsheet.BottomSheetScaffold
 import com.android254.presentation.common.bottomsheet.rememberBottomSheetScaffoldState
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.droidconke.chai.atoms.ChaiCoal
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,6 +61,7 @@ fun FeedScreen(
         sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         sheetElevation = 16.dp,
         sheetPeekHeight = 0.dp,
+        sheetScrimColor = ChaiCoal.copy(alpha = 0.52f),
     ) { paddingValues ->
         Box(
             modifier = Modifier
