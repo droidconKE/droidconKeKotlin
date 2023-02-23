@@ -49,6 +49,7 @@ import com.android254.presentation.common.theme.DroidconKE2022Theme
 import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.SessionList
 import com.android254.presentation.sessions.components.SessionsFilterPanel
+import com.droidconke.chai.atoms.ChaiCoal
 import kotlinx.coroutines.launch
 
 @Composable
@@ -91,7 +92,8 @@ fun SessionsScreen(
         },
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetPeekHeight = 0.dp
+        sheetPeekHeight = 0.dp,
+        sheetScrimColor = ChaiCoal.copy(alpha = 0.52f),
     ) {
         Scaffold(
             topBar = {
