@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.home.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,8 +30,8 @@ import com.android254.presentation.sessions.mappers.getTimePeriod
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -43,7 +41,6 @@ class HomeViewModel @Inject constructor(
     var viewState by mutableStateOf(HomeViewState())
         private set
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun onGetHomeScreenDetails() {
         viewModelScope.launch {
             with(homeRepo.fetchHomeDetails()) {
@@ -73,7 +70,6 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun List<Session>.toSessionsPresentation() =
         map {
             val startTime = getTimePeriod(it.startDateTime)

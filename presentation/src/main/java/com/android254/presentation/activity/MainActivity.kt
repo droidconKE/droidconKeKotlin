@@ -53,7 +53,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen() {
     val authViewModel = hiltViewModel<AuthViewModel>()
@@ -88,7 +87,6 @@ fun MainScreen() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun MainScreenPreview() {

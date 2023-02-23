@@ -53,7 +53,6 @@ import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionDetailsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
