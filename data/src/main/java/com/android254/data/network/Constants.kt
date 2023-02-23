@@ -16,9 +16,12 @@
 package com.android254.data.network
 
 object Constants {
-    const val TEST_BASE_URL = "https://dev.droidcon.co.ke/api/v1"
-    const val LIVE_BASE_URL = "https://api.droidcon.co.ke/v1"
+    const val DEV_BASE_URL = "https://dev.droidcon.co.ke/api/v1"
+    const val PROD_BASE_URL = "https://api.droidcon.co.ke/v1"
     private const val EVENT_SLUG = "droidconke-2022-281"
-    const val ORG_SLUG = "droidcon-ke-645"
-    const val EVENT_BASE_URL = "$LIVE_BASE_URL/events/$EVENT_SLUG"
+    private const val ORG_SLUG = "droidcon-ke-645"
+    const val EVENT_PROD_BASE_URL = "$PROD_BASE_URL/events/$EVENT_SLUG"
+    const val EVENT_DEV_BASE_URL = "$DEV_BASE_URL/events/$EVENT_SLUG"
+    const val ORG_PROD_BASE_URL = "$PROD_BASE_URL/organizers/$ORG_SLUG"
+    const val ORG_DEV_BASE_URL = "$DEV_BASE_URL/organizers/$ORG_SLUG"
 }

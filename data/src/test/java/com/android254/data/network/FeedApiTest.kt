@@ -15,14 +15,14 @@
  */
 package com.android254.data.network
 
-import com.android254.data.network.models.responses.Feed
 import com.android254.data.network.apis.FeedApi
+import com.android254.data.network.models.responses.Feed
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.domain.models.DataResult
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
 import kotlinx.coroutines.test.runTest
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -39,7 +39,7 @@ class FeedApiTest {
 
         assertThat(mockEngine.requestHistory.size, `is`(1))
         mockEngine.requestHistory.first().run {
-            val expectedUrl = "${Constants.EVENT_BASE_URL}/feeds?page=2&per_page=50"
+            val expectedUrl = "${Constants.EVENT_PROD_BASE_URL}/feeds?page=2&per_page=50"
             assertThat(url.toString(), `is`(expectedUrl))
             assertThat(method, `is`(HttpMethod.Get))
         }
