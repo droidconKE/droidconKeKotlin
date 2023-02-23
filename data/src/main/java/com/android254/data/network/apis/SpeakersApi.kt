@@ -17,7 +17,7 @@ package com.android254.data.network.apis
 
 import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.network.util.dataResultSafeApiCall
-import com.android254.data.network.util.provideBaseUrl
+import com.android254.data.network.util.provideEventBaseUrl
 import com.android254.domain.models.DataResult
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -29,7 +29,7 @@ class SpeakersApi @Inject constructor(
 ) {
     suspend fun fetchSpeakers(): DataResult<SpeakersPagedResponse> = dataResultSafeApiCall {
         return@dataResultSafeApiCall client.get(
-            "${provideBaseUrl()}/speakers?per_page=100"
+            "${provideEventBaseUrl()}/speakers?per_page=100"
         ) {
         }.body()
     }
