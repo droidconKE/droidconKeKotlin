@@ -15,8 +15,17 @@
  */
 package com.android254.data.network.util
 
-import com.android254.data.network.Constants.LIVE_BASE_URL
-import com.android254.data.network.Constants.TEST_BASE_URL
+import com.android254.data.network.Constants.DEV_BASE_URL
+import com.android254.data.network.Constants.EVENT_DEV_BASE_URL
+import com.android254.data.network.Constants.EVENT_PROD_BASE_URL
+import com.android254.data.network.Constants.ORG_DEV_BASE_URL
+import com.android254.data.network.Constants.ORG_PROD_BASE_URL
+import com.android254.data.network.Constants.PROD_BASE_URL
 import com.android254.droidconKE2023.data.BuildConfig
 
-fun provideBaseUrl(): String = if (BuildConfig.DEBUG) TEST_BASE_URL else LIVE_BASE_URL
+fun provideBaseUrl(): String = if (BuildConfig.DEBUG) DEV_BASE_URL else PROD_BASE_URL
+
+fun provideEventBaseUrl(): String =
+    if (BuildConfig.DEBUG) EVENT_DEV_BASE_URL else EVENT_PROD_BASE_URL
+
+fun provideOrgBaseUrl(): String = if (BuildConfig.DEBUG) ORG_DEV_BASE_URL else ORG_PROD_BASE_URL
