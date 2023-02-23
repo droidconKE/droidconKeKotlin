@@ -16,7 +16,11 @@
 package com.android254.presentation.common.bottomsheet
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -39,13 +43,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.collapse
-import androidx.compose.ui.semantics.expand
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CancellationException
@@ -79,7 +83,7 @@ enum class BottomSheetValue {
 class BottomSheetState(
     initialValue: BottomSheetValue,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    confirmStateChange: (BottomSheetValue) -> Boolean = { true }
+    confirmStateChange: (BottomSheetValue) -> Boolean = { true },
 ) : SwipeableState<BottomSheetValue>(
     initialValue = initialValue,
     animationSpec = animationSpec,
@@ -121,7 +125,7 @@ class BottomSheetState(
          */
         fun Saver(
             animationSpec: AnimationSpec<Float>,
-            confirmStateChange: (BottomSheetValue) -> Boolean
+            confirmStateChange: (BottomSheetValue) -> Boolean,
         ): Saver<BottomSheetState, *> = Saver(
             save = { it.currentValue },
             restore = {
@@ -148,7 +152,7 @@ class BottomSheetState(
 fun rememberBottomSheetState(
     initialValue: BottomSheetValue,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    confirmStateChange: (BottomSheetValue) -> Boolean = { true }
+    confirmStateChange: (BottomSheetValue) -> Boolean = { true },
 ): BottomSheetState {
     return rememberSaveable(
         animationSpec,
@@ -176,7 +180,7 @@ fun rememberBottomSheetState(
 class BottomSheetScaffoldState(
     val drawerState: DrawerState,
     val bottomSheetState: BottomSheetState,
-    val snackbarHostState: SnackbarHostState
+    val snackbarHostState: SnackbarHostState,
 )
 
 /**
@@ -190,7 +194,7 @@ class BottomSheetScaffoldState(
 fun rememberBottomSheetScaffoldState(
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     bottomSheetState: BottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed),
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ): BottomSheetScaffoldState {
     return remember(drawerState, bottomSheetState, snackbarHostState) {
         BottomSheetScaffoldState(
@@ -273,7 +277,8 @@ fun BottomSheetScaffold(
     drawerScrimColor: Color = DrawerDefaults.scrimColor,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(backgroundColor),
-    content: @Composable (PaddingValues) -> Unit
+    sheetScrimColor: Color = BottomSheetScaffoldDefaults.scrimColor,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     BoxWithConstraints(modifier) {
@@ -320,9 +325,27 @@ fun BottomSheetScaffold(
                         color = backgroundColor,
                         contentColor = contentColor
                     ) {
-                        Column(Modifier.fillMaxSize()) {
-                            topBar?.invoke()
-                            content(PaddingValues(bottom = sheetPeekHeight))
+                        Box(Modifier.fillMaxSize()) {
+                            Column(Modifier.fillMaxSize()) {
+                                topBar?.invoke()
+                                content(PaddingValues(bottom = sheetPeekHeight))
+                            }
+                            Scrim(
+                                color = sheetScrimColor,
+                                onDismiss = {
+                                    if (scaffoldState.bottomSheetState.confirmStateChange(
+                                            BottomSheetValue.Collapsed
+                                        )
+                                    ) {
+                                        scope.launch {
+                                            scaffoldState.bottomSheetState.animateTo(
+                                                BottomSheetValue.Collapsed
+                                            )
+                                        }
+                                    }
+                                },
+                                visible = scaffoldState.bottomSheetState.isExpanded
+                            )
                         }
                     }
                 },
@@ -356,6 +379,7 @@ fun BottomSheetScaffold(
                 floatingActionButtonPosition = floatingActionButtonPosition
             )
         }
+
         if (drawerContent == null) {
             child()
         } else {
@@ -371,6 +395,7 @@ fun BottomSheetScaffold(
                 content = child
             )
         }
+
     }
 }
 
@@ -382,7 +407,7 @@ private fun BottomSheetScaffoldStack(
     floatingActionButton: @Composable () -> Unit,
     snackbarHost: @Composable () -> Unit,
     bottomSheetOffset: State<Float>,
-    floatingActionButtonPosition: FabPosition
+    floatingActionButtonPosition: FabPosition,
 ) {
     Layout(
         content = {
@@ -424,6 +449,39 @@ private fun BottomSheetScaffoldStack(
 
 private val FabEndSpacing = 16.dp
 
+@Composable
+private fun Scrim(
+    color: Color,
+    onDismiss: () -> Unit,
+    visible: Boolean,
+) {
+    if (color.isSpecified) {
+        val alpha by animateFloatAsState(
+            targetValue = if (visible) 1f else 0f,
+            animationSpec = TweenSpec()
+        )
+        val closeSheet = getString(Strings.CloseSheet)
+        val dismissModifier = if (visible) {
+            Modifier
+                .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
+                .semantics(mergeDescendants = true) {
+                    contentDescription = closeSheet
+                    onClick { onDismiss(); true }
+                }
+        } else {
+            Modifier
+        }
+
+        Canvas(
+            Modifier
+                .fillMaxSize()
+                .then(dismissModifier)
+        ) {
+            drawRect(color = color, alpha = alpha)
+        }
+    }
+}
+
 /**
  * Contains useful defaults for [BottomSheetScaffold].
  */
@@ -438,4 +496,11 @@ object BottomSheetScaffoldDefaults {
      * The default peek height used by [BottomSheetScaffold].
      */
     val SheetPeekHeight = 56.dp
+
+    /**
+     * The default scrim color used by [BottomSheetScaffold].
+     */
+    val scrimColor: Color
+        @Composable
+        get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.32f)
 }
