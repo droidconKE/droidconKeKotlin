@@ -395,7 +395,6 @@ fun BottomSheetScaffold(
                 content = child
             )
         }
-
     }
 }
 

@@ -71,8 +71,8 @@ fun EventDaySelectorButton(
 */
     val containerColor = Color.Black
     val contentColor = Color.Red
-    val shadowElevation =  0.dp
-    val tonalElevation =  0.dp
+    val shadowElevation = 0.dp
+    val tonalElevation = 0.dp
 
     Surface(
         onClick = onClick,
