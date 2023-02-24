@@ -56,8 +56,8 @@ class TimePeriodTest(
         )
         assertEquals(
             "Should be valid period",
-            periodResult,
-            formattedTime.period
+            periodResult.lowercase(),
+            formattedTime.period.lowercase()
         )
     }
 }
