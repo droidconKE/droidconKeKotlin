@@ -1,8 +1,6 @@
 name: branch
 
 on:
-  push:
-    branches-ignore: [ main, develop, release ]
   pull_request:
     branches: [ main ]
 

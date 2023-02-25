@@ -15,20 +15,19 @@
  */
 package com.android254.data.network
 
-import com.android254.data.network.models.payloads.Feedback
 import com.android254.data.network.apis.FeedbackApi
+import com.android254.data.network.models.payloads.Feedback
 import com.android254.data.network.models.payloads.FeedbackRating
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.provideEventBaseUrl
 import com.android254.domain.models.DataResult
-
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
 import io.ktor.http.content.*
-
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
-
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
@@ -45,7 +44,7 @@ class FeedbackApiTest {
         )
 
         mockEngine.requestHistory.first().run {
-            val expectedUrl = "${Constants.EVENT_BASE_URL}/feedback/sessions/$sessionId"
+            val expectedUrl = "${provideEventBaseUrl()}/feedback/sessions/$sessionId"
             assertThat(url.toString(), `is`(expectedUrl))
             assertThat(method, `is`(HttpMethod.Post))
             assertThat(body.toJsonString(), `is`("""{"rating":3,"message":"Was nice"}"""))

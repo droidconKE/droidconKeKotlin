@@ -15,9 +15,9 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.Constants
 import com.android254.data.network.models.payloads.Feedback
 import com.android254.data.network.util.dataResultSafeApiCall
+import com.android254.data.network.util.provideEventBaseUrl
 import io.ktor.client.*
 import io.ktor.client.request.*
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class FeedbackApi @Inject constructor(
     private val client: HttpClient
 ) {
     suspend fun postFeedback(feedback: Feedback, sessionId: String) = dataResultSafeApiCall {
-        client.post("${Constants.EVENT_BASE_URL}/feedback/sessions/$sessionId") {
+        client.post("${provideEventBaseUrl()}/feedback/sessions/$sessionId") {
             setBody(feedback)
         }
         return@dataResultSafeApiCall

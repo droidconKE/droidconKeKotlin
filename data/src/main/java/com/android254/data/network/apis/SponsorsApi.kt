@@ -15,12 +15,12 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.Constants
 import com.android254.data.network.models.responses.SponsorsPagedResponse
 import com.android254.data.network.util.dataResultSafeApiCall
+import com.android254.data.network.util.provideEventBaseUrl
 import com.android254.domain.models.DataResult
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
+import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import javax.inject.Inject
 
@@ -30,7 +30,7 @@ class SponsorsApi @Inject constructor(
 
     suspend fun fetchSponsors(): DataResult<SponsorsPagedResponse> =
         dataResultSafeApiCall {
-            client.get("${Constants.EVENT_BASE_URL}/sponsors?per_page=10") {
+            client.get("${provideEventBaseUrl()}/sponsors?per_page=10") {
             }.body()
         }
 }
