@@ -1,3 +1,5 @@
 package com.droidconke.chai.utils
 
-const val AlphaDisabled = 0.3f
+object Alpha {
+    const val AlphaDisabled = 0.3f
+}
