@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.utils.AlphaDisabled
+import com.droidconke.chai.utils.Alpha.AlphaDisabled
 import com.droidconke.chai.utils.CShapes
 import com.droidconke.chai.utils.SeparatorSpace
 
@@ -114,6 +114,10 @@ fun COutlinedPrimaryButton(
     }
 }
 
+
+private const val PREVIEW_BUTTON_TITLE = "Filter"
+private const val PREVIEW_OUTLINE_BUTTON_TITLE = "Twitter"
+
 @Preview
 @Composable
 fun CPrimaryButtonDarkPreview() {
@@ -121,12 +125,11 @@ fun CPrimaryButtonDarkPreview() {
         CPrimaryButton(
             onClick = { },
             isEnabled = true,
-            title = "Filter",
+            title = PREVIEW_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth()
         )
     }
 }
-
 
 @Preview
 @Composable
@@ -135,7 +138,7 @@ fun CPrimaryButtonDisableDarkPreview() {
         CPrimaryButton(
             onClick = { },
             isEnabled = false,
-            title = "Filter",
+            title = PREVIEW_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -148,7 +151,7 @@ fun CPrimaryButtonDisableLightPreview() {
         CPrimaryButton(
             onClick = { },
             isEnabled = false,
-            title = "Filter",
+            title = PREVIEW_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -161,7 +164,7 @@ fun CPrimaryButtonLightPreview() {
         CPrimaryButton(
             onClick = { },
             isEnabled = true,
-            title = "Filter",
+            title = PREVIEW_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -173,7 +176,7 @@ fun CPrimaryOutlinedButtonLightPreview() {
     ChaiDCKE22Theme(darkTheme = false) {
         COutlinedPrimaryButton(
             onClick = { },
-            title = "Twitter",
+            title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Outlined.Save
         )
@@ -186,7 +189,7 @@ fun CPrimaryOutlinedButtonDarktPreview() {
     ChaiDCKE22Theme(darkTheme = true) {
         COutlinedPrimaryButton(
             onClick = { },
-            title = "Twitter",
+            title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
             icon = Icons.Outlined.Save
         )
