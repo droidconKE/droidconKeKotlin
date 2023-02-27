@@ -135,6 +135,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/janewaitara">
+            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
+            <br />
+            <sub><b>Jane Waitara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/MamboBryan">
             <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
             <br />
@@ -146,6 +153,14 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
             <br />
             <sub><b>Martin Thuo</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
         </a>
     </td></tr>
 </table>
