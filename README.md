@@ -5,16 +5,21 @@ Android app for the 4th Android Developer conference- droidcon to be held in Nai
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
 and is optimized for phones and tablets of all shapes and sizes.
 
+## Running the Project
+
+To ensure the project runs on your local environment ensure to you have Java 11 on your pc or if you don't have you can install it from [here](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html). 
+
+If you have multiple installations of Java make sure to set Java 11 as your preferred version to run the project.
+
 ## Dependencies
 
-1. JAVA 11 - [Install](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
-2. Jetpack Compose
-3. Coroutines - For Concurrency and Asynchronous tasks
-4. Ktor - For network requests
-5. Hilt - For Dependency Injection
-6. Crashlytics
-7. Coil - For Image Loading and Caching
-8. Lint Checks - [Ktlint](https://ktlint.github.io/)
+1. Jetpack Compose
+2. Coroutines - For Concurrency and Asynchronous tasks
+3. Ktor - For network requests
+4. Hilt - For Dependency Injection
+5. Crashlytics
+6. Coil - For Image Loading and Caching
+7. Lint Checks - [Ktlint](https://ktlint.github.io/)
 
 ## Architecture
 
