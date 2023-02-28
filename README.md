@@ -7,13 +7,14 @@ and is optimized for phones and tablets of all shapes and sizes.
 
 ## Dependencies
 
-1. Jetpack Compose
-2. Coroutines - For Concurrency and Asynchronous tasks
-3. Ktor - For network requests
-4. Hilt - For Dependency Injection
-5. Crashlytics
-6. Coil - For Image Loading and Caching
-7. Lint Checks - [Ktlint](https://ktlint.github.io/)
+1. JAVA 11 - [Install](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html)
+2. Jetpack Compose
+3. Coroutines - For Concurrency and Asynchronous tasks
+4. Ktor - For network requests
+5. Hilt - For Dependency Injection
+6. Crashlytics
+7. Coil - For Image Loading and Caching
+8. Lint Checks - [Ktlint](https://ktlint.github.io/)
 
 ## Architecture
 
@@ -66,6 +67,7 @@ This is the link to the app designs:
 The app uses a design system: Chai 
 
 ## Dependencies
+
 The project uses [Versions Catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog) to set up and share dependencies across the modules. The main reasons for choosing to adopt Versions Catalog are:
 - Central place to define dependencies.
 - Easy syntax.
