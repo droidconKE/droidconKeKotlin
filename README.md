@@ -171,6 +171,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
