@@ -26,7 +26,6 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.theme.DroidconKE2022Theme
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -56,16 +55,16 @@ class SessionScreenTest {
     @Test
     fun hasExpectedButtons() {
         val navController = TestNavHostController(
-            ApplicationProvider.getApplicationContext()
+            ApplicationProvider.getApplicationContext(),
         )
 
-        coEvery { repo.fetchAndSaveSessions() } returns flowOf(ResourceResult.Empty(""))
+        coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Empty("")
 
         composeTestRule.setContent {
             DroidconKE2022Theme() {
                 SessionsScreen(
                     navController = navController,
-                    sessionsViewModel = SessionsViewModel(repo)
+                    sessionsViewModel = SessionsViewModel(repo),
                 )
             }
         }
@@ -80,16 +79,16 @@ class SessionScreenTest {
     @Test
     fun `should show topBar`() {
         val navController = TestNavHostController(
-            ApplicationProvider.getApplicationContext()
+            ApplicationProvider.getApplicationContext(),
         )
 
-        coEvery { repo.fetchAndSaveSessions() } returns flowOf()
+        coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Success(emptyList())
 
         composeTestRule.setContent {
             DroidconKE2022Theme() {
                 SessionsScreen(
                     navController = navController,
-                    sessionsViewModel = SessionsViewModel(repo)
+                    sessionsViewModel = SessionsViewModel(repo),
                 )
             }
         }

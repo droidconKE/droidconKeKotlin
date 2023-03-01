@@ -68,7 +68,7 @@ fun CPageTitle(pageTitle: String) {
             fontWeight = FontWeight.W300,
             fontFamily = MontserratThin,
 
-            ),
+        ),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -83,7 +83,7 @@ fun CSubtitle(dSubtitle: String) {
             fontWeight = FontWeight.W700,
             fontFamily = MontserratRegular,
 
-            ),
+        ),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -98,7 +98,7 @@ fun CActionText(cAction: String) {
             fontWeight = FontWeight.W700,
             fontFamily = MontserratRegular,
 
-            ),
+        ),
         modifier = Modifier.fillMaxWidth()
     )
 }

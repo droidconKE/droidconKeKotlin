@@ -29,21 +29,19 @@ import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
 import javax.inject.Inject
 
 data class Error(
-    val message: String
+    val message: String,
 )
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo
+    private val sessionsRepo: SessionsRepo,
 ) : ViewModel() {
     private val _sessions: MutableLiveData<List<SessionPresentationModel>> =
         MutableLiveData(listOf())
@@ -54,16 +52,16 @@ class SessionsViewModel @Inject constructor(
     private val _empty: MutableLiveData<Boolean> = MutableLiveData(false)
     private val _selectedFilterOptions: MutableLiveData<List<SessionsFilterOption>> =
         MutableLiveData(
-            mutableListOf()
+            mutableListOf(),
         )
     private val _filterState: MutableLiveData<SessionsFilterState> = MutableLiveData(
-        SessionsFilterState()
+        SessionsFilterState(),
     )
 
     private val _selectedEventDate: MutableLiveData<EventDate> = MutableLiveData(
         EventDate(
-            LocalDate(2022, 11, 16)
-        )
+            LocalDate(2022, 11, 16),
+        ),
     )
 
     val selectedEventDate: MutableLiveData<EventDate> = _selectedEventDate
@@ -110,7 +108,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }?.toList()
                 _filterState.value = _filterState.value?.copy(
-                    levels = newValue!!
+                    levels = newValue!!,
                 )
             }
             SessionsFilterCategory.Topic -> {
@@ -123,7 +121,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    topics = newValue
+                    topics = newValue,
                 )
             }
             SessionsFilterCategory.Room -> {
@@ -136,7 +134,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    rooms = newValue
+                    rooms = newValue,
                 )
             }
             SessionsFilterCategory.SessionType -> {
@@ -149,52 +147,49 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value!!.copy(
-                    sessionTypes = newValue
+                    sessionTypes = newValue,
                 )
             }
         }
     }
 
     private suspend fun fetchSessions(query: String? = null, fetchFromRemote: Boolean = false) {
-        sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
-            .collectLatest { result ->
-                when (result) {
-                    is ResourceResult.Success -> {
-                        result.data.let { sessionDomainModels ->
-                            _sessions.value = sessionDomainModels?.map { sessionDomainModel ->
-                                sessionDomainModel.toPresentationModel()
-                            }
+        when (
+            val result =
+                sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
+        ) {
+            is ResourceResult.Success -> {
+                result.data.let { sessionDomainModels ->
+                    _sessions.value = sessionDomainModels?.map { sessionDomainModel ->
+                        sessionDomainModel.toPresentationModel()
+                    }
 
-                            _displayableSessions.value =
-                                sessionDomainModels?.map { sessionDomainModel ->
-                                    sessionDomainModel.toPresentationModel()
-                                }?.filter {
-                                    it.startDate.split(" ").first()
-                                        .toLocalDate().dayOfMonth == selectedEventDate.value?.value?.dayOfMonth
-                                }
+                    _displayableSessions.value =
+                        sessionDomainModels?.map { sessionDomainModel ->
+                            sessionDomainModel.toPresentationModel()
+                        }?.filter {
+                            it.startDate.split(" ").first()
+                                .toLocalDate().dayOfMonth == selectedEventDate.value?.value?.dayOfMonth
                         }
-                    }
-
-                    is ResourceResult.Error -> {
-                        _error.value = Error(result.message)
-                    }
-
-                    is ResourceResult.Loading -> {
-                        _loading.value = result.isLoading
-                    }
-
-                    is ResourceResult.Empty -> {
-                        _empty.value = true
-                    }
-
-                    else -> Unit
                 }
             }
-    }
 
-    private fun getQuery(): String = listOf("1", "2",).random()
+            is ResourceResult.Error -> {
+                _error.value = Error(result.message)
+            }
 
-    //       var query = Query().fields("*").from("sessions")
+            is ResourceResult.Loading -> {
+                _loading.value = result.isLoading
+            }
+
+            is ResourceResult.Empty -> {
+                _empty.value = true
+            }
+
+            else -> Unit
+        }
+
+        //       var query = Query().fields("*").from("sessions")
 //        if (_filterState.value!!.rooms.isNotEmpty()) {
 //            val rooms = _filterState.value!!.rooms.joinToString(",")
 //            query = query.where("rooms LIKE '%$rooms%'")
@@ -218,6 +213,10 @@ class SessionsViewModel @Inject constructor(
 //        query.orderAsc("startTimestamp")
 //
 //        return query.toSql()
+    }
+
+    fun getQuery(): String = listOf("1", "2").random()
+
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
             fetchSessions(query = getQuery())
@@ -247,7 +246,10 @@ class SessionsViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateBookmarkStatus(id: String, isCurrentlyStarred: Boolean): Flow<ResourceResult<Boolean>> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
+    suspend fun updateBookmarkStatus(
+        id: String,
+        isCurrentlyStarred: Boolean,
+    ): ResourceResult<Boolean> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
 
     fun fetchBookmarkedSessions() {
         viewModelScope.launch {
