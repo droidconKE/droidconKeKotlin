@@ -48,7 +48,7 @@ class SessionsManagerTest {
     fun beforeTest() {
         database = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(),
-            Database::class.java
+            Database::class.java,
         ).allowMainThreadQueries().build()
 
         sessionDao = database.sessionDao()
