@@ -114,7 +114,6 @@ fun COutlinedPrimaryButton(
     }
 }
 
-
 private const val PREVIEW_BUTTON_TITLE = "Filter"
 private const val PREVIEW_OUTLINE_BUTTON_TITLE = "Twitter"
 
