@@ -15,18 +15,23 @@
  */
 package com.android254.data.di
 
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.TokenProvider
 import com.android254.data.preferences.DefaultTokenProvider
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
@@ -43,8 +48,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(): HttpClientEngine = Android.create {
-        connectTimeout = 10_000
+    fun provideHttpClientEngine(chuckerInterceptor: ChuckerInterceptor): HttpClientEngine = OkHttp.create {
+        addInterceptor(chuckerInterceptor)
     }
 
     @Provides
@@ -54,4 +59,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideTokenProvider(datastore: DataStore<Preferences>): TokenProvider = DefaultTokenProvider(datastore)
+
+    @Provides
+    @Singleton
+    fun provideChuckerInterceptor(@ApplicationContext context: Context): ChuckerInterceptor {
+        return ChuckerInterceptor.Builder(context)
+            .collector(ChuckerCollector(context))
+            .maxContentLength(250000L)
+            .redactHeaders(emptySet())
+            .alwaysReadResponseBody(false)
+            .build()
+    }
 }
