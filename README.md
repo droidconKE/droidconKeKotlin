@@ -183,6 +183,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Kibet Theo</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->
