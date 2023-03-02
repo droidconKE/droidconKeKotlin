@@ -48,15 +48,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(@ApplicationContext context: Context): HttpClientEngine = OkHttp.create {
-        addInterceptor(
-            ChuckerInterceptor.Builder(context)
-                .collector(ChuckerCollector(context))
-                .maxContentLength(250000L)
-                .redactHeaders(emptySet())
-                .alwaysReadResponseBody(false)
-                .build()
-        )
+    fun provideHttpClientEngine(chuckerInterceptor: ChuckerInterceptor): HttpClientEngine = OkHttp.create {
+        addInterceptor(chuckerInterceptor)
     }
 
     @Provides
@@ -66,4 +59,15 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideTokenProvider(datastore: DataStore<Preferences>): TokenProvider = DefaultTokenProvider(datastore)
+
+    @Provides
+    @Singleton
+    fun provideChuckerInterceptor(@ApplicationContext context: Context): ChuckerInterceptor {
+        return ChuckerInterceptor.Builder(context)
+            .collector(ChuckerCollector(context))
+            .maxContentLength(250000L)
+            .redactHeaders(emptySet())
+            .alwaysReadResponseBody(false)
+            .build()
+    }
 }
