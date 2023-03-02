@@ -73,6 +73,10 @@ dependencies {
     implementation(libs.ktor.json)
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
+    implementation(libs.ktor.okhttp)
+
+    releaseImplementation(libs.chucker.release)
+    debugImplementation(libs.chucker.debug)
 
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.androidx.core)
