@@ -52,7 +52,7 @@ fun FeedShareSection() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 48.dp)
             .testTag("share_bottom_sheet")
     ) {
         Row(
