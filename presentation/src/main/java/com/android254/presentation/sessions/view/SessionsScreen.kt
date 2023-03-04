@@ -16,6 +16,7 @@
 package com.android254.presentation.sessions.view
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -74,6 +75,10 @@ fun SessionsScreen(
 
     val isFilterDialogOpen = rememberSaveable {
         mutableStateOf(false)
+    }
+
+    BackHandler(bottomSheetState.isVisible) {
+        scope.launch { bottomSheetState.hide() }
     }
 
     Scaffold(
