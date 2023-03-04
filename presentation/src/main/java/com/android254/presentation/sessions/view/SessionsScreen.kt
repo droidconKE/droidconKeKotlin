@@ -42,29 +42,27 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.android254.presentation.common.bottomsheet.BottomSheetScaffold
-import com.android254.presentation.common.bottomsheet.rememberBottomSheetScaffoldState
 import com.android254.presentation.common.components.*
 import com.android254.presentation.common.theme.DroidconKE2022Theme
 import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.SessionList
 import com.android254.presentation.sessions.components.SessionsFilterPanel
-import com.droidconke.chai.atoms.ChaiCoal
 import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
     navController: NavHostController,
-    sessionsViewModel: SessionsViewModel = hiltViewModel()
+    sessionsViewModel: SessionsViewModel = hiltViewModel(),
 ) {
     val showMySessions = remember {
         mutableStateOf(false)
     }
 
     val scope = rememberCoroutineScope()
-
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetState = rememberSheetState(
+        skipHalfExpanded = true
+    )
 
     val isSessionLayoutList = rememberSaveable {
         mutableStateOf(true)
@@ -78,75 +76,74 @@ fun SessionsScreen(
         mutableStateOf(false)
     }
 
-    BottomSheetScaffold(
-        sheetContent = {
+    Scaffold(
+        topBar = {
+            DroidconAppBarWithFilter(
+                isListActive = isSessionLayoutList.value,
+                onListIconClick = {
+                    isSessionLayoutList.value = true
+                },
+                onAgendaIconClick = {
+                    isSessionLayoutList.value = false
+                },
+                isFilterActive = isFilterActive.value,
+                onFilterButtonClick = {
+                    isFilterDialogOpen.value = true
+                    scope.launch {
+                        bottomSheetState.show()
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
+            ) {
+                EventDaySelector(viewModel = sessionsViewModel)
+                CustomSwitch(checked = showMySessions.value, onCheckedChange = {
+                    showMySessions.value = it
+                    isFilterActive.value = !it
+                    if (showMySessions.value) {
+                        sessionsViewModel.fetchBookmarkedSessions()
+                    } else {
+                        sessionsViewModel.clearSelectedFilterList()
+                    }
+                })
+            }
+            SessionList(navController = navController, viewModel = sessionsViewModel)
+        }
+    }
+
+    if (bottomSheetState.isVisible) {
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = {
+                scope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+        ) {
             SessionsFilterPanel(
                 onDismiss = {
                     scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                        bottomSheetState.hide()
                     }
                 },
                 onChange = {},
                 viewModel = sessionsViewModel
             )
-        },
-        scaffoldState = bottomSheetScaffoldState,
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetPeekHeight = 0.dp,
-        sheetScrimColor = ChaiCoal.copy(alpha = 0.52f),
-    ) {
-        Scaffold(
-            topBar = {
-                DroidconAppBarWithFilter(
-                    isListActive = isSessionLayoutList.value,
-                    onListIconClick = {
-                        isSessionLayoutList.value = true
-                    },
-                    onAgendaIconClick = {
-                        isSessionLayoutList.value = false
-                    },
-                    isFilterActive = isFilterActive.value,
-                    onFilterButtonClick = {
-                        isFilterDialogOpen.value = true
-                        scope.launch {
-                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                                bottomSheetScaffoldState.bottomSheetState.expand()
-                            } else {
-                                bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
-                        }
-                    }
-                )
-            }
-        ) { paddingValues ->
-
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(paddingValues)
-                    .padding(horizontal = 20.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
-                ) {
-                    EventDaySelector(viewModel = sessionsViewModel)
-                    CustomSwitch(checked = showMySessions.value, onCheckedChange = {
-                        showMySessions.value = it
-                        isFilterActive.value = !it
-                        if (showMySessions.value) {
-                            sessionsViewModel.fetchBookmarkedSessions()
-                        } else {
-                            sessionsViewModel.clearSelectedFilterList()
-                        }
-                    })
-                }
-                SessionList(navController = navController, viewModel = sessionsViewModel)
-            }
         }
     }
 }
@@ -172,7 +169,7 @@ fun CustomSwitch(
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     // this is to disable the ripple effect
     val interactionSource = remember {
@@ -228,7 +225,7 @@ fun CustomSwitch(
 
 @Composable
 private fun animateAlignmentAsState(
-    targetBiasValue: Float
+    targetBiasValue: Float,
 ): State<BiasAlignment> {
     val bias by animateFloatAsState(targetBiasValue)
     return derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
