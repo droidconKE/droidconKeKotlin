@@ -16,6 +16,7 @@
 package com.android254.presentation.feed.view
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +39,11 @@ fun FeedScreen(
     val bottomSheetState = rememberSheetState(
         skipHalfExpanded = true
     )
+
+    BackHandler(bottomSheetState.isVisible) {
+        scope.launch { bottomSheetState.hide() }
+    }
+
     Scaffold(
         topBar = {
             DroidconAppBarWithFeedbackButton(
