@@ -128,6 +128,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/janewaitara">
+            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
+            <br />
+            <sub><b>Jane Waitara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
@@ -139,13 +146,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
             <br />
             <sub><b>Juma Allan</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/janewaitara">
-            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
-            <br />
-            <sub><b>Jane Waitara</b></sub>
         </a>
     </td>
     <td align="center">
