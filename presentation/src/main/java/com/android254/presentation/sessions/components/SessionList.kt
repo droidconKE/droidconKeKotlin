@@ -58,6 +58,7 @@ fun SessionList(
             viewModel.refreshSessionList()
         }) {
             LazyColumn(modifier = Modifier.fillMaxHeight()) {
+
                 sessions.value?.let {
                     itemsIndexed(
                         items = it,
@@ -95,8 +96,6 @@ fun SessionList(
                             }
                         }
                     }
-                }
-
             }
         }
     }
