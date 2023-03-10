@@ -43,6 +43,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-preview-customview = "androidx.customview:customview:1.2.0-alpha02"
 compose-preview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha07"
+compose-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-compose:2.6.0"
 accompanist-flowlayout = "com.google.accompanist:accompanist-flowlayout:0.25.1"
 accompanist-swiperefresh = "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 gson-gson = "com.google.code.gson:gson:2.9.0"
@@ -96,7 +97,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [bundles]
-compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout"]
+compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation"]
