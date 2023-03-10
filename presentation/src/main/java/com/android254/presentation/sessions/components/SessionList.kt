@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.SessionsCard
@@ -45,12 +46,12 @@ fun SessionList(
     viewModel: SessionsViewModel,
     navController: NavHostController
 ) {
-    val sessions: List<SessionPresentationModel> by viewModel.sessions.observeAsState(arrayListOf())
-    val loading: Boolean by viewModel.loading.observeAsState(false)
-    val empty: Boolean by viewModel.loading.observeAsState(false)
+    val sessions = viewModel.sessions.collectAsStateWithLifecycle()
+    val loading = viewModel.loading.collectAsStateWithLifecycle(initialValue = false)
+    val empty = viewModel.loading.collectAsStateWithLifecycle(initialValue = false)
     val swipeRefreshState = rememberSwipeRefreshState(false)
 
-    if (loading) {
+    if (loading.value) {
         SessionsLoadingSkeleton()
     } else {
         SwipeRefresh(state = swipeRefreshState, onRefresh = {
@@ -58,7 +59,7 @@ fun SessionList(
         }) {
             LazyColumn(modifier = Modifier.fillMaxHeight()) {
                 itemsIndexed(
-                    items = sessions,
+                    items = sessions.value!!,
                     key = { _, session -> session.remoteId }
                 ) { index, session ->
                     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
@@ -73,7 +74,7 @@ fun SessionList(
                                 restoreState = true
                             }
                         })
-                        if (index != sessions.size - 1) {
+                        if (index != sessions.value?.size?.minus(1)) {
                             Box(
                                 Modifier.padding(
                                     start = 40.dp,
@@ -88,7 +89,7 @@ fun SessionList(
                                 )
                             }
                         }
-                        if (index == sessions.size - 1) {
+                        if (index == sessions.value?.size?.minus(1)) {
                             Spacer(modifier = Modifier.height(32.dp))
                         }
                     }
