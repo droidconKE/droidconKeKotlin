@@ -46,10 +46,12 @@ class SpeakersManager @Inject constructor(
     }
 
     override suspend fun fetchSpeakersUnpacked(): List<Speaker> {
-        val result = fetchSpeakers()
-        if (result is ResourceResult.Success) {
-            return result.data ?: emptyList()
-        }
+            val result = fetchSpeakers()
+            if (result is ResourceResult.Success) {
+                return withContext(Dispatchers.IO){
+                    result.data ?: emptyList()
+                }
+            }
 
         return emptyList()
     }
@@ -59,14 +61,24 @@ class SpeakersManager @Inject constructor(
         if (result is DataResult.Success) {
             val data = result.data
             if (data.data.isNotEmpty()) {
-                speakerDao.deleteAll()
-                speakerDao.insert(data.data.map { it.toEntity() })
+                withContext(Dispatchers.IO){
+                    speakerDao.deleteAll()
+                    speakerDao.insert(data.data.map { it.toEntity() })
+                }
             }
         }
         return result
     }
 
-    override suspend fun fetchSpeakerCount(): ResourceResult<Int> = ResourceResult.Success(speakerDao.fetchSpeakerCount())
+    override suspend fun fetchSpeakerCount(): ResourceResult<Int> =
+        withContext(Dispatchers.IO){
+            ResourceResult.Success(speakerDao.fetchSpeakerCount())
+        }
 
-    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> = ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
+
+    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
+        withContext(Dispatchers.IO){
+            ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
+        }
+
 }
