@@ -32,7 +32,7 @@ class AuthManager @Inject constructor(
     private val tokenProvider: TokenProvider
 ) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val result = api.googleLogin(GoogleToken(idToken))
                 tokenProvider.update(result.token)
@@ -41,9 +41,10 @@ class AuthManager @Inject constructor(
                 when (e) {
                     is ServerError, is NetworkError -> {
                         DataResult.Error("Login failed", networkError = true, exc = e)
-                    } else -> {
-                    DataResult.Error("Login failed", exc = e)
-                }
+                    }
+                    else -> {
+                        DataResult.Error("Login failed", exc = e)
+                    }
                 }
             }
         }
