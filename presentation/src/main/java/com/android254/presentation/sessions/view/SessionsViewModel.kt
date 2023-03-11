@@ -80,11 +80,11 @@ class SessionsViewModel @Inject constructor(
             _selectedFilterOptions.value =
                 _selectedFilterOptions.value.toMutableList().apply {
                     removeAt(index)
-                }!!
+                }
         } else {
-            _selectedFilterOptions.value = _selectedFilterOptions.value.toMutableList()?.apply {
+            _selectedFilterOptions.value = _selectedFilterOptions.value.toMutableList().apply {
                 add(option)
-            }!!
+            }
         }
 
         updateFilterState(option)
@@ -103,7 +103,7 @@ class SessionsViewModel @Inject constructor(
                 }?.toList()
                 _filterState.value = _filterState.value?.copy(
                     levels = newValue!!,
-                )!!
+                )
             }
             SessionsFilterCategory.Topic -> {
                 val newValue = _filterState.value!!.topics.toMutableList().apply {
@@ -116,7 +116,7 @@ class SessionsViewModel @Inject constructor(
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
                     topics = newValue,
-                )!!
+                )
             }
             SessionsFilterCategory.Room -> {
                 val newValue = _filterState.value!!.rooms.toMutableList().apply {
@@ -129,7 +129,7 @@ class SessionsViewModel @Inject constructor(
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
                     rooms = newValue,
-                )!!
+                )
             }
             SessionsFilterCategory.SessionType -> {
                 val newValue = _filterState.value!!.sessionTypes.toMutableList().apply {
@@ -159,11 +159,11 @@ class SessionsViewModel @Inject constructor(
                     }!!
 
                     _displayableSessions.value =
-                        sessionDomainModels?.map { sessionDomainModel ->
+                        sessionDomainModels.map { sessionDomainModel ->
                             sessionDomainModel.toPresentationModel()
-                        }?.filter {
+                        }.filter {
                             it.startDate.split(" ").first()
-                                .toLocalDate().dayOfMonth == selectedEventDate.value?.value?.dayOfMonth
+                                .toLocalDate().dayOfMonth == selectedEventDate.value.value.dayOfMonth
                         }
                 }
             }
