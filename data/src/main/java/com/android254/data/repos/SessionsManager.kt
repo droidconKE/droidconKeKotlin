@@ -90,11 +90,12 @@ class SessionsManager @Inject constructor(
         }
     }
 
-    override suspend fun fetchSessionById(id: String): ResourceResult<Session> = withContext(Dispatchers.IO) {
-        val session = dao.getSessionById(id)
-            ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
-        return@withContext ResourceResult.Success(data = session.toDomainModel())
-    }
+    override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
+        withContext(Dispatchers.IO) {
+            val session = dao.getSessionById(id)
+                ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
+            return@withContext ResourceResult.Success(data = session.toDomainModel())
+        }
 
     override suspend fun toggleBookmarkStatus(
         id: String,
