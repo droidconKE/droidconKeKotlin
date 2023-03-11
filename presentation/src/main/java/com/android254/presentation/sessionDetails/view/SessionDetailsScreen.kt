@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2022Theme
@@ -61,7 +62,7 @@ fun SessionDetailsScreen(
     onNavigationIconClick: () -> Unit,
 ) {
 
-    val sessionDetails by viewModel.sessionDetails.observeAsState()
+    val sessionDetails = viewModel.sessionDetails.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = sessionId) {
         viewModel.getSessionDetailsById(sessionId)
@@ -87,10 +88,12 @@ fun SessionDetailsScreen(
             }
         }
     ) { paddingValues ->
-
-        sessionDetails?.let {
-            Body(paddingValues, darkTheme, it)
+        sessionDetails.value.let {
+            if (it != null) {
+                Body(paddingValues, darkTheme,it)
+            }
         }
+
     }
 }
 
