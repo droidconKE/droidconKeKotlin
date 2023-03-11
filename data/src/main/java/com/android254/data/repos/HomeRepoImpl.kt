@@ -43,8 +43,8 @@ class HomeRepoImpl @Inject constructor(
         val speakers = speakersRepo.fetchSpeakersUnpacked()
         val sessions = sessionsRepo.fetchAndSaveSessions()
 
-        return withContext(Dispatchers.IO){
-             HomeDetails(
+        return withContext(Dispatchers.IO) {
+            HomeDetails(
                 isCallForSpeakersEnable = false,
                 isEventBannerEnable = true,
                 speakers = speakers,

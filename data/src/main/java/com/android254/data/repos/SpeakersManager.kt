@@ -34,24 +34,26 @@ class SpeakersManager @Inject constructor(
 ) : SpeakersRepo {
     private val speakerDao = db.speakerDao()
 
-    override suspend fun fetchSpeakers(): ResourceResult<List<Speaker>> = withContext(Dispatchers.IO) {
-        val result = fetchSpeakersFromApi()
-        if (result is DataResult.Error) {
-            return@withContext ResourceResult.Error(
-                result.message,
-                networkError = result.message.contains("network", ignoreCase = true)
-            )
+    override suspend fun fetchSpeakers(): ResourceResult<List<Speaker>> =
+        withContext(Dispatchers.IO) {
+            val result = fetchSpeakersFromApi()
+            if (result is DataResult.Error) {
+                return@withContext ResourceResult.Error(
+                    result.message,
+                    networkError = result.message.contains("network", ignoreCase = true)
+                )
+            }
+            return@withContext ResourceResult.Success(
+                speakerDao.fetchSpeakers().map { it.toDomainModel() })
         }
-        return@withContext ResourceResult.Success(speakerDao.fetchSpeakers().map { it.toDomainModel() })
-    }
 
     override suspend fun fetchSpeakersUnpacked(): List<Speaker> {
-            val result = fetchSpeakers()
-            if (result is ResourceResult.Success) {
-                return withContext(Dispatchers.IO){
-                    result.data ?: emptyList()
-                }
+        val result = fetchSpeakers()
+        if (result is ResourceResult.Success) {
+            return withContext(Dispatchers.IO) {
+                result.data ?: emptyList()
             }
+        }
 
         return emptyList()
     }
@@ -61,7 +63,7 @@ class SpeakersManager @Inject constructor(
         if (result is DataResult.Success) {
             val data = result.data
             if (data.data.isNotEmpty()) {
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     speakerDao.deleteAll()
                     speakerDao.insert(data.data.map { it.toEntity() })
                 }
@@ -71,13 +73,13 @@ class SpeakersManager @Inject constructor(
     }
 
     override suspend fun fetchSpeakerCount(): ResourceResult<Int> =
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             ResourceResult.Success(speakerDao.fetchSpeakerCount())
         }
 
 
     override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
         }
 
