@@ -27,7 +27,9 @@ import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HomeRepoImpl @Inject constructor(
@@ -40,16 +42,19 @@ class HomeRepoImpl @Inject constructor(
         val sponsors = sponsorsApi.fetchSponsors()
         val speakers = speakersRepo.fetchSpeakersUnpacked()
         val sessions = sessionsRepo.fetchAndSaveSessions()
-        return HomeDetails(
-            isCallForSpeakersEnable = false,
-            isEventBannerEnable = true,
-            speakers = speakers,
-            speakersCount = speakers.size,
-            sessions = getSessionsFromResourceResult(sessions),
-            sessionsCount = getSessionsFromResourceResult(sessions).size,
-            sponsors = sponsors.getSponsorsList(),
-            organizers = listOf(),
-        )
+
+        return withContext(Dispatchers.IO){
+             HomeDetails(
+                isCallForSpeakersEnable = false,
+                isEventBannerEnable = true,
+                speakers = speakers,
+                speakersCount = speakers.size,
+                sessions = getSessionsFromResourceResult(sessions),
+                sessionsCount = getSessionsFromResourceResult(sessions).size,
+                sponsors = sponsors.getSponsorsList(),
+                organizers = listOf(),
+            )
+        }
     }
 
     private fun getSessionsFromResourceResult(result: ResourceResult<List<Session>>): List<Session> {
