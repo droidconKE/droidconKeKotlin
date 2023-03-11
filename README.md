@@ -149,10 +149,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/Mogakamo">
-            <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="Mogakamo"/>
+        <a href="https://github.com/mog-rn">
+            <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
-            <sub><b>Amos</b></sub>
+            <sub><b>Amos Nyaburi</b></sub>
         </a>
     </td>
     <td align="center">
@@ -163,6 +163,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td></tr>
 <tr>
+    <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
+        </a>
+    </td>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
@@ -182,13 +189,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/yveskalume">
-            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
-            <br />
-            <sub><b>Yves Kalume</b></sub>
         </a>
     </td></tr>
 </table>
