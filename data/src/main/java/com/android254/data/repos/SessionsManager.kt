@@ -28,6 +28,7 @@ import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,13 +36,14 @@ import javax.inject.Inject
 class SessionsManager @Inject constructor(
     private val api: SessionsApi,
     private val dao: SessionDao,
-    private val bookmarkDao: BookmarkDao
+    private val bookmarkDao: BookmarkDao,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SessionsRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchAndSaveSessions(
         fetchFromRemote: Boolean,
         query: String?
-    ): ResourceResult<List<Session>> = withContext(Dispatchers.IO) {
+    ): ResourceResult<List<Session>> = withContext(ioDispatcher) {
         val sessions = if (query == null) {
             dao.fetchSessions()
         } else {
@@ -91,7 +93,7 @@ class SessionsManager @Inject constructor(
     }
 
     override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             val session = dao.getSessionById(id)
                 ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
             return@withContext ResourceResult.Success(data = session.toDomainModel())
@@ -100,7 +102,7 @@ class SessionsManager @Inject constructor(
     override suspend fun toggleBookmarkStatus(
         id: String,
         isCurrentlyStarred: Boolean
-    ): ResourceResult<Boolean> = withContext(Dispatchers.IO) {
+    ): ResourceResult<Boolean> = withContext(ioDispatcher) {
         try {
             dao.updateBookmarkedStatus(id, !isCurrentlyStarred)
             if (isCurrentlyStarred) {
