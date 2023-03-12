@@ -21,6 +21,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.android254.data.dao.BookmarkDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.model.BookmarkEntity
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SessionsApi
 import com.android254.data.network.util.NetworkError
 import com.android254.data.repos.mappers.toDomainModel
@@ -29,15 +30,15 @@ import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 class SessionsManager @Inject constructor(
     private val api: SessionsApi,
     private val dao: SessionDao,
     private val bookmarkDao: BookmarkDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SessionsRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchAndSaveSessions(

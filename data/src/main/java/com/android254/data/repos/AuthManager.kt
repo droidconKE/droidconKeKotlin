@@ -15,6 +15,7 @@
  */
 package com.android254.data.repos
 
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.AuthApi
 import com.android254.data.network.models.payloads.GoogleToken
 import com.android254.data.network.util.NetworkError
@@ -24,14 +25,16 @@ import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+
+@Singleton
 class AuthManager @Inject constructor(
     private val api: AuthApi,
     private val tokenProvider: TokenProvider,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
         return withContext(ioDispatcher) {
