@@ -23,16 +23,18 @@ import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AuthManager @Inject constructor(
     private val api: AuthApi,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             try {
                 val result = api.googleLogin(GoogleToken(idToken))
                 tokenProvider.update(result.token)
