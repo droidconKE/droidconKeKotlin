@@ -27,6 +27,7 @@ import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
@@ -36,6 +37,7 @@ class HomeRepoImpl @Inject constructor(
     private val sponsorsApi: SponsorsApi,
     private val speakersRepo: SpeakersRepo,
     private val sessionsRepo: SessionsRepo,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : HomeRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchHomeDetails(): HomeDetails {
@@ -43,7 +45,7 @@ class HomeRepoImpl @Inject constructor(
         val speakers = speakersRepo.fetchSpeakersUnpacked()
         val sessions = sessionsRepo.fetchAndSaveSessions()
 
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             HomeDetails(
                 isCallForSpeakersEnable = false,
                 isEventBannerEnable = true,
