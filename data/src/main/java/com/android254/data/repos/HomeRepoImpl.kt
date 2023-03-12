@@ -42,11 +42,10 @@ class HomeRepoImpl @Inject constructor(
 ) : HomeRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchHomeDetails(): HomeDetails {
-        val sponsors = sponsorsApi.fetchSponsors()
-        val speakers = speakersRepo.fetchSpeakersUnpacked()
-        val sessions = sessionsRepo.fetchAndSaveSessions()
-
         return withContext(ioDispatcher) {
+            val sponsors = sponsorsApi.fetchSponsors()
+            val speakers = speakersRepo.fetchSpeakersUnpacked()
+            val sessions = sessionsRepo.fetchAndSaveSessions()
             HomeDetails(
                 isCallForSpeakersEnable = false,
                 isEventBannerEnable = true,
