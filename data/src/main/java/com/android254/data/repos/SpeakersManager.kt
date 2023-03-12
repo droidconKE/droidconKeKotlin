@@ -24,18 +24,20 @@ import com.android254.domain.models.DataResult
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpeakersManager @Inject constructor(
     db: Database,
-    private val api: SpeakersApi
+    private val api: SpeakersApi,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : SpeakersRepo {
     private val speakerDao = db.speakerDao()
 
     override suspend fun fetchSpeakers(): ResourceResult<List<Speaker>> =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             val result = fetchSpeakersFromApi()
             if (result is DataResult.Error) {
                 return@withContext ResourceResult.Error(
@@ -50,7 +52,7 @@ class SpeakersManager @Inject constructor(
     override suspend fun fetchSpeakersUnpacked(): List<Speaker> {
         val result = fetchSpeakers()
         if (result is ResourceResult.Success) {
-            return withContext(Dispatchers.IO) {
+            return withContext(ioDispatcher) {
                 result.data ?: emptyList()
             }
         }
@@ -63,7 +65,7 @@ class SpeakersManager @Inject constructor(
         if (result is DataResult.Success) {
             val data = result.data
             if (data.data.isNotEmpty()) {
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     speakerDao.deleteAll()
                     speakerDao.insert(data.data.map { it.toEntity() })
                 }
@@ -73,13 +75,13 @@ class SpeakersManager @Inject constructor(
     }
 
     override suspend fun fetchSpeakerCount(): ResourceResult<Int> =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             ResourceResult.Success(speakerDao.fetchSpeakerCount())
         }
 
 
     override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
         }
 
