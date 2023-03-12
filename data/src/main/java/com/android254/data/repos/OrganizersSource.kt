@@ -16,21 +16,22 @@
 package com.android254.data.repos
 
 import com.android254.data.dao.OrganizersDao
+import com.android254.data.di.DefaultDispatcher
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.OrganizersApi
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.DataResult
 import com.android254.domain.repos.OrganizersRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrganizersSource @Inject constructor(
     private val api: OrganizersApi,
     private val dao: OrganizersDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : OrganizersRepository {
 
     override suspend fun getOrganizers() = withContext(ioDispatcher) {
