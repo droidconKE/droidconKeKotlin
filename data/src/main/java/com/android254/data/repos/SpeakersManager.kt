@@ -16,6 +16,7 @@
 package com.android254.data.repos
 
 import com.android254.data.db.Database
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SpeakersApi
 import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.repos.mappers.toDomainModel
@@ -25,14 +26,14 @@ import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 class SpeakersManager @Inject constructor(
     db: Database,
     private val api: SpeakersApi,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SpeakersRepo {
     private val speakerDao = db.speakerDao()
 
