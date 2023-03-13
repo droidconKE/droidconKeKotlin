@@ -24,6 +24,7 @@ import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import io.mockk.*
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -32,7 +33,7 @@ import org.junit.Test
 class AuthManagerTest {
     val mockApi = mockk<AuthApi>()
     val mockTokenProvider = mockk<TokenProvider>()
-    val mockioDispatcher = mockk<CoroutineDispatcher>()
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val fakeUserDetails = UserDetailsDTO(
         name = "Test", email = "test@gmail.com", gender = null, avatar = "http://test.com"
@@ -42,7 +43,7 @@ class AuthManagerTest {
     fun `test getAndSaveApiToken successfully`() {
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider, mockioDispatcher)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             coEvery { mockApi.googleLogin(any()) } returns AccessTokenDTO(
                 "test", user = fakeUserDetails
             )
@@ -58,7 +59,7 @@ class AuthManagerTest {
     fun `test getAndSaveApiToken failure - network error`() {
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider, mockioDispatcher)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = NetworkError()
 
             coEvery { mockApi.googleLogin(any()) } throws exc
@@ -71,7 +72,7 @@ class AuthManagerTest {
     fun `test getAndSaveApiToken failure - other error`() {
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider, mockioDispatcher)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = Exception()
 
             coEvery { mockApi.googleLogin(any()) } throws exc
