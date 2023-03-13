@@ -35,12 +35,12 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Deploy to Production
-        uses: r0adkll/upload-google-play@v1.0.19
+      - name: Deploy to Alpha
+        uses: r0adkll/upload-google-play@v1.0.0
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
-          packageName: com.android254.droidconKE2022
+          packageName: com.android254.droidconKE2023
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: production
+          track: alpha
           whatsNewDirectory: whatsnew/
           status: completed
