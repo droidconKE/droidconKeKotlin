@@ -85,7 +85,7 @@ dependencies {
     implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
-    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.compose.lifecycle.runtime)
     kapt(libs.android.hilt.compiler)
     implementation(libs.android.hilt.navigation.compose)
     kapt(libs.android.hilt.androidx.compiler)
