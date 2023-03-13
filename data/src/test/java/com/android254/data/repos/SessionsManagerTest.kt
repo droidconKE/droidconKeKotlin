@@ -28,6 +28,7 @@ import io.mockk.coEvery
 // import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 // import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 // import org.hamcrest.CoreMatchers
@@ -44,7 +45,7 @@ class SessionsManagerTest {
     private lateinit var sessionDao: SessionDao
     private lateinit var bookmarkDao: BookmarkDao
     private lateinit var database: Database
-    private lateinit var ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Before
     fun beforeTest() {
