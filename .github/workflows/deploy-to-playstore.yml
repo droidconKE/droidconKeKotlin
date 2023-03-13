@@ -36,7 +36,7 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Deploy to Alpha
-        uses: r0adkll/upload-google-play@v1.0.0
+        uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
           packageName: com.android254.droidconKE2023
