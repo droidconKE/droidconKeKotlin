@@ -102,11 +102,6 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
-## Material 3 Bottom Sheets
-At the time of working on this app, Material 3 didn't have BottomSheet classes. Solution was to copy them from AOSP. They can be found in the `com/android254/presentation/common/bottomsheet` packages and have been used to do the Share feed and Fitter Bottom Sheets.
-You can find more information [here](https://stackoverflow.com/questions/72518262/how-to-implement-bottomsheet-in-material-3-jetpack-compose-android).
-
-
 ## Contributing
 
 Contributions are always welcome!
