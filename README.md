@@ -164,6 +164,13 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/misshannah">
+            <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
+            <br />
+            <sub><b>Hannah Olukoye</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/yveskalume">
             <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
             <br />
@@ -189,13 +196,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/misshannah">
-            <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
-            <br />
-            <sub><b>Hannah Olukoye</b></sub>
         </a>
     </td></tr>
 </table>
