@@ -12,6 +12,7 @@ ktor = "2.2.2"
 splash = "1.0.0"
 junit4 = "4.13.2"
 agp = "7.4.1"
+chucker = "3.5.2"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
@@ -30,7 +31,7 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 coil-compose = "io.coil-kt:coil-compose:2.0.0-rc03"
 compose-activity = "androidx.activity:activity-compose:1.6.1"
 compose-compiler = "androidx.compose.compiler:compiler:1.4.2"
-compose-material-3 = "androidx.compose.material3:material3:1.1.0-alpha06"
+compose-material-3 = "androidx.compose.material3:material3:1.1.0-alpha07"
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 compose-runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
@@ -42,6 +43,7 @@ compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview"
 compose-preview-customview = "androidx.customview:customview:1.2.0-alpha02"
 compose-preview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
 compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha07"
+compose-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-compose:2.6.0"
 accompanist-flowlayout = "com.google.accompanist:accompanist-flowlayout:0.25.1"
 accompanist-swiperefresh = "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 gson-gson = "com.google.code.gson:gson:2.9.0"
@@ -70,6 +72,7 @@ test-navigation = "androidx.navigation:navigation-testing:2.5.3"
 test-mockk = "io.mockk:mockk:1.12.7"
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
@@ -80,6 +83,8 @@ firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
+chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
+chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
 espresso = "androidx.test.espresso:espresso-core:3.5.1"
 junit-androidx = "androidx.test.ext:junit:1.1.5"
@@ -92,7 +97,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 [bundles]
-compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout"]
+compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation"]

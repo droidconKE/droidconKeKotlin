@@ -33,29 +33,23 @@ import javax.inject.Inject
 class HomeRepoImpl @Inject constructor(
     private val sponsorsApi: SponsorsApi,
     private val speakersRepo: SpeakersRepo,
-    private val sessionsRepo: SessionsRepo
+    private val sessionsRepo: SessionsRepo,
 ) : HomeRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchHomeDetails(): HomeDetails {
-        return combine(
-            flowOf(sponsorsApi.fetchSponsors()),
-            flowOf(speakersRepo.fetchSpeakersUnpacked()),
-            sessionsRepo.fetchAndSaveSessions()
-                .filter {
-                    it is ResourceResult.Success && it.data?.isNotEmpty() == true || it is ResourceResult.Error
-                }
-        ) { sponsors, speakers, sessions ->
-            HomeDetails(
-                isCallForSpeakersEnable = false,
-                isEventBannerEnable = true,
-                speakers = speakers,
-                speakersCount = speakers.size,
-                sessions = getSessionsFromResourceResult(sessions),
-                sessionsCount = getSessionsFromResourceResult(sessions).size,
-                sponsors = sponsors.getSponsorsList(),
-                organizers = listOf()
-            )
-        }.first()
+        val sponsors = sponsorsApi.fetchSponsors()
+        val speakers = speakersRepo.fetchSpeakersUnpacked()
+        val sessions = sessionsRepo.fetchAndSaveSessions()
+        return HomeDetails(
+            isCallForSpeakersEnable = false,
+            isEventBannerEnable = true,
+            speakers = speakers,
+            speakersCount = speakers.size,
+            sessions = getSessionsFromResourceResult(sessions),
+            sessionsCount = getSessionsFromResourceResult(sessions).size,
+            sponsors = sponsors.getSponsorsList(),
+            organizers = listOf(),
+        )
     }
 
     private fun getSessionsFromResourceResult(result: ResourceResult<List<Session>>): List<Session> {

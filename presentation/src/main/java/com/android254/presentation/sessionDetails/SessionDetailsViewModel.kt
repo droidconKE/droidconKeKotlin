@@ -24,7 +24,6 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,25 +38,23 @@ class SessionDetailsViewModel @Inject constructor(
 
     fun getSessionDetailsById(sessionId: String) {
         viewModelScope.launch {
-            sessionsRepo.fetchSessionById(sessionId).collectLatest { result ->
-                when (result) {
-                    is ResourceResult.Success -> {
-                        result.data.let {
-                            _sessionDetails.value = it?.toSessionDetailsPresentationModal()
-                        }
+            when (val result = sessionsRepo.fetchSessionById(sessionId)) {
+                is ResourceResult.Success -> {
+                    result.data.let {
+                        _sessionDetails.value = it?.toSessionDetailsPresentationModal()
                     }
-
-                    is ResourceResult.Error -> {
-                    }
-
-                    is ResourceResult.Loading -> {
-                    }
-
-                    is ResourceResult.Empty -> {
-                    }
-
-                    else -> Unit
                 }
+
+                is ResourceResult.Error -> {
+                }
+
+                is ResourceResult.Loading -> {
+                }
+
+                is ResourceResult.Empty -> {
+                }
+
+                else -> Unit
             }
         }
     }

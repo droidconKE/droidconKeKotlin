@@ -5,6 +5,12 @@ Android app for the 4th Android Developer conference- droidcon to be held in Nai
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
 and is optimized for phones and tablets of all shapes and sizes.
 
+## Running the Project
+
+To ensure the project runs on your local environment ensure to you have Java 11 on your pc or if you don't have you can install it from [here](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html). 
+
+If you have multiple installations of Java make sure to set Java 11 as your preferred version to run the project.
+
 ## Dependencies
 
 1. Jetpack Compose
@@ -66,6 +72,7 @@ This is the link to the app designs:
 The app uses a design system: Chai 
 
 ## Dependencies
+
 The project uses [Versions Catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog) to set up and share dependencies across the modules. The main reasons for choosing to adopt Versions Catalog are:
 - Central place to define dependencies.
 - Easy syntax.
@@ -121,6 +128,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/janewaitara">
+            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
+            <br />
+            <sub><b>Jane Waitara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
@@ -135,10 +149,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/janewaitara">
-            <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
+        <a href="https://github.com/mog-rn">
+            <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
-            <sub><b>Jane Waitara</b></sub>
+            <sub><b>Amos Nyaburi</b></sub>
         </a>
     </td>
     <td align="center">
@@ -147,6 +161,14 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>MamboBryan</b></sub>
         </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
+        </a>
     </td>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
@@ -154,13 +176,26 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Martin Thuo</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
+    <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td>
     <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/misshannah">
+            <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
+            <br />
+            <sub><b>Hannah Olukoye</b></sub>
         </a>
     </td></tr>
 </table>
