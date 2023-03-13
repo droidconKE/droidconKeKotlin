@@ -56,7 +56,6 @@ gms-play-services-auth = "com.google.android.gms:play-services-auth:20.4.1"
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-lifecycle-runtime-compose = "androidx.lifecycle:lifecycle-runtime-compose:2.6.0"
 lottie-compose = "com.airbnb.android:lottie-compose:5.0.3"
 paging-common = "androidx.paging:paging-common-ktx:3.1.1"
 paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
