@@ -27,6 +27,7 @@ import com.android254.data.network.apis.SessionsApi
 import io.mockk.coEvery
 // import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineDispatcher
 // import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 // import org.hamcrest.CoreMatchers
@@ -43,6 +44,7 @@ class SessionsManagerTest {
     private lateinit var sessionDao: SessionDao
     private lateinit var bookmarkDao: BookmarkDao
     private lateinit var database: Database
+    private lateinit var ioDispatcher: CoroutineDispatcher
 
     @Before
     fun beforeTest() {
@@ -57,7 +59,7 @@ class SessionsManagerTest {
 
     @Test
     fun `test it fetches and saves sessions successfully`() {
-        val repo = SessionsManager(mockApi, sessionDao, bookmarkDao)
+        val repo = SessionsManager(mockApi, sessionDao, bookmarkDao,ioDispatcher)
 
         runBlocking {
             val session = sessionDao.fetchSessions()
