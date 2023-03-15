@@ -35,7 +35,7 @@ class SessionDetailsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo
 ) : ViewModel() {
     private val _sessionDetails = MutableStateFlow<SessionDetailsPresentationModel?>(null)
-    var sessionDetails = _sessionDetails.asStateFlow()
+    val sessionDetails = _sessionDetails.asStateFlow()
 
     fun getSessionDetailsById(sessionId: String) {
         viewModelScope.launch {

@@ -61,12 +61,12 @@ class SessionsViewModel @Inject constructor(
     )
 
     val selectedEventDate = _selectedEventDate.asStateFlow()
-    var sessions = _displayableSessions.asStateFlow()
+    val sessions = _displayableSessions.asStateFlow()
 
-    var error = _error.asStateFlow()
-    var loading = _loading.asStateFlow()
-    var empty = _empty.asStateFlow()
-    var selectedFilterOptions= _selectedFilterOptions.asStateFlow()
+    val error = _error.asStateFlow()
+    val loading = _loading.asStateFlow()
+    val empty = _empty.asStateFlow()
+    val selectedFilterOptions= _selectedFilterOptions.asStateFlow()
 
     init {
         viewModelScope.launch {
