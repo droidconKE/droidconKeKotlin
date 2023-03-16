@@ -29,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
@@ -122,9 +123,7 @@ fun SessionsFilterPanel(
     val groupedFilters = selectableFilters.groupBy {
         it.type
     }
-    val currentSelections = viewModel.selectedFilterOptions.observeAsState(
-        mutableListOf()
-    )
+    val currentSelections = viewModel.selectedFilterOptions.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
     val context = LocalContext.current
