@@ -55,6 +55,18 @@ class FeedBackScreenTest {
     }
 
     @Test
+    fun `should show Feedback OnCollapse`() {
+        composeTestRule.setContent {
+            DroidconKE2022Theme {
+                FeedBackScreen()
+            }
+        }
+
+        composeTestRule.onNodeWithTag("heading").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("heading").assertTextEquals("Feedback")
+    }
+
+    @Test
     fun `should show submit Button`() {
         composeTestRule.setContent {
             DroidconKE2022Theme {
