@@ -15,10 +15,6 @@
  */
 package com.android254.presentation.feedback.view
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -39,7 +35,6 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -69,30 +64,28 @@ fun FeedBackScreen(
 
     val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
 
-
-
     Scaffold(
         topBar = {
             Box {
                 if (isCollapsed.value) {
-                        TopAppBar(
-                            title = { FeedbackTitle() },
-                            navigationIcon = {
-                                IconButton(
-                                    onClick = { navigateBack() }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_back_arrow),
-                                        contentDescription = stringResource(R.string.back_arrow_icon_description),
-                                    )
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                titleContentColor = if (darkTheme) colorScheme.onPrimary else Color(0xFF1B1B1F),
-                                navigationIconContentColor = if (darkTheme) colorScheme.onPrimary  else Color(0xFF1B1B1F),
-                                containerColor = Color.Transparent
-                            )
+                    TopAppBar(
+                        title = { FeedbackTitle() },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { navigateBack() }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            titleContentColor = if (darkTheme) colorScheme.onPrimary else Color(0xFF1B1B1F),
+                            navigationIconContentColor = if (darkTheme) colorScheme.onPrimary else Color(0xFF1B1B1F),
+                            containerColor = Color.Transparent
                         )
+                    )
                 } else {
                     Image(
                         modifier = Modifier
@@ -127,7 +120,7 @@ fun FeedBackScreen(
                 )
             }
         },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -256,7 +249,7 @@ fun FeedBackScreen(
 }
 
 @Composable
-fun FeedbackTitle(){
+fun FeedbackTitle() {
     Text(
         stringResource(R.string.feedback_label),
         modifier = Modifier.testTag("heading")

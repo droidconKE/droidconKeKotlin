@@ -27,7 +27,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 fun SessionEntity.toDomainModel() = Session(
-    id = this.id.toString(),
+    id = id.toString(),
     description = this.description,
     title = this.title,
     sessionFormat = this.sessionFormat,
