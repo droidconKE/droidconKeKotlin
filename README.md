@@ -166,6 +166,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Joel-K-Muraguri">
+            <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="Joel-K-Muraguri"/>
+            <br />
+            <sub><b>Joel  Muraguri</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/MamboBryan">
             <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
             <br />
@@ -192,15 +199,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/chege4179">
             <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
             <br />
             <sub><b>Peter Chege</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
