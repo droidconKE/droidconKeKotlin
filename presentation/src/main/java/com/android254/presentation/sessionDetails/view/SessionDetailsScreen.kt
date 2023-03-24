@@ -30,7 +30,6 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -90,10 +89,9 @@ fun SessionDetailsScreen(
     ) { paddingValues ->
         sessionDetails.value.let {
             if (it != null) {
-                Body(paddingValues, darkTheme,it)
+                Body(paddingValues, darkTheme, it)
             }
         }
-
     }
 }
 

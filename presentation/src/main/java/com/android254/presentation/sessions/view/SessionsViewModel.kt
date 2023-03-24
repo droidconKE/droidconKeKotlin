@@ -17,8 +17,6 @@ package com.android254.presentation.sessions.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -50,13 +48,13 @@ class SessionsViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<Error?>(null)
     private val _loading = MutableStateFlow(false)
-    private val _empty  = MutableStateFlow(false)
+    private val _empty = MutableStateFlow(false)
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> = MutableStateFlow(emptyList())
     private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
 
     private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
-            LocalDate(year = 2023, monthNumber =  11, dayOfMonth = 16),
+            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
         ),
     )
 
@@ -66,7 +64,7 @@ class SessionsViewModel @Inject constructor(
     val error = _error.asStateFlow()
     val loading = _loading.asStateFlow()
     val empty = _empty.asStateFlow()
-    val selectedFilterOptions= _selectedFilterOptions.asStateFlow()
+    val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
     init {
         viewModelScope.launch {

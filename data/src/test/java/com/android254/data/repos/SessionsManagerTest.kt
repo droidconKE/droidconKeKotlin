@@ -60,7 +60,7 @@ class SessionsManagerTest {
 
     @Test
     fun `test it fetches and saves sessions successfully`() {
-        val repo = SessionsManager(mockApi, sessionDao, bookmarkDao,ioDispatcher)
+        val repo = SessionsManager(mockApi, sessionDao, bookmarkDao, ioDispatcher)
 
         runBlocking {
             val session = sessionDao.fetchSessions()

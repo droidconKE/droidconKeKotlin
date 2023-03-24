@@ -33,7 +33,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 class SessionsManager @Inject constructor(
     private val api: SessionsApi,
     private val dao: SessionDao,
