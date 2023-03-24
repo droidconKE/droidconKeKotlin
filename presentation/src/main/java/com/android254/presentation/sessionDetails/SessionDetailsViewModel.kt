@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessionDetails
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -24,7 +22,6 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
