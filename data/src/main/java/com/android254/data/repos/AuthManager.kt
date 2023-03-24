@@ -29,7 +29,6 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class AuthManager @Inject constructor(
     private val api: AuthApi,

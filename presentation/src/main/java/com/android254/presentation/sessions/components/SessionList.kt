@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,7 +33,6 @@ import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.components.SessionsLoadingSkeleton
 import com.android254.presentation.common.navigation.Screens
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -96,7 +94,6 @@ fun SessionList(
                         }
                     }
                 }
-
             }
         }
     }

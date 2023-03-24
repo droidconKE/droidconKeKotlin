@@ -29,7 +29,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 class SpeakersManager @Inject constructor(
     db: Database,
     private val api: SpeakersApi,
@@ -47,7 +46,8 @@ class SpeakersManager @Inject constructor(
                 )
             }
             return@withContext ResourceResult.Success(
-                speakerDao.fetchSpeakers().map { it.toDomainModel() })
+                speakerDao.fetchSpeakers().map { it.toDomainModel() }
+            )
         }
 
     override suspend fun fetchSpeakersUnpacked(): List<Speaker> {
@@ -80,10 +80,8 @@ class SpeakersManager @Inject constructor(
             ResourceResult.Success(speakerDao.fetchSpeakerCount())
         }
 
-
     override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
         withContext(ioDispatcher) {
             ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
         }
-
 }
