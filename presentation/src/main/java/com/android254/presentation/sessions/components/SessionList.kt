@@ -16,82 +16,107 @@
 package com.android254.presentation.sessions.components
 
 import android.os.Build
+
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
+import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.components.SessionsLoadingSkeleton
-import com.android254.presentation.common.navigation.Screens
-import com.android254.presentation.sessions.view.SessionsViewModel
+import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.sessions.models.SessionsUiState
+import com.droidconke.chai.atoms.ChaiDarkGrey
+import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SessionList(
-    viewModel: SessionsViewModel,
-    navController: NavHostController
+fun SessionsStateComponent(
+    sessionsUiState: SessionsUiState,
+    navigateToSessionDetails: (sessionId: String) -> Unit,
+    refreshSessionsList: () -> Unit,
+    retry: () -> Unit
 ) {
-    val sessions = viewModel.sessions.collectAsStateWithLifecycle()
-    val loading = viewModel.loading.collectAsStateWithLifecycle(initialValue = false)
-    val empty = viewModel.loading.collectAsStateWithLifecycle(initialValue = false)
     val swipeRefreshState = rememberSwipeRefreshState(false)
+    when (sessionsUiState) {
+        is SessionsUiState.Loading -> {
+            SessionsLoadingSkeleton()
+        }
+        is SessionsUiState.Empty -> {
+            val message = sessionsUiState.message
+            Text(
+                text = message,
+                modifier = Modifier.fillMaxSize(),
+                style = TextStyle(
+                    color = ChaiDarkGrey,
+                    fontSize = 24.sp,
+                    fontFamily = MontserratRegular,
+                ),
+            )
+        }
+        is SessionsUiState.Data -> {
+            val sessionsList = sessionsUiState.data
+            SessionListCompponent(
+                swipeRefreshState = swipeRefreshState,
+                sessions = sessionsList,
+                navigateToSessionDetails = navigateToSessionDetails,
+                refreshSessionsList = refreshSessionsList
+            )
+        }
+        is SessionsUiState.Error -> {
+            val message = sessionsUiState.message
+            SessionsErrorComponent(errorMessage = message, retry = retry)
 
-    if (loading.value) {
-        SessionsLoadingSkeleton()
-    } else {
-        SwipeRefresh(state = swipeRefreshState, onRefresh = {
-            viewModel.refreshSessionList()
-        }) {
-            LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                sessions.value?.let {
-                    itemsIndexed(
-                        items = it,
-                        key = { _, session -> session.remoteId }
-                    ) { index, session ->
-                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-                            SessionsCard(session = session, onclick = {
-                                navController.navigate(
-                                    Screens.SessionDetails.route.replace(
-                                        oldValue = "{sessionId}",
-                                        newValue = session.id
-                                    )
-                                ) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            })
-                            if (index != sessions.value?.size?.minus(1)) {
-                                Box(
-                                    Modifier.padding(
-                                        start = 40.dp,
-                                        end = 0.dp,
-                                        top = 10.dp,
-                                        bottom = 10.dp
-                                    )
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                                        contentDescription = "spacer icon"
-                                    )
-                                }
-                            }
-                            if (index == sessions.value?.size?.minus(1)) {
-                                Spacer(modifier = Modifier.height(32.dp))
-                            }
-                        }
+        }
+        is SessionsUiState.Idle -> {}
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun SessionListCompponent(
+    swipeRefreshState: SwipeRefreshState,
+    sessions: List<SessionPresentationModel>,
+    navigateToSessionDetails: (sessionId: String) -> Unit,
+    refreshSessionsList: () -> Unit,
+) {
+    SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 32.dp)
+        ) {
+            itemsIndexed(
+                items = sessions,
+                key = { _, session -> session.remoteId }
+            ) { index, session ->
+                SessionsCard(
+                    session = session,
+                    navigateToSessionDetails = navigateToSessionDetails,
+                )
+                if (index != sessions.lastIndex) {
+                    Box(
+                        Modifier.padding(
+                            start = 40.dp,
+                            end = 0.dp,
+                            top = 10.dp,
+                            bottom = 10.dp
+                        )
+                    ) {
+                        Image(
+                            painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
+                            contentDescription = "spacer icon"
+                        )
                     }
                 }
             }
