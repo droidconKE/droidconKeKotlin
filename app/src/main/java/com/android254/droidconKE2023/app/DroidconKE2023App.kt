@@ -16,17 +16,21 @@
 package com.android254.droidconKE2023.app
 
 import android.app.Application
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.droidconKE2023.BuildConfig
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application() {
+    @Inject
+    lateinit var remoteFeatureToggle: RemoteFeatureToggle
     override fun onCreate() {
         super.onCreate()
-
+        remoteFeatureToggle.sync()
         initTimber()
     }
 

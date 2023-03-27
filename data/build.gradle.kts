@@ -26,15 +26,6 @@ plugins {
 android {
     namespace = "com.android254.droidconKE2023.data"
 
-    defaultConfig {
-
-        if (File("api_key.txt").exists()) {
-            buildConfigField("String", "API_KEY", "\"${File("api_key.txt").readText().trim()}\"")
-        } else {
-            buildConfigField("String", "API_KEY", "\"\"")
-        }
-    }
-
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")
     }
@@ -74,6 +65,8 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.bundles.firebase)
 
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)
