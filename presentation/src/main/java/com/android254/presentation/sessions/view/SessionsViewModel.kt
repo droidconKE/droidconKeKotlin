@@ -143,7 +143,7 @@ class SessionsViewModel @Inject constructor(
                         sessionDomainModel.toPresentationModel()
                     }
 
-                    if (!sessions.isNullOrEmpty()) {
+                  _sessionsUiState.value =  if (!sessions.isNullOrEmpty()) {
                         SessionsUiState.Data(data = sessions)
                     } else {
                         SessionsUiState.Empty("No sessions Found")
