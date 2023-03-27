@@ -17,8 +17,6 @@ package com.android254.presentation.sessions.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -29,6 +27,8 @@ import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDate
@@ -43,34 +43,28 @@ data class Error(
 class SessionsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
 ) : ViewModel() {
-    private val _sessions: MutableLiveData<List<SessionPresentationModel>> =
-        MutableLiveData(listOf())
-    private val _displayableSessions: MutableLiveData<List<SessionPresentationModel>> =
-        MutableLiveData(listOf())
-    private val _error: MutableLiveData<Error> = MutableLiveData(null)
-    private val _loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val _empty: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val _selectedFilterOptions: MutableLiveData<List<SessionsFilterOption>> =
-        MutableLiveData(
-            mutableListOf(),
-        )
-    private val _filterState: MutableLiveData<SessionsFilterState> = MutableLiveData(
-        SessionsFilterState(),
-    )
+    private val _sessions: MutableStateFlow<List<SessionPresentationModel>> = MutableStateFlow(emptyList())
+    private val _displayableSessions: MutableStateFlow<List<SessionPresentationModel>?> = MutableStateFlow(emptyList())
 
-    private val _selectedEventDate: MutableLiveData<EventDate> = MutableLiveData(
+    private val _error = MutableStateFlow<Error?>(null)
+    private val _loading = MutableStateFlow(false)
+    private val _empty = MutableStateFlow(false)
+    private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> = MutableStateFlow(emptyList())
+    private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
+
+    private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
-            LocalDate(2022, 11, 16),
+            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
         ),
     )
 
-    val selectedEventDate: MutableLiveData<EventDate> = _selectedEventDate
+    val selectedEventDate = _selectedEventDate.asStateFlow()
+    val sessions = _displayableSessions.asStateFlow()
 
-    var sessions: LiveData<List<SessionPresentationModel>> = _displayableSessions
-    var error: LiveData<Error> = _error
-    var loading: LiveData<Boolean> = _loading
-    var empty: LiveData<Boolean> = _empty
-    var selectedFilterOptions: LiveData<List<SessionsFilterOption>> = _selectedFilterOptions
+    val error = _error.asStateFlow()
+    val loading = _loading.asStateFlow()
+    val empty = _empty.asStateFlow()
+    val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -79,16 +73,14 @@ class SessionsViewModel @Inject constructor(
     }
 
     fun updateSelectedFilterOptionList(option: SessionsFilterOption) {
-        if (_selectedFilterOptions.value?.contains(option) == true) {
-            val index = _selectedFilterOptions.value?.indexOf(option)
-            if (index != null) {
-                _selectedFilterOptions.value =
-                    _selectedFilterOptions.value?.toMutableList()?.apply {
-                        removeAt(index)
-                    }
-            }
+        if (_selectedFilterOptions.value.contains(option)) {
+            val index = _selectedFilterOptions.value.indexOf(option)
+            _selectedFilterOptions.value =
+                _selectedFilterOptions.value.toMutableList().apply {
+                    removeAt(index)
+                }
         } else {
-            _selectedFilterOptions.value = _selectedFilterOptions.value?.toMutableList()?.apply {
+            _selectedFilterOptions.value = _selectedFilterOptions.value.toMutableList().apply {
                 add(option)
             }
         }
@@ -162,14 +154,14 @@ class SessionsViewModel @Inject constructor(
                 result.data.let { sessionDomainModels ->
                     _sessions.value = sessionDomainModels?.map { sessionDomainModel ->
                         sessionDomainModel.toPresentationModel()
-                    }
+                    }!!
 
                     _displayableSessions.value =
-                        sessionDomainModels?.map { sessionDomainModel ->
+                        sessionDomainModels.map { sessionDomainModel ->
                             sessionDomainModel.toPresentationModel()
-                        }?.filter {
+                        }.filter {
                             it.startDate.split(" ").first()
-                                .toLocalDate().dayOfMonth == selectedEventDate.value?.value?.dayOfMonth
+                                .toLocalDate().dayOfMonth == selectedEventDate.value.value.dayOfMonth
                         }
                 }
             }
