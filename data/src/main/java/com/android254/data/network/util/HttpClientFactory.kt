@@ -30,9 +30,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProvider) {
+class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProvider, private val remoteFeatureToggle: RemoteFeatureToggle) {
 
     fun create(engine: HttpClientEngine) = HttpClient(engine) {
+
         install(ContentNegotiation) {
             json(
                 Json {
@@ -45,9 +46,7 @@ class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProv
 
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            if (BuildConfig.API_KEY.isNotEmpty()) {
-                header("Api-Authorization-Key", BuildConfig.API_KEY)
-            }
+            header("Api-Authorization-Key", remoteFeatureToggle.getString("API_KEY"))
         }
 
         expectSuccess = true

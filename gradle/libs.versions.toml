@@ -83,6 +83,7 @@ firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
+firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
@@ -101,7 +102,7 @@ compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-mate
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation"]
-firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance"]
+firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance", "firebase-config"]
 test = ["junit4", "test-junit-ktx"]
 
 [plugins]

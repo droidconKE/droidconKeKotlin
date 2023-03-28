@@ -19,6 +19,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.network.util.TokenProvider
 import com.android254.data.preferences.DefaultTokenProvider
 import com.chuckerteam.chucker.api.ChuckerCollector
@@ -54,7 +55,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(engine: HttpClientEngine, tokenProvider: TokenProvider): HttpClient = HttpClientFactory(tokenProvider).create(engine)
+    fun provideHttpClient(engine: HttpClientEngine, tokenProvider: TokenProvider, remoteFeatureToggle: RemoteFeatureToggle): HttpClient = HttpClientFactory(tokenProvider, remoteFeatureToggle).create(engine)
 
     @Provides
     @Singleton

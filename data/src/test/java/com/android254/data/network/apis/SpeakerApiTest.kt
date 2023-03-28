@@ -13,34 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.apis.SpeakersApi
-import com.android254.data.network.apis.samplePaginationMetaData
 import com.android254.data.network.models.responses.SpeakerDTO
 import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.MockTokenProvider
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.domain.models.DataResult
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondError
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Before
 import org.junit.Test
 
-class SpeakerRemoteSourceTest {
+class SpeakerApiTest {
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
+
+    @Before
+    fun setup() {
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+    }
+
     @Test
     fun `test DataResult error is returned when http client returns server error response`() {
         val mockHttpEngine = MockEngine {
             respondError(HttpStatusCode.InternalServerError)
         }
-        val httpClient = HttpClientFactory(MockTokenProvider())
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
             .create(mockHttpEngine)
 
         runBlocking {
@@ -54,7 +65,7 @@ class SpeakerRemoteSourceTest {
         val mockHttpEngine = MockEngine {
             respondError(HttpStatusCode.NotFound)
         }
-        val httpClient = HttpClientFactory(MockTokenProvider())
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
             .create(mockHttpEngine)
 
         runBlocking {
@@ -76,7 +87,7 @@ class SpeakerRemoteSourceTest {
                     twitter = null
                 )
             ),
-            meta = samplePaginationMetaData
+            meta = SamplePaginationMetaData
         )
         val mockHttpEngine = MockEngine {
             // To ensure correct http method and url are used
@@ -85,7 +96,7 @@ class SpeakerRemoteSourceTest {
                 headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(MockTokenProvider())
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
             .create(mockHttpEngine)
 
         runBlocking {
