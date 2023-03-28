@@ -54,7 +54,6 @@ class FeedBackScreenTest {
         composeTestRule.onNodeWithTag("heading").assertTextEquals("Feedback")
     }
 
-
     @Test
     fun `should should show FeedBack Heading onCollapse`() {
         composeTestRule.setContent {
