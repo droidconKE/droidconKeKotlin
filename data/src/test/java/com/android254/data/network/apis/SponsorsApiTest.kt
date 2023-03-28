@@ -13,26 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.apis.SponsorsApi
 import com.android254.data.network.models.responses.SponsorDTO
 import com.android254.data.network.models.responses.SponsorsPagedResponse
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.MockTokenProvider
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.domain.models.DataResult
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class SponsorsApiTest {
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
+
+    @Before
+    fun setup() {
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+    }
 
     @Test
     fun `test successful fetching sponsors`() {
@@ -54,7 +65,7 @@ class SponsorsApiTest {
                 headers = headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(MockTokenProvider())
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
             .create(mockHttpEngine)
 
         runBlocking {
@@ -77,7 +88,7 @@ class SponsorsApiTest {
         val mockEngine = MockEngine {
             respondError(HttpStatusCode.InternalServerError)
         }
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         runBlocking {
             // Act
             val response = SponsorsApi(httpClient).fetchSponsors()
