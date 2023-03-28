@@ -15,6 +15,7 @@
  */
 package com.android254.data.repos
 
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.AuthApi
 import com.android254.data.network.models.payloads.GoogleToken
 import com.android254.data.network.util.NetworkError
@@ -23,23 +24,31 @@ import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthManager @Inject constructor(
     private val api: AuthApi,
-    private val tokenProvider: TokenProvider
+    private val tokenProvider: TokenProvider,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
-        return try {
-            val result = api.googleLogin(GoogleToken(idToken))
-            tokenProvider.update(result.token)
-            DataResult.Success(Success)
-        } catch (e: Exception) {
-            when (e) {
-                is ServerError, is NetworkError -> {
-                    DataResult.Error("Login failed", networkError = true, exc = e)
-                } else -> {
-                    DataResult.Error("Login failed", exc = e)
+        return withContext(ioDispatcher) {
+            try {
+                val result = api.googleLogin(GoogleToken(idToken))
+                tokenProvider.update(result.token)
+                DataResult.Success(Success)
+            } catch (e: Exception) {
+                when (e) {
+                    is ServerError, is NetworkError -> {
+                        DataResult.Error("Login failed", networkError = true, exc = e)
+                    }
+                    else -> {
+                        DataResult.Error("Login failed", exc = e)
+                    }
                 }
             }
         }

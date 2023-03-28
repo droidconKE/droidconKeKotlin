@@ -16,31 +16,35 @@
 package com.android254.data.repos
 
 import com.android254.data.dao.OrganizersDao
+import com.android254.data.di.DefaultDispatcher
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.OrganizersApi
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.DataResult
 import com.android254.domain.repos.OrganizersRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrganizersSource @Inject constructor(
     private val api: OrganizersApi,
-    private val dao: OrganizersDao
+    private val dao: OrganizersDao,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : OrganizersRepository {
 
-    override suspend fun getOrganizers() = withContext(Dispatchers.IO) {
+    override suspend fun getOrganizers() = withContext(ioDispatcher) {
         val dbObjs = dao.fetchOrganizers()
         if (dbObjs.isEmpty()) {
-            withContext(Dispatchers.Default) {
+            withContext(defaultDispatcher) {
                 val result = api.fetchOrganizers("individual")
                 if (result is DataResult.Success) {
                     val data = result.data
                     dao.insert(data.data.map { it.toEntity() })
                 }
             }
-            withContext(Dispatchers.Default) {
+            withContext(defaultDispatcher) {
                 val result = api.fetchOrganizers("company")
                 if (result is DataResult.Success) {
                     val data = result.data

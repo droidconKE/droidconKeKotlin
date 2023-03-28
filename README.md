@@ -102,11 +102,6 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
-## Material 3 Bottom Sheets
-At the time of working on this app, Material 3 didn't have BottomSheet classes. Solution was to copy them from AOSP. They can be found in the `com/android254/presentation/common/bottomsheet` packages and have been used to do the Share feed and Fitter Bottom Sheets.
-You can find more information [here](https://stackoverflow.com/questions/72518262/how-to-implement-bottomsheet-in-material-3-jetpack-compose-android).
-
-
 ## Contributing
 
 Contributions are always welcome!
@@ -135,6 +130,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/KennethMathari">
+            <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
+            <br />
+            <sub><b>Kenneth Mathari</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
@@ -149,10 +151,25 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
             <sub><b>Amos Nyaburi</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Joel-K-Muraguri">
+            <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="Joel-K-Muraguri"/>
+            <br />
+            <sub><b>Joel  Muraguri</b></sub>
         </a>
     </td>
     <td align="center">
@@ -161,20 +178,12 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>MamboBryan</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
             <sub><b>Hannah Olukoye</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/yveskalume">
-            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
-            <br />
-            <sub><b>Yves Kalume</b></sub>
         </a>
     </td>
     <td align="center">
@@ -189,6 +198,14 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
             <br />
             <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/chege4179">
+            <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
+            <br />
+            <sub><b>Peter Chege</b></sub>
         </a>
     </td>
     <td align="center">
