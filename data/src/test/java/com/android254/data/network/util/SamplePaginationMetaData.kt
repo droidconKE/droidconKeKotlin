@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.util.TokenProvider
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import com.android254.data.network.models.responses.PaginationMetaData
+import com.android254.data.network.models.responses.ResponseMetaData
 
-class MockTokenProvider : TokenProvider {
-    override suspend fun fetch(): Flow<String?> = emptyFlow()
-    override suspend fun update(accessToken: String) {}
-}
+val SamplePaginationMetaData = ResponseMetaData(
+    paginator = PaginationMetaData(
+        count = 0,
+        currentPage = 1,
+        hasMorePages = false,
+        nextPage = null,
+        nextPageUrl = null,
+        perPage = "20",
+        previousPageUrl = null
+    )
+)

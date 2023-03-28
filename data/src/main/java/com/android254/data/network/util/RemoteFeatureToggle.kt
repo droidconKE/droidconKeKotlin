@@ -28,18 +28,22 @@ class RemoteFeatureToggle(
     fun sync() {
         remoteConfig.apply {
             setDefaultsAsync(R.xml.config)
-            setConfigSettingsAsync(remoteConfigSettings {
-                minimumFetchIntervalInSeconds = configConfig.minimumFetchIntervalInSeconds() })
+            setConfigSettingsAsync(
+                remoteConfigSettings {
+                    minimumFetchIntervalInSeconds = configConfig.minimumFetchIntervalInSeconds()
+                }
+            )
         }
             .fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     remoteConfig.activate()
+                } else {
+                    Timber.e("Failed to fetch remote config from Firebase")
                 }
             }
     }
     fun getString(key: String): String {
-        Timber.d("DemoKey $key value ${remoteConfig.getString(key)}")
         return remoteConfig.getString(key)
     }
 }

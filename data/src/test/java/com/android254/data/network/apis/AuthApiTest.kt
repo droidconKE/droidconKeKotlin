@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -21,16 +21,18 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
-import com.android254.data.network.apis.AuthApi
 import com.android254.data.network.models.payloads.GoogleToken
 import com.android254.data.network.models.responses.AccessTokenDTO
 import com.android254.data.network.models.responses.StatusDTO
 import com.android254.data.network.models.responses.UserDetailsDTO
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.network.util.ServerError
 import com.android254.data.preferences.DefaultTokenProvider
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import io.mockk.mockk
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
@@ -44,6 +46,7 @@ import org.robolectric.RobolectricTestRunner
 class AuthApiTest {
 
     private lateinit var testDataStore: DataStore<Preferences>
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
     fun setup() {
@@ -51,6 +54,8 @@ class AuthApiTest {
         testDataStore = PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("test") }
         )
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
     }
 
     @Test(expected = ServerError::class)
@@ -59,7 +64,7 @@ class AuthApiTest {
             delay(500)
             respondError(HttpStatusCode.InternalServerError)
         }
-        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore)).create(mockEngine)
+        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
             api.logout()
@@ -75,7 +80,7 @@ class AuthApiTest {
                 headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore)).create(mockEngine)
+        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
             val response = api.logout()
@@ -104,7 +109,7 @@ class AuthApiTest {
                 headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore)).create(mockEngine)
+        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
             val accessToken = AccessTokenDTO(

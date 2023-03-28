@@ -13,29 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.apis.FeedbackApi
 import com.android254.data.network.models.payloads.Feedback
 import com.android254.data.network.models.payloads.FeedbackRating
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.MockTokenProvider
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.network.util.provideEventBaseUrl
 import com.android254.domain.models.DataResult
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
 import io.ktor.http.content.*
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Before
 import org.junit.Test
 
 class FeedbackApiTest {
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
+
+    @Before
+    fun setup() {
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+    }
     @Test
     fun `sends correct http request`() = runTest {
         val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
         val sessionId = "1"
         FeedbackApi(httpClient).postFeedback(
@@ -54,7 +65,7 @@ class FeedbackApiTest {
     @Test
     fun `when request succeeds, returns empty Success result`() = runTest {
         val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
         val sessionId = "1"
         val result = FeedbackApi(httpClient).postFeedback(
@@ -68,7 +79,7 @@ class FeedbackApiTest {
     @Test
     fun `when request fails, returns Error result`() = runTest {
         val mockEngine = MockEngine { respondError(HttpStatusCode.InternalServerError) }
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
         val sessionId = "1"
         val result = FeedbackApi(httpClient).postFeedback(
