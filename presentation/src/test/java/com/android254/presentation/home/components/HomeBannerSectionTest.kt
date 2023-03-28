@@ -18,7 +18,7 @@ package com.android254.presentation.home.components
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.viewstate.HomeViewState
 import org.junit.Before
 import org.junit.Rule
@@ -45,7 +45,7 @@ class HomeBannerSectionTest {
     @Test
     fun `Test home poster is displayed`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 HomeBannerSection(homeViewState)
             }
         }
@@ -55,7 +55,7 @@ class HomeBannerSectionTest {
     @Test
     fun `Test home poster is hidden`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 HomeBannerSection(homeViewState.copy(isPosterVisible = false))
             }
         }
@@ -65,7 +65,7 @@ class HomeBannerSectionTest {
     @Test
     fun `Test home call for speakers is displayed`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 HomeBannerSection(homeViewState.copy(isCallForSpeakersVisible = true))
             }
         }
@@ -75,7 +75,7 @@ class HomeBannerSectionTest {
     @Test
     fun `Test home call for speakers is hidden`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 HomeBannerSection(homeViewState.copy(isCallForSpeakersVisible = false))
             }
         }

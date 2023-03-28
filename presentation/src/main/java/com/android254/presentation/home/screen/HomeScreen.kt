@@ -36,7 +36,7 @@ import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.DroidconAppBar
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.SponsorsCard
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
@@ -133,7 +133,7 @@ fun HomeToolbar(
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         HomeScreen()
     }
 }
