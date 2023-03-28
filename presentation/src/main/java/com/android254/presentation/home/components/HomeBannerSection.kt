@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.android254.droidconKE2023.presentation.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiTeal
@@ -118,7 +118,7 @@ fun HomeCallForSpeakersLink() {
 @Preview
 @Composable
 fun HomeBannerSectionPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         HomeBannerSection(HomeViewState())
     }
 }
@@ -126,7 +126,7 @@ fun HomeBannerSectionPreview() {
 @Preview
 @Composable
 fun HomeEventBannerPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         HomeEventPoster()
     }
 }
@@ -134,7 +134,7 @@ fun HomeEventBannerPreview() {
 @Preview
 @Composable
 fun HomeCallForSpeakersLinkPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         HomeCallForSpeakersLink()
     }
 }

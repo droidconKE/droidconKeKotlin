@@ -56,7 +56,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersViewModel
 import com.droidconke.chai.atoms.ChaiBlue
@@ -243,7 +243,7 @@ fun SpeakerDetailsScreen(
 @Preview
 @Composable
 fun SpeakerDetailsScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         SpeakerDetailsScreen(
             id = 0
         )

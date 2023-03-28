@@ -30,7 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 
 @Composable
 fun DroidconAppBar(
@@ -71,7 +71,7 @@ fun DroidconAppBar(
 @Preview
 @Composable
 fun DroidconAppBarPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         DroidconAppBar()
     }
 }

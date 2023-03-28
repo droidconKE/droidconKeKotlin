@@ -48,7 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
@@ -446,7 +446,7 @@ object TestTag {
 @Preview
 @Composable
 fun SessionDetailsScreenPreview() {
-    DroidconKE2022Theme(darkTheme = false) {
+    DroidconKE2023Theme(darkTheme = false) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             sessionId = "1",
@@ -458,7 +458,7 @@ fun SessionDetailsScreenPreview() {
 @Preview
 @Composable
 fun SessionDetailsScreenDarkThemePreview() {
-    DroidconKE2022Theme(darkTheme = true) {
+    DroidconKE2023Theme(darkTheme = true) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             sessionId = "1",
