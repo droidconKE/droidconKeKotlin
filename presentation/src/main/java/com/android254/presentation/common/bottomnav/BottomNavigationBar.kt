@@ -24,7 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationDestinations
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.bottomBlack
 import com.android254.presentation.common.theme.bottomOrange
 import com.android254.presentation.common.theme.bottomPurple
@@ -71,7 +71,7 @@ fun BottomNavigationBar(navController: NavHostController) {
 @Preview
 @Composable
 fun BottomNavigationBarPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         BottomNavigationBar(rememberNavController())
     }
 }

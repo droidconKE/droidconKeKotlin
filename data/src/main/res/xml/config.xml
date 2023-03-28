@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- START xml_config -->
+<defaultsMap>
+    <entry>
+        <key>API_KEY</key>
+        <value>default-key-value</value>
+    </entry>
+</defaultsMap>

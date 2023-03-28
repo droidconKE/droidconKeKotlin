@@ -45,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.*
 import com.android254.presentation.common.theme.DroidconKE2022Theme
 import com.android254.presentation.sessions.components.EventDaySelector
+import com.android254.presentation.sessions.components.SessionList
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import kotlinx.coroutines.launch

@@ -13,28 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.apis.FeedApi
 import com.android254.data.network.models.responses.Feed
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.MockTokenProvider
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.network.util.provideEventBaseUrl
 import com.android254.domain.models.DataResult
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 class FeedApiTest {
+
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
+
+    @Before
+    fun setup() {
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+    }
+
     @Test
     fun `sends correct http request`() = runTest {
         val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
         FeedApi(httpClient).fetchFeed(page = 2, size = 50)
 
@@ -48,7 +61,7 @@ class FeedApiTest {
 
     @Test
     fun `when successful returns a list of feed items`() = runTest {
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(
             MockEngine {
                 respond(
                     content = """{

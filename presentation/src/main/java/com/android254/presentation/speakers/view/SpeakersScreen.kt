@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -120,7 +120,7 @@ fun SpeakersScreen(
 @Preview
 @Composable
 fun SpeakersScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         SpeakersScreen()
     }
 }

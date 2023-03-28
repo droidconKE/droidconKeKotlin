@@ -46,7 +46,7 @@ import coil.request.ImageRequest
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiCoal
@@ -214,7 +214,7 @@ fun OrganizingTeamSection(
 @Preview
 @Composable
 fun AboutScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         AboutScreen()
     }
 }

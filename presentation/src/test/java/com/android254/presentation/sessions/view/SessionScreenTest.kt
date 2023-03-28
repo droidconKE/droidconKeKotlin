@@ -23,7 +23,7 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SessionsRepo
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Before
@@ -61,7 +61,7 @@ class SessionScreenTest {
         coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Empty("")
 
         composeTestRule.setContent {
-            DroidconKE2022Theme() {
+            DroidconKE2023Theme() {
                 SessionsScreen(
                     sessionsViewModel = SessionsViewModel(repo),
                 )
@@ -84,7 +84,7 @@ class SessionScreenTest {
         coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Success(emptyList())
 
         composeTestRule.setContent {
-            DroidconKE2022Theme() {
+            DroidconKE2023Theme() {
                 SessionsScreen(
                     sessionsViewModel = SessionsViewModel(repo),
                 )

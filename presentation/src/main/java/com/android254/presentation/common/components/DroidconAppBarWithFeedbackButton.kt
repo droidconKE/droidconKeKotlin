@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.droidconke.chai.atoms.ChaiCoal
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratRegular
@@ -125,7 +125,7 @@ fun FeedbackButton(
 @Preview
 @Composable
 fun Preview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         DroidconAppBarWithFeedbackButton(
             onButtonClick = {},
             userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"

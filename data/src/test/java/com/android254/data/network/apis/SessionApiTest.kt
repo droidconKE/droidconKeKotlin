@@ -13,19 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
-import com.android254.data.network.apis.SessionsApi
 import com.android254.data.network.models.responses.EventScheduleGroupedResponse
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.MockTokenProvider
+import com.android254.data.network.util.RemoteFeatureToggle
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
+import org.junit.Before
 
 class SessionApiTest {
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
+
+    @Before
+    fun setup() {
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+    }
+
     @Test
     fun `sessions are fetched successfully`() {
         val expectedResponse =
@@ -45,7 +57,7 @@ class SessionApiTest {
             )
         }
 
-        val httpClient = HttpClientFactory(MockTokenProvider()).create(mockHttpEngine)
+        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockHttpEngine)
 
         runBlocking {
             // WHEN
