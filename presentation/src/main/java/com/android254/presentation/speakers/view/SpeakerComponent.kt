@@ -47,7 +47,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
 
 @Composable
@@ -155,7 +155,7 @@ fun SpeakerComponent(
 @Preview
 @Composable
 fun SpeakerComponentPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         SpeakerComponent(
             speaker = SpeakerUI(
                 imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",

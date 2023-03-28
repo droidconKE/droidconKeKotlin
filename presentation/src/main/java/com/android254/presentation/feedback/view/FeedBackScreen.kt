@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 
 @Composable
@@ -258,7 +258,7 @@ fun FeedbackTitle() {
 @Preview
 @Composable
 fun FeedBackScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         FeedBackScreen()
     }
 }

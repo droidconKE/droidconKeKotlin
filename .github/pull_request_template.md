@@ -1,6 +1,6 @@
 # Scope
 
-_Please make sure to read https://github.com/droidconKE/droidconKE2022Android/docs/CONTRIBUTING.md
+_Please make sure to read the [Contribution Guidelines](https://github.com/droidconKE/droidconKE2023Android/blob/main/CONTRIBUTING.md)
 and check that you understand and have followed it as best as possible Explain what your feature
 does in a short paragraph._ please check the below boxes
 - [ ] I have followed the coding conventions

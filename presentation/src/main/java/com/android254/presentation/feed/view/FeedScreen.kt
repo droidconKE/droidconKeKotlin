@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,7 +92,7 @@ fun FeedScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun FeedScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             FeedScreen()
         }

@@ -19,7 +19,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,7 +44,7 @@ class FeedScreenTest {
     @Test
     fun `should display feed items`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 FeedScreen()
             }
         }
@@ -59,7 +59,7 @@ class FeedScreenTest {
     @Test
     fun `test share bottom sheet is shown`() {
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 FeedScreen()
             }
         }

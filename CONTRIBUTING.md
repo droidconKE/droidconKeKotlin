@@ -92,7 +92,7 @@ class YOUR_TEST_FILE_NAME {
     fun `YOUR TEST NAME HERE`() {
 
         composeTestRule.setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 YOUR_COMPOSABLE_HERE()
             }
         }
