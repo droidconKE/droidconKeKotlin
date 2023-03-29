@@ -42,7 +42,6 @@ import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionsStateComponent(
     sessionsUiState: SessionsUiState,
@@ -85,7 +84,6 @@ fun SessionsStateComponent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionListCompponent(
     swipeRefreshState: SwipeRefreshState,

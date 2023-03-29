@@ -49,7 +49,6 @@ import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -159,7 +158,6 @@ fun SessionsScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun SessionsScreenPreview() {
