@@ -47,7 +47,6 @@ fun ordinal(i: Int): String {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventDaySelector(
     viewModel: SessionsViewModel = hiltViewModel()
