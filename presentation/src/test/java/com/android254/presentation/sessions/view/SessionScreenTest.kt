@@ -63,7 +63,6 @@ class SessionScreenTest {
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    navController = navController,
                     sessionsViewModel = SessionsViewModel(repo),
                 )
             }
@@ -87,7 +86,6 @@ class SessionScreenTest {
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    navController = navController,
                     sessionsViewModel = SessionsViewModel(repo),
                 )
             }

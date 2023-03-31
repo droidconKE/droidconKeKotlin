@@ -41,21 +41,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.*
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.sessions.components.EventDaySelector
-import com.android254.presentation.sessions.components.SessionList
 import com.android254.presentation.sessions.components.SessionsFilterPanel
+import com.android254.presentation.sessions.components.SessionsStateComponent
 import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    navController: NavHostController,
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
+    navigateToSessionDetails: (sessionId: String) -> Unit = {}
 ) {
+    val sessionsUiState = sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle().value
     val showMySessions = remember {
         mutableStateOf(false)
     }
@@ -127,38 +127,43 @@ fun SessionsScreen(
                     }
                 })
             }
-            SessionList(navController = navController, viewModel = sessionsViewModel)
-        }
-    }
-
-    if (bottomSheetState.isVisible) {
-        ModalBottomSheet(
-            sheetState = bottomSheetState,
-            onDismissRequest = {
-                scope.launch {
-                    bottomSheetState.hide()
+            SessionsStateComponent(
+                sessionsUiState = sessionsUiState,
+                navigateToSessionDetails = navigateToSessionDetails,
+                refreshSessionsList = { sessionsViewModel.refreshSessionList() },
+                retry = { }
+            )
+            if (bottomSheetState.isVisible) {
+                ModalBottomSheet(
+                    sheetState = bottomSheetState,
+                    onDismissRequest = {
+                        scope.launch {
+                            bottomSheetState.hide()
+                        }
+                    }
+                ) {
+                    SessionsFilterPanel(
+                        onDismiss = {
+                            scope.launch {
+                                bottomSheetState.hide()
+                            }
+                        },
+                        onChange = {},
+                        viewModel = sessionsViewModel
+                    )
                 }
             }
-        ) {
-            SessionsFilterPanel(
-                onDismiss = {
-                    scope.launch {
-                        bottomSheetState.hide()
-                    }
-                },
-                onChange = {},
-                viewModel = sessionsViewModel
-            )
         }
+
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun SessionsScreenPreview() {
-    DroidconKE2023Theme {
-        SessionsScreen(navController = rememberNavController())
+    DroidconKE2023Theme() {
+        SessionsScreen()
+
     }
 }
 

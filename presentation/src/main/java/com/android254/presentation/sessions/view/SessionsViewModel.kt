@@ -22,50 +22,37 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
+import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toLocalDate
-import javax.inject.Inject
-
-data class Error(
-    val message: String,
-)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
 ) : ViewModel() {
-    private val _sessions: MutableStateFlow<List<SessionPresentationModel>> = MutableStateFlow(emptyList())
-    private val _displayableSessions: MutableStateFlow<List<SessionPresentationModel>?> = MutableStateFlow(emptyList())
 
-    private val _error = MutableStateFlow<Error?>(null)
-    private val _loading = MutableStateFlow(false)
-    private val _empty = MutableStateFlow(false)
-    private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> = MutableStateFlow(emptyList())
+    private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
+        MutableStateFlow(emptyList())
+    val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
+
     private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
-
     private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
             LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
         ),
     )
-
     val selectedEventDate = _selectedEventDate.asStateFlow()
-    val sessions = _displayableSessions.asStateFlow()
 
-    val error = _error.asStateFlow()
-    val loading = _loading.asStateFlow()
-    val empty = _empty.asStateFlow()
-    val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
-
+    private val _sessionsUiState = MutableStateFlow<SessionsUiState>(SessionsUiState.Idle)
+    val sessionsUiState = _sessionsUiState.asStateFlow()
     init {
         viewModelScope.launch {
             fetchSessions(fetchFromRemote = false)
@@ -146,36 +133,33 @@ class SessionsViewModel @Inject constructor(
     }
 
     private suspend fun fetchSessions(query: String? = null, fetchFromRemote: Boolean = false) {
-        when (
-            val result =
-                sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
-        ) {
+        val result =
+            sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
+        when (result) {
             is ResourceResult.Success -> {
                 result.data.let { sessionDomainModels ->
-                    _sessions.value = sessionDomainModels?.map { sessionDomainModel ->
+                    val sessions = sessionDomainModels?.map { sessionDomainModel ->
                         sessionDomainModel.toPresentationModel()
-                    }!!
+                    }
 
-                    _displayableSessions.value =
-                        sessionDomainModels.map { sessionDomainModel ->
-                            sessionDomainModel.toPresentationModel()
-                        }.filter {
-                            it.startDate.split(" ").first()
-                                .toLocalDate().dayOfMonth == selectedEventDate.value.value.dayOfMonth
-                        }
+                  _sessionsUiState.value =  if (!sessions.isNullOrEmpty()) {
+                        SessionsUiState.Data(data = sessions)
+                    } else {
+                        SessionsUiState.Empty("No sessions Found")
+                    }
                 }
             }
 
             is ResourceResult.Error -> {
-                _error.value = Error(result.message)
+                _sessionsUiState.value = SessionsUiState.Error(message = result.message)
             }
 
             is ResourceResult.Loading -> {
-                _loading.value = result.isLoading
+                _sessionsUiState.value = SessionsUiState.Loading
             }
 
             is ResourceResult.Empty -> {
-                _empty.value = true
+                _sessionsUiState.value = SessionsUiState.Empty("No sessions Found")
             }
 
             else -> Unit

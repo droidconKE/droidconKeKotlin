@@ -46,10 +46,11 @@ import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
 import kotlinx.coroutines.launch
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SessionsCard(session: SessionPresentationModel, onclick: () -> Unit) {
+fun SessionsCard(
+    session: SessionPresentationModel,
+    navigateToSessionDetails: (sessionId: String) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -57,7 +58,7 @@ fun SessionsCard(session: SessionPresentationModel, onclick: () -> Unit) {
         shape = RoundedCornerShape(5),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
-        onClick = onclick,
+        onClick = { navigateToSessionDetails(session.id) },
     ) {
         Row(
             Modifier
@@ -99,7 +100,6 @@ fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: Strin
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RowScope.SessionDetails(session: SessionPresentationModel) {
     Column(
@@ -145,7 +145,6 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SessionTitleComponent(
     session: SessionPresentationModel,
@@ -172,7 +171,8 @@ fun SessionTitleComponent(
         )
         IconButton(onClick = {
             scope.launch {
-                when (val result = viewModel.updateBookmarkStatus(session.remoteId, isStarred.value)) {
+                when (val result =
+                    viewModel.updateBookmarkStatus(session.remoteId, isStarred.value)) {
                     is ResourceResult.Empty -> {}
                     is ResourceResult.Error -> {
                     }
