@@ -132,8 +132,6 @@ val md_theme_light_outline = Color(0xFFF5F5F5)
  */
 val md_theme_light_shadow = Color(0xFFFAFAFA)
 
-// DARK
-
 /**
  * DARK PRIMARY
  */
