@@ -30,7 +30,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -63,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2022Theme
 import com.android254.presentation.common.theme.Montserrat
+import com.droidconke.chai.components.CButton
 
 @Composable
 fun FeedBackScreen(
@@ -213,12 +213,13 @@ fun FeedBackScreen(
                 shape = RoundedCornerShape(7.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Button(
+            CButton(
                 onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
                     .testTag("submit_feedback_button"),
+                isEnabled = true,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (darkTheme) Color.Black else colorResource(id = R.color.blue),
