@@ -17,63 +17,42 @@ package com.android254.presentation.sessions.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
+import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toLocalDate
-import javax.inject.Inject
-
-data class Error(
-    val message: String
-)
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo
+    private val sessionsRepo: SessionsRepo,
 ) : ViewModel() {
-    private val _sessions: MutableLiveData<List<SessionPresentationModel>> =
-        MutableLiveData(listOf())
-    private val _displayableSessions: MutableLiveData<List<SessionPresentationModel>> =
-        MutableLiveData(listOf())
-    private val _error: MutableLiveData<Error> = MutableLiveData(null)
-    private val _loading: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val _empty: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val _selectedFilterOptions: MutableLiveData<List<SessionsFilterOption>> =
-        MutableLiveData(
-            mutableListOf()
-        )
-    private val _filterState: MutableLiveData<SessionsFilterState> = MutableLiveData(
-        SessionsFilterState()
-    )
 
-    private val _selectedEventDate: MutableLiveData<EventDate> = MutableLiveData(
+    private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
+        MutableStateFlow(emptyList())
+    val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
+
+    private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
+    private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
-            LocalDate(2022, 11, 16)
-        )
+            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
+        ),
     )
+    val selectedEventDate = _selectedEventDate.asStateFlow()
 
-    val selectedEventDate: MutableLiveData<EventDate> = _selectedEventDate
-
-    var sessions: LiveData<List<SessionPresentationModel>> = _displayableSessions
-    var error: LiveData<Error> = _error
-    var loading: LiveData<Boolean> = _loading
-    var empty: LiveData<Boolean> = _empty
-    var selectedFilterOptions: LiveData<List<SessionsFilterOption>> = _selectedFilterOptions
-
+    private val _sessionsUiState = MutableStateFlow<SessionsUiState>(SessionsUiState.Idle)
+    val sessionsUiState = _sessionsUiState.asStateFlow()
     init {
         viewModelScope.launch {
             fetchSessions(fetchFromRemote = false)
@@ -81,16 +60,14 @@ class SessionsViewModel @Inject constructor(
     }
 
     fun updateSelectedFilterOptionList(option: SessionsFilterOption) {
-        if (_selectedFilterOptions.value?.contains(option) == true) {
-            val index = _selectedFilterOptions.value?.indexOf(option)
-            if (index != null) {
-                _selectedFilterOptions.value =
-                    _selectedFilterOptions.value?.toMutableList()?.apply {
-                        removeAt(index)
-                    }
-            }
+        if (_selectedFilterOptions.value.contains(option)) {
+            val index = _selectedFilterOptions.value.indexOf(option)
+            _selectedFilterOptions.value =
+                _selectedFilterOptions.value.toMutableList().apply {
+                    removeAt(index)
+                }
         } else {
-            _selectedFilterOptions.value = _selectedFilterOptions.value?.toMutableList()?.apply {
+            _selectedFilterOptions.value = _selectedFilterOptions.value.toMutableList().apply {
                 add(option)
             }
         }
@@ -110,7 +87,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }?.toList()
                 _filterState.value = _filterState.value?.copy(
-                    levels = newValue!!
+                    levels = newValue!!,
                 )
             }
             SessionsFilterCategory.Topic -> {
@@ -123,7 +100,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    topics = newValue
+                    topics = newValue,
                 )
             }
             SessionsFilterCategory.Room -> {
@@ -136,7 +113,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    rooms = newValue
+                    rooms = newValue,
                 )
             }
             SessionsFilterCategory.SessionType -> {
@@ -149,52 +126,46 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value!!.copy(
-                    sessionTypes = newValue
+                    sessionTypes = newValue,
                 )
             }
         }
     }
 
     private suspend fun fetchSessions(query: String? = null, fetchFromRemote: Boolean = false) {
-        sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
-            .collectLatest { result ->
-                when (result) {
-                    is ResourceResult.Success -> {
-                        result.data.let { sessionDomainModels ->
-                            _sessions.value = sessionDomainModels?.map { sessionDomainModel ->
-                                sessionDomainModel.toPresentationModel()
-                            }
-
-                            _displayableSessions.value =
-                                sessionDomainModels?.map { sessionDomainModel ->
-                                    sessionDomainModel.toPresentationModel()
-                                }?.filter {
-                                    it.startDate.split(" ").first()
-                                        .toLocalDate().dayOfMonth == selectedEventDate.value?.value?.dayOfMonth
-                                }
-                        }
+        val result =
+            sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
+        when (result) {
+            is ResourceResult.Success -> {
+                result.data.let { sessionDomainModels ->
+                    val sessions = sessionDomainModels?.map { sessionDomainModel ->
+                        sessionDomainModel.toPresentationModel()
                     }
 
-                    is ResourceResult.Error -> {
-                        _error.value = Error(result.message)
+                  _sessionsUiState.value =  if (!sessions.isNullOrEmpty()) {
+                        SessionsUiState.Data(data = sessions)
+                    } else {
+                        SessionsUiState.Empty("No sessions Found")
                     }
-
-                    is ResourceResult.Loading -> {
-                        _loading.value = result.isLoading
-                    }
-
-                    is ResourceResult.Empty -> {
-                        _empty.value = true
-                    }
-
-                    else -> Unit
                 }
             }
-    }
 
-    private fun getQuery(): String = listOf("1", "2",).random()
+            is ResourceResult.Error -> {
+                _sessionsUiState.value = SessionsUiState.Error(message = result.message)
+            }
 
-    //       var query = Query().fields("*").from("sessions")
+            is ResourceResult.Loading -> {
+                _sessionsUiState.value = SessionsUiState.Loading
+            }
+
+            is ResourceResult.Empty -> {
+                _sessionsUiState.value = SessionsUiState.Empty("No sessions Found")
+            }
+
+            else -> Unit
+        }
+
+        //       var query = Query().fields("*").from("sessions")
 //        if (_filterState.value!!.rooms.isNotEmpty()) {
 //            val rooms = _filterState.value!!.rooms.joinToString(",")
 //            query = query.where("rooms LIKE '%$rooms%'")
@@ -218,6 +189,10 @@ class SessionsViewModel @Inject constructor(
 //        query.orderAsc("startTimestamp")
 //
 //        return query.toSql()
+    }
+
+    fun getQuery(): String = listOf("1", "2").random()
+
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
             fetchSessions(query = getQuery())
@@ -247,7 +222,10 @@ class SessionsViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateBookmarkStatus(id: String, isCurrentlyStarred: Boolean): Flow<ResourceResult<Boolean>> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
+    suspend fun updateBookmarkStatus(
+        id: String,
+        isCurrentlyStarred: Boolean,
+    ): ResourceResult<Boolean> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
 
     fun fetchBookmarkedSessions() {
         viewModelScope.launch {

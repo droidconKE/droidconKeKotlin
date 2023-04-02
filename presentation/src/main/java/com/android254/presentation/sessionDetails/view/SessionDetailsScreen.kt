@@ -30,7 +30,6 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -46,9 +45,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
@@ -62,7 +62,7 @@ fun SessionDetailsScreen(
     onNavigationIconClick: () -> Unit,
 ) {
 
-    val sessionDetails by viewModel.sessionDetails.observeAsState()
+    val sessionDetails = viewModel.sessionDetails.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = sessionId) {
         viewModel.getSessionDetailsById(sessionId)
@@ -88,9 +88,10 @@ fun SessionDetailsScreen(
             }
         }
     ) { paddingValues ->
-
-        sessionDetails?.let {
-            Body(paddingValues, darkTheme, it)
+        sessionDetails.value.let {
+            if (it != null) {
+                Body(paddingValues, darkTheme, it)
+            }
         }
     }
 }
@@ -441,7 +442,7 @@ object TestTag {
 @Preview
 @Composable
 fun SessionDetailsScreenPreview() {
-    DroidconKE2022Theme(darkTheme = false) {
+    DroidconKE2023Theme(darkTheme = false) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             sessionId = "1",
@@ -453,7 +454,7 @@ fun SessionDetailsScreenPreview() {
 @Preview
 @Composable
 fun SessionDetailsScreenDarkThemePreview() {
-    DroidconKE2022Theme(darkTheme = true) {
+    DroidconKE2023Theme(darkTheme = true) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             sessionId = "1",

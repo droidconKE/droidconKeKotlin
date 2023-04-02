@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 
 @Composable
 fun TopAppBar(modifier: Modifier = Modifier, onBackPressed: () -> Unit = {}) {
@@ -73,7 +73,7 @@ fun TopAppBar(modifier: Modifier = Modifier, onBackPressed: () -> Unit = {}) {
 @Composable
 @Preview
 fun TopAppBarPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         TopAppBar()
     }
 }

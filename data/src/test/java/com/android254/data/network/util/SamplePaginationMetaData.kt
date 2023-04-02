@@ -18,7 +18,7 @@ package com.android254.data.network.apis
 import com.android254.data.network.models.responses.PaginationMetaData
 import com.android254.data.network.models.responses.ResponseMetaData
 
-val samplePaginationMetaData = ResponseMetaData(
+val SamplePaginationMetaData = ResponseMetaData(
     paginator = PaginationMetaData(
         count = 0,
         currentPage = 1,

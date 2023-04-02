@@ -72,24 +72,48 @@ fun FeedBackScreen(
     var value by remember {
         mutableStateOf("")
     }
+
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+
+    val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
+
     Scaffold(
         topBar = {
             Box {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    painter = if (darkTheme) {
-                        painterResource(R.drawable.toolbar_bg_sign_up_dark)
-                    } else {
-                        painterResource(
-                            R.drawable.topbar_bg_sign_up
+                if (isCollapsed.value) {
+                    TopAppBar(
+                        title = { FeedbackTitle() },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { navigateBack() }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            titleContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(0xFF1B1B1F),
+                            navigationIconContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(0xFF1B1B1F),
+                            containerColor = Color.Transparent
                         )
-                    },
-                    contentDescription = stringResource(R.string.login_screen_bg_image_description),
-                    contentScale = ContentScale.FillBounds
-                )
+                    )
+                } else {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        painter = if (darkTheme) {
+                            painterResource(R.drawable.toolbar_bg_sign_up_dark)
+                        } else {
+                            painterResource(R.drawable.topbar_bg_sign_up)
+                        },
+                        contentDescription = stringResource(R.string.login_screen_bg_image_description),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
                 LargeTopAppBar(
-                    title = { Text(stringResource(R.string.feedback_label), modifier = Modifier.testTag("heading")) },
+                    title = { FeedbackTitle() },
                     navigationIcon = {
                         IconButton(
                             onClick = { navigateBack() }
@@ -100,6 +124,7 @@ fun FeedBackScreen(
                             )
                         }
                     },
+                    scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.largeTopAppBarColors(
                         containerColor = Color.Transparent,
                         titleContentColor = if (darkTheme) Color(0xFFF2F0F4) else MaterialTheme.colorScheme.onPrimary,
@@ -107,7 +132,8 @@ fun FeedBackScreen(
                     )
                 )
             }
-        }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -236,10 +262,18 @@ fun FeedBackScreen(
     }
 }
 
+@Composable
+fun FeedbackTitle() {
+    Text(
+        stringResource(R.string.feedback_label),
+        modifier = Modifier.testTag("heading")
+    )
+}
+
 @Preview
 @Composable
 fun FeedBackScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         FeedBackScreen()
     }
 }

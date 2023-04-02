@@ -23,28 +23,30 @@ import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import io.mockk.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import java.lang.Exception
 
 class AuthManagerTest {
+    val mockApi = mockk<AuthApi>()
+    val mockTokenProvider = mockk<TokenProvider>()
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     private val fakeUserDetails = UserDetailsDTO(
-        name = "Test",
-        email = "test@gmail.com",
-        gender = null,
-        avatar = "http://test.com"
+        name = "Test", email = "test@gmail.com", gender = null, avatar = "http://test.com"
     )
 
     @Test
     fun `test getAndSaveApiToken successfully`() {
-        val mockApi = mockk<AuthApi>()
-        val mockTokenProvider = mockk<TokenProvider>()
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider)
-            coEvery { mockApi.googleLogin(any()) } returns AccessTokenDTO("test", user = fakeUserDetails)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
+            coEvery { mockApi.googleLogin(any()) } returns AccessTokenDTO(
+                "test", user = fakeUserDetails
+            )
             coEvery { mockTokenProvider.update(any()) } just Runs
 
             val result = repo.getAndSaveApiToken("test")
@@ -55,11 +57,9 @@ class AuthManagerTest {
 
     @Test
     fun `test getAndSaveApiToken failure - network error`() {
-        val mockApi = mockk<AuthApi>()
-        val mockTokenProvider = mockk<TokenProvider>()
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = NetworkError()
 
             coEvery { mockApi.googleLogin(any()) } throws exc
@@ -70,11 +70,9 @@ class AuthManagerTest {
 
     @Test
     fun `test getAndSaveApiToken failure - other error`() {
-        val mockApi = mockk<AuthApi>()
-        val mockTokenProvider = mockk<TokenProvider>()
 
         runBlocking {
-            val repo = AuthManager(mockApi, mockTokenProvider)
+            val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = Exception()
 
             coEvery { mockApi.googleLogin(any()) } throws exc

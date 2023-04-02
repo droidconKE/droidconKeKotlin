@@ -16,6 +16,7 @@
 package com.android254.presentation.sessions.view
 
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -40,31 +41,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.android254.presentation.common.bottomsheet.BottomSheetScaffold
-import com.android254.presentation.common.bottomsheet.rememberBottomSheetScaffoldState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.*
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.sessions.components.EventDaySelector
-import com.android254.presentation.sessions.components.SessionList
 import com.android254.presentation.sessions.components.SessionsFilterPanel
-import com.droidconke.chai.atoms.ChaiCoal
+import com.android254.presentation.sessions.components.SessionsStateComponent
 import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    navController: NavHostController,
-    sessionsViewModel: SessionsViewModel = hiltViewModel()
+    sessionsViewModel: SessionsViewModel = hiltViewModel(),
+    navigateToSessionDetails: (sessionId: String) -> Unit = {}
 ) {
+    val sessionsUiState = sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle().value
     val showMySessions = remember {
         mutableStateOf(false)
     }
 
     val scope = rememberCoroutineScope()
-
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetState = rememberSheetState(
+        skipHalfExpanded = true
+    )
 
     val isSessionLayoutList = rememberSaveable {
         mutableStateOf(true)
@@ -78,85 +77,93 @@ fun SessionsScreen(
         mutableStateOf(false)
     }
 
-    BottomSheetScaffold(
-        sheetContent = {
-            SessionsFilterPanel(
-                onDismiss = {
-                    scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
-                },
-                onChange = {},
-                viewModel = sessionsViewModel
-            )
-        },
-        scaffoldState = bottomSheetScaffoldState,
-        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        sheetPeekHeight = 0.dp,
-        sheetScrimColor = ChaiCoal.copy(alpha = 0.52f),
-    ) {
-        Scaffold(
-            topBar = {
-                DroidconAppBarWithFilter(
-                    isListActive = isSessionLayoutList.value,
-                    onListIconClick = {
-                        isSessionLayoutList.value = true
-                    },
-                    onAgendaIconClick = {
-                        isSessionLayoutList.value = false
-                    },
-                    isFilterActive = isFilterActive.value,
-                    onFilterButtonClick = {
-                        isFilterDialogOpen.value = true
-                        scope.launch {
-                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                                bottomSheetScaffoldState.bottomSheetState.expand()
-                            } else {
-                                bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
-                        }
-                    }
-                )
-            }
-        ) { paddingValues ->
+    BackHandler(bottomSheetState.isVisible) {
+        scope.launch { bottomSheetState.hide() }
+    }
 
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(paddingValues)
-                    .padding(horizontal = 20.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
-                ) {
-                    EventDaySelector(viewModel = sessionsViewModel)
-                    CustomSwitch(checked = showMySessions.value, onCheckedChange = {
-                        showMySessions.value = it
-                        isFilterActive.value = !it
-                        if (showMySessions.value) {
-                            sessionsViewModel.fetchBookmarkedSessions()
-                        } else {
-                            sessionsViewModel.clearSelectedFilterList()
-                        }
-                    })
+    Scaffold(
+        topBar = {
+            DroidconAppBarWithFilter(
+                isListActive = isSessionLayoutList.value,
+                onListIconClick = {
+                    isSessionLayoutList.value = true
+                },
+                onAgendaIconClick = {
+                    isSessionLayoutList.value = false
+                },
+                isFilterActive = isFilterActive.value,
+                onFilterButtonClick = {
+                    isFilterDialogOpen.value = true
+                    scope.launch {
+                        bottomSheetState.show()
+                    }
                 }
-                SessionList(navController = navController, viewModel = sessionsViewModel)
+            )
+        }
+    ) { paddingValues ->
+
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)
+                .padding(horizontal = 20.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
+            ) {
+                EventDaySelector(viewModel = sessionsViewModel)
+                CustomSwitch(checked = showMySessions.value, onCheckedChange = {
+                    showMySessions.value = it
+                    isFilterActive.value = !it
+                    if (showMySessions.value) {
+                        sessionsViewModel.fetchBookmarkedSessions()
+                    } else {
+                        sessionsViewModel.clearSelectedFilterList()
+                    }
+                })
+            }
+            SessionsStateComponent(
+                sessionsUiState = sessionsUiState,
+                navigateToSessionDetails = navigateToSessionDetails,
+                refreshSessionsList = { sessionsViewModel.refreshSessionList() },
+                retry = { }
+            )
+            if (bottomSheetState.isVisible) {
+                ModalBottomSheet(
+                    sheetState = bottomSheetState,
+                    onDismissRequest = {
+                        scope.launch {
+                            bottomSheetState.hide()
+                        }
+                    }
+                ) {
+                    SessionsFilterPanel(
+                        onDismiss = {
+                            scope.launch {
+                                bottomSheetState.hide()
+                            }
+                        },
+                        onChange = {},
+                        viewModel = sessionsViewModel
+                    )
+                }
             }
         }
+
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun SessionsScreenPreview() {
-    DroidconKE2022Theme {
-        SessionsScreen(navController = rememberNavController())
+    DroidconKE2023Theme() {
+        SessionsScreen()
+
     }
 }
 
@@ -172,7 +179,7 @@ fun CustomSwitch(
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     // this is to disable the ripple effect
     val interactionSource = remember {
@@ -228,7 +235,7 @@ fun CustomSwitch(
 
 @Composable
 private fun animateAlignmentAsState(
-    targetBiasValue: Float
+    targetBiasValue: Float,
 ): State<BiasAlignment> {
     val bias by animateFloatAsState(targetBiasValue)
     return derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }

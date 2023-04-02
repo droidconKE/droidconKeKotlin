@@ -41,8 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -55,8 +56,8 @@ fun SpeakersScreen(
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val isRefreshing by speakersViewModel.isLoading.collectAsState()
-    val toastMessage by speakersViewModel.message.collectAsState(initial = "")
+    val isRefreshing by speakersViewModel.isLoading.collectAsStateWithLifecycle()
+    val toastMessage by speakersViewModel.message.collectAsStateWithLifecycle(initialValue = "")
     val speakers = remember { mutableStateListOf<SpeakerUI>() }
 
     LaunchedEffect(toastMessage) {
@@ -119,7 +120,7 @@ fun SpeakersScreen(
 @Preview
 @Composable
 fun SpeakersScreenPreview() {
-    DroidconKE2022Theme {
+    DroidconKE2023Theme {
         SpeakersScreen()
     }
 }

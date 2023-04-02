@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessionDetails
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -24,7 +22,8 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,32 +31,28 @@ import javax.inject.Inject
 class SessionDetailsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo
 ) : ViewModel() {
-    private val _sessionDetails: MutableLiveData<SessionDetailsPresentationModel> =
-        MutableLiveData(null)
-
-    var sessionDetails: LiveData<SessionDetailsPresentationModel> = _sessionDetails
+    private val _sessionDetails = MutableStateFlow<SessionDetailsPresentationModel?>(null)
+    val sessionDetails = _sessionDetails.asStateFlow()
 
     fun getSessionDetailsById(sessionId: String) {
         viewModelScope.launch {
-            sessionsRepo.fetchSessionById(sessionId).collectLatest { result ->
-                when (result) {
-                    is ResourceResult.Success -> {
-                        result.data.let {
-                            _sessionDetails.value = it?.toSessionDetailsPresentationModal()
-                        }
+            when (val result = sessionsRepo.fetchSessionById(sessionId)) {
+                is ResourceResult.Success -> {
+                    result.data.let {
+                        _sessionDetails.value = it?.toSessionDetailsPresentationModal()
                     }
-
-                    is ResourceResult.Error -> {
-                    }
-
-                    is ResourceResult.Loading -> {
-                    }
-
-                    is ResourceResult.Empty -> {
-                    }
-
-                    else -> Unit
                 }
+
+                is ResourceResult.Error -> {
+                }
+
+                is ResourceResult.Loading -> {
+                }
+
+                is ResourceResult.Empty -> {
+                }
+
+                else -> Unit
             }
         }
     }

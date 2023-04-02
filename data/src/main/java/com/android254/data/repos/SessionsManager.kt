@@ -21,6 +21,7 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import com.android254.data.dao.BookmarkDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.model.BookmarkEntity
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SessionsApi
 import com.android254.data.network.util.NetworkError
 import com.android254.data.repos.mappers.toDomainModel
@@ -28,119 +29,97 @@ import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SessionsManager @Inject constructor(
     private val api: SessionsApi,
     private val dao: SessionDao,
-    private val bookmarkDao: BookmarkDao
+    private val bookmarkDao: BookmarkDao,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SessionsRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchAndSaveSessions(
         fetchFromRemote: Boolean,
         query: String?
-    ): Flow<ResourceResult<List<Session>>> {
-        return flow {
-            emit(ResourceResult.Loading(isLoading = true))
-            val sessions = if (query == null) {
-                dao.fetchSessions()
-            } else {
-                dao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
-            }
+    ): ResourceResult<List<Session>> = withContext(ioDispatcher) {
+        val sessions = if (query == null) {
+            dao.fetchSessions()
+        } else {
+            dao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
+        }
 
-            val isDbEmpty = sessions.isEmpty()
-            val hasAQuery = query != null
-            emit(
-                ResourceResult.Success(
-                    data = sessions.map {
-                        it.toDomainModel()
-                    }
-                )
-            )
-            val shouldLoadFromCache = (!isDbEmpty && !fetchFromRemote) || hasAQuery
-            if (shouldLoadFromCache) {
-                emit(ResourceResult.Loading(isLoading = false))
-                return@flow
-            }
-
-            try {
+        val isDbEmpty = sessions.isEmpty()
+        val hasAQuery = query != null
+        val shouldLoadFromCache = (!isDbEmpty && !fetchFromRemote) || hasAQuery
+        if (shouldLoadFromCache) {
+            return@withContext try {
                 val response = api.fetchSessions()
                 val remoteSessions = response.data.flatMap { (_, value) -> value }
                 if (remoteSessions.isEmpty()) {
-                    emit(ResourceResult.Empty("No sessions just yet"))
-                }
-                remoteSessions.let {
-                    dao.clearSessions()
-                    val bookmarkIds = bookmarkDao.getBookmarkIds().map { sessionEntity ->
-                        sessionEntity.sessionId
-                    }
-                    val sessionEntities = it.map { session ->
-                        val newSession = session.toEntity().copy(
-                            isBookmarked = bookmarkIds.contains(session.id)
-                        )
-                        newSession
-                    }
-                    dao.insert(sessionEntities)
-                    emit(
+                    ResourceResult.Empty("No sessions just yet")
+                } else {
+                    remoteSessions.let {
+                        dao.clearSessions()
+                        val bookmarkIds = bookmarkDao.getBookmarkIds().map { sessionEntity ->
+                            sessionEntity.sessionId
+                        }
+                        val sessionEntities = it.map { session ->
+                            val newSession = session.toEntity().copy(
+                                isBookmarked = bookmarkIds.contains(session.id)
+                            )
+                            newSession
+                        }
+                        dao.insert(sessionEntities)
                         ResourceResult.Success(
                             data = sessionEntities.map { sessionEntity -> sessionEntity.toDomainModel() }
                         )
-                    )
-                    emit(ResourceResult.Loading(isLoading = false))
+                    }
                 }
             } catch (e: Exception) {
-                emit(ResourceResult.Loading(isLoading = false))
                 when (e) {
-                    is NetworkError -> emit(ResourceResult.Error("Network error"))
-                    else -> emit(ResourceResult.Error("Error fetching sessions"))
+                    is NetworkError -> ResourceResult.Error("Network error")
+                    else -> ResourceResult.Error("Error fetching sessions")
                 }
             }
-        }.flowOn(Dispatchers.IO)
+        } else {
+            return@withContext ResourceResult.Success(
+                data = sessions.map {
+                    it.toDomainModel()
+                }
+            )
+        }
     }
 
-    override suspend fun fetchSessionById(id: String): Flow<ResourceResult<Session>> {
-        return flow<ResourceResult<Session>> {
-            emit(ResourceResult.Loading(isLoading = true))
+    override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
+        withContext(ioDispatcher) {
             val session = dao.getSessionById(id)
-            if (session == null) {
-                emit(ResourceResult.Loading(isLoading = false))
-                emit(ResourceResult.Error(message = "requested event no longer available"))
-                return@flow
-            }
-            emit(ResourceResult.Loading(isLoading = false))
-            emit(ResourceResult.Success(data = session.toDomainModel()))
-            return@flow
-        }.flowOn(Dispatchers.IO)
-    }
+                ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
+            return@withContext ResourceResult.Success(data = session.toDomainModel())
+        }
 
     override suspend fun toggleBookmarkStatus(
         id: String,
         isCurrentlyStarred: Boolean
-    ): Flow<ResourceResult<Boolean>> {
-        return flow {
-            try {
-                dao.updateBookmarkedStatus(id, !isCurrentlyStarred)
-                if (isCurrentlyStarred) {
-                    bookmarkDao.delete(BookmarkEntity(id))
-                } else {
-                    bookmarkDao.insert(BookmarkEntity(id))
+    ): ResourceResult<Boolean> = withContext(ioDispatcher) {
+        try {
+            dao.updateBookmarkedStatus(id, !isCurrentlyStarred)
+            if (isCurrentlyStarred) {
+                bookmarkDao.delete(BookmarkEntity(id))
+            } else {
+                bookmarkDao.insert(BookmarkEntity(id))
+            }
+        } catch (e: Exception) {
+            when (e) {
+                is NetworkError -> {
+                    return@withContext ResourceResult.Error("Network error")
                 }
-            } catch (e: Exception) {
-                emit(ResourceResult.Loading(isLoading = true))
-                when (e) {
-                    is NetworkError -> {
-                        emit(ResourceResult.Error("Network error"))
-                    }
-                    else -> {
-                        emit(ResourceResult.Error("Error fetching sessions"))
-                    }
+                else -> {
+                    return@withContext ResourceResult.Error("Error fetching sessions")
                 }
             }
-            emit(ResourceResult.Success(data = dao.getBookmarkStatus(id)))
-        }.flowOn(Dispatchers.IO)
+        }
+        return@withContext ResourceResult.Success(data = dao.getBookmarkStatus(id))
     }
 }

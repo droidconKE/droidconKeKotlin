@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.network.util
 
-import com.android254.domain.models.ResourceResult
-import com.android254.domain.models.Session
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
-interface SessionsRepo {
-    suspend fun fetchAndSaveSessions(
-        fetchFromRemote: Boolean = false,
-        query: String? = null
-    ): ResourceResult<List<Session>>
-
-    suspend fun fetchSessionById(id: String): ResourceResult<Session>
-
-    suspend fun toggleBookmarkStatus(id: String, isCurrentlyStarred: Boolean): ResourceResult<Boolean>
+class MockTokenProvider : TokenProvider {
+    override suspend fun fetch(): Flow<String?> = emptyFlow()
+    override suspend fun update(accessToken: String) {}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.data.network.apis
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -21,16 +21,18 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
-import com.android254.data.network.apis.OrganizersApi
 import com.android254.data.network.models.responses.OrganizersPagedResponse
 import com.android254.data.network.util.HttpClientFactory
+import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.preferences.DefaultTokenProvider
 import com.android254.domain.models.DataResult
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -44,12 +46,16 @@ import org.robolectric.RobolectricTestRunner
 class OrganizersApiTest {
 
     private lateinit var testDataStore: DataStore<Preferences>
+    private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         testDataStore =
             PreferenceDataStoreFactory.create(produceFile = { context.preferencesDataStoreFile("test") })
+
+        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
     }
 
     @Test
@@ -79,7 +85,7 @@ class OrganizersApiTest {
                 headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore)).create(mockEngine)
+        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore), remoteFeatureToggleTest).create(mockEngine)
         val api = OrganizersApi(httpClient)
         runBlocking {
             val expected = DataResult.Success(
@@ -115,7 +121,7 @@ class OrganizersApiTest {
                     "upcoming_events_count": 1,
                     "total_events_count": 1
                 }],
-              
+
                     "paginator": {
                         "count": 21,
                         "per_page": "15",
@@ -135,7 +141,7 @@ class OrganizersApiTest {
                 headersOf(HttpHeaders.ContentType, "application/json")
             )
         }
-        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore)).create(mockEngine)
+        val httpClient = HttpClientFactory(DefaultTokenProvider(testDataStore), remoteFeatureToggleTest).create(mockEngine)
         val api = OrganizersApi(httpClient)
 
         val actual = runBlocking { api.fetchOrganizers("individual") }

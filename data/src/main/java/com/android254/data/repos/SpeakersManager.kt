@@ -16,6 +16,7 @@
 package com.android254.data.repos
 
 import com.android254.data.db.Database
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SpeakersApi
 import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.repos.mappers.toDomainModel
@@ -24,31 +25,37 @@ import com.android254.domain.models.DataResult
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpeakersManager @Inject constructor(
     db: Database,
-    private val api: SpeakersApi
+    private val api: SpeakersApi,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SpeakersRepo {
     private val speakerDao = db.speakerDao()
 
-    override suspend fun fetchSpeakers(): ResourceResult<List<Speaker>> = withContext(Dispatchers.IO) {
-        val result = fetchSpeakersFromApi()
-        if (result is DataResult.Error) {
-            return@withContext ResourceResult.Error(
-                result.message,
-                networkError = result.message.contains("network", ignoreCase = true)
+    override suspend fun fetchSpeakers(): ResourceResult<List<Speaker>> =
+        withContext(ioDispatcher) {
+            val result = fetchSpeakersFromApi()
+            if (result is DataResult.Error) {
+                return@withContext ResourceResult.Error(
+                    result.message,
+                    networkError = result.message.contains("network", ignoreCase = true)
+                )
+            }
+            return@withContext ResourceResult.Success(
+                speakerDao.fetchSpeakers().map { it.toDomainModel() }
             )
         }
-        return@withContext ResourceResult.Success(speakerDao.fetchSpeakers().map { it.toDomainModel() })
-    }
 
     override suspend fun fetchSpeakersUnpacked(): List<Speaker> {
         val result = fetchSpeakers()
         if (result is ResourceResult.Success) {
-            return result.data ?: emptyList()
+            return withContext(ioDispatcher) {
+                result.data ?: emptyList()
+            }
         }
 
         return emptyList()
@@ -59,14 +66,22 @@ class SpeakersManager @Inject constructor(
         if (result is DataResult.Success) {
             val data = result.data
             if (data.data.isNotEmpty()) {
-                speakerDao.deleteAll()
-                speakerDao.insert(data.data.map { it.toEntity() })
+                withContext(ioDispatcher) {
+                    speakerDao.deleteAll()
+                    speakerDao.insert(data.data.map { it.toEntity() })
+                }
             }
         }
         return result
     }
 
-    override suspend fun fetchSpeakerCount(): ResourceResult<Int> = ResourceResult.Success(speakerDao.fetchSpeakerCount())
+    override suspend fun fetchSpeakerCount(): ResourceResult<Int> =
+        withContext(ioDispatcher) {
+            ResourceResult.Success(speakerDao.fetchSpeakerCount())
+        }
 
-    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> = ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
+    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
+        withContext(ioDispatcher) {
+            ResourceResult.Success(speakerDao.getSpeakerById(id).toDomainModel())
+        }
 }

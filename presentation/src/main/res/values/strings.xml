@@ -61,4 +61,6 @@
     <string name="cancel_filter_button_label">Cancel</string>
     <string name="close_icon_description">close icon</string>
     <string name="star_session_icon_description">star session</string>
+    <string name="retry_label">Retry</string>
+    <string name="spacer_icon_descript">spacer icon</string>
 </resources>

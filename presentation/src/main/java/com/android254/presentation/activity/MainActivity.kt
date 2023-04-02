@@ -35,18 +35,17 @@ import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
 import com.android254.presentation.common.navigation.Navigation
-import com.android254.presentation.common.theme.DroidconKE2022Theme
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContent {
-            DroidconKE2022Theme {
+            DroidconKE2023Theme {
                 MainScreen()
             }
         }

@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SponsorsApi
 import com.android254.data.network.models.responses.SponsorsPagedResponse
 import com.android254.data.repos.mappers.toDomain
@@ -27,24 +28,23 @@ import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class HomeRepoImpl @Inject constructor(
     private val sponsorsApi: SponsorsApi,
     private val speakersRepo: SpeakersRepo,
-    private val sessionsRepo: SessionsRepo
+    private val sessionsRepo: SessionsRepo,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun fetchHomeDetails(): HomeDetails {
-        return combine(
-            flowOf(sponsorsApi.fetchSponsors()),
-            flowOf(speakersRepo.fetchSpeakersUnpacked()),
-            sessionsRepo.fetchAndSaveSessions()
-                .filter {
-                    it is ResourceResult.Success && it.data?.isNotEmpty() == true || it is ResourceResult.Error
-                }
-        ) { sponsors, speakers, sessions ->
+        return withContext(ioDispatcher) {
+            val sponsors = sponsorsApi.fetchSponsors()
+            val speakers = speakersRepo.fetchSpeakersUnpacked()
+            val sessions = sessionsRepo.fetchAndSaveSessions()
             HomeDetails(
                 isCallForSpeakersEnable = false,
                 isEventBannerEnable = true,
@@ -53,9 +53,9 @@ class HomeRepoImpl @Inject constructor(
                 sessions = getSessionsFromResourceResult(sessions),
                 sessionsCount = getSessionsFromResourceResult(sessions).size,
                 sponsors = sponsors.getSponsorsList(),
-                organizers = listOf()
+                organizers = listOf(),
             )
-        }.first()
+        }
     }
 
     private fun getSessionsFromResourceResult(result: ResourceResult<List<Session>>): List<Session> {

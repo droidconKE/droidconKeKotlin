@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.network
+package com.android254.presentation.sessions.models
 
-import com.android254.data.network.util.TokenProvider
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import com.android254.presentation.models.SessionPresentationModel
 
-class MockTokenProvider : TokenProvider {
-    override suspend fun fetch(): Flow<String?> = emptyFlow()
-    override suspend fun update(accessToken: String) {}
+sealed interface SessionsUiState{
+    object Idle: SessionsUiState
+    object Loading: SessionsUiState
+    data class Data(val  data: List<SessionPresentationModel>): SessionsUiState
+    @JvmInline
+    value class Error(val message: String): SessionsUiState
+    @JvmInline
+    value  class Empty(val message: String): SessionsUiState
 }
