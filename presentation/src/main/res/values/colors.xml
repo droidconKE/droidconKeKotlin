@@ -12,4 +12,5 @@
     <color name="light_grey">#B1B1B1</color>
     <color name="black">#000000</color>
     <color name="eerie_black">#191D1D</color>
+    <color name="splash_screen_background">#FFFFFF</color>
 </resources>

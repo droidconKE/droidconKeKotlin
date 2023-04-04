@@ -15,11 +15,11 @@
  */
 package com.android254.presentation.sessions.components
 
-import android.os.Build
-
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
@@ -40,7 +40,6 @@ import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import java.util.*
 
 @Composable
 fun SessionsStateComponent(
@@ -78,7 +77,6 @@ fun SessionsStateComponent(
         is SessionsUiState.Error -> {
             val message = sessionsUiState.message
             SessionsErrorComponent(errorMessage = message, retry = retry)
-
         }
         is SessionsUiState.Idle -> {}
     }

@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.DroidconKE2023" parent="android:Theme.Material.Light.NoActionBar" />
     <style name="Theme.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/design_default_color_on_secondary</item>
+        <item name="windowSplashScreenBackground">@color/splash_screen_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/droidcon_icon</item>
         <item name="postSplashScreenTheme">@style/Theme.DroidconKE2023</item>
     </style>
