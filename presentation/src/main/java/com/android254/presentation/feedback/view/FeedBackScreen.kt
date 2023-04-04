@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
+import com.droidconke.chai.components.CButton
 
 @Composable
 fun FeedBackScreen(
@@ -225,12 +226,13 @@ fun FeedBackScreen(
                 shape = RoundedCornerShape(7.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Button(
+            CButton(
                 onClick = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
                     .testTag("submit_feedback_button"),
+                isEnabled = true,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (darkTheme) Color.Black else colorResource(id = R.color.blue),

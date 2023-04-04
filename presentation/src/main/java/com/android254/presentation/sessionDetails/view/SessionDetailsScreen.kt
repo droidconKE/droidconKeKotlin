@@ -52,6 +52,7 @@ import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
+import com.droidconke.chai.components.COutlinedButton
 
 @Composable
 fun SessionDetailsScreen(
@@ -179,14 +180,9 @@ private fun SpeakerTwitterHandle(
                     lineHeight = 19.sp
                 )
             )
-            Button(
+            COutlinedButton(
                 onClick = { context.startActivity(intent) },
-                border = BorderStroke(
-                    1.dp,
-                    colorResource(id = if (darkTheme) R.color.cyan else R.color.blue)
-                ),
                 shape = RoundedCornerShape(10.dp),
-                contentPadding = PaddingValues(horizontal = 40.dp, vertical = 10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(id = if (darkTheme) R.color.black else R.color.white))
             ) {
 
