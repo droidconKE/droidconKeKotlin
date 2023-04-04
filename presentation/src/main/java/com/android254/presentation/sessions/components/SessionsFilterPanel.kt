@@ -36,6 +36,7 @@ import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
+import com.droidconke.chai.components.CButton
 import java.util.*
 
 private fun loadFilters(): List<SessionsFilterOption> {
@@ -185,11 +186,12 @@ fun SessionsFilterPanel(
             Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Button(
+        CButton(
             onClick = {
                 viewModel.fetchSessionWithFilter()
                 onDismiss()
             },
+            isEnabled = true,
             shape = MaterialTheme.shapes.small,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
