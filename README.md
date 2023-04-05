@@ -159,6 +159,13 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/chege4179">
+            <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
+            <br />
+            <sub><b>Peter Chege</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
@@ -192,15 +199,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Beatrice Kinya</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Jacquigee">
             <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
             <br />
             <sub><b>Jacquiline Gitau</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
@@ -213,13 +220,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
             <br />
             <sub><b>Michael Bukachi</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/chege4179">
-            <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
-            <br />
-            <sub><b>Peter Chege</b></sub>
         </a>
     </td>
     <td align="center">
