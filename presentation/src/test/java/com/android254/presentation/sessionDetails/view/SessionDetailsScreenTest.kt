@@ -113,7 +113,7 @@ class SessionDetailsScreenTest {
     fun `test if twitter handle is shown`() {
         composeTestRule.onNodeWithTag(TestTag.TWITTER_HANDLE_TEXT, true).apply {
             assertExists()
-//            assertIsDisplayed() // TODO: (Rashan) This assertion fails even when node is visible. Check semantic tree to resolve this
+
         }
     }
 
