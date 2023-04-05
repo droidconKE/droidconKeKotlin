@@ -21,17 +21,10 @@ import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
-import com.android254.presentation.sessions.mappers.FormattedTime
-import com.android254.presentation.sessions.mappers.getTimePeriod
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,11 +33,11 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
- @RunWith(RobolectricTestRunner::class)
- @Config(instrumentedPackages = ["androidx.loader.content"])
+@RunWith(RobolectricTestRunner::class)
+@Config(instrumentedPackages = ["androidx.loader.content"])
 class SessionDetailsScreenTest {
 
-    // TODO Fix tests
+
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -95,17 +88,23 @@ class SessionDetailsScreenTest {
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
 
         composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
-            sessionPresentationModel.speakerName)
+            sessionPresentationModel.speakerName
+        )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_TITLE).assertTextEquals(
-            sessionPresentationModel.title)
+            sessionPresentationModel.title
+        )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_DESCRIPTION).assertTextEquals(
-            sessionPresentationModel.description)
+            sessionPresentationModel.description
+        )
         composeTestRule.onNodeWithTag(testTag = TestTag.TIME_SLOT).assertTextEquals(
-            sessionPresentationModel.timeSlot.uppercase())
+            sessionPresentationModel.timeSlot.uppercase()
+        )
         composeTestRule.onNodeWithTag(testTag = TestTag.ROOM).assertTextEquals(
-            sessionPresentationModel.venue.uppercase())
+            sessionPresentationModel.venue.uppercase()
+        )
         composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
-            "#${sessionPresentationModel.level.uppercase()}")
+            "#${sessionPresentationModel.level.uppercase()}"
+        )
 
 
     }
