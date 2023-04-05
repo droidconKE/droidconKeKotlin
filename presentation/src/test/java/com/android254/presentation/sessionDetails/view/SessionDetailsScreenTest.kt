@@ -17,13 +17,31 @@ package com.android254.presentation.sessionDetails.view
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android254.domain.models.ResourceResult
+import com.android254.domain.models.Session
+import com.android254.domain.repos.SessionsRepo
+import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SessionDetailsPresentationModel
+import com.android254.presentation.sessionDetails.SessionDetailsViewModel
+import com.android254.presentation.sessions.mappers.FormattedTime
+import com.android254.presentation.sessions.mappers.getTimePeriod
+import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
-// @RunWith(RobolectricTestRunner::class)
-// @Config(instrumentedPackages = ["androidx.loader.content"])
+ @RunWith(RobolectricTestRunner::class)
+ @Config(instrumentedPackages = ["androidx.loader.content"])
 class SessionDetailsScreenTest {
 
     // TODO Fix tests
@@ -36,25 +54,25 @@ class SessionDetailsScreenTest {
     fun setUp() {
         ShadowLog.stream = System.out
 
-//        val sessionId = "randomSessionId"
-//        val repo = mockk<SessionsRepo>()
-//        val viewModel = SessionDetailsViewModel(repo)
-//        val channel = Channel<SessionDetailsPresentationModel>()
-//        val flow = channel.consumeAsFlow()
-//        coEvery { repo.fetchSessionById(any()) } returns flowOf(ResourceResult.Empty(""))
-//
-//        composeTestRule.setContent {
-//            DroidconKE2022Theme() {
-//                SessionDetailsScreen(
-//                    viewModel = viewModel,
-//                    sessionId = sessionId,
-//                    onNavigationIconClick = {}
-//                )
-//            }
-//        }
+        val sessionId = "randomSessionId"
+        val repo = mockk<SessionsRepo>()
+        val viewModel = SessionDetailsViewModel(sessionsRepo = repo)
+
+        coEvery { repo.fetchSessionById(any()) } returns ResourceResult.Success(data = mockSession)
+
+
+        composeTestRule.setContent {
+            DroidconKE2023Theme() {
+                SessionDetailsScreen(
+                    viewModel = viewModel,
+                    sessionId = sessionId,
+                    onNavigationIconClick = {}
+                )
+            }
+        }
     }
 
-//    @Test
+    @Test
     fun `should show top bar and floating action button`() {
         composeTestRule.onNodeWithTag(TestTag.TOP_BAR).assertExists()
         composeTestRule.onNodeWithTag(TestTag.TOP_BAR).assertIsDisplayed()
@@ -63,7 +81,7 @@ class SessionDetailsScreenTest {
         composeTestRule.onNodeWithTag(TestTag.FLOATING_ACTION_BUTTON).assertIsDisplayed()
     }
 
-//    @Test
+    @Test
     fun `should show favourite icon and session banner image`() {
         composeTestRule.onNodeWithTag(TestTag.FAVOURITE_ICON).apply {
             assertExists()
@@ -73,27 +91,26 @@ class SessionDetailsScreenTest {
         composeTestRule.onNodeWithTag(TestTag.IMAGE_BANNER).assertExists()
     }
 
-//    @Test
+    @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
-        val textComposableTagToValueMap = mapOf(
-            TestTag.SPEAKER_NAME to DUMMY_SESSION_DETAILS.speakerName,
-            TestTag.SESSION_TITLE to DUMMY_SESSION_DETAILS.title,
-            TestTag.SESSION_DESCRIPTION to DUMMY_SESSION_DETAILS.description,
-            TestTag.TIME_SLOT to DUMMY_SESSION_DETAILS.timeSlot,
-            TestTag.ROOM to DUMMY_SESSION_DETAILS.venue.uppercase(),
-            TestTag.LEVEL to "#${DUMMY_SESSION_DETAILS.level.uppercase()}"
-        )
 
-        textComposableTagToValueMap.forEach { (testTag, value) ->
-            composeTestRule.onNodeWithTag(testTag).apply {
-                assertExists()
-                assertIsDisplayed()
-                assertTextEquals(value)
-            }
-        }
+        composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
+            sessionPresentationModel.speakerName)
+        composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_TITLE).assertTextEquals(
+            sessionPresentationModel.title)
+        composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_DESCRIPTION).assertTextEquals(
+            sessionPresentationModel.description)
+        composeTestRule.onNodeWithTag(testTag = TestTag.TIME_SLOT).assertTextEquals(
+            sessionPresentationModel.timeSlot.uppercase())
+        composeTestRule.onNodeWithTag(testTag = TestTag.ROOM).assertTextEquals(
+            sessionPresentationModel.venue.uppercase())
+        composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
+            "#${sessionPresentationModel.level.uppercase()}")
+
+
     }
 
-//    @Test
+    @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.onNodeWithTag(TestTag.TWITTER_HANDLE_TEXT, true).apply {
             assertExists()
@@ -102,22 +119,25 @@ class SessionDetailsScreenTest {
     }
 
     companion object {
-        val DUMMY_SESSION_DETAILS = SessionDetailsPresentationModel(
-            speakerName = "Frank Tamre",
-            isStarred = true,
+        val mockSession = Session(
             title = "Compose Beyond Material Design",
             description = "Been in the tech industry for over 20 years. Am passionate about developer communities, motivating people and building successfulBeen in the tech industry for over 20 years.",
-            sessionImageUrl = "https://www.freepnglogos.com/uploads/twitter-logo-png/twitter-logo-vector-png-clipart-1.png",
-            timeSlot = "9.30AM - 10:15AM",
-            venue = "Room 1",
-            level = "Beginner",
-            twitterHandle = "PriestTamzi",
             id = "",
-            amOrPm = "AM",
             endTime = "",
-            format = "",
-            speakerImage = "",
-            startTime = ""
+            startTime = "2022-10-15 18:30:00",
+            isBookmarked = true,
+            isKeynote = true,
+            isServiceSession = true,
+            remote_id = "",
+            sessionLevel = "",
+            endDateTime = "",
+            sessionImage = "",
+            sessionFormat = "",
+            startDateTime = "2022-10-15 18:30:00",
+            slug = "",
+            rooms = "",
+            speakers = "[]",
         )
+        val sessionPresentationModel = mockSession.toSessionDetailsPresentationModal()
     }
 }

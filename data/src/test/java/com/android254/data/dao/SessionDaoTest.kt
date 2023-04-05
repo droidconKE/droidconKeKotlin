@@ -79,9 +79,7 @@ class SessionDaoTest {
             startTimestamp = 0L
         )
         sessionDao.insert(session)
-        runBlocking {
-            val result = sessionDao.fetchSessions().first()
-            assertThat(session.title, `is`(result.title))
-        }
+        val result = sessionDao.fetchSessions().first()
+        assertThat(session.title, `is`(result.title))
     }
 }
