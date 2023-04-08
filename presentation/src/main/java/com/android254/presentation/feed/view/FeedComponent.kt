@@ -46,7 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
@@ -137,7 +137,7 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
 @Preview
 @Composable
 fun Preview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         FeedComponent(modifier = Modifier) {
         }
     }
