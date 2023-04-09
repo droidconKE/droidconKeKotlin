@@ -33,7 +33,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    BottomAppBar {
+    BottomAppBar (containerColor = MaterialTheme.colorScheme.background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
