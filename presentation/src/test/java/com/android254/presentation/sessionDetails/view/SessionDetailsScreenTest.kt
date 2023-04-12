@@ -56,7 +56,7 @@ class SessionDetailsScreenTest {
                 SessionDetailsScreen(
                     viewModel = viewModel,
                     sessionId = sessionId,
-                    onNavigationIconClick = {}
+                    onNavigationIconClick = {},
                 )
             }
         }
@@ -83,24 +83,23 @@ class SessionDetailsScreenTest {
 
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
-
         composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
-            sessionPresentationModel.speakerName
+            sessionPresentationModel.speakerName,
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_TITLE).assertTextEquals(
-            sessionPresentationModel.title
+            sessionPresentationModel.title,
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_DESCRIPTION).assertTextEquals(
-            sessionPresentationModel.description
+            sessionPresentationModel.description,
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.TIME_SLOT).assertTextEquals(
-            sessionPresentationModel.timeSlot.uppercase()
+            sessionPresentationModel.timeSlot.uppercase(),
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.ROOM).assertTextEquals(
-            sessionPresentationModel.venue.uppercase()
+            sessionPresentationModel.venue.uppercase(),
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
-            "#${sessionPresentationModel.level.uppercase()}"
+            "#${sessionPresentationModel.level.uppercase()}",
         )
     }
 
