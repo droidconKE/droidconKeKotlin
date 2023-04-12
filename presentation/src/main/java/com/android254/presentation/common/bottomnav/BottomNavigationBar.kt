@@ -43,7 +43,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                 icon = {
                     Icon(
                         painter = painterResource(id = destination.icon),
-                        contentDescription = destination.title,
+                        contentDescription = destination.title
                     )
                 },
                 label = { Text(text = destination.title) },
@@ -61,14 +61,14 @@ fun BottomNavigationBar(navController: NavHostController) {
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f),
+                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
                     )
                     else -> NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f),
+                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
 
                     )
                 },
