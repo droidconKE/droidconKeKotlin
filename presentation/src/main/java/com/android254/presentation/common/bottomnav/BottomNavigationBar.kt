@@ -18,32 +18,32 @@ package com.android254.presentation.common.bottomnav
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationDestinations
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import androidx.compose.runtime.getValue
-import androidx.navigation.NavDestination.Companion.hierarchy
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    BottomAppBar (containerColor = MaterialTheme.colorScheme.background) {
+    BottomAppBar(containerColor = MaterialTheme.colorScheme.background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-
         bottomNavigationDestinations.forEach { destination ->
-            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
+            val selected =
+                currentDestination?.hierarchy?.any { it.route == destination.route } == true
             NavigationBarItem(
                 selected = selected,
                 icon = {
                     Icon(
                         painter = painterResource(id = destination.icon),
-                        contentDescription = destination.title
+                        contentDescription = destination.title,
                     )
                 },
                 label = { Text(text = destination.title) },
@@ -55,23 +55,23 @@ fun BottomNavigationBar(navController: NavHostController) {
                         popUpTo(Screens.Home.route)
                     }
                 },
-                colors =  when {
+                colors = when {
                     isSystemInDarkTheme() -> NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.surfaceTint,
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor =  MaterialTheme.colorScheme.background.copy(alpha = 0f)
+                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f),
                     )
                     else -> NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor =  MaterialTheme.colorScheme.background.copy(alpha = 0f)
+                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f),
 
                     )
-                }
+                },
             )
         }
     }
