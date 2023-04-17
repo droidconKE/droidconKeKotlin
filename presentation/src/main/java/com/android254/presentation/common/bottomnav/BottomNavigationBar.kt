@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.common.bottomnav
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,22 +54,13 @@ fun BottomNavigationBar(navController: NavHostController) {
                         popUpTo(Screens.Home.route)
                     }
                 },
-                colors = when {
-                    isSystemInDarkTheme() -> NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.surfaceTint,
-                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                        selectedTextColor = MaterialTheme.colorScheme.secondary,
-                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
-                    )
-                    else -> NavigationBarItemDefaults.colors(
+                colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         unselectedIconColor = MaterialTheme.colorScheme.onBackground,
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
                         indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
-                    )
-                },
+                    ),
             )
         }
     }
