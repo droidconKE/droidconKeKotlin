@@ -42,7 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.droidconKE2023.presentation.R
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratBold
@@ -141,7 +141,7 @@ fun PlatformButton(platform: String, icon: Int) {
 @Preview(showBackground = true)
 @Composable
 fun PlatformButtonPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         PlatformButton("Twitter", R.drawable.ic_whatsapp)
     }
 }
@@ -149,7 +149,7 @@ fun PlatformButtonPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PFeedShareSectionPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         FeedShareSection()
     }
 }
