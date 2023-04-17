@@ -69,7 +69,6 @@ fun BottomNavigationBar(navController: NavHostController) {
                         selectedTextColor = MaterialTheme.colorScheme.secondary,
                         unselectedTextColor = MaterialTheme.colorScheme.onBackground,
                         indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
-
                     )
                 },
             )
