@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessions.view
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -33,7 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
