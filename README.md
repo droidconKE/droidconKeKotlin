@@ -242,6 +242,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Kibet Theo</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/joenjogu">
+            <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
+            <br />
+            <sub><b>Joenjogu</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->
