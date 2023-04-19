@@ -37,8 +37,6 @@ import org.robolectric.shadows.ShadowLog
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class SessionDetailsScreenTest {
 
-
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -52,7 +50,6 @@ class SessionDetailsScreenTest {
         val viewModel = SessionDetailsViewModel(sessionsRepo = repo)
 
         coEvery { repo.fetchSessionById(any()) } returns ResourceResult.Success(data = mockSession)
-
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
@@ -105,15 +102,12 @@ class SessionDetailsScreenTest {
         composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
             "#${sessionPresentationModel.level.uppercase()}"
         )
-
-
     }
 
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.onNodeWithTag(TestTag.TWITTER_HANDLE_TEXT, true).apply {
             assertExists()
-
         }
     }
 

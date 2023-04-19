@@ -102,6 +102,13 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
+## Compatibility
+
+This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API levels 25 and below. Specifically the Kotlin `kotlinx.datetime` API which depends on Java's `java.time`.
+This allows use of `kotlinx.datetime.LocalDate` without having to wrap it in `@RequiresAPI(Build.VERSION_CODES.O)` and also backports the fix to API level 21.
+More on Desugaring using Android Gradle Plugin can be found [here](https://developer.android.com/studio/write/java8-support).
+Instructions on how to set up and add `coreLibraryDesugaring` to your project can be found [here](https://developer.android.com/studio/write/java8-support#library-desugaring).
+
 ## Contributing
 
 Contributions are always welcome!

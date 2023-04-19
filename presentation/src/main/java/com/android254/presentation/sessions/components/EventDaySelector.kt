@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessions.components
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -30,14 +28,11 @@ import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.view.SessionsViewModel
 import kotlinx.datetime.LocalDate
 
-@RequiresApi(Build.VERSION_CODES.O)
 val droidconEventDays = listOf(
     EventDate(LocalDate(2023, 11, 16)),
     EventDate(LocalDate(2023, 11, 17)),
     EventDate(LocalDate(2023, 11, 18)),
 )
-
-@RequiresApi(Build.VERSION_CODES.O)
 
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
