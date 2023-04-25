@@ -202,6 +202,7 @@ val md_theme_dark_onSurfaceVariant = Color(0xFF45454f)
  * DARK SURFACE TINT
  */
 val md_theme_dark_surfaceTint = Color(0xFF7DE1C3)
+val md_theme_dark_surfaceTintColor = Color(0xFF7DE1C3)
 
 
 /**
