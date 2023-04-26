@@ -166,6 +166,13 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
+        <a href="https://github.com/Raynafs">
+            <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/chege4179">
             <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
             <br />
@@ -177,6 +184,13 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
             <sub><b>Hannah Olukoye</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
         </a>
     </td>
     <td align="center">
@@ -192,7 +206,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Amos Nyaburi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joelmuraguri">
             <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="joelmuraguri"/>
@@ -206,8 +221,7 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Beatrice Kinya</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/Dbriane208">
             <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
@@ -235,14 +249,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/kibettheophilus">
-            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
-            <br />
-            <sub><b>Kibet Theo</b></sub>
-        </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
