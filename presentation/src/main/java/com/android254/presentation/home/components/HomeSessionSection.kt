@@ -44,6 +44,7 @@ import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratMedium
 import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun HomeSessionSection(
@@ -116,7 +117,8 @@ fun HomeSectionHeader(
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
                     fontFamily = MontserratMedium
-                )
+                ),
+                color = MaterialTheme.chaiColorsPalette.textColorPrimary
             )
             Spacer(modifier = Modifier.width(4.dp))
             Box(
