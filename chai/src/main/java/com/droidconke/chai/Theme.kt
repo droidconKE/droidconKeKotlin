@@ -22,12 +22,18 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.droidconke.chai.atoms.*
+import com.droidconke.chai.colors.ChaiColors
+import com.droidconke.chai.colors.ChaiDarkColorPalette
+import com.droidconke.chai.colors.ChaiLightColorPalette
+import com.droidconke.chai.colors.LocalChaiColorsPalette
 
 private val LightColors = lightColorScheme(
     primary = md_theme_light_primary,
@@ -88,6 +94,7 @@ private val DarkColors = darkColorScheme(
     inversePrimary = md_theme_dark_inversePrimary,
     surfaceTint = md_theme_dark_surfaceTint,
 )
+
 @Composable
 fun ChaiDCKE22Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -99,6 +106,7 @@ fun ChaiDCKE22Theme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
+
         darkTheme -> DarkColors
         else -> LightColors
     }
@@ -107,15 +115,27 @@ fun ChaiDCKE22Theme(
         SideEffect {
             val activity = view.context.findActivity()
             activity.window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = darkTheme
+            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars =
+                darkTheme
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
+    val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
+
+    CompositionLocalProvider(
+        LocalChaiColorsPalette provides customColorsPalette
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content
+        )
+    }
 }
+
+val MaterialTheme.chaiColorsPalette: ChaiColors
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalChaiColorsPalette.current
 
 /**
  * Iterate through the context wrapper to find the closest activity associated with this context
