@@ -31,10 +31,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun DroidconAppBarWithFilter(

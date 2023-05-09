@@ -17,13 +17,13 @@ package com.android254.presentation.auth
 
 import android.content.Context
 import android.content.Intent
-import com.android254.droidconKE2023.presentation.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
+import ke.droidcon.kotlin.presentation.R
 
 class GoogleSignInHandler @Inject constructor(@ApplicationContext private val context: Context) {
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

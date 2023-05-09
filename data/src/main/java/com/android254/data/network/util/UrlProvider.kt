@@ -21,7 +21,7 @@ import com.android254.data.network.Constants.EVENT_PROD_BASE_URL
 import com.android254.data.network.Constants.ORG_DEV_BASE_URL
 import com.android254.data.network.Constants.ORG_PROD_BASE_URL
 import com.android254.data.network.Constants.PROD_BASE_URL
-import com.android254.droidconKE2023.data.BuildConfig
+import ke.droidcon.kotlin.data.BuildConfig
 
 fun provideBaseUrl(): String = if (BuildConfig.DEBUG) DEV_BASE_URL else PROD_BASE_URL
 

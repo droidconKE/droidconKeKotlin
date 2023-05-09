@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android254.droidconKE2023.domain"
+    namespace = "ke.droidcon.kotlin.domain"
 }
 
 dependencies {

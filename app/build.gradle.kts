@@ -30,7 +30,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.android254.droidconKE2023"
+        applicationId = "ke.droidcon.kotlin"
         minSdk = 21
         targetSdk = 33
         versionCode = 1

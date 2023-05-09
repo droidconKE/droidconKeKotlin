@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.theme.DroidconKE2023Theme
@@ -55,6 +54,7 @@ import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun AboutScreen(

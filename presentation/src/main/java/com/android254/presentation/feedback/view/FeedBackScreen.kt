@@ -46,10 +46,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.droidconke.chai.components.CButton
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedBackScreen(

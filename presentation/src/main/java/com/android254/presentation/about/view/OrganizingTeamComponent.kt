@@ -39,13 +39,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.ChaiDarkerGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun OrganizingTeamComponent(

@@ -1,34 +1,45 @@
 {
   "project_info": {
-    "project_number": "181567258682",
-    "project_id": "droidconke2023",
-    "storage_bucket": "droidconke2023.appspot.com"
+    "project_number": "602867001820",
+    "firebase_url": "https://droidconke-70d60.firebaseio.com",
+    "project_id": "droidconke-70d60",
+    "storage_bucket": "droidconke-70d60.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:181567258682:android:c03a823be9ce47aceeb503",
+        "mobilesdk_app_id": "1:602867001820:android:e35cecb9b334a1dd710719",
         "android_client_info": {
-          "package_name": "com.android254.droidconKE2023"
+          "package_name": "ke.droidcon.kotlin"
         }
       },
       "oauth_client": [
         {
-          "client_id": "181567258682-g2tqet9t80gpdfq7d274i2b9ongpe4i7.apps.googleusercontent.com",
+          "client_id": "602867001820-hcujt6b2lach0r72khh4it6ugmhjoohl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBCNfabdZXZgVfcgXCJ2KhNP-GHwXu5cl8"
+          "current_key": "AIzaSyActSHcjEqq3KUyciBZTA--iuooqBugFKM"
+        },
+        {
+          "current_key": "AIzaSyBY00roSeNZOq5AaLnHWYkSN-FnxtkUrrc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "181567258682-g2tqet9t80gpdfq7d274i2b9ongpe4i7.apps.googleusercontent.com",
+              "client_id": "602867001820-hcujt6b2lach0r72khh4it6ugmhjoohl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "602867001820-34dovhe457imsa2dg1acnmfuf233rijq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flutterKenya.droidconkeflutterflowversion"
+              }
             }
           ]
         }
