@@ -15,11 +15,11 @@
  */
 package com.android254.data.network.util
 
-import com.android254.droidconKE2023.data.R
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import ke.droidcon.kotlin.data.R
 import org.junit.Test
 
 class RemoteFeatureToggleTest {
