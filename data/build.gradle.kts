@@ -24,7 +24,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android254.droidconKE2023.data"
+    namespace = "ke.droidcon.kotlin.data"
 
     ksp {
         arg("room.schemaLocation", "$projectDir/schemas")

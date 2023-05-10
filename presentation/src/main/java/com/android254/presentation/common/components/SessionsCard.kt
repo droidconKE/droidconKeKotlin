@@ -53,11 +53,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.domain.models.ResourceResult
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
+import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
 @Composable

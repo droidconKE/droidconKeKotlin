@@ -47,12 +47,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.droidconke.chai.components.COutlinedButton
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionDetailsScreen(

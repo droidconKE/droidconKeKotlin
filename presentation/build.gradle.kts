@@ -22,7 +22,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android254.droidconKE2023.presentation"
+    namespace = "ke.droidcon.kotlin.presentation"
 
     defaultConfig {
         vectorDrawables {

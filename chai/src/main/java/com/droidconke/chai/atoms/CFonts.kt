@@ -17,7 +17,7 @@ package com.droidconke.chai.atoms
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import com.android254.droidconKE2023.chai.R
+import ke.droidcon.kotlin.chai.R
 
 /**
  * Chai typography:

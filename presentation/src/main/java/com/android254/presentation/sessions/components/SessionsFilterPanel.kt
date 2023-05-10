@@ -29,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
@@ -37,6 +36,7 @@ import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
 import com.droidconke.chai.components.CButton
+import ke.droidcon.kotlin.presentation.R
 import java.util.*
 
 private fun loadFilters(): List<SessionsFilterOption> {

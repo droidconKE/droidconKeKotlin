@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.DroidconAppBar
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.SponsorsCard
@@ -44,6 +43,7 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.atoms.MontserratSemiBold
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeScreen(

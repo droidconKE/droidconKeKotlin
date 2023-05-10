@@ -32,7 +32,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.android254.droidconKE2023.presentation.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.theme.DroidconKE2023Theme
@@ -42,6 +41,7 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeBannerSection(homeViewState: HomeViewState) {

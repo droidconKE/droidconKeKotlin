@@ -34,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.android254.droidconKE2023.presentation.R
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -44,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
 @Composable
