@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun Loader(message: String = "Loading...") {

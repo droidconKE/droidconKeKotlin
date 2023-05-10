@@ -15,9 +15,9 @@
  */
 package com.android254.data.network.util
 
-import com.android254.droidconKE2023.data.R
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import ke.droidcon.kotlin.data.R
 import timber.log.Timber
 
 class RemoteFeatureToggle(

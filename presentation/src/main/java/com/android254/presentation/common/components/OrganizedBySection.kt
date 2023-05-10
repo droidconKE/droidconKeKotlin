@@ -38,7 +38,7 @@ import com.droidconke.chai.atoms.MontserratBold
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun OrganizedBySection(

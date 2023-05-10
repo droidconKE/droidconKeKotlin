@@ -15,7 +15,7 @@
  */
 package com.android254.data.network.util
 
-import com.android254.droidconKE2023.data.BuildConfig
+import ke.droidcon.kotlin.data.BuildConfig
 import java.util.concurrent.TimeUnit
 
 class RemoteConfigConfig {

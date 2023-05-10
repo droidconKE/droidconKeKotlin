@@ -31,7 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionsLoadingSkeleton() {

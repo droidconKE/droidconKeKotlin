@@ -15,7 +15,7 @@
  */
 package com.android254.presentation.sessions.utils
 
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 enum class SessionsFilterCategory(val resId: Int) {
     Level(R.string.title_filter_level),

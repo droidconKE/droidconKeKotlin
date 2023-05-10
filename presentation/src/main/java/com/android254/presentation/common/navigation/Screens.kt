@@ -16,7 +16,7 @@
 package com.android254.presentation.common.navigation
 
 import androidx.annotation.DrawableRes
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: String) {
     object Home : Screens("/home", R.drawable.home_icon, "Home")
