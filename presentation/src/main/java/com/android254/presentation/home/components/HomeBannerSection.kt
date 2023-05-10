@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -62,7 +63,10 @@ fun HomeEventPoster() {
     Image(
         painter = painterResource(id = R.drawable.droidcon_event_banner),
         contentDescription = stringResource(id = R.string.home_banner_event_poster_description),
-        modifier = Modifier.fillMaxWidth().testTag("home_event_poster"),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .testTag("home_event_poster"),
         contentScale = ContentScale.FillWidth
     )
 }
@@ -71,7 +75,9 @@ fun HomeEventPoster() {
 fun HomeCallForSpeakersLink() {
     Card(
         shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.fillMaxWidth().aspectRatio(4.2f)
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(4.2f)
             .testTag("home_call_for_speakers_link"),
         colors = CardDefaults.cardColors(containerColor = ChaiTeal)
     ) {
@@ -88,7 +94,9 @@ fun HomeCallForSpeakersLink() {
             )
 
             Column(
-                modifier = Modifier.fillMaxHeight().padding(end = 20.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(end = 20.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
