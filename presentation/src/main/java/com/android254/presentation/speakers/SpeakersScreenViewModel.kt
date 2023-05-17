@@ -16,28 +16,45 @@
 package com.android254.presentation.speakers
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+sealed interface SpeakersScreenUiState {
+
+    object Loading : SpeakersScreenUiState
+
+    data class Success(val speakers: List<SpeakerUI>  ) : SpeakersScreenUiState
+
+    data class Error(val message: String ) : SpeakersScreenUiState
+}
+
 @HiltViewModel
-class SpeakersViewModel @Inject constructor(
+class SpeakersScreenViewModel @Inject constructor(
     private val speakersRepo: SpeakersRepo
 ) : ViewModel() {
 
-    val isLoading = MutableStateFlow(false)
-    val message = MutableSharedFlow<String>()
+    private val _uiState = MutableStateFlow<SpeakersScreenUiState>(SpeakersScreenUiState.Loading)
+    val uiState = _uiState.asStateFlow()
 
-    suspend fun getSpeakers(): List<SpeakerUI> {
-        isLoading.value = true
+    init {
+        viewModelScope.launch {
+            getSpeakers()
+        }
+    }
+
+    suspend fun getSpeakers() {
         when (val result = speakersRepo.fetchSpeakers()) {
             is ResourceResult.Success -> {
-                isLoading.value = false
-                return result.data?.map {
+                val speakers =  result.data?.map {
                     SpeakerUI(
                         id = 1,
                         imageUrl = it.avatar,
@@ -47,39 +64,13 @@ class SpeakersViewModel @Inject constructor(
                         twitterHandle = it.twitter
                     )
                 } ?: emptyList()
+                _uiState.value = SpeakersScreenUiState.Success(speakers = speakers)
             }
             is ResourceResult.Error -> {
-                message.tryEmit(result.message)
-            }
-            else -> {}
-        }
-        isLoading.value = false
-        return emptyList()
-    }
+                _uiState.value = SpeakersScreenUiState.Error(message = result.message)
 
-    suspend fun getSpeakerById(id: Int): SpeakerUI {
-        isLoading.value = true
-        when (val result = speakersRepo.getSpeakerById(id)) {
-            is ResourceResult.Success -> {
-                val data = result.data
-                return if (data == null) {
-                    SpeakerUI()
-                } else {
-                    SpeakerUI(
-                        id = 1,
-                        imageUrl = data.avatar,
-                        name = data.name,
-                        tagline = data.tagline,
-                        bio = data.biography,
-                        twitterHandle = data.twitter
-                    )
-                }
-            }
-            is ResourceResult.Error -> {
-                message.tryEmit(result.message)
             }
             else -> {}
         }
-        return SpeakerUI()
     }
 }
