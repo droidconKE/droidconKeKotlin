@@ -15,6 +15,8 @@
  */
 package com.android254.presentation.sessions.components
 
+import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
@@ -39,66 +41,67 @@ import com.droidconke.chai.components.CButton
 import ke.droidcon.kotlin.presentation.R
 import java.util.*
 
-private fun loadFilters(): List<SessionsFilterOption> {
+private fun loadFilters(context: Context): List<SessionsFilterOption> {
+    val resources:Resources = context.resources
     return listOf(
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Keynote",
+            label = resources.getString(R.string.session_filter_label_keynote),
             value = "keynote"
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Codelab",
+            label = resources.getString(R.string.session_filter_label_codelab),
             value = "codelab"
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Session",
+            label = resources.getString(R.string.session_filter_label_session),
             value = "Session"
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Workshop",
+            label = resources.getString(R.string.session_filter_label_workshop),
             value = "Workshop"
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Lightning Talk",
+            label = resources.getString(R.string.session_filter_label_lightning_talk),
             value = "Lightning talk"
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
-            label = "Panel Discussion",
+            label = resources.getString(R.string.session_filter_label_panel_discussion),
             value = "Panel discussion"
         ),
         SessionsFilterOption(
-            label = "Room A",
+            label = resources.getString(R.string.session_filter_label_room_a),
             value = "Room A",
             type = SessionsFilterCategory.Room
         ),
         SessionsFilterOption(
-            label = "Room B",
+            label = resources.getString(R.string.session_filter_label_room_b),
             value = "Room B",
             type = SessionsFilterCategory.Room
         ),
         SessionsFilterOption(
-            label = "Room C",
+            label = resources.getString(R.string.session_filter_label_room_c),
             value = "Room C",
             type = SessionsFilterCategory.Room
         ),
 
         SessionsFilterOption(
-            label = "Beginner",
+            label = resources.getString(R.string.session_filter_label_beginner),
             value = "Introductory and overview",
             type = SessionsFilterCategory.Level
         ),
         SessionsFilterOption(
-            label = "Intermediate",
+            label = resources.getString(R.string.session_filter_label_intermediate),
             value = "Intermediate",
             type = SessionsFilterCategory.Level
         ),
         SessionsFilterOption(
-            label = "Advanced",
+            label = resources.getString(R.string.session_filter_label_advanced),
             value = "Advanced",
             type = SessionsFilterCategory.Level
         ),
@@ -118,7 +121,9 @@ fun SessionsFilterPanel(
         fontFamily = MontserratBold
     )
 
-    val selectableFilters = loadFilters()
+    val context = LocalContext.current
+
+    val selectableFilters = loadFilters(context)
 
     val groupedFilters = selectableFilters.groupBy {
         it.type
@@ -126,7 +131,6 @@ fun SessionsFilterPanel(
     val currentSelections = viewModel.selectedFilterOptions.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    val context = LocalContext.current
 
     Column(
         modifier = Modifier

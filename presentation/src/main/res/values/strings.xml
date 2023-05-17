@@ -63,4 +63,17 @@
     <string name="star_session_icon_description">star session</string>
     <string name="retry_label">Retry</string>
     <string name="spacer_icon_descript">spacer icon</string>
+
+    <string name="session_filter_label_keynote">Keynote</string>
+    <string name="session_filter_label_codelab">Codelab</string>
+    <string name="session_filter_label_session">Session</string>
+    <string name="session_filter_label_workshop">Workshop</string>
+    <string name="session_filter_label_lightning_talk">Lightning Talk</string>
+    <string name="session_filter_label_panel_discussion">Panel Discussion</string>
+    <string name="session_filter_label_room_a">Room A</string>
+    <string name="session_filter_label_room_b">Room B</string>
+    <string name="session_filter_label_room_c">Room C</string>
+    <string name="session_filter_label_beginner">Beginner</string>
+    <string name="session_filter_label_intermediate">Intermediate</string>
+    <string name="session_filter_label_advanced">Advanced</string>
 </resources>
