@@ -45,11 +45,6 @@ class SpeakersScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SpeakersScreenUiState>(SpeakersScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            getSpeakers()
-        }
-    }
 
     suspend fun getSpeakers() {
         when (val result = speakersRepo.fetchSpeakers()) {

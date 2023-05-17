@@ -74,6 +74,9 @@ fun SpeakerDetailsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
     navigateBack: () -> Unit = {}
 ) {
+    LaunchedEffect(key1 = true){
+        speakersDetailsScreenViewModel.getSpeakerById(id = id)
+    }
     val uriHandler = LocalUriHandler.current
     val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
