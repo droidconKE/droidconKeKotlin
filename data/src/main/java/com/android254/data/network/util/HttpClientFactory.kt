@@ -46,7 +46,7 @@ class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProv
 
         install(DefaultRequest) {
             header(HttpHeaders.ContentType, ContentType.Application.Json)
-            header("Api-Authorization-Key", remoteFeatureToggle.getString("API_KEY"))
+            header("Api-Authorization-Key", "droidconKe-2020")
         }
 
         expectSuccess = true

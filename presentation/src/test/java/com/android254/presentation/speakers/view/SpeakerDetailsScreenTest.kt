@@ -22,7 +22,7 @@ import androidx.compose.ui.test.performScrollTo
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
-import com.android254.presentation.speakers.SpeakersViewModel
+import com.android254.presentation.speakers.SpeakersScreenViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.Rule
@@ -49,7 +49,7 @@ class SpeakerDetailsScreenTest {
         )
 
         composeTestRule.setContent {
-            SpeakerDetailsScreen(id = 0, SpeakersViewModel(speakersRepo))
+            SpeakerDetailsScreen(id = 0, SpeakersScreenViewModel(speakersRepo))
         }
 
         with(composeTestRule) {
