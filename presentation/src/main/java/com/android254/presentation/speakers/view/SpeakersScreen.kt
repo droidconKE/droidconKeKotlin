@@ -68,6 +68,10 @@ fun SpeakersScreen(
     val context = LocalContext.current
     val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
+    LaunchedEffect(key1 = true){
+        speakersScreenViewModel.getSpeakers()
+    }
+
     Scaffold(
         topBar = {
             SmallTopAppBar(

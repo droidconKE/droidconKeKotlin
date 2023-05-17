@@ -33,13 +33,7 @@ class SpeakerDetailsScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    init {
-        savedStateHandle.get<Int>("speakerId")?.let{
-            viewModelScope.launch {
-                getSpeakerById(id = it)
-            }
-        }
-    }
+
 
     suspend fun getSpeakerById(id: Int) {
         when (val result = speakersRepo.getSpeakerById(id)) {
