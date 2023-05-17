@@ -98,7 +98,7 @@ private fun loadFilters(): List<SessionsFilterOption> {
             type = SessionsFilterCategory.Level
         ),
         SessionsFilterOption(
-            label = "advanced",
+            label = "Advanced",
             value = "Advanced",
             type = SessionsFilterCategory.Level
         ),
