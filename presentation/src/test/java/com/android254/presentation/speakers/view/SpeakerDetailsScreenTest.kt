@@ -19,11 +19,14 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
+import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
+import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
 import com.android254.presentation.speakers.SpeakersScreenViewModel
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
@@ -35,12 +38,14 @@ import org.robolectric.annotation.Config
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class SpeakerDetailsScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
+    private val mockSavedStateHandle = mockk<SavedStateHandle>()
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
     fun `all components should be displayed properly`() {
+        every { mockSavedStateHandle.get<Int>("speakerId") } returns 0
         coEvery { speakersRepo.getSpeakerById(any()) } returns ResourceResult.Success(
             Speaker(
                 name = "Harun Wangereka",
@@ -49,7 +54,8 @@ class SpeakerDetailsScreenTest {
         )
 
         composeTestRule.setContent {
-            SpeakerDetailsScreen(id = 0, SpeakersScreenViewModel(speakersRepo))
+            SpeakerDetailsScreen(id = 0, SpeakerDetailsScreenViewModel(
+                speakersRepo = speakersRepo, savedStateHandle = mockSavedStateHandle))
         }
 
         with(composeTestRule) {
