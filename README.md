@@ -216,6 +216,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Njoguu">
+            <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
+            <br />
+            <sub><b>Whoisnjoguu</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
             <br />
@@ -242,15 +249,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Martin Thuo</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/michaelbukachi">
             <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
