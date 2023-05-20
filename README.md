@@ -1,6 +1,6 @@
 # droidcon KE 23 🔥🔨
 
-Android app for the 4th Android Developer conference- droidcon to be held in Nairobi date to be announced.
+Android app for the 4th Android Developer conference- droidcon to be held in Nairobi on 8th - 10th November.
 
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
 and is optimized for phones and tablets of all shapes and sizes.
