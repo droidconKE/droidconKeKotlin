@@ -216,6 +216,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/mertoenjosh">
+            <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
+            <br />
+            <sub><b>Martin Thuo</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Njoguu">
             <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
             <br />
@@ -241,13 +248,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
             <br />
             <sub><b>Jacquiline Gitau</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/mertoenjosh">
-            <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
-            <br />
-            <sub><b>Martin Thuo</b></sub>
         </a>
     </td></tr>
 <tr>
