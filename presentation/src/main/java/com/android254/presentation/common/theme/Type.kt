@@ -136,5 +136,5 @@ val AppTypography = Typography(
         letterSpacing = 0.10000000149011612.sp,
         lineHeight = 20.sp,
         fontSize = 14.sp
-    ),
+    )
 )

@@ -59,7 +59,7 @@ private val LightColors = lightColorScheme(
     inverseSurface = md_theme_light_inverseSurface,
     inverseOnSurface = md_theme_light_inverseOnSurface,
     inversePrimary = md_theme_light_inversePrimary,
-    surfaceTint = md_theme_light_surfaceTint,
+    surfaceTint = md_theme_light_surfaceTint
 )
 
 private val DarkColors = darkColorScheme(
@@ -89,8 +89,9 @@ private val DarkColors = darkColorScheme(
     inverseSurface = md_theme_dark_inverseSurface,
     inverseOnSurface = md_theme_dark_inverseOnSurface,
     inversePrimary = md_theme_dark_inversePrimary,
-    surfaceTint = md_theme_dark_surfaceTint,
+    surfaceTint = md_theme_dark_surfaceTint
 )
+
 @Composable
 fun DroidconKE2023Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),

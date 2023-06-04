@@ -52,7 +52,7 @@ fun CParagraph(dParagraph: String) {
             color = ChaiBlack,
             fontSize = 12.sp,
             fontWeight = FontWeight.W500,
-            fontFamily = MontserratRegular,
+            fontFamily = MontserratRegular
         ),
         modifier = Modifier.fillMaxWidth()
     )
@@ -66,7 +66,7 @@ fun CPageTitle(pageTitle: String) {
             color = ChaiBlue,
             fontSize = 33.sp,
             fontWeight = FontWeight.W300,
-            fontFamily = MontserratThin,
+            fontFamily = MontserratThin
 
         ),
         modifier = Modifier.fillMaxWidth()
@@ -81,7 +81,7 @@ fun CSubtitle(dSubtitle: String) {
             color = ChaiRed,
             fontSize = 15.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = MontserratRegular,
+            fontFamily = MontserratRegular
 
         ),
         modifier = Modifier.fillMaxWidth()
@@ -96,7 +96,7 @@ fun CActionText(cAction: String) {
             color = ChaiRed,
             fontSize = 15.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = MontserratRegular,
+            fontFamily = MontserratRegular
 
         ),
         modifier = Modifier.fillMaxWidth()

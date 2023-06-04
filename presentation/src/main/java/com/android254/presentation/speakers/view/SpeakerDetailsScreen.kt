@@ -59,13 +59,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.android254.presentation.speakers.SpeakersScreenViewModel
 import com.droidconke.chai.atoms.ChaiBlue
 import ke.droidcon.kotlin.presentation.R
-
 
 @Composable
 fun SpeakerDetailsScreen(
@@ -74,18 +71,17 @@ fun SpeakerDetailsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
     navigateBack: () -> Unit = {}
 ) {
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         speakersDetailsScreenViewModel.getSpeakerById(id = id)
     }
     val uriHandler = LocalUriHandler.current
     val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
-    when(uiState){
-
+    when (uiState) {
         is SpeakerDetailsScreenUiState.SpeakerNotFound -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-            ){
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = uiState.message
@@ -94,8 +90,8 @@ fun SpeakerDetailsScreen(
         }
         is SpeakerDetailsScreenUiState.Error -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-            ){
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     text = uiState.message
@@ -104,8 +100,8 @@ fun SpeakerDetailsScreen(
         }
         is SpeakerDetailsScreenUiState.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize(),
-            ){
+                modifier = Modifier.fillMaxSize()
+            ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
@@ -277,9 +273,7 @@ fun SpeakerDetailsScreen(
                 }
             }
         }
-
     }
-
 }
 
 @Preview

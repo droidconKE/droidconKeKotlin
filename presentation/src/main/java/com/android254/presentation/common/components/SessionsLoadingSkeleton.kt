@@ -38,7 +38,7 @@ fun SessionsLoadingSkeleton() {
     val shimmerColors = listOf(
         Color.LightGray.copy(alpha = 0.6f),
         Color.LightGray.copy(alpha = 0.2f),
-        Color.LightGray.copy(alpha = 0.6f),
+        Color.LightGray.copy(alpha = 0.6f)
     )
 
     val transition = rememberInfiniteTransition()

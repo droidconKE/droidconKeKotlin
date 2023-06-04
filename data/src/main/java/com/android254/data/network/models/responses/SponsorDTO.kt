@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SponsorsPagedResponse(
-    val data: List<SponsorDTO>,
+    val data: List<SponsorDTO>
 )
 
 @Serializable
