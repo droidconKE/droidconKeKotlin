@@ -33,7 +33,6 @@ import javax.inject.Inject
 class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProvider, private val remoteFeatureToggle: RemoteFeatureToggle) {
 
     fun create(engine: HttpClientEngine) = HttpClient(engine) {
-
         install(ContentNegotiation) {
             json(
                 Json {

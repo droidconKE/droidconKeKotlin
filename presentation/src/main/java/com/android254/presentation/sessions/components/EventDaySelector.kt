@@ -31,7 +31,7 @@ import kotlinx.datetime.LocalDate
 val droidconEventDays = listOf(
     EventDate(LocalDate(2023, 11, 16)),
     EventDate(LocalDate(2023, 11, 17)),
-    EventDate(LocalDate(2023, 11, 18)),
+    EventDate(LocalDate(2023, 11, 18))
 )
 
 fun ordinal(i: Int): String {

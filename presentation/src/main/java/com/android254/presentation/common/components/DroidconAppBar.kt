@@ -35,7 +35,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
-    onActionClicked: () -> Unit = {},
+    onActionClicked: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -45,7 +45,6 @@ fun DroidconAppBar(
             .testTag("droidcon_topBar_notSignedIn"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)

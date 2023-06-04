@@ -95,7 +95,7 @@ fun EventDaySelectorButton(
         shadowElevation = shadowElevation,
         border = border,
         interactionSource = interactionSource,
-        enabled = enabled,
+        enabled = enabled
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
@@ -107,13 +107,13 @@ fun EventDaySelectorButton(
                         text = title,
                         style = TextStyle(
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Bold
                         )
                     )
                     Text(
                         text = subtitle,
                         style = TextStyle(
-                            fontSize = 11.sp,
+                            fontSize = 11.sp
                         )
                     )
                 }

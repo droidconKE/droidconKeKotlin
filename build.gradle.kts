@@ -13,7 +13,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.0" apply false
     id("com.google.devtools.ksp") version "1.8.0-1.0.9" apply true
     kotlin("plugin.serialization") version "1.6.21"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
     id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
     id("com.diffplug.spotless") version "6.0.0"
 }

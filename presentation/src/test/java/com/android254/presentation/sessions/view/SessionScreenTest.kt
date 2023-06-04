@@ -55,7 +55,7 @@ class SessionScreenTest {
     @Test
     fun hasExpectedButtons() {
         val navController = TestNavHostController(
-            ApplicationProvider.getApplicationContext(),
+            ApplicationProvider.getApplicationContext()
         )
 
         coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Empty("")
@@ -63,7 +63,7 @@ class SessionScreenTest {
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    sessionsViewModel = SessionsViewModel(repo),
+                    sessionsViewModel = SessionsViewModel(repo)
                 )
             }
         }
@@ -78,7 +78,7 @@ class SessionScreenTest {
     @Test
     fun `should show topBar`() {
         val navController = TestNavHostController(
-            ApplicationProvider.getApplicationContext(),
+            ApplicationProvider.getApplicationContext()
         )
 
         coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Success(emptyList())
@@ -86,7 +86,7 @@ class SessionScreenTest {
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    sessionsViewModel = SessionsViewModel(repo),
+                    sessionsViewModel = SessionsViewModel(repo)
                 )
             }
         }

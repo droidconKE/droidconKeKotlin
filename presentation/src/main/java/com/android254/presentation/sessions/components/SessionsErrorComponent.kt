@@ -52,8 +52,8 @@ fun SessionsErrorComponent(
             style = TextStyle(
                 color = ChaiDarkGrey,
                 fontSize = 24.sp,
-                fontFamily = MontserratRegular,
-            ),
+                fontFamily = MontserratRegular
+            )
         )
         Spacer(
             modifier = Modifier.height(32.dp)
@@ -66,7 +66,7 @@ fun SessionsErrorComponent(
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontFamily = MontserratRegular
-                ),
+                )
             )
         }
     }
