@@ -190,23 +190,26 @@ class SessionsViewModel @Inject constructor(
     }
 
     private fun getQuery(): String {
+        val separator = ","
+        val prefix = "("
+        val postfix = ")"
         val stringBuilder = StringBuilder()
         _filterState.value?.let {
             if (it.levels.isNotEmpty()) {
                 val items =
-                    it.levels.joinToString(",", "(", ")") { value -> "'${value.lowercase()}'" }
+                    it.levels.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
                 stringBuilder.append("LOWER (sessionLevel) IN $items")
             }
             if (it.sessionTypes.isNotEmpty()) {
                 val items = it.sessionTypes.joinToString(
-                    ",", "(", ")"
+                    separator, prefix, postfix
                 ) { value -> "'${value.lowercase()}'" }
                 if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
                 stringBuilder.append("LOWER (sessionFormat) IN $items")
             }
             if (it.rooms.isNotEmpty()) {
                 val items =
-                    it.rooms.joinToString(",", "(", ")") { value -> "'${value.lowercase()}'" }
+                    it.rooms.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
                 if (stringBuilder.isNotEmpty()) {
                     stringBuilder.append(" AND ")
                 }
