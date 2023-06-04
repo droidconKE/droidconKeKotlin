@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -188,7 +189,35 @@ class SessionsViewModel @Inject constructor(
 //        return query.toSql()
     }
 
-    fun getQuery(): String = listOf("1", "2").random()
+    private fun getQuery(): String {
+        val stringBuilder = StringBuilder()
+        _filterState.value?.let {
+            if (it.levels.isNotEmpty()) {
+                val items =
+                    it.levels.joinToString(",", "(", ")") { value -> "'${value.lowercase()}'" }
+                stringBuilder.append("LOWER (sessionLevel) IN $items")
+            }
+            if (it.sessionTypes.isNotEmpty()) {
+                val items = it.sessionTypes.joinToString(
+                    ",", "(", ")"
+                ) { value -> "'${value.lowercase()}'" }
+                if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
+                stringBuilder.append("LOWER (sessionFormat) IN $items")
+            }
+            if (it.rooms.isNotEmpty()) {
+                val items =
+                    it.rooms.joinToString(",", "(", ")") { value -> "'${value.lowercase()}'" }
+                if (stringBuilder.isNotEmpty()) {
+                    stringBuilder.append(" AND ")
+                }
+                stringBuilder.append("LOWER (rooms) IN $items")
+            }
+        }
+        val where = if (stringBuilder.isNotEmpty()) {
+            "WHERE $stringBuilder"
+        } else stringBuilder
+        return "SELECT * FROM sessions $where".also { Timber.i("QUERY = $it") }
+    }
 
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
