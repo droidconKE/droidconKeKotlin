@@ -15,7 +15,7 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.models.responses.Feed
+import com.android254.data.network.models.responses.FeedDTO
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
@@ -108,7 +108,7 @@ class FeedApiTest {
             `is`(
                 DataResult.Success(
                     listOf(
-                        Feed(
+                        FeedDTO(
                             title = "Test",
                             body = "Good one",
                             topic = "droidconweb",
@@ -119,7 +119,7 @@ class FeedApiTest {
                                 LocalTime.parse("18:45:49")
                             )
                         ),
-                        Feed(
+                        FeedDTO(
                             title = "niko fine",
                             body = "this is a test",
                             topic = "droidconweb",

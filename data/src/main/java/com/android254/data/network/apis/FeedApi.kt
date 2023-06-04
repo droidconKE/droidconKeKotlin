@@ -15,7 +15,7 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.models.responses.Feed
+import com.android254.data.network.models.responses.FeedDTO
 import com.android254.data.network.models.responses.PaginatedResponse
 import com.android254.data.network.util.dataResultSafeApiCall
 import com.android254.data.network.util.provideEventBaseUrl
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class FeedApi @Inject constructor(private val client: HttpClient) {
 
     suspend fun fetchFeed(page: Int = 1, size: Int = 100) = dataResultSafeApiCall {
-        val response: PaginatedResponse<List<Feed>> =
+        val response: PaginatedResponse<List<FeedDTO>> =
             client.get("${provideEventBaseUrl()}/feeds") {
                 url {
                     parameters.append("page", page.toString())
