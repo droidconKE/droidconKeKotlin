@@ -53,7 +53,7 @@ class HomeRepoImpl @Inject constructor(
                 sessions = getSessionsFromResourceResult(sessions),
                 sessionsCount = getSessionsFromResourceResult(sessions).size,
                 sponsors = sponsors.getSponsorsList(),
-                organizers = listOf(),
+                organizers = listOf()
             )
         }
     }

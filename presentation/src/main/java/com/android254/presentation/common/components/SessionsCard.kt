@@ -72,17 +72,17 @@ fun SessionsCard(
         shape = RoundedCornerShape(5),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
-        onClick = { navigateToSessionDetails(session.id) },
+        onClick = { navigateToSessionDetails(session.id) }
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(PaddingValues(top = 20.dp, bottom = 8.dp)),
+                .padding(PaddingValues(top = 20.dp, bottom = 8.dp))
         ) {
             SessionTimeComponent(
                 session.startTime,
-                session.amOrPm,
+                session.amOrPm
             )
             Spacer(modifier = Modifier.width(8.dp))
             SessionDetails(session = session)
@@ -95,21 +95,21 @@ fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: Strin
     Column(
         modifier = Modifier
             .weight(0.15f),
-        horizontalAlignment = Alignment.End,
+        horizontalAlignment = Alignment.End
     ) {
         Text(
             text = sessionStartTime,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontSize = 18.sp,
-                fontFamily = MontserratSemiBold,
-            ),
+                fontFamily = MontserratSemiBold
+            )
         )
         Text(
             text = sessionAmOrPm,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontSize = 18.sp,
-                fontFamily = MontserratSemiBold,
-            ),
+                fontFamily = MontserratSemiBold
+            )
         )
     }
 }
@@ -119,7 +119,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
     Column(
         modifier = Modifier
             .weight(0.85f)
-            .padding(PaddingValues(start = 10.dp, end = 10.dp, bottom = 10.dp)),
+            .padding(PaddingValues(start = 10.dp, end = 10.dp, bottom = 10.dp))
     ) {
         SessionTitleComponent(session)
         Spacer(modifier = Modifier.height(6.dp))
@@ -128,7 +128,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
                 text = session.level.replaceFirstChar { it.uppercase() },
                 fontSize = 12.sp,
                 style = TextStyle(fontFamily = MontserratSemiBold),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             if (session.format.isNotEmpty() && session.level.isNotEmpty()) {
@@ -136,7 +136,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
                 Text(
                     text = "|",
                     fontSize = 12.sp,
-                    style = TextStyle(fontFamily = MontserratSemiBold),
+                    style = TextStyle(fontFamily = MontserratSemiBold)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
             }
@@ -144,7 +144,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
                 text = session.format.replaceFirstChar { it.uppercase() },
                 fontSize = 12.sp,
                 style = TextStyle(fontFamily = MontserratSemiBold),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
@@ -154,7 +154,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
         Spacer(modifier = Modifier.height(12.dp))
         SessionPresenterComponents(
             sessionSpeakerImageUrl = session.speakerImage,
-            sessionSpeakerName = session.speakerName,
+            sessionSpeakerName = session.speakerName
         )
     }
 }
@@ -162,7 +162,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
 @Composable
 fun SessionTitleComponent(
     session: SessionPresentationModel,
-    viewModel: SessionsViewModel = hiltViewModel(),
+    viewModel: SessionsViewModel = hiltViewModel()
 ) {
     val isStarred = rememberSaveable() {
         mutableStateOf(session.isStarred)
@@ -170,7 +170,7 @@ fun SessionTitleComponent(
     val scope = rememberCoroutineScope()
     Row(
         Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
     ) {
         Text(
             text = session.title,
@@ -179,9 +179,9 @@ fun SessionTitleComponent(
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
                 fontFamily = MontserratBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface
             ),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
         )
         IconButton(onClick = {
             scope.launch {
@@ -203,7 +203,7 @@ fun SessionTitleComponent(
             Icon(
                 imageVector = if (isStarred.value) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -215,7 +215,7 @@ fun SessionsDescriptionComponent(sessionDescription: String) {
         text = sessionDescription,
         style = MaterialTheme.typography.bodyLarge,
         maxLines = 5,
-        overflow = TextOverflow.Ellipsis,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -225,19 +225,19 @@ fun TimeAndVenueComponent(session: SessionPresentationModel) {
         Text(
             text = "${session.startTime} - ${session.endTime}",
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = "|",
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = session.venue.uppercase(),
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -250,15 +250,15 @@ fun SessionPresenterComponents(sessionSpeakerImageUrl: String, sessionSpeakerNam
             contentDescription = "session speaker image",
             modifier = Modifier
                 .size(30.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = sessionSpeakerName,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.primary,
-                fontFamily = MontserratSemiBold,
-            ),
+                fontFamily = MontserratSemiBold
+            )
         )
     }
 }

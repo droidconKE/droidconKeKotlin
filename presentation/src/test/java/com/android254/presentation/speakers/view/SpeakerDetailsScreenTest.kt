@@ -24,7 +24,6 @@ import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.android254.presentation.speakers.SpeakersScreenViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -54,8 +53,13 @@ class SpeakerDetailsScreenTest {
         )
 
         composeTestRule.setContent {
-            SpeakerDetailsScreen(id = 0, SpeakerDetailsScreenViewModel(
-                speakersRepo = speakersRepo, savedStateHandle = mockSavedStateHandle))
+            SpeakerDetailsScreen(
+                id = 0,
+                SpeakerDetailsScreenViewModel(
+                    speakersRepo = speakersRepo,
+                    savedStateHandle = mockSavedStateHandle
+                )
+            )
         }
 
         with(composeTestRule) {

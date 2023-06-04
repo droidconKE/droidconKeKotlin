@@ -54,7 +54,6 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -68,7 +67,6 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             val textFromNetwork = stringResource(id = R.string.placeholder_long_text)
 
             Text(
@@ -98,12 +96,11 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 TextButton(
                     onClick = {
                         onClickItem(1)
                     },
-                    modifier = Modifier.testTag("share_button"),
+                    modifier = Modifier.testTag("share_button")
                 ) {
                     Text(
                         text = stringResource(id = R.string.share),
@@ -111,7 +108,7 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         lineHeight = 25.sp,
-                        fontFamily = MontserratBold,
+                        fontFamily = MontserratBold
                     )
 
                     Icon(

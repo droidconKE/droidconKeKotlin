@@ -42,7 +42,7 @@ import ke.droidcon.kotlin.presentation.R
 import java.util.*
 
 private fun loadFilters(context: Context): List<SessionsFilterOption> {
-    val resources:Resources = context.resources
+    val resources: Resources = context.resources
     return listOf(
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
@@ -104,7 +104,7 @@ private fun loadFilters(context: Context): List<SessionsFilterOption> {
             label = resources.getString(R.string.session_filter_label_advanced),
             value = "Advanced",
             type = SessionsFilterCategory.Level
-        ),
+        )
     )
 }
 
@@ -130,7 +130,6 @@ fun SessionsFilterPanel(
     }
     val currentSelections = viewModel.selectedFilterOptions.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
-
 
     Column(
         modifier = Modifier
@@ -171,7 +170,7 @@ fun SessionsFilterPanel(
         groupedFilters.forEach { filter ->
             Column(
                 Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = filter.key.name,

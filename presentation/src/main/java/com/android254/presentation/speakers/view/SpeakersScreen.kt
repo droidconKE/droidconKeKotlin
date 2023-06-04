@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.speakers.view
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,8 +33,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,7 +49,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -68,7 +64,7 @@ fun SpeakersScreen(
     val context = LocalContext.current
     val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         speakersScreenViewModel.getSpeakers()
     }
 
@@ -112,16 +108,15 @@ fun SpeakersScreen(
             when (uiState) {
                 is SpeakersScreenUiState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
-
                 }
 
                 is SpeakersScreenUiState.Error -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
@@ -146,7 +141,6 @@ fun SpeakersScreen(
                     }
                 }
             }
-
         }
     }
 }

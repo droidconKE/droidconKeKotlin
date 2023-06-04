@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo,
+    private val sessionsRepo: SessionsRepo
 ) : ViewModel() {
 
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
@@ -43,8 +43,8 @@ class SessionsViewModel @Inject constructor(
     private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
     private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
-            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
-        ),
+            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16)
+        )
     )
     val selectedEventDate = _selectedEventDate.asStateFlow()
 
@@ -84,7 +84,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }?.toList()
                 _filterState.value = _filterState.value?.copy(
-                    levels = newValue!!,
+                    levels = newValue!!
                 )
             }
             SessionsFilterCategory.Topic -> {
@@ -97,7 +97,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    topics = newValue,
+                    topics = newValue
                 )
             }
             SessionsFilterCategory.Room -> {
@@ -110,7 +110,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    rooms = newValue,
+                    rooms = newValue
                 )
             }
             SessionsFilterCategory.SessionType -> {
@@ -123,7 +123,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value!!.copy(
-                    sessionTypes = newValue,
+                    sessionTypes = newValue
                 )
             }
         }
@@ -221,7 +221,7 @@ class SessionsViewModel @Inject constructor(
 
     suspend fun updateBookmarkStatus(
         id: String,
-        isCurrentlyStarred: Boolean,
+        isCurrentlyStarred: Boolean
     ): ResourceResult<Boolean> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
 
     fun fetchBookmarkedSessions() {

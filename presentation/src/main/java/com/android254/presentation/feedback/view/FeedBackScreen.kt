@@ -54,7 +54,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun FeedBackScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    navigateBack: () -> Unit = {},
+    navigateBack: () -> Unit = {}
 ) {
     var value by remember {
         mutableStateOf("")
@@ -76,7 +76,7 @@ fun FeedBackScreen(
                             ) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_back_arrow),
-                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                                    contentDescription = stringResource(R.string.back_arrow_icon_description)
                                 )
                             }
                         },
@@ -144,7 +144,7 @@ fun FeedBackScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .background(Color.White),
+                    .background(Color.White)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
