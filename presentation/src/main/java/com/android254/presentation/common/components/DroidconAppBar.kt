@@ -16,6 +16,7 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ fun DroidconAppBar(
     modifier: Modifier = Modifier,
     onActionClicked: () -> Unit = {}
 ) {
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -46,7 +48,7 @@ fun DroidconAppBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.droidcon_logo),
+            painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.droidcon_logo_dark) else painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
         )
         Spacer(modifier = Modifier.weight(1f))
