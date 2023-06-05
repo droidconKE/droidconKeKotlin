@@ -18,6 +18,7 @@ package com.android254.presentation.common.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,7 +60,8 @@ fun DroidconAppBarWithFeedbackButton(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.droidcon_logo),
+            painter = if (isSystemInDarkTheme()) painterResource(id = R.drawable.droidcon_logo_dark)
+                else painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
         )
         Spacer(modifier = Modifier.weight(1f))
