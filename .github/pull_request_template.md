@@ -6,7 +6,7 @@ does in a short paragraph._ please check the below boxes
 - [ ] I have followed the coding conventions
 - [ ] I have added/updated necessary tests
 - [ ] I have tested the changes added on a physical device
-- [ ] I have run `./codeAnalysis.sh` to make sure all lint/formatting checks have been done.
+- [ ] I have run `./codeAnalysis.sh` on linux/unix or `codeAnalysys.bat` on windows to make sure all lint/formatting checks have been done.
 
 ## Closes/Fixes Issues
 _Declare any issues by typing `fixes #1` or `closes #1` for example so that the automation can kick
