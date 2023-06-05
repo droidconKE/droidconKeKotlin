@@ -38,7 +38,6 @@ fun DroidconAppBar(
     modifier: Modifier = Modifier,
     onActionClicked: () -> Unit = {}
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -48,7 +47,7 @@ fun DroidconAppBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.droidcon_logo_dark) else painterResource(id = R.drawable.droidcon_logo),
+            painter = if (isSystemInDarkTheme()) painterResource(id = R.drawable.droidcon_logo_dark) else painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
         )
         Spacer(modifier = Modifier.weight(1f))
