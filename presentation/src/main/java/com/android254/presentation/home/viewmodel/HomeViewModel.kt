@@ -80,7 +80,7 @@ class HomeViewModel @Inject constructor(
             val hasNoSpeakers = speakers.isEmpty()
 
             SessionPresentationModel(
-                id = it.id.toString(),
+                id = it.id,
                 title = it.title,
                 description = it.description,
                 venue = it.rooms,
