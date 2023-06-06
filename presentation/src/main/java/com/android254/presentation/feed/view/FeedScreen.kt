@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,46 @@
 package com.android254.presentation.feed.view
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.android254.presentation.common.bottomsheet.BottomSheetScaffold
+import com.android254.presentation.common.bottomsheet.rememberBottomSheetScaffoldState
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
+import com.android254.presentation.feed.FeedViewModel
 import com.droidconke.chai.ChaiDCKE22Theme
 import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(
-    navigateToFeedbackScreen: () -> Unit = {}
+    navigateToFeedbackScreen: () -> Unit = {},
+    feedViewModel: FeedViewModel = hiltViewModel()
 ) {
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberSheetState(
-        skipHalfExpanded = true
-    )
-
-    BackHandler(bottomSheetState.isVisible) {
-        scope.launch { bottomSheetState.hide() }
-    }
-
-    Scaffold(
+    feedViewModel.fetchFeed()
+    val feedUIState = feedViewModel.feedsState.collectAsState().value
+    BottomSheetScaffold(
+        sheetContent = {
+            FeedShareSection()
+        },
+        scaffoldState = bottomSheetScaffoldState,
         topBar = {
             DroidconAppBarWithFeedbackButton(
                 onButtonClick = {
@@ -52,38 +63,38 @@ fun FeedScreen(
                 },
                 userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
             )
-        }
+        },
+        sheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        sheetElevation = 16.dp,
+        sheetPeekHeight = 0.dp
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            LazyColumn(
-                modifier = Modifier.testTag("feeds_lazy_column"),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(count = 10) {
-                    FeedComponent(modifier = Modifier.fillMaxWidth()) {
-                        scope.launch {
-                            bottomSheetState.show()
+            when (feedUIState) {
+                is FeedUIState.Error -> {}
+                FeedUIState.Loading -> {}
+                is FeedUIState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier.testTag("feeds_lazy_column"),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(feedUIState.feeds) { feedPresentationModel ->
+                            FeedComponent(modifier = Modifier.fillMaxWidth(), feedPresentationModel) {
+                                scope.launch {
+                                    if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+                                        bottomSheetScaffoldState.bottomSheetState.expand()
+                                    } else {
+                                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-
-    if (bottomSheetState.isVisible) {
-        ModalBottomSheet(
-            sheetState = bottomSheetState,
-            onDismissRequest = {
-                scope.launch {
-                    bottomSheetState.hide()
-                }
-            }
-        ) {
-            FeedShareSection()
         }
     }
 }

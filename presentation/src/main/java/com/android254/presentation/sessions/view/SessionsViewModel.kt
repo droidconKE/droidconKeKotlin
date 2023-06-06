@@ -202,7 +202,9 @@ class SessionsViewModel @Inject constructor(
             }
             if (it.sessionTypes.isNotEmpty()) {
                 val items = it.sessionTypes.joinToString(
-                    separator, prefix, postfix
+                    separator,
+                    prefix,
+                    postfix
                 ) { value -> "'${value.lowercase()}'" }
                 if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
                 stringBuilder.append("LOWER (sessionFormat) IN $items")
@@ -218,7 +220,9 @@ class SessionsViewModel @Inject constructor(
         }
         val where = if (stringBuilder.isNotEmpty()) {
             "WHERE $stringBuilder"
-        } else stringBuilder
+        } else {
+            stringBuilder
+        }
         return "SELECT * FROM sessions $where".also { Timber.i("QUERY = $it") }
     }
 

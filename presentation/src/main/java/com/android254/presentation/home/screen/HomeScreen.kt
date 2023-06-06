@@ -82,7 +82,7 @@ fun HomeScreen(
             HomeHeaderSection()
             HomeBannerSection(homeViewState)
             HomeSpacer()
-            if (homeViewState.isSessionsSectionVisible){
+            if (homeViewState.isSessionsSectionVisible) {
                 HomeSessionSection(
                     sessions = homeViewState.sessions,
                     onSessionClick = onSessionClicked,
@@ -90,7 +90,7 @@ fun HomeScreen(
                 )
                 HomeSpacer()
             }
-            if (homeViewState.isSpeakersSectionVisible){
+            if (homeViewState.isSpeakersSectionVisible) {
                 HomeSpeakersSection(
                     speakers = homeViewState.speakers,
                     navigateToSpeakers = navigateToSpeakers,

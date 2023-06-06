@@ -18,17 +18,17 @@ package com.android254.data.network.apis
 import com.android254.data.network.models.responses.FeedDTO
 import com.android254.data.network.models.responses.PaginatedResponse
 import com.android254.data.network.util.dataResultSafeApiCall
-import com.android254.data.network.util.provideEventBaseUrl
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
+import com.android254.data.network.util.provideBaseUrl
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
 import javax.inject.Inject
 
 class FeedApi @Inject constructor(private val client: HttpClient) {
 
     suspend fun fetchFeed(page: Int = 1, size: Int = 100) = dataResultSafeApiCall {
         val response: PaginatedResponse<List<FeedDTO>> =
-            client.get("${provideEventBaseUrl()}/feeds") {
+            client.get("${provideBaseUrl()}/feeds") {
                 url {
                     parameters.append("page", page.toString())
                     parameters.append("per_page", size.toString())
