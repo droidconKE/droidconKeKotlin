@@ -44,13 +44,14 @@ class HomeViewModel @Inject constructor(
     fun onGetHomeScreenDetails() {
         viewModelScope.launch {
             with(homeRepo.fetchHomeDetails()) {
-                viewState
                 viewState = viewState.copy(
-                    isPosterVisible = this.isEventBannerEnable,
-                    isCallForSpeakersVisible = this.isCallForSpeakersEnable,
-                    linkToCallForSpeakers = "",
+                    isPosterVisible = isEventBannerEnable,
+                    isCallForSpeakersVisible = isCallForSpeakersEnable,
+                    linkToCallForSpeakers = linkToCallForSpeakers,
                     isSignedIn = false,
                     speakers = speakers.toSpeakersPresentation(),
+                    isSpeakersSectionVisible = isSpeakersSessionEnable,
+                    isSessionsSectionVisible = isSessionsSectionEnable,
                     sponsors = sponsors.map { it.sponsorLogoUrl },
                     organizedBy = organizers.map { it.organizerLogoUrl },
                     sessions = sessions.toSessionsPresentation()
