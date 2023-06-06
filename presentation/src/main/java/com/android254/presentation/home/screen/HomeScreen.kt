@@ -82,18 +82,22 @@ fun HomeScreen(
             HomeHeaderSection()
             HomeBannerSection(homeViewState)
             HomeSpacer()
-            HomeSessionSection(
-                sessions = homeViewState.sessions,
-                onSessionClick = onSessionClicked,
-                onViewAllSessionClicked = navigateToSessionScreen
-            )
-            HomeSpacer()
-            HomeSpeakersSection(
-                speakers = homeViewState.speakers,
-                navigateToSpeakers = navigateToSpeakers,
-                navigateToSpeaker = navigateToSpeaker
-            )
-            HomeSpacer()
+            if (homeViewState.isSessionsSectionVisible){
+                HomeSessionSection(
+                    sessions = homeViewState.sessions,
+                    onSessionClick = onSessionClicked,
+                    onViewAllSessionClicked = navigateToSessionScreen
+                )
+                HomeSpacer()
+            }
+            if (homeViewState.isSpeakersSectionVisible){
+                HomeSpeakersSection(
+                    speakers = homeViewState.speakers,
+                    navigateToSpeakers = navigateToSpeakers,
+                    navigateToSpeaker = navigateToSpeaker
+                )
+                HomeSpacer()
+            }
             SponsorsCard(sponsorsLogos = homeViewState.sponsors)
             HomeSpacer()
         }
