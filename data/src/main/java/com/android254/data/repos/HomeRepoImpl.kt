@@ -39,19 +39,23 @@ class HomeRepoImpl @Inject constructor(
     private val sessionsRepo: SessionsRepo,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override suspend fun fetchHomeDetails(): HomeDetails {
         return withContext(ioDispatcher) {
             val sponsors = sponsorsApi.fetchSponsors()
             val speakers = speakersRepo.fetchSpeakersUnpacked()
-            val sessions = sessionsRepo.fetchAndSaveSessions()
+            val sessionsResult = sessionsRepo.fetchAndSaveSessions()
+            val sessions = getSessionsFromResourceResult(sessionsResult)
             HomeDetails(
-                isCallForSpeakersEnable = false,
+                isCallForSpeakersEnable = true,
+                linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
                 isEventBannerEnable = true,
                 speakers = speakers,
                 speakersCount = speakers.size,
-                sessions = getSessionsFromResourceResult(sessions),
-                sessionsCount = getSessionsFromResourceResult(sessions).size,
+                isSpeakersSessionEnable = speakers.isNotEmpty(),
+                sessions = sessions,
+                sessionsCount = sessions.size,
+                isSessionsSectionEnable = sessions.isNotEmpty(),
                 sponsors = sponsors.getSponsorsList(),
                 organizers = listOf()
             )
