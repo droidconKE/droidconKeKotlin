@@ -27,7 +27,7 @@ Flamingo comes bundled with Java 17. You only need to ensure the project uses Ja
 go to **File -> Project Structure -> SDK Location -> Gradle Settings** and set the Java Version to
 17 from the list that appears.
 
-![Settings Image]([AS Java Version.png](https://github.com/droidconKE/droidconKE2023Android/blob/update-to-flamingo/AS%20Java%20Version.png)
+![Settings Image](https://github.com/droidconKE/droidconKE2023Android/blob/update-to-flamingo/AS%20Java%20Version.png)
 
 ## Dependencies
 
