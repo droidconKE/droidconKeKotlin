@@ -23,7 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -57,10 +56,6 @@ fun HomeScreen(
 ) {
     val homeViewState = homeViewModel.viewState
 
-    LaunchedEffect(key1 = Unit) {
-        homeViewModel.onGetHomeScreenDetails()
-    }
-
     Scaffold(
         topBar = {
             HomeToolbar(
@@ -82,7 +77,7 @@ fun HomeScreen(
             HomeHeaderSection()
             HomeBannerSection(homeViewState)
             HomeSpacer()
-            if (homeViewState.isSessionsSectionVisible){
+            if (homeViewState.isSessionsSectionVisible) {
                 HomeSessionSection(
                     sessions = homeViewState.sessions,
                     onSessionClick = onSessionClicked,
@@ -90,7 +85,7 @@ fun HomeScreen(
                 )
                 HomeSpacer()
             }
-            if (homeViewState.isSpeakersSectionVisible){
+            if (homeViewState.isSpeakersSectionVisible) {
                 HomeSpeakersSection(
                     speakers = homeViewState.speakers,
                     navigateToSpeakers = navigateToSpeakers,

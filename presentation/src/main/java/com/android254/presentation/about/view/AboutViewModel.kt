@@ -16,9 +16,13 @@
 package com.android254.presentation.about.view
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.OrganizersRepository
 import com.android254.presentation.models.OrganizingTeamMember
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,19 +30,33 @@ class AboutViewModel @Inject constructor(
     private val organizersRepo: OrganizersRepository
 ) : ViewModel() {
 
-    suspend fun getOrganizers(): Pair<List<OrganizingTeamMember>, List<String>> {
-        val result = organizersRepo.getOrganizers()
-        val team = result.filter { it.type == "individual" }.map {
-            OrganizingTeamMember(
-                name = it.name,
-                desc = it.tagline,
-                image = it.photo
-            )
-        }
-        val stakeholders = result.filterNot { it.type == "individual" }.map {
-            it.photo
-        }
+    private val _teamMembers: MutableStateFlow<List<OrganizingTeamMember>> = MutableStateFlow(emptyList())
+    val teamMembers: StateFlow<List<OrganizingTeamMember>>
+        get() = _teamMembers
 
-        return Pair(team, stakeholders)
+    private val _stakeHolderLogos: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val stakeHolderLogos: StateFlow<List<String>>
+        get() = _stakeHolderLogos
+
+    init {
+        getOrganizers()
+    }
+
+    private fun getOrganizers() {
+        viewModelScope.launch {
+            val result = organizersRepo.getOrganizers()
+            val team = result.filter { it.type == "individual" }.map {
+                OrganizingTeamMember(
+                    name = it.name,
+                    desc = it.tagline,
+                    image = it.photo
+                )
+            }
+            val stakeholders = result.filterNot { it.type == "individual" }.map {
+                it.photo
+            }
+            _teamMembers.emit(team)
+            _stakeHolderLogos.emit(stakeholders)
+        }
     }
 }

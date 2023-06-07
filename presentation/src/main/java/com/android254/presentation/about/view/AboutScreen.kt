@@ -26,9 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
@@ -61,14 +60,8 @@ fun AboutScreen(
     aboutViewModel: AboutViewModel = hiltViewModel(),
     navigateToFeedbackScreen: () -> Unit = {}
 ) {
-    val teamMembers = remember { mutableStateListOf<OrganizingTeamMember>() }
-    val stakeHolderLogos = remember { mutableStateListOf<String>() }
-
-    LaunchedEffect(Unit) {
-        val data = aboutViewModel.getOrganizers()
-        teamMembers.addAll(data.first)
-        stakeHolderLogos.addAll(data.second)
-    }
+    val teamMembers by aboutViewModel.teamMembers.collectAsStateWithLifecycle()
+    val stakeHolderLogos by aboutViewModel.stakeHolderLogos.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
