@@ -44,12 +44,14 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.R
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
@@ -420,7 +422,8 @@ fun ModalDrawer(
                 },
                 color = scrimColor
             )
-            val navigationMenu = getString(Strings.NavigationMenu)
+            val resources = LocalContext.current.resources
+            val navigationMenu = resources.getString(R.string.navigation_menu)
             Surface(
                 modifier = with(LocalDensity.current) {
                     Modifier
@@ -559,7 +562,8 @@ fun BottomDrawer(
                 },
                 visible = drawerState.targetValue != BottomDrawerValue.Closed
             )
-            val navigationMenu = getString(Strings.NavigationMenu)
+            val resources = LocalContext.current.resources
+            val navigationMenu = resources.getString(R.string.navigation_menu)
             Surface(
                 drawerConstraints
                     .offset { IntOffset(x = 0, y = drawerState.offset.value.roundToInt()) }
@@ -623,7 +627,8 @@ private fun BottomDrawerScrim(
             targetValue = if (visible) 1f else 0f,
             animationSpec = TweenSpec()
         )
-        val closeDrawer = getString(Strings.CloseDrawer)
+        val resources = LocalContext.current.resources
+        val closeDrawer = resources.getString(R.string.close_drawer)
         val dismissModifier = if (visible) {
             Modifier
                 .pointerInput(onDismiss) {
@@ -654,7 +659,8 @@ private fun Scrim(
     fraction: () -> Float,
     color: Color
 ) {
-    val closeDrawer = getString(Strings.CloseDrawer)
+    val resources = LocalContext.current.resources
+    val closeDrawer = resources.getString(R.string.close_drawer)
     val dismissDrawer = if (open) {
         Modifier
             .pointerInput(onClose) { detectTapGestures { onClose() } }
