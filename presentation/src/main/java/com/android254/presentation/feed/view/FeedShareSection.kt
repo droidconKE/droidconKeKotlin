@@ -41,11 +41,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratBold
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedShareSection() {
@@ -71,7 +71,7 @@ fun FeedShareSection() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     lineHeight = 25.sp,
-                    fontFamily = MontserratBold,
+                    fontFamily = MontserratBold
                 )
 
                 Icon(

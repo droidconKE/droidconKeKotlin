@@ -31,10 +31,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun DroidconAppBarWithFilter(
@@ -43,7 +43,7 @@ fun DroidconAppBarWithFilter(
     onListIconClick: () -> Unit,
     onAgendaIconClick: () -> Unit,
     isFilterActive: Boolean,
-    onFilterButtonClick: () -> Unit,
+    onFilterButtonClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -53,7 +53,6 @@ fun DroidconAppBarWithFilter(
             .testTag("droidcon_topBar_with_Filter"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
@@ -69,7 +68,7 @@ fun DroidconAppBarWithFilter(
 
         FilterButton(
             isActive = isFilterActive,
-            onButtonClick = onFilterButtonClick,
+            onButtonClick = onFilterButtonClick
         )
     }
 }
@@ -79,18 +78,16 @@ fun LayoutIconButtons(
     modifier: Modifier = Modifier,
     isListActive: Boolean,
     onListIconClick: () -> Unit,
-    onAgendaIconClick: () -> Unit,
+    onAgendaIconClick: () -> Unit
 ) {
-
     val listIconColor = if (isListActive) ChaiBlue else ChaiSmokeyGrey
     val agendaIconColor = if (!isListActive) ChaiBlue else ChaiSmokeyGrey
 
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Icon(
             modifier = Modifier
                 .clickable(
@@ -98,7 +95,7 @@ fun LayoutIconButtons(
                 ),
             painter = painterResource(id = R.drawable.ic_listalt),
             contentDescription = null,
-            tint = listIconColor,
+            tint = listIconColor
         )
 
         Spacer(modifier = Modifier.width(35.dp))
@@ -110,7 +107,7 @@ fun LayoutIconButtons(
                 ),
             painter = painterResource(id = R.drawable.ic_view_agenda),
             contentDescription = null,
-            tint = agendaIconColor,
+            tint = agendaIconColor
         )
     }
 }
@@ -119,9 +116,8 @@ fun LayoutIconButtons(
 fun FilterButton(
     modifier: Modifier = Modifier,
     isActive: Boolean,
-    onButtonClick: () -> Unit,
+    onButtonClick: () -> Unit
 ) {
-
     val stateColors = if (isActive) ChaiBlue else ChaiGrey
 
     Row(
@@ -131,9 +127,8 @@ fun FilterButton(
                 onClick = onButtonClick
             ),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Text(
             modifier = Modifier,
             text = stringResource(id = R.string.top_bar_filter),
@@ -141,15 +136,15 @@ fun FilterButton(
                 color = stateColors,
                 fontSize = 18.sp,
                 lineHeight = 14.sp,
-                fontFamily = MontserratRegular,
-            ),
+                fontFamily = MontserratRegular
+            )
         )
         Spacer(modifier = Modifier.width(8.dp))
 
         Icon(
             painter = painterResource(id = R.drawable.ic_filter),
             contentDescription = null,
-            tint = stateColors,
+            tint = stateColors
         )
     }
 }
@@ -159,13 +154,12 @@ fun FilterButton(
 fun ToolbarPreview() {
     DroidconKE2023Theme {
         Column() {
-
             DroidconAppBarWithFilter(
                 isListActive = true,
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = true,
-                onFilterButtonClick = {},
+                onFilterButtonClick = {}
             )
             Spacer(
                 modifier = Modifier
@@ -179,7 +173,7 @@ fun ToolbarPreview() {
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = false,
-                onFilterButtonClick = {},
+                onFilterButtonClick = {}
             )
             Spacer(
                 modifier = Modifier

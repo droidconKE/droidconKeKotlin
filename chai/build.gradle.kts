@@ -22,7 +22,7 @@ plugins {
 
 android {
     compileSdk = 33
-    namespace = "com.android254.droidconKE2023.chai"
+    namespace = "ke.droidcon.kotlin.chai"
 
     defaultConfig {
         minSdk = 21

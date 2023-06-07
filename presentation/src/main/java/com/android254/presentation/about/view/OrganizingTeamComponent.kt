@@ -39,25 +39,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.ChaiDarkerGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun OrganizingTeamComponent(
     modifier: Modifier = Modifier,
     teamMember: OrganizingTeamMember,
-    onClickMember: (Int) -> Unit,
+    onClickMember: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.clickable(onClick = { onClickMember(teamMember.id) }),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
             placeholder = painterResource(R.drawable.droidcon_icon),
@@ -79,9 +78,9 @@ fun OrganizingTeamComponent(
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 lineHeight = 16.sp,
-                fontFamily = MontserratRegular,
+                fontFamily = MontserratRegular
             ),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(Modifier.height(2.dp))
@@ -94,9 +93,9 @@ fun OrganizingTeamComponent(
                 fontWeight = FontWeight.Normal,
                 fontSize = 11.sp,
                 lineHeight = 14.sp,
-                fontFamily = MontserratRegular,
+                fontFamily = MontserratRegular
             ),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
     }
 }

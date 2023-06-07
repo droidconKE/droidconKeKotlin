@@ -15,8 +15,6 @@
  */
 package com.android254.data.repos
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SponsorsApi
 import com.android254.data.network.models.responses.SponsorsPagedResponse
@@ -28,10 +26,9 @@ import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 class HomeRepoImpl @Inject constructor(
     private val sponsorsApi: SponsorsApi,
@@ -39,21 +36,25 @@ class HomeRepoImpl @Inject constructor(
     private val sessionsRepo: SessionsRepo,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override suspend fun fetchHomeDetails(): HomeDetails {
         return withContext(ioDispatcher) {
             val sponsors = sponsorsApi.fetchSponsors()
             val speakers = speakersRepo.fetchSpeakersUnpacked()
-            val sessions = sessionsRepo.fetchAndSaveSessions()
+            val sessionsResult = sessionsRepo.fetchAndSaveSessions()
+            val sessions = getSessionsFromResourceResult(sessionsResult)
             HomeDetails(
-                isCallForSpeakersEnable = false,
+                isCallForSpeakersEnable = true,
+                linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
                 isEventBannerEnable = true,
                 speakers = speakers,
                 speakersCount = speakers.size,
-                sessions = getSessionsFromResourceResult(sessions),
-                sessionsCount = getSessionsFromResourceResult(sessions).size,
+                isSpeakersSessionEnable = speakers.isNotEmpty(),
+                sessions = sessions,
+                sessionsCount = sessions.size,
+                isSessionsSectionEnable = sessions.isNotEmpty(),
                 sponsors = sponsors.getSponsorsList(),
-                organizers = listOf(),
+                organizers = listOf()
             )
         }
     }

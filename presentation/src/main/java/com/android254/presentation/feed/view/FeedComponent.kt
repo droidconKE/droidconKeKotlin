@@ -45,16 +45,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.MontserratBold
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
-
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -68,7 +67,6 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             val textFromNetwork = stringResource(id = R.string.placeholder_long_text)
 
             Text(
@@ -98,12 +96,11 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 TextButton(
                     onClick = {
                         onClickItem(1)
                     },
-                    modifier = Modifier.testTag("share_button"),
+                    modifier = Modifier.testTag("share_button")
                 ) {
                     Text(
                         text = stringResource(id = R.string.share),
@@ -111,7 +108,7 @@ fun FeedComponent(modifier: Modifier, onClickItem: (Int) -> Unit) {
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp,
                         lineHeight = 25.sp,
-                        fontFamily = MontserratBold,
+                        fontFamily = MontserratBold
                     )
 
                     Icon(

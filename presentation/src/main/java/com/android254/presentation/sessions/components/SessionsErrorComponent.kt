@@ -15,7 +15,12 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,9 +33,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.droidconke.chai.atoms.ChaiDarkGrey
 import com.droidconke.chai.atoms.MontserratRegular
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionsErrorComponent(
@@ -47,8 +52,8 @@ fun SessionsErrorComponent(
             style = TextStyle(
                 color = ChaiDarkGrey,
                 fontSize = 24.sp,
-                fontFamily = MontserratRegular,
-            ),
+                fontFamily = MontserratRegular
+            )
         )
         Spacer(
             modifier = Modifier.height(32.dp)
@@ -61,7 +66,7 @@ fun SessionsErrorComponent(
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontFamily = MontserratRegular
-                ),
+                )
             )
         }
     }

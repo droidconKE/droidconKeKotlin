@@ -47,21 +47,20 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.droidconke.chai.components.COutlinedButton
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionDetailsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
     viewModel: SessionDetailsViewModel = hiltViewModel(),
     sessionId: String,
-    onNavigationIconClick: () -> Unit,
+    onNavigationIconClick: () -> Unit
 ) {
-
     val sessionDetails = viewModel.sessionDetails.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = sessionId) {
@@ -112,7 +111,6 @@ private fun Body(
     ) {
         CustomDivider()
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
-
             Spacer(modifier = Modifier.height(24.dp))
 
             SessionSpeakerNameAndFavouriteIcon(darkTheme, sessionDetails)
@@ -133,7 +131,6 @@ private fun Body(
         Spacer(modifier = Modifier.height(19.dp))
 
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
-
             SessionTimeAndRoom(darkTheme, sessionDetails)
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -160,7 +157,6 @@ private fun SpeakerTwitterHandle(
     darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel
 ) {
-
     if (sessionDetails.twitterHandle != null) {
         val context = LocalContext.current
         val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitter.com/${sessionDetails.twitterHandle}")) }
@@ -168,7 +164,7 @@ private fun SpeakerTwitterHandle(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = stringResource(id = R.string.twitter_handle_label),
@@ -185,7 +181,6 @@ private fun SpeakerTwitterHandle(
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(id = if (darkTheme) R.color.black else R.color.white))
             ) {
-
                 Icon(
                     painter = painterResource(id = R.drawable.ic_twitter_logo),
                     contentDescription = null,
@@ -206,7 +201,7 @@ private fun SpeakerTwitterHandle(
                         fontWeight = FontWeight.Normal,
                         fontSize = 16.sp,
                         lineHeight = 19.sp
-                    ),
+                    )
                 )
             }
         }
@@ -235,7 +230,6 @@ private fun SessionSpeakerNameAndFavouriteIcon(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Icon(
             imageVector = Icons.Filled.Android,
             contentDescription = null,
@@ -261,7 +255,7 @@ private fun SessionSpeakerNameAndFavouriteIcon(
             .padding(end = 15.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
@@ -345,7 +339,7 @@ private fun SessionTimeAndRoom(
     sessionDetails: SessionDetailsPresentationModel
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             modifier = Modifier.testTag(TestTag.TIME_SLOT),
@@ -406,7 +400,7 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontSize = 18.sp,
                     lineHeight = 28.sp
-                ),
+                )
             )
         },
         navigationIcon = {
@@ -415,7 +409,7 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                    contentDescription = stringResource(R.string.back_arrow_icon_description)
                 )
             }
         }
@@ -445,7 +439,7 @@ fun SessionDetailsScreenPreview() {
     DroidconKE2023Theme(darkTheme = false) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
-            sessionId = "1",
+            sessionId = "1"
         )
     }
 }
@@ -457,7 +451,7 @@ fun SessionDetailsScreenDarkThemePreview() {
     DroidconKE2023Theme(darkTheme = true) {
         SessionDetailsScreen(
             onNavigationIconClick = {},
-            sessionId = "1",
+            sessionId = "1"
         )
     }
 }

@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(
-    navigateToFeedbackScreen: () -> Unit = {},
+    navigateToFeedbackScreen: () -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberSheetState(
@@ -92,7 +92,7 @@ fun FeedScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun FeedScreenPreview() {
-   ChaiDCKE22Theme {
+    ChaiDCKE22Theme {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             FeedScreen()
         }

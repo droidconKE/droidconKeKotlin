@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.components.SessionsLoadingSkeleton
 import com.android254.presentation.models.SessionPresentationModel
@@ -40,6 +39,7 @@ import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionsStateComponent(
@@ -61,8 +61,8 @@ fun SessionsStateComponent(
                 style = TextStyle(
                     color = ChaiDarkGrey,
                     fontSize = 24.sp,
-                    fontFamily = MontserratRegular,
-                ),
+                    fontFamily = MontserratRegular
+                )
             )
         }
         is SessionsUiState.Data -> {
@@ -87,7 +87,7 @@ fun SessionListCompponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit,
+    refreshSessionsList: () -> Unit
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
@@ -99,7 +99,7 @@ fun SessionListCompponent(
             ) { index, session ->
                 SessionsCard(
                     session = session,
-                    navigateToSessionDetails = navigateToSessionDetails,
+                    navigateToSessionDetails = navigateToSessionDetails
                 )
                 if (index != sessions.lastIndex) {
                     Box(

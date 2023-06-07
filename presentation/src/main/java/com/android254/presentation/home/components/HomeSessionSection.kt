@@ -38,12 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratMedium
 import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeSessionSection(
@@ -116,7 +117,8 @@ fun HomeSectionHeader(
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
                     fontFamily = MontserratMedium
-                )
+                ),
+                color = MaterialTheme.chaiColorsPalette.textColorPrimary
             )
             Spacer(modifier = Modifier.width(4.dp))
             Box(

@@ -29,13 +29,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
-    onActionClicked: () -> Unit = {},
+    onActionClicked: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -45,7 +45,6 @@ fun DroidconAppBar(
             .testTag("droidcon_topBar_notSignedIn"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)

@@ -38,13 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.droidconKE2023.presentation.R
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.MontserratBold
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SponsorsCard(

@@ -42,12 +42,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.android254.droidconKE2023.presentation.R
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.speakersDummyData
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
 import com.droidconke.chai.atoms.MontserratSemiBold
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeSpeakersSection(

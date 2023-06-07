@@ -15,20 +15,25 @@
  */
 package com.android254.presentation.speakers.view
 
-import android.widget.Toast
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -42,32 +47,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android254.droidconKE2023.presentation.R
+
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.models.SpeakerUI
-import com.android254.presentation.speakers.SpeakersViewModel
+import com.android254.presentation.speakers.SpeakersScreenUiState
+import com.android254.presentation.speakers.SpeakersScreenViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SpeakersScreen(
-    speakersViewModel: SpeakersViewModel = hiltViewModel(),
+    speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val isRefreshing by speakersViewModel.isLoading.collectAsStateWithLifecycle()
-    val toastMessage by speakersViewModel.message.collectAsStateWithLifecycle(initialValue = "")
-    val speakers = remember { mutableStateListOf<SpeakerUI>() }
+    val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
-    LaunchedEffect(toastMessage) {
-        if (toastMessage.isNotEmpty()) {
-            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
-        }
+    LaunchedEffect(key1 = true) {
+        speakersScreenViewModel.getSpeakers()
     }
-    LaunchedEffect(Unit) {
-        speakers.addAll(speakersViewModel.getSpeakers())
-    }
+
     Scaffold(
         topBar = {
             SmallTopAppBar(
@@ -99,18 +99,46 @@ fun SpeakersScreen(
         }
     ) { paddingValues ->
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+            state = rememberSwipeRefreshState(isRefreshing = uiState is SpeakersScreenUiState.Loading),
             onRefresh = { /*TODO*/ },
-            modifier = Modifier.fillMaxWidth().padding(paddingValues)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(160.dp),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
-            ) {
-                items(speakers) { speaker ->
-                    SpeakerComponent(speaker = speaker, onClick = {
-                        navigateToSpeaker.invoke(speaker.id)
-                    })
+            when (uiState) {
+                is SpeakersScreenUiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+
+                is SpeakersScreenUiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = uiState.message
+                        )
+                    }
+                }
+
+                is SpeakersScreenUiState.Success -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Adaptive(160.dp),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                    ) {
+                        items(items = uiState.speakers) { speaker ->
+                            SpeakerComponent(
+                                speaker = speaker,
+                                onClick = {
+                                    navigateToSpeaker.invoke(speaker.id)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }

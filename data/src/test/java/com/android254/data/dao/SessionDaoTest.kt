@@ -20,7 +20,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

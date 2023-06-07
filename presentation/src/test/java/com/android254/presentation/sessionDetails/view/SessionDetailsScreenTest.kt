@@ -37,8 +37,6 @@ import org.robolectric.shadows.ShadowLog
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class SessionDetailsScreenTest {
 
-
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -52,7 +50,6 @@ class SessionDetailsScreenTest {
         val viewModel = SessionDetailsViewModel(sessionsRepo = repo)
 
         coEvery { repo.fetchSessionById(any()) } returns ResourceResult.Success(data = mockSession)
-
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
@@ -86,7 +83,6 @@ class SessionDetailsScreenTest {
 
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
-
         composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
             sessionPresentationModel.speakerName
         )
@@ -105,15 +101,12 @@ class SessionDetailsScreenTest {
         composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
             "#${sessionPresentationModel.level.uppercase()}"
         )
-
-
     }
 
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.onNodeWithTag(TestTag.TWITTER_HANDLE_TEXT, true).apply {
             assertExists()
-
         }
     }
 
@@ -135,7 +128,7 @@ class SessionDetailsScreenTest {
             startDateTime = "2022-10-15 18:30:00",
             slug = "",
             rooms = "",
-            speakers = "[]",
+            speakers = "[]"
         )
         val sessionPresentationModel = mockSession.toSessionDetailsPresentationModal()
     }

@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessions.view
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
@@ -31,12 +29,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import timber.log.Timber
 import javax.inject.Inject
 
-@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo,
+    private val sessionsRepo: SessionsRepo
 ) : ViewModel() {
 
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
@@ -46,8 +44,8 @@ class SessionsViewModel @Inject constructor(
     private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
     private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
-            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16),
-        ),
+            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16)
+        )
     )
     val selectedEventDate = _selectedEventDate.asStateFlow()
 
@@ -87,7 +85,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }?.toList()
                 _filterState.value = _filterState.value?.copy(
-                    levels = newValue!!,
+                    levels = newValue!!
                 )
             }
             SessionsFilterCategory.Topic -> {
@@ -100,7 +98,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    topics = newValue,
+                    topics = newValue
                 )
             }
             SessionsFilterCategory.Room -> {
@@ -113,7 +111,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value?.copy(
-                    rooms = newValue,
+                    rooms = newValue
                 )
             }
             SessionsFilterCategory.SessionType -> {
@@ -126,7 +124,7 @@ class SessionsViewModel @Inject constructor(
                     }
                 }.toList()
                 _filterState.value = _filterState.value!!.copy(
-                    sessionTypes = newValue,
+                    sessionTypes = newValue
                 )
             }
         }
@@ -191,7 +189,38 @@ class SessionsViewModel @Inject constructor(
 //        return query.toSql()
     }
 
-    fun getQuery(): String = listOf("1", "2").random()
+    private fun getQuery(): String {
+        val separator = ","
+        val prefix = "("
+        val postfix = ")"
+        val stringBuilder = StringBuilder()
+        _filterState.value?.let {
+            if (it.levels.isNotEmpty()) {
+                val items =
+                    it.levels.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
+                stringBuilder.append("LOWER (sessionLevel) IN $items")
+            }
+            if (it.sessionTypes.isNotEmpty()) {
+                val items = it.sessionTypes.joinToString(
+                    separator, prefix, postfix
+                ) { value -> "'${value.lowercase()}'" }
+                if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
+                stringBuilder.append("LOWER (sessionFormat) IN $items")
+            }
+            if (it.rooms.isNotEmpty()) {
+                val items =
+                    it.rooms.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
+                if (stringBuilder.isNotEmpty()) {
+                    stringBuilder.append(" AND ")
+                }
+                stringBuilder.append("LOWER (rooms) IN $items")
+            }
+        }
+        val where = if (stringBuilder.isNotEmpty()) {
+            "WHERE $stringBuilder"
+        } else stringBuilder
+        return "SELECT * FROM sessions $where".also { Timber.i("QUERY = $it") }
+    }
 
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
@@ -224,7 +253,7 @@ class SessionsViewModel @Inject constructor(
 
     suspend fun updateBookmarkStatus(
         id: String,
-        isCurrentlyStarred: Boolean,
+        isCurrentlyStarred: Boolean
     ): ResourceResult<Boolean> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
 
     fun fetchBookmarkedSessions() {

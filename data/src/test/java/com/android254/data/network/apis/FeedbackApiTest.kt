@@ -43,6 +43,7 @@ class FeedbackApiTest {
         val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
         remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
     }
+
     @Test
     fun `sends correct http request`() = runTest {
         val mockEngine = MockEngine { respondOk() }

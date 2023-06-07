@@ -30,7 +30,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.android254.droidconKE2023"
+        applicationId = "ke.droidcon.kotlin"
         minSdk = 21
         targetSdk = 33
         versionCode = 1
@@ -44,12 +44,13 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -96,4 +97,6 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

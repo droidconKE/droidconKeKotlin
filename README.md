@@ -1,6 +1,6 @@
 # droidcon KE 23 🔥🔨
 
-Android app for the 4th Android Developer conference- droidcon to be held in Nairobi date to be announced.
+Android app for the 4th Android Developer conference- droidcon to be held in Nairobi on 8th - 10th November.
 
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
 and is optimized for phones and tablets of all shapes and sizes.
@@ -102,6 +102,13 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
+## Compatibility
+
+This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API levels 25 and below. Specifically the Kotlin `kotlinx.datetime` API which depends on Java's `java.time`.
+This allows use of `kotlinx.datetime.LocalDate` without having to wrap it in `@RequiresAPI(Build.VERSION_CODES.O)` and also backports the fix to API level 21.
+More on Desugaring using Android Gradle Plugin can be found [here](https://developer.android.com/studio/write/java8-support).
+Instructions on how to set up and add `coreLibraryDesugaring` to your project can be found [here](https://developer.android.com/studio/write/java8-support#library-desugaring).
+
 ## Contributing
 
 Contributions are always welcome!
@@ -144,21 +151,6 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/jumaallan">
-            <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
-            <br />
-            <sub><b>Juma Allan</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/MamboBryan">
-            <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
-            <br />
-            <sub><b>MamboBryan</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
         <a href="https://github.com/chege4179">
             <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
             <br />
@@ -166,10 +158,39 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/jumaallan">
+            <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
+            <br />
+            <sub><b>Juma Allan</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/MamboBryan">
+            <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
+            <br />
+            <sub><b>MamboBryan</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Raynafs">
+            <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
             <sub><b>Hannah Olukoye</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
         </a>
     </td>
     <td align="center">
@@ -185,34 +206,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Amos Nyaburi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joelmuraguri">
             <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="joelmuraguri"/>
             <br />
             <sub><b>Joel  Muraguri</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/BKinya">
-            <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
-            <br />
-            <sub><b>Beatrice Kinya</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/Dbriane208">
-            <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
-            <br />
-            <sub><b>Null</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/Jacquigee">
-            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
-            <br />
-            <sub><b>Jacquiline Gitau</b></sub>
         </a>
     </td>
     <td align="center">
@@ -223,6 +223,42 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Njoguu">
+            <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
+            <br />
+            <sub><b>Whoisnjoguu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/emmanuelmuturia">
+            <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
+            <br />
+            <sub><b>Emmanuel Muturia</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/BKinya">
+            <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
+            <br />
+            <sub><b>Beatrice Kinya</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Dbriane208">
+            <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/Jacquigee">
+            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
+            <br />
+            <sub><b>Jacquiline Gitau</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/michaelbukachi">
             <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
             <br />
@@ -230,10 +266,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/kibettheophilus">
-            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+        <a href="https://github.com/joenjogu">
+            <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
             <br />
-            <sub><b>Kibet Theo</b></sub>
+            <sub><b>Joenjogu</b></sub>
         </a>
     </td></tr>
 </table>

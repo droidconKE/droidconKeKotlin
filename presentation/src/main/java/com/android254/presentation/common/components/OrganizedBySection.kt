@@ -38,12 +38,12 @@ import com.droidconke.chai.atoms.MontserratBold
 import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
-import com.android254.droidconKE2023.presentation.R
+import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun OrganizedBySection(
     modifier: Modifier = Modifier,
-    organizationLogos: List<String>,
+    organizationLogos: List<String>
 ) {
     Column(
         modifier = modifier
@@ -53,7 +53,7 @@ fun OrganizedBySection(
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(horizontal = 40.dp, vertical = 20.dp)
-            .testTag("organized_by_section"),
+            .testTag("organized_by_section")
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
@@ -63,9 +63,9 @@ fun OrganizedBySection(
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
-                fontFamily = MontserratBold,
+                fontFamily = MontserratBold
             ),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -75,7 +75,7 @@ fun OrganizedBySection(
             mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
             mainAxisSize = SizeMode.Expand,
             mainAxisSpacing = 16.dp,
-            crossAxisSpacing = 16.dp,
+            crossAxisSpacing = 16.dp
         ) {
             organizationLogos.forEach { logo ->
 

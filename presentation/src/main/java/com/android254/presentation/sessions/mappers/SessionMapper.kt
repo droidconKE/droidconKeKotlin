@@ -73,7 +73,7 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
         format = this.sessionFormat,
         sessionImageUrl = this.sessionImage.toString(),
         timeSlot = "${startTime.time} - ${this.endTime}",
-        twitterHandle = if (hasNoSpeakers) "" else getTwitterHandle(speakers),
+        twitterHandle = if (hasNoSpeakers) "" else getTwitterHandle(speakers)
     )
 }
 
@@ -90,7 +90,7 @@ fun getTimePeriod(time: String): FormattedTime {
     val date: Date = format.parse(time) ?: Date()
     return FormattedTime(
         time = SimpleDateFormat("hh:mm", Locale.getDefault()).format(date),
-        period = SimpleDateFormat("a", Locale.getDefault()).format(date),
+        period = SimpleDateFormat("a", Locale.getDefault()).format(date)
     )
 }
 
