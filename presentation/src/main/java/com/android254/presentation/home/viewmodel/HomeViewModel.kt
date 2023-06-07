@@ -41,7 +41,11 @@ class HomeViewModel @Inject constructor(
     var viewState by mutableStateOf(HomeViewState())
         private set
 
-    fun onGetHomeScreenDetails() {
+    init {
+        onGetHomeScreenDetails()
+    }
+
+    private fun onGetHomeScreenDetails() {
         viewModelScope.launch {
             with(homeRepo.fetchHomeDetails()) {
                 viewState = viewState.copy(

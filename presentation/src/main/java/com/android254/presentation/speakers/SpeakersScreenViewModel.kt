@@ -16,12 +16,14 @@
 package com.android254.presentation.speakers
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface SpeakersScreenUiState {
@@ -41,7 +43,13 @@ class SpeakersScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SpeakersScreenUiState>(SpeakersScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    suspend fun getSpeakers() {
+    init {
+        viewModelScope.launch {
+            getSpeakers()
+        }
+    }
+
+    private suspend fun getSpeakers() {
         when (val result = speakersRepo.fetchSpeakers()) {
             is ResourceResult.Success -> {
                 val speakers = result.data?.map {
