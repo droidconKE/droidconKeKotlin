@@ -31,7 +31,6 @@ import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,10 +62,6 @@ fun SpeakersScreen(
 ) {
     val context = LocalContext.current
     val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
-
-    LaunchedEffect(key1 = true) {
-        speakersScreenViewModel.getSpeakers()
-    }
 
     Scaffold(
         topBar = {

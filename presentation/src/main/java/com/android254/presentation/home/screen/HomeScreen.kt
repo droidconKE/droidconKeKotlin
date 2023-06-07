@@ -23,7 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -56,10 +55,6 @@ fun HomeScreen(
     onSessionClicked: (SessionPresentationModel) -> Unit = {}
 ) {
     val homeViewState = homeViewModel.viewState
-
-    LaunchedEffect(key1 = Unit) {
-        homeViewModel.onGetHomeScreenDetails()
-    }
 
     Scaffold(
         topBar = {
