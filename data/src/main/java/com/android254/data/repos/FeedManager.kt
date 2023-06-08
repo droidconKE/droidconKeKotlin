@@ -19,34 +19,28 @@ import com.android254.data.network.apis.FeedApi
 import com.android254.data.repos.mappers.toDomain
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Feed
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.FeedRepo
 import javax.inject.Inject
 
 class FeedManager @Inject constructor(
     private val FeedApi: FeedApi
 ) : FeedRepo {
-    override suspend fun fetchFeed(): ResourceResult<List<Feed>> {
+    override suspend fun fetchFeed(): List<Feed>? {
         return when (val result = FeedApi.fetchFeed(1, 100)) {
             is DataResult.Empty -> {
-                ResourceResult.Success(emptyList())
+                emptyList()
             }
+
             is DataResult.Error -> {
-                ResourceResult.Error(
-                    result.message,
-                    networkError = result.message.contains("network", ignoreCase = true)
-                )
+                null
             }
+
             is DataResult.Success -> {
                 val data = result.data
-
-                ResourceResult.Success(
-                    data.map { it.toDomain() }
-                )
+                data.map { it.toDomain() }
             }
-
             else -> {
-                ResourceResult.Success(emptyList())
+                emptyList()
             }
         }
     }

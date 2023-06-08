@@ -20,7 +20,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android254.domain.models.Feed
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.feed.FeedViewModel
@@ -51,7 +50,7 @@ class FeedScreenTest {
 
     @Test
     fun `should display feed items`() {
-        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+        coEvery { repo.fetchFeed() } returns listOf(Feed("", "", "", "", "", ""))
 
         composeTestRule.setContent {
             DroidconKE2023Theme {
@@ -68,7 +67,7 @@ class FeedScreenTest {
 
     @Test
     fun `test share bottom sheet is shown`() {
-        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+        coEvery { repo.fetchFeed() } returns listOf(Feed("", "", "", "", "", ""))
 
         composeTestRule.setContent {
             DroidconKE2023Theme {

@@ -28,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -50,7 +49,7 @@ fun FeedScreen(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
     feedViewModel.fetchFeed()
-    val feedUIState = feedViewModel.feedsState.collectAsState().value
+    val feedUIState = feedViewModel.viewState
     BottomSheetScaffold(
         sheetContent = {
             FeedShareSection()

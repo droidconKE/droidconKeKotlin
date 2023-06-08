@@ -18,5 +18,5 @@ package com.android254.domain.repos
 import com.android254.domain.models.Feed
 
 interface FeedRepo {
-    suspend fun fetchFeed(): List<Feed>
+    suspend fun fetchFeed(): List<Feed>?
 }
