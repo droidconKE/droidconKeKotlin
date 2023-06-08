@@ -171,17 +171,17 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/KennethMathari">
-            <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
-            <br />
-            <sub><b>Kenneth Mathari</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
             <sub><b>Harun Wangereka</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/KennethMathari">
+            <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
+            <br />
+            <sub><b>Kenneth Mathari</b></sub>
         </a>
     </td>
     <td align="center">
@@ -221,6 +221,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
@@ -232,13 +239,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/yveskalume">
-            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
-            <br />
-            <sub><b>Yves Kalume</b></sub>
         </a>
     </td></tr>
 <tr>
