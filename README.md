@@ -1,15 +1,33 @@
 # droidcon KE 23 🔥🔨
 
-Android app for the 4th Android Developer conference- droidcon to be held in Nairobi on 8th - 10th November.
+Android app for the 4th Android Developer conference- droidcon to be held in Nairobi on 8th - 10th
+November.
 
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
 and is optimized for phones and tablets of all shapes and sizes.
 
 ## Running the Project
 
-To ensure the project runs on your local environment ensure to you have Java 11 on your pc or if you don't have you can install it from [here](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html). 
+To ensure the project runs on your local environment ensure to you have Java 11 on your pc or if you
+don't have you can install it
+from [here](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html).
 
-If you have multiple installations of Java make sure to set Java 11 as your preferred version to run the project.
+If you have multiple installations of Java make sure to set Java 11 as your preferred version to run
+the project.
+
+With the new Android Gradle Plugin version 8.0.0, you need Java 17 to run the project and any
+terminal commands. A workaround for this, it to add this in your **global** gradle.properties file:
+
+```properties
+org.gradle.java.home=/Applications/Android Studio.app/Contents/jbr/Contents/Home
+```
+
+This simply sets the Gradle Java home to the one set in Android Studio. Android Studio
+Flamingo comes bundled with Java 17. You only need to ensure the project uses Java 17. To do so,
+go to **File -> Project Structure -> SDK Location -> Gradle Settings** and set the Java Version to
+17 from the list that appears.
+
+![image](java_version.png)
 
 ## Dependencies
 
@@ -69,23 +87,32 @@ This is the link to the app designs:
 [Light Theme] (https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)  
 [Dark Theme] (https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
 
-The app uses a design system: Chai 
+The app uses a design system: Chai
 
 ## Dependencies
 
-The project uses [Versions Catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog) to set up and share dependencies across the modules. The main reasons for choosing to adopt Versions Catalog are:
+The project
+uses [Versions Catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog)
+to set up and share dependencies across the modules. The main reasons for choosing to adopt Versions
+Catalog are:
+
 - Central place to define dependencies.
 - Easy syntax.
 - Does not compromise on build speeds as changes do not need the module to be compiled.
 
-To add a dependency, navigate to **gradle/libs.versions.toml*** file, which has all the dependencies for the whole project. This file has the following sections:
+To add a dependency, navigate to **gradle/libs.versions.toml*** file, which has all the dependencies
+for the whole project. This file has the following sections:
 
-[versions] is used to declare the version numbers that will be referenced later by plugins and libraries.
+[versions] is used to declare the version numbers that will be referenced later by plugins and
+libraries.
 [libraries] Define the libraries that will be later accessed in our Gradle files.
-[bundles] Are used to define a set of dependencies. For this, we have `compose`, `room`, `lifecycle` and `ktor` as examples.
+[bundles] Are used to define a set of dependencies. For this, we have `compose`, `room`, `lifecycle`
+and `ktor` as examples.
 [plugins] Used to define plugins.
 
-You need to add your dependency version in [versions]. This is unnecessary if you are not sharing the version across different dependencies. After defining the version, add your library in the [libraries] section as:
+You need to add your dependency version in [versions]. This is unnecessary if you are not sharing
+the version across different dependencies. After defining the version, add your library in
+the [libraries] section as:
 
 ```toml
 compose-activity = "androidx.activity:activity-compose:1.5.0"
@@ -98,16 +125,23 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 ```
 
 **Note**:
-- You can use separators such as -, _v, . that will be normalized by Gradle to . in the Catalog and allow you to create subsections.
+
+- You can use separators such as -, _v, . that will be normalized by Gradle to . in the Catalog and
+  allow you to create subsections.
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
 ## Compatibility
 
-This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API levels 25 and below. Specifically the Kotlin `kotlinx.datetime` API which depends on Java's `java.time`.
-This allows use of `kotlinx.datetime.LocalDate` without having to wrap it in `@RequiresAPI(Build.VERSION_CODES.O)` and also backports the fix to API level 21.
-More on Desugaring using Android Gradle Plugin can be found [here](https://developer.android.com/studio/write/java8-support).
-Instructions on how to set up and add `coreLibraryDesugaring` to your project can be found [here](https://developer.android.com/studio/write/java8-support#library-desugaring).
+This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API
+levels 25 and below. Specifically the Kotlin `kotlinx.datetime` API which depends on
+Java's `java.time`.
+This allows use of `kotlinx.datetime.LocalDate` without having to wrap it
+in `@RequiresAPI(Build.VERSION_CODES.O)` and also backports the fix to API level 21.
+More on Desugaring using Android Gradle Plugin can be
+found [here](https://developer.android.com/studio/write/java8-support).
+Instructions on how to set up and add `coreLibraryDesugaring` to your project can be
+found [here](https://developer.android.com/studio/write/java8-support#library-desugaring).
 
 ## Contributing
 
