@@ -171,17 +171,17 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/KennethMathari">
-            <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
-            <br />
-            <sub><b>Kenneth Mathari</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
             <sub><b>Harun Wangereka</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/KennethMathari">
+            <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
+            <br />
+            <sub><b>Kenneth Mathari</b></sub>
         </a>
     </td>
     <td align="center">
