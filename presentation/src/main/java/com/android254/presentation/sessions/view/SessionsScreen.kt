@@ -250,6 +250,9 @@ fun CustomSwitch(
 private fun animateAlignmentAsState(
     targetBiasValue: Float
 ): State<BiasAlignment> {
-    val bias by animateFloatAsState(targetBiasValue)
-    return derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
+    val bias by animateFloatAsState(targetValue = targetBiasValue, label = "")
+
+    return remember {
+        derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
+    }
 }
