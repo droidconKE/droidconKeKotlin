@@ -18,6 +18,7 @@ package com.android254.presentation.common.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +49,7 @@ import ke.droidcon.kotlin.presentation.R
 fun DroidconAppBarWithFeedbackButton(
     modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
-    userProfile: String,
+    userProfile: String
 ) {
     Row(
         modifier = modifier
@@ -58,9 +59,8 @@ fun DroidconAppBarWithFeedbackButton(
             .testTag("droidcon_topBar_with_Feedback"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Image(
-            painter = painterResource(id = R.drawable.droidcon_logo),
+            painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -78,7 +78,7 @@ fun DroidconAppBarWithFeedbackButton(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(30.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
         )
     }
 }
@@ -86,18 +86,18 @@ fun DroidconAppBarWithFeedbackButton(
 @Composable
 fun FeedbackButton(
     modifier: Modifier = Modifier,
-    onButtonClick: () -> Unit,
+    onButtonClick: () -> Unit
 ) {
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
             .background(
-                color = ChaiTeal.copy(alpha = 0.21f),
+                color = ChaiTeal.copy(alpha = 0.21f)
             )
             .clickable(onClick = onButtonClick)
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_feedback_emoji),
@@ -111,13 +111,13 @@ fun FeedbackButton(
                 color = ChaiCoal,
                 fontSize = 12.sp,
                 lineHeight = 15.sp,
-                fontFamily = MontserratRegular,
-            ),
+                fontFamily = MontserratRegular
+            )
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_send_icon),
             contentDescription = null,
-            tint = ChaiTeal,
+            tint = ChaiTeal
         )
     }
 }

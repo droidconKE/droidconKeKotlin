@@ -20,22 +20,19 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.android254.presentation.speakers.SpeakersScreenViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
-@Config(instrumentedPackages = ["androidx.loader.content"])
+@RunWith(AndroidJUnit4::class)
 class SpeakerDetailsScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
     private val mockSavedStateHandle = mockk<SavedStateHandle>()
@@ -54,8 +51,13 @@ class SpeakerDetailsScreenTest {
         )
 
         composeTestRule.setContent {
-            SpeakerDetailsScreen(id = 0, SpeakerDetailsScreenViewModel(
-                speakersRepo = speakersRepo, savedStateHandle = mockSavedStateHandle))
+            SpeakerDetailsScreen(
+                id = 0,
+                SpeakerDetailsScreenViewModel(
+                    speakersRepo = speakersRepo,
+                    savedStateHandle = mockSavedStateHandle
+                )
+            )
         }
 
         with(composeTestRule) {

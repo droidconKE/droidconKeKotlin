@@ -51,13 +51,12 @@ import ke.droidcon.kotlin.presentation.R
 fun OrganizingTeamComponent(
     modifier: Modifier = Modifier,
     teamMember: OrganizingTeamMember,
-    onClickMember: (Int) -> Unit,
+    onClickMember: (Int) -> Unit
 ) {
     Column(
         modifier = modifier.clickable(onClick = { onClickMember(teamMember.id) }),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
             placeholder = painterResource(R.drawable.droidcon_icon),
@@ -79,9 +78,9 @@ fun OrganizingTeamComponent(
                 fontWeight = FontWeight.Normal,
                 fontSize = 13.sp,
                 lineHeight = 16.sp,
-                fontFamily = MontserratRegular,
+                fontFamily = MontserratRegular
             ),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Spacer(Modifier.height(2.dp))
@@ -94,9 +93,9 @@ fun OrganizingTeamComponent(
                 fontWeight = FontWeight.Normal,
                 fontSize = 11.sp,
                 lineHeight = 14.sp,
-                fontFamily = MontserratRegular,
+                fontFamily = MontserratRegular
             ),
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
     }
 }

@@ -24,7 +24,9 @@ data class HomeViewState(
     val linkToCallForSpeakers: String = "",
     val isSignedIn: Boolean = false,
     val speakers: List<SpeakerUI> = emptyList(),
+    val isSpeakersSectionVisible: Boolean = false,
     val sponsors: List<String> = emptyList(),
     val organizedBy: List<String> = emptyList(),
-    val sessions: List<SessionPresentationModel> = emptyList()
+    val sessions: List<SessionPresentationModel> = emptyList(),
+    val isSessionsSectionVisible: Boolean = false
 )

@@ -41,16 +41,21 @@ class HomeViewModel @Inject constructor(
     var viewState by mutableStateOf(HomeViewState())
         private set
 
-    fun onGetHomeScreenDetails() {
+    init {
+        onGetHomeScreenDetails()
+    }
+
+    private fun onGetHomeScreenDetails() {
         viewModelScope.launch {
             with(homeRepo.fetchHomeDetails()) {
-                viewState
                 viewState = viewState.copy(
-                    isPosterVisible = this.isEventBannerEnable,
-                    isCallForSpeakersVisible = this.isCallForSpeakersEnable,
-                    linkToCallForSpeakers = "",
+                    isPosterVisible = isEventBannerEnable,
+                    isCallForSpeakersVisible = isCallForSpeakersEnable,
+                    linkToCallForSpeakers = linkToCallForSpeakers,
                     isSignedIn = false,
                     speakers = speakers.toSpeakersPresentation(),
+                    isSpeakersSectionVisible = isSpeakersSessionEnable,
+                    isSessionsSectionVisible = isSessionsSectionEnable,
                     sponsors = sponsors.map { it.sponsorLogoUrl },
                     organizedBy = organizers.map { it.organizerLogoUrl },
                     sessions = sessions.toSessionsPresentation()
@@ -79,7 +84,7 @@ class HomeViewModel @Inject constructor(
             val hasNoSpeakers = speakers.isEmpty()
 
             SessionPresentationModel(
-                id = it.id.toString(),
+                id = it.id,
                 title = it.title,
                 description = it.description,
                 venue = it.rooms,

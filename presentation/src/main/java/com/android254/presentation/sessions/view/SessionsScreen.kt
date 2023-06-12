@@ -192,7 +192,7 @@ fun CustomSwitch(
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     // this is to disable the ripple effect
     val interactionSource = remember {
@@ -248,8 +248,11 @@ fun CustomSwitch(
 
 @Composable
 private fun animateAlignmentAsState(
-    targetBiasValue: Float,
+    targetBiasValue: Float
 ): State<BiasAlignment> {
-    val bias by animateFloatAsState(targetBiasValue)
-    return derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
+    val bias by animateFloatAsState(targetValue = targetBiasValue, label = "")
+
+    return remember {
+        derivedStateOf { BiasAlignment(horizontalBias = bias, verticalBias = 0f) }
+    }
 }

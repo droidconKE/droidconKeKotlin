@@ -41,7 +41,6 @@ import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
 
-
 @Composable
 fun SessionsStateComponent(
     sessionsUiState: SessionsUiState,
@@ -62,8 +61,8 @@ fun SessionsStateComponent(
                 style = TextStyle(
                     color = ChaiDarkGrey,
                     fontSize = 24.sp,
-                    fontFamily = MontserratRegular,
-                ),
+                    fontFamily = MontserratRegular
+                )
             )
         }
         is SessionsUiState.Data -> {
@@ -88,7 +87,7 @@ fun SessionListCompponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit,
+    refreshSessionsList: () -> Unit
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
@@ -100,7 +99,7 @@ fun SessionListCompponent(
             ) { index, session ->
                 SessionsCard(
                     session = session,
-                    navigateToSessionDetails = navigateToSessionDetails,
+                    navigateToSessionDetails = navigateToSessionDetails
                 )
                 if (index != sessions.lastIndex) {
                     Box(

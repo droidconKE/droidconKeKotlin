@@ -57,7 +57,7 @@ class SponsorsApiTest {
                     createdAt = "abc",
                     logo = "abc"
                 )
-            ),
+            )
         )
         val mockHttpEngine = MockEngine {
             respond(

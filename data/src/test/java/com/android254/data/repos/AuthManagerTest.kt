@@ -36,16 +36,19 @@ class AuthManagerTest {
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val fakeUserDetails = UserDetailsDTO(
-        name = "Test", email = "test@gmail.com", gender = null, avatar = "http://test.com"
+        name = "Test",
+        email = "test@gmail.com",
+        gender = null,
+        avatar = "http://test.com"
     )
 
     @Test
     fun `test getAndSaveApiToken successfully`() {
-
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             coEvery { mockApi.googleLogin(any()) } returns AccessTokenDTO(
-                "test", user = fakeUserDetails
+                "test",
+                user = fakeUserDetails
             )
             coEvery { mockTokenProvider.update(any()) } just Runs
 
@@ -57,7 +60,6 @@ class AuthManagerTest {
 
     @Test
     fun `test getAndSaveApiToken failure - network error`() {
-
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = NetworkError()
@@ -70,7 +72,6 @@ class AuthManagerTest {
 
     @Test
     fun `test getAndSaveApiToken failure - other error`() {
-
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = Exception()

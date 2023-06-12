@@ -71,7 +71,7 @@ fun FeedShareSection() {
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     lineHeight = 25.sp,
-                    fontFamily = MontserratBold,
+                    fontFamily = MontserratBold
                 )
 
                 Icon(

@@ -16,6 +16,7 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +36,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
-    onActionClicked: () -> Unit = {},
+    onActionClicked: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -45,9 +46,8 @@ fun DroidconAppBar(
             .testTag("droidcon_topBar_notSignedIn"),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Image(
-            painter = painterResource(id = R.drawable.droidcon_logo),
+            painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
             contentDescription = stringResource(id = R.string.logo)
         )
         Spacer(modifier = Modifier.weight(1f))
