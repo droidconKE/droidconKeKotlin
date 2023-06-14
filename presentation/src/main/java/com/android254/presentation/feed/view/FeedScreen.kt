@@ -116,6 +116,10 @@ fun FeedScreen(
                         }
                     }
                 }
+
+                FeedUIState.Empty -> Column(modifier = Modifier.fillMaxSize()) {
+                    Text(text = "Empty")
+                }
             }
         }
     }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feed.view.toPresentation
@@ -37,8 +38,11 @@ class FeedViewModel @Inject constructor(
     fun fetchFeed() {
         viewModelScope.launch {
             viewState = when (val value = feedRepo.fetchFeed()) {
-                null -> FeedUIState.Error("Error getting result")
-                else -> FeedUIState.Success(value.map { it.toPresentation() })
+                is ResourceResult.Empty -> FeedUIState.Empty
+                is ResourceResult.Error -> FeedUIState.Error(value.message)
+                is ResourceResult.Loading -> FeedUIState.Loading
+                is ResourceResult.Success -> FeedUIState.Success(value.data?.map { it.toPresentation() }
+                    ?: emptyList())
             }
         }
     }
