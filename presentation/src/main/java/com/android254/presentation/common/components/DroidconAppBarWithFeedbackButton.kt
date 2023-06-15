@@ -109,7 +109,7 @@ fun FeedbackButton(
             modifier = Modifier,
             text = stringResource(id = R.string.feedback),
             style = TextStyle(
-                color = if(!isSystemInDarkTheme()) ChaiCoal else ChaiGrey,
+                color = if (!isSystemInDarkTheme()) ChaiCoal else ChaiGrey,
                 fontSize = 12.sp,
                 lineHeight = 15.sp,
                 fontFamily = MontserratRegular
