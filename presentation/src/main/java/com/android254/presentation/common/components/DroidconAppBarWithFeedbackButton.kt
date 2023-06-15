@@ -41,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.droidconke.chai.atoms.ChaiCoal
+import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratRegular
 import ke.droidcon.kotlin.presentation.R
@@ -108,7 +109,7 @@ fun FeedbackButton(
             modifier = Modifier,
             text = stringResource(id = R.string.feedback),
             style = TextStyle(
-                color = ChaiCoal,
+                color = if(!isSystemInDarkTheme()) ChaiCoal else ChaiGrey,
                 fontSize = 12.sp,
                 lineHeight = 15.sp,
                 fontFamily = MontserratRegular
