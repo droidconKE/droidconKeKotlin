@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.about.view
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,6 +49,8 @@ import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiCoal
+import com.droidconke.chai.atoms.ChaiGrey
+import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.flowlayout.FlowRow
@@ -135,7 +138,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = stringResource(id = R.string.about),
             style = TextStyle(
-                color = ChaiBlue,
+                color = if(!isSystemInDarkTheme())ChaiBlue else ChaiTeal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
@@ -151,7 +154,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = droidconDesc,
             style = TextStyle(
-                color = ChaiCoal,
+                color = if(!isSystemInDarkTheme())ChaiCoal else ChaiGrey,
                 fontSize = 16.sp,
                 lineHeight = 19.sp,
                 fontFamily = MontserratRegular
@@ -175,7 +178,7 @@ fun OrganizingTeamSection(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.about_organizing_team),
             style = TextStyle(
-                color = ChaiBlue,
+                color = if(!isSystemInDarkTheme()) ChaiBlue else ChaiTeal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
