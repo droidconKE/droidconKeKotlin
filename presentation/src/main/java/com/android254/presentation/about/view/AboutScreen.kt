@@ -138,7 +138,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = stringResource(id = R.string.about),
             style = TextStyle(
-                color = if(!isSystemInDarkTheme())ChaiBlue else ChaiTeal,
+                color = if (!isSystemInDarkTheme())ChaiBlue else ChaiTeal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
@@ -154,7 +154,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = droidconDesc,
             style = TextStyle(
-                color = if(!isSystemInDarkTheme())ChaiCoal else ChaiGrey,
+                color = if (!isSystemInDarkTheme())ChaiCoal else ChaiGrey,
                 fontSize = 16.sp,
                 lineHeight = 19.sp,
                 fontFamily = MontserratRegular
@@ -178,7 +178,7 @@ fun OrganizingTeamSection(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.about_organizing_team),
             style = TextStyle(
-                color = if(!isSystemInDarkTheme()) ChaiBlue else ChaiTeal,
+                color = if (!isSystemInDarkTheme()) ChaiBlue else ChaiTeal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
