@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -109,7 +110,7 @@ fun FeedbackButton(
             modifier = Modifier,
             text = stringResource(id = R.string.feedback),
             style = TextStyle(
-                color = if (!isSystemInDarkTheme()) ChaiCoal else ChaiGrey,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 12.sp,
                 lineHeight = 15.sp,
                 fontFamily = MontserratRegular
