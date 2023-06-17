@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -52,7 +53,7 @@ fun OrganizedBySection(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = if (!isSystemInDarkTheme()) ChaiLightGrey else ChaiBlack,
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(horizontal = 40.dp, vertical = 20.dp)
@@ -62,7 +63,7 @@ fun OrganizedBySection(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.organized_by),
             style = TextStyle(
-                color = if (!isSystemInDarkTheme()) ChaiBlue else ChaiTeal,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,

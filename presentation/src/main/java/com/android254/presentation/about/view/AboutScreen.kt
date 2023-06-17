@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -138,7 +139,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = stringResource(id = R.string.about),
             style = TextStyle(
-                color = if (!isSystemInDarkTheme())ChaiBlue else ChaiTeal,
+                color = MaterialTheme.colorScheme.surfaceTint,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
@@ -154,7 +155,7 @@ fun AboutDroidconSection(
                 .padding(start = 20.dp, end = 20.dp),
             text = droidconDesc,
             style = TextStyle(
-                color = if (!isSystemInDarkTheme())ChaiCoal else ChaiGrey,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
                 lineHeight = 19.sp,
                 fontFamily = MontserratRegular
@@ -178,7 +179,7 @@ fun OrganizingTeamSection(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.about_organizing_team),
             style = TextStyle(
-                color = if (!isSystemInDarkTheme()) ChaiBlue else ChaiTeal,
+                color = MaterialTheme.colorScheme.surfaceTint,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
                 lineHeight = 25.sp,
