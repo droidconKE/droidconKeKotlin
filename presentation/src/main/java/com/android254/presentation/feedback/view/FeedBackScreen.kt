@@ -167,7 +167,7 @@ fun FeedBackScreen(
                                     modifier = Modifier
                                         .height(40.dp)
                                         .width(40.dp),
-                                    painter = painterResource(id = R.drawable.),
+                                    painter = painterResource(id = R.drawable.ic_feedback_bad_face),
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
                                 Text(text = "Bad")
