@@ -170,6 +170,22 @@ fun FeedBackScreen(
                                     painter = painterResource(id = R.drawable.smiling),
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
+                                Text(text = "Bad")
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Card {
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .height(40.dp)
+                                        .width(40.dp),
+                                    painter = painterResource(id = R.drawable.smiling),
+                                    contentDescription = stringResource(id = R.string.sign_in_label)
+                                )
                                 Text(text = "Okay")
                             }
                         }
@@ -187,22 +203,6 @@ fun FeedBackScreen(
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
                                 Text(text = "Great")
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Card {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(40.dp),
-                                    painter = painterResource(id = R.drawable.smiling),
-                                    contentDescription = stringResource(id = R.string.sign_in_label)
-                                )
-                                Text(text = "Bad")
                             }
                         }
                     }
