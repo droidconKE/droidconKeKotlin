@@ -170,7 +170,8 @@ fun FeedBackScreen(
                                     painter = painterResource(id = R.drawable.ic_feedback_bad_face),
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
-                                Text(text = "Bad")
+                                Text(
+                                    text = stringResource(R.string.Bad))
                             }
                         }
                         Spacer(modifier = Modifier.width(20.dp))
@@ -186,7 +187,9 @@ fun FeedBackScreen(
                                     painter = painterResource(id = R.drawable.ic_feedback_neutral_face),
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
-                                Text(text = "Okay")
+                                Text(
+                                    text = stringResource(R.string.Okay)
+                                )
                             }
                         }
                         Spacer(modifier = Modifier.width(20.dp))
@@ -202,7 +205,9 @@ fun FeedBackScreen(
                                     painter = painterResource(id = R.drawable.ic_feedback_smiling_face),
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
-                                Text(text = "Great")
+                                Text(
+                                    text = stringResource(R.string.Great)
+                                )
                             }
                         }
                     }
