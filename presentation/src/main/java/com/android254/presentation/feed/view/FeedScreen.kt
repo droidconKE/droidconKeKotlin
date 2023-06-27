@@ -60,9 +60,13 @@ fun FeedScreen(
     val scope = rememberCoroutineScope()
     feedViewModel.fetchFeed()
     val feedUIState = feedViewModel.viewState
-    if (bottomSheetState.isVisible) ModalBottomSheet(sheetState = bottomSheetState,
-        onDismissRequest = { scope.launch { bottomSheetState.hide() } }) {
-        FeedShareSection()
+    if (bottomSheetState.isVisible) {
+        ModalBottomSheet(
+            sheetState = bottomSheetState,
+            onDismissRequest = { scope.launch { bottomSheetState.hide() } }
+        ) {
+            FeedShareSection()
+        }
     }
     Scaffold(topBar = {
         DroidconAppBarWithFeedbackButton(
@@ -107,7 +111,8 @@ fun FeedScreen(
                     ) {
                         items(feedUIState.feeds) { feedPresentationModel ->
                             FeedComponent(
-                                modifier = Modifier.fillMaxWidth(), feedPresentationModel
+                                modifier = Modifier.fillMaxWidth(),
+                                feedPresentationModel
                             ) {
                                 scope.launch {
                                     bottomSheetState.show()

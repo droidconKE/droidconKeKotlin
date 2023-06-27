@@ -41,8 +41,10 @@ class FeedViewModel @Inject constructor(
                 is ResourceResult.Empty -> FeedUIState.Empty
                 is ResourceResult.Error -> FeedUIState.Error(value.message)
                 is ResourceResult.Loading -> FeedUIState.Loading
-                is ResourceResult.Success -> FeedUIState.Success(value.data?.map { it.toPresentation() }
-                    ?: emptyList())
+                is ResourceResult.Success -> FeedUIState.Success(
+                    value.data?.map { it.toPresentation() }
+                        ?: emptyList()
+                )
             }
         }
     }
