@@ -76,6 +76,9 @@
     <string name="session_filter_label_beginner">Beginner</string>
     <string name="session_filter_label_intermediate">Intermediate</string>
     <string name="session_filter_label_advanced">Advanced</string>
+    <string name="Bad">Bad</string>
+    <string name="Okay">Okay</string>
+    <string name="Great">Great</string>
 
-    <string name="feed_image">Feed image</string>
+
 </resources>
