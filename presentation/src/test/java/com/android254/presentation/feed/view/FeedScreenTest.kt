@@ -19,7 +19,13 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android254.domain.models.Feed
+import com.android254.domain.models.ResourceResult
+import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.android254.presentation.feed.FeedViewModel
+import io.mockk.coEvery
+import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,6 +38,8 @@ import org.robolectric.shadows.ShadowLog
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class FeedScreenTest {
 
+    private val repo = mockk<FeedRepo>()
+
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -43,9 +51,11 @@ class FeedScreenTest {
 
     @Test
     fun `should display feed items`() {
+        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedScreen()
+                FeedScreen(feedViewModel = FeedViewModel(repo))
             }
         }
 
@@ -58,9 +68,11 @@ class FeedScreenTest {
 
     @Test
     fun `test share bottom sheet is shown`() {
+        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedScreen()
+                FeedScreen(feedViewModel = FeedViewModel(repo))
             }
         }
         composeTestRule.onNodeWithTag("share_button").assertExists()

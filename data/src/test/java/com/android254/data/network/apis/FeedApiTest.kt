@@ -15,15 +15,19 @@
  */
 package com.android254.data.network.apis
 
-import com.android254.data.network.models.responses.Feed
+import com.android254.data.network.models.responses.FeedDTO
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
-import com.android254.data.network.util.provideEventBaseUrl
+import com.android254.data.network.util.provideBaseUrl
 import com.android254.domain.models.DataResult
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondOk
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.headersOf
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
@@ -53,7 +57,7 @@ class FeedApiTest {
 
         assertThat(mockEngine.requestHistory.size, `is`(1))
         mockEngine.requestHistory.first().run {
-            val expectedUrl = "${provideEventBaseUrl()}/feeds?page=2&per_page=50"
+            val expectedUrl = "${provideBaseUrl()}/feeds?page=2&per_page=50"
             assertThat(url.toString(), `is`(expectedUrl))
             assertThat(method, `is`(HttpMethod.Get))
         }
@@ -108,7 +112,7 @@ class FeedApiTest {
             `is`(
                 DataResult.Success(
                     listOf(
-                        Feed(
+                        FeedDTO(
                             title = "Test",
                             body = "Good one",
                             topic = "droidconweb",
@@ -119,7 +123,7 @@ class FeedApiTest {
                                 LocalTime.parse("18:45:49")
                             )
                         ),
-                        Feed(
+                        FeedDTO(
                             title = "niko fine",
                             body = "this is a test",
                             topic = "droidconweb",

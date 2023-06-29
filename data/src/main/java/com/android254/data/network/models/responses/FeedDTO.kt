@@ -27,7 +27,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Serializable
-data class Feed(
+data class FeedDTO(
     val title: String,
     val body: String,
     val topic: String,

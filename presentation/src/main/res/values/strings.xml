@@ -79,6 +79,7 @@
     <string name="Bad">Bad</string>
     <string name="Okay">Okay</string>
     <string name="Great">Great</string>
+    <string name="feed_image">Feed Image</string>
 
 
 </resources>
