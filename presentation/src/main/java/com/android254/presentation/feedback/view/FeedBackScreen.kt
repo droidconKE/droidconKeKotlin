@@ -171,7 +171,8 @@ fun FeedBackScreen(
                                     contentDescription = stringResource(id = R.string.sign_in_label)
                                 )
                                 Text(
-                                    text = stringResource(R.string.Bad))
+                                    text = stringResource(R.string.Bad)
+                                )
                             }
                         }
                         Spacer(modifier = Modifier.width(20.dp))
