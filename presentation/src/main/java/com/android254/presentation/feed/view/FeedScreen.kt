@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,74 +16,116 @@
 package com.android254.presentation.feed.view
 
 import android.content.res.Configuration
-import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
+import com.android254.presentation.feed.FeedViewModel
 import com.droidconke.chai.ChaiDCKE22Theme
 import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(
-    navigateToFeedbackScreen: () -> Unit = {}
+    navigateToFeedbackScreen: () -> Unit = {},
+    feedViewModel: FeedViewModel = hiltViewModel()
 ) {
+    val bottomSheetState = rememberSheetState()
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberSheetState(
-        skipHalfExpanded = true
-    )
-
-    BackHandler(bottomSheetState.isVisible) {
-        scope.launch { bottomSheetState.hide() }
-    }
-
-    Scaffold(
-        topBar = {
-            DroidconAppBarWithFeedbackButton(
-                onButtonClick = {
-                    navigateToFeedbackScreen()
-                },
-                userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
-            )
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            LazyColumn(
-                modifier = Modifier.testTag("feeds_lazy_column"),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(count = 10) {
-                    FeedComponent(modifier = Modifier.fillMaxWidth()) {
-                        scope.launch {
-                            bottomSheetState.show()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    feedViewModel.fetchFeed()
+    val feedUIState = feedViewModel.viewState
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
             sheetState = bottomSheetState,
-            onDismissRequest = {
-                scope.launch {
-                    bottomSheetState.hide()
-                }
-            }
+            onDismissRequest = { scope.launch { bottomSheetState.hide() } }
         ) {
             FeedShareSection()
+        }
+    }
+    Scaffold(topBar = {
+        DroidconAppBarWithFeedbackButton(
+            onButtonClick = {
+                navigateToFeedbackScreen()
+            },
+            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
+        )
+    }) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues = paddingValues)
+                .fillMaxSize()
+        ) {
+            when (feedUIState) {
+                is FeedUIState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .width(50.dp)
+                                .height(50.dp),
+                            imageVector = Icons.Rounded.Error,
+                            contentDescription = "Error",
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error)
+                        )
+                        Text(text = feedUIState.message)
+                    }
+                }
+
+                FeedUIState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is FeedUIState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier.testTag("feeds_lazy_column"),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(feedUIState.feeds) { feedPresentationModel ->
+                            FeedComponent(
+                                modifier = Modifier.fillMaxWidth(),
+                                feedPresentationModel
+                            ) {
+                                scope.launch {
+                                    bottomSheetState.show()
+                                }
+                            }
+                        }
+                    }
+                }
+
+                FeedUIState.Empty -> Column(modifier = Modifier.fillMaxSize()) {
+                    Text(text = "Empty")
+                }
+            }
         }
     }
 }
