@@ -16,6 +16,7 @@
 plugins {
     id("droidconke.android.library")
     id("com.google.devtools.ksp")
+    id("droidconke.android.room")
     kotlin("kapt")
     kotlin("plugin.serialization")
     id("com.google.dagger.hilt.android")
@@ -54,9 +55,6 @@ dependencies {
     implementation(libs.timber)
     kapt(libs.android.hilt.compiler)
     implementation(libs.datastore)
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.ktor.core)
     implementation(libs.ktor.android)
