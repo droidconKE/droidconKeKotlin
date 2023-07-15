@@ -26,5 +26,9 @@ gradlePlugin {
             id = "droidconke.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("androidHilt") {
+            id = "droidconke.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
     }
 }

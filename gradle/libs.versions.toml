@@ -14,6 +14,8 @@ splash = "1.0.0"
 junit4 = "4.13.2"
 agp = "7.4.1"
 chucker = "3.5.2"
+ksp = "1.8.20-1.0.11"
+androidxHiltNavigationCompose = "1.0.0"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
@@ -98,6 +100,7 @@ junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [bundles]
 compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
@@ -117,3 +120,4 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 spotless = "com.diffplug.spotless:6.4.2"
 toml-checker = "com.github.ben-manes.versions:0.42.0"
 toml-updater = "nl.littlerobots.version-catalog-update:0.3.1"
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -15,7 +15,7 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("dagger.hilt.android.plugin")
+    id("droidconke.android.hilt")
     kotlin("kapt")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
@@ -76,7 +76,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
-    implementation(libs.android.hilt)
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
@@ -86,9 +85,6 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.compose.lifecycle.runtime)
-    kapt(libs.android.hilt.compiler)
-    implementation(libs.android.hilt.navigation.compose)
-    kapt(libs.android.hilt.androidx.compiler)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 
