@@ -15,7 +15,6 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("com.google.devtools.ksp")
     id("droidconke.android.room")
     kotlin("kapt")
     kotlin("plugin.serialization")
@@ -26,10 +25,6 @@ plugins {
 
 android {
     namespace = "ke.droidcon.kotlin.data"
-
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
 
     testOptions {
         unitTests {
