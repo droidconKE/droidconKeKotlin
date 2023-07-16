@@ -15,7 +15,6 @@ junit4 = "4.13.2"
 agp = "7.4.1"
 chucker = "3.5.2"
 ksp = "1.8.20-1.0.11"
-androidxHiltNavigationCompose = "1.0.0"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
