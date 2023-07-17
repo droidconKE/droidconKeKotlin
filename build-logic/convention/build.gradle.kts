@@ -31,5 +31,9 @@ gradlePlugin {
             id = "droidconke.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
         }
+        register("androidHilt") {
+            id = "droidconke.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
     }
 }
