@@ -16,8 +16,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("droidconke.android.hilt")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     id("com.google.firebase.firebase-perf")
@@ -81,19 +80,12 @@ dependencies {
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
 
-    implementation(libs.android.hilt)
-    kapt(libs.android.hilt.compiler)
-
     implementation(libs.timber)
 
     androidTestImplementation(libs.android.test.junit4)
     androidTestImplementation(libs.android.test.espresso)
-    androidTestImplementation(libs.android.hilt.testing)
-    kaptAndroidTest(libs.android.hilt.compiler)
 
     testImplementation(libs.bundles.test)
-    testImplementation(libs.android.hilt.compiler)
-    kaptTest(libs.android.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.bundles.firebase)
