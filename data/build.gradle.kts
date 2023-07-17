@@ -17,7 +17,6 @@ plugins {
     id("droidconke.android.library")
     id("droidconke.android.room")
     id("droidconke.android.hilt")
-    kotlin("kapt")
     kotlin("plugin.serialization")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
