@@ -39,7 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.rememberSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -76,8 +76,8 @@ fun SessionsScreen(
     }
 
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberSheetState(
-        skipHalfExpanded = true
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
     )
 
     val isSessionLayoutList = rememberSaveable {
