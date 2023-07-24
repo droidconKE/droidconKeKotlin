@@ -56,7 +56,8 @@ fun FeedScreen(
     navigateToFeedbackScreen: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
-    val bottomSheetState = rememberModalBottomSheetState()
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded= true)
     val scope = rememberCoroutineScope()
     feedViewModel.fetchFeed()
     val feedUIState = feedViewModel.viewState
