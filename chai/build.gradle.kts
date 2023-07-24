@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.library")
+    id("droidconke.android.library")
     id("org.jetbrains.kotlin.android")
+    id("droidconke.android.library.compose")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
 }
@@ -61,10 +62,6 @@ android {
         jvmTarget = "11"
     }
 
-    buildFeatures {
-        compose = true
-    }
-
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -72,28 +69,21 @@ android {
             pickFirsts.add("META-INF/io.netty.versions.properties")
         }
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
-    }
 }
 
 dependencies {
     implementation(libs.android.coreKtx)
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
-    implementation(libs.bundles.compose)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
     implementation(libs.android.hilt)
 
     androidTestImplementation(libs.android.test.junit4)
     androidTestImplementation(libs.android.test.espresso)
-    androidTestImplementation(libs.compose.ui.test.junit)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.test.robolectric)
-    testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
 }
 

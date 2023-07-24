@@ -35,5 +35,9 @@ gradlePlugin {
             id = "droidconke.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
+        register("androidLibraryCompose") {
+            id = "droidconke.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
     }
 }
