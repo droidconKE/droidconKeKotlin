@@ -91,7 +91,6 @@ firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
-androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 
 espresso = "androidx.test.espresso:espresso-core:3.5.1"
 junit-androidx = "androidx.test.ext:junit:1.1.5"
