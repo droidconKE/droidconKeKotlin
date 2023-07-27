@@ -16,6 +16,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 }
 
 dependencies {
+    implementation("com.google.firebase:firebase-crashlytics-gradle:2.9.7")
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
@@ -38,6 +39,10 @@ gradlePlugin {
         register("androidLibraryCompose") {
             id = "droidconke.android.library.compose"
             implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidFirebase") {
+            id = "droidconke.android.application.firebase"
+            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
         }
     }
 }
