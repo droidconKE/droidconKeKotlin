@@ -11,6 +11,8 @@ lifecycle = "2.5.1"
 room = "2.5.0"
 ktor = "2.2.2"
 splash = "1.0.0"
+firebaseCrashlyticsPlugin = "2.9.2"
+firebasePerfPlugin = "1.4.2"
 junit4 = "4.13.2"
 agp = "7.4.1"
 chucker = "3.5.2"
@@ -102,6 +104,8 @@ test-junit-ktx = "androidx.test.ext:junit-ktx:1.1.5"
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 
 # Dependencies of the included build-logic
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
