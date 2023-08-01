@@ -57,7 +57,8 @@ fun FeedScreen(
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded= true)
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     feedViewModel.fetchFeed()
     val feedUIState = feedViewModel.viewState
