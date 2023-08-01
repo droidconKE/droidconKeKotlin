@@ -15,8 +15,8 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("dagger.hilt.android.plugin")
-    kotlin("kapt")
+    id("droidconke.android.hilt")
+    id("droidconke.android.library.compose")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
 }
@@ -41,10 +41,6 @@ android {
     }
 
     buildFeatures {
-        compose = true
-    }
-
-    buildFeatures {
         buildConfig = true
     }
 
@@ -53,10 +49,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             pickFirsts.add("META-INF/io.netty.versions.properties")
         }
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
     }
 
     /**
@@ -73,10 +65,8 @@ dependencies {
 
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
-    implementation(libs.bundles.compose)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
-    implementation(libs.android.hilt)
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
@@ -85,15 +75,8 @@ dependencies {
     implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
-    implementation(libs.compose.lifecycle.runtime)
-    kapt(libs.android.hilt.compiler)
-    implementation(libs.android.hilt.navigation.compose)
-    kapt(libs.android.hilt.androidx.compiler)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.test.manifest)
 
     testImplementation(libs.test.robolectric)
-    testImplementation(libs.compose.ui.test.junit)
     testImplementation(libs.android.test.espresso)
     testImplementation(libs.test.navigation)
     testImplementation(libs.test.mockk)

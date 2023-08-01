@@ -171,6 +171,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/misshannah">
+            <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
+            <br />
+            <sub><b>Hannah Olukoye</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
@@ -190,15 +197,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Peter Chege</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/jumaallan">
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
             <br />
             <sub><b>Juma Allan</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/MamboBryan">
             <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
@@ -228,13 +235,6 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/misshannah">
-            <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
-            <br />
-            <sub><b>Hannah Olukoye</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
@@ -247,6 +247,13 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
             <sub><b>Amos Nyaburi</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Jacquigee">
+            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
+            <br />
+            <sub><b>Jacquiline Gitau</b></sub>
         </a>
     </td>
     <td align="center">
@@ -276,15 +283,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Emmanuel Muturia</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
             <br />
             <sub><b>Beatrice Kinya</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/Dbriane208">
             <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
@@ -293,10 +300,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/Jacquigee">
-            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
+        <a href="https://github.com/josphatmwania">
+            <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
             <br />
-            <sub><b>Jacquiline Gitau</b></sub>
+            <sub><b>Josphat Mwania</b></sub>
         </a>
     </td>
     <td align="center">

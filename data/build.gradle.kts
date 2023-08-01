@@ -15,20 +15,15 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("com.google.devtools.ksp")
-    kotlin("kapt")
+    id("droidconke.android.room")
+    id("droidconke.android.hilt")
     kotlin("plugin.serialization")
-    id("com.google.dagger.hilt.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
 }
 
 android {
     namespace = "ke.droidcon.kotlin.data"
-
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
 
     testOptions {
         unitTests {
@@ -50,13 +45,8 @@ dependencies {
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     api(libs.kotlin.coroutines.datetime)
-    implementation(libs.android.hilt)
     implementation(libs.timber)
-    kapt(libs.android.hilt.compiler)
     implementation(libs.datastore)
-    implementation(libs.room.runtime)
-    ksp(libs.room.compiler)
-    implementation(libs.room.ktx)
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.ktor.core)
     implementation(libs.ktor.android)

@@ -18,6 +18,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
 }
 
 gradlePlugin {
@@ -25,6 +26,18 @@ gradlePlugin {
         register("androidLibrary") {
             id = "droidconke.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "droidconke.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "droidconke.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = "droidconke.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
         }
     }
 }
