@@ -17,6 +17,7 @@ plugins {
     id("droidconke.android.library")
     id("droidconke.android.room")
     id("droidconke.android.hilt")
+    //Adding this line here breaks gradle
     //id("droidconke.android.application.firebase")
     kotlin("plugin.serialization")
     id("org.jlleitschuh.gradle.ktlint")
@@ -56,6 +57,10 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
+
+    //I'm trying to move these two lines to the convention plugin
+    implementation(libs.firebase.common)
+    implementation(libs.firebase.remote.config)
 
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)
