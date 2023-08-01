@@ -15,10 +15,7 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("org.jetbrains.kotlin.android")
     id("droidconke.android.library.compose")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
 }
 
 android {

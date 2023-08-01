@@ -112,8 +112,8 @@ val md_theme_light_onSurfaceVariant = Color(0xFF45454f)
 /**
  * LIGHT SURFACE TINT
  */
-val md_theme_light_surfaceTint = Color(0xFF005AC1)
-val md_theme_light_surfaceTintColor = Color(0xFF005AC1)
+val md_theme_light_surfaceTint = Color(0xFF000CEB)
+val md_theme_light_surfaceTintColor = Color(0xFF000CEB)
 
 /**
  * LIGHT INVERSE COLORS
