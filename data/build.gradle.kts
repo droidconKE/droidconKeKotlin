@@ -17,6 +17,7 @@ plugins {
     id("droidconke.android.library")
     id("droidconke.android.room")
     id("droidconke.android.hilt")
+    id("droidconke.android.library.firebase")
     kotlin("plugin.serialization")
 }
 
@@ -53,8 +54,6 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
 
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)

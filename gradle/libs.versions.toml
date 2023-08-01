@@ -11,11 +11,14 @@ lifecycle = "2.5.1"
 room = "2.5.0"
 ktor = "2.2.2"
 splash = "1.0.0"
+firebaseCrashlyticsPlugin = "2.9.2"
+firebasePerfPlugin = "1.4.2"
 junit4 = "4.13.2"
 agp = "7.4.1"
 chucker = "3.5.2"
 ksp = "1.8.20-1.0.11"
 androidxComposeBom = "2023.06.01"
+remote_config = "21.4.1"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
@@ -83,12 +86,14 @@ ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = 
 ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-firebase-bom = "com.google.firebase:firebase-bom:31.2.2"
+firebase-bom = "com.google.firebase:firebase-bom:32.2.0"
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
+firebase-remote-config = { module = "com.google.firebase:firebase-config-ktx", version.ref = "remote_config" }
+firebase-common = "com.google.firebase:firebase-common-ktx:20.3.3"
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
@@ -99,6 +104,8 @@ test-junit-ktx = "androidx.test.ext:junit-ktx:1.1.5"
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 
 # Dependencies of the included build-logic
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
@@ -108,7 +115,7 @@ compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-mate
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation"]
-firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance", "firebase-config"]
+firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance", "firebase-remote-config", "firebase-common"]
 test = ["junit4", "test-junit-ktx"]
 
 [plugins]

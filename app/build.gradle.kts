@@ -17,9 +17,9 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("droidconke.android.hilt")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.firebase-perf")
+    id("droidconke.android.application.firebase")
+    id("org.jlleitschuh.gradle.ktlint")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -84,9 +84,6 @@ dependencies {
     androidTestImplementation(libs.android.test.espresso)
 
     testImplementation(libs.bundles.test)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
