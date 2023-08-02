@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("droidconke.android.application")
     id("droidconke.android.hilt")
     id("droidconke.android.application.firebase")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -44,16 +41,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = "11"
     }
 
     packagingOptions {

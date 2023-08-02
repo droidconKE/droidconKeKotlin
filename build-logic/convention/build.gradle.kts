@@ -49,5 +49,9 @@ gradlePlugin {
             id = "droidconke.android.library.firebase"
             implementationClass = "AndroidLibraryFirebaseConventionPlugin"
         }
+        register("androidApplication") {
+            id = "droidconke.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
     }
 }
