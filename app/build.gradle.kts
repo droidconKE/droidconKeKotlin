@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    kotlin("kapt")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("com.google.firebase.firebase-perf")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
+    id("droidconke.android.application")
+    id("droidconke.android.hilt")
+    id("droidconke.android.application.firebase")
 }
 
 android {
@@ -49,16 +43,6 @@ android {
         }
     }
 
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
     packagingOptions {
         resources {
             pickFirsts.add("META-INF/io.netty.versions.properties")
@@ -81,22 +65,12 @@ dependencies {
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
 
-    implementation(libs.android.hilt)
-    kapt(libs.android.hilt.compiler)
-
     implementation(libs.timber)
 
     androidTestImplementation(libs.android.test.junit4)
     androidTestImplementation(libs.android.test.espresso)
-    androidTestImplementation(libs.android.hilt.testing)
-    kaptAndroidTest(libs.android.hilt.compiler)
 
     testImplementation(libs.bundles.test)
-    testImplementation(libs.android.hilt.compiler)
-    kaptTest(libs.android.hilt.compiler)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

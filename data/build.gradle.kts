@@ -16,11 +16,9 @@
 plugins {
     id("droidconke.android.library")
     id("droidconke.android.room")
-    kotlin("kapt")
+    id("droidconke.android.hilt")
+    id("droidconke.android.library.firebase")
     kotlin("plugin.serialization")
-    id("com.google.dagger.hilt.android")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
 }
 
 android {
@@ -46,9 +44,7 @@ dependencies {
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     api(libs.kotlin.coroutines.datetime)
-    implementation(libs.android.hilt)
     implementation(libs.timber)
-    kapt(libs.android.hilt.compiler)
     implementation(libs.datastore)
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.ktor.core)
@@ -58,8 +54,6 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.bundles.firebase)
 
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)

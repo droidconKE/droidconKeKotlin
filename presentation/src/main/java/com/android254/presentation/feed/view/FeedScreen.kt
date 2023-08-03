@@ -36,7 +36,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSheetState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -56,7 +56,9 @@ fun FeedScreen(
     navigateToFeedbackScreen: () -> Unit = {},
     feedViewModel: FeedViewModel = hiltViewModel()
 ) {
-    val bottomSheetState = rememberSheetState()
+    val bottomSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    )
     val scope = rememberCoroutineScope()
     feedViewModel.fetchFeed()
     val feedUIState = feedViewModel.viewState

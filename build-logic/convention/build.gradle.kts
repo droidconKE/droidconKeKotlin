@@ -18,6 +18,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.firebase.crashlytics.gradlePlugin)
+    compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
 }
 
@@ -30,6 +32,26 @@ gradlePlugin {
         register("androidRoom") {
             id = "droidconke.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "droidconke.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidLibraryCompose") {
+            id = "droidconke.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        register("androidFirebase") {
+            id = "droidconke.android.application.firebase"
+            implementationClass = "AndroidApplicationFirebaseConventionPlugin"
+        }
+        register("androidLibraryFirebase") {
+            id = "droidconke.android.library.firebase"
+            implementationClass = "AndroidLibraryFirebaseConventionPlugin"
+        }
+        register("androidApplication") {
+            id = "droidconke.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
         }
     }
 }
