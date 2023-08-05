@@ -20,9 +20,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.speakers.SpeakersScreenViewModel
 import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,13 +38,16 @@ import org.robolectric.annotation.Config
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class SpeakersScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
+    private val mockSyncDataWorkManager = mockk<SyncDataWorkManager>()
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
     @Test
     fun `should show heading and show speaker details card`() {
-        coEvery { speakersRepo.fetchSpeakers() } returns ResourceResult.Success(
+        every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
+        coEvery { mockSyncDataWorkManager.startSync() } just runs
+        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(
             listOf(
                 Speaker(
                     name = "Harun Wangereka",
@@ -48,7 +56,7 @@ class SpeakersScreenTest {
             )
         )
         composeTestRule.setContent {
-            SpeakersScreen(SpeakersScreenViewModel(speakersRepo))
+            SpeakersScreen(SpeakersScreenViewModel(speakersRepo,mockSyncDataWorkManager))
         }
 
         with(composeTestRule) {
