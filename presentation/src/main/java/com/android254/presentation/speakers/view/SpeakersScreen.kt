@@ -61,7 +61,8 @@ fun SpeakersScreen(
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
+    val speakers by speakersScreenViewModel.speakers.collectAsStateWithLifecycle()
+    val isSyncing by speakersScreenViewModel.isSyncing.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -94,46 +95,23 @@ fun SpeakersScreen(
         }
     ) { paddingValues ->
         SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = uiState is SpeakersScreenUiState.Loading),
-            onRefresh = { /*TODO*/ },
+            state = rememberSwipeRefreshState(isRefreshing = isSyncing),
+            onRefresh = {  },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
         ) {
-            when (uiState) {
-                is SpeakersScreenUiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-                }
-
-                is SpeakersScreenUiState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = uiState.message
-                        )
-                    }
-                }
-
-                is SpeakersScreenUiState.Success -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(160.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                    ) {
-                        items(items = uiState.speakers) { speaker ->
-                            SpeakerComponent(
-                                speaker = speaker,
-                                onClick = {
-                                    navigateToSpeaker.invoke(speaker.id)
-                                }
-                            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(160.dp),
+                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            ) {
+                items(items = speakers) { speaker ->
+                    SpeakerComponent(
+                        speaker = speaker,
+                        onClick = {
+                            navigateToSpeaker.invoke(speaker.id)
                         }
-                    }
+                    )
                 }
             }
         }

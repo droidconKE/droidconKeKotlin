@@ -20,24 +20,25 @@ import androidx.room.Query
 import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.db.model.SessionEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SessionDao : BaseDao<SessionEntity> {
     @Query("SELECT * FROM sessions ORDER BY startTimestamp ASC")
-    fun fetchSessions(): List<SessionEntity>
+    fun fetchSessions(): Flow<List<SessionEntity>>
 
     @Query("DELETE FROM sessions")
-    fun clearSessions()
+    suspend fun clearSessions()
 
     @Query("SELECT * FROM sessions WHERE id = :id")
-    fun getSessionById(id: String): SessionEntity?
+    suspend fun getSessionById(id: String): SessionEntity?
 
     @RawQuery
-    fun fetchSessionsWithFilters(query: SupportSQLiteQuery): List<SessionEntity>
+    suspend fun fetchSessionsWithFilters(query: SupportSQLiteQuery): List<SessionEntity>
 
     @Query("UPDATE sessions SET isBookmarked = :isBookmarked WHERE remote_id = :id")
-    fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
+    suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
 
     @Query("SELECT isBookmarked FROM sessions WHERE remote_id = :id")
-    fun getBookmarkStatus(id: String): Boolean
+    suspend fun getBookmarkStatus(id: String): Boolean
 }

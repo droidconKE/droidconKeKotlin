@@ -19,10 +19,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SpeakersRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,37 +41,39 @@ sealed interface SpeakersScreenUiState {
 
 @HiltViewModel
 class SpeakersScreenViewModel @Inject constructor(
-    private val speakersRepo: SpeakersRepo
+    private val speakersRepo: SpeakersRepo,
+    private val syncDataWorkManager: SyncDataWorkManager,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<SpeakersScreenUiState>(SpeakersScreenUiState.Loading)
-    val uiState = _uiState.asStateFlow()
+    val isSyncing = syncDataWorkManager.isSyncing
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
 
-    init {
-        viewModelScope.launch {
-            getSpeakers()
+    val speakers = speakersRepo.fetchSpeakers()
+        .map { speakers ->
+            speakers.map {
+                SpeakerUI(
+                    id = 1,
+                    imageUrl = it.avatar,
+                    name = it.name,
+                    tagline = it.tagline,
+                    bio = it.biography,
+                    twitterHandle = it.twitter
+                )
+            }
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = emptyList()
+        )
 
-    private suspend fun getSpeakers() {
-        when (val result = speakersRepo.fetchSpeakers()) {
-            is ResourceResult.Success -> {
-                val speakers = result.data?.map {
-                    SpeakerUI(
-                        id = 1,
-                        imageUrl = it.avatar,
-                        name = it.name,
-                        tagline = it.tagline,
-                        bio = it.biography,
-                        twitterHandle = it.twitter
-                    )
-                } ?: emptyList()
-                _uiState.value = SpeakersScreenUiState.Success(speakers = speakers)
-            }
-            is ResourceResult.Error -> {
-                _uiState.value = SpeakersScreenUiState.Error(message = result.message)
-            }
-            else -> {}
-        }
-    }
+
+
+
+
+
 }

@@ -17,10 +17,10 @@ package com.android254.domain.repos
 
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
+import kotlinx.coroutines.flow.Flow
 
 interface SpeakersRepo {
-    suspend fun fetchSpeakers(): ResourceResult<List<Speaker>>
-    suspend fun fetchSpeakersUnpacked(): List<Speaker>
-    suspend fun fetchSpeakerCount(): ResourceResult<Int>
+    fun fetchSpeakers(): Flow<List<Speaker>>
+    suspend fun fetchSpeakerCount(): Flow<Int>
     suspend fun getSpeakerById(id: Int): ResourceResult<Speaker>
 }

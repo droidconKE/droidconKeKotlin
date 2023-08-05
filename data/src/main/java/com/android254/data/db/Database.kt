@@ -23,10 +23,12 @@ import com.android254.data.dao.BookmarkDao
 import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
+import com.android254.data.dao.SponsorsDao
 import com.android254.data.db.model.BookmarkEntity
 import com.android254.data.db.model.OrganizerEntity
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.db.model.SpeakerEntity
+import com.android254.data.db.model.SponsorEntity
 import com.android254.data.db.util.InstantConverter
 
 @Database(
@@ -34,7 +36,8 @@ import com.android254.data.db.util.InstantConverter
         SessionEntity::class,
         SpeakerEntity::class,
         BookmarkEntity::class,
-        OrganizerEntity::class
+        OrganizerEntity::class,
+        SponsorEntity::class,
     ],
     version = 2,
     exportSchema = true,
@@ -51,4 +54,6 @@ abstract class Database : RoomDatabase() {
     abstract fun bookmarkDao(): BookmarkDao
 
     abstract fun organizersDao(): OrganizersDao
+
+    abstract fun sponsorsDao():SponsorsDao
 }

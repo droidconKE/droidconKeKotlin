@@ -15,10 +15,23 @@
  */
 package com.android254.data.repos.mappers
 
+import com.android254.data.db.model.SponsorEntity
 import com.android254.data.network.models.responses.SponsorDTO
 import com.android254.domain.models.Sponsors
 
 fun SponsorDTO.toDomain() = Sponsors(
     sponsorName = name,
     sponsorLogoUrl = logo
+)
+
+fun SponsorDTO.toEntity() = SponsorEntity(
+    name = name,
+    logo = logo,
+    tagline = tagline,
+    createdAt = createdAt,
+    link = link,
+)
+fun SponsorEntity.toDomain() = Sponsors(
+    sponsorLogoUrl = logo,
+    sponsorName = name,
 )

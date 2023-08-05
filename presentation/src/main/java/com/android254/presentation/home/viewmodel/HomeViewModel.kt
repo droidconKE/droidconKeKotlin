@@ -23,6 +23,7 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.HomeRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
@@ -30,39 +31,53 @@ import com.android254.presentation.sessions.mappers.getTimePeriod
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepo: HomeRepo
+    private val homeRepo: HomeRepo,
+    private val syncDataWorkManager: SyncDataWorkManager,
 ) : ViewModel() {
 
-    var viewState by mutableStateOf(HomeViewState())
-        private set
+    val isSyncing = syncDataWorkManager.isSyncing
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
 
-    init {
-        onGetHomeScreenDetails()
-    }
+    val viewState: StateFlow<HomeViewState> = homeRepo.fetchHomeDetails()
+        .map {
+            HomeViewState(
+                isPosterVisible = it.isEventBannerEnable,
+                isCallForSpeakersVisible = it.isCallForSpeakersEnable,
+                linkToCallForSpeakers = it.linkToCallForSpeakers,
+                isSignedIn = false,
+                speakers = it.speakers.toSpeakersPresentation(),
+                isSpeakersSectionVisible = it.isSpeakersSessionEnable,
+                isSessionsSectionVisible = it.isSessionsSectionEnable,
+                sponsors = it.sponsors.map { it.sponsorLogoUrl },
+                organizedBy = it.organizers.map { it.organizerLogoUrl },
+                sessions = it.sessions.toSessionsPresentation()
+            )
+        }
+        .stateIn(
+            scope= viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = HomeViewState()
+        )
 
-    private fun onGetHomeScreenDetails() {
+    fun startRefresh(){
         viewModelScope.launch {
-            with(homeRepo.fetchHomeDetails()) {
-                viewState = viewState.copy(
-                    isPosterVisible = isEventBannerEnable,
-                    isCallForSpeakersVisible = isCallForSpeakersEnable,
-                    linkToCallForSpeakers = linkToCallForSpeakers,
-                    isSignedIn = false,
-                    speakers = speakers.toSpeakersPresentation(),
-                    isSpeakersSectionVisible = isSpeakersSessionEnable,
-                    isSessionsSectionVisible = isSessionsSectionEnable,
-                    sponsors = sponsors.map { it.sponsorLogoUrl },
-                    organizedBy = organizers.map { it.organizerLogoUrl },
-                    sessions = sessions.toSessionsPresentation()
-                )
-            }
+            syncDataWorkManager.startSync()
         }
     }
+
 
     private fun List<Speaker>.toSpeakersPresentation() =
         map {
