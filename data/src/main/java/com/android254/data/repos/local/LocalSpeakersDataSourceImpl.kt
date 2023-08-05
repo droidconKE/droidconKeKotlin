@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.android254.data.repos.local
 
 import com.android254.data.dao.SpeakerDao
@@ -13,53 +28,43 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 interface LocalSpeakersDataSource {
 
     fun getCachedSpeakers(): Flow<List<Speaker>>
 
-    suspend fun getCachedSpeakerById(speakerId:Int):Speaker?
+    suspend fun getCachedSpeakerById(speakerId: Int): Speaker?
 
-    fun fetchCachedSpeakerCount():Flow<Int>
+    fun fetchCachedSpeakerCount(): Flow<Int>
 
     suspend fun deleteAllCachedSpeakers()
 
-    suspend fun saveCachedSpeakers(speakers:List<SpeakerDTO>)
-
+    suspend fun saveCachedSpeakers(speakers: List<SpeakerDTO>)
 }
-class LocalSpeakersDataSourceImpl  @Inject constructor(
+class LocalSpeakersDataSourceImpl @Inject constructor(
     private val speakerDao: SpeakerDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-):LocalSpeakersDataSource {
+) : LocalSpeakersDataSource {
 
-    override fun getCachedSpeakers(): Flow<List<Speaker>> {
-        return speakerDao.fetchSpeakers()
-            .map { speakers ->  speakers.map { it.toDomainModel() } }
+    override fun getCachedSpeakers(): Flow<List<Speaker>> =
+        speakerDao.fetchSpeakers()
+            .map { speakers -> speakers.map { it.toDomainModel() } }
             .flowOn(ioDispatcher)
 
-
-    }
-
-    override suspend fun saveCachedSpeakers(speakers: List<SpeakerDTO>) {
-        return speakerDao.insert(items = speakers.map { it.toEntity() })
-    }
+    override suspend fun saveCachedSpeakers(speakers: List<SpeakerDTO>) =
+        speakerDao.insert(items = speakers.map { it.toEntity() })
 
     override suspend fun getCachedSpeakerById(speakerId: Int): Speaker? {
-        return withContext(ioDispatcher){
+        return withContext(ioDispatcher) {
             speakerDao.getSpeakerById(id = speakerId)?.toDomainModel()
         }
-
     }
 
-    override fun fetchCachedSpeakerCount(): Flow<Int> {
-        return speakerDao.fetchSpeakerCount().flowOn(ioDispatcher)
-    }
+    override fun fetchCachedSpeakerCount(): Flow<Int> =
+        speakerDao.fetchSpeakerCount().flowOn(ioDispatcher)
 
     override suspend fun deleteAllCachedSpeakers() {
-        withContext(ioDispatcher){
+        withContext(ioDispatcher) {
             speakerDao.deleteAll()
         }
     }
-
-
 }

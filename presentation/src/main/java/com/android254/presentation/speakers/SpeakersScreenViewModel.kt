@@ -17,17 +17,13 @@ package com.android254.presentation.speakers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface SpeakersScreenUiState {
@@ -42,7 +38,7 @@ sealed interface SpeakersScreenUiState {
 @HiltViewModel
 class SpeakersScreenViewModel @Inject constructor(
     private val speakersRepo: SpeakersRepo,
-    private val syncDataWorkManager: SyncDataWorkManager,
+    private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {
 
     val isSyncing = syncDataWorkManager.isSyncing
@@ -70,10 +66,4 @@ class SpeakersScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = emptyList()
         )
-
-
-
-
-
-
 }

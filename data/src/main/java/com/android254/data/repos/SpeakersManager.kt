@@ -15,39 +15,24 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.db.Database
-import com.android254.data.di.IoDispatcher
-import com.android254.data.network.apis.SpeakersApi
-import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.repos.local.LocalSpeakersDataSource
-import com.android254.data.repos.mappers.toDomainModel
-import com.android254.data.repos.mappers.toEntity
-import com.android254.data.repos.remote.RemoteSpeakersDataSource
-import com.android254.domain.models.DataResult
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SpeakersManager @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource,
+    private val localSpeakersDataSource: LocalSpeakersDataSource
 
 ) : SpeakersRepo {
     // the repo is offline first i.e the data should only be loaded from the local data source
 
-    override fun fetchSpeakers(): Flow<List<Speaker>>  {
-        return localSpeakersDataSource.getCachedSpeakers()
-    }
+    override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers()
 
-
-    override suspend fun fetchSpeakerCount(): Flow<Int> {
-        return localSpeakersDataSource.fetchCachedSpeakerCount()
-    }
-
+    override suspend fun fetchSpeakerCount(): Flow<Int> =
+        localSpeakersDataSource.fetchCachedSpeakerCount()
 
     override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
-         ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerById(id))
+        ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerById(id))
 }

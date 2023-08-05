@@ -33,11 +33,12 @@ object DaoModule {
     @Provides
     fun provideSpeakersDao(
         database: Database
-    ):SpeakerDao = database.speakerDao()
+    ): SpeakerDao = database.speakerDao()
+
     @Provides
     fun provideSponsorsDao(
         database: Database
-    ):SponsorsDao = database.sponsorsDao()
+    ): SponsorsDao = database.sponsorsDao()
 
     @Provides
     fun providesAuthorDao(

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.android254.data.di
 
 import com.android254.data.dao.SessionDao
@@ -25,7 +40,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourcesModule {
@@ -34,56 +48,41 @@ object DataSourcesModule {
     @Singleton
     fun provideRemoteSpeakersDataSource(
         api: SpeakersApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSpeakersDataSource {
-        return RemoteSpeakersDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
-    }
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): RemoteSpeakersDataSource = RemoteSpeakersDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideRemoteSponsorsDataSource(
         api: SponsorsApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSponsorsDataSource {
-        return RemoteSponsorsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
-    }
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): RemoteSponsorsDataSource = RemoteSponsorsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideRemoteSessionsDataSource(
         api: SessionsApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSessionsDataSource {
-        return RemoteSessionsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
-    }
-
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): RemoteSessionsDataSource = RemoteSessionsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSessionsDataSource(
         sessionDao: SessionDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSessionsDataSource {
-        return LocalSessionsDataSourceImpl(sessionDao = sessionDao, ioDispatcher = ioDispatcher)
-    }
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): LocalSessionsDataSource = LocalSessionsDataSourceImpl(sessionDao = sessionDao, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSpeakersDataSource(
         speakersDao: SpeakerDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSpeakersDataSource {
-        return LocalSpeakersDataSourceImpl(speakerDao = speakersDao, ioDispatcher = ioDispatcher)
-    }
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): LocalSpeakersDataSource = LocalSpeakersDataSourceImpl(speakerDao = speakersDao, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSponsorsDataSource(
         sponsorsDao: SponsorsDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSponsorsDataSource {
-        return LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, ioDispatcher = ioDispatcher)
-    }
-
-
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): LocalSponsorsDataSource = LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, ioDispatcher = ioDispatcher)
 }

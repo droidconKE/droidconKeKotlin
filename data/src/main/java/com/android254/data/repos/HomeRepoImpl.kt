@@ -16,7 +16,6 @@
 package com.android254.data.repos
 
 import com.android254.data.di.IoDispatcher
-import com.android254.data.network.apis.SponsorsApi
 import com.android254.data.network.models.responses.SponsorsPagedResponse
 import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.local.LocalSpeakersDataSource
@@ -27,13 +26,10 @@ import com.android254.domain.models.HomeDetails
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
-import com.android254.domain.repos.SessionsRepo
-import com.android254.domain.repos.SpeakersRepo
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.withContext
 
 class HomeRepoImpl @Inject constructor(
     private val localSpeakersDataSource: LocalSpeakersDataSource,
@@ -46,7 +42,7 @@ class HomeRepoImpl @Inject constructor(
         val sponsorsflow = localSponsorsDataSource.fetchCachedSponsors()
         val speakersflow = localSpeakersDataSource.getCachedSpeakers()
         val sessionsflow = localSessionsDataSource.getCachedSessions()
-        return combine(sponsorsflow,speakersflow,sessionsflow){ sponsors, speakers, sessions ->
+        return combine(sponsorsflow, speakersflow, sessionsflow) { sponsors, speakers, sessions ->
             HomeDetails(
                 isCallForSpeakersEnable = true,
                 linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",

@@ -37,7 +37,7 @@ import com.android254.data.db.util.InstantConverter
         SpeakerEntity::class,
         BookmarkEntity::class,
         OrganizerEntity::class,
-        SponsorEntity::class,
+        SponsorEntity::class
     ],
     version = 2,
     exportSchema = true,
@@ -55,5 +55,5 @@ abstract class Database : RoomDatabase() {
 
     abstract fun organizersDao(): OrganizersDao
 
-    abstract fun sponsorsDao():SponsorsDao
+    abstract fun sponsorsDao(): SponsorsDao
 }

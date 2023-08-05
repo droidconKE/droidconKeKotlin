@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.android254.data.work
 
 import android.content.Context
@@ -18,7 +33,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
-
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
     @Assisted val appContext: Context,
@@ -30,26 +44,23 @@ class SyncDataWorker @AssistedInject constructor(
     private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
     private val localSessionsDataSource: LocalSessionsDataSource,
     private val localSpeakersDataSource: LocalSpeakersDataSource,
-    private val localSponsorsDataSource: LocalSponsorsDataSource,
+    private val localSponsorsDataSource: LocalSponsorsDataSource
 
-    ) : CoroutineWorker(appContext, workerParameters) {
+) : CoroutineWorker(appContext, workerParameters) {
 
     override suspend fun doWork(): Result {
-        withContext(ioDispatcher){
+        withContext(ioDispatcher) {
             val sessionSyncDefferred = async { syncSessions() }
             val speakersDeffered = async { syncSpeakers() }
-            val sponsorsDeffered = async{ syncSponsors() }
+            val sponsorsDeffered = async { syncSponsors() }
 
             sessionSyncDefferred.await()
             speakersDeffered.await()
             sponsorsDeffered.await()
-
         }
-
 
         return Result.success()
     }
-
 
     private suspend fun syncSessions() {
         withContext(ioDispatcher) {
@@ -61,18 +72,15 @@ class SyncDataWorker @AssistedInject constructor(
                         sessions = response.data ?: emptyList()
                     )
                     println("Sync sessions successful")
-
                 }
 
                 is ResourceResult.Error -> {
                     println("Sync sessions failed ${response.message}")
-
                 }
 
                 else -> {}
             }
         }
-
     }
 
     private suspend fun syncSponsors() {
@@ -85,17 +93,14 @@ class SyncDataWorker @AssistedInject constructor(
                         sponsors = response.data ?: emptyList()
                     )
                     println("Sync sponsors successful")
-
                 }
 
                 is ResourceResult.Error -> {
                     println("Sync sponsors failed ${response.message}")
-
                 }
 
                 else -> {}
             }
-
         }
     }
 
@@ -110,12 +115,10 @@ class SyncDataWorker @AssistedInject constructor(
                     )
 
                     println("Sync speakers successful")
-
                 }
 
                 is ResourceResult.Error -> {
                     println("Sync speakers failed ${response.message}")
-
                 }
 
                 else -> {}

@@ -16,7 +16,6 @@
 package com.android254.presentation.home.viewmodel
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,7 +40,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepo: HomeRepo,
-    private val syncDataWorkManager: SyncDataWorkManager,
+    private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {
 
     val isSyncing = syncDataWorkManager.isSyncing
@@ -67,17 +66,16 @@ class HomeViewModel @Inject constructor(
             )
         }
         .stateIn(
-            scope= viewModelScope,
+            scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = HomeViewState()
         )
 
-    fun startRefresh(){
+    fun startRefresh() {
         viewModelScope.launch {
             syncDataWorkManager.startSync()
         }
     }
-
 
     private fun List<Speaker>.toSpeakersPresentation() =
         map {

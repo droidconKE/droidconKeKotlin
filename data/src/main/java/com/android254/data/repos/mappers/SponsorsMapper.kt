@@ -29,9 +29,9 @@ fun SponsorDTO.toEntity() = SponsorEntity(
     logo = logo,
     tagline = tagline,
     createdAt = createdAt,
-    link = link,
+    link = link
 )
 fun SponsorEntity.toDomain() = Sponsors(
     sponsorLogoUrl = logo,
-    sponsorName = name,
+    sponsorName = name
 )

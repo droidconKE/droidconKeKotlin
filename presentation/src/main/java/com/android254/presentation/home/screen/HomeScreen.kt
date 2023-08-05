@@ -85,7 +85,6 @@ fun HomeScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 HomeHeaderSection()
                 HomeBannerSection(homeViewState)
                 HomeSpacer()
@@ -109,7 +108,6 @@ fun HomeScreen(
                 HomeSpacer()
             }
         }
-
     }
 }
 
