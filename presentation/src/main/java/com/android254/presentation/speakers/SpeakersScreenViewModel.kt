@@ -19,10 +19,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.presentation.models.Speaker
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -48,22 +52,31 @@ class SpeakersScreenViewModel @Inject constructor(
             initialValue = false
         )
 
-    val speakers = speakersRepo.fetchSpeakers()
-        .map { speakers ->
-            speakers.map {
-                SpeakerUI(
-                    id = 1,
-                    imageUrl = it.avatar,
-                    name = it.name,
-                    tagline = it.tagline,
-                    bio = it.biography,
-                    twitterHandle = it.twitter
-                )
+    val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
+        speakersRepo.fetchSpeakers()
+            .map {
+                it.map {
+                    SpeakerUI(
+                        id = 1,
+                        imageUrl = it.avatar,
+                        name = it.name,
+                        tagline = it.tagline,
+                        bio = it.biography,
+                        twitterHandle = it.twitter
+                    )
+                }
             }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = emptyList()
-        )
+            .map<List<SpeakerUI>,SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+            .onStart {
+                emit(SpeakersScreenUiState.Loading)
+            }
+            .catch {
+                emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = SpeakersScreenUiState.Loading
+            )
+
 }

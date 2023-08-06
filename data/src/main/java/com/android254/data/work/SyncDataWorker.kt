@@ -32,6 +32,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
@@ -71,11 +72,11 @@ class SyncDataWorker @AssistedInject constructor(
                     localSessionsDataSource.saveCachedSessions(
                         sessions = response.data ?: emptyList()
                     )
-                    println("Sync sessions successful")
+                    Timber.d("Sync sessions successful")
                 }
 
                 is ResourceResult.Error -> {
-                    println("Sync sessions failed ${response.message}")
+                    Timber.d("Sync sessions failed ${response.message}")
                 }
 
                 else -> {}
@@ -92,11 +93,11 @@ class SyncDataWorker @AssistedInject constructor(
                     localSponsorsDataSource.saveCachedSponsors(
                         sponsors = response.data ?: emptyList()
                     )
-                    println("Sync sponsors successful")
+                    Timber.d("Sync sponsors successful")
                 }
 
                 is ResourceResult.Error -> {
-                    println("Sync sponsors failed ${response.message}")
+                    Timber.d("Sync sponsors failed ${response.message}")
                 }
 
                 else -> {}
@@ -114,11 +115,11 @@ class SyncDataWorker @AssistedInject constructor(
                         speakers = response.data ?: emptyList()
                     )
 
-                    println("Sync speakers successful")
+                    Timber.d("Sync speakers successful")
                 }
 
                 is ResourceResult.Error -> {
-                    println("Sync speakers failed ${response.message}")
+                    Timber.d("Sync speakers failed ${response.message}")
                 }
 
                 else -> {}

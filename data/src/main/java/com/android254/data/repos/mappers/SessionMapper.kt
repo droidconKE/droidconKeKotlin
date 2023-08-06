@@ -46,7 +46,7 @@ fun SessionEntity.toDomainModel() = Session(
     remote_id = this.remote_id
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 fun SessionDTO.toEntity(): SessionEntity {
     return SessionEntity(
         id = 0,
@@ -71,7 +71,7 @@ fun SessionDTO.toEntity(): SessionEntity {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 fun fromString(offsetDateTime: String): Long {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return LocalDateTime.parse(offsetDateTime, pattern).toInstant(ZoneOffset.ofHours(3))

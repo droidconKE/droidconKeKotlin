@@ -59,7 +59,7 @@ class LocalSessionsDataSourceImpl @Inject constructor(
             .map { sessions -> sessions.map { it.toDomainModel() } }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override suspend fun saveCachedSessions(sessions: List<SessionDTO>) {
         withContext(ioDispatcher) {
             sessionDao.insert(items = sessions.map { it.toEntity() })

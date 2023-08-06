@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.lifecycle.livedataKtx)
 
     implementation(libs.work.runtime)
