@@ -17,7 +17,6 @@ package com.android254.presentation.speakers.view
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
@@ -56,7 +55,7 @@ class SpeakersScreenTest {
             )
         )
         composeTestRule.setContent {
-            SpeakersScreen(SpeakersScreenViewModel(speakersRepo,mockSyncDataWorkManager))
+            SpeakersScreen(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
         }
 
         with(composeTestRule) {

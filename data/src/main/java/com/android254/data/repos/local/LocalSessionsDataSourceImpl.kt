@@ -15,8 +15,6 @@
  */
 package com.android254.data.repos.local
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.model.SessionEntity
@@ -32,23 +30,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface LocalSessionsDataSource {
-
-    fun getCachedSessions(): Flow<List<Session>>
-
-    suspend fun deleteCachedSessions()
-
-    suspend fun getCachedSessionById(id: String): SessionEntity?
-
-    suspend fun fetchSessionWithFilters(query: SupportSQLiteQuery): List<Session>
-
-    suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
-
-    suspend fun getBookmarkStatus(id: String): Boolean
-
-    suspend fun saveCachedSessions(sessions: List<SessionDTO>)
-}
-
 class LocalSessionsDataSourceImpl @Inject constructor(
     private val sessionDao: SessionDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -58,7 +39,6 @@ class LocalSessionsDataSourceImpl @Inject constructor(
             .flowOn(ioDispatcher)
             .map { sessions -> sessions.map { it.toDomainModel() } }
     }
-
 
     override suspend fun saveCachedSessions(sessions: List<SessionDTO>) {
         withContext(ioDispatcher) {

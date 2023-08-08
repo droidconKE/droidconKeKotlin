@@ -28,14 +28,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface LocalSponsorsDataSource {
-
-    fun fetchCachedSponsors(): Flow<List<Sponsors>>
-
-    suspend fun deleteCachedSponsors()
-
-    suspend fun saveCachedSponsors(sponsors: List<SponsorDTO>)
-}
 class LocalSponsorsDataSourceImpl @Inject constructor(
     private val sponsorsDao: SponsorsDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher

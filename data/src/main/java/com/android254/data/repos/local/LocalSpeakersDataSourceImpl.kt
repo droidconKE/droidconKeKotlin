@@ -28,18 +28,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-interface LocalSpeakersDataSource {
-
-    fun getCachedSpeakers(): Flow<List<Speaker>>
-
-    suspend fun getCachedSpeakerById(speakerId: Int): Speaker?
-
-    fun fetchCachedSpeakerCount(): Flow<Int>
-
-    suspend fun deleteAllCachedSpeakers()
-
-    suspend fun saveCachedSpeakers(speakers: List<SpeakerDTO>)
-}
 class LocalSpeakersDataSourceImpl @Inject constructor(
     private val speakerDao: SpeakerDao,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher

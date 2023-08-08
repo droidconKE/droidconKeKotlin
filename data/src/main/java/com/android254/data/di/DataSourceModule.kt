@@ -27,9 +27,7 @@ import com.android254.data.repos.local.LocalSpeakersDataSource
 import com.android254.data.repos.local.LocalSpeakersDataSourceImpl
 import com.android254.data.repos.local.LocalSponsorsDataSource
 import com.android254.data.repos.local.LocalSponsorsDataSourceImpl
-import com.android254.data.repos.remote.RemoteSessionsDataSource
 import com.android254.data.repos.remote.RemoteSessionsDataSourceImpl
-import com.android254.data.repos.remote.RemoteSpeakersDataSource
 import com.android254.data.repos.remote.RemoteSpeakersDataSourceImpl
 import com.android254.data.repos.remote.RemoteSponsorsDataSource
 import com.android254.data.repos.remote.RemoteSponsorsDataSourceImpl
@@ -42,7 +40,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataSourcesModule {
+object DataSourceModule {
 
     @Provides
     @Singleton

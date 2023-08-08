@@ -15,8 +15,6 @@
  */
 package com.android254.data.repos.mappers
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.network.models.responses.SessionDTO
 import com.android254.domain.models.Session
@@ -46,7 +44,6 @@ fun SessionEntity.toDomainModel() = Session(
     remote_id = this.remote_id
 )
 
-
 fun SessionDTO.toEntity(): SessionEntity {
     return SessionEntity(
         id = 0,
@@ -70,7 +67,6 @@ fun SessionDTO.toEntity(): SessionEntity {
         sessionImageUrl = sessionImage.toString()
     )
 }
-
 
 fun fromString(offsetDateTime: String): Long {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
