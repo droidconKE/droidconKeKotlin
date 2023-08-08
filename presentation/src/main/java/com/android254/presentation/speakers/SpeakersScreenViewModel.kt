@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.presentation.models.Speaker
+
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -66,7 +66,7 @@ class SpeakersScreenViewModel @Inject constructor(
                     )
                 }
             }
-            .map<List<SpeakerUI>,SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+            .map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
             .onStart {
                 emit(SpeakersScreenUiState.Loading)
             }
@@ -78,5 +78,4 @@ class SpeakersScreenViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = SpeakersScreenUiState.Loading
             )
-
 }
