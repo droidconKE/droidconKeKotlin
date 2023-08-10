@@ -19,23 +19,23 @@ import com.android254.data.network.models.responses.EventScheduleGroupedResponse
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
+import io.ktor.http.headersOf
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Test
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
+import org.junit.Test
 
 class SessionApiTest {
     private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
     fun setup() {
-        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
-        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true))
     }
 
     @Test
