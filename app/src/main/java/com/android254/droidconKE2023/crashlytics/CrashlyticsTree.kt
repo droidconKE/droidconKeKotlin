@@ -16,8 +16,8 @@
 package com.android254.droidconKE2023.crashlytics
 
 import android.util.Log
-import com.android254.droidconKE2023.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import ke.droidcon.kotlin.BuildConfig
 import timber.log.Timber
 
 class CrashlyticsTree : Timber.Tree() {

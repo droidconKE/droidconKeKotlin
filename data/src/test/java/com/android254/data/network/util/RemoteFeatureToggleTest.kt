@@ -29,7 +29,7 @@ class RemoteFeatureToggleTest {
         val remoteConfig: FirebaseRemoteConfig = mockk {
             every { getString(any()) } returns "default_api_key"
         }
-        val remoteFeatureToggle = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        val remoteFeatureToggle = RemoteFeatureToggle(mockk(relaxed = true))
         remoteFeatureToggle.getString("default_api_key")
 
         verify { remoteConfig.getString("default_api_key") }
@@ -38,10 +38,10 @@ class RemoteFeatureToggleTest {
     @Test
     fun `test firebase remote config sync`() {
         val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
-        val remoteFeatureToggle = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        val remoteFeatureToggle = RemoteFeatureToggle(mockk(relaxed = true))
         remoteFeatureToggle.sync()
 
-        verify { remoteConfig.setDefaultsAsync(R.xml.config) }
+        verify { remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults) }
         verify { remoteConfig.setConfigSettingsAsync(any()) }
         verify { remoteConfig.fetchAndActivate() }
     }
