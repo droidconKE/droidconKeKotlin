@@ -26,7 +26,6 @@ import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.preferences.DefaultTokenProvider
 import com.android254.domain.models.DataResult
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -53,9 +52,7 @@ class OrganizersApiTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         testDataStore =
             PreferenceDataStoreFactory.create(produceFile = { context.preferencesDataStoreFile("test") })
-
-        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
-        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true))
     }
 
     @Test

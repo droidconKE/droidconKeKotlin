@@ -21,7 +21,6 @@ import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.network.util.provideBaseUrl
 import com.android254.domain.models.DataResult
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondOk
@@ -29,14 +28,14 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.headersOf
 import io.mockk.mockk
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 class FeedApiTest {
 
@@ -44,8 +43,7 @@ class FeedApiTest {
 
     @Before
     fun setup() {
-        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
-        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true))
     }
 
     @Test

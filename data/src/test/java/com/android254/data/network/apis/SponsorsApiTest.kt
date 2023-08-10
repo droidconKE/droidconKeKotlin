@@ -21,7 +21,6 @@ import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.domain.models.DataResult
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import io.ktor.client.engine.mock.*
 import io.ktor.http.*
 import io.mockk.mockk
@@ -41,8 +40,7 @@ class SponsorsApiTest {
 
     @Before
     fun setup() {
-        val remoteConfig: FirebaseRemoteConfig = mockk(relaxed = true)
-        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true), remoteConfig)
+        remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true))
     }
 
     @Test
