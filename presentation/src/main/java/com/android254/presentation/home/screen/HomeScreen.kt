@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBar
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.SponsorsCard
@@ -42,6 +44,8 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.atoms.MontserratSemiBold
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -54,7 +58,8 @@ fun HomeScreen(
     onActionClicked: () -> Unit = {},
     onSessionClicked: (SessionPresentationModel) -> Unit = {}
 ) {
-    val homeViewState = homeViewModel.viewState
+    val homeViewState by homeViewModel.viewState.collectAsStateWithLifecycle()
+    val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -65,36 +70,43 @@ fun HomeScreen(
             )
         }
     ) { paddingValues ->
-
-        Column(
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = isSyncing),
+            onRefresh = { homeViewModel.startRefresh() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HomeHeaderSection()
-            HomeBannerSection(homeViewState)
-            HomeSpacer()
-            if (homeViewState.isSessionsSectionVisible) {
-                HomeSessionSection(
-                    sessions = homeViewState.sessions,
-                    onSessionClick = onSessionClicked,
-                    onViewAllSessionClicked = navigateToSessionScreen
-                )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .padding(horizontal = 20.dp)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                HomeHeaderSection()
+                HomeBannerSection(homeViewState)
+                HomeSpacer()
+                if (homeViewState.isSessionsSectionVisible) {
+                    HomeSessionSection(
+                        sessions = homeViewState.sessions,
+                        onSessionClick = onSessionClicked,
+                        onViewAllSessionClicked = navigateToSessionScreen
+                    )
+                    HomeSpacer()
+                }
+                if (homeViewState.isSpeakersSectionVisible) {
+                    HomeSpeakersSection(
+                        speakers = homeViewState.speakers,
+                        navigateToSpeakers = navigateToSpeakers,
+                        navigateToSpeaker = navigateToSpeaker
+                    )
+                    HomeSpacer()
+                }
+                SponsorsCard(sponsorsLogos = homeViewState.sponsors)
                 HomeSpacer()
             }
-            if (homeViewState.isSpeakersSectionVisible) {
-                HomeSpeakersSection(
-                    speakers = homeViewState.speakers,
-                    navigateToSpeakers = navigateToSpeakers,
-                    navigateToSpeaker = navigateToSpeaker
-                )
-                HomeSpacer()
-            }
-            SponsorsCard(sponsorsLogos = homeViewState.sponsors)
-            HomeSpacer()
         }
     }
 }

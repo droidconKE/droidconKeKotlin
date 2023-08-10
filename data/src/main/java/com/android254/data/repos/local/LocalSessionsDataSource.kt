@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.dao
+package com.android254.data.repos.local
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.db.model.SessionEntity
+import com.android254.data.network.models.responses.SessionDTO
+import com.android254.domain.models.Session
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface SessionDao : BaseDao<SessionEntity> {
-    @Query("SELECT * FROM sessions ORDER BY startTimestamp ASC")
-    fun fetchSessions(): Flow<List<SessionEntity>>
+interface LocalSessionsDataSource {
 
-    @Query("DELETE FROM sessions")
-    suspend fun clearSessions()
+    fun getCachedSessions(): Flow<List<Session>>
 
-    @Query("SELECT * FROM sessions WHERE id = :id")
-    suspend fun getSessionById(id: String): SessionEntity?
+    suspend fun deleteCachedSessions()
 
-    @RawQuery
-    suspend fun fetchSessionsWithFilters(query: SupportSQLiteQuery): List<SessionEntity>
+    suspend fun getCachedSessionById(id: String): SessionEntity?
 
-    @Query("UPDATE sessions SET isBookmarked = :isBookmarked WHERE remote_id = :id")
+    suspend fun fetchSessionWithFilters(query: SupportSQLiteQuery): List<Session>
+
     suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
 
-    @Query("SELECT isBookmarked FROM sessions WHERE remote_id = :id")
     suspend fun getBookmarkStatus(id: String): Boolean
+
+    suspend fun saveCachedSessions(sessions: List<SessionDTO>)
 }
