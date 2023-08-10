@@ -16,33 +16,33 @@
 package com.android254.data.repos
 
 import com.android254.data.di.IoDispatcher
-import com.android254.data.network.apis.SponsorsApi
 import com.android254.data.network.models.responses.SponsorsPagedResponse
+import com.android254.data.repos.local.LocalSessionsDataSource
+import com.android254.data.repos.local.LocalSpeakersDataSource
+import com.android254.data.repos.local.LocalSponsorsDataSource
 import com.android254.data.repos.mappers.toDomain
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.HomeDetails
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.HomeRepo
-import com.android254.domain.repos.SessionsRepo
-import com.android254.domain.repos.SpeakersRepo
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
 class HomeRepoImpl @Inject constructor(
-    private val sponsorsApi: SponsorsApi,
-    private val speakersRepo: SpeakersRepo,
-    private val sessionsRepo: SessionsRepo,
+    private val localSpeakersDataSource: LocalSpeakersDataSource,
+    private val localSessionsDataSource: LocalSessionsDataSource,
+    private val localSponsorsDataSource: LocalSponsorsDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
 
-    override suspend fun fetchHomeDetails(): HomeDetails {
-        return withContext(ioDispatcher) {
-            val sponsors = sponsorsApi.fetchSponsors()
-            val speakers = speakersRepo.fetchSpeakersUnpacked()
-            val sessionsResult = sessionsRepo.fetchAndSaveSessions()
-            val sessions = getSessionsFromResourceResult(sessionsResult)
+    override fun fetchHomeDetails(): Flow<HomeDetails> {
+        val sponsorsflow = localSponsorsDataSource.fetchCachedSponsors()
+        val speakersflow = localSpeakersDataSource.getCachedSpeakers()
+        val sessionsflow = localSessionsDataSource.getCachedSessions()
+        return combine(sponsorsflow, speakersflow, sessionsflow) { sponsors, speakers, sessions ->
             HomeDetails(
                 isCallForSpeakersEnable = true,
                 linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
@@ -53,7 +53,7 @@ class HomeRepoImpl @Inject constructor(
                 sessions = sessions,
                 sessionsCount = sessions.size,
                 isSessionsSectionEnable = sessions.isNotEmpty(),
-                sponsors = sponsors.getSponsorsList(),
+                sponsors = sponsors,
                 organizers = listOf()
             )
         }

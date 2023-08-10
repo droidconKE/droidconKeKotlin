@@ -67,6 +67,10 @@ dependencies {
 
     implementation(libs.timber)
 
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    implementation(libs.hilt.common)
+
     androidTestImplementation(libs.android.test.junit4)
     androidTestImplementation(libs.android.test.espresso)
 

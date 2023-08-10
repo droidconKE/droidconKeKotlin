@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.repos.local
 
-import com.android254.domain.models.ResourceResult
-import com.android254.domain.models.Speaker
+import com.android254.data.network.models.responses.SponsorDTO
+import com.android254.domain.models.Sponsors
 import kotlinx.coroutines.flow.Flow
 
-interface SpeakersRepo {
-    fun fetchSpeakers(): Flow<List<Speaker>>
-    suspend fun fetchSpeakerCount(): Flow<Int>
-    suspend fun getSpeakerById(id: Int): ResourceResult<Speaker>
+interface LocalSponsorsDataSource {
+
+    fun fetchCachedSponsors(): Flow<List<Sponsors>>
+
+    suspend fun deleteCachedSponsors()
+
+    suspend fun saveCachedSponsors(sponsors: List<SponsorDTO>)
 }

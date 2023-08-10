@@ -16,7 +16,8 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.HomeDetails
+import kotlinx.coroutines.flow.Flow
 
 interface HomeRepo {
-    suspend fun fetchHomeDetails(): HomeDetails
+    fun fetchHomeDetails(): Flow<HomeDetails>
 }

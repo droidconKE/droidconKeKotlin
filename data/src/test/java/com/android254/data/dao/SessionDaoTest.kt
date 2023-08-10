@@ -20,6 +20,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -79,6 +80,6 @@ class SessionDaoTest {
         )
         sessionDao.insert(session)
         val result = sessionDao.fetchSessions().first()
-        assertThat(session.title, `is`(result.title))
+        assertThat(session.title, `is`(result[0].title))
     }
 }

@@ -29,6 +29,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 // import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 // import org.hamcrest.CoreMatchers
@@ -64,7 +65,7 @@ class SessionsManagerTest {
 
         runBlocking {
             val session = sessionDao.fetchSessions()
-            Assert.assertEquals(session.isEmpty(), true)
+            Assert.assertEquals(session.first().isEmpty(), true)
             coEvery { mockApi.fetchSessions() } returns results
             val result = repo.fetchAndSaveSessions()
 //            coVerify { mockApi.fetchSessions() }
