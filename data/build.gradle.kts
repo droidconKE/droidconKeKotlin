@@ -55,9 +55,17 @@ dependencies {
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.lifecycle.livedataKtx)
+
+    implementation(libs.work.runtime)
+    implementation(libs.hilt.work)
+    implementation(libs.hilt.common)
+
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)
 
+    testImplementation(libs.app.cash.turbine.turbine)
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.androidx.core)
     testImplementation(libs.test.robolectric)

@@ -30,6 +30,7 @@ import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -45,7 +46,7 @@ class SessionsManager @Inject constructor(
         query: String?
     ): ResourceResult<List<Session>> = withContext(ioDispatcher) {
         val sessions = if (query == null) {
-            dao.fetchSessions()
+            dao.fetchSessions().first()
         } else {
             dao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
         }

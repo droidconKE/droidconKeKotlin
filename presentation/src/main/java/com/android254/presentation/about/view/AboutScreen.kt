@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.about.view
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,10 +47,6 @@ import com.android254.presentation.common.components.DroidconAppBarWithFeedbackB
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiCoal
-import com.droidconke.chai.atoms.ChaiGrey
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.flowlayout.FlowRow

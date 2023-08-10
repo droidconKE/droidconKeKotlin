@@ -61,7 +61,7 @@ fun SpeakersScreen(
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
-    val uiState = speakersScreenViewModel.uiState.collectAsStateWithLifecycle().value
+    val uiState = speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = {
