@@ -52,14 +52,12 @@ class LocalSessionsDataSourceImpl @Inject constructor(
         }
     }
 
-    override  fun getCachedSessionById(id: String): Flow<SessionEntity?> {
-        return sessionDao.getSessionById(id = id).flowOn(ioDispatcher)
-    }
+    override fun getCachedSessionById(id: String): Flow<SessionEntity?> =
+        sessionDao.getSessionById(id = id).flowOn(ioDispatcher)
 
-    override fun fetchSessionWithFilters(query: SupportSQLiteQuery): Flow<List<Session>> {
-        return sessionDao.fetchSessionsWithFilters(query = query).map { it.map { it.toDomainModel() } }
+    override fun fetchSessionWithFilters(query: SupportSQLiteQuery): Flow<List<Session>> =
+        sessionDao.fetchSessionsWithFilters(query = query).map { it.map { it.toDomainModel() } }
             .flowOn(ioDispatcher)
-    }
 
     override suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean) {
         withContext(ioDispatcher) {

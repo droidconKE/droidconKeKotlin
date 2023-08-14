@@ -147,7 +147,7 @@ fun SessionsScreen(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
                 refreshSessionsList = { sessionsViewModel.refreshSessionList() },
-                retry = {  },
+                retry = { },
                 isRefreshing = isRefreshing.value
             )
             if (bottomSheetState.isVisible) {

@@ -84,7 +84,7 @@ fun SessionDetailsScreen(
             }
         }
     ) { paddingValues ->
-        when(uiState){
+        when (uiState) {
             is SessionDetailsUiState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -105,11 +105,11 @@ fun SessionDetailsScreen(
             is SessionDetailsUiState.Success -> {
                 Body(
                     paddingValues = paddingValues,
-                    darkTheme =  darkTheme,
+                    darkTheme = darkTheme,
                     sessionDetails = uiState.data,
                     bookmarkSession = viewModel::bookmarkSession,
                     unBookmarkSession = viewModel::unBookmarkSession
-                    )
+                )
             }
         }
     }
@@ -121,7 +121,7 @@ private fun Body(
     darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
-    unBookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -137,7 +137,7 @@ private fun Body(
 
             SessionSpeakerNameAndFavouriteIcon(
                 darkTheme = darkTheme,
-                sessionDetails =  sessionDetails,
+                sessionDetails = sessionDetails,
                 bookmarkSession = bookmarkSession,
                 unBookmarkSession = unBookmarkSession
             )
@@ -252,8 +252,8 @@ private fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) 
 private fun SessionSpeakerNameAndFavouriteIcon(
     darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel,
-    bookmarkSession:(String) -> Unit,
-    unBookmarkSession:(String) -> Unit,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -298,9 +298,9 @@ private fun SessionSpeakerNameAndFavouriteIcon(
             )
         )
         IconButton(onClick = {
-            if (sessionDetails.isStarred){
+            if (sessionDetails.isStarred) {
                 unBookmarkSession(sessionDetails.id)
-            }else{
+            } else {
                 bookmarkSession(sessionDetails.id)
             }
         }) {
@@ -313,7 +313,6 @@ private fun SessionSpeakerNameAndFavouriteIcon(
                 tint = colorResource(id = if (darkTheme) R.color.cyan else R.color.blue)
             )
         }
-
     }
 }
 

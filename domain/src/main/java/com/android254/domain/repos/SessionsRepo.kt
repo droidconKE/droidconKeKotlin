@@ -15,21 +15,19 @@
  */
 package com.android254.domain.repos
 
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import kotlinx.coroutines.flow.Flow
 
 interface SessionsRepo {
-    fun fetchSessions():Flow<List<Session>>
+    fun fetchSessions(): Flow<List<Session>>
 
-    fun fetchFilteredSessions(query:String):Flow<List<Session>>
+    fun fetchFilteredSessions(query: String): Flow<List<Session>>
 
     fun fetchBookmarkedSessions(): Flow<List<Session>>
 
-    fun fetchSessionById(id:String): Flow<Session?>
+    fun fetchSessionById(id: String): Flow<Session?>
 
-    suspend fun bookmarkSession(id:String)
+    suspend fun bookmarkSession(id: String)
 
-    suspend fun unBookmarkSession(id:String)
-
+    suspend fun unBookmarkSession(id: String)
 }

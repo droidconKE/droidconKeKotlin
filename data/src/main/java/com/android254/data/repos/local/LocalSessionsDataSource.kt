@@ -29,7 +29,7 @@ interface LocalSessionsDataSource {
 
     fun getCachedSessionById(id: String): Flow<SessionEntity?>
 
-     fun fetchSessionWithFilters(query: SupportSQLiteQuery):Flow<List<Session>>
+    fun fetchSessionWithFilters(query: SupportSQLiteQuery): Flow<List<Session>>
 
     suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
 

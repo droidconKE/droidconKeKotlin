@@ -66,8 +66,8 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             Timber.plant(CrashlyticsTree())
         }
     }
-    private fun setUpWorkerManagerNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private fun setUpWorkerManagerNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 WorkConstants.NOTIFICATION_CHANNEL,
                 WorkConstants.syncDataWorkerName,

@@ -38,9 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.android254.domain.models.ResourceResult
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
@@ -164,7 +161,6 @@ fun SessionTitleComponent(
     session: SessionPresentationModel,
     viewModel: SessionsViewModel = hiltViewModel()
 ) {
-
     val scope = rememberCoroutineScope()
     Row(
         Modifier
@@ -183,9 +179,9 @@ fun SessionTitleComponent(
         )
         IconButton(onClick = {
             scope.launch {
-                if (session.isStarred){
+                if (session.isStarred) {
                     viewModel.unBookmarkSession(session.id)
-                }else{
+                } else {
                     viewModel.bookmarkSession(session.id)
                 }
             }

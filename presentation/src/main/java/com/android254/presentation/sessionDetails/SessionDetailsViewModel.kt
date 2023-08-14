@@ -18,17 +18,12 @@ package com.android254.presentation.sessionDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.android254.presentation.models.SessionPresentationModel
-import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -42,24 +37,22 @@ sealed interface SessionDetailsUiState {
     data class Success(val data: SessionDetailsPresentationModel) : SessionDetailsUiState
 
     data class Error(val message: String) : SessionDetailsUiState
-
-
 }
 
 @HiltViewModel
 class SessionDetailsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
-    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle
 
 ) : ViewModel() {
 
     val sessionId = savedStateHandle.get<String>(Screens.SessionDetails.sessionIdNavigationArgument)
 
-    val uiState = sessionsRepo.fetchSessionById(id = sessionId ?:"")
+    val uiState = sessionsRepo.fetchSessionById(id = sessionId ?: "")
         .map {
-            if (it == null){
+            if (it == null) {
                 SessionDetailsUiState.Error(message = "Session Info not found")
-            }else{
+            } else {
                 SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
             }
         }
@@ -71,13 +64,11 @@ class SessionDetailsViewModel @Inject constructor(
             initialValue = SessionDetailsUiState.Loading
         )
 
-    fun bookmarkSession(sessionId:String) = viewModelScope.launch {
+    fun bookmarkSession(sessionId: String) = viewModelScope.launch {
         sessionsRepo.bookmarkSession(sessionId)
     }
-
 
     fun unBookmarkSession(sessionId: String) = viewModelScope.launch {
         sessionsRepo.unBookmarkSession(sessionId)
     }
-
 }

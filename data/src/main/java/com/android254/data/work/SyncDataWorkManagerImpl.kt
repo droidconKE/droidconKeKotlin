@@ -54,8 +54,6 @@ class SyncDataWorkManagerImpl @Inject constructor(
         workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
             .enqueue()
     }
-
-
 }
 
 val List<WorkInfo>.anyRunning get() = any { it.state == WorkInfo.State.RUNNING }

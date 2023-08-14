@@ -15,25 +15,18 @@
  */
 package com.android254.data.repos
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.sqlite.db.SimpleSQLiteQuery
-import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.dao.BookmarkDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.model.BookmarkEntity
 import com.android254.data.di.IoDispatcher
 import com.android254.data.network.apis.SessionsApi
-import com.android254.data.network.util.NetworkError
 import com.android254.data.repos.mappers.toDomainModel
-import com.android254.data.repos.mappers.toEntity
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -49,29 +42,29 @@ class SessionsManager @Inject constructor(
     override fun fetchSessions(): Flow<List<Session>> {
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         val sessionsFlow = dao.fetchSessions()
-        return combine(sessionsFlow,bookmarksFlow){ sessions, bookmarks ->
+        return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { it.toDomainModel() }
                 .map { session ->
-                      session.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
+                    session.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
                 }
         }.flowOn(ioDispatcher)
     }
     override fun fetchBookmarkedSessions(): Flow<List<Session>> {
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         val sessionsFlow = dao.fetchSessions()
-        return combine(sessionsFlow,bookmarksFlow){ sessions, bookmarks ->
+        return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { it.toDomainModel() }
                 .map { session ->
                     session.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
                 }
-                .filter { session -> session.isBookmarked  }
+                .filter { session -> session.isBookmarked }
         }.flowOn(ioDispatcher)
     }
 
-    override fun fetchFilteredSessions(query:String):Flow<List<Session>>{
+    override fun fetchFilteredSessions(query: String): Flow<List<Session>> {
         val filteredSessions = dao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        return combine(filteredSessions,bookmarksFlow){sessions,bookmarks ->
+        return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { session ->
                 session.copy(
                     isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
@@ -80,25 +73,24 @@ class SessionsManager @Inject constructor(
         }.flowOn(ioDispatcher)
     }
 
-    override fun fetchSessionById(sessionId:String):Flow<Session?> {
+    override fun fetchSessionById(sessionId: String): Flow<Session?> {
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         val sessionFlow = dao.getSessionById(sessionId).map {
             it?.toDomainModel()
         }
-        return combine(sessionFlow,bookmarksFlow){session,bookmarks ->
+        return combine(sessionFlow, bookmarksFlow) { session, bookmarks ->
             session?.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session?.id.toString()))
-
         }
     }
 
-    override suspend fun bookmarkSession(id:String){
-        withContext(ioDispatcher){
+    override suspend fun bookmarkSession(id: String) {
+        withContext(ioDispatcher) {
             bookmarkDao.insert(BookmarkEntity(id))
         }
     }
 
-    override suspend fun unBookmarkSession(id:String){
-        withContext(ioDispatcher){
+    override suspend fun unBookmarkSession(id: String) {
+        withContext(ioDispatcher) {
             bookmarkDao.delete(BookmarkEntity(id))
         }
     }
@@ -155,12 +147,12 @@ class SessionsManager @Inject constructor(
 //        }
 //    }
 //
-////    override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
-////        withContext(ioDispatcher) {
-////            val session = dao.getSessionById(id)
-////                ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
-////            return@withContext ResourceResult.Success(data = session.toDomainModel())
-////        }
+// //    override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
+// //        withContext(ioDispatcher) {
+// //            val session = dao.getSessionById(id)
+// //                ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
+// //            return@withContext ResourceResult.Success(data = session.toDomainModel())
+// //        }
 //
 //    override suspend fun toggleBookmarkStatus(
 //        id: String,
