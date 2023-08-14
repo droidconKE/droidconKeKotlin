@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
@@ -26,7 +27,12 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import timber.log.Timber
@@ -34,7 +40,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo
+    private val sessionsRepo: SessionsRepo,
+    private val syncDataWorkManager: SyncDataWorkManager,
+
 ) : ViewModel() {
 
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
@@ -51,9 +59,16 @@ class SessionsViewModel @Inject constructor(
 
     private val _sessionsUiState = MutableStateFlow<SessionsUiState>(SessionsUiState.Idle)
     val sessionsUiState = _sessionsUiState.asStateFlow()
+
+    val isRefreshing = syncDataWorkManager.isSyncing
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = false
+        )
     init {
         viewModelScope.launch {
-            fetchSessions(fetchFromRemote = false)
+            fetchAllSessions()
         }
     }
 
@@ -130,64 +145,54 @@ class SessionsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchSessions(query: String? = null, fetchFromRemote: Boolean = false) {
-        val result =
-            sessionsRepo.fetchAndSaveSessions(query = query, fetchFromRemote = fetchFromRemote)
-        when (result) {
-            is ResourceResult.Success -> {
-                result.data.let { sessionDomainModels ->
-                    val sessions = sessionDomainModels?.map { sessionDomainModel ->
-                        sessionDomainModel.toPresentationModel()
-                    }
-
-                    _sessionsUiState.value = if (!sessions.isNullOrEmpty()) {
-                        SessionsUiState.Data(data = sessions)
-                    } else {
-                        SessionsUiState.Empty("No sessions Found")
-                    }
+    private suspend fun fetchAllSessions() {
+        _sessionsUiState.value = SessionsUiState.Loading
+        sessionsRepo.fetchSessions().collectLatest { sessions ->
+            try {
+                _sessionsUiState.value = if (sessions.isNotEmpty()) {
+                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
+                } else {
+                    SessionsUiState.Empty("No sessions Found")
                 }
+            }catch (e:Exception){
+                _sessionsUiState.value = SessionsUiState.Error(message =
+                e.message ?:"An unexpected error occurred")
             }
-
-            is ResourceResult.Error -> {
-                _sessionsUiState.value = SessionsUiState.Error(message = result.message)
-            }
-
-            is ResourceResult.Loading -> {
-                _sessionsUiState.value = SessionsUiState.Loading
-            }
-
-            is ResourceResult.Empty -> {
-                _sessionsUiState.value = SessionsUiState.Empty("No sessions Found")
-            }
-
-            else -> Unit
         }
-
-        //       var query = Query().fields("*").from("sessions")
-//        if (_filterState.value!!.rooms.isNotEmpty()) {
-//            val rooms = _filterState.value!!.rooms.joinToString(",")
-//            query = query.where("rooms LIKE '%$rooms%'")
-//        }
-//
-//        if (_filterState.value!!.levels.isNotEmpty()) {
-//            val sessionLevels = _filterState.value!!.levels.joinToString("','", "'", "'")
-//            query.where("sessionLevel IN ($sessionLevels)")
-//        }
-//
-//        if (_filterState.value!!.sessionTypes.isNotEmpty()) {
-//            val sessionTypes = _filterState.value!!.sessionTypes.joinToString("','", "'", "'")
-//            query.where("sessionFormat IN ($sessionTypes)")
-//        }
-//
-//        if (_filterState.value!!.isBookmarked) {
-//            val isBookmarked = _filterState.value!!.isBookmarked
-//            query.where("isBookmarked = '${if (isBookmarked) '1' else '0'}'")
-//        }
-//
-//        query.orderAsc("startTimestamp")
-//
-//        return query.toSql()
     }
+
+    private suspend fun fetchFilteredSessions(query:String){
+        _sessionsUiState.value = SessionsUiState.Loading
+        sessionsRepo.fetchFilteredSessions(query = query).collectLatest { sessions ->
+            try {
+                _sessionsUiState.value = if (sessions.isNotEmpty()) {
+                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
+                } else {
+                    SessionsUiState.Empty("No sessions Found")
+                }
+            }catch (e:Exception){
+                _sessionsUiState.value = SessionsUiState.Error(message =
+                e.message ?:"An unexpected error occurred")
+            }
+        }
+    }
+
+    private suspend fun fetchBookmarkSessions(){
+        _sessionsUiState.value = SessionsUiState.Loading
+        sessionsRepo.fetchBookmarkedSessions().collectLatest { sessions ->
+            try {
+                _sessionsUiState.value = if (sessions.isNotEmpty()) {
+                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
+                } else {
+                    SessionsUiState.Empty("No bookmarked sessions Found")
+                }
+            }catch (e:Exception){
+                _sessionsUiState.value = SessionsUiState.Error(message =
+                e.message ?:"An unexpected error occurred")
+            }
+        }
+    }
+
 
     private fun getQuery(): String {
         val separator = ","
@@ -228,7 +233,7 @@ class SessionsViewModel @Inject constructor(
 
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
-            fetchSessions(query = getQuery())
+            fetchFilteredSessions(query = getQuery())
         }
     }
 
@@ -236,14 +241,14 @@ class SessionsViewModel @Inject constructor(
         _selectedFilterOptions.value = listOf()
         _filterState.value = SessionsFilterState()
         viewModelScope.launch {
-            fetchSessions()
+            fetchAllSessions()
         }
     }
 
     fun updateSelectedDay(date: EventDate) {
         _selectedEventDate.value = date
         viewModelScope.launch {
-            fetchSessions(query = getQuery())
+            fetchFilteredSessions(query = getQuery())
         }
     }
 
@@ -251,20 +256,28 @@ class SessionsViewModel @Inject constructor(
         _selectedFilterOptions.value = listOf()
         _filterState.value = SessionsFilterState()
         viewModelScope.launch {
-            fetchSessions(fetchFromRemote = true)
+            syncDataWorkManager.startSync()
         }
     }
 
-    suspend fun updateBookmarkStatus(
-        id: String,
-        isCurrentlyStarred: Boolean
-    ): ResourceResult<Boolean> = sessionsRepo.toggleBookmarkStatus(id, isCurrentlyStarred)
+    suspend fun bookmarkSession(id:String){
+        sessionsRepo.bookmarkSession(id = id)
+    }
 
-    fun fetchBookmarkedSessions() {
+    suspend fun unBookmarkSession(id:String){
+        sessionsRepo.unBookmarkSession(id = id)
+    }
+
+    fun toggleBookmarkFilter() {
         viewModelScope.launch {
             _filterState.value = SessionsFilterState()
-            _filterState.value = _filterState.value?.copy(isBookmarked = true)
-            fetchSessionWithFilter()
+            val previousState = _filterState?.value?.isBookmarked ?: false
+            _filterState.value = _filterState.value?.copy(isBookmarked = !previousState)
+            if (_filterState?.value?.isBookmarked == true){
+                fetchBookmarkSessions()
+            }else{
+                fetchAllSessions()
+            }
         }
     }
 }

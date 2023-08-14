@@ -16,8 +16,10 @@
 package com.android254.data.work
 
 import android.content.Context
+import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.android254.data.di.IoDispatcher
 import com.android254.data.repos.local.LocalSessionsDataSource
@@ -29,10 +31,12 @@ import com.android254.data.repos.remote.RemoteSponsorsDataSource
 import com.android254.domain.models.ResourceResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import ke.droidcon.kotlin.data.R
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import kotlin.random.Random
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(
@@ -48,6 +52,17 @@ class SyncDataWorker @AssistedInject constructor(
     private val localSponsorsDataSource: LocalSponsorsDataSource
 
 ) : CoroutineWorker(appContext, workerParameters) {
+
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        return ForegroundInfo(
+            Random.nextInt(),
+            NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
+                .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
+                .setContentTitle("Syncing App Data")
+                .build()
+
+        )
+    }
 
     override suspend fun doWork(): Result {
         withContext(ioDispatcher) {

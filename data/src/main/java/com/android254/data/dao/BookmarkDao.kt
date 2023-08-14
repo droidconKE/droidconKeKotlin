@@ -18,9 +18,10 @@ package com.android254.data.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.android254.data.db.model.BookmarkEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BookmarkDao : BaseDao<BookmarkEntity> {
     @Query("SELECT * FROM bookmarks")
-    fun getBookmarkIds(): List<BookmarkEntity>
+    fun getBookmarkIds(): Flow<List<BookmarkEntity>>
 }

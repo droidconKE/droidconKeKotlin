@@ -164,9 +164,7 @@ fun SessionTitleComponent(
     session: SessionPresentationModel,
     viewModel: SessionsViewModel = hiltViewModel()
 ) {
-    val isStarred = rememberSaveable() {
-        mutableStateOf(session.isStarred)
-    }
+
     val scope = rememberCoroutineScope()
     Row(
         Modifier
@@ -185,23 +183,15 @@ fun SessionTitleComponent(
         )
         IconButton(onClick = {
             scope.launch {
-                when (
-                    val result =
-                        viewModel.updateBookmarkStatus(session.remoteId, isStarred.value)
-                ) {
-                    is ResourceResult.Empty -> {}
-                    is ResourceResult.Error -> {
-                    }
-                    is ResourceResult.Loading -> {
-                    }
-                    is ResourceResult.Success -> {
-                        isStarred.value = if (result.data != null) result.data!! else false
-                    }
+                if (session.isStarred){
+                    viewModel.unBookmarkSession(session.id)
+                }else{
+                    viewModel.bookmarkSession(session.id)
                 }
             }
         }) {
             Icon(
-                imageVector = if (isStarred.value) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                imageVector = if (session.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
                 tint = MaterialTheme.colorScheme.primary
             )
