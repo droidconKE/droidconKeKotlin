@@ -46,7 +46,7 @@ class SessionDetailsViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    val sessionId = savedStateHandle.get<String>(Screens.SessionDetails.sessionIdNavigationArgument)
+    private val sessionId = savedStateHandle.get<String>(Screens.SessionDetails.sessionIdNavigationArgument)
 
     val uiState = sessionsRepo.fetchSessionById(id = sessionId ?: "")
         .map {

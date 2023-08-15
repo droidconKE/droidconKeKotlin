@@ -116,7 +116,7 @@ fun SessionDetailsScreen(
 }
 
 @Composable
-private fun Body(
+fun Body(
     paddingValues: PaddingValues,
     darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel,

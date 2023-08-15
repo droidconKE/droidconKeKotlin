@@ -21,21 +21,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android254.data.dao.BookmarkDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.Database
+import com.android254.data.db.model.SessionEntity
 import com.android254.data.network.apis.SessionsApi
 // import com.android254.domain.models.DataResult
 // import com.android254.domain.models.Success
-import io.mockk.coEvery
 // import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 // import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 // import org.hamcrest.CoreMatchers
 // import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,18 +59,11 @@ class SessionsManagerTest {
     }
 
     @Test
-    fun `test it fetches and saves sessions successfully`() {
+    fun `test it fetches from the local cache`() = runTest {
         val repo = SessionsManager(mockApi, sessionDao, bookmarkDao, ioDispatcher)
-
-        runBlocking {
-            val session = sessionDao.fetchSessions()
-            Assert.assertEquals(session.first().isEmpty(), true)
-            coEvery { mockApi.fetchSessions() } returns results
-            val result = repo.fetchAndSaveSessions()
-//            coVerify { mockApi.fetchSessions() }
-//            assertThat(result, CoreMatchers.`is`(DataResult.Success(Success)))
-//            Assert.assertEquals(dao.fetchSessions().count(), 1)
-        }
+        sessionDao.insert(listOf(sessionEntity))
+        val sessions = repo.fetchSessions().first()
+        assert(sessions[0].description == sessionEntity.description)
     }
 
     @After
@@ -79,3 +71,24 @@ class SessionsManagerTest {
         database.close()
     }
 }
+val sessionEntity = SessionEntity(
+    id = 1,
+    remote_id = "1234567890",
+    description = "This is a keynote session about the future of technology.",
+    sessionFormat = "Keynote",
+    sessionLevel = "Beginner",
+    slug = "keynote-session",
+    title = "The Future of Technology",
+    endDateTime = "2023-08-17T12:00:00Z",
+    endTime = "12:00 PM",
+    isBookmarked = false,
+    isKeynote = true,
+    isServiceSession = false,
+    sessionImage = "https://example.com/session-1.jpg",
+    startDateTime = "2023-08-17T10:00:00Z",
+    startTime = "10:00 AM",
+    rooms = "Room 1",
+    speakers = "John Doe, Jane Doe",
+    startTimestamp = 1638457600000,
+    sessionImageUrl = "https://example.com/session-1.jpg"
+)
