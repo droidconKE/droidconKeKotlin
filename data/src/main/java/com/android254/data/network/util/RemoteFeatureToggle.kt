@@ -26,7 +26,7 @@ class RemoteFeatureToggle(
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    remoteConfig.activate()
+                    Timber.w("Failed to fetch remote config from Firebase")
                 } else {
                     Timber.w("Failed to fetch remote config from Firebase")
                 }
