@@ -39,7 +39,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
-          packageName: com.android254.droidconKE2023
+          packageName: ke.droidcon.kotlin
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: alpha
           whatsNewDirectory: whatsnew/
