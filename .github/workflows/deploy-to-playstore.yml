@@ -16,15 +16,15 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Assemble Release Bundle
-        run: ./gradlew bundleRelease
-
       - name: Bump version
         uses: chkfung/android-version-actions@v1.1
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{github.run_number}}
           versionName: 1.0.1
+
+      - name: Assemble Release Bundle
+        run: ./gradlew bundleRelease
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
