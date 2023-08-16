@@ -24,7 +24,7 @@ jobs:
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{github.run_number}}
-          versionName: 1.0.0
+          versionName: 1.0.1
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
