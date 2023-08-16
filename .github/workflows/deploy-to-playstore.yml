@@ -35,12 +35,12 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Deploy to Alpha
+      - name: Deploy to Production
         uses: r0adkll/upload-google-play@v1.1.1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
           packageName: ke.droidcon.kotlin
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: alpha
+          track: production
           whatsNewDirectory: whatsnew/
           status: completed
