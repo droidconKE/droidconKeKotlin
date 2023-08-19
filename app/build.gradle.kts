@@ -20,7 +20,7 @@ plugins {
 }
 
 android {
-    namespace = "com.android254.droidconKE2023"
+    namespace = "ke.droidcon.kotlin"
     compileSdk = 33
 
     defaultConfig {

@@ -28,9 +28,10 @@ import com.android254.data.work.WorkInitializer
 import com.android254.droidconKE2023.BuildConfig
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
+import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {

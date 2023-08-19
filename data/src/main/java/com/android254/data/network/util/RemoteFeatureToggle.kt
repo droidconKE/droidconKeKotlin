@@ -16,32 +16,22 @@
 package com.android254.data.network.util
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import ke.droidcon.kotlin.data.R
 import timber.log.Timber
 
 class RemoteFeatureToggle(
-    private val configConfig: RemoteConfigConfig,
     private val remoteConfig: FirebaseRemoteConfig
 ) {
 
     fun sync() {
-        remoteConfig.apply {
-            setDefaultsAsync(R.xml.config)
-            setConfigSettingsAsync(
-                remoteConfigSettings {
-                    minimumFetchIntervalInSeconds = configConfig.minimumFetchIntervalInSeconds()
-                }
-            )
-        }
-            .fetchAndActivate()
+        remoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    remoteConfig.activate()
+                    Timber.w("Failed to fetch remote config from Firebase")
                 } else {
                     Timber.w("Failed to fetch remote config from Firebase")
                 }
             }
     }
+
     fun getString(key: String): String = remoteConfig.getString(key)
 }
