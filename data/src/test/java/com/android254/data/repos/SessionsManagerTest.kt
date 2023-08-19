@@ -23,17 +23,11 @@ import com.android254.data.dao.SessionDao
 import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.network.apis.SessionsApi
-// import com.android254.domain.models.DataResult
-// import com.android254.domain.models.Success
-// import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-// import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-// import org.hamcrest.CoreMatchers
-// import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

@@ -58,7 +58,7 @@ class SyncDataWorker @AssistedInject constructor(
             Random.nextInt(),
             NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
                 .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
-                .setContentTitle("Syncing App Data")
+                .setContentTitle(R.string.sync_notification_message.toString())
                 .build()
 
         )
