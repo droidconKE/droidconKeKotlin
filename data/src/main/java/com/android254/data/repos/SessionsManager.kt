@@ -79,8 +79,8 @@ class SessionsManager @Inject constructor(
             it?.toDomainModel()
         }
         return combine(sessionFlow, bookmarksFlow) { session, bookmarks ->
-            session?.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session?.id.toString()))
-        }
+            session?.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
+        }.flowOn(ioDispatcher)
     }
 
     override suspend fun bookmarkSession(id: String) {
@@ -94,87 +94,4 @@ class SessionsManager @Inject constructor(
             bookmarkDao.delete(BookmarkEntity(id))
         }
     }
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    override suspend fun fetchAndSaveSessions(
-//        fetchFromRemote: Boolean,
-//        query: String?
-//    ): ResourceResult<List<Session>> = withContext(ioDispatcher) {
-//        val sessions = if (query == null) {
-//            dao.fetchSessions().first()
-//        } else {
-//            dao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
-//        }
-//
-//        val isDbEmpty = sessions.isEmpty()
-//        val hasAQuery = query != null
-//        val shouldLoadFromCache = (!isDbEmpty && !fetchFromRemote) || hasAQuery
-//        if (shouldLoadFromCache) {
-//            return@withContext try {
-//                val response = api.fetchSessions()
-//                val remoteSessions = response.data.flatMap { (_, value) -> value }
-//                if (remoteSessions.isEmpty()) {
-//                    ResourceResult.Empty("No sessions just yet")
-//                } else {
-//                    remoteSessions.let {
-//                        dao.clearSessions()
-//                        val bookmarkIds = bookmarkDao.getBookmarkIds().map { sessionEntity ->
-//                            sessionEntity.sessionId
-//                        }
-//                        val sessionEntities = it.map { session ->
-//                            val newSession = session.toEntity().copy(
-//                                isBookmarked = bookmarkIds.contains(session.id)
-//                            )
-//                            newSession
-//                        }
-//                        dao.insert(sessionEntities)
-//                        ResourceResult.Success(
-//                            data = sessionEntities.map { sessionEntity -> sessionEntity.toDomainModel() }
-//                        )
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                when (e) {
-//                    is NetworkError -> ResourceResult.Error("Network error")
-//                    else -> ResourceResult.Error("Error fetching sessions")
-//                }
-//            }
-//        } else {
-//            return@withContext ResourceResult.Success(
-//                data = sessions.map {
-//                    it.toDomainModel()
-//                }
-//            )
-//        }
-//    }
-//
-// //    override suspend fun fetchSessionById(id: String): ResourceResult<Session> =
-// //        withContext(ioDispatcher) {
-// //            val session = dao.getSessionById(id)
-// //                ?: return@withContext ResourceResult.Error(message = "requested event no longer available")
-// //            return@withContext ResourceResult.Success(data = session.toDomainModel())
-// //        }
-//
-//    override suspend fun toggleBookmarkStatus(
-//        id: String,
-//        isCurrentlyStarred: Boolean
-//    ): ResourceResult<Boolean> = withContext(ioDispatcher) {
-//        try {
-//            dao.updateBookmarkedStatus(id, !isCurrentlyStarred)
-//            if (isCurrentlyStarred) {
-//                bookmarkDao.delete(BookmarkEntity(id))
-//            } else {
-//                bookmarkDao.insert(BookmarkEntity(id))
-//            }
-//        } catch (e: Exception) {
-//            when (e) {
-//                is NetworkError -> {
-//                    return@withContext ResourceResult.Error("Network error")
-//                }
-//                else -> {
-//                    return@withContext ResourceResult.Error("Error fetching sessions")
-//                }
-//            }
-//        }
-//        return@withContext ResourceResult.Success(data = dao.getBookmarkStatus(id))
-//    }
 }

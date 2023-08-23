@@ -78,26 +78,26 @@ class SessionDetailsScreenTest {
         composeTestRule.onNodeWithTag(TestTag.FLOATING_ACTION_BUTTON).assertIsDisplayed()
     }
 
-//    @Test
-//    fun `should show favourite icon and session banner image`() {
-//        composeTestRule.setContent {
-//            DroidconKE2023Theme() {
-//                Body(
-//                    paddingValues = PaddingValues(1.dp),
-//                    darkTheme = false,
-//                    sessionDetails = sessionPresentationModel,
-//                    bookmarkSession = {  },
-//                    unBookmarkSession = {  },
-//                )
-//            }
-//        }
-//        composeTestRule.onNodeWithTag(TestTag.FAVOURITE_ICON).apply {
-//            assertExists()
-//            assertIsDisplayed()
-//        }
-//
-//        composeTestRule.onNodeWithTag(TestTag.IMAGE_BANNER).assertExists()
-//    }
+    @Test
+    fun `should show favourite icon and session banner image`() {
+        composeTestRule.setContent {
+            DroidconKE2023Theme() {
+                Body(
+                    paddingValues = PaddingValues(1.dp),
+                    darkTheme = false,
+                    sessionDetails = sessionPresentationModel,
+                    bookmarkSession = { },
+                    unBookmarkSession = { }
+                )
+            }
+        }
+        composeTestRule.onNodeWithTag(TestTag.FAVOURITE_ICON, useUnmergedTree = true).apply {
+            assertExists()
+            assertIsDisplayed()
+        }
+
+        composeTestRule.onNodeWithTag(TestTag.IMAGE_BANNER).assertExists()
+    }
 
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
