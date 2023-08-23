@@ -68,7 +68,7 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
         startTime = startTime.time,
         endTime = this.endTime,
         amOrPm = startTime.period,
-        isStarred = false,
+        isStarred = this.isBookmarked,
         level = this.sessionLevel,
         format = this.sessionFormat,
         sessionImageUrl = this.sessionImage.toString(),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.dao
+package com.android254.data.work
 
-import androidx.room.Dao
-import androidx.room.Query
-import com.android254.data.db.model.BookmarkEntity
-import kotlinx.coroutines.flow.Flow
+object WorkConstants {
 
-@Dao
-interface BookmarkDao : BaseDao<BookmarkEntity> {
-    @Query("SELECT * FROM bookmarks")
-    fun getBookmarkIds(): Flow<List<BookmarkEntity>>
+    const val NOTIFICATION_CHANNEL = "notification_channel"
+    const val syncDataWorkerName = "sync_data"
 }

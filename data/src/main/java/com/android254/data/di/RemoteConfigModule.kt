@@ -38,5 +38,4 @@ object RemoteConfigModule {
     @Provides
     @Singleton
     fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = RemoteConfigConfig.setup()
-
 }
