@@ -70,6 +70,7 @@ fun SessionsScreen(
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
     navigateToSessionDetails: (sessionId: String) -> Unit = {}
 ) {
+    val isRefreshing = sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val sessionsUiState = sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle().value
     val showMySessions = remember {
         mutableStateOf(false)
@@ -136,7 +137,7 @@ fun SessionsScreen(
                     showMySessions.value = it
                     isFilterActive.value = !it
                     if (showMySessions.value) {
-                        sessionsViewModel.fetchBookmarkedSessions()
+                        sessionsViewModel.toggleBookmarkFilter()
                     } else {
                         sessionsViewModel.clearSelectedFilterList()
                     }
@@ -146,7 +147,8 @@ fun SessionsScreen(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
                 refreshSessionsList = { sessionsViewModel.refreshSessionList() },
-                retry = { }
+                retry = { },
+                isRefreshing = isRefreshing.value
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(

@@ -50,6 +50,7 @@ import coil.compose.AsyncImage
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
+import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.droidconke.chai.components.COutlinedButton
 import ke.droidcon.kotlin.presentation.R
@@ -61,11 +62,7 @@ fun SessionDetailsScreen(
     sessionId: String,
     onNavigationIconClick: () -> Unit
 ) {
-    val sessionDetails = viewModel.sessionDetails.collectAsStateWithLifecycle()
-
-    LaunchedEffect(key1 = sessionId) {
-        viewModel.getSessionDetailsById(sessionId)
-    }
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = { TopBar(onNavigationIconClick) },
@@ -87,19 +84,44 @@ fun SessionDetailsScreen(
             }
         }
     ) { paddingValues ->
-        sessionDetails.value.let {
-            if (it != null) {
-                Body(paddingValues, darkTheme, it)
+        when (uiState) {
+            is SessionDetailsUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
+            is SessionDetailsUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = uiState.message
+                    )
+                }
+            }
+            is SessionDetailsUiState.Success -> {
+                Body(
+                    paddingValues = paddingValues,
+                    darkTheme = darkTheme,
+                    sessionDetails = uiState.data,
+                    bookmarkSession = viewModel::bookmarkSession,
+                    unBookmarkSession = viewModel::unBookmarkSession
+                )
             }
         }
     }
 }
 
 @Composable
-private fun Body(
+fun Body(
     paddingValues: PaddingValues,
     darkTheme: Boolean,
-    sessionDetails: SessionDetailsPresentationModel
+    sessionDetails: SessionDetailsPresentationModel,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -113,7 +135,12 @@ private fun Body(
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            SessionSpeakerNameAndFavouriteIcon(darkTheme, sessionDetails)
+            SessionSpeakerNameAndFavouriteIcon(
+                darkTheme = darkTheme,
+                sessionDetails = sessionDetails,
+                bookmarkSession = bookmarkSession,
+                unBookmarkSession = unBookmarkSession
+            )
 
             Spacer(modifier = Modifier.height(25.dp))
 
@@ -224,7 +251,9 @@ private fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) 
 @Composable
 private fun SessionSpeakerNameAndFavouriteIcon(
     darkTheme: Boolean,
-    sessionDetails: SessionDetailsPresentationModel
+    sessionDetails: SessionDetailsPresentationModel,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -268,15 +297,22 @@ private fun SessionSpeakerNameAndFavouriteIcon(
                 lineHeight = 18.sp
             )
         )
-
-        Icon(
-            imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-            contentDescription = null,
-            modifier = Modifier
-                .size(21.dp)
-                .testTag(TestTag.FAVOURITE_ICON),
-            tint = colorResource(id = if (darkTheme) R.color.cyan else R.color.blue)
-        )
+        IconButton(onClick = {
+            if (sessionDetails.isStarred) {
+                unBookmarkSession(sessionDetails.id)
+            } else {
+                bookmarkSession(sessionDetails.id)
+            }
+        }) {
+            Icon(
+                imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(21.dp)
+                    .testTag(TestTag.FAVOURITE_ICON),
+                tint = colorResource(id = if (darkTheme) R.color.cyan else R.color.blue)
+            )
+        }
     }
 }
 

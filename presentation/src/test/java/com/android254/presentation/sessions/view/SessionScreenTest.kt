@@ -21,11 +21,15 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
-import com.android254.domain.models.ResourceResult
+import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.theme.DroidconKE2023Theme
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -42,6 +46,7 @@ import org.robolectric.shadows.ShadowLog
 @Config(instrumentedPackages = ["androidx.loader.content"])
 class SessionScreenTest {
     private val repo = mockk<SessionsRepo>()
+    private val mockSyncDataWorkManager = FakeSyncWorkManager()
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -53,17 +58,22 @@ class SessionScreenTest {
     }
 
     @Test
-    fun hasExpectedButtons() {
+    fun hasExpectedButtons() = runTest {
         val navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
         )
-
-        coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Empty("")
+        val viewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.isRefreshing.collect {
+            }
+        }
+        every { repo.fetchSessions() } returns flowOf(emptyList())
+        every { repo.fetchBookmarkedSessions() } returns flowOf(emptyList())
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    sessionsViewModel = SessionsViewModel(repo)
+                    sessionsViewModel = viewModel
                 )
             }
         }
@@ -76,17 +86,18 @@ class SessionScreenTest {
     }
 
     @Test
-    fun `should show topBar`() {
+    fun `should show topBar`() = runTest {
         val navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
         )
 
-        coEvery { repo.fetchAndSaveSessions() } returns ResourceResult.Success(emptyList())
+        every { repo.fetchSessions() } returns flowOf(mockSessions)
+        every { repo.fetchBookmarkedSessions() } returns flowOf(mockSessions)
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    sessionsViewModel = SessionsViewModel(repo)
+                    sessionsViewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
                 )
             }
         }
@@ -95,3 +106,63 @@ class SessionScreenTest {
         composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertIsDisplayed()
     }
 }
+
+val mockSessions = listOf(
+    Session(
+        id = "1",
+        endDateTime = "2023-08-17T12:00:00Z",
+        endTime = "12:00 PM",
+        isBookmarked = false,
+        isKeynote = true,
+        isServiceSession = false,
+        sessionImage = "https://example.com/session-1.jpg",
+        startDateTime = "2023-08-17T10:00:00Z",
+        startTime = "10:00 AM",
+        rooms = "Room 1",
+        speakers = "John Doe, Jane Doe",
+        remote_id = "1234567890",
+        description = "This is a keynote session about the future of technology.",
+        sessionFormat = "Keynote",
+        sessionLevel = "Beginner",
+        slug = "keynote-session",
+        title = "The Future of Technology"
+    ),
+    Session(
+        id = "2",
+        endDateTime = "2023-08-17T13:00:00Z",
+        endTime = "1:00 PM",
+        isBookmarked = true,
+        isKeynote = false,
+        isServiceSession = false,
+        sessionImage = "https://example.com/session-2.jpg",
+        startDateTime = "2023-08-17T11:00:00Z",
+        startTime = "11:00 AM",
+        rooms = "Room 2",
+        speakers = "Steve Smith, Bill Jones",
+        remote_id = "9876543210",
+        description = "This is a session about the latest trends in artificial intelligence.",
+        sessionFormat = "Workshop",
+        sessionLevel = "Intermediate",
+        slug = "ai-trends",
+        title = "The Latest Trends in Artificial Intelligence"
+    ),
+    Session(
+        id = "3",
+        endDateTime = "2023-08-17T14:00:00Z",
+        endTime = "2:00 PM",
+        isBookmarked = false,
+        isKeynote = false,
+        isServiceSession = true,
+        sessionImage = null,
+        startDateTime = "2023-08-17T12:00:00Z",
+        startTime = "12:00 PM",
+        rooms = "Room 3",
+        speakers = "No speakers",
+        remote_id = "",
+        description = "This is a service session about how to use the conference app.",
+        sessionFormat = "Service Session",
+        sessionLevel = "All Levels",
+        slug = "conference-app",
+        title = "How to Use the Conference App"
+    )
+)
