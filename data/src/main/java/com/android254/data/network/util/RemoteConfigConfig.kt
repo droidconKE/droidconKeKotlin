@@ -15,16 +15,26 @@
  */
 package com.android254.data.network.util
 
-import ke.droidcon.kotlin.data.BuildConfig
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import java.util.concurrent.TimeUnit
+import ke.droidcon.kotlin.data.BuildConfig
+import ke.droidcon.kotlin.data.R
 
-class RemoteConfigConfig {
+object RemoteConfigConfig {
 
-    fun minimumFetchIntervalInSeconds(): Long {
-        if (BuildConfig.DEBUG) {
-            return TimeUnit.MINUTES.toSeconds(5L)
-        } else {
-            return TimeUnit.MINUTES.toSeconds(12L)
+    private val minimumFetchInterval = if (BuildConfig.DEBUG) {
+        TimeUnit.MINUTES.toSeconds(5L)
+    } else {
+        TimeUnit.MINUTES.toSeconds(12L)
+    }
+
+    fun setup() = Firebase.remoteConfig.apply {
+        setDefaultsAsync(R.xml.remote_config_defaults)
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = minimumFetchInterval
         }
+        setConfigSettingsAsync(configSettings)
     }
 }

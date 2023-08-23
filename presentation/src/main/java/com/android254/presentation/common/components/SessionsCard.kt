@@ -38,9 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.android254.domain.models.ResourceResult
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
@@ -164,9 +161,6 @@ fun SessionTitleComponent(
     session: SessionPresentationModel,
     viewModel: SessionsViewModel = hiltViewModel()
 ) {
-    val isStarred = rememberSaveable() {
-        mutableStateOf(session.isStarred)
-    }
     val scope = rememberCoroutineScope()
     Row(
         Modifier
@@ -185,23 +179,15 @@ fun SessionTitleComponent(
         )
         IconButton(onClick = {
             scope.launch {
-                when (
-                    val result =
-                        viewModel.updateBookmarkStatus(session.remoteId, isStarred.value)
-                ) {
-                    is ResourceResult.Empty -> {}
-                    is ResourceResult.Error -> {
-                    }
-                    is ResourceResult.Loading -> {
-                    }
-                    is ResourceResult.Success -> {
-                        isStarred.value = if (result.data != null) result.data!! else false
-                    }
+                if (session.isStarred) {
+                    viewModel.unBookmarkSession(session.id)
+                } else {
+                    viewModel.bookmarkSession(session.id)
                 }
             }
         }) {
             Icon(
-                imageVector = if (isStarred.value) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                imageVector = if (session.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
                 tint = MaterialTheme.colorScheme.primary
             )

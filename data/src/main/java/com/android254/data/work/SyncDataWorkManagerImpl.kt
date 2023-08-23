@@ -24,6 +24,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.android254.data.work.WorkConstants.syncDataWorkerName
 import com.android254.domain.work.SyncDataWorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -52,10 +53,6 @@ class SyncDataWorkManagerImpl @Inject constructor(
         val workManager = WorkManager.getInstance(context)
         workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
             .enqueue()
-    }
-
-    companion object {
-        const val syncDataWorkerName = "sync_data"
     }
 }
 

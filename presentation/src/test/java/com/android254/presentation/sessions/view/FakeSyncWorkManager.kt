@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.dao
+package com.android254.presentation.sessions.view
 
-import androidx.room.Dao
-import androidx.room.Query
-import com.android254.data.db.model.BookmarkEntity
+import com.android254.domain.work.SyncDataWorkManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
-@Dao
-interface BookmarkDao : BaseDao<BookmarkEntity> {
-    @Query("SELECT * FROM bookmarks")
-    fun getBookmarkIds(): Flow<List<BookmarkEntity>>
+class FakeSyncWorkManager : SyncDataWorkManager {
+    override val isSyncing: Flow<Boolean>
+        get() = flow { emit(true) }
+    override suspend fun startSync() {
+    }
 }
