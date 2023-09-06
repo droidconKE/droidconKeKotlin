@@ -140,7 +140,7 @@ fun LoadingGridItem(brush: Brush) {
 fun LoaderCardElement(width: Dp, height: Dp, brush: Brush) {
     Spacer(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(5.dp))
             .width(width)
             .height(height)
             .background(brush)
