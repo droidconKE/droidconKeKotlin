@@ -224,7 +224,7 @@ We would endlessly like to thank the following contributors
         <a href="https://github.com/Raynafs">
             <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Rachel Murabula</b></sub>
         </a>
     </td>
     <td align="center">
