@@ -57,7 +57,8 @@ fun OrganizingTeamComponent(
     Column(
         modifier = modifier
             .padding(3.dp)
-            .clickable(onClick = { onClickMember(teamMember.id) }
+            .clickable(
+                onClick = { onClickMember(teamMember.id) }
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

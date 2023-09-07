@@ -71,7 +71,7 @@ fun OrganizedBySection(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center
         ) {
             organizationLogos.forEach { logo ->
 
@@ -82,7 +82,7 @@ fun OrganizedBySection(
                         .data(logo)
                         .build(),
                     placeholder = painterResource(R.drawable.ic_google_logo_icon),
-                    contentDescription = stringResource(id = R.string.logo),
+                    contentDescription = stringResource(id = R.string.logo)
                 )
             }
         }
