@@ -70,18 +70,4 @@ class SyncDataWorker @AssistedInject constructor(
         }
         return Result.success()
     }
-
-//    private suspend fun startForegroundService(notificationInfo:String) {
-//        setForeground(
-//            ForegroundInfo(
-//                Random.nextInt(),
-//                NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
-//                    .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
-//                    .setContentTitle(notificationInfo)
-//                    .build()
-//
-//            )
-//        )
-//
-//    }
 }
