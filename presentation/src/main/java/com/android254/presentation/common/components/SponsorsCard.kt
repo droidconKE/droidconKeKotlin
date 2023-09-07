@@ -16,6 +16,7 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -87,10 +88,13 @@ fun SponsorsCard(
             )
 
             FlowRow(
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.Center
             ) {
                 sponsorsLogos.forEach { sponsorLogo ->
                     AsyncImage(
+                        modifier = Modifier.padding(6.dp),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(sponsorLogo)
                             .crossfade(true)

@@ -49,7 +49,7 @@ fun OrganizedBySection(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(10.dp)
             )
-            .padding(horizontal = 40.dp, vertical = 20.dp)
+            .padding(vertical = 20.dp)
             .testTag("organized_by_section")
     ) {
         Text(
@@ -68,18 +68,21 @@ fun OrganizedBySection(
         Spacer(modifier = Modifier.height(40.dp))
 
         FlowRow(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
         ) {
             organizationLogos.forEach { logo ->
 
                 AsyncImage(
+                    modifier = Modifier
+                        .padding(6.dp),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(logo)
                         .build(),
                     placeholder = painterResource(R.drawable.ic_google_logo_icon),
                     contentDescription = stringResource(id = R.string.logo),
-                    modifier = Modifier.size(68.dp)
                 )
             }
         }

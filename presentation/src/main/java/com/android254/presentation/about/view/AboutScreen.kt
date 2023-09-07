@@ -187,7 +187,7 @@ fun OrganizingTeamSection(
 
         FlowRow(
             modifier = Modifier,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             organizingTeam.forEach { teamMember ->
                 OrganizingTeamComponent(
