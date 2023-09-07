@@ -17,6 +17,8 @@ package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,11 +43,9 @@ import coil.request.ImageRequest
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.MontserratBold
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import ke.droidcon.kotlin.presentation.R
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SponsorsCard(
     modifier: Modifier = Modifier,
@@ -87,11 +87,7 @@ fun SponsorsCard(
             )
 
             FlowRow(
-                modifier = Modifier.padding(top = 16.dp),
-                mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-                mainAxisSize = SizeMode.Expand,
-                mainAxisSpacing = 16.dp,
-                crossAxisSpacing = 16.dp
+                modifier = Modifier.padding(top = 16.dp)
             ) {
                 sponsorsLogos.forEach { sponsorLogo ->
                     AsyncImage(

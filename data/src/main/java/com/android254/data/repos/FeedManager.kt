@@ -24,10 +24,10 @@ import com.android254.domain.repos.FeedRepo
 import javax.inject.Inject
 
 class FeedManager @Inject constructor(
-    private val FeedApi: FeedApi
+    private val feedApi: FeedApi
 ) : FeedRepo {
     override suspend fun fetchFeed(): ResourceResult<List<Feed>> {
-        return when (val result = FeedApi.fetchFeed(1, 100)) {
+        return when (val result = feedApi.fetchFeed(1, 100)) {
             DataResult.Empty -> ResourceResult.Empty("Empty list ")
             is DataResult.Error -> ResourceResult.Error(result.message)
             is DataResult.Loading -> ResourceResult.Loading(true)

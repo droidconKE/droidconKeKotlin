@@ -34,11 +34,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.droidconke.chai.atoms.MontserratBold
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import ke.droidcon.kotlin.presentation.R
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizedBySection(
     modifier: Modifier = Modifier,
@@ -71,10 +69,7 @@ fun OrganizedBySection(
 
         FlowRow(
             modifier = Modifier,
-            mainAxisAlignment = MainAxisAlignment.SpaceEvenly,
-            mainAxisSize = SizeMode.Expand,
-            mainAxisSpacing = 16.dp,
-            crossAxisSpacing = 16.dp
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             organizationLogos.forEach { logo ->
 

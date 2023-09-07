@@ -16,24 +16,33 @@
 package com.android254.presentation.sessions.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.components.SessionsLoadingSkeleton
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
+import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiDarkGrey
 import com.droidconke.chai.atoms.MontserratRegular
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -54,37 +63,55 @@ fun SessionsStateComponent(
         is SessionsUiState.Loading -> {
             SessionsLoadingSkeleton()
         }
+
         is SessionsUiState.Empty -> {
             val message = sessionsUiState.message
-            Text(
-                text = message,
-                modifier = Modifier.fillMaxSize(),
-                style = TextStyle(
-                    color = ChaiDarkGrey,
-                    fontSize = 24.sp,
-                    fontFamily = MontserratRegular
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    modifier = Modifier.size(70.dp),
+                    painter = painterResource(id = R.drawable.sessions_icon),
+                    contentDescription = stringResource(id = R.string.sessions_icon_description),
+                    tint = ChaiBlue
                 )
-            )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = message,
+                    style = TextStyle(
+                        color = ChaiDarkGrey,
+                        fontSize = 18.sp,
+                        fontFamily = MontserratRegular,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
         }
+
         is SessionsUiState.Data -> {
             val sessionsList = sessionsUiState.data
-            SessionListCompponent(
+            SessionListComponent(
                 swipeRefreshState = swipeRefreshState,
                 sessions = sessionsList,
                 navigateToSessionDetails = navigateToSessionDetails,
                 refreshSessionsList = refreshSessionsList
             )
         }
+
         is SessionsUiState.Error -> {
             val message = sessionsUiState.message
             SessionsErrorComponent(errorMessage = message, retry = retry)
         }
+
         is SessionsUiState.Idle -> {}
     }
 }
 
 @Composable
-fun SessionListCompponent(
+fun SessionListComponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
