@@ -22,20 +22,17 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.android254.data.di.IoDispatcher
-import com.android254.data.repos.local.LocalSessionsDataSource
-import com.android254.data.repos.local.LocalSpeakersDataSource
-import com.android254.data.repos.local.LocalSponsorsDataSource
-import com.android254.data.repos.remote.RemoteSessionsDataSource
-import com.android254.data.repos.remote.RemoteSpeakersDataSource
-import com.android254.data.repos.remote.RemoteSponsorsDataSource
-import com.android254.domain.models.ResourceResult
+import com.android254.domain.repos.OrganizersRepo
+import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.repos.SpeakersRepo
+import com.android254.domain.repos.SponsorsRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import kotlin.random.Random
 
 @HiltWorker
@@ -44,12 +41,10 @@ class SyncDataWorker @AssistedInject constructor(
     @Assisted val workerParameters: WorkerParameters,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 
-    private val remoteSessionsDataSource: RemoteSessionsDataSource,
-    private val remoteSponsorsDataSource: RemoteSponsorsDataSource,
-    private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
-    private val localSessionsDataSource: LocalSessionsDataSource,
-    private val localSpeakersDataSource: LocalSpeakersDataSource,
-    private val localSponsorsDataSource: LocalSponsorsDataSource
+    private val speakersRepo: SpeakersRepo,
+    private val sponsorsRepo: SponsorsRepo,
+    private val sessionsRepo: SessionsRepo,
+    private val organizersRepo: OrganizersRepo
 
 ) : CoroutineWorker(appContext, workerParameters) {
 
@@ -58,7 +53,7 @@ class SyncDataWorker @AssistedInject constructor(
             Random.nextInt(),
             NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
                 .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
-                .setContentTitle(R.string.sync_notification_message.toString())
+                .setContentTitle(appContext.getString(R.string.sync_notification_message))
                 .build()
 
         )
@@ -66,79 +61,27 @@ class SyncDataWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         withContext(ioDispatcher) {
-            val sessionSyncDefferred = async { syncSessions() }
-            val speakersDeffered = async { syncSpeakers() }
-            val sponsorsDeffered = async { syncSponsors() }
-
-            sessionSyncDefferred.await()
-            speakersDeffered.await()
-            sponsorsDeffered.await()
+            awaitAll(
+                async { sessionsRepo.syncSessions() },
+                async { speakersRepo.syncSpeakers() },
+                async { sponsorsRepo.syncSponsors() },
+                async { organizersRepo.syncOrganizers() }
+            )
         }
-
         return Result.success()
     }
 
-    private suspend fun syncSessions() {
-        withContext(ioDispatcher) {
-            val response = remoteSessionsDataSource.getAllSessionsRemote()
-            when (response) {
-                is ResourceResult.Success -> {
-                    localSessionsDataSource.deleteCachedSessions()
-                    localSessionsDataSource.saveCachedSessions(
-                        sessions = response.data ?: emptyList()
-                    )
-                    Timber.d("Sync sessions successful")
-                }
-
-                is ResourceResult.Error -> {
-                    Timber.d("Sync sessions failed ${response.message}")
-                }
-
-                else -> {}
-            }
-        }
-    }
-
-    private suspend fun syncSponsors() {
-        withContext(ioDispatcher) {
-            val response = remoteSponsorsDataSource.getAllSponsorsRemote()
-            when (response) {
-                is ResourceResult.Success -> {
-                    localSponsorsDataSource.deleteCachedSponsors()
-                    localSponsorsDataSource.saveCachedSponsors(
-                        sponsors = response.data ?: emptyList()
-                    )
-                    Timber.d("Sync sponsors successful")
-                }
-
-                is ResourceResult.Error -> {
-                    Timber.d("Sync sponsors failed ${response.message}")
-                }
-
-                else -> {}
-            }
-        }
-    }
-
-    private suspend fun syncSpeakers() {
-        withContext(ioDispatcher) {
-            val response = remoteSpeakersDataSource.getAllSpeakersRemote()
-            when (response) {
-                is ResourceResult.Success -> {
-                    localSpeakersDataSource.deleteAllCachedSpeakers()
-                    localSpeakersDataSource.saveCachedSpeakers(
-                        speakers = response.data ?: emptyList()
-                    )
-
-                    Timber.d("Sync speakers successful")
-                }
-
-                is ResourceResult.Error -> {
-                    Timber.d("Sync speakers failed ${response.message}")
-                }
-
-                else -> {}
-            }
-        }
-    }
+//    private suspend fun startForegroundService(notificationInfo:String) {
+//        setForeground(
+//            ForegroundInfo(
+//                Random.nextInt(),
+//                NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
+//                    .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
+//                    .setContentTitle(notificationInfo)
+//                    .build()
+//
+//            )
+//        )
+//
+//    }
 }

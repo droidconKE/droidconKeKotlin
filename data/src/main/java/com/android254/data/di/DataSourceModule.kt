@@ -15,18 +15,24 @@
  */
 package com.android254.data.di
 
+import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
 import com.android254.data.dao.SponsorsDao
+import com.android254.data.network.apis.OrganizersApi
 import com.android254.data.network.apis.SessionsApi
 import com.android254.data.network.apis.SpeakersApi
 import com.android254.data.network.apis.SponsorsApi
+import com.android254.data.repos.local.LocalOrganizersDataSource
+import com.android254.data.repos.local.LocalOrganizersDataSourceImpl
 import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.local.LocalSessionsDataSourceImpl
 import com.android254.data.repos.local.LocalSpeakersDataSource
 import com.android254.data.repos.local.LocalSpeakersDataSourceImpl
 import com.android254.data.repos.local.LocalSponsorsDataSource
 import com.android254.data.repos.local.LocalSponsorsDataSourceImpl
+import com.android254.data.repos.remote.RemoteOrganizersDataSource
+import com.android254.data.repos.remote.RemoteOrganizersDataSourceImpl
 import com.android254.data.repos.remote.RemoteSessionsDataSource
 import com.android254.data.repos.remote.RemoteSessionsDataSourceImpl
 import com.android254.data.repos.remote.RemoteSpeakersDataSource
@@ -85,4 +91,18 @@ object DataSourceModule {
         sponsorsDao: SponsorsDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): LocalSponsorsDataSource = LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, ioDispatcher = ioDispatcher)
+
+    @Provides
+    @Singleton
+    fun provideLocalOrganizersDataSource(
+        organizersDao: OrganizersDao,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): LocalOrganizersDataSource =
+        LocalOrganizersDataSourceImpl(organizersDao = organizersDao, ioDispatcher = ioDispatcher)
+
+    @Provides
+    @Singleton
+    fun provideRemoteOrganizersDataSource(
+        api: OrganizersApi
+    ): RemoteOrganizersDataSource = RemoteOrganizersDataSourceImpl(api = api)
 }
