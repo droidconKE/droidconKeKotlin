@@ -21,16 +21,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -38,17 +41,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
 import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiBlue
+import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,7 +68,9 @@ fun FeedScreen(
         skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
-    feedViewModel.fetchFeed()
+    LaunchedEffect(Unit) {
+        feedViewModel.fetchFeed()
+    }
     val feedUIState = feedViewModel.viewState
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
@@ -70,14 +80,16 @@ fun FeedScreen(
             FeedShareSection()
         }
     }
-    Scaffold(topBar = {
-        DroidconAppBarWithFeedbackButton(
-            onButtonClick = {
-                navigateToFeedbackScreen()
-            },
-            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
-        )
-    }) { paddingValues ->
+    Scaffold(
+        topBar = {
+            DroidconAppBarWithFeedbackButton(
+                onButtonClick = {
+                    navigateToFeedbackScreen()
+                },
+                userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
+            )
+        }
+    ) { paddingValues ->
         Box(
             modifier = Modifier
                 .padding(paddingValues = paddingValues)
@@ -103,7 +115,13 @@ fun FeedScreen(
                 }
 
                 FeedUIState.Loading -> {
-                    CircularProgressIndicator()
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
 
                 is FeedUIState.Success -> {
@@ -124,8 +142,19 @@ fun FeedScreen(
                     }
                 }
 
-                FeedUIState.Empty -> Column(modifier = Modifier.fillMaxSize()) {
-                    Text(text = "Empty")
+                FeedUIState.Empty -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(70.dp),
+                            painter = painterResource(id = R.drawable.feed_icon),
+                            contentDescription = stringResource(id = R.string.feed_icon_description),
+                            tint = ChaiBlue
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Text(text = "No items")
+                    }
                 }
             }
         }

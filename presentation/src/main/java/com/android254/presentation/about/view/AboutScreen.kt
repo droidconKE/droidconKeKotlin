@@ -15,19 +15,27 @@
  */
 package com.android254.presentation.about.view
 
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,9 +57,6 @@ import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -59,8 +64,7 @@ fun AboutScreen(
     aboutViewModel: AboutViewModel = hiltViewModel(),
     navigateToFeedbackScreen: () -> Unit = {}
 ) {
-    val teamMembers by aboutViewModel.teamMembers.collectAsStateWithLifecycle()
-    val stakeHolderLogos by aboutViewModel.stakeHolderLogos.collectAsStateWithLifecycle()
+    val uiState = aboutViewModel.uiState.collectAsStateWithLifecycle().value
 
     Scaffold(
         topBar = {
@@ -72,36 +76,59 @@ fun AboutScreen(
             )
         }
     ) { paddingValues ->
+        when (uiState) {
+            is AboutScreenUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
 
-        Column(
-            Modifier
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .testTag("about_screen")
-        ) {
-            AboutDroidconSection(
-                droidconDesc = stringResource(id = R.string.about_droidcon),
-                droidconImage = ""
-            )
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            OrganizingTeamSection(
-                modifier = Modifier,
-                organizingTeam = teamMembers,
-                onClickMember = {
-                    // TODO navigate to team screen
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-            )
+            }
+            is AboutScreenUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = uiState.message,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+            is AboutScreenUiState.Success -> {
+                val teamMembers = uiState.teamMembers
+                val stakeHolderLogos = uiState.stakeHoldersLogos
+                Column(
+                    Modifier
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState())
+                        .testTag("about_screen")
+                ) {
+                    AboutDroidconSection(
+                        droidconDesc = stringResource(id = R.string.about_droidcon),
+                        droidconImage = ""
+                    )
 
-            Spacer(modifier = Modifier.height(40.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
 
-            OrganizedBySection(
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                organizationLogos = stakeHolderLogos
-            )
+                    OrganizingTeamSection(
+                        modifier = Modifier,
+                        organizingTeam = teamMembers,
+                        onClickMember = {
+                            // TODO navigate to team screen
+                        }
+                    )
 
-            Spacer(modifier = Modifier.height(40.dp))
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    OrganizedBySection(
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                        organizationLogos = stakeHolderLogos
+                    )
+
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
+            }
         }
     }
 }
@@ -159,6 +186,7 @@ fun AboutDroidconSection(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizingTeamSection(
     modifier: Modifier = Modifier,
@@ -186,11 +214,7 @@ fun OrganizingTeamSection(
 
         FlowRow(
             modifier = Modifier,
-            mainAxisAlignment = MainAxisAlignment.SpaceBetween,
-            mainAxisSize = SizeMode.Expand,
-            mainAxisSpacing = 16.dp,
-            crossAxisSpacing = 16.dp,
-            lastLineMainAxisAlignment = MainAxisAlignment.Start
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             organizingTeam.forEach { teamMember ->
                 OrganizingTeamComponent(

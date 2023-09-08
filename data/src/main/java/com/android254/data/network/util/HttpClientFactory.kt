@@ -15,7 +15,6 @@
  */
 package com.android254.data.network.util
 
-import ke.droidcon.kotlin.data.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
@@ -26,11 +25,15 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import ke.droidcon.kotlin.data.BuildConfig
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class HttpClientFactory @Inject constructor(private val tokenProvider: TokenProvider, private val remoteFeatureToggle: RemoteFeatureToggle) {
+class HttpClientFactory @Inject constructor(
+    private val tokenProvider: TokenProvider,
+    private val remoteFeatureToggle: RemoteFeatureToggle
+) {
 
     fun create(engine: HttpClientEngine) = HttpClient(engine) {
         install(ContentNegotiation) {

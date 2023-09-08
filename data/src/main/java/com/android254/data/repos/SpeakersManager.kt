@@ -16,14 +16,17 @@
 package com.android254.data.repos
 
 import com.android254.data.repos.local.LocalSpeakersDataSource
+import com.android254.data.repos.remote.RemoteSpeakersDataSource
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class SpeakersManager @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource
+    private val localSpeakersDataSource: LocalSpeakersDataSource,
+    private val remoteSpeakersDataSource: RemoteSpeakersDataSource
 
 ) : SpeakersRepo {
     // the repo is offline first i.e the data should only be loaded from the local data source
@@ -35,4 +38,24 @@ class SpeakersManager @Inject constructor(
 
     override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
         ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerById(id))
+
+    override suspend fun syncSpeakers() {
+        val response = remoteSpeakersDataSource.getAllSpeakersRemote()
+        when (response) {
+            is ResourceResult.Success -> {
+                localSpeakersDataSource.deleteAllCachedSpeakers()
+                localSpeakersDataSource.saveCachedSpeakers(
+                    speakers = response.data ?: emptyList()
+                )
+                Timber.d("Sync speakers successful")
+            }
+
+            is ResourceResult.Error -> {
+                Timber.d("Sync speakers failed ${response.message}")
+            }
+
+            else -> {
+            }
+        }
+    }
 }

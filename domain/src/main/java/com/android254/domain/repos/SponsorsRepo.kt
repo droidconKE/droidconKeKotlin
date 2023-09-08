@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,12 @@
  */
 package com.android254.domain.repos
 
-import com.android254.domain.models.Organizer
+import com.android254.domain.models.Sponsors
+import kotlinx.coroutines.flow.Flow
 
-interface OrganizersRepository {
-    suspend fun getOrganizers(): List<Organizer>
+interface SponsorsRepo {
+
+    fun getAllSponsors(): Flow<List<Sponsors>>
+
+    suspend fun syncSponsors()
 }

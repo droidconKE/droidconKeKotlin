@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.dao
+package com.android254.domain.repos
 
-import androidx.room.Dao
-import androidx.room.Query
-import com.android254.data.db.model.OrganizerEntity
+import com.android254.domain.models.Organizer
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface OrganizersDao : BaseDao<OrganizerEntity> {
+interface OrganizersRepo {
+    fun getOrganizers(): Flow<List<Organizer>>
 
-    @Query("SELECT * FROM ORGANIZERS")
-    fun fetchOrganizers(): Flow<List<OrganizerEntity>>
-
-    @Query("DELETE FROM ORGANIZERS")
-    suspend fun deleteAllOrganizers()
+    suspend fun syncOrganizers()
 }

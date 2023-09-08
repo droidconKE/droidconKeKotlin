@@ -31,9 +31,11 @@ suspend fun <T> safeApiCall(block: suspend () -> T): T {
             is ServerResponseException, is NoTransformationFoundException -> {
                 throw ServerError(e)
             }
+
             is ConnectTimeoutException -> {
                 throw NetworkError()
             }
+
             else -> throw e
         }
     }
@@ -52,9 +54,11 @@ suspend fun <T : Any> dataResultSafeApiCall(
         is ServerResponseException, is NoTransformationFoundException -> {
             DataResult.Error("Server error", exc = throwable)
         }
+
         is ConnectTimeoutException -> {
             DataResult.Error("Network error", exc = throwable, networkError = true)
         }
+
         else -> {
             DataResult.Error("Client error", exc = throwable)
         }
