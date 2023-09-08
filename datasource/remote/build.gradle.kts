@@ -15,14 +15,13 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("droidconke.android.room")
     id("droidconke.android.hilt")
     id("droidconke.android.library.firebase")
     kotlin("plugin.serialization")
 }
 
 android {
-    namespace = "ke.droidcon.kotlin.data"
+    namespace = "ke.droidcon.kotlin.datasource.remote"
 
     testOptions {
         unitTests {
@@ -40,15 +39,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":datasource:local"))
-    implementation(project(":datasource:remote"))
-
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
-    api(libs.kotlin.coroutines.datetime)
+    implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
-    implementation(libs.datastore)
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.ktor.core)
     implementation(libs.ktor.android)
@@ -57,9 +49,6 @@ dependencies {
     implementation(libs.ktor.auth)
     implementation(libs.ktor.logging)
     implementation(libs.ktor.okhttp)
-
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
-    implementation(libs.lifecycle.livedataKtx)
 
     implementation(libs.work.runtime)
     implementation(libs.hilt.work)

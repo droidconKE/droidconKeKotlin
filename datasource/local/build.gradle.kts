@@ -18,11 +18,10 @@ plugins {
     id("droidconke.android.room")
     id("droidconke.android.hilt")
     id("droidconke.android.library.firebase")
-    kotlin("plugin.serialization")
 }
 
 android {
-    namespace = "ke.droidcon.kotlin.data"
+    namespace = "ke.droidcon.kotlin.datasource.local"
 
     testOptions {
         unitTests {
@@ -40,23 +39,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":datasource:local"))
-    implementation(project(":datasource:remote"))
-
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
-    api(libs.kotlin.coroutines.datetime)
+    implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
     implementation(libs.datastore)
     implementation(libs.kotlin.coroutines.android)
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.android)
-    implementation(libs.ktor.content.negotiation)
-    implementation(libs.ktor.json)
-    implementation(libs.ktor.auth)
-    implementation(libs.ktor.logging)
-    implementation(libs.ktor.okhttp)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.lifecycle.livedataKtx)
@@ -72,16 +58,4 @@ dependencies {
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.androidx.core)
     testImplementation(libs.test.robolectric)
-    testImplementation(libs.ktor.mock)
-    testImplementation(libs.test.mockk)
-}
-
-kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            }
-        }
-    }
 }
