@@ -38,6 +38,7 @@ import com.android254.presentation.common.components.DroidconAppBarWithFeedbackB
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.components.HomeBannerSection
+import com.android254.presentation.home.components.HomeSessionLoadingComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
 import com.android254.presentation.home.components.HomeSpeakersSection
@@ -88,13 +89,21 @@ fun HomeScreen(
                 HomeHeaderSection()
                 HomeBannerSection(homeViewState)
                 HomeSpacer()
-                if (homeViewState.isSessionsSectionVisible) {
-                    HomeSessionSection(
-                        sessions = homeViewState.sessions,
-                        onSessionClick = onSessionClicked,
-                        onViewAllSessionClicked = navigateToSessionScreen
-                    )
-                    HomeSpacer()
+                when{
+                    isSyncing && homeViewState.sessions.isEmpty() ->{
+                        HomeSessionLoadingComponent()
+                    }
+
+                    else -> {
+                        if (homeViewState.isSessionsSectionVisible) {
+                            HomeSessionSection(
+                                sessions = homeViewState.sessions,
+                                onSessionClick = onSessionClicked,
+                                onViewAllSessionClicked = navigateToSessionScreen
+                            )
+                            HomeSpacer()
+                        }
+                    }
                 }
                 if (homeViewState.isSpeakersSectionVisible) {
                     HomeSpeakersSection(
