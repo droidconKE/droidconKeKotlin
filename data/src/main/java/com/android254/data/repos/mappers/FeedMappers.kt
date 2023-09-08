@@ -15,6 +15,7 @@
  */
 package com.android254.data.repos.mappers
 
+import com.android254.data.db.model.FeedEntity
 import com.android254.data.network.models.responses.FeedDTO
 import com.android254.domain.models.Feed
 
@@ -25,4 +26,22 @@ fun FeedDTO.toDomain() = Feed(
     url = url,
     image = image,
     createdAt = createdAt.toString()
+)
+
+fun FeedDTO.toEntity() = FeedEntity(
+    title = title,
+    body = body,
+    topic = topic,
+    url = url,
+    image = image,
+    createdAt = createdAt.toString()
+)
+
+fun FeedEntity.toDomain() = Feed(
+    title = title,
+    body = body,
+    topic = topic,
+    url = url,
+    image = image,
+    createdAt = createdAt
 )

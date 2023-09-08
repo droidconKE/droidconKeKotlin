@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.repos.remote
 
-import com.android254.domain.models.Feed
-import kotlinx.coroutines.flow.Flow
+import com.android254.data.network.apis.FeedApi
+import com.android254.data.network.models.responses.FeedDTO
+import com.android254.domain.models.DataResult
+import javax.inject.Inject
 
-interface FeedRepo {
-    fun fetchFeed(): Flow<List<Feed>>
+interface RemoteFeedDataSource {
 
-    fun fetchFeedById(id: Int): Flow<Feed?>
+    suspend fun fetchFeed(): DataResult<List<FeedDTO>>
+}
 
-    suspend fun syncFeed()
+class RemoteFeedDataSourceImpl @Inject constructor(
+    private val api: FeedApi
+) : RemoteFeedDataSource {
+
+    override suspend fun fetchFeed(): DataResult<List<FeedDTO>> =
+        api.fetchFeed()
 }

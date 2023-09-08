@@ -38,5 +38,6 @@ object DatabaseModule {
         Database::class.java,
         "dcke22-database"
     )
+        .fallbackToDestructiveMigration()
         .build()
 }

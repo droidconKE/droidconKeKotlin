@@ -15,23 +15,41 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.network.apis.FeedApi
-import com.android254.data.repos.mappers.toDomain
+import com.android254.data.repos.local.LocalFeedDataSource
+import com.android254.data.repos.remote.RemoteFeedDataSource
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Feed
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.FeedRepo
+import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class FeedManager @Inject constructor(
-    private val feedApi: FeedApi
+    private val localFeedDataSource: LocalFeedDataSource,
+    private val remoteFeedDataSource: RemoteFeedDataSource
 ) : FeedRepo {
-    override suspend fun fetchFeed(): ResourceResult<List<Feed>> {
-        return when (val result = feedApi.fetchFeed(1, 100)) {
-            DataResult.Empty -> ResourceResult.Empty("Empty list ")
-            is DataResult.Error -> ResourceResult.Error(result.message)
-            is DataResult.Loading -> ResourceResult.Loading(true)
-            is DataResult.Success -> ResourceResult.Success(result.data.map { it.toDomain() })
+
+    override fun fetchFeed(): Flow<List<Feed>> =
+        localFeedDataSource.fetchFeed()
+
+    override fun fetchFeedById(id: Int): Flow<Feed?> =
+        localFeedDataSource.getFeedById(id)
+
+    override suspend fun syncFeed() {
+        val feedResponse = remoteFeedDataSource.fetchFeed()
+        when (feedResponse) {
+            is DataResult.Success -> {
+                localFeedDataSource.deleteAllFeed()
+                localFeedDataSource.insertFeed(feedItems = feedResponse.data)
+                Timber.d("Sync feed successful")
+            }
+            is DataResult.Empty -> {
+            }
+            is DataResult.Loading -> {
+            }
+            is DataResult.Error -> {
+                Timber.d("Sync feed error ${feedResponse.message}")
+            }
         }
     }
 }

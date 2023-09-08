@@ -22,6 +22,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import com.android254.data.di.IoDispatcher
+import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
@@ -44,7 +45,8 @@ class SyncDataWorker @AssistedInject constructor(
     private val speakersRepo: SpeakersRepo,
     private val sponsorsRepo: SponsorsRepo,
     private val sessionsRepo: SessionsRepo,
-    private val organizersRepo: OrganizersRepo
+    private val organizersRepo: OrganizersRepo,
+    private val feedRepo: FeedRepo
 
 ) : CoroutineWorker(appContext, workerParameters) {
 
@@ -65,7 +67,8 @@ class SyncDataWorker @AssistedInject constructor(
                 async { sessionsRepo.syncSessions() },
                 async { speakersRepo.syncSpeakers() },
                 async { sponsorsRepo.syncSponsors() },
-                async { organizersRepo.syncOrganizers() }
+                async { organizersRepo.syncOrganizers() },
+                async { feedRepo.syncFeed() }
             )
         }
         return Result.success()
