@@ -34,7 +34,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(instrumentedPackages = ["androidx.loader.content"])
+@Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SpeakersScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
     private val mockSyncDataWorkManager = mockk<SyncDataWorkManager>()
@@ -49,7 +49,7 @@ class SpeakersScreenTest {
         coEvery { speakersRepo.fetchSpeakers() } returns flowOf(
             listOf(
                 Speaker(
-                    name = "Harun Wangereka",
+                    name = "John Doe",
                     tagline = "kenya partner lead"
                 )
             )
@@ -62,7 +62,7 @@ class SpeakersScreenTest {
             onNodeWithText("Speakers").assertIsDisplayed()
             onNodeWithContentDescription("Back arrow icon").assertIsDisplayed()
             onNodeWithContentDescription("Speaker headshot").assertIsDisplayed()
-            onNodeWithText("Harun Wangereka").assertIsDisplayed()
+            onNodeWithText("John Doe").assertIsDisplayed()
             onNodeWithText("kenya partner lead", substring = true, ignoreCase = true)
             onNodeWithText("Session").assertIsDisplayed()
         }

@@ -27,10 +27,10 @@ import com.android254.data.work.WorkConstants
 import com.android254.data.work.WorkInitializer
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {
@@ -66,6 +66,7 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             Timber.plant(CrashlyticsTree())
         }
     }
+
     private fun setUpWorkerManagerNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -76,6 +77,9 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-        WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(workerFactory).build())
+        WorkManager.initialize(
+            this,
+            Configuration.Builder().setWorkerFactory(workerFactory).build()
+        )
     }
 }

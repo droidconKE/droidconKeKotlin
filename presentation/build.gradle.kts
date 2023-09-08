@@ -68,7 +68,6 @@ dependencies {
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
-    implementation(libs.accompanist.flowlayout)
     implementation(libs.lottie.compose)
     implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)

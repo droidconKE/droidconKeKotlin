@@ -26,11 +26,8 @@ import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.preferences.DefaultTokenProvider
 import com.android254.domain.models.DataResult
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
+import io.ktor.client.engine.mock.*
+import io.ktor.http.*
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
@@ -40,8 +37,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class OrganizersApiTest {
 
     private lateinit var testDataStore: DataStore<Preferences>

@@ -1,72 +1,70 @@
 [versions]
-compose = "1.4.0-beta01"
 composecompiler = "1.4.6"
-coroutines = "1.6.4"
+coroutines = "1.7.3"
 desugar_jdk_libs = "2.0.3"
 espresso = "3.5.1"
 gradleplugin = "8.0.2"
-hilt = "2.45"
+hilt = "2.47"
 kotlin = "1.8.20"
-lifecycle = "2.5.1"
-room = "2.5.0"
+lifecycle = "2.6.2"
+room = "2.5.2"
 ktor = "2.2.2"
-splash = "1.0.0"
-firebaseCrashlyticsPlugin = "2.9.2"
+splash = "1.0.1"
+firebaseCrashlyticsPlugin = "2.9.9"
 firebasePerfPlugin = "1.4.2"
 junit4 = "4.13.2"
-agp = "7.4.1"
-chucker = "3.5.2"
+agp = "7.4.2"
+chucker = "4.0.0"
 ksp = "1.8.20-1.0.11"
-androidxComposeBom = "2023.06.01"
+androidxComposeBom = "2023.09.00"
 remote_config = "21.4.1"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
-android-coreKtx = "androidx.core:core-ktx:1.9.0"
+android-coreKtx = "androidx.core:core-ktx:1.10.1"
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 android-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 android-hilt-navigation-compose = "androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
 android-hilt-androidx-compiler = "androidx.hilt:hilt-compiler:1.0.0"
 android-hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
-android-material = "com.google.android.material:material:1.8.0"
-android-test-compose = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+android-material = "com.google.android.material:material:1.9.0"
+android-test-compose = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 android-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 android-test-idling = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
 android-test-junit4 = "androidx.test.ext:junit:1.1.5"
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
-coil-compose = "io.coil-kt:coil-compose:2.0.0-rc03"
-compose-activity = "androidx.activity:activity-compose:1.6.1"
-compose-compiler = "androidx.compose.compiler:compiler:1.4.2"
+coil-compose = "io.coil-kt:coil-compose:2.4.0"
+compose-activity = "androidx.activity:activity-compose:1.7.2"
+compose-compiler = "androidx.compose.compiler:compiler:1.4.6"
 compose-material-3 = { group = "androidx.compose.material3", name = "material3" }
-compose-materialIcons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
-compose-runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "compose" }
-compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-materialIcons = { group = "androidx.compose.material", name = "material-icons-extended" }
+compose-runtimeLivedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+compose-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-preview-customview = "androidx.customview:customview:1.2.0-alpha02"
 compose-preview-customview-poolingcontainer = "androidx.customview:customview-poolingcontainer:1.0.0"
-compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha07"
-compose-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-compose:2.6.0"
-accompanist-flowlayout = "com.google.accompanist:accompanist-flowlayout:0.25.1"
+compose-constraintlayout = "androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha12"
+compose-lifecycle-runtime = "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
 accompanist-swiperefresh = "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
-gson-gson = "com.google.code.gson:gson:2.9.0"
-kotlinx-coroutines-core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+gson-gson = "com.google.code.gson:gson:2.10.1"
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutines-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlin-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
-gms-play-services-auth = "com.google.android.gms:play-services-auth:20.4.1"
+gms-play-services-auth = "com.google.android.gms:play-services-auth:20.7.0"
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-lottie-compose = "com.airbnb.android:lottie-compose:5.0.3"
-paging-common = "androidx.paging:paging-common-ktx:3.1.1"
-paging-compose = "androidx.paging:paging-compose:1.0.0-alpha18"
+lottie-compose = "com.airbnb.android:lottie-compose:6.0.0"
+paging-common = "androidx.paging:paging-common-ktx:3.2.1"
+paging-compose = "androidx.paging:paging-compose:3.2.1"
 result-jvm = "com.github.kittinunf.result:result-jvm:5.2.1"
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
@@ -75,8 +73,8 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 datastore = "androidx.datastore:datastore-preferences:1.0.0"
 timber = "com.jakewharton.timber:timber:5.0.1"
 test-androidx-core = "androidx.test:core-ktx:1.5.0"
-test-robolectric = "org.robolectric:robolectric:4.9"
-test-navigation = "androidx.navigation:navigation-testing:2.5.3"
+test-robolectric = "org.robolectric:robolectric:4.10.3"
+test-navigation = "androidx.navigation:navigation-testing:2.7.2"
 test-mockk = "io.mockk:mockk:1.12.7"
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
@@ -86,7 +84,7 @@ ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = 
 ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-firebase-bom = "com.google.firebase:firebase-bom:32.2.0"
+firebase-bom = "com.google.firebase:firebase-bom:32.2.3"
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
@@ -97,11 +95,11 @@ firebase-common = "com.google.firebase:firebase-common-ktx:20.3.3"
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
-work-runtime ="androidx.work:work-runtime-ktx:2.8.1"
-hilt-work="androidx.hilt:hilt-work:1.0.0"
-hilt-common ="androidx.hilt:hilt-common:1.0.0"
+work-runtime = "androidx.work:work-runtime-ktx:2.8.1"
+hilt-work = "androidx.hilt:hilt-work:1.0.0"
+hilt-common = "androidx.hilt:hilt-common:1.0.0"
 
-app-cash-turbine-turbine ="app.cash.turbine:turbine:1.0.0"
+app-cash-turbine-turbine = "app.cash.turbine:turbine:1.0.0"
 espresso = "androidx.test.espresso:espresso-core:3.5.1"
 junit-androidx = "androidx.test.ext:junit:1.1.5"
 junit-androidx-ktx = "androidx.test.ext:junit-ktx:1.1.5"
