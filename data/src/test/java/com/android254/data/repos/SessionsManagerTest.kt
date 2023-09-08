@@ -19,10 +19,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android254.data.dao.BookmarkDao
-import com.android254.data.dao.SessionDao
 import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
-import com.android254.data.network.apis.SessionsApi
 import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.remote.RemoteSessionsDataSource
@@ -61,11 +59,11 @@ class SessionsManagerTest {
 
     @Test
     fun `test it fetches from the local cache`() = runTest {
-       coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
-               flowOf(listOf(sessionEntity.toDomainModel()))
+        coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
+            flowOf(listOf(sessionEntity.toDomainModel()))
         val sessions = mockLocalSessionsDataSource.getCachedSessions().first()
         assert(sessions[0].description == sessionEntity.description)
-        coVerify (atLeast = 1){
+        coVerify(atLeast = 1) {
             mockLocalSessionsDataSource.getCachedSessions()
         }
     }

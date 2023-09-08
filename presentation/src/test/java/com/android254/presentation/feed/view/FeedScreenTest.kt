@@ -51,7 +51,18 @@ class FeedScreenTest {
 
     @Test
     fun `should display feed items`() {
-        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+        coEvery { repo.fetchFeed() } returns ResourceResult.Success(
+            listOf(
+                Feed(
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                )
+            )
+        )
 
         composeTestRule.setContent {
             DroidconKE2023Theme {
@@ -68,7 +79,18 @@ class FeedScreenTest {
 
     @Test
     fun `test share bottom sheet is shown`() {
-        coEvery { repo.fetchFeed() } returns ResourceResult.Success(listOf(Feed("", "", "", "", "", "")))
+        coEvery { repo.fetchFeed() } returns ResourceResult.Success(
+            listOf(
+                Feed(
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                )
+            )
+        )
 
         composeTestRule.setContent {
             DroidconKE2023Theme {
