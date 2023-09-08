@@ -41,6 +41,9 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":datasource:local"))
+    implementation(project(":datasource:remote"))
+
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     api(libs.kotlin.coroutines.datetime)
