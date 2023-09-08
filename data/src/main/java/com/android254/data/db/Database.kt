@@ -20,11 +20,13 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.android254.data.dao.BookmarkDao
+import com.android254.data.dao.FeedDao
 import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
 import com.android254.data.dao.SponsorsDao
 import com.android254.data.db.model.BookmarkEntity
+import com.android254.data.db.model.FeedEntity
 import com.android254.data.db.model.OrganizerEntity
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.db.model.SpeakerEntity
@@ -37,11 +39,15 @@ import com.android254.data.db.util.InstantConverter
         SpeakerEntity::class,
         BookmarkEntity::class,
         OrganizerEntity::class,
-        SponsorEntity::class
+        SponsorEntity::class,
+        FeedEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
-    autoMigrations = [AutoMigration(from = 1, to = 2)]
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2),
+        AutoMigration(from = 2, to = 3)
+    ]
 )
 @TypeConverters(
     InstantConverter::class
@@ -56,4 +62,6 @@ abstract class Database : RoomDatabase() {
     abstract fun organizersDao(): OrganizersDao
 
     abstract fun sponsorsDao(): SponsorsDao
+
+    abstract fun feedDao(): FeedDao
 }

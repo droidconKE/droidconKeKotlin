@@ -15,14 +15,18 @@
  */
 package com.android254.data.di
 
+import com.android254.data.dao.FeedDao
 import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
 import com.android254.data.dao.SponsorsDao
+import com.android254.data.network.apis.FeedApi
 import com.android254.data.network.apis.OrganizersApi
 import com.android254.data.network.apis.SessionsApi
 import com.android254.data.network.apis.SpeakersApi
 import com.android254.data.network.apis.SponsorsApi
+import com.android254.data.repos.local.LocalFeedDataSource
+import com.android254.data.repos.local.LocalFeedDataSourceImpl
 import com.android254.data.repos.local.LocalOrganizersDataSource
 import com.android254.data.repos.local.LocalOrganizersDataSourceImpl
 import com.android254.data.repos.local.LocalSessionsDataSource
@@ -31,6 +35,8 @@ import com.android254.data.repos.local.LocalSpeakersDataSource
 import com.android254.data.repos.local.LocalSpeakersDataSourceImpl
 import com.android254.data.repos.local.LocalSponsorsDataSource
 import com.android254.data.repos.local.LocalSponsorsDataSourceImpl
+import com.android254.data.repos.remote.RemoteFeedDataSource
+import com.android254.data.repos.remote.RemoteFeedDataSourceImpl
 import com.android254.data.repos.remote.RemoteOrganizersDataSource
 import com.android254.data.repos.remote.RemoteOrganizersDataSourceImpl
 import com.android254.data.repos.remote.RemoteSessionsDataSource
@@ -105,4 +111,17 @@ object DataSourceModule {
     fun provideRemoteOrganizersDataSource(
         api: OrganizersApi
     ): RemoteOrganizersDataSource = RemoteOrganizersDataSourceImpl(api = api)
+
+    @Provides
+    @Singleton
+    fun provideFeedDataSource(
+        api: FeedApi
+    ): RemoteFeedDataSource = RemoteFeedDataSourceImpl(api = api)
+
+    @Provides
+    @Singleton
+    fun provideLocalFeedDataSource(
+        feedDao: FeedDao,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): LocalFeedDataSource = LocalFeedDataSourceImpl(feedDao = feedDao, ioDispatcher = ioDispatcher)
 }
