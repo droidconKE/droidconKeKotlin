@@ -15,7 +15,10 @@
  */
 package com.android254.presentation.about.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,9 +52,6 @@ import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratRegular
-import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.flowlayout.MainAxisAlignment
-import com.google.accompanist.flowlayout.SizeMode
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -159,6 +159,7 @@ fun AboutDroidconSection(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizingTeamSection(
     modifier: Modifier = Modifier,
@@ -186,11 +187,7 @@ fun OrganizingTeamSection(
 
         FlowRow(
             modifier = Modifier,
-            mainAxisAlignment = MainAxisAlignment.SpaceBetween,
-            mainAxisSize = SizeMode.Expand,
-            mainAxisSpacing = 16.dp,
-            crossAxisSpacing = 16.dp,
-            lastLineMainAxisAlignment = MainAxisAlignment.Start
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             organizingTeam.forEach { teamMember ->
                 OrganizingTeamComponent(

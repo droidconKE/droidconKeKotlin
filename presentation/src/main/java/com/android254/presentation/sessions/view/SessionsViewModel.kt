@@ -46,7 +46,8 @@ class SessionsViewModel @Inject constructor(
         MutableStateFlow(emptyList())
     val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
-    private val _filterState: MutableStateFlow<SessionsFilterState?> = MutableStateFlow(SessionsFilterState())
+    private val _filterState: MutableStateFlow<SessionsFilterState?> =
+        MutableStateFlow(SessionsFilterState())
     private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
         EventDate(
             LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16)
@@ -63,6 +64,7 @@ class SessionsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = false
         )
+
     init {
         viewModelScope.launch {
             fetchAllSessions()
@@ -100,6 +102,7 @@ class SessionsViewModel @Inject constructor(
                     levels = newValue!!
                 )
             }
+
             SessionsFilterCategory.Topic -> {
                 val newValue = _filterState.value!!.topics.toMutableList().apply {
                     val index = this.indexOf(option.value)
@@ -113,6 +116,7 @@ class SessionsViewModel @Inject constructor(
                     topics = newValue
                 )
             }
+
             SessionsFilterCategory.Room -> {
                 val newValue = _filterState.value!!.rooms.toMutableList().apply {
                     val index = this.indexOf(option.value)
@@ -126,6 +130,7 @@ class SessionsViewModel @Inject constructor(
                     rooms = newValue
                 )
             }
+
             SessionsFilterCategory.SessionType -> {
                 val newValue = _filterState.value!!.sessionTypes.toMutableList().apply {
                     val index = this.indexOf(option.value)
@@ -149,7 +154,7 @@ class SessionsViewModel @Inject constructor(
                 _sessionsUiState.value = if (sessions.isNotEmpty()) {
                     SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
                 } else {
-                    SessionsUiState.Empty("No sessions Found")
+                    SessionsUiState.Empty("No sessions found")
                 }
             } catch (e: Exception) {
                 _sessionsUiState.value = SessionsUiState.Error(
@@ -166,7 +171,7 @@ class SessionsViewModel @Inject constructor(
                 _sessionsUiState.value = if (sessions.isNotEmpty()) {
                     SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
                 } else {
-                    SessionsUiState.Empty("No sessions Found")
+                    SessionsUiState.Empty("No sessions found")
                 }
             } catch (e: Exception) {
                 _sessionsUiState.value = SessionsUiState.Error(
@@ -184,7 +189,7 @@ class SessionsViewModel @Inject constructor(
                 _sessionsUiState.value = if (sessions.isNotEmpty()) {
                     SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
                 } else {
-                    SessionsUiState.Empty("No bookmarked sessions Found")
+                    SessionsUiState.Empty("No bookmarked sessions found")
                 }
             } catch (e: Exception) {
                 _sessionsUiState.value = SessionsUiState.Error(
@@ -203,7 +208,11 @@ class SessionsViewModel @Inject constructor(
         _filterState.value?.let {
             if (it.levels.isNotEmpty()) {
                 val items =
-                    it.levels.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
+                    it.levels.joinToString(
+                        separator,
+                        prefix,
+                        postfix
+                    ) { value -> value.lowercase() }
                 stringBuilder.append("LOWER (sessionLevel) IN $items")
             }
             if (it.sessionTypes.isNotEmpty()) {

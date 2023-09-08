@@ -22,7 +22,11 @@ import com.android254.data.network.util.NetworkError
 import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -31,8 +35,8 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 
 class AuthManagerTest {
-    val mockApi = mockk<AuthApi>()
-    val mockTokenProvider = mockk<TokenProvider>()
+    private val mockApi = mockk<AuthApi>()
+    private val mockTokenProvider = mockk<TokenProvider>()
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val fakeUserDetails = UserDetailsDTO(

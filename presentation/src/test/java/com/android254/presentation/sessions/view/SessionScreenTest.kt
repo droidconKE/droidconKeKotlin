@@ -27,8 +27,6 @@ import com.android254.presentation.common.theme.DroidconKE2023Theme
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -43,7 +41,7 @@ import org.robolectric.shadows.ShadowLog
  *
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(instrumentedPackages = ["androidx.loader.content"])
+@Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SessionScreenTest {
     private val repo = mockk<SessionsRepo>()
     private val mockSyncDataWorkManager = FakeSyncWorkManager()
@@ -62,18 +60,13 @@ class SessionScreenTest {
         val navController = TestNavHostController(
             ApplicationProvider.getApplicationContext()
         )
-        val viewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            viewModel.isRefreshing.collect {
-            }
-        }
-        every { repo.fetchSessions() } returns flowOf(emptyList())
-        every { repo.fetchBookmarkedSessions() } returns flowOf(emptyList())
+        every { repo.fetchSessions() } returns flowOf(mockSessions)
+        every { repo.fetchBookmarkedSessions() } returns flowOf(mockSessions)
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(
-                    sessionsViewModel = viewModel
+                    sessionsViewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
                 )
             }
         }
