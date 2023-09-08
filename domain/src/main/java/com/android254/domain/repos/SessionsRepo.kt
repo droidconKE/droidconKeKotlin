@@ -30,4 +30,6 @@ interface SessionsRepo {
     suspend fun bookmarkSession(id: String)
 
     suspend fun unBookmarkSession(id: String)
+
+    suspend fun syncSessions()
 }

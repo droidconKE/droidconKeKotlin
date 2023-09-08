@@ -16,33 +16,32 @@
 package com.android254.data.repos
 
 import com.android254.data.di.IoDispatcher
-import com.android254.data.network.models.responses.SponsorsPagedResponse
-import com.android254.data.repos.local.LocalSessionsDataSource
-import com.android254.data.repos.local.LocalSpeakersDataSource
-import com.android254.data.repos.local.LocalSponsorsDataSource
-import com.android254.data.repos.mappers.toDomain
-import com.android254.domain.models.DataResult
 import com.android254.domain.models.HomeDetails
-import com.android254.domain.models.ResourceResult
-import com.android254.domain.models.Session
+import com.android254.domain.models.OrganizingPartners
 import com.android254.domain.repos.HomeRepo
+import com.android254.domain.repos.OrganizersRepo
+import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.repos.SpeakersRepo
+import com.android254.domain.repos.SponsorsRepo
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
 class HomeRepoImpl @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource,
-    private val localSessionsDataSource: LocalSessionsDataSource,
-    private val localSponsorsDataSource: LocalSponsorsDataSource,
+    private val speakersRepo: SpeakersRepo,
+    private val sessionsRepo: SessionsRepo,
+    private val sponsorsRepo: SponsorsRepo,
+    private val organizersRepo: OrganizersRepo,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
 
     override fun fetchHomeDetails(): Flow<HomeDetails> {
-        val sponsorsflow = localSponsorsDataSource.fetchCachedSponsors()
-        val speakersflow = localSpeakersDataSource.getCachedSpeakers()
-        val sessionsflow = localSessionsDataSource.getCachedSessions()
-        return combine(sponsorsflow, speakersflow, sessionsflow) { sponsors, speakers, sessions ->
+        val sponsorsflow = sponsorsRepo.getAllSponsors()
+        val speakersflow = speakersRepo.fetchSpeakers()
+        val sessionsflow = sessionsRepo.fetchSessions()
+        val organizerflow = organizersRepo.getOrganizers()
+        return combine(sponsorsflow, speakersflow, sessionsflow, organizerflow) { sponsors, speakers, sessions, organizers ->
             HomeDetails(
                 isCallForSpeakersEnable = true,
                 linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
@@ -54,22 +53,10 @@ class HomeRepoImpl @Inject constructor(
                 sessionsCount = sessions.size,
                 isSessionsSectionEnable = sessions.isNotEmpty(),
                 sponsors = sponsors,
-                organizers = listOf()
+                organizers = organizers.map {
+                    OrganizingPartners(organizerName = it.name, organizerLogoUrl = it.photo)
+                }
             )
         }
     }
-
-    private fun getSessionsFromResourceResult(result: ResourceResult<List<Session>>): List<Session> {
-        if (result is ResourceResult.Success) {
-            return result.data ?: emptyList()
-        }
-
-        return emptyList()
-    }
-
-    private fun DataResult<SponsorsPagedResponse>.getSponsorsList() =
-        when (this) {
-            is DataResult.Success -> this.data.data.map { it.toDomain() }
-            else -> emptyList()
-        }
 }

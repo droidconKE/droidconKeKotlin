@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.dao
+package com.android254.data.repos.local
 
-import androidx.room.Dao
-import androidx.room.Query
 import com.android254.data.db.model.OrganizerEntity
 import kotlinx.coroutines.flow.Flow
 
-@Dao
-interface OrganizersDao : BaseDao<OrganizerEntity> {
+interface LocalOrganizersDataSource {
 
-    @Query("SELECT * FROM ORGANIZERS")
-    fun fetchOrganizers(): Flow<List<OrganizerEntity>>
+    fun getOrganizers(): Flow<List<OrganizerEntity>>
 
-    @Query("DELETE FROM ORGANIZERS")
     suspend fun deleteAllOrganizers()
+
+    suspend fun insertOrganizers(organizers: List<OrganizerEntity>)
 }

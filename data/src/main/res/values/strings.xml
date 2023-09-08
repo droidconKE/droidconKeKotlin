@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sync_notification_message">Syncing App Data h</string>
+    <string name="sync_notification_message">Syncing App Data</string>
+    <string name="sync_notification_success">Sync successful</string>
+    <string name="sync_notification_failure">Sync failed</string>
 </resources>
