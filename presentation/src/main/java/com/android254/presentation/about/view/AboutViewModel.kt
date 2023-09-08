@@ -17,46 +17,49 @@ package com.android254.presentation.about.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.repos.OrganizersRepository
+import com.android254.domain.repos.OrganizersRepo
 import com.android254.presentation.models.OrganizingTeamMember
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+
+sealed interface AboutScreenUiState {
+    object Loading : AboutScreenUiState
+
+    data class Success(
+        val teamMembers: List<OrganizingTeamMember>,
+        val stakeHoldersLogos: List<String>
+    ) : AboutScreenUiState
+
+    data class Error(val message: String) : AboutScreenUiState
+}
 
 @HiltViewModel
 class AboutViewModel @Inject constructor(
-    private val organizersRepo: OrganizersRepository
+    private val organizersRepo: OrganizersRepo
 ) : ViewModel() {
 
-    private val _teamMembers: MutableStateFlow<List<OrganizingTeamMember>> = MutableStateFlow(emptyList())
-    val teamMembers: StateFlow<List<OrganizingTeamMember>>
-        get() = _teamMembers
-
-    private val _stakeHolderLogos: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
-    val stakeHolderLogos: StateFlow<List<String>>
-        get() = _stakeHolderLogos
-
-    init {
-        getOrganizers()
-    }
-
-    private fun getOrganizers() {
-        viewModelScope.launch {
-            val result = organizersRepo.getOrganizers()
-            val team = result.filter { it.type == "individual" }.map {
+    val uiState = organizersRepo.getOrganizers()
+        .map { organizers ->
+            val team = organizers.filter { it.type == "individual" }.map {
                 OrganizingTeamMember(
                     name = it.name,
                     desc = it.tagline,
                     image = it.photo
                 )
             }
-            val stakeholders = result.filterNot { it.type == "individual" }.map {
-                it.photo
-            }
-            _teamMembers.emit(team)
-            _stakeHolderLogos.emit(stakeholders)
+            val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
+            AboutScreenUiState.Success(teamMembers = team, stakeHoldersLogos = stakeholders)
         }
-    }
+        .onStart { AboutScreenUiState.Loading }
+        .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = AboutScreenUiState.Loading
+        )
 }

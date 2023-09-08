@@ -23,10 +23,16 @@ import com.android254.data.dao.SessionDao
 import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.network.apis.SessionsApi
+import com.android254.data.repos.local.LocalSessionsDataSource
+import com.android254.data.repos.mappers.toDomainModel
+import com.android254.data.repos.remote.RemoteSessionsDataSource
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -37,8 +43,8 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 class SessionsManagerTest {
-    private val mockApi = mockk<SessionsApi>()
-    private lateinit var sessionDao: SessionDao
+    private val mockLocalSessionsDataSource = mockk<LocalSessionsDataSource>()
+    private val mockRemoteSessionsDataSource = mockk<RemoteSessionsDataSource>()
     private lateinit var bookmarkDao: BookmarkDao
     private lateinit var database: Database
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -50,16 +56,18 @@ class SessionsManagerTest {
             Database::class.java
         ).allowMainThreadQueries().build()
 
-        sessionDao = database.sessionDao()
         bookmarkDao = database.bookmarkDao()
     }
 
     @Test
     fun `test it fetches from the local cache`() = runTest {
-        val repo = SessionsManager(mockApi, sessionDao, bookmarkDao, ioDispatcher)
-        sessionDao.insert(listOf(sessionEntity))
-        val sessions = repo.fetchSessions().first()
+       coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
+               flowOf(listOf(sessionEntity.toDomainModel()))
+        val sessions = mockLocalSessionsDataSource.getCachedSessions().first()
         assert(sessions[0].description == sessionEntity.description)
+        coVerify (atLeast = 1){
+            mockLocalSessionsDataSource.getCachedSessions()
+        }
     }
 
     @After
