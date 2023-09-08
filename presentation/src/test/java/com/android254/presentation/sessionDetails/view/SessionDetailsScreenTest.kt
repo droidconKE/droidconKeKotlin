@@ -38,19 +38,19 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
 @RunWith(RobolectricTestRunner::class)
-@Config(instrumentedPackages = ["androidx.loader.content"])
+@Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SessionDetailsScreenTest {
-    val sessionId = "randomSessionId"
+    private val sessionId = "randomSessionId"
 
-    val mockSavedStateHandle: SavedStateHandle = SavedStateHandle().apply {
+    private val mockSavedStateHandle: SavedStateHandle = SavedStateHandle().apply {
         set(Screens.SessionDetails.sessionIdNavigationArgument, sessionId)
     }
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    val repo = mockk<SessionsRepo>(relaxed = true)
-    val viewModel = SessionDetailsViewModel(sessionsRepo = repo, mockSavedStateHandle)
+    private val repo = mockk<SessionsRepo>(relaxed = true)
+    private val viewModel = SessionDetailsViewModel(sessionsRepo = repo, mockSavedStateHandle)
 
     @Before
     @Throws(Exception::class)

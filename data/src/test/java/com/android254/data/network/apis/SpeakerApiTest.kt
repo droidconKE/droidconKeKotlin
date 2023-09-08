@@ -20,13 +20,10 @@ import com.android254.data.network.models.responses.SpeakersPagedResponse
 import com.android254.data.network.util.HttpClientFactory
 import com.android254.data.network.util.MockTokenProvider
 import com.android254.data.network.util.RemoteFeatureToggle
+import com.android254.data.network.util.SamplePaginationMetaData
 import com.android254.domain.models.DataResult
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.engine.mock.respondError
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
+import io.ktor.client.engine.mock.*
+import io.ktor.http.*
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.encodeToString
