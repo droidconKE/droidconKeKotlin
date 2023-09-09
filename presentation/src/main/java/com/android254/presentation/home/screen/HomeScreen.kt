@@ -41,6 +41,7 @@ import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
+import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.models.SessionPresentationModel
@@ -93,7 +94,6 @@ fun HomeScreen(
                     isSyncing && homeViewState.sessions.isEmpty() ->{
                         HomeSessionLoadingComponent()
                     }
-
                     else -> {
                         if (homeViewState.isSessionsSectionVisible) {
                             HomeSessionSection(
@@ -105,13 +105,20 @@ fun HomeScreen(
                         }
                     }
                 }
-                if (homeViewState.isSpeakersSectionVisible) {
-                    HomeSpeakersSection(
-                        speakers = homeViewState.speakers,
-                        navigateToSpeakers = navigateToSpeakers,
-                        navigateToSpeaker = navigateToSpeaker
-                    )
-                    HomeSpacer()
+                when{
+                    isSyncing && homeViewState.speakers.isEmpty() -> {
+                        HomeSpeakersLoadingComponent()
+                    }
+                    else -> {
+                        if (homeViewState.isSpeakersSectionVisible) {
+                            HomeSpeakersSection(
+                                speakers = homeViewState.speakers,
+                                navigateToSpeakers = navigateToSpeakers,
+                                navigateToSpeaker = navigateToSpeaker
+                            )
+                            HomeSpacer()
+                        }
+                    }
                 }
                 SponsorsCard(sponsorsLogos = homeViewState.sponsors)
                 HomeSpacer()

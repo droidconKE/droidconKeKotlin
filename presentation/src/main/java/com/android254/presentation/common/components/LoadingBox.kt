@@ -20,20 +20,21 @@ fun LoadingBox(
     width: Dp = 0.dp,
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
-    brush: Brush? = null
+    brush: Brush? = null,
+    color: Color = Color.LightGray.copy(alpha = 0.6f)
 ){
     Box(
         modifier = Modifier
             .customWidth(widthRatio, width)
             .height(height)
             .clip(RoundedCornerShape(cornerRadius))
-            .customBackground(brush)
+            .customBackground(brush, color)
     )
 }
 
 
-fun Modifier.customBackground(brush: Brush?) = if (brush != null) background(brush)
-    else background(Color.LightGray.copy(alpha = 0.6f))
+fun Modifier.customBackground(brush: Brush?, color: Color) = if (brush != null) background(brush)
+    else background(color)
 
 fun Modifier.customWidth(ratio: Float?, width: Dp) = if (ratio!=null) fillMaxWidth(ratio)
     else width(width)
