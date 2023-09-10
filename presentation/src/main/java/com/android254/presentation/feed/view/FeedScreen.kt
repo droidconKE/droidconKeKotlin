@@ -120,7 +120,10 @@ fun FeedScreen(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        CircularProgressIndicator()
+                        //CircularProgressIndicator()
+                        repeat(4){
+                            FeedLoadingComponent()
+                        }
                     }
                 }
 

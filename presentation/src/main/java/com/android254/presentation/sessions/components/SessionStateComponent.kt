@@ -61,7 +61,8 @@ fun SessionsStateComponent(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     when (sessionsUiState) {
         is SessionsUiState.Loading -> {
-            SessionsLoadingSkeleton()
+            //SessionsLoadingSkeleton()
+            SessionLoadingComponent()
         }
 
         is SessionsUiState.Empty -> {
