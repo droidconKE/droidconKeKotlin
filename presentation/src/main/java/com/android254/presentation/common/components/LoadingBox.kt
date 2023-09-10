@@ -21,7 +21,7 @@ fun LoadingBox(
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
     brush: Brush? = null,
-    color: Color = Color.LightGray.copy(alpha = 0.6f)
+    color: Color = Color.LightGray.copy(alpha = 0.5f)
 ){
     Box(
         modifier = Modifier
