@@ -29,6 +29,7 @@ fun HomeSessionLoadingComponent(){
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 20.dp)
     ) {
         Row(
             modifier = Modifier
