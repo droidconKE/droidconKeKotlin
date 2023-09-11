@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.SessionsCard
-import com.android254.presentation.common.components.SessionsLoadingSkeleton
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.droidconke.chai.atoms.ChaiBlue
@@ -61,7 +60,6 @@ fun SessionsStateComponent(
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
     when (sessionsUiState) {
         is SessionsUiState.Loading -> {
-            //SessionsLoadingSkeleton()
             SessionLoadingComponent()
         }
 

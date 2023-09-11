@@ -91,7 +91,7 @@ fun HomeScreen(
                 HomeBannerSection(homeViewState)
                 HomeSpacer()
                 when{
-                    isSyncing && homeViewState.sessions.isEmpty() ->{
+                    isSyncing ->{
                         HomeSessionLoadingComponent()
                     }
                     else -> {
@@ -106,7 +106,7 @@ fun HomeScreen(
                     }
                 }
                 when{
-                    isSyncing && homeViewState.speakers.isEmpty() -> {
+                    isSyncing -> {
                         HomeSpeakersLoadingComponent()
                     }
                     else -> {
