@@ -16,9 +16,9 @@ import ke.droidcon.kotlin.presentation.R
 fun SessionLoadingComponent(){
 
     Column {
-        repeat(4){index ->
+        repeat(3) { index ->
             SessionsLoadingCard()
-            if (index != 3) {
+            if (index != 2) {
                 Box(
                     Modifier.padding(
                         start = 40.dp,
