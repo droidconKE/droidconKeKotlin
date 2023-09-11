@@ -38,8 +38,10 @@ import com.android254.presentation.common.components.DroidconAppBarWithFeedbackB
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.components.HomeBannerSection
+import com.android254.presentation.home.components.HomeSessionLoadingComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
+import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.models.SessionPresentationModel
@@ -88,21 +90,35 @@ fun HomeScreen(
                 HomeHeaderSection()
                 HomeBannerSection(homeViewState)
                 HomeSpacer()
-                if (homeViewState.isSessionsSectionVisible) {
-                    HomeSessionSection(
-                        sessions = homeViewState.sessions,
-                        onSessionClick = onSessionClicked,
-                        onViewAllSessionClicked = navigateToSessionScreen
-                    )
-                    HomeSpacer()
+                when{
+                    isSyncing ->{
+                        HomeSessionLoadingComponent()
+                    }
+                    else -> {
+                        if (homeViewState.isSessionsSectionVisible) {
+                            HomeSessionSection(
+                                sessions = homeViewState.sessions,
+                                onSessionClick = onSessionClicked,
+                                onViewAllSessionClicked = navigateToSessionScreen
+                            )
+                            HomeSpacer()
+                        }
+                    }
                 }
-                if (homeViewState.isSpeakersSectionVisible) {
-                    HomeSpeakersSection(
-                        speakers = homeViewState.speakers,
-                        navigateToSpeakers = navigateToSpeakers,
-                        navigateToSpeaker = navigateToSpeaker
-                    )
-                    HomeSpacer()
+                when{
+                    isSyncing -> {
+                        HomeSpeakersLoadingComponent()
+                    }
+                    else -> {
+                        if (homeViewState.isSpeakersSectionVisible) {
+                            HomeSpeakersSection(
+                                speakers = homeViewState.speakers,
+                                navigateToSpeakers = navigateToSpeakers,
+                                navigateToSpeaker = navigateToSpeaker
+                            )
+                            HomeSpacer()
+                        }
+                    }
                 }
                 SponsorsCard(sponsorsLogos = homeViewState.sponsors)
                 HomeSpacer()
