@@ -1,6 +1,6 @@
 # droidcon KE 23 🔥🔨
 
-Android app for the 4th Android Developer conference- droidcon to be held in Nairobi on 8th - 10th
+Android app for the 4th Android Developer conference- Droidcon Kenya to be held in Nairobi on 8th - 10th
 November.
 
 This project is the Android app for the conference. The app supports devices running Android 5.0+,
@@ -8,15 +8,15 @@ and is optimized for phones and tablets of all shapes and sizes.
 
 ## Running the Project
 
-To ensure the project runs on your local environment ensure to you have Java 11 on your pc or if you
+To ensure the project runs on your local environment ensure you have Java 17 on your PC or if you
 don't have you can install it
-from [here](https://www.oracle.com/java/technologies/javase/jdk11-archive-downloads.html).
+from [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 
-If you have multiple installations of Java make sure to set Java 11 as your preferred version to run
+If you have multiple installations of Java make sure to set Java 17 as your preferred version to run
 the project.
 
 With the new Android Gradle Plugin version 8.0.0, you need Java 17 to run the project and any
-terminal commands. A workaround for this, it to add this in your **global** gradle.properties file:
+terminal commands. A workaround for this is to add this in your **global** gradle.properties file:
 
 ```properties
 org.gradle.java.home=/Applications/Android Studio.app/Contents/jbr/Contents/Home
@@ -70,7 +70,7 @@ This layer will contain;
 
 ## Features
 
-App will have the following features:
+The app will have the following features:
 
 - Sessions
 - Feed
@@ -178,6 +178,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/robert-nganga">
+            <img src="https://avatars.githubusercontent.com/u/52964743?v=4" width="100;" alt="robert-nganga"/>
+            <br />
+            <sub><b>Robert Nganga</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/janewaitara">
             <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
             <br />
@@ -190,15 +197,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Peter Chege</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/KennethMathari">
             <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
             <br />
             <sub><b>Kenneth Mathari</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/Borwe">
             <img src="https://avatars.githubusercontent.com/u/3319843?v=4" width="100;" alt="Borwe"/>
@@ -233,15 +240,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Kibet Theo</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/yveskalume">
             <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
             <br />
             <sub><b>Yves Kalume</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
@@ -276,15 +283,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Whoisnjoguu</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/emmanuelmuturia">
             <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
             <br />
             <sub><b>Emmanuel Muturia</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
