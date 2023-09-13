@@ -16,6 +16,7 @@
 package com.android254.data.di
 
 import com.android254.data.dao.BookmarkDao
+import com.android254.data.dao.FeedDao
 import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
@@ -54,4 +55,9 @@ object DaoModule {
     fun providesOrganizersDao(
         database: Database
     ): OrganizersDao = database.organizersDao()
+
+    @Provides
+    fun providesFeedDao(
+        database: Database
+    ): FeedDao = database.feedDao()
 }
