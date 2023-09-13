@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.repos.local
 
+import com.android254.data.network.models.responses.FeedDTO
 import com.android254.domain.models.Feed
 import kotlinx.coroutines.flow.Flow
 
-interface FeedRepo {
+interface LocalFeedDataSource {
+
+    suspend fun insertFeed(feedItems: List<FeedDTO>)
+
     fun fetchFeed(): Flow<List<Feed>>
 
-    fun fetchFeedById(id: Int): Flow<Feed?>
+    fun getFeedById(feedId: Int): Flow<Feed?>
 
-    suspend fun syncFeed()
+    suspend fun deleteAllFeed()
 }

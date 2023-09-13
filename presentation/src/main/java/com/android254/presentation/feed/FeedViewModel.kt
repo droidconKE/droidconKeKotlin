@@ -16,36 +16,34 @@
 package com.android254.presentation.feed
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feed.view.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val feedRepo: FeedRepo
 ) : ViewModel() {
-    var viewState: FeedUIState by mutableStateOf(FeedUIState.Loading)
-        private set
 
-    fun fetchFeed() {
-        viewModelScope.launch {
-            viewState = when (val value = feedRepo.fetchFeed()) {
-                is ResourceResult.Empty -> FeedUIState.Empty
-                is ResourceResult.Error -> FeedUIState.Error(value.message)
-                is ResourceResult.Loading -> FeedUIState.Loading
-                is ResourceResult.Success -> FeedUIState.Success(
-                    value.data?.map { it.toPresentation() }
-                        ?: emptyList()
-                )
-            }
+    val uiState = feedRepo.fetchFeed()
+        .map { feeds ->
+            FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
         }
-    }
+        .onStart { FeedUIState.Loading }
+        .catch { FeedUIState.Error(message = "An unexpected error occurred") }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = FeedUIState.Empty
+        )
 }

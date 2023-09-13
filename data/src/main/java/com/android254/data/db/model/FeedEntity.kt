@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.db.model
 
-import com.android254.domain.models.Feed
-import kotlinx.coroutines.flow.Flow
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-interface FeedRepo {
-    fun fetchFeed(): Flow<List<Feed>>
-
-    fun fetchFeedById(id: Int): Flow<Feed?>
-
-    suspend fun syncFeed()
-}
+@Entity(tableName = "feed")
+data class FeedEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
+    val title: String,
+    val body: String,
+    val topic: String,
+    val url: String,
+    val image: String?,
+    val createdAt: String
+)

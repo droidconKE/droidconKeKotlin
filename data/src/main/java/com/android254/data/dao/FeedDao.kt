@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.domain.repos
+package com.android254.data.dao
 
-import com.android254.domain.models.Feed
+import androidx.room.Dao
+import androidx.room.Query
+import com.android254.data.db.model.FeedEntity
 import kotlinx.coroutines.flow.Flow
 
-interface FeedRepo {
-    fun fetchFeed(): Flow<List<Feed>>
+@Dao
+interface FeedDao : BaseDao<FeedEntity> {
+    @Query("SELECT * FROM feed")
+    fun fetchFeed(): Flow<List<FeedEntity>>
 
-    fun fetchFeedById(id: Int): Flow<Feed?>
+    @Query("SELECT * FROM feed WHERE id =:id")
+    fun fetchFeedById(id: Int): Flow<FeedEntity?>
 
-    suspend fun syncFeed()
+    @Query("DELETE FROM feed")
+    suspend fun deleteAllFeed()
 }
