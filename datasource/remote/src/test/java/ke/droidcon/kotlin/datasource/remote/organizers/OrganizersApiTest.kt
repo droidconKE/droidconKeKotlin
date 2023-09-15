@@ -37,7 +37,6 @@ import org.robolectric.annotation.Config
 @Config(sdk = [33])
 class OrganizersApiTest {
 
-    //private lateinit var testDataStore: DataStore<Preferences>
     private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
