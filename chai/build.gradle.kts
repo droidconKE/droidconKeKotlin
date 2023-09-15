@@ -62,7 +62,6 @@ dependencies {
     implementation(libs.android.material)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
-    implementation(libs.android.hilt)
 
     androidTestImplementation(libs.android.test.junit4)
     androidTestImplementation(libs.android.test.espresso)
