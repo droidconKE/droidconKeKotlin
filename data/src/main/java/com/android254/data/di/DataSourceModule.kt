@@ -20,13 +20,6 @@ import com.android254.data.dao.OrganizersDao
 import com.android254.data.dao.SessionDao
 import com.android254.data.dao.SpeakerDao
 import com.android254.data.dao.SponsorsDao
-import com.android254.data.network.apis.FeedApi
-import com.android254.data.network.apis.OrganizersApi
-import com.android254.data.network.apis.SessionsApi
-import com.android254.data.network.apis.SpeakersApi
-import com.android254.data.network.apis.SponsorsApi
-import com.android254.data.repos.local.LocalFeedDataSource
-import com.android254.data.repos.local.LocalFeedDataSourceImpl
 import com.android254.data.repos.local.LocalOrganizersDataSource
 import com.android254.data.repos.local.LocalOrganizersDataSourceImpl
 import com.android254.data.repos.local.LocalSessionsDataSource
@@ -35,22 +28,25 @@ import com.android254.data.repos.local.LocalSpeakersDataSource
 import com.android254.data.repos.local.LocalSpeakersDataSourceImpl
 import com.android254.data.repos.local.LocalSponsorsDataSource
 import com.android254.data.repos.local.LocalSponsorsDataSourceImpl
-import com.android254.data.repos.remote.RemoteFeedDataSource
-import com.android254.data.repos.remote.RemoteFeedDataSourceImpl
-import com.android254.data.repos.remote.RemoteOrganizersDataSource
-import com.android254.data.repos.remote.RemoteOrganizersDataSourceImpl
-import com.android254.data.repos.remote.RemoteSessionsDataSource
-import com.android254.data.repos.remote.RemoteSessionsDataSourceImpl
-import com.android254.data.repos.remote.RemoteSpeakersDataSource
-import com.android254.data.repos.remote.RemoteSpeakersDataSourceImpl
-import com.android254.data.repos.remote.RemoteSponsorsDataSource
-import com.android254.data.repos.remote.RemoteSponsorsDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.organizers.OrganizersApi
+import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
+import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSourceImpl
+import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
+import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSourceImpl
+import ke.droidcon.kotlin.datasource.remote.sessions.SessionsApi
+import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
+import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSourceImpl
+import ke.droidcon.kotlin.datasource.remote.speakers.SpeakersApi
+import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
+import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSourceImpl
+import ke.droidcon.kotlin.datasource.remote.sponsors.SponsorsApi
+import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)

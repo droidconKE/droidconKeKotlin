@@ -18,13 +18,14 @@ package com.android254.data.repos
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.android254.data.dao.BookmarkDao
 import com.android254.data.db.model.BookmarkEntity
-import com.android254.data.di.IoDispatcher
 import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.mappers.toDomainModel
-import com.android254.data.repos.remote.RemoteSessionsDataSource
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -32,7 +33,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import javax.inject.Inject
 
 class SessionsManager @Inject constructor(
     private val localSessionsDataSource: LocalSessionsDataSource,
@@ -68,7 +68,7 @@ class SessionsManager @Inject constructor(
         return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { session ->
                 session.copy(
-                    isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
+                    isBookmarked = bookmarks.map { it.sessionId }.contains(session.id)
                 )
             }
         }.flowOn(ioDispatcher)
@@ -97,17 +97,16 @@ class SessionsManager @Inject constructor(
     }
 
     override suspend fun syncSessions() {
-        val response = remoteSessionsDataSource.getAllSessionsRemote()
-        when (response) {
-            is ResourceResult.Success -> {
+        when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
+            is DataResult.Success -> {
                 localSessionsDataSource.deleteCachedSessions()
                 localSessionsDataSource.saveCachedSessions(
-                    sessions = response.data ?: emptyList()
+                    sessions = response.data
                 )
                 Timber.d("Sync sessions successful")
             }
 
-            is ResourceResult.Error -> {
+            is DataResult.Error -> {
                 Timber.d("Sync sessions failed ${response.message}")
             }
             else -> {

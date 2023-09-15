@@ -15,11 +15,6 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.network.apis.AuthApi
-import com.android254.data.network.models.responses.AccessTokenDTO
-import com.android254.data.network.models.responses.UserDetailsDTO
-import com.android254.data.network.util.NetworkError
-import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import io.mockk.Runs
@@ -27,6 +22,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
+import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
+import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
+import ke.droidcon.kotlin.datasource.remote.auth.model.UserDetailsDTO
+import ke.droidcon.kotlin.datasource.remote.utils.NetworkError
+import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

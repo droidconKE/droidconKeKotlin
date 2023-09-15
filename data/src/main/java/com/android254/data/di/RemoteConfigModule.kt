@@ -15,8 +15,6 @@
  */
 package com.android254.data.di
 
-import com.android254.data.network.util.RemoteConfigConfig
-import com.android254.data.network.util.RemoteFeatureToggle
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -25,6 +23,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteConfigConfig
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -15,20 +15,20 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.di.IoDispatcher
 import com.android254.data.repos.local.LocalOrganizersDataSource
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
-import com.android254.data.repos.remote.RemoteOrganizersDataSource
-import com.android254.domain.models.DataResult
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import kotlinx.coroutines.async
 import timber.log.Timber
 
 class OrganizersManager @Inject constructor(
@@ -44,8 +44,10 @@ class OrganizersManager @Inject constructor(
 
     override suspend fun syncOrganizers() {
         withContext(ioDispatcher) {
-            val individualOrganizersResponseDeffered = async { remoteOrganizersDataSource.getIndividualOrganizers() }
-            val companyOrganizersResponseDeffered = async { remoteOrganizersDataSource.getCompanyOrganizers() }
+            val individualOrganizersResponseDeffered =
+                async { remoteOrganizersDataSource.getIndividualOrganizers() }
+            val companyOrganizersResponseDeffered =
+                async { remoteOrganizersDataSource.getCompanyOrganizers() }
 
             val individualOrganizersResponse = individualOrganizersResponseDeffered.await()
             val companyOrganizersResponse = companyOrganizersResponseDeffered.await()

@@ -18,9 +18,6 @@ package com.android254.data.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.android254.data.network.util.HttpClientFactory
-import com.android254.data.network.util.RemoteFeatureToggle
-import com.android254.data.network.util.TokenProvider
 import com.android254.data.preferences.DefaultTokenProvider
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -42,6 +39,9 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 
 @Module
 @InstallIn(SingletonComponent::class)
