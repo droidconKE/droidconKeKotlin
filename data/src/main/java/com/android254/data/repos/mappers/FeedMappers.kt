@@ -16,7 +16,6 @@
 package com.android254.data.repos.mappers
 
 import com.android254.data.db.model.FeedEntity
-import com.android254.data.network.models.responses.FeedDTO
 import com.android254.domain.models.Feed
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 
