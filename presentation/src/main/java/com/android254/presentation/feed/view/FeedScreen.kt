@@ -115,7 +115,7 @@ fun FeedScreen(
                     Column(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        repeat(3){
+                        repeat(3) {
                             FeedLoadingComponent()
                         }
                     }

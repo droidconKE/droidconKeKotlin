@@ -90,8 +90,8 @@ fun HomeScreen(
                 HomeHeaderSection()
                 HomeBannerSection(homeViewState)
                 HomeSpacer()
-                when{
-                    isSyncing ->{
+                when {
+                    isSyncing -> {
                         HomeSessionLoadingComponent()
                     }
                     else -> {
@@ -105,7 +105,7 @@ fun HomeScreen(
                         }
                     }
                 }
-                when{
+                when {
                     isSyncing -> {
                         HomeSpeakersLoadingComponent()
                     }
