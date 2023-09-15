@@ -15,9 +15,9 @@
  */
 package com.droidconke.chai.colors
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import javax.annotation.concurrent.Immutable
 
 @Immutable
 data class ChaiColors(
