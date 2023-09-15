@@ -15,8 +15,8 @@
  */
 package com.android254.data.repos.local
 
-import com.android254.data.network.models.responses.SpeakerDTO
 import com.android254.domain.models.Speaker
+import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSpeakersDataSource {

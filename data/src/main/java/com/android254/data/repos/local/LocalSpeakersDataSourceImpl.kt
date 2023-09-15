@@ -16,17 +16,17 @@
 package com.android254.data.repos.local
 
 import com.android254.data.dao.SpeakerDao
-import com.android254.data.di.IoDispatcher
-import com.android254.data.network.models.responses.SpeakerDTO
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Speaker
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class LocalSpeakersDataSourceImpl @Inject constructor(
     private val speakerDao: SpeakerDao,

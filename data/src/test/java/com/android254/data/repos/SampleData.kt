@@ -15,7 +15,8 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.network.models.responses.*
+import ke.droidcon.kotlin.datasource.remote.sessions.model.EventScheduleGroupedResponse
+import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 
 val results = EventScheduleGroupedResponse(
     data = mapOf(

@@ -23,10 +23,10 @@ import com.android254.data.db.Database
 import com.android254.data.db.model.SessionEntity
 import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.mappers.toDomainModel
-import com.android254.data.repos.remote.RemoteSessionsDataSource
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

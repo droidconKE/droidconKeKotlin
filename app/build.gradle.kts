@@ -58,6 +58,8 @@ android {
 dependencies {
     implementation(project(":chai"))
     implementation(project(":data"))
+    implementation(project(":datasource:local"))
+    implementation(project(":datasource:remote"))
     implementation(project(":domain"))
     implementation(project(":presentation"))
 

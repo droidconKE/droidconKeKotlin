@@ -15,7 +15,6 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.di.IoDispatcher
 import com.android254.domain.models.HomeDetails
 import com.android254.domain.models.OrganizingPartners
 import com.android254.domain.repos.HomeRepo
@@ -24,6 +23,7 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

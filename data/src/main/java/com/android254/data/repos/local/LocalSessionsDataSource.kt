@@ -17,8 +17,8 @@ package com.android254.data.repos.local
 
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.db.model.SessionEntity
-import com.android254.data.network.models.responses.SessionDTO
 import com.android254.domain.models.Session
+import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSessionsDataSource {

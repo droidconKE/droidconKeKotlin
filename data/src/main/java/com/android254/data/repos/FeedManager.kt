@@ -15,14 +15,14 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.repos.local.LocalFeedDataSource
-import com.android254.data.repos.remote.RemoteFeedDataSource
-import com.android254.domain.models.DataResult
+import com.android254.data.repos.mappers.toDomain
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.feed.FeedApi
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 
 class FeedManager @Inject constructor(
     private val localFeedDataSource: LocalFeedDataSource,

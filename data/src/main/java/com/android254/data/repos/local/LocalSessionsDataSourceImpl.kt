@@ -18,17 +18,17 @@ package com.android254.data.repos.local
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.android254.data.dao.SessionDao
 import com.android254.data.db.model.SessionEntity
-import com.android254.data.di.IoDispatcher
-import com.android254.data.network.models.responses.SessionDTO
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Session
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class LocalSessionsDataSourceImpl @Inject constructor(
     private val sessionDao: SessionDao,
