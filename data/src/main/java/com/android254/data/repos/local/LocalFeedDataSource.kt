@@ -15,8 +15,8 @@
  */
 package com.android254.data.repos.local
 
-import com.android254.data.network.models.responses.FeedDTO
 import com.android254.domain.models.Feed
+import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import kotlinx.coroutines.flow.Flow
 
 interface LocalFeedDataSource {

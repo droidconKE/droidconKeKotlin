@@ -21,7 +21,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.android254.data.di.IoDispatcher
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo

@@ -16,16 +16,16 @@
 package com.android254.data.repos.local
 
 import com.android254.data.dao.FeedDao
-import com.android254.data.network.models.responses.FeedDTO
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Feed
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class LocalFeedDataSourceImpl @Inject constructor(
     private val feedDao: FeedDao,
