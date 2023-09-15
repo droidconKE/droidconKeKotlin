@@ -48,13 +48,6 @@ android {
             pickFirsts.add("META-INF/io.netty.versions.properties")
         }
     }
-
-    /**
-     * Excluding the folder as it has classes from Google AOSP which don't pass most rules
-     */
-    tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
-        exclude("**/com/android254/presentation/common/bottomsheet/**")
-    }
 }
 
 dependencies {
