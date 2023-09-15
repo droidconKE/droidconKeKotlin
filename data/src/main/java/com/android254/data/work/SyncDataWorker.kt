@@ -30,11 +30,12 @@ import com.android254.domain.repos.SponsorsRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
 
 @HiltWorker
 class SyncDataWorker @AssistedInject constructor(

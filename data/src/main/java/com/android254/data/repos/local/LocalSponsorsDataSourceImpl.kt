@@ -16,17 +16,17 @@
 package com.android254.data.repos.local
 
 import com.android254.data.dao.SponsorsDao
-import com.android254.data.di.IoDispatcher
-import com.android254.data.network.models.responses.SponsorDTO
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Sponsors
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class LocalSponsorsDataSourceImpl @Inject constructor(
     private val sponsorsDao: SponsorsDao,

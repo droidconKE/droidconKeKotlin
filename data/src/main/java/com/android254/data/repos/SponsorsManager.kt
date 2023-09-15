@@ -16,13 +16,13 @@
 package com.android254.data.repos
 
 import com.android254.data.repos.local.LocalSponsorsDataSource
-import com.android254.data.repos.remote.RemoteSponsorsDataSource
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import javax.inject.Inject
 
 class SponsorsManager @Inject constructor(
     private val localSponsorsDataSource: LocalSponsorsDataSource,
@@ -35,14 +35,14 @@ class SponsorsManager @Inject constructor(
     override suspend fun syncSponsors() {
         val response = remoteSponsorsDataSource.getAllSponsorsRemote()
         when (response) {
-            is ResourceResult.Success -> {
+            is DataResult.Success -> {
                 localSponsorsDataSource.deleteCachedSponsors()
                 localSponsorsDataSource.saveCachedSponsors(
-                    sponsors = response.data ?: emptyList()
+                    sponsors = response.data
                 )
                 Timber.d("Sync sponsors successful")
             }
-            is ResourceResult.Error -> {
+            is DataResult.Error -> {
                 Timber.d("Sync sponsors failed ${response.message}")
             }
             else -> {

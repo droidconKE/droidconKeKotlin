@@ -15,19 +15,19 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.di.IoDispatcher
-import com.android254.data.network.apis.AuthApi
-import com.android254.data.network.models.payloads.GoogleToken
-import com.android254.data.network.util.NetworkError
-import com.android254.data.network.util.ServerError
-import com.android254.data.network.util.TokenProvider
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
+import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.utils.NetworkError
+import ke.droidcon.kotlin.datasource.remote.utils.ServerError
+import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 @Singleton
 class AuthManager @Inject constructor(

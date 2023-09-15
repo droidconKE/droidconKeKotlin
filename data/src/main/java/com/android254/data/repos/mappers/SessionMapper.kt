@@ -16,13 +16,13 @@
 package com.android254.data.repos.mappers
 
 import com.android254.data.db.model.SessionEntity
-import com.android254.data.network.models.responses.SessionDTO
 import com.android254.domain.models.Session
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 fun SessionEntity.toDomainModel() = Session(
     id = this.id.toString(),

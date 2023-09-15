@@ -17,12 +17,12 @@ package com.android254.data.repos.local
 
 import com.android254.data.dao.OrganizersDao
 import com.android254.data.db.model.OrganizerEntity
-import com.android254.data.di.IoDispatcher
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class LocalOrganizersDataSourceImpl @Inject constructor(
     private val organizersDao: OrganizersDao,
