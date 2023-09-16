@@ -30,10 +30,6 @@ android {
         }
     }
 
-    buildFeatures {
-        buildConfig = true
-    }
-
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
