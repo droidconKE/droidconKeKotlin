@@ -45,8 +45,6 @@ dependencies {
     implementation(libs.bundles.ktor)
 
     implementation(libs.work.runtime)
-    implementation(libs.hilt.work)
-    implementation(libs.hilt.common)
 
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)
