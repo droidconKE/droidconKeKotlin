@@ -23,12 +23,6 @@ plugins {
 android {
     namespace = "ke.droidcon.kotlin.datasource.remote"
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }

@@ -24,12 +24,6 @@ plugins {
 android {
     namespace = "ke.droidcon.kotlin.data"
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
