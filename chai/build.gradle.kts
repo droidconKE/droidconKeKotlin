@@ -64,11 +64,9 @@ dependencies {
     implementation(libs.timber)
 
     androidTestImplementation(libs.android.test.junit4)
-    androidTestImplementation(libs.android.test.espresso)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.test.robolectric)
-    testImplementation(libs.android.test.espresso)
 }
 
 kotlin {

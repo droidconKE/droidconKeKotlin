@@ -64,11 +64,12 @@ internal fun Project.configureKotlinAndroid(
     dependencies {
         add("implementation", libs.findLibrary("android.coreKtx").get())
 
-        add("androidTestImplementation", libs.findLibrary("espresso").get())
+        add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())
         add("androidTestImplementation", libs.findLibrary("junit.androidx").get())
         add("androidTestImplementation", libs.findLibrary("junit.androidx.ktx").get())
 
         add("testImplementation", libs.findBundle("test").get())
+        add("testImplementation", libs.findLibrary("android.test.espresso").get())
     }
 }
 

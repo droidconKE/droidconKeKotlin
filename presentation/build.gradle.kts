@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.datetime)
 
     testImplementation(libs.test.robolectric)
-    testImplementation(libs.android.test.espresso)
     testImplementation(libs.test.navigation)
     testImplementation(libs.test.mockk)
 }
