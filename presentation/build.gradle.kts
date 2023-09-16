@@ -28,12 +28,6 @@ android {
         }
     }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
-
     kotlinOptions {
         freeCompilerArgs + "-Xjvm-default=all"
     }
