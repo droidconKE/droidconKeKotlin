@@ -20,11 +20,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.android254.data.network.util.TokenProvider
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 private object PreferencesKeys {
     val ACCESS_TOKEN = stringPreferencesKey("access_token")

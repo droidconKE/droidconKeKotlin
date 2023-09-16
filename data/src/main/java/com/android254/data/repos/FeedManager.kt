@@ -16,13 +16,13 @@
 package com.android254.data.repos
 
 import com.android254.data.repos.local.LocalFeedDataSource
-import com.android254.data.repos.remote.RemoteFeedDataSource
-import com.android254.domain.models.DataResult
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
+import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import javax.inject.Inject
 
 class FeedManager @Inject constructor(
     private val localFeedDataSource: LocalFeedDataSource,
@@ -36,8 +36,7 @@ class FeedManager @Inject constructor(
         localFeedDataSource.getFeedById(id)
 
     override suspend fun syncFeed() {
-        val feedResponse = remoteFeedDataSource.fetchFeed()
-        when (feedResponse) {
+        when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
             is DataResult.Success -> {
                 localFeedDataSource.deleteAllFeed()
                 localFeedDataSource.insertFeed(feedItems = feedResponse.data)

@@ -19,3 +19,4 @@ build-logic/build
 build-logic/convention/build
 /datasource/local/build
 /datasource/remote/build
+/datasource/build

@@ -22,15 +22,15 @@ import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.android254.data.network.util.RemoteFeatureToggle
 import com.android254.data.work.WorkConstants
 import com.android254.data.work.WorkInitializer
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {

@@ -15,8 +15,8 @@
  */
 package com.android254.data.repos.local
 
-import com.android254.data.network.models.responses.SponsorDTO
 import com.android254.domain.models.Sponsors
+import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSponsorsDataSource {
