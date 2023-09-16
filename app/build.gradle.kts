@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.work.runtime)
 
     androidTestImplementation(libs.android.test.junit4)
-    androidTestImplementation(libs.android.test.espresso)
 
     testImplementation(libs.bundles.test)
 
