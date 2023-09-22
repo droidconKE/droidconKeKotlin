@@ -23,7 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.android254.presentation.about.view.AboutScreen
 import com.android254.presentation.feed.view.FeedScreen
-import com.android254.presentation.feedback.view.FeedBackScreen
+import com.android254.presentation.feedback.view.FeedBackRoute
 import com.android254.presentation.home.screen.HomeRoute
 import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
@@ -108,7 +108,7 @@ fun Navigation(
         }
         composable(Screens.FeedBack.route) {
             updateBottomBarState(false)
-            FeedBackScreen(
+            FeedBackRoute(
                 navigateBack = { navController.navigateUp() }
             )
         }
