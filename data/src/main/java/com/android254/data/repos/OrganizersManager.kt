@@ -15,12 +15,12 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.repos.local.LocalOrganizersDataSource
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSource
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult

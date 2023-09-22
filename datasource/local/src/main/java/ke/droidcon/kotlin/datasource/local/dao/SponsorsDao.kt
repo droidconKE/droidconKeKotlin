@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.repos.mappers
+package ke.droidcon.kotlin.datasource.local.dao
 
-import com.android254.domain.models.Sponsors
+import androidx.room.Dao
+import androidx.room.Query
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
-import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
+import kotlinx.coroutines.flow.Flow
 
-fun SponsorDTO.toDomain() = Sponsors(
-    sponsorName = name,
-    sponsorLogoUrl = logo
-)
+@Dao
+interface SponsorsDao : BaseDao<SponsorEntity> {
 
-fun SponsorDTO.toEntity() = SponsorEntity(
-    name = name,
-    logo = logo,
-    tagline = tagline,
-    createdAt = createdAt,
-    link = link
-)
-fun SponsorEntity.toDomain() = Sponsors(
-    sponsorLogoUrl = logo,
-    sponsorName = name
-)
+    @Query("SELECT * FROM sponsors")
+    fun fetchCachedSponsors(): Flow<List<SponsorEntity>>
+
+    @Query("DELETE FROM sponsors")
+    suspend fun deleteAllCachedSponsors()
+}

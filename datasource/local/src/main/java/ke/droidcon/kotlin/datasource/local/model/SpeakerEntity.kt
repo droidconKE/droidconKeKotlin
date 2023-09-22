@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.repos.mappers
+package ke.droidcon.kotlin.datasource.local.model
 
-import com.android254.domain.models.Sponsors
-import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
-import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
-fun SponsorDTO.toDomain() = Sponsors(
-    sponsorName = name,
-    sponsorLogoUrl = logo
-)
-
-fun SponsorDTO.toEntity() = SponsorEntity(
-    name = name,
-    logo = logo,
-    tagline = tagline,
-    createdAt = createdAt,
-    link = link
-)
-fun SponsorEntity.toDomain() = Sponsors(
-    sponsorLogoUrl = logo,
-    sponsorName = name
+@Entity(tableName = "speakers", indices = [Index(value = ["twitter"], unique = true)])
+data class SpeakerEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val name: String,
+    val tagline: String,
+    val bio: String,
+    val avatar: String,
+    val twitter: String
 )

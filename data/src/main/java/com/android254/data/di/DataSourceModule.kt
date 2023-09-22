@@ -15,26 +15,26 @@
  */
 package com.android254.data.di
 
-import com.android254.data.dao.FeedDao
-import com.android254.data.dao.OrganizersDao
-import com.android254.data.dao.SessionDao
-import com.android254.data.dao.SpeakerDao
-import com.android254.data.dao.SponsorsDao
-import com.android254.data.repos.local.LocalFeedDataSource
-import com.android254.data.repos.local.LocalFeedDataSourceImpl
-import com.android254.data.repos.local.LocalOrganizersDataSource
-import com.android254.data.repos.local.LocalOrganizersDataSourceImpl
-import com.android254.data.repos.local.LocalSessionsDataSource
-import com.android254.data.repos.local.LocalSessionsDataSourceImpl
-import com.android254.data.repos.local.LocalSpeakersDataSource
-import com.android254.data.repos.local.LocalSpeakersDataSourceImpl
-import com.android254.data.repos.local.LocalSponsorsDataSource
-import com.android254.data.repos.local.LocalSponsorsDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.local.dao.FeedDao
+import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
+import ke.droidcon.kotlin.datasource.local.dao.SessionDao
+import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
+import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
+import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSourceImpl
+import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSource
+import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSourceImpl
+import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
+import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSourceImpl
+import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
+import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSourceImpl
+import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
+import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSourceImpl
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.feed.FeedApi
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
@@ -87,7 +87,7 @@ object DataSourceModule {
         sessionDao: SessionDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): LocalSessionsDataSource =
-        LocalSessionsDataSourceImpl(sessionDao = sessionDao, ioDispatcher = ioDispatcher)
+        LocalSessionsDataSourceImpl(sessionDao = sessionDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
@@ -95,7 +95,7 @@ object DataSourceModule {
         speakersDao: SpeakerDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): LocalSpeakersDataSource =
-        LocalSpeakersDataSourceImpl(speakerDao = speakersDao, ioDispatcher = ioDispatcher)
+        LocalSpeakersDataSourceImpl(speakerDao = speakersDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
@@ -103,7 +103,7 @@ object DataSourceModule {
         sponsorsDao: SponsorsDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): LocalSponsorsDataSource =
-        LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, ioDispatcher = ioDispatcher)
+        LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
@@ -111,7 +111,7 @@ object DataSourceModule {
         organizersDao: OrganizersDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher
     ): LocalOrganizersDataSource =
-        LocalOrganizersDataSourceImpl(organizersDao = organizersDao, ioDispatcher = ioDispatcher)
+        LocalOrganizersDataSourceImpl(organizersDao = organizersDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
