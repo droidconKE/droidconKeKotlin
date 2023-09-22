@@ -22,7 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.android254.presentation.about.view.AboutScreen
-import com.android254.presentation.feed.view.FeedScreen
+import com.android254.presentation.feed.view.FeedRoute
 import com.android254.presentation.feedback.view.FeedBackRoute
 import com.android254.presentation.home.screen.HomeRoute
 import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
@@ -82,7 +82,7 @@ fun Navigation(
         }
         composable(Screens.Feed.route) {
             updateBottomBarState(true)
-            FeedScreen(
+            FeedRoute(
                 navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) }
             )
         }
