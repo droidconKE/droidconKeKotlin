@@ -73,8 +73,6 @@ private fun SpeakersScreen(
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
-
-
     Scaffold(
         topBar = {
             SmallTopAppBar(

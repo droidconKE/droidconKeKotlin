@@ -78,7 +78,6 @@ fun SessionsRoute(
     val selectedEventDate by sessionsViewModel.selectedEventDate.collectAsStateWithLifecycle()
     val currentSelections by sessionsViewModel.selectedFilterOptions.collectAsStateWithLifecycle()
 
-
     SessionsScreen(
         sessionsUiState = sessionsUiState,
         isRefreshing = isRefreshing,
@@ -106,9 +105,8 @@ private fun SessionsScreen(
     refreshSessionList: () -> Unit,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     fetchSessionWithFilter: () -> Unit,
-    clearSelectedFilterList: () -> Unit,
+    clearSelectedFilterList: () -> Unit
 ) {
-
     val showMySessions = remember {
         mutableStateOf(false)
     }
@@ -229,7 +227,7 @@ fun SessionsScreenPreview() {
     DroidconKE2023Theme() {
         SessionsScreen(
             sessionsUiState = SessionsUiState.Data(
-                listOf(),
+                listOf()
             ),
             selectedEventDate = EventDate(LocalDate(2023, 11, 16)),
             isRefreshing = false,
