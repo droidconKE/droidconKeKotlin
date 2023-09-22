@@ -31,7 +31,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,11 +39,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
-import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
 import com.droidconke.chai.components.CButton
@@ -120,8 +117,10 @@ private fun loadFilters(context: Context): List<SessionsFilterOption> {
 @Composable
 fun SessionsFilterPanel(
     onDismiss: () -> Unit,
-    onChange: (SessionsFilterOption) -> Unit,
-    viewModel: SessionsViewModel
+    currentSelections: List<SessionsFilterOption>,
+    updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
+    fetchSessionWithFilter: () -> Unit,
+    clearSelectedFilterList: () -> Unit,
 ) {
     val filterTypeTextStyle = TextStyle(
         fontSize = 20.sp,
@@ -136,8 +135,6 @@ fun SessionsFilterPanel(
     val groupedFilters = selectableFilters.groupBy {
         it.type
     }
-    val currentSelections = viewModel.selectedFilterOptions.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -152,7 +149,7 @@ fun SessionsFilterPanel(
 
         ) {
             IconButton(onClick = {
-                viewModel.clearSelectedFilterList()
+                clearSelectedFilterList()
                 onDismiss()
             }) {
                 Icon(
@@ -162,7 +159,7 @@ fun SessionsFilterPanel(
             }
             Spacer(Modifier.weight(1f))
             TextButton(onClick = {
-                viewModel.clearSelectedFilterList()
+                clearSelectedFilterList()
             }) {
                 Text(
                     text = "Clear Filters".uppercase(),
@@ -189,9 +186,9 @@ fun SessionsFilterPanel(
                 MultiToggleButton(
                     toggleStates = filter.value,
                     onClick = {
-                        viewModel.updateSelectedFilterOptionList(it)
+                        updateSelectedFilterOptionList(it)
                     },
-                    currentSelections = currentSelections.value
+                    currentSelections = currentSelections
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -199,7 +196,7 @@ fun SessionsFilterPanel(
 
         CButton(
             onClick = {
-                viewModel.fetchSessionWithFilter()
+                fetchSessionWithFilter()
                 onDismiss()
             },
             isEnabled = true,

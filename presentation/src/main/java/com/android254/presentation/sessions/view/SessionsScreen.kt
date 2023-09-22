@@ -15,13 +15,13 @@
  */
 package com.android254.presentation.sessions.view
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,19 +59,56 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.android254.presentation.models.EventDate
+import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
+import com.android254.presentation.sessions.models.SessionsUiState
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 
 @Composable
-fun SessionsScreen(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+fun SessionsRoute(
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
     navigateToSessionDetails: (sessionId: String) -> Unit = {}
 ) {
-    val isRefreshing = sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
-    val sessionsUiState = sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle().value
+    val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
+    val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
+    val selectedEventDate by sessionsViewModel.selectedEventDate.collectAsStateWithLifecycle()
+    val currentSelections by sessionsViewModel.selectedFilterOptions.collectAsStateWithLifecycle()
+
+
+    SessionsScreen(
+        sessionsUiState = sessionsUiState,
+        isRefreshing = isRefreshing,
+        navigateToSessionDetails = navigateToSessionDetails,
+        selectedEventDate = selectedEventDate,
+        currentSelections = currentSelections,
+        updateSelectedDay = { sessionsViewModel.updateSelectedDay(it) },
+        toggleBookmarkFilter = { sessionsViewModel.toggleBookmarkFilter() },
+        refreshSessionList = { sessionsViewModel.refreshSessionList() },
+        updateSelectedFilterOptionList = { sessionsViewModel.updateSelectedFilterOptionList(it) },
+        fetchSessionWithFilter = { sessionsViewModel.fetchSessionWithFilter() },
+        clearSelectedFilterList = { sessionsViewModel.clearSelectedFilterList() }
+    )
+}
+
+@Composable
+private fun SessionsScreen(
+    sessionsUiState: SessionsUiState,
+    selectedEventDate: EventDate,
+    isRefreshing: Boolean,
+    currentSelections: List<SessionsFilterOption>,
+    updateSelectedDay: (EventDate) -> Unit,
+    navigateToSessionDetails: (sessionId: String) -> Unit,
+    toggleBookmarkFilter: () -> Unit,
+    refreshSessionList: () -> Unit,
+    updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
+    fetchSessionWithFilter: () -> Unit,
+    clearSelectedFilterList: () -> Unit,
+) {
+
     val showMySessions = remember {
         mutableStateOf(false)
     }
@@ -132,23 +169,26 @@ fun SessionsScreen(
                     .fillMaxWidth()
                     .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
             ) {
-                EventDaySelector(viewModel = sessionsViewModel)
+                EventDaySelector(
+                    selectedDate = selectedEventDate,
+                    updateSelectedDay = updateSelectedDay
+                )
                 CustomSwitch(checked = showMySessions.value, onCheckedChange = {
                     showMySessions.value = it
                     isFilterActive.value = !it
                     if (showMySessions.value) {
-                        sessionsViewModel.toggleBookmarkFilter()
+                        toggleBookmarkFilter()
                     } else {
-                        sessionsViewModel.clearSelectedFilterList()
+                        clearSelectedFilterList()
                     }
                 })
             }
             SessionsStateComponent(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
-                refreshSessionsList = { sessionsViewModel.refreshSessionList() },
+                refreshSessionsList = refreshSessionList,
                 retry = { },
-                isRefreshing = isRefreshing.value
+                isRefreshing = isRefreshing
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(
@@ -165,8 +205,10 @@ fun SessionsScreen(
                                 bottomSheetState.hide()
                             }
                         },
-                        onChange = {},
-                        viewModel = sessionsViewModel
+                        currentSelections = currentSelections,
+                        updateSelectedFilterOptionList = updateSelectedFilterOptionList,
+                        fetchSessionWithFilter = fetchSessionWithFilter,
+                        clearSelectedFilterList = clearSelectedFilterList
                     )
                 }
             }
@@ -174,11 +216,32 @@ fun SessionsScreen(
     }
 }
 
-@Preview
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun SessionsScreenPreview() {
     DroidconKE2023Theme() {
-        SessionsScreen()
+        SessionsScreen(
+            sessionsUiState = SessionsUiState.Data(
+                listOf(),
+            ),
+            selectedEventDate = EventDate(LocalDate(2023, 11, 16)),
+            isRefreshing = false,
+            currentSelections = listOf(),
+            updateSelectedDay = {},
+            navigateToSessionDetails = {},
+            toggleBookmarkFilter = {},
+            refreshSessionList = {},
+            updateSelectedFilterOptionList = {},
+            fetchSessionWithFilter = {},
+            clearSelectedFilterList = {}
+        )
     }
 }
 
