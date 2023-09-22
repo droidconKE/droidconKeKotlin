@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.speakers.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
@@ -55,13 +54,26 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun SpeakersScreen(
+fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (Int) -> Unit = {}
 ) {
-    val context = LocalContext.current
-    val uiState = speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle().value
+    val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
+    SpeakersScreen(
+        uiState = uiState,
+        navigateToHomeScreen = navigateToHomeScreen,
+        navigateToSpeaker = navigateToSpeaker
+    )
+}
+
+@Composable
+private fun SpeakersScreen(
+    uiState: SpeakersScreenUiState,
+    navigateToHomeScreen: () -> Unit = {},
+    navigateToSpeaker: (Int) -> Unit = {}
+) {
+
 
     Scaffold(
         topBar = {
@@ -140,10 +152,19 @@ fun SpeakersScreen(
     }
 }
 
-@Preview
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun SpeakersScreenPreview() {
     DroidconKE2023Theme {
-        SpeakersScreen()
+        SpeakersScreen(
+            uiState = SpeakersScreenUiState.Success(speakers = listOf())
+        )
     }
 }

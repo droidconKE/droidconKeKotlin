@@ -15,10 +15,10 @@
  */
 package com.android254.presentation.speakers.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,23 +59,36 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.android254.presentation.models.speakersDummyData
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
 import com.droidconke.chai.atoms.ChaiBlue
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun SpeakerDetailsScreen(
+fun SpeakerDetailsRoute(
     id: Int,
     speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = hiltViewModel(),
-    darkTheme: Boolean = isSystemInDarkTheme(),
     navigateBack: () -> Unit = {}
 ) {
+    val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = true) {
         speakersDetailsScreenViewModel.getSpeakerById(id = id)
     }
+
+    SpeakerDetailsScreen(
+        uiState = uiState.value,
+        navigateBack = navigateBack
+    )
+}
+
+@Composable
+private fun SpeakerDetailsScreen(
+    uiState: SpeakerDetailsScreenUiState,
+    navigateBack: () -> Unit = {}
+) {
+
     val uriHandler = LocalUriHandler.current
-    val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle().value
 
     when (uiState) {
         is SpeakerDetailsScreenUiState.SpeakerNotFound -> {
@@ -88,6 +101,7 @@ fun SpeakerDetailsScreen(
                 )
             }
         }
+
         is SpeakerDetailsScreenUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -98,6 +112,7 @@ fun SpeakerDetailsScreen(
                 )
             }
         }
+
         is SpeakerDetailsScreenUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -105,6 +120,7 @@ fun SpeakerDetailsScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
         is SpeakerDetailsScreenUiState.Success -> {
             val speaker = uiState.speaker
             ConstraintLayout(
@@ -263,7 +279,8 @@ fun SpeakerDetailsScreen(
                             tint = ChaiBlue
                         )
                         Text(
-                            text = if (speaker.twitterHandle != null) speaker.twitterHandle.toString().replace("https://twitter.com/", "") else "",
+                            text = if (speaker.twitterHandle != null) speaker.twitterHandle.toString()
+                                .replace("https://twitter.com/", "") else "",
                             fontSize = 16.sp,
                             lineHeight = 19.sp,
                             color = colorResource(id = R.color.blue),
@@ -276,12 +293,23 @@ fun SpeakerDetailsScreen(
     }
 }
 
-@Preview
+@Preview(
+    name = "Light",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun SpeakerDetailsScreenPreview() {
     DroidconKE2023Theme {
         SpeakerDetailsScreen(
-            id = 0
+            uiState = SpeakerDetailsScreenUiState.Success(
+                speaker = speakersDummyData.first()
+            )
         )
     }
 }
