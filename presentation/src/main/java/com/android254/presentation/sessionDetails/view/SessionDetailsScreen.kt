@@ -16,20 +16,47 @@
 package com.android254.presentation.sessionDetails.view
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -56,13 +83,33 @@ import com.droidconke.chai.components.COutlinedButton
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun SessionDetailsScreen(
+fun SessionDetailsRoute(
     darkTheme: Boolean = isSystemInDarkTheme(),
     viewModel: SessionDetailsViewModel = hiltViewModel(),
     sessionId: String,
     onNavigationIconClick: () -> Unit
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    SessionDetailsScreen(
+        darkTheme = darkTheme,
+        uiState = uiState,
+        sessionId = sessionId,
+        bookmarkSession = viewModel::bookmarkSession,
+        unBookmarkSession = viewModel::unBookmarkSession,
+        onNavigationIconClick = onNavigationIconClick
+    )
+}
+
+@Composable
+private fun SessionDetailsScreen(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    uiState: SessionDetailsUiState,
+    sessionId: String,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit,
+    onNavigationIconClick: () -> Unit
+) {
 
     Scaffold(
         topBar = { TopBar(onNavigationIconClick) },
@@ -92,6 +139,7 @@ fun SessionDetailsScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
+
             is SessionDetailsUiState.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -102,13 +150,14 @@ fun SessionDetailsScreen(
                     )
                 }
             }
+
             is SessionDetailsUiState.Success -> {
                 Body(
                     paddingValues = paddingValues,
                     darkTheme = darkTheme,
                     sessionDetails = uiState.data,
-                    bookmarkSession = viewModel::bookmarkSession,
-                    unBookmarkSession = viewModel::unBookmarkSession
+                    bookmarkSession = bookmarkSession,
+                    unBookmarkSession = unBookmarkSession
                 )
             }
         }
@@ -186,7 +235,12 @@ private fun SpeakerTwitterHandle(
 ) {
     if (sessionDetails.twitterHandle != null) {
         val context = LocalContext.current
-        val intent = remember { Intent(Intent.ACTION_VIEW, Uri.parse("https://www.twitter.com/${sessionDetails.twitterHandle}")) }
+        val intent = remember {
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.twitter.com/${sessionDetails.twitterHandle}")
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -468,26 +522,42 @@ object TestTag {
     const val TWITTER_HANDLE_TEXT = "$PREFIX twitterHandleText"
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
+
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun SessionDetailsScreenPreview() {
-    DroidconKE2023Theme(darkTheme = false) {
+    DroidconKE2023Theme() {
         SessionDetailsScreen(
             onNavigationIconClick = {},
-            sessionId = "1"
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun SessionDetailsScreenDarkThemePreview() {
-    DroidconKE2023Theme(darkTheme = true) {
-        SessionDetailsScreen(
-            onNavigationIconClick = {},
-            sessionId = "1"
+            uiState = SessionDetailsUiState.Success(
+                data = SessionDetailsPresentationModel(
+                    id = "1",
+                    title = "Welcome at DroidconKE",
+                    description = "Welcome to DroidconKE 2022. We are excited to have you here. We hope you will have a great time.",
+                    venue = "Main Hall",
+                    speakerImage = "",
+                    speakerName = "DroidconKE",
+                    startTime = "10:00",
+                    endTime = "11:00",
+                    amOrPm = "AM",
+                    isStarred = false,
+                    format = "Keynote",
+                    level = "Beginner",
+                    twitterHandle = "@droidconke",
+                    sessionImageUrl = "",
+                    timeSlot = "10:00 - 11:00 AM"
+                )
+            ),
+            sessionId = "1",
+            bookmarkSession = {},
+            unBookmarkSession = {}
         )
     }
 }

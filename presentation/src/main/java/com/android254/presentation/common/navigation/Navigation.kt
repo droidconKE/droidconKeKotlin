@@ -25,7 +25,7 @@ import com.android254.presentation.about.view.AboutScreen
 import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feedback.view.FeedBackScreen
 import com.android254.presentation.home.screen.HomeRoute
-import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
+import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
@@ -73,7 +73,7 @@ fun Navigation(
             })
         ) { backStackEntry ->
             updateBottomBarState(false)
-            SessionDetailsScreen(
+            SessionDetailsRoute(
                 sessionId = requireNotNull(backStackEntry.arguments?.getString(Screens.SessionDetails.sessionIdNavigationArgument)),
                 onNavigationIconClick = {
                     navController.popBackStack()
