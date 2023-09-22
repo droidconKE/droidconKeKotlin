@@ -27,8 +27,8 @@ import com.android254.presentation.feedback.view.FeedBackScreen
 import com.android254.presentation.home.screen.HomeRoute
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
 import com.android254.presentation.sessions.view.SessionsScreen
-import com.android254.presentation.speakers.view.SpeakerDetailsScreen
-import com.android254.presentation.speakers.view.SpeakersScreen
+import com.android254.presentation.speakers.view.SpeakerDetailsRoute
+import com.android254.presentation.speakers.view.SpeakersRoute
 
 @Composable
 fun Navigation(
@@ -94,7 +94,7 @@ fun Navigation(
         }
         composable(Screens.Speakers.route) {
             updateBottomBarState(true)
-            SpeakersScreen(
+            SpeakersRoute(
                 navigateToHomeScreen = { navController.navigateUp() },
                 navigateToSpeaker = { speakerId ->
                     navController.navigate(
@@ -120,7 +120,7 @@ fun Navigation(
             val speakerId = it.arguments?.getInt("speakerId")
                 ?: throw IllegalStateException("Speaker data missing.")
             updateBottomBarState(false)
-            SpeakerDetailsScreen(
+            SpeakerDetailsRoute(
                 id = speakerId,
                 navigateBack = { navController.navigateUp() }
             )

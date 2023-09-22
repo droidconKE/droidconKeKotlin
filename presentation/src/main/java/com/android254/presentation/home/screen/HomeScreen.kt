@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -186,7 +187,15 @@ fun HomeToolbar(
     }
 }
 
-@Preview
+
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun HomeScreenPreview() {
     DroidconKE2023Theme {
