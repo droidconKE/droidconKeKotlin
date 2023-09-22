@@ -46,7 +46,7 @@ class FeedBackScreenTest {
     fun `should should show FeedBack Screen and show the heading`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedBackScreen()
+                FeedBackRoute()
             }
         }
 
@@ -58,7 +58,7 @@ class FeedBackScreenTest {
     fun `should should show FeedBack Heading onCollapse`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedBackScreen()
+                FeedBackRoute()
             }
         }
 
@@ -70,7 +70,7 @@ class FeedBackScreenTest {
     fun `should show submit Button`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedBackScreen()
+                FeedBackRoute()
             }
         }
 

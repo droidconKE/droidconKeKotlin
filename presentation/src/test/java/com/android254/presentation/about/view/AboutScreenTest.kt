@@ -46,7 +46,7 @@ class AboutScreenTest {
     fun `should show About Screen and organizing team section`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                AboutScreen()
+                AboutRoute()
             }
         }
 
@@ -60,7 +60,7 @@ class AboutScreenTest {
     fun `should show About Screen and the droidcon topBar`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                AboutScreen()
+                AboutRoute()
             }
         }
 
@@ -73,7 +73,7 @@ class AboutScreenTest {
     fun `should show About Screen and show the organized by section`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                AboutScreen()
+                AboutRoute()
             }
         }
 

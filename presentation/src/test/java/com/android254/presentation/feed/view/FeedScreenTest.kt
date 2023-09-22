@@ -66,7 +66,7 @@ class FeedScreenTest {
 
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedScreen(feedViewModel = FeedViewModel(repo))
+                FeedRoute(feedViewModel = FeedViewModel(repo))
             }
         }
 
@@ -94,7 +94,7 @@ class FeedScreenTest {
 
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                FeedScreen(feedViewModel = FeedViewModel(repo))
+                FeedRoute(feedViewModel = FeedViewModel(repo))
             }
         }
         composeTestRule.onNodeWithTag("share_button").assertExists()

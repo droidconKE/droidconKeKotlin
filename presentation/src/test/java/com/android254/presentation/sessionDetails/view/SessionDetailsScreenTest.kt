@@ -64,7 +64,7 @@ class SessionDetailsScreenTest {
     fun `should show top bar and floating action button`() {
         composeTestRule.setContent {
             DroidconKE2023Theme() {
-                SessionDetailsScreen(
+                SessionDetailsRoute(
                     viewModel = viewModel,
                     sessionId = sessionId,
                     onNavigationIconClick = {}
