@@ -44,6 +44,7 @@ import com.android254.presentation.home.components.HomeSpacer
 import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.viewmodel.HomeViewModel
+import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.atoms.MontserratSemiBold
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -51,7 +52,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun HomeScreen(
+fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
@@ -62,11 +63,37 @@ fun HomeScreen(
 ) {
     val homeViewState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
+    HomeScreen(
+        viewState = homeViewState,
+        isSyncing = isSyncing,
+        navigateToSpeakers = navigateToSpeakers,
+        navigateToSpeaker = navigateToSpeaker,
+        navigateToFeedbackScreen = navigateToFeedbackScreen,
+        navigateToSessionScreen = navigateToSessionScreen,
+        onActionClicked = onActionClicked,
+        onSessionClicked = onSessionClicked,
+        onRefresh = { homeViewModel.startRefresh() }
+    )
+}
+
+@Composable
+private fun HomeScreen(
+    viewState: HomeViewState,
+    isSyncing: Boolean,
+    navigateToSpeakers: () -> Unit = {},
+    navigateToSpeaker: (String) -> Unit = {},
+    navigateToFeedbackScreen: () -> Unit = {},
+    navigateToSessionScreen: () -> Unit = {},
+    onActionClicked: () -> Unit = {},
+    onSessionClicked: (SessionPresentationModel) -> Unit = {},
+    onRefresh: () -> Unit = {}
+) {
+
 
     Scaffold(
         topBar = {
             HomeToolbar(
-                isSignedIn = homeViewState.isSignedIn,
+                isSignedIn = viewState.isSignedIn,
                 navigateToFeedbackScreen = navigateToFeedbackScreen,
                 onActionClicked = onActionClicked
             )
@@ -74,7 +101,7 @@ fun HomeScreen(
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isSyncing),
-            onRefresh = { homeViewModel.startRefresh() },
+            onRefresh = onRefresh,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
@@ -88,16 +115,17 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 HomeHeaderSection()
-                HomeBannerSection(homeViewState)
+                HomeBannerSection(viewState)
                 HomeSpacer()
                 when {
                     isSyncing -> {
                         HomeSessionLoadingComponent()
                     }
+
                     else -> {
-                        if (homeViewState.isSessionsSectionVisible) {
+                        if (viewState.isSessionsSectionVisible) {
                             HomeSessionSection(
-                                sessions = homeViewState.sessions,
+                                sessions = viewState.sessions,
                                 onSessionClick = onSessionClicked,
                                 onViewAllSessionClicked = navigateToSessionScreen
                             )
@@ -109,10 +137,11 @@ fun HomeScreen(
                     isSyncing -> {
                         HomeSpeakersLoadingComponent()
                     }
+
                     else -> {
-                        if (homeViewState.isSpeakersSectionVisible) {
+                        if (viewState.isSpeakersSectionVisible) {
                             HomeSpeakersSection(
-                                speakers = homeViewState.speakers,
+                                speakers = viewState.speakers,
                                 navigateToSpeakers = navigateToSpeakers,
                                 navigateToSpeaker = navigateToSpeaker
                             )
@@ -120,7 +149,7 @@ fun HomeScreen(
                         }
                     }
                 }
-                SponsorsCard(sponsorsLogos = homeViewState.sponsors)
+                SponsorsCard(sponsorsLogos = viewState.sponsors)
                 HomeSpacer()
             }
         }
@@ -161,6 +190,20 @@ fun HomeToolbar(
 @Composable
 fun HomeScreenPreview() {
     DroidconKE2023Theme {
-        HomeScreen()
+        HomeScreen(
+            viewState = HomeViewState(
+                isPosterVisible = true,
+                isCallForSpeakersVisible = true,
+                linkToCallForSpeakers = "https://droidconke.com",
+                isSignedIn = false,
+                speakers = listOf(),
+                isSpeakersSectionVisible = true,
+                isSessionsSectionVisible = true,
+                sponsors = listOf(),
+                organizedBy = listOf(),
+                sessions = listOf()
+            ),
+            isSyncing = false,
+        )
     }
 }
