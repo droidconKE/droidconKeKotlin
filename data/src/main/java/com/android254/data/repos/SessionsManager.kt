@@ -15,14 +15,14 @@
  */
 package com.android254.data.repos
 
-import androidx.sqlite.db.SimpleSQLiteQuery
-import com.android254.data.dao.BookmarkDao
-import com.android254.data.db.model.BookmarkEntity
-import com.android254.data.repos.local.LocalSessionsDataSource
 import com.android254.data.repos.mappers.toDomainModel
+import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
+import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
+import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
@@ -47,7 +47,7 @@ class SessionsManager @Inject constructor(
         return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
             sessions
                 .map { session ->
-                    session.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
+                    session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()))
                 }
         }.flowOn(ioDispatcher)
     }
@@ -56,19 +56,19 @@ class SessionsManager @Inject constructor(
         val sessionsFlow = localSessionsDataSource.getCachedSessions()
         return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { session ->
-                session.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
+                session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()))
             }
                 .filter { session -> session.isBookmarked }
         }.flowOn(ioDispatcher)
     }
 
     override fun fetchFilteredSessions(query: String): Flow<List<Session>> {
-        val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(SimpleSQLiteQuery(query))
+        val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query)
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
             sessions.map { session ->
-                session.copy(
-                    isBookmarked = bookmarks.map { it.sessionId }.contains(session.id)
+                session.toDomainModel().copy(
+                    isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
                 )
             }
         }.flowOn(ioDispatcher)
@@ -101,7 +101,7 @@ class SessionsManager @Inject constructor(
             is DataResult.Success -> {
                 localSessionsDataSource.deleteCachedSessions()
                 localSessionsDataSource.saveCachedSessions(
-                    sessions = response.data
+                    sessions = response.data.map { session -> session.toEntity() }
                 )
                 Timber.d("Sync sessions successful")
             }

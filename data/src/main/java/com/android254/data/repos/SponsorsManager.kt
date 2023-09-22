@@ -15,13 +15,16 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.repos.local.LocalSponsorsDataSource
+import com.android254.data.repos.mappers.toDomain
+import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 class SponsorsManager @Inject constructor(
@@ -30,21 +33,22 @@ class SponsorsManager @Inject constructor(
 ) : SponsorsRepo {
 
     override fun getAllSponsors(): Flow<List<Sponsors>> =
-        localSponsorsDataSource.fetchCachedSponsors()
+        localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }
 
     override suspend fun syncSponsors() {
-        val response = remoteSponsorsDataSource.getAllSponsorsRemote()
-        when (response) {
+        when (val response = remoteSponsorsDataSource.getAllSponsorsRemote()) {
             is DataResult.Success -> {
                 localSponsorsDataSource.deleteCachedSponsors()
                 localSponsorsDataSource.saveCachedSponsors(
-                    sponsors = response.data
+                    sponsors = response.data.map { sponsors -> sponsors.toEntity() }
                 )
                 Timber.d("Sync sponsors successful")
             }
+
             is DataResult.Error -> {
                 Timber.d("Sync sponsors failed ${response.message}")
             }
+
             else -> {
             }
         }

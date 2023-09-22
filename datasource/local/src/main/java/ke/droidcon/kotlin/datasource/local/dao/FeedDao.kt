@@ -13,35 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.repos.mappers
+package ke.droidcon.kotlin.datasource.local.dao
 
-import com.android254.domain.models.Feed
+import androidx.room.Dao
+import androidx.room.Query
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
-import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
+import kotlinx.coroutines.flow.Flow
 
-fun FeedDTO.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+@Dao
+interface FeedDao : BaseDao<FeedEntity> {
+    @Query("SELECT * FROM feed")
+    fun fetchFeed(): Flow<List<FeedEntity>>
 
-fun FeedDTO.toEntity() = FeedEntity(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+    @Query("SELECT * FROM feed WHERE id =:id")
+    fun fetchFeedById(id: Int): Flow<FeedEntity?>
 
-fun FeedEntity.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt
-)
+    @Query("DELETE FROM feed")
+    suspend fun deleteAllFeed()
+}

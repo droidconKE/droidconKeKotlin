@@ -15,8 +15,8 @@
  */
 package com.android254.data.repos.mappers
 
-import com.android254.data.db.model.SpeakerEntity
 import com.android254.domain.models.Speaker
+import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 
 fun SpeakerDTO.toEntity() = SpeakerEntity(

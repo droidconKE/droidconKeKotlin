@@ -13,35 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.repos.mappers
+package ke.droidcon.kotlin.datasource.local.source
 
-import com.android254.domain.models.Feed
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
-import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
+import kotlinx.coroutines.flow.Flow
 
-fun FeedDTO.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+interface LocalFeedDataSource {
 
-fun FeedDTO.toEntity() = FeedEntity(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+    suspend fun insertFeed(feedItems: List<FeedEntity>)
 
-fun FeedEntity.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt
-)
+    fun fetchFeed(): Flow<List<FeedEntity>>
+
+    fun getFeedById(feedId: Int): Flow<FeedEntity?>
+
+    suspend fun deleteAllFeed()
+}

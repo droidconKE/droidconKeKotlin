@@ -15,11 +15,11 @@
  */
 package com.android254.data.repos.mappers
 
-import com.android254.data.db.model.SessionEntity
 import com.android254.domain.models.Session
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
