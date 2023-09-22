@@ -19,13 +19,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.models.EventDate
-import com.android254.presentation.sessions.view.SessionsViewModel
 import kotlinx.datetime.LocalDate
 
 val droidconEventDays = listOf(
@@ -44,15 +40,15 @@ fun ordinal(i: Int): String {
 
 @Composable
 fun EventDaySelector(
-    viewModel: SessionsViewModel = hiltViewModel()
+    selectedDate: EventDate,
+    updateSelectedDay: (EventDate) -> Unit
 ) {
-    val selectedDate by viewModel.selectedEventDate.collectAsStateWithLifecycle()
     Row() {
         droidconEventDays.forEachIndexed { index, eventDate ->
             EventDaySelectorButton(
                 title = ordinal(eventDate.value.dayOfMonth),
                 subtitle = "Day ${index + 1}",
-                onClick = { viewModel.updateSelectedDay(eventDate) },
+                onClick = { updateSelectedDay(eventDate) },
                 selected = selectedDate == eventDate
             ) {
             }
