@@ -53,7 +53,7 @@ class SpeakerDetailsScreenTest {
         )
 
         composeTestRule.setContent {
-            SpeakerDetailsScreen(
+            SpeakerDetailsRoute(
                 id = 0,
                 SpeakerDetailsScreenViewModel(
                     speakersRepo = speakersRepo,
