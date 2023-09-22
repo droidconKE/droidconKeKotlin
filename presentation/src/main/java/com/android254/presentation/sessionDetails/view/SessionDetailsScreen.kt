@@ -110,7 +110,6 @@ private fun SessionDetailsScreen(
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit
 ) {
-
     Scaffold(
         topBar = { TopBar(onNavigationIconClick) },
         floatingActionButton = {
@@ -521,7 +520,6 @@ object TestTag {
     const val LEVEL = "$PREFIX level"
     const val TWITTER_HANDLE_TEXT = "$PREFIX twitterHandleText"
 }
-
 
 @Preview(
     name = "Light",

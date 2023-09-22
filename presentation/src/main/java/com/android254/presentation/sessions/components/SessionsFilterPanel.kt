@@ -120,7 +120,7 @@ fun SessionsFilterPanel(
     currentSelections: List<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     fetchSessionWithFilter: () -> Unit,
-    clearSelectedFilterList: () -> Unit,
+    clearSelectedFilterList: () -> Unit
 ) {
     val filterTypeTextStyle = TextStyle(
         fontSize = 20.sp,

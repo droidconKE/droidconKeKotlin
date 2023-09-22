@@ -111,12 +111,20 @@ private fun FeedBackScreen(
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            titleContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(
-                                0xFF1B1B1F
-                            ),
-                            navigationIconContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(
-                                0xFF1B1B1F
-                            ),
+                            titleContentColor = if (darkTheme) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                Color(
+                                    0xFF1B1B1F
+                                )
+                            },
+                            navigationIconContentColor = if (darkTheme) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                Color(
+                                    0xFF1B1B1F
+                                )
+                            },
                             containerColor = Color.Transparent
                         )
                     )

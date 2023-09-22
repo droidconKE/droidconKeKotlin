@@ -87,7 +87,6 @@ private fun SpeakerDetailsScreen(
     uiState: SpeakerDetailsScreenUiState,
     navigateBack: () -> Unit = {}
 ) {
-
     val uriHandler = LocalUriHandler.current
 
     when (uiState) {
@@ -279,8 +278,12 @@ private fun SpeakerDetailsScreen(
                             tint = ChaiBlue
                         )
                         Text(
-                            text = if (speaker.twitterHandle != null) speaker.twitterHandle.toString()
-                                .replace("https://twitter.com/", "") else "",
+                            text = if (speaker.twitterHandle != null) {
+                                speaker.twitterHandle.toString()
+                                    .replace("https://twitter.com/", "")
+                            } else {
+                                ""
+                            },
                             fontSize = 16.sp,
                             lineHeight = 19.sp,
                             color = colorResource(id = R.color.blue),

@@ -89,8 +89,6 @@ private fun HomeScreen(
     onSessionClicked: (SessionPresentationModel) -> Unit = {},
     onRefresh: () -> Unit = {}
 ) {
-
-
     Scaffold(
         topBar = {
             HomeToolbar(
@@ -187,7 +185,6 @@ fun HomeToolbar(
     }
 }
 
-
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO
@@ -212,7 +209,7 @@ fun HomeScreenPreview() {
                 organizedBy = listOf(),
                 sessions = listOf()
             ),
-            isSyncing = false,
+            isSyncing = false
         )
     }
 }
