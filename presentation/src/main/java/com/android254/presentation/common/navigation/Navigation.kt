@@ -26,7 +26,7 @@ import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feedback.view.FeedBackScreen
 import com.android254.presentation.home.screen.HomeRoute
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
-import com.android254.presentation.sessions.view.SessionsScreen
+import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
 
@@ -54,7 +54,7 @@ fun Navigation(
         }
         composable(Screens.Sessions.route) {
             updateBottomBarState(true)
-            SessionsScreen(navigateToSessionDetails = { sessionId ->
+            SessionsRoute(navigateToSessionDetails = { sessionId ->
                 navController.navigate(
                     Screens.SessionDetails.route.replace(
                         oldValue = "{sessionId}",
