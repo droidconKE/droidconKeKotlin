@@ -24,7 +24,7 @@ import androidx.navigation.navArgument
 import com.android254.presentation.about.view.AboutScreen
 import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feedback.view.FeedBackScreen
-import com.android254.presentation.home.screen.HomeScreen
+import com.android254.presentation.home.screen.HomeRoute
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
 import com.android254.presentation.sessions.view.SessionsScreen
 import com.android254.presentation.speakers.view.SpeakerDetailsScreen
@@ -39,7 +39,7 @@ fun Navigation(
     NavHost(navController, startDestination = Screens.Home.route) {
         composable(Screens.Home.route) {
             updateBottomBarState(true)
-            HomeScreen(
+            HomeRoute(
                 navigateToSpeakers = { navController.navigate(Screens.Speakers.route) },
                 navigateToSpeaker = { twitterHandle ->
                     navController.navigate(
@@ -68,7 +68,9 @@ fun Navigation(
         }
         composable(
             Screens.SessionDetails.route,
-            arguments = listOf(navArgument(Screens.SessionDetails.sessionIdNavigationArgument) { type = NavType.StringType })
+            arguments = listOf(navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
+                type = NavType.StringType
+            })
         ) { backStackEntry ->
             updateBottomBarState(false)
             SessionDetailsScreen(
@@ -95,7 +97,12 @@ fun Navigation(
             SpeakersScreen(
                 navigateToHomeScreen = { navController.navigateUp() },
                 navigateToSpeaker = { speakerId ->
-                    navController.navigate(Screens.SpeakerDetails.route.replace("{speakerId}", "$speakerId"))
+                    navController.navigate(
+                        Screens.SpeakerDetails.route.replace(
+                            "{speakerId}",
+                            "$speakerId"
+                        )
+                    )
                 }
             )
         }
