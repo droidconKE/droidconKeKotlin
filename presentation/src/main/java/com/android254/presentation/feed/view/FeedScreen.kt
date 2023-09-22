@@ -40,6 +40,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,22 +54,35 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
+import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun FeedScreen(
+fun FeedRoute(
+    feedViewModel: FeedViewModel = hiltViewModel(),
     navigateToFeedbackScreen: () -> Unit = {},
-    feedViewModel: FeedViewModel = hiltViewModel()
+) {
+    val feedUIState by feedViewModel.uiState.collectAsStateWithLifecycle()
+
+    FeedScreen(
+        feedUIState = feedUIState,
+        navigateToFeedbackScreen = navigateToFeedbackScreen
+    )
+}
+
+@Composable
+private fun FeedScreen(
+    feedUIState: FeedUIState,
+    navigateToFeedbackScreen: () -> Unit = {},
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
 
-    val feedUIState = feedViewModel.uiState.collectAsStateWithLifecycle().value
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
             sheetState = bottomSheetState,
@@ -158,13 +172,40 @@ fun FeedScreen(
     }
 }
 
-@Preview(name = "Light Mode", showBackground = true)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun FeedScreenPreview() {
     ChaiDCKE22Theme {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
-            FeedScreen()
+            FeedScreen(
+                feedUIState = FeedUIState.Success(
+                    feeds = listOf(
+                        FeedUI(
+                            title = "Feed item 1",
+                            body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
+                            topic = "Lorem ipsum",
+                            url = "https://www.droidcon.co.ke",
+                            image = "https://www.droidcon.co.ke",
+                            createdAt = "2021-10-10"
+                        ),
+                        FeedUI(
+                            title = "Feed item 2",
+                            body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
+                            topic = "Lorem ipsum",
+                            url = "https://www.droidcon.co.ke",
+                            image = "https://www.droidcon.co.ke",
+                            createdAt = "2021-10-10"
+                        ),
+                    )
+                )
+            )
         }
     }
 }
