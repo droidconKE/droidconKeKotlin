@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FeedRoute(
     feedViewModel: FeedViewModel = hiltViewModel(),
-    navigateToFeedbackScreen: () -> Unit = {},
+    navigateToFeedbackScreen: () -> Unit = {}
 ) {
     val feedUIState by feedViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -76,7 +76,7 @@ fun FeedRoute(
 @Composable
 private fun FeedScreen(
     feedUIState: FeedUIState,
-    navigateToFeedbackScreen: () -> Unit = {},
+    navigateToFeedbackScreen: () -> Unit = {}
 ) {
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
@@ -191,18 +191,18 @@ fun FeedScreenPreview() {
                             title = "Feed item 1",
                             body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
                             topic = "Lorem ipsum",
-                            url = "https://www.droidcon.co.ke",
-                            image = "https://www.droidcon.co.ke",
+                            url = "",
+                            image = "",
                             createdAt = "2021-10-10"
                         ),
                         FeedUI(
                             title = "Feed item 2",
                             body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
                             topic = "Lorem ipsum",
-                            url = "https://www.droidcon.co.ke",
-                            image = "https://www.droidcon.co.ke",
+                            url = "",
+                            image = "",
                             createdAt = "2021-10-10"
-                        ),
+                        )
                     )
                 )
             )

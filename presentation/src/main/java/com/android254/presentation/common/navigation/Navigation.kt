@@ -68,9 +68,11 @@ fun Navigation(
         }
         composable(
             Screens.SessionDetails.route,
-            arguments = listOf(navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
-                type = NavType.StringType
-            })
+            arguments = listOf(
+                navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
+                    type = NavType.StringType
+                }
+            )
         ) { backStackEntry ->
             updateBottomBarState(false)
             SessionDetailsRoute(

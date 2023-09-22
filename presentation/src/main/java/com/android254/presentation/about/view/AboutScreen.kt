@@ -77,7 +77,6 @@ private fun AboutScreen(
     uiState: AboutScreenUiState,
     navigateToFeedbackScreen: () -> Unit = {}
 ) {
-
     Scaffold(
         topBar = {
             DroidconAppBarWithFeedbackButton(
@@ -256,35 +255,35 @@ fun AboutScreenPreview() {
             uiState = AboutScreenUiState.Success(
                 teamMembers = listOf(
                     OrganizingTeamMember(
-                        name = "John Doe",
-                        desc = "Android Developer",
+                        name = "Member 1",
+                        desc = "Description 1",
                         image = ""
                     ),
                     OrganizingTeamMember(
-                        name = "Jane Doe",
-                        desc = "Android Developer",
+                        name = "Member 2",
+                        desc = "Description 2",
                         image = ""
                     ),
                     OrganizingTeamMember(
-                        name = "John Doe",
-                        desc = "Android Developer",
+                        name = "Member 3",
+                        desc = "Description 3",
                         image = ""
                     ),
                     OrganizingTeamMember(
-                        name = "Jane Doe",
-                        desc = "Android Developer",
+                        name = "Member 4",
+                        desc = "Description 4",
                         image = ""
                     ),
                     OrganizingTeamMember(
-                        name = "John Doe",
-                        desc = "Android Developer",
+                        name = "Member 5",
+                        desc = "Description 5",
                         image = ""
                     ),
                     OrganizingTeamMember(
-                        name = "Jane Doe",
-                        desc = "Android Developer",
+                        name = "Member 6",
+                        desc = "Description 6",
                         image = ""
-                    ),
+                    )
                 ),
                 stakeHoldersLogos = listOf(
                     "",
@@ -293,7 +292,7 @@ fun AboutScreenPreview() {
                     "",
                     "",
                     "",
-                    "",
+                    ""
                 )
             )
         )
