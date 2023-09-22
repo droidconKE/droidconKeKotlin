@@ -15,8 +15,8 @@
  */
 package com.android254.data.repos.mappers
 
-import com.android254.data.db.model.OrganizerEntity
 import com.android254.domain.models.Organizer
+import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizerDTO
 
 fun OrganizerDTO.toEntity() = OrganizerEntity(

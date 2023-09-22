@@ -15,35 +15,36 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.repos.local.LocalSpeakersDataSource
+import com.android254.data.repos.mappers.toDomainModel
+import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 class SpeakersManager @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource,
-    private val remoteSpeakersDataSource: RemoteSpeakersDataSource
+    private val localSpeakersDataSource: LocalSpeakersDataSource, private val remoteSpeakersDataSource: RemoteSpeakersDataSource
 
 ) : SpeakersRepo {
-    override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers()
+    override fun fetchSpeakers(): Flow<List<Speaker>> =
+        localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
 
-    override suspend fun fetchSpeakerCount(): Flow<Int> =
-        localSpeakersDataSource.fetchCachedSpeakerCount()
+    override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
 
-    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> =
-        ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerById(id))
+    override suspend fun getSpeakerById(id: Int): ResourceResult<Speaker> = ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerById(id)?.toDomainModel())
 
     override suspend fun syncSpeakers() {
         when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
             is DataResult.Success -> {
                 localSpeakersDataSource.deleteAllCachedSpeakers()
                 localSpeakersDataSource.saveCachedSpeakers(
-                    speakers = response.data
+                    speakers = response.data.map { speaker -> speaker.toEntity() }
                 )
                 Timber.d("Sync speakers successful")
             }

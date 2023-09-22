@@ -15,13 +15,16 @@
  */
 package com.android254.data.repos
 
-import com.android254.data.repos.local.LocalFeedDataSource
+import com.android254.data.repos.mappers.toDomain
+import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import javax.inject.Inject
+import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 class FeedManager @Inject constructor(
@@ -30,22 +33,25 @@ class FeedManager @Inject constructor(
 ) : FeedRepo {
 
     override fun fetchFeed(): Flow<List<Feed>> =
-        localFeedDataSource.fetchFeed()
+        localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }
 
     override fun fetchFeedById(id: Int): Flow<Feed?> =
-        localFeedDataSource.getFeedById(id)
+        localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }
 
     override suspend fun syncFeed() {
         when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
             is DataResult.Success -> {
                 localFeedDataSource.deleteAllFeed()
-                localFeedDataSource.insertFeed(feedItems = feedResponse.data)
+                localFeedDataSource.insertFeed(feedItems = feedResponse.data.map { it.toEntity() })
                 Timber.d("Sync feed successful")
             }
+
             is DataResult.Empty -> {
             }
+
             is DataResult.Loading -> {
             }
+
             is DataResult.Error -> {
                 Timber.d("Sync feed error ${feedResponse.message}")
             }

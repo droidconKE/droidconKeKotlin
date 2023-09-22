@@ -15,7 +15,6 @@
  */
 plugins {
     id("droidconke.android.library")
-    id("droidconke.android.room")
     id("droidconke.android.hilt")
     id("droidconke.android.library.firebase")
     kotlin("plugin.serialization")

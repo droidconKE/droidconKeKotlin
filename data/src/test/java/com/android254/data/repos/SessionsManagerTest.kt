@@ -15,25 +15,20 @@
  */
 package com.android254.data.repos
 
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android254.data.dao.BookmarkDao
-import com.android254.data.db.Database
-import com.android254.data.db.model.SessionEntity
-import com.android254.data.repos.local.LocalSessionsDataSource
-import com.android254.data.repos.mappers.toDomainModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import ke.droidcon.kotlin.datasource.local.Database
+import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
+import ke.droidcon.kotlin.datasource.local.model.SessionEntity
+import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -47,20 +42,10 @@ class SessionsManagerTest {
     private lateinit var database: Database
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    @Before
-    fun beforeTest() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            Database::class.java
-        ).allowMainThreadQueries().build()
-
-        bookmarkDao = database.bookmarkDao()
-    }
-
     @Test
     fun `test it fetches from the local cache`() = runTest {
         coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
-            flowOf(listOf(sessionEntity.toDomainModel()))
+            flowOf(listOf(sessionEntity))
         val sessions = mockLocalSessionsDataSource.getCachedSessions().first()
         assert(sessions[0].description == sessionEntity.description)
         coVerify(atLeast = 1) {
@@ -68,10 +53,6 @@ class SessionsManagerTest {
         }
     }
 
-    @After
-    fun afterTest() {
-        database.close()
-    }
 }
 val sessionEntity = SessionEntity(
     id = 1,

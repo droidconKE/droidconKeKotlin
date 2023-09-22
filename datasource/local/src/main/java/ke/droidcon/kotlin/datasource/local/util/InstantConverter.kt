@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.repos.mappers
+package ke.droidcon.kotlin.datasource.local.util
 
-import com.android254.domain.models.Sponsors
-import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
-import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
+import androidx.room.TypeConverter
+import kotlinx.datetime.Instant
 
-fun SponsorDTO.toDomain() = Sponsors(
-    sponsorName = name,
-    sponsorLogoUrl = logo
-)
+class InstantConverter {
 
-fun SponsorDTO.toEntity() = SponsorEntity(
-    name = name,
-    logo = logo,
-    tagline = tagline,
-    createdAt = createdAt,
-    link = link
-)
-fun SponsorEntity.toDomain() = Sponsors(
-    sponsorLogoUrl = logo,
-    sponsorName = name
-)
+    @TypeConverter
+    fun longToInstant(value: Long?): Instant? =
+        value?.let(Instant::fromEpochMilliseconds)
+
+    @TypeConverter
+    fun instantToLong(instant: Instant?): Long? =
+        instant?.toEpochMilliseconds()
+}
