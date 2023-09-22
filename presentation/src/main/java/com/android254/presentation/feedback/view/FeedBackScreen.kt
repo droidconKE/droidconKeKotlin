@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.feedback.view
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,8 +31,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,15 +70,27 @@ import com.droidconke.chai.components.CButton
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun FeedBackScreen(
+fun FeedBackRoute(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    navigateBack: () -> Unit = {}
+) {
+    FeedBackScreen(
+        darkTheme = darkTheme,
+        navigateBack = navigateBack
+    )
+}
+
+@Composable
+private fun FeedBackScreen(
+    darkTheme: Boolean,
     navigateBack: () -> Unit = {}
 ) {
     var value by remember {
         mutableStateOf("")
     }
 
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
 
@@ -81,8 +111,12 @@ fun FeedBackScreen(
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            titleContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(0xFF1B1B1F),
-                            navigationIconContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(0xFF1B1B1F),
+                            titleContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(
+                                0xFF1B1B1F
+                            ),
+                            navigationIconContentColor = if (darkTheme) MaterialTheme.colorScheme.onPrimary else Color(
+                                0xFF1B1B1F
+                            ),
                             containerColor = Color.Transparent
                         )
                     )
@@ -263,10 +297,17 @@ fun FeedbackTitle() {
     )
 }
 
-@Preview
+@Preview(
+    name = "Light",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Preview(
+    name = "Dark",
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
 fun FeedBackScreenPreview() {
     DroidconKE2023Theme {
-        FeedBackScreen()
+        FeedBackScreen(darkTheme = isSystemInDarkTheme())
     }
 }
