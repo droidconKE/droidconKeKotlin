@@ -64,8 +64,8 @@ class SessionScreenTest {
         every { repo.fetchBookmarkedSessions() } returns flowOf(mockSessions)
 
         composeTestRule.setContent {
-            DroidconKE2023Theme() {
-                SessionsScreen(
+            DroidconKE2023Theme {
+                SessionsRoute(
                     sessionsViewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
                 )
             }
@@ -89,7 +89,7 @@ class SessionScreenTest {
 
         composeTestRule.setContent {
             DroidconKE2023Theme() {
-                SessionsScreen(
+                SessionsRoute(
                     sessionsViewModel = SessionsViewModel(repo, mockSyncDataWorkManager)
                 )
             }

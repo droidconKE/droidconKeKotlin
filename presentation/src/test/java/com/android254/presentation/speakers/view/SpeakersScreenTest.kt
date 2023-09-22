@@ -55,7 +55,7 @@ class SpeakersScreenTest {
             )
         )
         composeTestRule.setContent {
-            SpeakersScreen(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
+            SpeakersRoute(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
         }
 
         with(composeTestRule) {
