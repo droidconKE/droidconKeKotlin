@@ -131,6 +131,17 @@ androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.re
 - Define variables using **CamelCase**.\
 - Check if the library can be added to any existing bundles.
 
+## Compose Preview and ViewModel
+
+Previews are limited when using ViewModel within a composable.
+
+If you want to preview a composable that uses a ViewModel, you should create another composable with
+the parameters from ViewModel passed as arguments of the composable. This way, you don't need to
+preview the composable that uses the ViewModel.
+
+More on Previews and ViewModels can be
+found [here](https://developer.android.com/jetpack/compose/tooling/previews#preview-viewmodel).
+
 ## Compatibility
 
 This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API
