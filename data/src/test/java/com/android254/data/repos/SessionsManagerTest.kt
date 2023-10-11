@@ -52,7 +52,6 @@ class SessionsManagerTest {
             mockLocalSessionsDataSource.getCachedSessions()
         }
     }
-
 }
 val sessionEntity = SessionEntity(
     id = 1,

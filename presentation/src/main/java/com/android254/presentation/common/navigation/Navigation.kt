@@ -58,6 +58,7 @@ fun Navigation(
         composable(Screens.Sessions.route) {
             updateBottomBarState(true)
             SessionsRoute(navigateToSessionDetails = { sessionId ->
+
                 navController.navigate(
                     Screens.SessionDetails.route.replace(
                         oldValue = "{sessionId}",
