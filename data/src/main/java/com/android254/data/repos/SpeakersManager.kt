@@ -29,7 +29,8 @@ import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 class SpeakersManager @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource, private val remoteSpeakersDataSource: RemoteSpeakersDataSource
+    private val localSpeakersDataSource: LocalSpeakersDataSource,
+    private val remoteSpeakersDataSource: RemoteSpeakersDataSource
 
 ) : SpeakersRepo {
     override fun fetchSpeakers(): Flow<List<Speaker>> =
