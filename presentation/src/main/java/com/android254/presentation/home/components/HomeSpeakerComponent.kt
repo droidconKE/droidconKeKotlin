@@ -68,7 +68,12 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                 .clip(
                     shape = RoundedCornerShape(12.dp)
                 )
-                .border(BorderStroke(2.dp, color = colorResource(id = R.color.cyan)))
+                .border(
+                    border = BorderStroke(
+                        2.dp, color = colorResource(id = R.color.cyan)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .height(85.dp)
                 .width(85.dp)
                 .constrainAs(headShot) {
