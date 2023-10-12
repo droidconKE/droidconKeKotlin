@@ -89,6 +89,7 @@ private fun HomeScreen(
     onSessionClicked: (SessionPresentationModel) -> Unit = {},
     onRefresh: () -> Unit = {}
 ) {
+
     Scaffold(
         topBar = {
             HomeToolbar(

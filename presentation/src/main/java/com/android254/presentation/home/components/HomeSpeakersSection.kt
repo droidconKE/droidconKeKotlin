@@ -16,6 +16,7 @@
 package com.android254.presentation.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -92,7 +93,7 @@ fun HomeSpeakersSection(
                 Text(
                     text = stringResource(R.string.view_all_label),
                     style = TextStyle(
-                        color = colorResource(id = R.color.blue),
+                        color = if (isSystemInDarkTheme()) Color.White else colorResource(id = R.color.blue),
                         fontSize = 12.sp,
                         fontFamily = MontserratSemiBold
                     )
@@ -111,7 +112,7 @@ fun HomeSpeakersSection(
                         text = "${speakers.size}",
                         modifier = Modifier.align(Alignment.Center),
                         style = TextStyle(
-                            color = colorResource(id = R.color.blue),
+                            color = if (isSystemInDarkTheme()) Color.White else colorResource(id = R.color.blue),
                             fontSize = 10.sp,
                             fontFamily = MontserratRegular
                         )

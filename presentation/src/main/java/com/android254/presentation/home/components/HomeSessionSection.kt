@@ -15,8 +15,10 @@
  */
 package com.android254.presentation.home.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -25,6 +27,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -34,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -112,7 +117,8 @@ fun HomeSectionHeader(
                 text = stringResource(id = R.string.view_all_label),
                 textAlign = TextAlign.Start,
                 style = TextStyle(
-                    color = ChaiBlue,
+                    //made the color for the sessions dynamic for Dark mode visibility
+                    color = if (isSystemInDarkTheme()) Color.White else ChaiBlue,
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
@@ -134,7 +140,7 @@ fun HomeSectionHeader(
                     text = stringResource(id = R.string.format_plus_label, sectionSize),
                     modifier = Modifier.align(Alignment.Center),
                     style = TextStyle(
-                        color = colorResource(id = R.color.blue),
+                        color = if (isSystemInDarkTheme()) colorResource(id = R.color.white) else colorResource(id = R.color.blue),
                         fontSize = 10.sp,
                         fontFamily = MontserratRegular
                     )
@@ -157,17 +163,51 @@ fun HomeSessionContent(
         colors = CardDefaults.cardColors(containerColor = ChaiLightGrey),
         onClick = { onSessionClick(session) }
     ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(if (session.isService) R.drawable.all else session.sessionImage)
-                .build(),
-            placeholder = painterResource(R.drawable.all),
-            contentDescription = stringResource(id = R.string.session_image),
+        Box(
             modifier = Modifier
-                .height(140.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.FillBounds
-        )
+                .fillMaxHeight(0.5f)
+                .fillMaxWidth()
+        ){
+            Image(
+                painter = painterResource(R.drawable.sessions_background),
+                contentDescription = "background image",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            )
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = session.title,
+                    modifier = Modifier.padding(25.dp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(4.dp)),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(session.speakerImage)
+                            .build(),
+                        contentDescription = stringResource(id = R.string.sessions_label),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(text = session.speakerName)
+                }
+                
+
+            }
+        }
+
         Spacer(Modifier.height(8.dp))
         Column(
             modifier = Modifier
@@ -203,3 +243,6 @@ fun HomeSessionContent(
         }
     }
 }
+
+
+
