@@ -16,6 +16,7 @@
 package com.android254.presentation.speakers.view
 
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,7 +67,17 @@ fun SpeakersRoute(
         navigateToSpeaker = navigateToSpeaker
     )
 }
-
+@Composable
+fun SpeakerTitleComponent() {
+    val isDarkMode = isSystemInDarkTheme()
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    Text(
+        text = stringResource(id = R.string.speakers_label),
+        fontSize = 24.sp,
+        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
+        color = textColor
+    )
+}
 @Composable
 private fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
@@ -76,14 +87,7 @@ private fun SpeakersScreen(
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.speakers_label),
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                        color = colorResource(id = R.color.dark)
-                    )
-                },
+                { SpeakerTitleComponent() },
                 navigationIcon = {
                     IconButton(
                         onClick = navigateToHomeScreen
