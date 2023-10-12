@@ -60,11 +60,15 @@ fun FeedComponent(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 15.dp, vertical = 2.dp)
             .wrapContentHeight(),
-        shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = ChaiLightGrey
-        )
+//        shape = RoundedCornerShape(0.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = ChaiLightGrey
+//        )
+        shape = RoundedCornerShape(5),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
     ) {
         Column(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
