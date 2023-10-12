@@ -85,7 +85,13 @@ fun SpeakerComponent(
                     .clip(
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .border(BorderStroke(2.5.dp, color = colorResource(id = R.color.cyan)))
+                    .border(
+                        border = BorderStroke(
+                            2.5.dp,
+                            color = colorResource(id = R.color.cyan)
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .height(120.dp)
                     .width(120.dp)
                     .constrainAs(image) {
