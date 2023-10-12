@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
@@ -50,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
+import com.droidconke.chai.chaiColorsPalette
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
@@ -68,17 +70,6 @@ fun SpeakersRoute(
     )
 }
 @Composable
-fun SpeakerTitleComponent() {
-    val isDarkMode = isSystemInDarkTheme()
-    val textColor = if (isDarkMode) Color.White else Color.Black
-    Text(
-        text = stringResource(id = R.string.speakers_label),
-        fontSize = 24.sp,
-        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-        color = textColor
-    )
-}
-@Composable
 private fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
     navigateToHomeScreen: () -> Unit = {},
@@ -87,7 +78,14 @@ private fun SpeakersScreen(
     Scaffold(
         topBar = {
             SmallTopAppBar(
-                { SpeakerTitleComponent() },
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.speakers_label),
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
+                        color = MaterialTheme.chaiColorsPalette.textColorPrimary,
+                    )
+                },
                 navigationIcon = {
                     IconButton(
                         onClick = navigateToHomeScreen
