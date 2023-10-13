@@ -15,42 +15,35 @@
  */
 package com.android254.presentation.home.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android254.presentation.common.components.DroidconAppBar
-import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.components.HomeBannerSection
+import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
 import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
+import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.models.SessionPresentationModel
-import com.droidconke.chai.atoms.MontserratSemiBold
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeRoute(
@@ -91,7 +84,7 @@ private fun HomeScreen(
 ) {
     Scaffold(
         topBar = {
-            HomeToolbar(
+            HomeToolbarComponent(
                 isSignedIn = viewState.isSignedIn,
                 navigateToFeedbackScreen = navigateToFeedbackScreen,
                 onActionClicked = onActionClicked
@@ -112,7 +105,7 @@ private fun HomeScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                HomeHeaderSection()
+                HomeHeaderSectionComponent()
                 HomeBannerSection(viewState)
                 HomeSpacer()
                 when {
@@ -154,44 +147,7 @@ private fun HomeScreen(
     }
 }
 
-@Composable
-fun HomeHeaderSection() {
-    Text(
-        text = stringResource(id = R.string.home_header_welcome_label),
-        modifier = Modifier.testTag("home_header"),
-        fontFamily = MontserratSemiBold,
-        fontSize = 16.sp
-    )
-}
-
-@Composable
-fun HomeToolbar(
-    isSignedIn: Boolean,
-    navigateToFeedbackScreen: () -> Unit = {},
-    onActionClicked: () -> Unit = {}
-) {
-    if (isSignedIn) {
-        DroidconAppBarWithFeedbackButton(
-            onButtonClick = {
-                navigateToFeedbackScreen()
-            },
-            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
-        )
-    } else {
-        DroidconAppBar(
-            onActionClicked = onActionClicked
-        )
-    }
-}
-
-@Preview(
-    name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO
-)
-@Preview(
-    name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun HomeScreenPreview() {
     DroidconKE2023Theme {
