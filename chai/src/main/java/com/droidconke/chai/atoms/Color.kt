@@ -42,6 +42,8 @@ val ChaiDarkGrey = Color(0xFF5A5A5A)
 val ChaiDarkerGrey = Color(0xFF191d1d)
 val ChaiCoal = Color(0xFF191D1D)
 val ChaiBlack = Color(0xFF000000)
+val ChaiGrey90 = Color(0xFF20201E)
+val ChaiTeal90 = Color(0xFF7DE1C3)
 
 /**
  * LIGHT PRIMARY

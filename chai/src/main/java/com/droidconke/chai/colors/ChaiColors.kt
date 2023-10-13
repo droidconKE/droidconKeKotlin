@@ -18,18 +18,47 @@ package com.droidconke.chai.colors
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.droidconke.chai.atoms.ChaiBlack
+import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.atoms.ChaiGrey
+import com.droidconke.chai.atoms.ChaiGrey90
+import com.droidconke.chai.atoms.ChaiLightGrey
+import com.droidconke.chai.atoms.ChaiSmokeyGrey
+import com.droidconke.chai.atoms.ChaiTeal90
+import com.droidconke.chai.atoms.ChaiWhite
 
 @Immutable
 data class ChaiColors(
-    val textColorPrimary: Color = Color.Unspecified
+    val textColorPrimary: Color = Color.Unspecified,
+    val background: Color = Color.Unspecified,
+    val primaryContainer: Color = Color.Unspecified,
+    val subtitleTextColor: Color = Color.Unspecified,
+    val activeBottomNavIconColor: Color = Color.Unspecified,
+    val inactiveBottomNavIconColor: Color = Color.Unspecified,
+    val titleTextColorPrimary: Color = Color.Unspecified,
+    val linkTextColorPrimary: Color = Color.Unspecified,
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
 
 val ChaiLightColorPalette = ChaiColors(
-    textColorPrimary = Color(color = 0xFF20201E)
+    textColorPrimary = ChaiGrey90,
+    background = ChaiWhite,
+    primaryContainer = ChaiLightGrey,
+    subtitleTextColor = ChaiSmokeyGrey,
+    activeBottomNavIconColor = ChaiBlue,
+    inactiveBottomNavIconColor = ChaiGrey90,
+    titleTextColorPrimary = ChaiBlue,
+    linkTextColorPrimary = ChaiBlue
 )
 
 val ChaiDarkColorPalette = ChaiColors(
-    textColorPrimary = Color(color = 0xFFF5F5F5)
+    textColorPrimary = ChaiLightGrey,
+    background = ChaiGrey90,
+    primaryContainer = ChaiBlack,
+    subtitleTextColor = ChaiGrey,
+    activeBottomNavIconColor = ChaiTeal90,
+    inactiveBottomNavIconColor = ChaiWhite,
+    titleTextColorPrimary = ChaiWhite,
+    linkTextColorPrimary = ChaiLightGrey
 )
