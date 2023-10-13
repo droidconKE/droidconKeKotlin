@@ -40,7 +40,6 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -53,7 +52,7 @@ fun HomeRoute(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
-    onSessionClicked: (SessionPresentationModel) -> Unit = {}
+    onSessionClicked: (sessionId: String) -> Unit = {},
 ) {
     val homeViewState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
@@ -79,7 +78,7 @@ private fun HomeScreen(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
-    onSessionClicked: (SessionPresentationModel) -> Unit = {},
+    onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {}
 ) {
     Scaffold(
