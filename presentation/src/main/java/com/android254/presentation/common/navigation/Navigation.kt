@@ -52,7 +52,18 @@ fun Navigation(
                 navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
                 navigateToSessionScreen = { navController.navigate(Screens.Sessions.route) },
                 onActionClicked = onActionClicked,
-                onSessionClicked = {}
+                onSessionClicked = { sessionId ->
+
+                    navController.navigate(
+                        Screens.SessionDetails.route.replace(
+                            oldValue = "{sessionId}",
+                            newValue = sessionId
+                        )
+                    ) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
         }
         composable(Screens.Sessions.route) {

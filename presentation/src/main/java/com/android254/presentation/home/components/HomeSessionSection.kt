@@ -54,7 +54,7 @@ import ke.droidcon.kotlin.presentation.R
 fun HomeSessionSection(
     modifier: Modifier = Modifier,
     sessions: List<SessionPresentationModel>,
-    onSessionClick: (SessionPresentationModel) -> Unit,
+    onSessionClick: (sessionId: String) -> Unit,
     onViewAllSessionClicked: () -> Unit
 ) {
     Column(
@@ -73,7 +73,7 @@ fun HomeSessionSection(
             items(sessions) { session ->
                 HomeSessionContent(
                     session = session,
-                    onSessionClick = onSessionClick
+                    onSessionClick = { onSessionClick(session.id) }
                 )
             }
         }
@@ -84,7 +84,7 @@ fun HomeSessionSection(
 @Composable
 fun HomeSessionContent(
     session: SessionPresentationModel,
-    onSessionClick: (SessionPresentationModel) -> Unit,
+    onSessionClick: (sessionId: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -92,7 +92,7 @@ fun HomeSessionContent(
             .width(300.dp)
             .height(intrinsicSize = IntrinsicSize.Max),
         colors = CardDefaults.cardColors(containerColor = ChaiLightGrey),
-        onClick = { onSessionClick(session) }
+        onClick = { onSessionClick(session.id) }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
