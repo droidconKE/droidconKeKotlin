@@ -352,6 +352,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Joenjogu</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/lokified">
+            <img src="https://avatars.githubusercontent.com/u/87479198?v=4" width="100;" alt="lokified"/>
+            <br />
+            <sub><b>Sheldon Okware</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->
