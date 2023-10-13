@@ -60,9 +60,9 @@ class HomeScreenTest {
             HomeSpeakersSection(speakers = emptyList())
         }
 
-        composeTestRule.onNodeWithTag("speakersLabel").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
         composeTestRule.onNodeWithTag("speakersRow").assertExists()
-        composeTestRule.onNodeWithTag("viewAllBtn").assertExists()
+        composeTestRule.onNodeWithTag("viewAll").assertExists()
     }
 
     @Test
