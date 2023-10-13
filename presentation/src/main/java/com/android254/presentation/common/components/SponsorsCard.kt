@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,9 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -57,7 +57,7 @@ fun SponsorsCard(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = ChaiLightGrey,
+                    color = MaterialTheme.chaiColorsPalette.primaryContainer,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 30.dp, vertical = 10.dp)
@@ -68,7 +68,7 @@ fun SponsorsCard(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.sponsors_title),
                 style = TextStyle(
-                    color = ChaiBlue,
+                    color = MaterialTheme.chaiColorsPalette.titleTextColorPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     lineHeight = 25.sp,

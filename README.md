@@ -268,6 +268,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/kanake10">
+            <img src="https://avatars.githubusercontent.com/u/77957614?v=4" width="100;" alt="kanake10"/>
+            <br />
+            <sub><b>N3</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
@@ -287,15 +294,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Joel  Muraguri</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
             <br />
             <sub><b>Martin Thuo</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/Njoguu">
             <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
@@ -311,6 +318,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/jumapaul">
+            <img src="https://avatars.githubusercontent.com/u/68422810?v=4" width="100;" alt="jumapaul"/>
+            <br />
+            <sub><b>Paul Juma</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
             <br />
@@ -323,7 +337,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Null</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/josphatmwania">
             <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
@@ -337,13 +352,19 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
             <br />
             <sub><b>Joenjogu</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/lokified">
+            <img src="https://avatars.githubusercontent.com/u/87479198?v=4" width="100;" alt="lokified"/>
+            <br />
+            <sub><b>Sheldon Okware</b></sub>
         </a>
     </td></tr>
 </table>

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,13 +45,13 @@ import coil.request.ImageRequest
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
 import com.droidconke.chai.atoms.MontserratMedium
+import com.droidconke.chai.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
     ConstraintLayout(
         modifier = Modifier
-            .height(110.dp)
             .width(90.dp)
             .padding(end = 16.dp)
             .clickable { onClick.invoke() }
@@ -68,7 +69,12 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                 .clip(
                     shape = RoundedCornerShape(12.dp)
                 )
-                .border(BorderStroke(2.dp, color = colorResource(id = R.color.cyan)))
+                .border(
+                    border = BorderStroke(
+                        2.dp, color = colorResource(id = R.color.cyan)
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .height(85.dp)
                 .width(85.dp)
                 .constrainAs(headShot) {
@@ -85,7 +91,7 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                 end.linkTo(parent.end)
             },
             style = TextStyle(
-                color = colorResource(id = R.color.dark),
+                color = MaterialTheme.chaiColorsPalette.textColorPrimary,
                 fontSize = 12.sp,
                 fontFamily = MontserratMedium
             ),

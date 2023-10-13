@@ -20,8 +20,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
+import com.android254.presentation.home.components.HomeToolbarComponent
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,7 +49,7 @@ class HomeScreenTest {
     fun `Test home title is displayed`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                HomeHeaderSection()
+                HomeHeaderSectionComponent()
             }
         }
 
@@ -60,16 +62,16 @@ class HomeScreenTest {
             HomeSpeakersSection(speakers = emptyList())
         }
 
-        composeTestRule.onNodeWithTag("speakersLabel").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
         composeTestRule.onNodeWithTag("speakersRow").assertExists()
-        composeTestRule.onNodeWithTag("viewAllBtn").assertExists()
+        composeTestRule.onNodeWithTag("viewAll").assertExists()
     }
 
     @Test
     fun `Not signedIn droidcon topBar is displayed`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                HomeToolbar(isSignedIn = false)
+                HomeToolbarComponent(isSignedIn = false)
             }
         }
 
@@ -81,7 +83,7 @@ class HomeScreenTest {
     fun `SignedIn droidcon topBar is displayed`() {
         composeTestRule.setContent {
             DroidconKE2023Theme {
-                HomeToolbar(isSignedIn = true)
+                HomeToolbarComponent(isSignedIn = true)
             }
         }
 

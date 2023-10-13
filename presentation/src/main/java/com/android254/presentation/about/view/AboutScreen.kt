@@ -16,6 +16,7 @@
 package com.android254.presentation.about.view
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -223,15 +225,15 @@ fun OrganizingTeamSection(
             )
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         FlowRow(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             organizingTeam.forEach { teamMember ->
                 OrganizingTeamComponent(
-                    modifier = Modifier.width(99.dp),
+                    modifier = Modifier.width(106.dp),
                     teamMember = teamMember,
                     onClickMember = onClickMember
                 )
