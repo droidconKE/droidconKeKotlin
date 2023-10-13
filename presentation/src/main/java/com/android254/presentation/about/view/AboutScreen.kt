@@ -225,7 +225,7 @@ fun OrganizingTeamSection(
             )
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -233,7 +233,7 @@ fun OrganizingTeamSection(
         ) {
             organizingTeam.forEach { teamMember ->
                 OrganizingTeamComponent(
-                    modifier = Modifier.width(105.dp),
+                    modifier = Modifier.width(106.dp),
                     teamMember = teamMember,
                     onClickMember = onClickMember
                 )
