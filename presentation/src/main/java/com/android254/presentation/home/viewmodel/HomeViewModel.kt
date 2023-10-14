@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.home.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
@@ -111,7 +109,9 @@ class HomeViewModel @Inject constructor(
                 format = it.sessionFormat,
                 startDate = it.startDateTime,
                 endDate = it.endDateTime,
-                remoteId = it.remote_id
+                remoteId = it.remote_id,
+                isService = it.isServiceSession,
+                sessionImage = it.sessionImage ?: ""
             )
         }
 }
