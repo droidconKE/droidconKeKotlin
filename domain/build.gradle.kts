@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 plugins {
-    id("droidconke.android.library")
+    alias(libs.plugins.droidconke.android.library)
 }
 
 android {

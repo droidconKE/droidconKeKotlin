@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 plugins {
-    id("droidconke.android.library")
-    id("droidconke.android.hilt")
-    id("droidconke.android.library.firebase")
+    alias(libs.plugins.droidconke.android.library)
+    alias(libs.plugins.droidconke.android.hilt)
+    alias(libs.plugins.droidconke.android.library.firebase)
     kotlin("plugin.serialization")
 }
 
