@@ -131,3 +131,12 @@ spotless = "com.diffplug.spotless:6.4.2"
 toml-checker = "com.github.ben-manes.versions:0.42.0"
 toml-updater = "nl.littlerobots.version-catalog-update:0.3.1"
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+# Convention plugins defined in the project
+droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
+droidconke-android-room = { id = "droidconke.android.room", version = "unspecified" }
+droidconke-android-hilt = { id = "droidconke.android.hilt", version = "unspecified" }
+droidconke-android-library-compose = { id = "droidconke.android.library.compose", version = "unspecified" }
+droidconke-android-application-firebase = { id = "droidconke.android.application.firebase", version = "unspecified" }
+droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }
+droidconke-android-application = { id = "droidconke.android.application", version = "unspecified" }
