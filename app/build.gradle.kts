@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 plugins {
-    id("droidconke.android.application")
-    id("droidconke.android.hilt")
-    id("droidconke.android.application.firebase")
+    alias(libs.plugins.droidconke.android.application)
+    alias(libs.plugins.droidconke.android.hilt)
+    alias(libs.plugins.droidconke.android.application.firebase)
 }
 
 android {
