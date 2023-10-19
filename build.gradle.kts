@@ -12,9 +12,9 @@ plugins {
     id("com.android.library") version "8.1.0" apply false
     id("org.jetbrains.kotlin.android") version "1.8.20" apply false
     id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply true
-    kotlin("plugin.serialization") version "1.6.21"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
     id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
+    alias(libs.plugins.kotlin.serialization) apply false
     id("com.diffplug.spotless") version "6.0.0"
 }
 
