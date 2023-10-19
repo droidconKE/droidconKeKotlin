@@ -3,7 +3,7 @@ composecompiler = "1.4.6"
 coroutines = "1.7.3"
 desugar_jdk_libs = "2.0.3"
 espresso = "3.5.1"
-gradleplugin = "8.0.2"
+gradleplugin = "8.1.2"
 hilt = "2.47"
 kotlin = "1.8.20"
 lifecycle = "2.6.2"
@@ -140,3 +140,4 @@ droidconke-android-library-compose = { id = "droidconke.android.library.compose"
 droidconke-android-application-firebase = { id = "droidconke.android.application.firebase", version = "unspecified" }
 droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }
 droidconke-android-application = { id = "droidconke.android.application", version = "unspecified" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
