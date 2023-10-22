@@ -8,14 +8,14 @@ buildscript {
     }
 }
 plugins {
-    id("com.android.application") version "8.1.0" apply false
-    id("com.android.library") version "8.1.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.8.20" apply false
-    id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply true
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
-    id("io.gitlab.arturbosch.detekt") version "1.18.0-RC2"
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
-    id("com.diffplug.spotless") version "6.0.0"
+    alias(libs.plugins.jlleitschuh)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.spotless)
 }
 
 allprojects {
