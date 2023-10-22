@@ -17,7 +17,7 @@ plugins {
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.droidconke.android.library.firebase)
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
