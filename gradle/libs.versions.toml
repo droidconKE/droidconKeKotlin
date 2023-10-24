@@ -3,7 +3,7 @@ composecompiler = "1.4.6"
 coroutines = "1.7.3"
 desugar_jdk_libs = "2.0.3"
 espresso = "3.5.1"
-gradleplugin = "8.0.2"
+gradleplugin = "8.1.2"
 hilt = "2.47"
 kotlin = "1.8.20"
 lifecycle = "2.6.2"
@@ -18,6 +18,9 @@ chucker = "4.0.0"
 ksp = "1.8.20-1.0.11"
 androidxComposeBom = "2023.09.00"
 remote_config = "21.4.1"
+detekt = "1.19.0"
+klint = "11.6.1"
+spotless = "6.4.2"
 
 [libraries]
 android-appCompat = "androidx.appcompat:appcompat:1.6.1"
@@ -123,14 +126,15 @@ test = ["junit4", "test-junit-ktx"]
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradleplugin" }
 android-library = { id = "com.android.library", version.ref = "gradleplugin" }
-detekt = "io.gitlab.arturbosch.detekt:1.19.0"
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-spotless = "com.diffplug.spotless:6.4.2"
+spotless =  { id = "com.diffplug.spotless", version.ref = "spotless" }
 toml-checker = "com.github.ben-manes.versions:0.42.0"
 toml-updater = "nl.littlerobots.version-catalog-update:0.3.1"
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 
 # Convention plugins defined in the project
 droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
@@ -140,3 +144,4 @@ droidconke-android-library-compose = { id = "droidconke.android.library.compose"
 droidconke-android-application-firebase = { id = "droidconke.android.application.firebase", version = "unspecified" }
 droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }
 droidconke-android-application = { id = "droidconke.android.application", version = "unspecified" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
