@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     dependencies {
-        classpath("com.google.dagger:hilt-android-gradle-plugin:2.47")
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
         classpath("com.google.gms:google-services:4.3.15")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.9")
         classpath("com.google.firebase:perf-plugin:1.4.2")
@@ -50,7 +50,7 @@ subprojects {
             targetExclude("${project.rootDir}/build-logic/**/*.kt")
             licenseHeaderFile(
                 rootProject.file("${project.rootDir}/spotless/copyright.kt"),
-                "^(package|object|import|interface)"
+                "^(package|object|import|interface)",
             )
         }
         format("kts") {
