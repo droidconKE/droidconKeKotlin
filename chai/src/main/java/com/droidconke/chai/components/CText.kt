@@ -304,10 +304,42 @@ fun ChaiBodyLarge(
 }
 
 @Composable
-fun CPrimaryButtonText(text: String, textAllCaps: Boolean = false) {
+fun ChaiTextButtonLight(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
     Text(
+        modifier = modifier,
+        text = bodyText.uppercase(),
+        style = TextStyle(
+            color = textColor,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.W300,
+            fontFamily = MontserratLight,
+            lineHeight = 16.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun CPrimaryButtonText(
+    modifier: Modifier = Modifier,
+    text: String,
+    textAllCaps: Boolean = false,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary
+) {
+    Text(
+        modifier = modifier,
         text = if (textAllCaps) text.uppercase() else text,
-        style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+        style = TextStyle(
+            color = textColor,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W600,
+            fontFamily = MontserratSemiBold,
+            lineHeight = 22.sp
+        ),
         textAlign = TextAlign.Center
     )
 }
