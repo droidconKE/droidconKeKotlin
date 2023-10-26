@@ -116,7 +116,7 @@ fun ChaiTitle(
         style = TextStyle(
             color = subTitleColor,
             fontSize = 20.sp,
-            fontWeight = FontWeight.W600,
+            fontWeight = FontWeight.W700,
             fontFamily = MontserratBold
         ),
         textAlign = TextAlign.Start
@@ -135,9 +135,47 @@ fun ChaiSubTitle(
         style = TextStyle(
             color = titleColor,
             fontSize = 18.sp,
-            fontWeight = FontWeight.W600,
+            fontWeight = FontWeight.W700,
             fontFamily = MontserratBold,
             lineHeight = 22.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+@Composable
+fun ChaiBodyXSmallBold(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.W500,
+            fontFamily = MontserratMedium,
+            lineHeight = 16.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+@Composable
+fun ChaiBodyXSmall(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = MontserratRegular,
+            lineHeight = 16.sp
         ),
         textAlign = TextAlign.Start
     )
