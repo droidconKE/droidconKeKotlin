@@ -282,20 +282,27 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/ndiritumichael">
+            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
+            <br />
+            <sub><b>Michael Ndiritu</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
             <sub><b>Amos Nyaburi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/etonotieno">
             <img src="https://avatars.githubusercontent.com/u/25648109?v=4" width="100;" alt="etonotieno"/>
             <br />
             <sub><b>Eton Otieno</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/joelmuraguri">
             <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="joelmuraguri"/>
@@ -330,15 +337,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Emmanuel Muturia</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/jumapaul">
             <img src="https://avatars.githubusercontent.com/u/68422810?v=4" width="100;" alt="jumapaul"/>
             <br />
             <sub><b>Paul Juma</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
@@ -373,7 +380,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Joenjogu</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/lokified">
             <img src="https://avatars.githubusercontent.com/u/87479198?v=4" width="100;" alt="lokified"/>

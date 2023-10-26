@@ -4,7 +4,8 @@ coroutines = "1.7.3"
 desugar_jdk_libs = "2.0.3"
 espresso = "3.5.1"
 gradleplugin = "8.1.2"
-hilt = "2.47"
+gmsPlugin = "4.3.15"
+hilt = "2.48"
 kotlin = "1.8.20"
 lifecycle = "2.6.2"
 room = "2.5.2"
@@ -127,14 +128,17 @@ test = ["junit4", "test-junit-ktx"]
 android-application = { id = "com.android.application", version.ref = "gradleplugin" }
 android-library = { id = "com.android.library", version.ref = "gradleplugin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless =  { id = "com.diffplug.spotless", version.ref = "spotless" }
 toml-checker = "com.github.ben-manes.versions:0.42.0"
 toml-updater = "nl.littlerobots.version-catalog-update:0.3.1"
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 
 # Convention plugins defined in the project
 droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
