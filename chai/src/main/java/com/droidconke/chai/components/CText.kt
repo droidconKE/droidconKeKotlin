@@ -142,6 +142,7 @@ fun ChaiSubTitle(
         textAlign = TextAlign.Start
     )
 }
+
 @Composable
 fun ChaiBodyXSmallBold(
     modifier: Modifier = Modifier,
@@ -161,6 +162,7 @@ fun ChaiBodyXSmallBold(
         textAlign = TextAlign.Start
     )
 }
+
 @Composable
 fun ChaiBodyXSmall(
     modifier: Modifier = Modifier,
@@ -176,6 +178,46 @@ fun ChaiBodyXSmall(
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
             lineHeight = 16.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiBodySmallBold(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.W700,
+            fontFamily = MontserratBold,
+            lineHeight = 20.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiBodySmall(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = MontserratRegular,
+            lineHeight = 20.sp
         ),
         textAlign = TextAlign.Start
     )
