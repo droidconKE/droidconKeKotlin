@@ -264,6 +264,46 @@ fun ChaiBodyMedium(
 }
 
 @Composable
+fun ChaiBodyLargeBold(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W600,
+            fontFamily = MontserratSemiBold,
+            lineHeight = 22.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiBodyLarge(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = MontserratRegular,
+            lineHeight = 22.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
 fun CPrimaryButtonText(text: String, textAllCaps: Boolean = false) {
     Text(
         text = if (textAllCaps) text.uppercase() else text,
