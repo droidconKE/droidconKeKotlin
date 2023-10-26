@@ -343,3 +343,63 @@ fun CPrimaryButtonText(
         textAlign = TextAlign.Center
     )
 }
+
+@Composable
+fun ChaiTextLabelLarge(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = MontserratRegular,
+            lineHeight = 16.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiTextLabelMedium(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.W400,
+            fontFamily = MontserratRegular,
+            lineHeight = 14.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiTextLabelSmall(
+    modifier: Modifier = Modifier,
+    bodyText: String,
+    textColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = bodyText,
+        style = TextStyle(
+            color = textColor,
+            fontSize = 9.sp,
+            fontWeight = FontWeight.W300,
+            fontFamily = MontserratLight,
+            lineHeight = 14.sp
+        ),
+        textAlign = TextAlign.Start
+    )
+}
