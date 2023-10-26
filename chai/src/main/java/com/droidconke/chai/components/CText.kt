@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -100,6 +101,45 @@ fun CActionText(cAction: String) {
 
         ),
         modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun ChaiTitle(
+    modifier: Modifier = Modifier,
+    subtitleText: String,
+    subTitleColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = subtitleText,
+        style = TextStyle(
+            color = subTitleColor,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.W600,
+            fontFamily = MontserratBold
+        ),
+        textAlign = TextAlign.Start
+    )
+}
+
+@Composable
+fun ChaiSubTitle(
+    modifier: Modifier = Modifier,
+    titleText: String,
+    titleColor: Color = Color.Unspecified
+) {
+    Text(
+        modifier = modifier,
+        text = titleText,
+        style = TextStyle(
+            color = titleColor,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.W600,
+            fontFamily = MontserratBold,
+            lineHeight = 22.sp
+        ),
+        textAlign = TextAlign.Start
     )
 }
 
