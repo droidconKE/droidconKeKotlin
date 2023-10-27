@@ -39,7 +39,6 @@ import timber.log.Timber
 class SessionsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
     private val syncDataWorkManager: SyncDataWorkManager
-
 ) : ViewModel() {
 
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
