@@ -23,42 +23,62 @@ import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
+import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
+import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
 
 @Immutable
 data class ChaiColors(
-    val textColorPrimary: Color = Color.Unspecified,
+    val primary: Color = Color.Unspecified,
     val background: Color = Color.Unspecified,
+    val surfaces: Color = Color.Unspecified,
     val primaryContainer: Color = Color.Unspecified,
-    val subtitleTextColor: Color = Color.Unspecified,
     val activeBottomNavIconColor: Color = Color.Unspecified,
+    val activeBottomNavTextColor: Color = Color.Unspecified,
     val inactiveBottomNavIconColor: Color = Color.Unspecified,
-    val titleTextColorPrimary: Color = Color.Unspecified,
+    val bottomNavBackgroundColor: Color = Color.Unspecified,
+    val textTitlePrimaryColor: Color = Color.Unspecified,
+    val textBoldColor: Color = Color.Unspecified,
+    val textNormalColor: Color = Color.Unspecified,
+    val textWeakColor: Color = Color.Unspecified,
+    val textLabelAndHeadings: Color = Color.Unspecified,
     val linkTextColorPrimary: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
 
 val ChaiLightColorPalette = ChaiColors(
-    textColorPrimary = ChaiGrey90,
+    primary = ChaiBlue,
     background = ChaiWhite,
+    surfaces = ChaiLightGrey,
     primaryContainer = ChaiLightGrey,
-    subtitleTextColor = ChaiSmokeyGrey,
     activeBottomNavIconColor = ChaiBlue,
     inactiveBottomNavIconColor = ChaiGrey90,
-    titleTextColorPrimary = ChaiBlue,
+    bottomNavBackgroundColor = ChaiWhite,
+    activeBottomNavTextColor = ChaiRed,
+    textTitlePrimaryColor = ChaiBlue,
+    textBoldColor = ChaiGrey90,
+    textNormalColor = ChaiGrey90,
+    textWeakColor = ChaiSmokeyGrey,
+    textLabelAndHeadings = ChaiBlue,
     linkTextColorPrimary = ChaiBlue
 )
 
 val ChaiDarkColorPalette = ChaiColors(
-    textColorPrimary = ChaiLightGrey,
+    primary = ChaiBlack,
     background = ChaiGrey90,
+    surfaces = ChaiBlack,
     primaryContainer = ChaiBlack,
-    subtitleTextColor = ChaiGrey,
-    activeBottomNavIconColor = ChaiTeal90,
+    activeBottomNavIconColor = ChaiTeal,
     inactiveBottomNavIconColor = ChaiWhite,
-    titleTextColorPrimary = ChaiWhite,
+    bottomNavBackgroundColor = ChaiBlack,
+    activeBottomNavTextColor = ChaiRed,
+    textTitlePrimaryColor = ChaiWhite,
+    textBoldColor = ChaiLightGrey,
+    textNormalColor = ChaiWhite,
+    textWeakColor = ChaiGrey,
+    textLabelAndHeadings = ChaiTeal90,
     linkTextColorPrimary = ChaiLightGrey
 )

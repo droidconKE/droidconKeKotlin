@@ -68,7 +68,7 @@ fun SponsorsCard(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(id = R.string.sponsors_title),
                 style = TextStyle(
-                    color = MaterialTheme.chaiColorsPalette.titleTextColorPrimary,
+                    color = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     lineHeight = 25.sp,

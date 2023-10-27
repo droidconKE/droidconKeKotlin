@@ -83,7 +83,7 @@ private fun SpeakersScreen(
                         text = stringResource(id = R.string.speakers_label),
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                        color = MaterialTheme.chaiColorsPalette.textColorPrimary
+                        color = MaterialTheme.chaiColorsPalette.textBoldColor
                     )
                 },
                 navigationIcon = {

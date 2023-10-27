@@ -65,7 +65,7 @@ fun HomeSectionHeaderComponent(
             text = sectionLabel,
             textAlign = TextAlign.Start,
             style = TextStyle(
-                color = MaterialTheme.chaiColorsPalette.titleTextColorPrimary,
+                color = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 lineHeight = 25.sp,

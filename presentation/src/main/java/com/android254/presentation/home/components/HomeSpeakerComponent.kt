@@ -92,7 +92,7 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                 end.linkTo(parent.end)
             },
             style = TextStyle(
-                color = MaterialTheme.chaiColorsPalette.textColorPrimary,
+                color = MaterialTheme.chaiColorsPalette.textBoldColor,
                 fontSize = 12.sp,
                 fontFamily = MontserratMedium
             ),
