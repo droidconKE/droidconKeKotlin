@@ -18,7 +18,11 @@ package com.android254.data.repos
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Session
+import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
@@ -51,6 +55,24 @@ class SessionsManager @Inject constructor(
                 }
         }.flowOn(ioDispatcher)
     }
+
+    override suspend fun fetchSessionsInformation(): Flow<SessionsInformationDomainModel> = combine(
+        localSessionsDataSource.getCachedSessions(),
+        bookmarkDao.getBookmarkIds()
+    ) { sessions, bookmarks ->
+        val eventDays = sessions.groupBy { it.startTimestamp.toEventDay() }.keys.toList()
+        SessionsInformationDomainModel(
+            sessions = sessions.map { session -> session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())) },
+            eventDays = eventDays
+        )
+    }
+
+    private fun Long.toEventDay(): String {
+        val date = Date(this)
+        val sdf = SimpleDateFormat("dd", Locale.getDefault())
+        return sdf.format(date)
+    }
+
     override fun fetchBookmarkedSessions(): Flow<List<Session>> {
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         val sessionsFlow = localSessionsDataSource.getCachedSessions()
@@ -74,9 +96,13 @@ class SessionsManager @Inject constructor(
         }.flowOn(ioDispatcher)
     }
 
-    override fun fetchSessionById(sessionId: String): Flow<Session?> {
+    override fun fetchFilteredSessions(vararg filters: List<String>) {
+        //
+    }
+
+    override fun fetchSessionById(id: String): Flow<Session?> {
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        val sessionFlow = localSessionsDataSource.getCachedSessionById(sessionId).map {
+        val sessionFlow = localSessionsDataSource.getCachedSessionById(id).map {
             it?.toDomainModel()
         }
         return combine(sessionFlow, bookmarksFlow) { session, bookmarks ->
@@ -109,6 +135,7 @@ class SessionsManager @Inject constructor(
             is DataResult.Error -> {
                 Timber.d("Sync sessions failed ${response.message}")
             }
+
             else -> {
             }
         }

@@ -15,20 +15,22 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.EventDate
-import kotlinx.datetime.LocalDate
 
+/*
 val droidconEventDays = listOf(
-    EventDate(LocalDate(2023, 11, 16)),
-    EventDate(LocalDate(2023, 11, 17)),
-    EventDate(LocalDate(2023, 11, 18))
+    EventDate(LocalDate(2023, 11, 16), 1),
+    EventDate(LocalDate(2023, 11, 17), 2),
+    EventDate(LocalDate(2023, 11, 18), 3)
 )
+*/
 
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
@@ -41,17 +43,17 @@ fun ordinal(i: Int): String {
 @Composable
 fun EventDaySelector(
     selectedDate: EventDate,
-    updateSelectedDay: (EventDate) -> Unit
+    updateSelectedDay: (EventDate) -> Unit,
+    eventDates: List<EventDate>
 ) {
-    Row() {
-        droidconEventDays.forEachIndexed { index, eventDate ->
+    LazyRow {
+        items(eventDates) { eventDay ->
             EventDaySelectorButton(
-                title = ordinal(eventDate.value.dayOfMonth),
-                subtitle = "Day ${index + 1}",
-                onClick = { updateSelectedDay(eventDate) },
-                selected = selectedDate == eventDate
-            ) {
-            }
+                title = ordinal(eventDay.value.toInt()),
+                subtitle = "Day ${eventDay.day}",
+                onClick = { updateSelectedDay(eventDay) },
+                selected = selectedDate == eventDay
+            )
             Spacer(Modifier.width(16.dp))
         }
     }

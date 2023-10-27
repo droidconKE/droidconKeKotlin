@@ -58,54 +58,48 @@ fun SessionsStateComponent(
     isRefreshing: Boolean
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
-    when (sessionsUiState) {
-        is SessionsUiState.Loading -> {
-            SessionLoadingComponent()
-        }
 
-        is SessionsUiState.Empty -> {
-            val message = sessionsUiState.message
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    modifier = Modifier.size(70.dp),
-                    painter = painterResource(id = R.drawable.sessions_icon),
-                    contentDescription = stringResource(id = R.string.sessions_icon_description),
-                    tint = ChaiBlue
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                Text(
-                    text = message,
-                    style = TextStyle(
-                        color = ChaiDarkGrey,
-                        fontSize = 18.sp,
-                        fontFamily = MontserratRegular,
-                        textAlign = TextAlign.Center
-                    )
-                )
-            }
-        }
+    if (sessionsUiState.isLoading){
+        SessionLoadingComponent()
+    }
 
-        is SessionsUiState.Data -> {
-            val sessionsList = sessionsUiState.data
-            SessionListComponent(
-                swipeRefreshState = swipeRefreshState,
-                sessions = sessionsList,
-                navigateToSessionDetails = navigateToSessionDetails,
-                refreshSessionsList = refreshSessionsList
+    if (sessionsUiState.isEmpty){
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                modifier = Modifier.size(70.dp),
+                painter = painterResource(id = R.drawable.sessions_icon),
+                contentDescription = stringResource(id = R.string.sessions_icon_description),
+                tint = ChaiBlue
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = sessionsUiState.isEmptyMessage,
+                style = TextStyle(
+                    color = ChaiDarkGrey,
+                    fontSize = 18.sp,
+                    fontFamily = MontserratRegular,
+                    textAlign = TextAlign.Center
+                )
             )
         }
+    }
 
-        is SessionsUiState.Error -> {
-            val message = sessionsUiState.message
-            SessionsErrorComponent(errorMessage = message, retry = retry)
-        }
+    if (sessionsUiState.isError){
+        SessionsErrorComponent(errorMessage = sessionsUiState.errorMessage, retry = retry)
+    }
 
-        is SessionsUiState.Idle -> {}
+    if (!sessionsUiState.isEmpty){
+        SessionListComponent(
+            swipeRefreshState = swipeRefreshState,
+            sessions = sessionsUiState.sessions,
+            navigateToSessionDetails = navigateToSessionDetails,
+            refreshSessionsList = refreshSessionsList
+        )
     }
 }
 
