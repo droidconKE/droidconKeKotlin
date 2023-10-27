@@ -19,8 +19,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -66,20 +64,8 @@ fun EventDaySelectorButton(
         } else {
             MaterialTheme.colorScheme.onSecondaryContainer
         }
-    ),
-    contentPadding: PaddingValues = PaddingValues(
-        start = 0.dp,
-        top = 0.dp,
-        end = 0.dp,
-        bottom = 0.dp
-    ),
-    content: @Composable RowScope.() -> Unit
+    )
 ) {
-    /*val containerColor = colors.containerColor(enabled).value
-    val contentColor = colors.contentColor(enabled).value
-    val shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
-    val tonalElevation = elevation?.tonalElevation(enabled, interactionSource)?.value ?: 0.dp
-*/
     val containerColor = Color.Black
     val contentColor = Color.Red
     val shadowElevation = 0.dp

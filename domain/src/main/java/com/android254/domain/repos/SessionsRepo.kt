@@ -16,12 +16,17 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.Session
+import com.android254.domain.models.SessionsInformationDomainModel
 import kotlinx.coroutines.flow.Flow
 
 interface SessionsRepo {
     fun fetchSessions(): Flow<List<Session>>
 
+    suspend fun fetchSessionsInformation(): Flow<SessionsInformationDomainModel>
+
     fun fetchFilteredSessions(query: String): Flow<List<Session>>
+
+    fun fetchFilteredSessions(vararg filters: List<String>)
 
     fun fetchBookmarkedSessions(): Flow<List<Session>>
 
