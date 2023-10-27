@@ -76,7 +76,7 @@ fun SessionsRoute(
 }
 
 @Composable
-private fun SessionsScreen(
+fun SessionsScreen(
     sessionsUiState: SessionsUiState,
     selectedEventDate: EventDate,
     isRefreshing: Boolean,
