@@ -20,6 +20,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.atoms.ChaiCoal
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
@@ -44,7 +45,14 @@ data class ChaiColors(
     val textNormalColor: Color = Color.Unspecified,
     val textWeakColor: Color = Color.Unspecified,
     val textLabelAndHeadings: Color = Color.Unspecified,
-    val linkTextColorPrimary: Color = Color.Unspecified
+    val linkTextColorPrimary: Color = Color.Unspecified,
+    val secondaryButtonColor: Color = Color.Unspecified,
+    val secondaryButtonTextColor: Color = Color.Unspecified,
+    val outlinedButtonTextColor: Color = Color.Unspecified,
+    val textButtonColor: Color = Color.Unspecified,
+    val buttonHighlightColor: Color = Color.Unspecified,
+    val radioButtonColors: Color = Color.Unspecified,
+    val unselectedToggleColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -63,7 +71,14 @@ val ChaiLightColorPalette = ChaiColors(
     textNormalColor = ChaiGrey90,
     textWeakColor = ChaiSmokeyGrey,
     textLabelAndHeadings = ChaiBlue,
-    linkTextColorPrimary = ChaiBlue
+    linkTextColorPrimary = ChaiBlue,
+    secondaryButtonColor = ChaiBlue,
+    secondaryButtonTextColor = ChaiBlue,
+    outlinedButtonTextColor = ChaiCoal,
+    textButtonColor = ChaiBlue,
+    buttonHighlightColor = ChaiBlue.copy(alpha = 0.11f),
+    radioButtonColors = ChaiSmokeyGrey,
+    unselectedToggleColor = ChaiLightGrey
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -80,5 +95,12 @@ val ChaiDarkColorPalette = ChaiColors(
     textNormalColor = ChaiWhite,
     textWeakColor = ChaiGrey,
     textLabelAndHeadings = ChaiTeal90,
-    linkTextColorPrimary = ChaiLightGrey
+    linkTextColorPrimary = ChaiLightGrey,
+    secondaryButtonColor = ChaiTeal90,
+    secondaryButtonTextColor = ChaiTeal,
+    outlinedButtonTextColor = ChaiTeal90,
+    textButtonColor = ChaiLightGrey,
+    buttonHighlightColor = ChaiLightGrey.copy(alpha = 0.11f),
+    radioButtonColors = ChaiWhite,
+    unselectedToggleColor = ChaiGrey90
 )
