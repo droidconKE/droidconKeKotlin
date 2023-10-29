@@ -36,7 +36,7 @@ data class ChaiColors(
     val activeBottomNavIconColor: Color = Color.Unspecified,
     val inactiveBottomNavIconColor: Color = Color.Unspecified,
     val titleTextColorPrimary: Color = Color.Unspecified,
-    val linkTextColorPrimary: Color = Color.Unspecified,
+    val linkTextColorPrimary: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.android254.presentation.home.components
 
 import android.content.res.Configuration
@@ -83,7 +98,7 @@ fun HomeSectionHeaderComponent(
                     .width(34.dp)
                     .background(
                         color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary.copy(alpha = 0.11f),
-                        shape = RoundedCornerShape(14.dp),
+                        shape = RoundedCornerShape(14.dp)
                     )
             ) {
                 Text(
@@ -102,11 +117,11 @@ fun HomeSectionHeaderComponent(
 
 @Preview(
     name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
 )
 @Preview(
     name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun HomeSectionHeaderComponentPreview() {
