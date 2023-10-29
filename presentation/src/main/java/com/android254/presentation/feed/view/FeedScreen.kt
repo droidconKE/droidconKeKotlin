@@ -57,6 +57,7 @@ import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
@@ -85,10 +86,14 @@ private fun FeedScreen(
 
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
+            containerColor = MaterialTheme.chaiColorsPalette.surfaces,
             sheetState = bottomSheetState,
+            dragHandle = {},
             onDismissRequest = { scope.launch { bottomSheetState.hide() } }
         ) {
-            FeedShareSection()
+            FeedShareSection(
+                onCancelClicked = { scope.launch { bottomSheetState.hide() } }
+            )
         }
     }
     Scaffold(
