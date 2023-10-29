@@ -50,7 +50,6 @@ class SessionScreenTest {
 
     @Test
     fun hasExpectedButtons() = runTest {
-
         composeTestRule.setContent {
             DroidconKE2023Theme {
                 SessionsScreen(
@@ -78,7 +77,6 @@ class SessionScreenTest {
 
     @Test
     fun `should show topBar`() = runTest {
-
         composeTestRule.setContent {
             DroidconKE2023Theme() {
                 SessionsScreen(

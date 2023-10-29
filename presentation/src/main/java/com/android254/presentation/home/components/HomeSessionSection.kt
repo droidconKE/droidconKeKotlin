@@ -80,7 +80,6 @@ fun HomeSessionSection(
     }
 }
 
-
 @Composable
 fun HomeSessionContent(
     session: SessionPresentationModel,

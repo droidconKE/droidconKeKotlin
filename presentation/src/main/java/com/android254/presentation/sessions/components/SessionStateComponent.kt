@@ -59,11 +59,11 @@ fun SessionsStateComponent(
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
-    if (sessionsUiState.isLoading){
+    if (sessionsUiState.isLoading) {
         SessionLoadingComponent()
     }
 
-    if (sessionsUiState.isEmpty){
+    if (sessionsUiState.isEmpty) {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -89,11 +89,11 @@ fun SessionsStateComponent(
         }
     }
 
-    if (sessionsUiState.isError){
+    if (sessionsUiState.isError) {
         SessionsErrorComponent(errorMessage = sessionsUiState.errorMessage, retry = retry)
     }
 
-    if (!sessionsUiState.isEmpty){
+    if (!sessionsUiState.isEmpty) {
         SessionListComponent(
             swipeRefreshState = swipeRefreshState,
             sessions = sessionsUiState.sessions,
