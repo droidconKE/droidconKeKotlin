@@ -37,7 +37,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -56,8 +55,8 @@ import com.android254.presentation.common.components.DroidconAppBarWithFeedbackB
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
@@ -126,7 +125,12 @@ private fun FeedScreen(
                             contentDescription = "Error",
                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error)
                         )
-                        Text(text = feedUIState.message)
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        ChaiBodyMediumBold(
+                            bodyText = feedUIState.message,
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        )
                     }
                 }
 
@@ -159,16 +163,22 @@ private fun FeedScreen(
 
                 FeedUIState.Empty -> {
                     Column(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
                             modifier = Modifier.size(70.dp),
                             painter = painterResource(id = R.drawable.feed_icon),
                             contentDescription = stringResource(id = R.string.feed_icon_description),
-                            tint = ChaiBlue
+                            tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
                         )
                         Spacer(modifier = Modifier.height(20.dp))
-                        Text(text = "No items")
+
+                        ChaiBodyMediumBold(
+                            bodyText = "No items",
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        )
                     }
                 }
             }
