@@ -137,8 +137,7 @@ private fun FeedScreen(
 
                 is FeedUIState.Success -> {
                     LazyColumn(
-                        modifier = Modifier.testTag("feeds_lazy_column"),
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        modifier = Modifier.testTag("feeds_lazy_column")
                     ) {
                         items(feedUIState.feeds) { feedPresentationModel ->
                             FeedComponent(
