@@ -17,12 +17,15 @@ package com.android254.presentation.common.bottomnav
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,8 +56,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                             contentDescription = destination.title
                         )
                         Text(
+                            modifier = Modifier.padding(top = 8.dp),
                             text = destination.title,
-                            color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+                            color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground,
+                            fontSize = MaterialTheme.typography.labelMedium.fontSize
                         )
                     }
                 },
