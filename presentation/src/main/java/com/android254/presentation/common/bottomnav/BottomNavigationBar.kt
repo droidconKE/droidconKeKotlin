@@ -40,8 +40,9 @@ fun BottomNavigationBar(navController: NavHostController) {
         val currentDestination = navBackStackEntry?.destination
 
         bottomNavigationDestinations.forEach { destination ->
+            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             NavigationBarItem(
-                selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true,
+                selected = selected,
                 icon = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,7 +52,10 @@ fun BottomNavigationBar(navController: NavHostController) {
                             painter = painterResource(id = destination.icon),
                             contentDescription = destination.title
                         )
-                        Text(text = destination.title)
+                        Text(
+                            text = destination.title,
+                            color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 },
                 alwaysShowLabel = false,
@@ -65,8 +69,6 @@ fun BottomNavigationBar(navController: NavHostController) {
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    selectedTextColor = MaterialTheme.colorScheme.secondary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
                     indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
                 )
             )
