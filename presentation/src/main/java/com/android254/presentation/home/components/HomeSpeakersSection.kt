@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -45,7 +46,8 @@ fun HomeSpeakersSection(
         LazyRow(
             modifier = Modifier
                 .testTag("speakersRow")
-                .padding(top = 24.dp)
+                .padding(top = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(speakers.take(8)) { speaker ->
                 HomeSpeakerComponent(speaker = speaker, onClick = {

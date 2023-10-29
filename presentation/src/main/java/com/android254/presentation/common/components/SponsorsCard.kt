@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,15 +34,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -57,23 +53,17 @@ fun SponsorsCard(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.chaiColorsPalette.primaryContainer,
+                    color = MaterialTheme.chaiColorsPalette.surfaces,
                     shape = RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 30.dp, vertical = 10.dp)
                 .testTag("sponsors_section"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+            ChaiSubTitle(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(id = R.string.sponsors_title),
-                style = TextStyle(
-                    color = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    lineHeight = 25.sp,
-                    fontFamily = MontserratBold
-                ),
+                titleText = stringResource(id = R.string.sponsors_title),
+                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 textAlign = TextAlign.Center
             )
 

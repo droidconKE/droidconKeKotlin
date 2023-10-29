@@ -127,7 +127,8 @@ fun ChaiTitle(
 fun ChaiSubTitle(
     modifier: Modifier = Modifier,
     titleText: String,
-    titleColor: Color = Color.Unspecified
+    titleColor: Color = Color.Unspecified,
+    textAlign: TextAlign? = TextAlign.Start
 ) {
     Text(
         modifier = modifier,
@@ -139,7 +140,7 @@ fun ChaiSubTitle(
             fontFamily = MontserratBold,
             lineHeight = 22.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = textAlign
     )
 }
 
@@ -147,7 +148,8 @@ fun ChaiSubTitle(
 fun ChaiBodyXSmallBold(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    textAlign: TextAlign? = TextAlign.Start
 ) {
     Text(
         modifier = modifier,
@@ -159,7 +161,7 @@ fun ChaiBodyXSmallBold(
             fontFamily = MontserratMedium,
             lineHeight = 16.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = textAlign
     )
 }
 
@@ -187,7 +189,8 @@ fun ChaiBodyXSmall(
 fun ChaiBodySmallBold(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     Text(
         modifier = modifier,
@@ -199,7 +202,8 @@ fun ChaiBodySmallBold(
             fontFamily = MontserratBold,
             lineHeight = 20.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
+        maxLines = maxLines
     )
 }
 

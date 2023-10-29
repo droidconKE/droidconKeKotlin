@@ -35,7 +35,6 @@ data class ChaiColors(
     val primary: Color = Color.Unspecified,
     val background: Color = Color.Unspecified,
     val surfaces: Color = Color.Unspecified,
-    val primaryContainer: Color = Color.Unspecified,
     val bottomNavBorderColor: Color = Color.Unspecified,
     val activeBottomNavIconColor: Color = Color.Unspecified,
     val activeBottomNavTextColor: Color = Color.Unspecified,
@@ -51,7 +50,6 @@ data class ChaiColors(
     val secondaryButtonTextColor: Color = Color.Unspecified,
     val outlinedButtonTextColor: Color = Color.Unspecified,
     val textButtonColor: Color = Color.Unspecified,
-    val buttonHighlightColor: Color = Color.Unspecified,
     val radioButtonColors: Color = Color.Unspecified,
     val unselectedToggleColor: Color = Color.Unspecified
 )
@@ -62,7 +60,6 @@ val ChaiLightColorPalette = ChaiColors(
     primary = ChaiBlue,
     background = ChaiWhite,
     surfaces = ChaiLightGrey,
-    primaryContainer = ChaiLightGrey,
     bottomNavBorderColor = ChaiLightGrey,
     activeBottomNavIconColor = ChaiBlue,
     inactiveBottomNavIconColor = ChaiGrey90,
@@ -78,7 +75,6 @@ val ChaiLightColorPalette = ChaiColors(
     secondaryButtonTextColor = ChaiBlue,
     outlinedButtonTextColor = ChaiCoal,
     textButtonColor = ChaiBlue,
-    buttonHighlightColor = ChaiBlue.copy(alpha = 0.11f),
     radioButtonColors = ChaiSmokeyGrey,
     unselectedToggleColor = ChaiLightGrey
 )
@@ -87,7 +83,6 @@ val ChaiDarkColorPalette = ChaiColors(
     primary = ChaiBlack,
     background = ChaiGrey90,
     surfaces = ChaiBlack,
-    primaryContainer = ChaiBlack,
     bottomNavBorderColor = ChaiGrey90,
     activeBottomNavIconColor = ChaiTeal,
     inactiveBottomNavIconColor = ChaiWhite,
@@ -103,7 +98,6 @@ val ChaiDarkColorPalette = ChaiColors(
     secondaryButtonTextColor = ChaiTeal,
     outlinedButtonTextColor = ChaiTeal90,
     textButtonColor = ChaiLightGrey,
-    buttonHighlightColor = ChaiLightGrey.copy(alpha = 0.11f),
     radioButtonColors = ChaiWhite,
     unselectedToggleColor = ChaiGrey90
 )
