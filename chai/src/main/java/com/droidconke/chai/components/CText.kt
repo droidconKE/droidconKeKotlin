@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
@@ -251,7 +252,8 @@ fun ChaiBodyMediumBold(
 fun ChaiBodyMedium(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     Text(
         modifier = modifier,
@@ -263,7 +265,9 @@ fun ChaiBodyMedium(
             fontFamily = MontserratRegular,
             lineHeight = 20.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
