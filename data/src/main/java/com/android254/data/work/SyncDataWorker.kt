@@ -41,13 +41,11 @@ class SyncDataWorker @AssistedInject constructor(
     @Assisted val appContext: Context,
     @Assisted val workerParameters: WorkerParameters,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-
     private val speakersRepo: SpeakersRepo,
     private val sponsorsRepo: SponsorsRepo,
     private val sessionsRepo: SessionsRepo,
     private val organizersRepo: OrganizersRepo,
     private val feedRepo: FeedRepo
-
 ) : CoroutineWorker(appContext, workerParameters) {
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
