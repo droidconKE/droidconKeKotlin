@@ -54,7 +54,12 @@ data class ChaiColors(
     val textButtonColor: Color = Color.Unspecified,
     val radioButtonColors: Color = Color.Unspecified,
     val unselectedToggleColor: Color = Color.Unspecified,
-    val loadingStateOnCardsColor: Color = Color.Unspecified
+    val loadingStateOnCardsColor: Color = Color.Unspecified,
+    val titleTextColorPrimary: Color = Color.Unspecified,
+    val eventDaySelectorActiveSurfaceColor: Color = Color.Unspecified,
+    val eventDaySelectorInactiveSurfaceColor: Color = Color.Unspecified,
+    val eventDaySelectorInactiveTextColor: Color = Color.Unspecified,
+    val eventDaySelectorActiveTextColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -81,7 +86,11 @@ val ChaiLightColorPalette = ChaiColors(
     textButtonColor = ChaiBlue,
     radioButtonColors = ChaiSmokeyGrey,
     unselectedToggleColor = ChaiLightGrey,
-    loadingStateOnCardsColor = ChaiGrey
+    loadingStateOnCardsColor = ChaiGrey,
+    eventDaySelectorActiveSurfaceColor = ChaiRed,
+    eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
+    eventDaySelectorActiveTextColor = ChaiWhite,
+    eventDaySelectorInactiveTextColor = ChaiGrey90
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -106,5 +115,9 @@ val ChaiDarkColorPalette = ChaiColors(
     textButtonColor = ChaiLightGrey,
     radioButtonColors = ChaiWhite,
     unselectedToggleColor = ChaiGrey90,
-    loadingStateOnCardsColor = ChaiDarkGrey
+    loadingStateOnCardsColor = ChaiDarkGrey,
+    eventDaySelectorActiveSurfaceColor = ChaiRed,
+    eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
+    eventDaySelectorActiveTextColor = ChaiWhite,
+    eventDaySelectorInactiveTextColor = ChaiWhite
 )
