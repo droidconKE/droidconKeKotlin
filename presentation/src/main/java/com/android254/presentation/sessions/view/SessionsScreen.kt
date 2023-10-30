@@ -110,6 +110,10 @@ fun SessionsScreen(
         mutableStateOf(false)
     }
 
+    val sessionScreenSessionsState = rememberSaveable {
+        mutableStateOf(SessionScreenState.ALL)
+    }
+
     BackHandler(bottomSheetState.isVisible) {
         scope.launch { bottomSheetState.hide() }
     }
@@ -158,8 +162,10 @@ fun SessionsScreen(
                     showMySessions.value = it
                     isFilterActive.value = !it
                     if (showMySessions.value) {
+                        sessionScreenSessionsState.value = SessionScreenState.MYSESSIONS
                         toggleBookmarkFilter()
                     } else {
+                        sessionScreenSessionsState.value = SessionScreenState.ALL
                         clearSelectedFilterList()
                     }
                 })
@@ -169,7 +175,8 @@ fun SessionsScreen(
                 navigateToSessionDetails = navigateToSessionDetails,
                 refreshSessionsList = refreshSessionList,
                 retry = { },
-                isRefreshing = isRefreshing
+                isRefreshing = isRefreshing,
+                sessionScreenState = sessionScreenSessionsState.value
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(
@@ -222,4 +229,8 @@ fun SessionsScreenPreview() {
             clearSelectedFilterList = {}
         )
     }
+}
+
+enum class SessionScreenState {
+    ALL, MYSESSIONS
 }

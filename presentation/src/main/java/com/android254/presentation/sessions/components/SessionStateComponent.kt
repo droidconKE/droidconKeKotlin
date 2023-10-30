@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,9 +42,12 @@ import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
+import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiDarkGrey
 import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiSubTitle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -55,7 +59,8 @@ fun SessionsStateComponent(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     refreshSessionsList: () -> Unit,
     retry: () -> Unit,
-    isRefreshing: Boolean
+    isRefreshing: Boolean,
+    sessionScreenState: SessionScreenState
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -98,7 +103,8 @@ fun SessionsStateComponent(
             swipeRefreshState = swipeRefreshState,
             sessions = sessionsUiState.sessions,
             navigateToSessionDetails = navigateToSessionDetails,
-            refreshSessionsList = refreshSessionsList
+            refreshSessionsList = refreshSessionsList,
+            sessionScreenState = sessionScreenState
         )
     }
 }
@@ -108,12 +114,25 @@ fun SessionListComponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit
+    refreshSessionsList: () -> Unit,
+    sessionScreenState: SessionScreenState
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                ChaiSubTitle(
+                    titleText = when (sessionScreenState) {
+                        SessionScreenState.ALL -> "All Sessions"
+                        SessionScreenState.MYSESSIONS -> "My sessions"
+                    },
+                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
             itemsIndexed(
                 items = sessions,
                 key = { _, session -> session.remoteId }
