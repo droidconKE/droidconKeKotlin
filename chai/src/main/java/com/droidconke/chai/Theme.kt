@@ -115,16 +115,16 @@ fun ChaiDCKE22Theme(
         else -> LightColors
     }
     val view = LocalView.current
+    val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
+
     if (!view.isInEditMode) {
         SideEffect {
             val activity = view.context.findActivity()
-            activity.window.statusBarColor = colorScheme.primary.toArgb()
+            activity.window.statusBarColor = customColorsPalette.background.toArgb()
             WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars =
-                darkTheme
+                !darkTheme
         }
     }
-
-    val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
 
     CompositionLocalProvider(
         LocalChaiColorsPalette provides customColorsPalette
