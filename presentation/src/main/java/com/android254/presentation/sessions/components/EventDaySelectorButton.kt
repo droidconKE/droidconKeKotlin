@@ -41,7 +41,7 @@ fun EventDaySelectorButton(
     title: String,
     subtitle: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -51,7 +51,7 @@ fun EventDaySelectorButton(
             .clickable { onClick() }
             .background(
                 color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveSurfaceColor else (MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveSurfaceColor).copy(alpha = 0.11f),
-                shape = RoundedCornerShape(5.dp)
+                shape = RoundedCornerShape(5.dp),
             )
             .padding(start = 5.dp)
     ) {
@@ -71,6 +71,7 @@ fun EventDaySelectorButton(
         )
     }
 }
+
 
 @ChaiLightAndDarkComposePreview
 @Composable
