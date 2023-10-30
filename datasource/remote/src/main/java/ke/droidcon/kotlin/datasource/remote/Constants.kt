@@ -16,7 +16,7 @@
 package ke.droidcon.kotlin.datasource.remote
 
 object Constants {
-    //const val DEV_BASE_URL = "https://dev.droidcon.co.ke/api/v1"
+    // const val DEV_BASE_URL = "https://dev.droidcon.co.ke/api/v1"
     const val PROD_BASE_URL = "https://api.droidcon.co.ke/v1"
     const val DEV_BASE_URL = "https://api.droidcon.co.ke/v1"
     private const val EVENT_SLUG = "droidconke-2023-137"
