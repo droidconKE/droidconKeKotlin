@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiCoal
+import com.droidconke.chai.atoms.ChaiDarkGrey
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
@@ -52,7 +53,8 @@ data class ChaiColors(
     val outlinedButtonTextColor: Color = Color.Unspecified,
     val textButtonColor: Color = Color.Unspecified,
     val radioButtonColors: Color = Color.Unspecified,
-    val unselectedToggleColor: Color = Color.Unspecified
+    val unselectedToggleColor: Color = Color.Unspecified,
+    val loadingStateOnCardsColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -78,7 +80,8 @@ val ChaiLightColorPalette = ChaiColors(
     outlinedButtonTextColor = ChaiCoal,
     textButtonColor = ChaiBlue,
     radioButtonColors = ChaiSmokeyGrey,
-    unselectedToggleColor = ChaiLightGrey
+    unselectedToggleColor = ChaiLightGrey,
+    loadingStateOnCardsColor = ChaiGrey
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -102,5 +105,6 @@ val ChaiDarkColorPalette = ChaiColors(
     outlinedButtonTextColor = ChaiTeal90,
     textButtonColor = ChaiLightGrey,
     radioButtonColors = ChaiWhite,
-    unselectedToggleColor = ChaiGrey90
+    unselectedToggleColor = ChaiGrey90,
+    loadingStateOnCardsColor = ChaiDarkGrey
 )

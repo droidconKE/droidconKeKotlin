@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
 import com.droidconke.chai.atoms.MontserratThin
+import com.droidconke.chai.chaiColorsPalette
 
 /**
  * CText:
@@ -336,7 +337,7 @@ fun CPrimaryButtonText(
     modifier: Modifier = Modifier,
     text: String,
     textAllCaps: Boolean = false,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary
+    textColor: Color = MaterialTheme.chaiColorsPalette.textButtonColor
 ) {
     Text(
         modifier = modifier,

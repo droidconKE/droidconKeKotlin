@@ -29,24 +29,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiDarkGrey
-import com.droidconke.chai.atoms.MontserratRegular
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiSubTitle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
@@ -82,14 +77,10 @@ fun SessionsStateComponent(
                 tint = ChaiBlue
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = sessionsUiState.isEmptyMessage,
-                style = TextStyle(
-                    color = ChaiDarkGrey,
-                    fontSize = 18.sp,
-                    fontFamily = MontserratRegular,
-                    textAlign = TextAlign.Center
-                )
+
+            ChaiBodyMediumBold(
+                bodyText = sessionsUiState.isEmptyMessage,
+                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
             )
         }
     }
