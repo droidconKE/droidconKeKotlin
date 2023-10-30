@@ -54,7 +54,7 @@ class SpeakerDetailsScreenTest {
 
         composeTestRule.setContent {
             SpeakerDetailsRoute(
-                id = 0,
+                name = "Harun Wangereka",
                 SpeakerDetailsScreenViewModel(
                     speakersRepo = speakersRepo,
                     savedStateHandle = mockSavedStateHandle
