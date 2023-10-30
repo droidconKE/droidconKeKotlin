@@ -17,6 +17,7 @@ package com.android254.presentation.sessions.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.EventDate
@@ -25,21 +26,19 @@ import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
     private val sessionsRepo: SessionsRepo,
     private val syncDataWorkManager: SyncDataWorkManager
-
 ) : ViewModel() {
 
     private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
@@ -48,14 +47,8 @@ class SessionsViewModel @Inject constructor(
 
     private val _filterState: MutableStateFlow<SessionsFilterState?> =
         MutableStateFlow(SessionsFilterState())
-    private val _selectedEventDate: MutableStateFlow<EventDate> = MutableStateFlow(
-        EventDate(
-            LocalDate(year = 2023, monthNumber = 11, dayOfMonth = 16)
-        )
-    )
-    val selectedEventDate = _selectedEventDate.asStateFlow()
 
-    private val _sessionsUiState = MutableStateFlow<SessionsUiState>(SessionsUiState.Idle)
+    private val _sessionsUiState = MutableStateFlow(SessionsUiState())
     val sessionsUiState = _sessionsUiState.asStateFlow()
 
     val isRefreshing = syncDataWorkManager.isSyncing
@@ -148,56 +141,52 @@ class SessionsViewModel @Inject constructor(
     }
 
     private suspend fun fetchAllSessions() {
-        _sessionsUiState.value = SessionsUiState.Loading
-        sessionsRepo.fetchSessions().collectLatest { sessions ->
-            try {
-                _sessionsUiState.value = if (sessions.isNotEmpty()) {
-                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
-                } else {
-                    SessionsUiState.Empty("No sessions found")
-                }
-            } catch (e: Exception) {
-                _sessionsUiState.value = SessionsUiState.Error(
-                    message = e.message ?: "An unexpected error occurred"
-                )
-            }
+        updateIsLoadingState()
+        sessionsRepo.fetchSessionsInformation().collectLatest { sessions ->
+            val sessionDays = sessions.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
+            _sessionsUiState.value = _sessionsUiState.value.copy(
+                eventDays = sessionDays,
+                selectedEventDay = sessionDays.first()
+            )
+            updateSessions(sessions.sessions)
         }
     }
 
     private suspend fun fetchFilteredSessions(query: String) {
-        _sessionsUiState.value = SessionsUiState.Loading
+        updateIsLoadingState()
         sessionsRepo.fetchFilteredSessions(query = query).collectLatest { sessions ->
-            try {
-                _sessionsUiState.value = if (sessions.isNotEmpty()) {
-                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
-                } else {
-                    SessionsUiState.Empty("No sessions found")
-                }
-            } catch (e: Exception) {
-                _sessionsUiState.value = SessionsUiState.Error(
-                    message =
-                    e.message ?: "Sessions not found"
-                )
-            }
+            updateSessions(sessions)
         }
     }
 
-    private suspend fun fetchBookmarkSessions() {
-        _sessionsUiState.value = SessionsUiState.Loading
-        sessionsRepo.fetchBookmarkedSessions().collectLatest { sessions ->
-            try {
-                _sessionsUiState.value = if (sessions.isNotEmpty()) {
-                    SessionsUiState.Data(data = sessions.map { it.toPresentationModel() })
-                } else {
-                    SessionsUiState.Empty("No bookmarked sessions found")
-                }
-            } catch (e: Exception) {
-                _sessionsUiState.value = SessionsUiState.Error(
-                    message =
-                    e.message ?: "Bookmark sessions not found"
-                )
-            }
+    private fun updateSessions(sessions: List<Session>) {
+        val newState = if (sessions.isEmpty()) {
+            _sessionsUiState.value.copy(
+                isEmpty = sessions.isEmpty(),
+                sessions = emptyList(),
+                isEmptyMessage = "No sessions found",
+                isLoading = false
+            )
+        } else {
+            _sessionsUiState.value.copy(
+                isEmpty = sessions.isEmpty(),
+                sessions = sessions.map { session -> session.toPresentationModel() },
+                isEmptyMessage = "",
+                isLoading = false
+            )
         }
+        _sessionsUiState.value = newState
+    }
+
+    private suspend fun fetchBookmarkSessions() {
+        updateIsLoadingState()
+        sessionsRepo.fetchBookmarkedSessions().collectLatest { sessions ->
+            updateSessions(sessions)
+        }
+    }
+
+    private fun updateIsLoadingState() {
+        _sessionsUiState.value = _sessionsUiState.value.copy(isLoading = true)
     }
 
     private fun getQuery(): String {
@@ -256,7 +245,9 @@ class SessionsViewModel @Inject constructor(
     }
 
     fun updateSelectedDay(date: EventDate) {
-        _selectedEventDate.value = date
+        _sessionsUiState.value = _sessionsUiState.value.copy(
+            selectedEventDay = date
+        )
         viewModelScope.launch {
             fetchFilteredSessions(query = getQuery())
         }
@@ -281,9 +272,9 @@ class SessionsViewModel @Inject constructor(
     fun toggleBookmarkFilter() {
         viewModelScope.launch {
             _filterState.value = SessionsFilterState()
-            val previousState = _filterState?.value?.isBookmarked ?: false
+            val previousState = _filterState.value?.isBookmarked ?: false
             _filterState.value = _filterState.value?.copy(isBookmarked = !previousState)
-            if (_filterState?.value?.isBookmarked == true) {
+            if (_filterState.value?.isBookmarked == true) {
                 fetchBookmarkSessions()
             } else {
                 fetchAllSessions()
