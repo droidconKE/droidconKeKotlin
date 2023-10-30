@@ -67,13 +67,13 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SpeakerDetailsRoute(
-    id: Int,
+    name: String,
     speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {}
 ) {
     val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = true) {
-        speakersDetailsScreenViewModel.getSpeakerById(id = id)
+        speakersDetailsScreenViewModel.getSpeakerByName(name = name)
     }
 
     SpeakerDetailsScreen(

@@ -41,11 +41,11 @@ fun Navigation(
             updateBottomBarState(true)
             HomeRoute(
                 navigateToSpeakers = { navController.navigate(Screens.Speakers.route) },
-                navigateToSpeaker = { speakerId ->
+                navigateToSpeaker = { speakerName ->
                     navController.navigate(
                         Screens.SpeakerDetails.route.replace(
-                            "{speakerId}",
-                            speakerId
+                            "{speakerName}",
+                            speakerName
                         )
                     )
                 },
@@ -113,11 +113,11 @@ fun Navigation(
             updateBottomBarState(true)
             SpeakersRoute(
                 navigateToHomeScreen = { navController.navigateUp() },
-                navigateToSpeaker = { speakerId ->
+                navigateToSpeaker = { speakerName ->
                     navController.navigate(
                         Screens.SpeakerDetails.route.replace(
-                            "{speakerId}",
-                            "$speakerId"
+                            "{speakerName}",
+                            speakerName
                         )
                     )
                 }
@@ -132,13 +132,13 @@ fun Navigation(
 
         composable(
             Screens.SpeakerDetails.route,
-            arguments = listOf(navArgument("speakerId") { type = NavType.IntType })
+            arguments = listOf(navArgument("speakerName") { type = NavType.StringType })
         ) {
-            val speakerId = it.arguments?.getInt("speakerId")
+            val speakerName = it.arguments?.getString("speakerName")
                 ?: throw IllegalStateException("Speaker data missing.")
             updateBottomBarState(false)
             SpeakerDetailsRoute(
-                id = speakerId,
+                name = speakerName,
                 navigateBack = { navController.navigateUp() }
             )
         }
