@@ -110,15 +110,8 @@ libraries.
 and `ktor` as examples.
 [plugins] Used to define plugins.
 
-You need to add your dependency version in [versions]. This is unnecessary if you are not sharing
-the version across different dependencies. After defining the version, add your library in
+You need to add your dependency version in [versions]. After defining the version, add your library in
 the [libraries] section as:
-
-```toml
-compose-activity = "androidx.activity:activity-compose:1.5.0"
-```
-
-Moreover, if you have already defined the version in [versions], you define it as:
 
 ```toml
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
