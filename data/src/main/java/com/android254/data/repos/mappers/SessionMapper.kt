@@ -16,9 +16,12 @@
 package com.android254.data.repos.mappers
 
 import com.android254.domain.models.Session
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import kotlinx.serialization.encodeToString
@@ -41,7 +44,8 @@ fun SessionEntity.toDomainModel() = Session(
     startTime = this.startTime,
     rooms = this.rooms,
     speakers = this.speakers,
-    remote_id = this.remote_id
+    remote_id = this.remote_id,
+    eventDay = this.startTimestamp.toEventDay()
 )
 
 fun SessionDTO.toEntity(): SessionEntity {
@@ -72,4 +76,10 @@ fun fromString(offsetDateTime: String): Long {
     val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     return LocalDateTime.parse(offsetDateTime, pattern).toInstant(ZoneOffset.ofHours(3))
         .toEpochMilli()
+}
+
+private fun Long.toEventDay(): String {
+    val date = Date(this)
+    val sdf = SimpleDateFormat("dd", Locale.getDefault())
+    return sdf.format(date)
 }
