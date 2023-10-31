@@ -32,5 +32,6 @@ data class Session(
     val sessionFormat: String,
     val sessionLevel: String,
     val slug: String,
-    val title: String
+    val title: String,
+    val eventDay: String
 )

@@ -28,16 +28,16 @@ import com.android254.presentation.sessions.mappers.getTimePeriod
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepo: HomeRepo,
+    homeRepo: HomeRepo,
     private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {
 
@@ -111,7 +111,8 @@ class HomeViewModel @Inject constructor(
                 endDate = it.endDateTime,
                 remoteId = it.remote_id,
                 isService = it.isServiceSession,
-                sessionImage = it.sessionImage ?: ""
+                sessionImage = it.sessionImage ?: "",
+                eventDay = it.eventDay
             )
         }
 }

@@ -22,7 +22,8 @@ import com.android254.presentation.models.Speaker
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 fun Session.toPresentationModel(): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
@@ -48,7 +49,8 @@ fun Session.toPresentationModel(): SessionPresentationModel {
         endDate = this.endDateTime,
         remoteId = this.remote_id,
         isService = this.isServiceSession,
-        sessionImage = this.sessionImage ?: ""
+        sessionImage = this.sessionImage ?: "",
+        eventDay = eventDay
     )
 }
 
