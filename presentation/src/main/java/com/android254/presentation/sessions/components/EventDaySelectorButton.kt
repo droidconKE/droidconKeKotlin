@@ -15,95 +15,80 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android254.presentation.common.theme.Montserrat
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun EventDaySelectorButton(
     title: String,
     subtitle: String,
     selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    elevation: ButtonElevation? = ButtonDefaults.buttonElevation(),
-    shape: Shape = RoundedCornerShape(5.dp),
-    border: BorderStroke? = null,
-    colors: ButtonColors = ButtonDefaults.buttonColors(
-        containerColor = if (selected) {
-            MaterialTheme.colorScheme.tertiary
-        } else {
-            MaterialTheme.colorScheme.secondaryContainer
-        },
-        contentColor = if (selected) {
-            MaterialTheme.colorScheme.onTertiary
-        } else {
-            MaterialTheme.colorScheme.onSecondaryContainer
-        }
-    )
+    onClick: () -> Unit
 ) {
-    val containerColor = Color.Black
-    val contentColor = Color.Red
-    val shadowElevation = 0.dp
-    val tonalElevation = 0.dp
-
-    Surface(
-        onClick = onClick,
-        modifier = modifier.size(48.dp),
-        shape = shape,
-        color = containerColor,
-        contentColor = contentColor,
-        tonalElevation = tonalElevation,
-        shadowElevation = shadowElevation,
-        border = border,
-        interactionSource = interactionSource,
-        enabled = enabled
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .size(51.dp)
+            .clickable { onClick() }
+            .background(
+                color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveSurfaceColor else (MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveSurfaceColor).copy(alpha = 0.11f),
+                shape = RoundedCornerShape(5.dp)
+            )
+            .padding(start = 5.dp)
     ) {
-        CompositionLocalProvider(LocalContentColor provides contentColor) {
-            ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = title,
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                    Text(
-                        text = subtitle,
-                        style = TextStyle(
-                            fontSize = 11.sp
-                        )
-                    )
-                }
-            }
+        Text(
+            text = title,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = Montserrat,
+            color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+        )
+        Text(
+            text = subtitle,
+            fontSize = 11.sp,
+            fontFamily = Montserrat,
+            fontWeight = FontWeight.Normal,
+            color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+        )
+    }
+}
+
+@ChaiLightAndDarkComposePreview
+@Composable
+private fun EventDaySelectorButtonPreview() {
+    ChaiDCKE22Theme {
+        Row {
+            EventDaySelectorButton(
+                title = "10th",
+                subtitle = "Day 1",
+                selected = true,
+                onClick = {}
+            )
+            EventDaySelectorButton(
+                title = "10th",
+                subtitle = "Day 1",
+                selected = false,
+                onClick = {}
+            )
         }
     }
 }

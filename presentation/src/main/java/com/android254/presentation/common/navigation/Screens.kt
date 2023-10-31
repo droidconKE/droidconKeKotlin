@@ -31,7 +31,7 @@ sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: S
     }
 
     object SpeakerDetails :
-        Screens("/speaker_details/{speakerId}", R.drawable.droidcon_icon, "Speaker Details")
+        Screens("/speaker_details/{speakerName}", R.drawable.droidcon_icon, "Speaker Details")
 }
 
 val bottomNavigationDestinations = listOf(

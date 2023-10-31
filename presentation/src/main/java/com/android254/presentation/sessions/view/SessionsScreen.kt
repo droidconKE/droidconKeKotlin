@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessions.view
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,6 +47,7 @@ import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsUiState
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import kotlinx.coroutines.launch
 
 @Composable
@@ -197,14 +196,7 @@ fun SessionsScreen(
     }
 }
 
-@Preview(
-    name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO
-)
-@Preview(
-    name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
-)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun SessionsScreenPreview() {
     DroidconKE2023Theme {

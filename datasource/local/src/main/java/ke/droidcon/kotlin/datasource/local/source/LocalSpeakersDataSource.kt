@@ -22,7 +22,7 @@ interface LocalSpeakersDataSource {
 
     fun getCachedSpeakers(): Flow<List<SpeakerEntity>>
 
-    suspend fun getCachedSpeakerById(speakerId: Int): SpeakerEntity?
+    suspend fun getCachedSpeakerByName(speakerName: String): SpeakerEntity?
 
     fun fetchCachedSpeakerCount(): Flow<Int>
 

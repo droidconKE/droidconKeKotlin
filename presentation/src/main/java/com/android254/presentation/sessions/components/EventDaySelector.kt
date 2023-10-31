@@ -24,14 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.EventDate
 
-/*
-val droidconEventDays = listOf(
-    EventDate(LocalDate(2023, 11, 16), 1),
-    EventDate(LocalDate(2023, 11, 17), 2),
-    EventDate(LocalDate(2023, 11, 18), 3)
-)
-*/
-
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
     return when (i % 100) {
