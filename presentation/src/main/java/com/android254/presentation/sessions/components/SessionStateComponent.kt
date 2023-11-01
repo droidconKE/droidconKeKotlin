@@ -55,7 +55,8 @@ fun SessionsStateComponent(
     refreshSessionsList: () -> Unit,
     retry: () -> Unit,
     isRefreshing: Boolean,
-    sessionScreenState: SessionScreenState
+    sessionScreenState: SessionScreenState,
+    isSessionLayoutList : Boolean
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -95,7 +96,8 @@ fun SessionsStateComponent(
             sessions = sessionsUiState.sessions,
             navigateToSessionDetails = navigateToSessionDetails,
             refreshSessionsList = refreshSessionsList,
-            sessionScreenState = sessionScreenState
+            sessionScreenState = sessionScreenState,
+            isSessionLayoutList = isSessionLayoutList
         )
     }
 }
@@ -106,7 +108,8 @@ fun SessionListComponent(
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     refreshSessionsList: () -> Unit,
-    sessionScreenState: SessionScreenState
+    sessionScreenState: SessionScreenState,
+    isSessionLayoutList: Boolean
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
@@ -128,24 +131,34 @@ fun SessionListComponent(
                 items = sessions,
                 key = { _, session -> session.remoteId }
             ) { index, session ->
-                SessionsCard(
-                    session = session,
-                    navigateToSessionDetails = navigateToSessionDetails
-                )
-                if (index != sessions.lastIndex) {
-                    Box(
-                        Modifier.padding(
-                            start = 40.dp,
-                            end = 0.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
-                    ) {
-                        Image(
-                            painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                            contentDescription = stringResource(R.string.spacer_icon_descript)
-                        )
+
+                if (isSessionLayoutList) {
+                    SessionsCard(
+                        session = session,
+                        navigateToSessionDetails = navigateToSessionDetails
+                    )
+                    if (index != sessions.lastIndex) {
+                        Box(
+                            Modifier.padding(
+                                start = 40.dp,
+                                end = 0.dp,
+                                top = 10.dp,
+                                bottom = 10.dp
+                            )
+                        ) {
+                            Image(
+                                painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
+                                contentDescription = stringResource(R.string.spacer_icon_descript)
+                            )
+                        }
                     }
+                }else{
+                    SessionsCardWithBannerImage(
+                        session = session,
+                        navigateToSessionDetails = navigateToSessionDetails
+                    )
+
+                    Spacer(Modifier.height(16.dp))
                 }
             }
         }
