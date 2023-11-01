@@ -45,8 +45,8 @@ class SpeakerDetailsScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    suspend fun getSpeakerById(id: Int) {
-        when (val result = speakersRepo.getSpeakerById(id)) {
+    suspend fun getSpeakerByName(name: String) {
+        when (val result = speakersRepo.getSpeakerByName(name)) {
             is ResourceResult.Success -> {
                 val data = result.data
                 if (data == null) {

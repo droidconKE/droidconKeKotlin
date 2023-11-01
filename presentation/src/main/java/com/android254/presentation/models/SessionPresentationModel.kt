@@ -32,5 +32,6 @@ data class SessionPresentationModel(
     val endDate: String,
     val remoteId: String,
     val isService: Boolean = false,
-    val sessionImage: String = ""
+    val sessionImage: String = "",
+    val eventDay: String
 )

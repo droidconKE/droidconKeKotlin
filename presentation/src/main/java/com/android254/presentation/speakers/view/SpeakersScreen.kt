@@ -59,7 +59,7 @@ import ke.droidcon.kotlin.presentation.R
 fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (Int) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {}
 ) {
     val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
     SpeakersScreen(
@@ -73,7 +73,7 @@ fun SpeakersRoute(
 private fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (Int) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -141,7 +141,7 @@ private fun SpeakersScreen(
                             SpeakerComponent(
                                 speaker = speaker,
                                 onClick = {
-                                    navigateToSpeaker.invoke(speaker.id)
+                                    navigateToSpeaker.invoke(speaker.name)
                                 }
                             )
                         }

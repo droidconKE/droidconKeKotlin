@@ -51,7 +51,7 @@ fun HomeSpeakersSection(
         ) {
             items(speakers.take(8)) { speaker ->
                 HomeSpeakerComponent(speaker = speaker, onClick = {
-                    navigateToSpeaker("${speaker.id}")
+                    navigateToSpeaker(speaker.name)
                 })
             }
         }

@@ -45,7 +45,7 @@ class SpeakerDetailsScreenTest {
     @Test
     fun `all components should be displayed properly`() {
         every { mockSavedStateHandle.get<Int>("speakerId") } returns 0
-        coEvery { speakersRepo.getSpeakerById(any()) } returns ResourceResult.Success(
+        coEvery { speakersRepo.getSpeakerByName(any()) } returns ResourceResult.Success(
             Speaker(
                 name = "Harun Wangereka",
                 tagline = "kenya partner lead"
@@ -54,7 +54,7 @@ class SpeakerDetailsScreenTest {
 
         composeTestRule.setContent {
             SpeakerDetailsRoute(
-                id = 0,
+                name = "Harun Wangereka",
                 SpeakerDetailsScreenViewModel(
                     speakersRepo = speakersRepo,
                     savedStateHandle = mockSavedStateHandle

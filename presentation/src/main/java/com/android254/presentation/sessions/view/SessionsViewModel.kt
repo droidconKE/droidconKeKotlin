@@ -18,6 +18,7 @@ package com.android254.presentation.sessions.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
+import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.EventDate
@@ -142,13 +143,19 @@ class SessionsViewModel @Inject constructor(
 
     private suspend fun fetchAllSessions() {
         updateIsLoadingState()
-        sessionsRepo.fetchSessionsInformation().collectLatest { sessions ->
-            val sessionDays = sessions.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
+        sessionsRepo.fetchSessionsInformation().collectLatest { sessionsInformation ->
+            updateSessionDays(sessionsInformation)
+            updateSessions(sessionsInformation.sessions)
+        }
+    }
+
+    private fun updateSessionDays(sessionsInformation: SessionsInformationDomainModel){
+        if (sessionsInformation.eventDays.isNotEmpty()){
+            val sessionDays = sessionsInformation.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
             _sessionsUiState.value = _sessionsUiState.value.copy(
                 eventDays = sessionDays,
                 selectedEventDay = sessionDays.first()
             )
-            updateSessions(sessions.sessions)
         }
     }
 
@@ -160,17 +167,18 @@ class SessionsViewModel @Inject constructor(
     }
 
     private fun updateSessions(sessions: List<Session>) {
+        val state = _sessionsUiState.value
         val newState = if (sessions.isEmpty()) {
-            _sessionsUiState.value.copy(
-                isEmpty = sessions.isEmpty(),
+            state.copy(
+                isEmpty = true,
                 sessions = emptyList(),
                 isEmptyMessage = "No sessions found",
                 isLoading = false
             )
         } else {
-            _sessionsUiState.value.copy(
-                isEmpty = sessions.isEmpty(),
-                sessions = sessions.map { session -> session.toPresentationModel() },
+            state.copy(
+                isEmpty = false,
+                sessions = sessions.map { session -> session.toPresentationModel() }.filter { session -> session.eventDay == state.selectedEventDay.value },
                 isEmptyMessage = "",
                 isLoading = false
             )

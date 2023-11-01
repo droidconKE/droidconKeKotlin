@@ -110,15 +110,8 @@ libraries.
 and `ktor` as examples.
 [plugins] Used to define plugins.
 
-You need to add your dependency version in [versions]. This is unnecessary if you are not sharing
-the version across different dependencies. After defining the version, add your library in
+You need to add your dependency version in [versions]. After defining the version, add your library in
 the [libraries] section as:
-
-```toml
-compose-activity = "androidx.activity:activity-compose:1.5.0"
-```
-
-Moreover, if you have already defined the version in [versions], you define it as:
 
 ```toml
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
@@ -254,17 +247,17 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/Jacquigee">
-            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
-            <br />
-            <sub><b>Jacquiline Gitau</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Jacquigee">
+            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
+            <br />
+            <sub><b>Jacquiline Gitau</b></sub>
         </a>
     </td>
     <td align="center">
@@ -382,6 +375,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td></tr>
 <tr>
+    <td align="center">
+        <a href="https://github.com/bagechengzi">
+            <img src="https://avatars.githubusercontent.com/u/89894288?v=4" width="100;" alt="bagechengzi"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
