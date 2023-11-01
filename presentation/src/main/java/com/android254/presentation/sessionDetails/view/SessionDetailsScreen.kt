@@ -77,6 +77,7 @@ import coil.compose.AsyncImage
 import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
+import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.droidconke.chai.components.COutlinedButton
@@ -94,7 +95,6 @@ fun SessionDetailsRoute(
     SessionDetailsScreen(
         darkTheme = darkTheme,
         uiState = uiState,
-        sessionId = sessionId,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick
@@ -105,7 +105,6 @@ fun SessionDetailsRoute(
 private fun SessionDetailsScreen(
     darkTheme: Boolean = isSystemInDarkTheme(),
     uiState: SessionDetailsUiState,
-    sessionId: String,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit
@@ -220,7 +219,11 @@ fun Body(
         Spacer(modifier = Modifier.height(18.dp))
 
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
-            SpeakerTwitterHandle(darkTheme, sessionDetails)
+            sessionDetails.speakers.forEach { speaker ->
+                if (speaker.twitterHandle.isNotEmpty()) {
+                    SpeakerTwitterHandle(darkTheme, speaker)
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(140.dp))
@@ -230,25 +233,51 @@ fun Body(
 @Composable
 private fun SpeakerTwitterHandle(
     darkTheme: Boolean,
-    sessionDetails: SessionDetailsPresentationModel
+    speaker: SessionDetailsSpeakerPresentationModel
 ) {
-    if (sessionDetails.twitterHandle != null) {
-        val context = LocalContext.current
-        val intent = remember {
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://www.twitter.com/${sessionDetails.twitterHandle}")
-            )
-        }
+    val context = LocalContext.current
+    val intent = remember {
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://www.twitter.com/${speaker.twitterHandle}")
+        )
+    }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.twitter_handle_label),
+            color = colorResource(id = if (darkTheme) R.color.smoke_white else R.color.dark),
+            style = TextStyle(
+                fontFamily = Montserrat,
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp,
+                lineHeight = 19.sp
+            )
+        )
+        COutlinedButton(
+            onClick = { context.startActivity(intent) },
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(colorResource(id = if (darkTheme) R.color.black else R.color.white))
         ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_twitter_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(20.dp),
+                tint = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue)
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
             Text(
-                text = stringResource(id = R.string.twitter_handle_label),
-                color = colorResource(id = if (darkTheme) R.color.smoke_white else R.color.dark),
+                modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
+                text = speaker.twitterHandle,
+                color = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue),
                 style = TextStyle(
                     fontFamily = Montserrat,
                     fontWeight = FontWeight.Normal,
@@ -256,34 +285,6 @@ private fun SpeakerTwitterHandle(
                     lineHeight = 19.sp
                 )
             )
-            COutlinedButton(
-                onClick = { context.startActivity(intent) },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(colorResource(id = if (darkTheme) R.color.black else R.color.white))
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_twitter_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width(20.dp),
-                    tint = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue)
-                )
-
-                Spacer(modifier = Modifier.width(5.dp))
-
-                Text(
-                    modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
-                    text = sessionDetails.twitterHandle,
-                    color = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue),
-                    style = TextStyle(
-                        fontFamily = Montserrat,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
-                        lineHeight = 19.sp
-                    )
-                )
-            }
         }
     }
 }
@@ -341,7 +342,7 @@ private fun SessionSpeakerNameAndFavouriteIcon(
     ) {
         Text(
             modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
-            text = sessionDetails.speakerName,
+            text = sessionDetails.speakers.joinToString(" & ") { it.name },
             color = colorResource(id = if (darkTheme) R.color.white else R.color.blue),
             style = TextStyle(
                 fontFamily = Montserrat,
@@ -533,29 +534,25 @@ object TestTag {
 fun SessionDetailsScreenPreview() {
     DroidconKE2023Theme() {
         SessionDetailsScreen(
-            onNavigationIconClick = {},
             uiState = SessionDetailsUiState.Success(
                 data = SessionDetailsPresentationModel(
                     id = "1",
                     title = "Welcome at DroidconKE",
                     description = "Welcome to DroidconKE 2022. We are excited to have you here. We hope you will have a great time.",
                     venue = "Main Hall",
-                    speakerImage = "",
-                    speakerName = "DroidconKE",
                     startTime = "10:00",
                     endTime = "11:00",
                     amOrPm = "AM",
                     isStarred = false,
                     format = "Keynote",
                     level = "Beginner",
-                    twitterHandle = "@droidconke",
                     sessionImageUrl = "",
-                    timeSlot = "10:00 - 11:00 AM"
+                    timeSlot = "10:00 - 11:00 AM",
+                    speakers = listOf()
                 )
             ),
-            sessionId = "1",
             bookmarkSession = {},
             unBookmarkSession = {}
-        )
+        ) {}
     }
 }
