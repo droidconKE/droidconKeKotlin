@@ -109,14 +109,14 @@ fun CActionText(cAction: String) {
 @Composable
 fun ChaiTitle(
     modifier: Modifier = Modifier,
-    subtitleText: String,
-    subTitleColor: Color = Color.Unspecified
+    titleText: String,
+    titleColor: Color = Color.Unspecified
 ) {
     Text(
         modifier = modifier,
-        text = subtitleText,
+        text = titleText,
         style = TextStyle(
-            color = subTitleColor,
+            color = titleColor,
             fontSize = 20.sp,
             fontWeight = FontWeight.W700,
             fontFamily = MontserratBold

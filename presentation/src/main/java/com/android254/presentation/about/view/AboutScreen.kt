@@ -170,8 +170,8 @@ fun AboutDroidconSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp),
-            subtitleText = stringResource(id = R.string.about),
-            subTitleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
+            titleText = stringResource(id = R.string.about),
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -201,8 +201,8 @@ fun OrganizingTeamSection(
         ChaiTitle(
             modifier = Modifier
                 .fillMaxWidth(),
-            subtitleText = stringResource(id = R.string.about_organizing_team),
-            subTitleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
+            titleText = stringResource(id = R.string.about_organizing_team),
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
 
         Spacer(modifier = Modifier.height(30.dp))
