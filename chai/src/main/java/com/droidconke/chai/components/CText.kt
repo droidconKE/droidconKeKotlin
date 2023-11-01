@@ -213,7 +213,8 @@ fun ChaiBodySmallBold(
 fun ChaiBodySmall(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         modifier = modifier,
@@ -225,7 +226,7 @@ fun ChaiBodySmall(
             fontFamily = MontserratRegular,
             lineHeight = 20.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = textAlign
     )
 }
 
@@ -357,7 +358,8 @@ fun CPrimaryButtonText(
 fun ChaiTextLabelLarge(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    textAlign: TextAlign = TextAlign.Start
 ) {
     Text(
         modifier = modifier,
@@ -369,7 +371,7 @@ fun ChaiTextLabelLarge(
             fontFamily = MontserratRegular,
             lineHeight = 16.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = textAlign
     )
 }
 

@@ -56,7 +56,7 @@ fun SessionsStateComponent(
     retry: () -> Unit,
     isRefreshing: Boolean,
     sessionScreenState: SessionScreenState,
-    isSessionLayoutList : Boolean
+    isSessionLayoutList: Boolean
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -152,7 +152,7 @@ fun SessionListComponent(
                             )
                         }
                     }
-                }else{
+                } else {
                     SessionsCardWithBannerImage(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails
