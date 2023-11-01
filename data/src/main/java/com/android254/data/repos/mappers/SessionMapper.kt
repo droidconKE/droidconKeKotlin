@@ -24,6 +24,8 @@ import java.util.Date
 import java.util.Locale
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
+import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -43,8 +45,8 @@ fun SessionEntity.toDomainModel() = Session(
     startDateTime = this.startDateTime,
     startTime = this.startTime,
     rooms = this.rooms,
-    speakers = this.speakers,
-    remote_id = this.remote_id,
+    speakers = Json.decodeFromString<List<SpeakerDTO>>(speakers).map { it.toDomain() },
+    remoteId = this.remote_id,
     eventDay = this.startTimestamp.toEventDay()
 )
 
