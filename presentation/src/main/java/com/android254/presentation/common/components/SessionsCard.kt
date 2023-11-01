@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
@@ -90,8 +91,7 @@ fun SessionsCard(
 @Composable
 fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: String) {
     Column(
-        modifier = Modifier
-            .weight(0.15f),
+        modifier = Modifier.weight(0.15f),
         horizontalAlignment = Alignment.End
     ) {
         Text(
@@ -144,15 +144,18 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         SessionsDescriptionComponent(session.description)
         Spacer(modifier = Modifier.height(20.dp))
         TimeAndVenueComponent(session)
         Spacer(modifier = Modifier.height(12.dp))
-        SessionPresenterComponents(
-            sessionSpeakerImageUrl = session.speakerImage,
-            sessionSpeakerName = session.speakerName
-        )
+        if (session.speakers.isNotEmpty()) {
+            Column {
+                session.speakers.forEach { speaker ->
+                    SessionPresenterComponents(speaker = speaker)
+                }
+            }
+        }
     }
 }
 
@@ -163,8 +166,7 @@ fun SessionTitleComponent(
 ) {
     val scope = rememberCoroutineScope()
     Row(
-        Modifier
-            .fillMaxWidth()
+        Modifier.fillMaxWidth()
     ) {
         Text(
             text = session.title,
@@ -229,10 +231,10 @@ fun TimeAndVenueComponent(session: SessionPresentationModel) {
 }
 
 @Composable
-fun SessionPresenterComponents(sessionSpeakerImageUrl: String, sessionSpeakerName: String) {
+fun SessionPresenterComponents(speaker: SessionSpeakersPresentationModel) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         AsyncImage(
-            model = sessionSpeakerImageUrl,
+            model = speaker.speakerImage,
             contentDescription = "session speaker image",
             modifier = Modifier
                 .size(30.dp)
@@ -240,7 +242,7 @@ fun SessionPresenterComponents(sessionSpeakerImageUrl: String, sessionSpeakerNam
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = sessionSpeakerName,
+            text = speaker.name,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.primary,
                 fontFamily = MontserratSemiBold

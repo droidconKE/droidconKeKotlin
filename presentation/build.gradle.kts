@@ -52,7 +52,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
     implementation(libs.lottie.compose)
-    implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
 
