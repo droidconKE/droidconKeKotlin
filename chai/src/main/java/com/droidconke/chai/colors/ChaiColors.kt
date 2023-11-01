@@ -27,6 +27,7 @@ import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
+import com.droidconke.chai.atoms.ChaiSubtleGrey
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
@@ -37,6 +38,7 @@ data class ChaiColors(
     val background: Color = Color.Unspecified,
     val surfaces: Color = Color.Unspecified,
     val cardsBackground: Color = Color.Unspecified,
+    val cardsBorderColor: Color = Color.Unspecified,
     val bottomNavBorderColor: Color = Color.Unspecified,
     val activeBottomNavIconColor: Color = Color.Unspecified,
     val activeBottomNavTextColor: Color = Color.Unspecified,
@@ -60,7 +62,6 @@ data class ChaiColors(
     val toggleOnIconBackgroundColor: Color = Color.Unspecified,
     val toggleOnIconColor: Color = Color.Unspecified,
     val loadingStateOnCardsColor: Color = Color.Unspecified,
-    val titleTextColorPrimary: Color = Color.Unspecified,
     val eventDaySelectorActiveSurfaceColor: Color = Color.Unspecified,
     val eventDaySelectorInactiveSurfaceColor: Color = Color.Unspecified,
     val eventDaySelectorInactiveTextColor: Color = Color.Unspecified,
@@ -74,6 +75,7 @@ val ChaiLightColorPalette = ChaiColors(
     background = ChaiWhite,
     surfaces = ChaiLightGrey,
     cardsBackground = ChaiWhite,
+    cardsBorderColor = ChaiLightGrey,
     bottomNavBorderColor = ChaiLightGrey,
     activeBottomNavIconColor = ChaiBlue,
     inactiveBottomNavIconColor = ChaiGrey90,
@@ -108,6 +110,7 @@ val ChaiDarkColorPalette = ChaiColors(
     background = ChaiGrey90,
     surfaces = ChaiBlack,
     cardsBackground = ChaiBlack,
+    cardsBorderColor = ChaiSubtleGrey,
     bottomNavBorderColor = ChaiGrey90,
     activeBottomNavIconColor = ChaiTeal,
     inactiveBottomNavIconColor = ChaiWhite,

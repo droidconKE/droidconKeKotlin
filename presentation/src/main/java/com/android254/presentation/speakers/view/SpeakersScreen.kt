@@ -16,6 +16,7 @@
 package com.android254.presentation.speakers.view
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -134,8 +135,10 @@ private fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Success -> {
                     LazyVerticalGrid(
-                        columns = GridCells.Adaptive(160.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(items = uiState.speakers) { speaker ->
                             SpeakerComponent(

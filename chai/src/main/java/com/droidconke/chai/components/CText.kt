@@ -214,7 +214,9 @@ fun ChaiBodySmall(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1
 ) {
     Text(
         modifier = modifier,
@@ -226,7 +228,10 @@ fun ChaiBodySmall(
             fontFamily = MontserratRegular,
             lineHeight = 20.sp
         ),
-        textAlign = textAlign
+        textAlign = textAlign,
+        maxLines = maxLines,
+        minLines = minLines,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -234,7 +239,9 @@ fun ChaiBodySmall(
 fun ChaiBodyMediumBold(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
+    textAlign: TextAlign = TextAlign.Start,
+    maxLines: Int = Int.MAX_VALUE
 ) {
     Text(
         modifier = modifier,
@@ -246,7 +253,9 @@ fun ChaiBodyMediumBold(
             fontFamily = MontserratSemiBold,
             lineHeight = 20.sp
         ),
-        textAlign = TextAlign.Start
+        textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
