@@ -149,8 +149,8 @@ class SessionsViewModel @Inject constructor(
         }
     }
 
-    private fun updateSessionDays(sessionsInformation: SessionsInformationDomainModel){
-        if (sessionsInformation.eventDays.isNotEmpty()){
+    private fun updateSessionDays(sessionsInformation: SessionsInformationDomainModel) {
+        if (sessionsInformation.eventDays.isNotEmpty()) {
             val sessionDays = sessionsInformation.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
             _sessionsUiState.value = _sessionsUiState.value.copy(
                 eventDays = sessionDays,
