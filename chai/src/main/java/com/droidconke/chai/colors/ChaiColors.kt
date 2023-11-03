@@ -25,6 +25,7 @@ import com.droidconke.chai.atoms.ChaiDarkGrey
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
+import com.droidconke.chai.atoms.ChaiLightGrey90
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiSubtleGrey
@@ -69,7 +70,8 @@ data class ChaiColors(
     val eventDaySelectorActiveTextColor: Color = Color.Unspecified,
     val badgeBackgroundColor: Color = Color.Unspecified,
     val textFieldBackgroundColor: Color = Color.Unspecified,
-    val textFieldBorderColor: Color = Color.Unspecified
+    val textFieldBorderColor: Color = Color.Unspecified,
+    val bottomSheetBackgroundColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -110,7 +112,8 @@ val ChaiLightColorPalette = ChaiColors(
     eventDaySelectorInactiveTextColor = ChaiGrey90,
     badgeBackgroundColor = ChaiCoal,
     textFieldBackgroundColor = ChaiLightGrey,
-    textFieldBorderColor = ChaiLightGrey
+    textFieldBorderColor = ChaiLightGrey,
+    bottomSheetBackgroundColor = ChaiLightGrey90
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -149,5 +152,6 @@ val ChaiDarkColorPalette = ChaiColors(
     eventDaySelectorInactiveTextColor = ChaiWhite,
     badgeBackgroundColor = ChaiBlack,
     textFieldBackgroundColor = ChaiGrey90,
-    textFieldBorderColor = ChaiSmokeyGrey
+    textFieldBorderColor = ChaiSmokeyGrey,
+    bottomSheetBackgroundColor = ChaiBlack
 )

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -48,6 +49,7 @@ import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.atoms.ChaiGrey90
 import kotlinx.coroutines.launch
 
 @Composable
@@ -185,7 +187,10 @@ fun SessionsScreen(
                         scope.launch {
                             bottomSheetState.hide()
                         }
-                    }
+                    },
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = ChaiGrey90.copy(alpha = 0.52f),
+                    dragHandle = {}
                 ) {
                     SessionsFilterPanel(
                         onDismiss = {

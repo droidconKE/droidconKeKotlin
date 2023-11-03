@@ -17,20 +17,22 @@ package com.android254.presentation.sessions.components
 
 import android.content.Context
 import android.content.res.Resources
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -42,9 +44,13 @@ import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
+import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.MontserratBold
 import com.droidconke.chai.atoms.MontserratSemiBold
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
+import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.presentation.R
 
 private fun loadFilters(context: Context): List<SessionsFilterOption> {
@@ -135,89 +141,107 @@ fun SessionsFilterPanel(
     val groupedFilters = selectableFilters.groupBy {
         it.type
     }
-
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 12.dp, end = 12.dp, top = 16.dp, bottom = 144.dp)
+            .fillMaxSize()
+            .background(
+                color = ChaiGrey90.copy(alpha = 0.52f)
+            )
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
+        // The Visible Content
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 32.dp)
-
+                .background(
+                    color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor
+                )
+                .padding(start = 12.dp, end = 12.dp, top = 48.dp, bottom = 36.dp)
         ) {
-            IconButton(onClick = {
-                clearSelectedFilterList()
-                onDismiss()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_close_24),
-                    contentDescription = stringResource(R.string.close_icon_description)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp)
+            ) {
+                Row {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_filter),
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 12.dp),
+                        tint = MaterialTheme.chaiColorsPalette.textNormalColor
+                    )
+                    ChaiBodyLarge(
+                        bodyText = stringResource(id = R.string.filter_button_label),
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                    )
+                }
+
+                ChaiTextButtonLight(
+                    modifier = Modifier.clickable {
+                        clearSelectedFilterList()
+                        onDismiss()
+                    },
+                    bodyText = stringResource(id = R.string.cancel),
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor
                 )
             }
-            Spacer(Modifier.weight(1f))
-            TextButton(onClick = {
-                clearSelectedFilterList()
-            }) {
+
+            groupedFilters.forEach { filter ->
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = filter.key.name,
+                        style = filterTypeTextStyle,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    MultiToggleButton(
+                        toggleStates = filter.value,
+                        onClick = {
+                            updateSelectedFilterOptionList(it)
+                        },
+                        currentSelections = currentSelections
+                    )
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            CButton(
+                onClick = {
+                    fetchSessionWithFilter()
+                    onDismiss()
+                },
+                isEnabled = true,
+                shape = MaterialTheme.shapes.small,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+            ) {
                 Text(
-                    text = "Clear Filters".uppercase(),
+                    text = stringResource(R.string.filter_button_label).uppercase(),
                     style = TextStyle(
+                        fontSize = 18.sp,
                         fontFamily = MontserratSemiBold,
-                        fontSize = 14.sp,
                         letterSpacing = 1.sp
                     )
                 )
             }
+            Spacer(modifier = Modifier.height(40.dp))
         }
-
-        groupedFilters.forEach { filter ->
-            Column(
-                Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = filter.key.name,
-                    style = filterTypeTextStyle,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                MultiToggleButton(
-                    toggleStates = filter.value,
-                    onClick = {
-                        updateSelectedFilterOptionList(it)
-                    },
-                    currentSelections = currentSelections
-                )
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-        }
-
-        CButton(
-            onClick = {
-                fetchSessionWithFilter()
-                onDismiss()
-            },
-            isEnabled = true,
-            shape = MaterialTheme.shapes.small,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
+        Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.filter_button_label).uppercase(),
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontFamily = MontserratSemiBold,
-                    letterSpacing = 1.sp
-                )
-            )
-        }
-        Spacer(modifier = Modifier.height(40.dp))
+                .weight(1f)
+                .clickable {
+                    onDismiss()
+                }
+        )
     }
 }

@@ -35,6 +35,7 @@ val ChaiTeal = Color(0xFF00E2C3)
  * these are the Neutrals from the Chai's Design spec document
  */
 
+val ChaiLightGrey90 = Color(0xFFF6F6F8)
 val ChaiLightGrey = Color(0xFFF5F5F5)
 val ChaiGrey = Color(0xFFB1B1B1)
 val ChaiSmokeyGrey = Color(0xFF707070)
