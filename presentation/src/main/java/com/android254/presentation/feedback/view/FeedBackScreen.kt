@@ -297,7 +297,7 @@ private fun FeedBackScreen(
                 )
             ) {
                 ChaiBodyMediumBold(
-                    bodyText = stringResource(R.string.feedback_label).uppercase()
+                    bodyText = stringResource(R.string.feedback_button).uppercase()
                 )
             }
         }
