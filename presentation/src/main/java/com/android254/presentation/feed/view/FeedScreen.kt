@@ -85,7 +85,7 @@ private fun FeedScreen(
 
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
-            containerColor = MaterialTheme.chaiColorsPalette.surfaces,
+            containerColor = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
             sheetState = bottomSheetState,
             dragHandle = {},
             onDismissRequest = { scope.launch { bottomSheetState.hide() } }

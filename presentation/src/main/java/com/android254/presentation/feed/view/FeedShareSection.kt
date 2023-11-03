@@ -16,6 +16,7 @@
 package com.android254.presentation.feed.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.chaiColorsPalette
@@ -53,6 +54,7 @@ fun FeedShareSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
             .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
             .testTag("share_bottom_sheet")
     ) {
@@ -132,7 +134,7 @@ fun PlatformButton(platform: String, icon: Int) {
     }
 }
 
-@Preview(showBackground = true)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun PlatformButtonPreview() {
     ChaiDCKE22Theme {
@@ -140,7 +142,7 @@ fun PlatformButtonPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun PFeedShareSectionPreview() {
     ChaiDCKE22Theme {
