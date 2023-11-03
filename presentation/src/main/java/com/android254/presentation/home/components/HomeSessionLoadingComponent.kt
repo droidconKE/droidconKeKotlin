@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
@@ -65,7 +65,7 @@ fun HomeSessionLoadingComponent() {
 @Preview(showBackground = true)
 @Composable
 fun HomeSessionLoadingComponentPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeSessionLoadingComponent()
     }
 }

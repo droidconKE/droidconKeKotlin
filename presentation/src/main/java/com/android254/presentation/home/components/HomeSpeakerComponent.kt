@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.presentation.R
@@ -93,7 +93,7 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun HomeSpeakerComponentPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         Surface(color = Color.White) {
             HomeSpeakerComponent(
                 speaker = SpeakerUI(

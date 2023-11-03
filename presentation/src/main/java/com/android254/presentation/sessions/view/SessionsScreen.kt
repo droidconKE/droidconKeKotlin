@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.components.CustomSwitch
@@ -49,6 +48,7 @@ import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiGrey90
 import kotlinx.coroutines.launch
 
@@ -212,7 +212,7 @@ fun SessionsScreen(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun SessionsScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         SessionsScreen(
             sessionsUiState = SessionsUiState(),
             selectedEventDate = EventDate("1", day = 1),

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.SponsorsCard
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
@@ -41,6 +40,7 @@ import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -149,7 +149,7 @@ private fun HomeScreen(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun HomeScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeScreen(
             viewState = HomeViewState(
                 isPosterVisible = true,

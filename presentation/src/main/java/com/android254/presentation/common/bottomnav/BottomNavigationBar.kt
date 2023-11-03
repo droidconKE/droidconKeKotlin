@@ -38,7 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationDestinations
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 
@@ -118,7 +118,7 @@ fun RowScope.BottomNavItem(
 @Preview
 @Composable
 fun BottomNavigationBarPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         BottomNavigationBar(rememberNavController())
     }
 }
