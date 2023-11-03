@@ -27,29 +27,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratSemiBold
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
+import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.presentation.R
 
@@ -128,12 +125,6 @@ fun SessionsFilterPanel(
     fetchSessionWithFilter: () -> Unit,
     clearSelectedFilterList: () -> Unit
 ) {
-    val filterTypeTextStyle = TextStyle(
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        fontFamily = MontserratBold
-    )
-
     val context = LocalContext.current
 
     val selectableFilters = loadFilters(context)
@@ -153,9 +144,10 @@ fun SessionsFilterPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor
+                    color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
+                    shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp)
                 )
-                .padding(start = 12.dp, end = 12.dp, top = 48.dp, bottom = 36.dp)
+                .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,11 +161,11 @@ fun SessionsFilterPanel(
                         painter = painterResource(id = R.drawable.ic_filter),
                         contentDescription = null,
                         modifier = Modifier.padding(end = 12.dp),
-                        tint = MaterialTheme.chaiColorsPalette.textNormalColor
+                        tint = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
                     )
                     ChaiBodyLarge(
                         bodyText = stringResource(id = R.string.filter_button_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
                     )
                 }
 
@@ -192,10 +184,9 @@ fun SessionsFilterPanel(
                     Modifier
                         .fillMaxWidth()
                 ) {
-                    Text(
-                        text = filter.key.name,
-                        style = filterTypeTextStyle,
-                        color = MaterialTheme.colorScheme.onSurface
+                    ChaiSubTitle(
+                        titleText = filter.key.name,
+                        titleColor = MaterialTheme.chaiColorsPalette.textNormalColor
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     MultiToggleButton(
@@ -217,20 +208,16 @@ fun SessionsFilterPanel(
                 isEnabled = true,
                 shape = MaterialTheme.shapes.small,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                    contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Text(
+                CPrimaryButtonText(
                     text = stringResource(R.string.filter_button_label).uppercase(),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = MontserratSemiBold,
-                        letterSpacing = 1.sp
-                    )
+                    textColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor
                 )
             }
             Spacer(modifier = Modifier.height(40.dp))

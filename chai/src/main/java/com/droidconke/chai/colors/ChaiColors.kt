@@ -71,7 +71,8 @@ data class ChaiColors(
     val badgeBackgroundColor: Color = Color.Unspecified,
     val textFieldBackgroundColor: Color = Color.Unspecified,
     val textFieldBorderColor: Color = Color.Unspecified,
-    val bottomSheetBackgroundColor: Color = Color.Unspecified
+    val bottomSheetBackgroundColor: Color = Color.Unspecified,
+    val inactiveMultiSelectButtonBorderColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -94,7 +95,7 @@ val ChaiLightColorPalette = ChaiColors(
     textLabelAndHeadings = ChaiBlue,
     linkTextColorPrimary = ChaiBlue,
     secondaryButtonColor = ChaiBlue,
-    secondaryButtonTextColor = ChaiBlue,
+    secondaryButtonTextColor = ChaiLightGrey90,
     outlinedButtonBackgroundColor = ChaiWhite,
     outlinedButtonTextColor = ChaiCoal,
     textButtonColor = ChaiBlue,
@@ -113,7 +114,8 @@ val ChaiLightColorPalette = ChaiColors(
     badgeBackgroundColor = ChaiCoal,
     textFieldBackgroundColor = ChaiLightGrey,
     textFieldBorderColor = ChaiLightGrey,
-    bottomSheetBackgroundColor = ChaiLightGrey90
+    bottomSheetBackgroundColor = ChaiLightGrey90,
+    inactiveMultiSelectButtonBorderColor = ChaiGrey90
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -134,7 +136,7 @@ val ChaiDarkColorPalette = ChaiColors(
     textLabelAndHeadings = ChaiTeal90,
     linkTextColorPrimary = ChaiLightGrey,
     secondaryButtonColor = ChaiTeal90,
-    secondaryButtonTextColor = ChaiTeal,
+    secondaryButtonTextColor = ChaiGrey90,
     outlinedButtonBackgroundColor = ChaiBlack,
     outlinedButtonTextColor = ChaiTeal90,
     textButtonColor = ChaiLightGrey,
@@ -153,5 +155,6 @@ val ChaiDarkColorPalette = ChaiColors(
     badgeBackgroundColor = ChaiBlack,
     textFieldBackgroundColor = ChaiGrey90,
     textFieldBorderColor = ChaiSmokeyGrey,
-    bottomSheetBackgroundColor = ChaiBlack
+    bottomSheetBackgroundColor = ChaiBlack,
+    inactiveMultiSelectButtonBorderColor = ChaiGrey
 )
