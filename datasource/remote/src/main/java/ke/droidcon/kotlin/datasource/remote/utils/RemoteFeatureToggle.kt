@@ -16,21 +16,32 @@
 package ke.droidcon.kotlin.datasource.remote.utils
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 class RemoteFeatureToggle(
     private val remoteConfig: FirebaseRemoteConfig
 ) {
+    private var intialized = false
 
     fun sync() {
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Timber.w("Failed to fetch remote config from Firebase")
+                    Timber.w("Successfully fetched remote config from Firebase")
                 } else {
                     Timber.w("Failed to fetch remote config from Firebase")
                 }
             }
+    }
+
+    suspend fun syncNowIfEmpty(): Boolean {
+        if (remoteConfig.all.isEmpty()) {
+            remoteConfig.ensureInitialized().await()
+            remoteConfig.fetchAndActivate().await()
+            return true
+        }
+        return false
     }
 
     fun getString(key: String): String = remoteConfig.getString(key)

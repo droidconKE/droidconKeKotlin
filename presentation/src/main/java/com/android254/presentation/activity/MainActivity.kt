@@ -32,20 +32,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
 import com.android254.presentation.common.navigation.Navigation
 import com.droidconke.chai.ChaiDCKE22Theme
 import dagger.hilt.android.AndroidEntryPoint
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var remoteFeatureToggle: RemoteFeatureToggle
+
+    @Inject
+    lateinit var syncDataWorkManager: SyncDataWorkManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        var keepSplashScreen = true
+        val splashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition {
+            keepSplashScreen
+        }
+        lifecycleScope.launch {
+            if (remoteFeatureToggle.syncNowIfEmpty()) {
+                syncDataWorkManager.startSync()
+            }
+            keepSplashScreen = false
+        }
         setContent {
             ChaiDCKE22Theme {
                 MainScreen()
