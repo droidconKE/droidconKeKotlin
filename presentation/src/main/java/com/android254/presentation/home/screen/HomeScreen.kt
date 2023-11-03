@@ -52,7 +52,7 @@ fun HomeRoute(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
-    onSessionClicked: (sessionId: String) -> Unit = {},
+    onSessionClicked: (sessionId: String) -> Unit = {}
 ) {
     val homeViewState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()

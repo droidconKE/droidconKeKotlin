@@ -23,6 +23,7 @@ import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
+import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
@@ -37,6 +38,10 @@ data class ChaiColors(
     val inactiveBottomNavIconColor: Color = Color.Unspecified,
     val titleTextColorPrimary: Color = Color.Unspecified,
     val linkTextColorPrimary: Color = Color.Unspecified,
+    val eventDaySelectorActiveSurfaceColor: Color = Color.Unspecified,
+    val eventDaySelectorInactiveSurfaceColor: Color = Color.Unspecified,
+    val eventDaySelectorInactiveTextColor: Color = Color.Unspecified,
+    val eventDaySelectorActiveTextColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -49,7 +54,11 @@ val ChaiLightColorPalette = ChaiColors(
     activeBottomNavIconColor = ChaiBlue,
     inactiveBottomNavIconColor = ChaiGrey90,
     titleTextColorPrimary = ChaiBlue,
-    linkTextColorPrimary = ChaiBlue
+    linkTextColorPrimary = ChaiBlue,
+    eventDaySelectorActiveSurfaceColor = ChaiRed,
+    eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
+    eventDaySelectorActiveTextColor = ChaiWhite,
+    eventDaySelectorInactiveTextColor = ChaiGrey90
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -60,5 +69,9 @@ val ChaiDarkColorPalette = ChaiColors(
     activeBottomNavIconColor = ChaiTeal90,
     inactiveBottomNavIconColor = ChaiWhite,
     titleTextColorPrimary = ChaiWhite,
-    linkTextColorPrimary = ChaiLightGrey
+    linkTextColorPrimary = ChaiLightGrey,
+    eventDaySelectorActiveSurfaceColor = ChaiRed,
+    eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
+    eventDaySelectorActiveTextColor = ChaiWhite,
+    eventDaySelectorInactiveTextColor = ChaiWhite
 )

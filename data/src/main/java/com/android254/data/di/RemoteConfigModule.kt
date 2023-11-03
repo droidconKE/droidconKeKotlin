@@ -22,9 +22,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteConfigConfig
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

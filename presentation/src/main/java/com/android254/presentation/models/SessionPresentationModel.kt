@@ -20,8 +20,6 @@ data class SessionPresentationModel(
     val title: String,
     val description: String,
     val venue: String,
-    val speakerImage: String,
-    val speakerName: String,
     val startTime: String,
     val endTime: String,
     val amOrPm: String,
@@ -32,5 +30,13 @@ data class SessionPresentationModel(
     val endDate: String,
     val remoteId: String,
     val isService: Boolean = false,
-    val sessionImage: String = ""
+    val sessionImage: String = "",
+    val eventDay: String,
+    val speakers: List<SessionSpeakersPresentationModel>
+)
+
+data class SessionSpeakersPresentationModel(
+    val name: String,
+    val speakerImage: String,
+    val twitterHandle: String
 )

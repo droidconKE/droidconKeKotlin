@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":chai"))
+    implementation(project(":datasource:remote"))
 
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
@@ -52,7 +53,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
     implementation(libs.lottie.compose)
-    implementation(libs.gson.gson)
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
 

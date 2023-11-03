@@ -59,7 +59,7 @@ import ke.droidcon.kotlin.presentation.R
 fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (Int) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {}
 ) {
     val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
     SpeakersScreen(
@@ -68,11 +68,12 @@ fun SpeakersRoute(
         navigateToSpeaker = navigateToSpeaker
     )
 }
+
 @Composable
 private fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (Int) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -82,7 +83,7 @@ private fun SpeakersScreen(
                         text = stringResource(id = R.string.speakers_label),
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                        color = MaterialTheme.chaiColorsPalette.textColorPrimary,
+                        color = MaterialTheme.chaiColorsPalette.textColorPrimary
                     )
                 },
                 navigationIcon = {
@@ -140,7 +141,7 @@ private fun SpeakersScreen(
                             SpeakerComponent(
                                 speaker = speaker,
                                 onClick = {
-                                    navigateToSpeaker.invoke(speaker.id)
+                                    navigateToSpeaker.invoke(speaker.name)
                                 }
                             )
                         }

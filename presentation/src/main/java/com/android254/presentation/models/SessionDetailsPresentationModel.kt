@@ -20,15 +20,19 @@ data class SessionDetailsPresentationModel(
     val title: String,
     val description: String,
     val venue: String,
-    val speakerImage: String,
-    val speakerName: String,
     val startTime: String,
     val endTime: String,
     val amOrPm: String,
     val isStarred: Boolean,
     val format: String,
     val level: String,
-    val twitterHandle: String?,
     val sessionImageUrl: String?,
-    val timeSlot: String
+    val timeSlot: String,
+    val speakers: List<SessionDetailsSpeakerPresentationModel>
+)
+
+data class SessionDetailsSpeakerPresentationModel(
+    val name: String,
+    val speakerImage: String,
+    val twitterHandle: String
 )

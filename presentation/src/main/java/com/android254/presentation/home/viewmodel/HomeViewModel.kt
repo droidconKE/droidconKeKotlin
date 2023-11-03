@@ -17,27 +17,23 @@ package com.android254.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.home.viewstate.HomeViewState
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
-import com.android254.presentation.sessions.mappers.getTimePeriod
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepo: HomeRepo,
+    homeRepo: HomeRepo,
     private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {
 
@@ -58,9 +54,9 @@ class HomeViewModel @Inject constructor(
                 speakers = it.speakers.toSpeakersPresentation(),
                 isSpeakersSectionVisible = it.isSpeakersSessionEnable,
                 isSessionsSectionVisible = it.isSessionsSectionEnable,
-                sponsors = it.sponsors.map { it.sponsorLogoUrl },
-                organizedBy = it.organizers.map { it.organizerLogoUrl },
-                sessions = it.sessions.toSessionsPresentation()
+                sponsors = it.sponsors.map { sponsor -> sponsor.sponsorLogoUrl },
+                organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
+                sessions = it.sessions.map { session -> session.toPresentationModel() }
             )
         }
         .stateIn(
@@ -83,35 +79,6 @@ class HomeViewModel @Inject constructor(
                 tagline = it.tagline,
                 bio = it.biography,
                 twitterHandle = it.twitter
-            )
-        }
-
-    private fun List<Session>.toSessionsPresentation() =
-        map {
-            val startTime = getTimePeriod(it.startDateTime)
-            val gson = Gson()
-            val typeToken = object : TypeToken<List<SpeakerUI>>() {}.type
-            val speakers = gson.fromJson<List<SpeakerUI>>(it.speakers, typeToken)
-            val hasNoSpeakers = speakers.isEmpty()
-
-            SessionPresentationModel(
-                id = it.id,
-                title = it.title,
-                description = it.description,
-                venue = it.rooms,
-                speakerImage = if (hasNoSpeakers) "" else speakers.first().imageUrl.toString(),
-                speakerName = if (hasNoSpeakers) "" else speakers.first().name,
-                startTime = startTime.time,
-                endTime = it.endTime,
-                amOrPm = startTime.period,
-                isStarred = false,
-                level = it.sessionLevel,
-                format = it.sessionFormat,
-                startDate = it.startDateTime,
-                endDate = it.endDateTime,
-                remoteId = it.remote_id,
-                isService = it.isServiceSession,
-                sessionImage = it.sessionImage ?: ""
             )
         }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
+import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.theme.DroidconKE2023Theme
@@ -113,7 +114,7 @@ class SessionDetailsScreenTest {
             }
         }
         composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
-            sessionPresentationModel.speakerName
+            sessionPresentationModel.speakers.joinToString(" & ") { it.name }
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_TITLE).assertTextEquals(
             sessionPresentationModel.title
@@ -160,7 +161,7 @@ class SessionDetailsScreenTest {
             isBookmarked = true,
             isKeynote = true,
             isServiceSession = true,
-            remote_id = "",
+            remoteId = "",
             sessionLevel = "",
             endDateTime = "",
             sessionImage = "",
@@ -168,7 +169,8 @@ class SessionDetailsScreenTest {
             startDateTime = "2022-10-15 18:30:00",
             slug = "",
             rooms = "",
-            speakers = "[]"
+            speakers = listOf(Speaker("", "", "", "", "", "", "", "John Doe", twitter = "johnDoe")),
+            eventDay = ""
         )
         val sessionPresentationModel = mockSession.toSessionDetailsPresentationModal()
     }

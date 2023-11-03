@@ -26,11 +26,12 @@ data class Session(
     val startDateTime: String,
     val startTime: String,
     val rooms: String,
-    val speakers: String,
-    val remote_id: String,
+    val speakers: List<Speaker>,
+    val remoteId: String,
     val description: String,
     val sessionFormat: String,
     val sessionLevel: String,
     val slug: String,
-    val title: String
+    val title: String,
+    val eventDay: String
 )

@@ -28,8 +28,8 @@ interface SpeakerDao : BaseDao<SpeakerEntity> {
     @Query("SELECT COUNT(*) FROM speakers")
     fun fetchSpeakerCount(): Flow<Int>
 
-    @Query("SELECT * FROM speakers WHERE id = :id")
-    suspend fun getSpeakerById(id: Int): SpeakerEntity?
+    @Query("SELECT * FROM speakers WHERE name = :name")
+    suspend fun getSpeakerByName(name: String): SpeakerEntity?
 
     @Query("DELETE FROM speakers")
     suspend fun deleteAll()

@@ -84,8 +84,8 @@ The app will have the following features:
 ## Designs
 
 This is the link to the app designs:  
-[Light Theme] (https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)  
-[Dark Theme] (https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
+- [Light Theme](https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)
+- [Dark Theme](https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
 
 The app uses a design system: Chai
 
@@ -110,15 +110,8 @@ libraries.
 and `ktor` as examples.
 [plugins] Used to define plugins.
 
-You need to add your dependency version in [versions]. This is unnecessary if you are not sharing
-the version across different dependencies. After defining the version, add your library in
+You need to add your dependency version in [versions]. After defining the version, add your library in
 the [libraries] section as:
-
-```toml
-compose-activity = "androidx.activity:activity-compose:1.5.0"
-```
-
-Moreover, if you have already defined the version in [versions], you define it as:
 
 ```toml
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
@@ -203,13 +196,20 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Borwe">
+            <img src="https://avatars.githubusercontent.com/u/3319843?v=4" width="100;" alt="Borwe"/>
+            <br />
+            <sub><b>Brian Orwe</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
         <a href="https://github.com/chege4179">
             <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
             <br />
             <sub><b>Peter Chege</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/robert-nganga">
             <img src="https://avatars.githubusercontent.com/u/52964743?v=4" width="100;" alt="robert-nganga"/>
@@ -232,13 +232,6 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/Borwe">
-            <img src="https://avatars.githubusercontent.com/u/3319843?v=4" width="100;" alt="Borwe"/>
-            <br />
-            <sub><b>Brian Orwe</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/jumaallan">
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
             <br />
@@ -254,17 +247,17 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/Jacquigee">
-            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
-            <br />
-            <sub><b>Jacquiline Gitau</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Jacquigee">
+            <img src="https://avatars.githubusercontent.com/u/25638707?v=4" width="100;" alt="Jacquigee"/>
+            <br />
+            <sub><b>Jacquiline Gitau</b></sub>
         </a>
     </td>
     <td align="center">
@@ -282,20 +275,27 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/ndiritumichael">
+            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
+            <br />
+            <sub><b>Michael Ndiritu</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
             <sub><b>Amos Nyaburi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/etonotieno">
             <img src="https://avatars.githubusercontent.com/u/25648109?v=4" width="100;" alt="etonotieno"/>
             <br />
             <sub><b>Eton Otieno</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/joelmuraguri">
             <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="joelmuraguri"/>
@@ -311,6 +311,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Njoguu">
             <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
             <br />
@@ -322,6 +329,14 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/82908547?v=4" width="100;" alt="Terry-Mochire"/>
             <br />
             <sub><b>Terry Mochire</b></sub>
+        </a>
+    </td></tr>
+<tr>
+    <td align="center">
+        <a href="https://github.com/cliffgor">
+            <img src="https://avatars.githubusercontent.com/u/17774205?v=4" width="100;" alt="cliffgor"/>
+            <br />
+            <sub><b>Cliff Gor</b></sub>
         </a>
     </td>
     <td align="center">
@@ -337,8 +352,7 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Paul Juma</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/BKinya">
             <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
@@ -359,12 +373,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Josphat Mwania</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
-        <a href="https://github.com/michaelbukachi">
-            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+        <a href="https://github.com/bagechengzi">
+            <img src="https://avatars.githubusercontent.com/u/89894288?v=4" width="100;" alt="bagechengzi"/>
             <br />
-            <sub><b>Michael Bukachi</b></sub>
+            <sub><b>Null</b></sub>
         </a>
     </td>
     <td align="center">

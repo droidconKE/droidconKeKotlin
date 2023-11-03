@@ -58,7 +58,6 @@ fun MultiToggleButton(
     val selectedContentColor = MaterialTheme.colorScheme.onPrimary
     val unselectedContentColor = MaterialTheme.colorScheme.primary
     val chunkedOptions = toggleStates.chunked(3)
-    println(currentSelections)
 
     chunkedOptions.forEach { filterOptions ->
         Row(modifier = modifier) {

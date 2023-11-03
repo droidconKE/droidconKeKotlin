@@ -71,7 +71,8 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                 )
                 .border(
                     border = BorderStroke(
-                        2.dp, color = colorResource(id = R.color.cyan)
+                        2.dp,
+                        color = colorResource(id = R.color.cyan)
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )

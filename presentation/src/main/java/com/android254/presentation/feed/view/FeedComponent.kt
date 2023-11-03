@@ -46,7 +46,6 @@ import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiSmokeyGrey
 import com.droidconke.chai.atoms.MontserratBold
 import ke.droidcon.kotlin.presentation.R
@@ -64,7 +63,7 @@ fun FeedComponent(
             .wrapContentHeight(),
         shape = RoundedCornerShape(5),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
     ) {
         Column(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),

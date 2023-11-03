@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ke.droidcon.kotlin.datasource.local.source
+package com.android254.domain.models
 
-import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
-import kotlinx.coroutines.flow.Flow
-
-interface LocalSpeakersDataSource {
-
-    fun getCachedSpeakers(): Flow<List<SpeakerEntity>>
-
-    suspend fun getCachedSpeakerByName(speakerName: String): SpeakerEntity?
-
-    fun fetchCachedSpeakerCount(): Flow<Int>
-
-    suspend fun deleteAllCachedSpeakers()
-
-    suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>)
-}
+data class SessionsInformationDomainModel(
+    val sessions: List<Session>,
+    val eventDays: List<String>
+)
