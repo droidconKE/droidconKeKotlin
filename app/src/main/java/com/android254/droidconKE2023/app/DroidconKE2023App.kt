@@ -23,28 +23,22 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants
-import com.android254.data.work.WorkInitializer
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
-import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {
-    @Inject
-    lateinit var remoteFeatureToggle: RemoteFeatureToggle
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
     override fun onCreate() {
         super.onCreate()
-        remoteFeatureToggle.sync()
         initTimber()
         setUpWorkerManagerNotificationChannel()
-        WorkInitializer.initialize(context = this)
     }
 
     override fun getWorkManagerConfiguration(): Configuration =

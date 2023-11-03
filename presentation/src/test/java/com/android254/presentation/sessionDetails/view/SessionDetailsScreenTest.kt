@@ -169,7 +169,7 @@ class SessionDetailsScreenTest {
             startDateTime = "2022-10-15 18:30:00",
             slug = "",
             rooms = "",
-            speakers = listOf(Speaker("","","", "", "", "", "","John Doe", twitter = "johnDoe")),
+            speakers = listOf(Speaker("", "", "", "", "", "", "", "John Doe", twitter = "johnDoe")),
             eventDay = ""
         )
         val sessionPresentationModel = mockSession.toSessionDetailsPresentationModal()

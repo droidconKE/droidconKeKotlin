@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":chai"))
+    implementation(project(":datasource:remote"))
 
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
