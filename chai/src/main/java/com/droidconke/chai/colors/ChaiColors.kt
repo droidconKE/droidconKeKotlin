@@ -67,7 +67,9 @@ data class ChaiColors(
     val eventDaySelectorInactiveSurfaceColor: Color = Color.Unspecified,
     val eventDaySelectorInactiveTextColor: Color = Color.Unspecified,
     val eventDaySelectorActiveTextColor: Color = Color.Unspecified,
-    val badgeBackgroundColor: Color = Color.Unspecified
+    val badgeBackgroundColor: Color = Color.Unspecified,
+    val textFieldBackgroundColor: Color = Color.Unspecified,
+    val textFieldBorderColor: Color = Color.Unspecified
 )
 
 val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
@@ -106,7 +108,9 @@ val ChaiLightColorPalette = ChaiColors(
     eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
     eventDaySelectorActiveTextColor = ChaiWhite,
     eventDaySelectorInactiveTextColor = ChaiGrey90,
-    badgeBackgroundColor = ChaiCoal
+    badgeBackgroundColor = ChaiCoal,
+    textFieldBackgroundColor = ChaiLightGrey,
+    textFieldBorderColor = ChaiLightGrey
 )
 
 val ChaiDarkColorPalette = ChaiColors(
@@ -143,5 +147,7 @@ val ChaiDarkColorPalette = ChaiColors(
     eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
     eventDaySelectorActiveTextColor = ChaiWhite,
     eventDaySelectorInactiveTextColor = ChaiWhite,
-    badgeBackgroundColor = ChaiBlack
+    badgeBackgroundColor = ChaiBlack,
+    textFieldBackgroundColor = ChaiGrey90,
+    textFieldBorderColor = ChaiSmokeyGrey
 )
