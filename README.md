@@ -311,6 +311,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Njoguu">
             <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="Njoguu"/>
             <br />
@@ -323,15 +330,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Terry Mochire</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/cliffgor">
             <img src="https://avatars.githubusercontent.com/u/17774205?v=4" width="100;" alt="cliffgor"/>
             <br />
             <sub><b>Cliff Gor</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/emmanuelmuturia">
             <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
@@ -365,13 +372,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
             <br />
             <sub><b>Josphat Mwania</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/michaelbukachi">
-            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
-            <br />
-            <sub><b>Michael Bukachi</b></sub>
         </a>
     </td></tr>
 <tr>

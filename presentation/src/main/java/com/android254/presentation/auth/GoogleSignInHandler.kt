@@ -36,7 +36,6 @@ class GoogleSignInHandler @Inject constructor(@ApplicationContext private val co
     fun getSignInIntent() = googleSignInClient.signInIntent
 
     fun getIdToken(intent: Intent?): String? {
-        println(context.getString(R.string.default_web_client_id))
         return try {
             val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
             val account = task.getResult(ApiException::class.java)

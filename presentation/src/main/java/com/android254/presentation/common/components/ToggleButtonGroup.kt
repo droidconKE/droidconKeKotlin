@@ -55,7 +55,6 @@ fun MultiToggleButton(
     val selectedContentColor = ChaiGrey90
     val unselectedContentColor = MaterialTheme.chaiColorsPalette.textNormalColor
     val chunkedOptions = toggleStates.chunked(3)
-    println(currentSelections)
 
     chunkedOptions.forEach { filterOptions ->
         Row(modifier = modifier) {
