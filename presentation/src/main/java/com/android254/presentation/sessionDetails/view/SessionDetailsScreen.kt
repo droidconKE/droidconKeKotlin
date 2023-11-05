@@ -43,6 +43,7 @@ import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.material3.AlertDialogDefaults.titleContentColor
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -52,6 +53,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -130,7 +132,8 @@ private fun SessionDetailsScreen(
                     tint = ChaiWhite
                 )
             }
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         when (uiState) {
             is SessionDetailsUiState.Loading -> {
@@ -424,6 +427,13 @@ private fun CustomDivider() {
 private fun TopBar(onNavigationIconClick: () -> Unit) {
     SmallTopAppBar(
         modifier = Modifier.testTag(TestTag.TOP_BAR),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.chaiColorsPalette.background,
+            navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            scrolledContainerColor = MaterialTheme.chaiColorsPalette.background,
+            titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            actionIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
+        ),
         title = {
             ChaiBodyLarge(
                 bodyText = stringResource(id = R.string.session_details_label),

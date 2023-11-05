@@ -153,6 +153,7 @@ private fun FeedBackScreen(
                 )
             }
         },
+        containerColor = MaterialTheme.chaiColorsPalette.background,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         Column(

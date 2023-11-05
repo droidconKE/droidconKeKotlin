@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +42,7 @@ import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -88,7 +90,8 @@ private fun HomeScreen(
                 navigateToFeedbackScreen = navigateToFeedbackScreen,
                 onActionClicked = onActionClicked
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isSyncing),

@@ -50,6 +50,7 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiGrey90
+import com.droidconke.chai.chaiColorsPalette
 import kotlinx.coroutines.launch
 
 @Composable
@@ -137,13 +138,13 @@ fun SessionsScreen(
                     }
                 }
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
 
         Column(
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {

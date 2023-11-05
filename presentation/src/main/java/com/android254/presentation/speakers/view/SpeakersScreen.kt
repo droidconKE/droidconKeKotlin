@@ -99,7 +99,8 @@ private fun SpeakersScreen(
                     navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
                 )
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = uiState is SpeakersScreenUiState.Loading),

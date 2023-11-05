@@ -83,7 +83,8 @@ private fun AboutScreen(
                 },
                 userProfile = ""
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         when (uiState) {
             is AboutScreenUiState.Loading -> {
