@@ -50,11 +50,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.TimeAndVenueComponent
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
-import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
@@ -113,8 +113,7 @@ fun SessionsCardWithBannerImage(
                     }
                 },
                 isSessionStarred = session.isStarred,
-                sessionSpeakerImageUrl = session.speakerImage,
-                sessionSpeakerName = session.speakerName
+                speakers = session.speakers
             )
         }
     }
@@ -124,36 +123,31 @@ fun SessionsCardWithBannerImage(
 fun SpeakerDetailsAndLikeButtonComponent(
     onBookmarkClicked: () -> Unit,
     isSessionStarred: Boolean,
-    sessionSpeakerImageUrl: String,
-    sessionSpeakerName: String
+    speakers: List<SessionSpeakersPresentationModel>
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
 
     ) {
-        if (sessionSpeakerName.isNotEmpty()) {
-            AsyncImage(
-                model = sessionSpeakerImageUrl,
-                contentDescription = "session speaker image",
-                modifier = Modifier
-                    .size(32.dp)
-                    .border(
-                        width = 1.dp,
-                        color = ChaiTeal,
-                        shape = CircleShape
-                    )
-                    .clip(CircleShape)
-            )
-
+        speakers.forEach { speaker ->
+            speaker.speakerImage?.let {
+                AsyncImage(
+                    model = speaker.speakerImage,
+                    contentDescription = "session speaker image",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .border(
+                            width = 1.dp,
+                            color = ChaiTeal,
+                            shape = CircleShape
+                        )
+                        .clip(CircleShape)
+                )
+            }
             Spacer(modifier = Modifier.width(8.dp))
-
-            // This text is not in the design but users might want to see the speaker's name hence the addition
-            ChaiBodySmall(
-                bodyText = sessionSpeakerName,
-                textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
-            )
         }
+
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(

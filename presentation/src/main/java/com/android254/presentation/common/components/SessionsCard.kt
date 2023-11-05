@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
@@ -57,7 +58,6 @@ import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @Composable
 fun SessionsCard(
@@ -121,11 +121,13 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
         Spacer(modifier = Modifier.height(12.dp))
         TimeAndVenueComponent(session)
         Spacer(modifier = Modifier.height(12.dp))
-        if (session.speakerName.isNotEmpty()) {
-            SessionPresenterComponents(
-                sessionSpeakerImageUrl = session.speakerImage,
-                sessionSpeakerName = session.speakerName
-            )
+        if (session.speakers.isNotEmpty()) {
+            Column {
+                session.speakers.forEach { speaker ->
+                    SessionPresenterComponents(speaker = speaker)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
         }
     }
 }
@@ -199,13 +201,14 @@ fun TimeAndVenueComponent(session: SessionPresentationModel) {
 }
 
 @Composable
-fun SessionPresenterComponents(sessionSpeakerImageUrl: String, sessionSpeakerName: String) {
-    Timber.tag("Speaker").d(sessionSpeakerName)
+fun SessionPresenterComponents(
+    speaker: SessionSpeakersPresentationModel
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = sessionSpeakerImageUrl,
+            model = speaker.speakerImage,
             contentDescription = "session speaker image",
             modifier = Modifier
                 .size(24.dp)
@@ -214,7 +217,7 @@ fun SessionPresenterComponents(sessionSpeakerImageUrl: String, sessionSpeakerNam
         Spacer(modifier = Modifier.width(10.dp))
 
         ChaiBodySmall(
-            bodyText = sessionSpeakerName,
+            bodyText = speaker.name,
             textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
     }

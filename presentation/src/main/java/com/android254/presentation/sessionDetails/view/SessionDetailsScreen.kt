@@ -71,6 +71,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionDetailsPresentationModel
+import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.droidconke.chai.ChaiDCKE22Theme
@@ -223,7 +224,11 @@ fun Body(
         Spacer(modifier = Modifier.height(18.dp))
 
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
-            SpeakerTwitterHandle(sessionDetails)
+            sessionDetails.speakers.forEach { speaker ->
+                if (speaker.twitterHandle.isNotEmpty()) {
+                    SpeakerTwitterHandle(speaker)
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(140.dp))
@@ -232,51 +237,49 @@ fun Body(
 
 @Composable
 private fun SpeakerTwitterHandle(
-    sessionDetails: SessionDetailsPresentationModel
+    speaker: SessionDetailsSpeakerPresentationModel
 ) {
-    if (sessionDetails.twitterHandle != null) {
-        val context = LocalContext.current
-        val intent = remember {
-            Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://www.twitter.com/${sessionDetails.twitterHandle}")
-            )
-        }
+    val context = LocalContext.current
+    val intent = remember {
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://www.twitter.com/${speaker.twitterHandle}")
+        )
+    }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        ChaiBodyMedium(
+            bodyText = stringResource(R.string.twitter_handle_label),
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+        )
+
+        COutlinedButton(
+            onClick = { context.startActivity(intent) },
+            shape = RoundedCornerShape(10.dp),
+            colors = ButtonDefaults.buttonColors(
+                MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor
+            )
         ) {
-            ChaiBodyMedium(
-                bodyText = stringResource(R.string.twitter_handle_label),
-                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+            Icon(
+                painter = painterResource(id = R.drawable.ic_twitter_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(20.dp),
+                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
             )
 
-            COutlinedButton(
-                onClick = { context.startActivity(intent) },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_twitter_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width(20.dp),
-                    tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
-                )
+            Spacer(modifier = Modifier.width(5.dp))
 
-                Spacer(modifier = Modifier.width(5.dp))
-
-                ChaiBodyMedium(
-                    modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
-                    bodyText = sessionDetails.twitterHandle,
-                    textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
-                )
-            }
+            ChaiBodyMedium(
+                modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
+                bodyText = speaker.twitterHandle,
+                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
+            )
         }
     }
 }
@@ -330,7 +333,7 @@ private fun SessionSpeakerNameAndFavouriteIcon(
     ) {
         ChaiTitle(
             modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
-            titleText = sessionDetails.speakerName,
+            titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
             titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
         )
 
@@ -489,17 +492,15 @@ fun SessionDetailsScreenPreview() {
                     title = "Welcome at DroidconKE",
                     description = "Welcome to DroidconKE 2022. We are excited to have you here. We hope you will have a great time.",
                     venue = "Main Hall",
-                    speakerImage = "",
-                    speakerName = "DroidconKE",
                     startTime = "10:00",
                     endTime = "11:00",
                     amOrPm = "AM",
                     isStarred = false,
                     format = "Keynote",
                     level = "Beginner",
-                    twitterHandle = "@droidconke",
                     sessionImageUrl = "",
-                    timeSlot = "10:00 - 11:00 AM"
+                    timeSlot = "10:00 - 11:00 AM",
+                    speakers = listOf()
                 )
             ),
             sessionId = "1",
