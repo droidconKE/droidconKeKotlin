@@ -23,6 +23,7 @@ import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
+import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiDCKE22Theme
 import org.junit.Before
 import org.junit.Rule
@@ -94,7 +95,7 @@ class HomeScreenTest {
     @Test
     fun `Test sponsors card is displayed`() {
         composeTestRule.setContent {
-            SponsorsCard(sponsorsLogos = listOf("Google"))
+            SponsorsCard(sponsors = listOf(SponsorPresentationModel("","","","")))
         }
         composeTestRule.onNodeWithTag("sponsors_section")
     }
