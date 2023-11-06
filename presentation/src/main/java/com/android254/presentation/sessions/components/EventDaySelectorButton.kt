@@ -24,17 +24,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.components.ChaiTextLabelLarge
 
 @Composable
 fun EventDaySelectorButton(
@@ -55,19 +53,13 @@ fun EventDaySelectorButton(
             )
             .padding(start = 5.dp)
     ) {
-        Text(
-            text = title,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = Montserrat,
-            color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+        ChaiSubTitle(
+            titleText = title,
+            titleColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
         )
-        Text(
-            text = subtitle,
-            fontSize = 11.sp,
-            fontFamily = Montserrat,
-            fontWeight = FontWeight.Normal,
-            color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+        ChaiTextLabelLarge(
+            bodyText = subtitle,
+            textColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
         )
     }
 }

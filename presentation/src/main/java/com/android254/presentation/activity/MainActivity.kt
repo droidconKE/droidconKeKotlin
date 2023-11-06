@@ -21,6 +21,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
 import com.android254.presentation.common.navigation.Navigation
 import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.launch
@@ -85,7 +87,8 @@ fun MainScreen() {
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController) }
+        bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController) },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { padding ->
 
         Column(

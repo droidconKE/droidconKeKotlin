@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.feed.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,18 +23,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun FeedLoadingComponent() {
     Column(
         modifier = Modifier
+            .background(color = MaterialTheme.chaiColorsPalette.background)
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 10.dp)
     ) {
@@ -54,7 +58,7 @@ fun FeedLoadingComponent() {
     }
 }
 
-@Preview(showBackground = true)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun FeedLoadingComponentPreview() {
     ChaiDCKE22Theme {

@@ -29,14 +29,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,24 +46,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.speakersDummyData
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiRed
+import com.droidconke.chai.atoms.ChaiTeal
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.CButton
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiBodySmall
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.components.ChaiTextLabelLarge
+import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -94,9 +101,10 @@ private fun SpeakerDetailsScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Text(
+                ChaiBodyMediumBold(
                     modifier = Modifier.align(Alignment.Center),
-                    text = uiState.message
+                    bodyText = uiState.message,
+                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                 )
             }
         }
@@ -105,9 +113,10 @@ private fun SpeakerDetailsScreen(
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Text(
+                ChaiBodyMediumBold(
                     modifier = Modifier.align(Alignment.Center),
-                    text = uiState.message
+                    bodyText = uiState.message,
+                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                 )
             }
         }
@@ -124,6 +133,7 @@ private fun SpeakerDetailsScreen(
             val speaker = uiState.speaker
             ConstraintLayout(
                 modifier = Modifier
+                    .background(color = MaterialTheme.chaiColorsPalette.background)
                     .verticalScroll(rememberScrollState())
                     .fillMaxSize()
             ) {
@@ -154,7 +164,7 @@ private fun SpeakerDetailsScreen(
                             shape = CircleShape
                         )
                         .border(
-                            BorderStroke(2.dp, color = colorResource(id = R.color.cyan)),
+                            BorderStroke(2.dp, color = ChaiTeal),
                             shape = CircleShape
                         )
                         .size(105.dp)
@@ -175,36 +185,30 @@ private fun SpeakerDetailsScreen(
                             end.linkTo(parent.end)
                         }
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.speaker_details_label),
-                        fontSize = 11.sp,
-                        lineHeight = 16.sp,
-                        textAlign = TextAlign.Center,
-                        color = colorResource(id = R.color.red_orange),
+                    ChaiTextLabelLarge(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
+                        bodyText = stringResource(id = R.string.speaker_details_label),
+                        textColor = ChaiRed
                     )
-                    Text(
-                        text = speaker.name,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 18.sp,
-                        textAlign = TextAlign.Center,
-                        color = colorResource(id = R.color.blue),
+
+                    ChaiTitle(
                         modifier = Modifier
                             .testTag("speaker_name")
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
+                        titleText = speaker.name,
+                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
                     )
-                    Text(
-                        text = speaker.tagline.toString(),
-                        textAlign = TextAlign.Center,
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
+
+                    ChaiBodySmall(
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .testTag("speaker_tagline")
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.CenterHorizontally),
+                        bodyText = speaker.tagline.toString(),
+                        textAlign = TextAlign.Center,
+                        textColor = MaterialTheme.chaiColorsPalette.textWeakColor
                     )
 
                     Spacer(
@@ -213,21 +217,17 @@ private fun SpeakerDetailsScreen(
                             .height(32.dp)
                     )
 
-                    Text(
-                        text = stringResource(id = R.string.bio_label),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        lineHeight = 22.sp,
-                        color = colorResource(id = R.color.blue)
+                    ChaiSubTitle(
+                        titleText = stringResource(id = R.string.bio_label),
+                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
                     )
 
-                    Text(
-                        text = speaker.bio ?: "",
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
+                    ChaiBodySmall(
                         modifier = Modifier
                             .testTag("speaker_bio")
-                            .padding(top = 8.dp)
+                            .padding(top = 8.dp),
+                        bodyText = speaker.bio ?: "",
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                     )
                 }
 
@@ -236,9 +236,7 @@ private fun SpeakerDetailsScreen(
                         .fillMaxWidth()
                         .height(1.dp)
                         .background(
-                            color = colorResource(
-                                id = R.color.light_blue
-                            )
+                            color = MaterialTheme.chaiColorsPalette.surfaces
                         )
                         .constrainAs(divider) {
                             top.linkTo(speakerDetails.bottom, 20.dp)
@@ -254,39 +252,51 @@ private fun SpeakerDetailsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = stringResource(R.string.twitter_handle_label),
-                        fontSize = 16.sp,
-                        lineHeight = 19.sp
+                    ChaiBodyMedium(
+                        bodyText = stringResource(R.string.twitter_handle_label),
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                    OutlinedButton(
+                    CButton(
+                        modifier = Modifier
+                            .testTag("twitter_button")
+                            .align(Alignment.CenterVertically)
+                            .border(
+                                border = BorderStroke(
+                                    1.dp,
+                                    MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                                ),
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clip(RoundedCornerShape(10.dp)),
                         onClick = {
                             if (speaker.twitterHandle != null) {
                                 uriHandler.openUri(speaker.twitterHandle.toString())
                             }
                         },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                            contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                            disabledContainerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                            disabledContentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                        ),
                         shape = RoundedCornerShape(10.dp),
-                        border = BorderStroke(1.dp, colorResource(id = R.color.blue)),
-                        modifier = Modifier
-                            .testTag("twitter_button")
-                            .align(Alignment.CenterVertically)
+                        isEnabled = true
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_twitter),
                             contentDescription = stringResource(id = R.string.share),
-                            tint = ChaiBlue
+                            tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
                         )
-                        Text(
-                            text = if (speaker.twitterHandle != null) {
+                        ChaiBodyMedium(
+                            bodyText = if (speaker.twitterHandle != null) {
                                 speaker.twitterHandle.toString()
                                     .replace("https://twitter.com/", "")
                             } else {
                                 ""
                             },
-                            fontSize = 16.sp,
-                            lineHeight = 19.sp,
-                            color = colorResource(id = R.color.blue),
+                            textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
                             modifier = Modifier.padding(start = 6.dp)
                         )
                     }
@@ -308,7 +318,7 @@ private fun SpeakerDetailsScreen(
 )
 @Composable
 fun SpeakerDetailsScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         SpeakerDetailsScreen(
             uiState = SpeakerDetailsScreenUiState.Success(
                 speaker = speakersDummyData.first()

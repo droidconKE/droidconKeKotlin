@@ -24,9 +24,9 @@ import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
+import com.droidconke.chai.ChaiDCKE22Theme
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -64,7 +64,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show top bar and floating action button`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme() {
+            ChaiDCKE22Theme() {
                 SessionDetailsRoute(
                     viewModel = viewModel,
                     sessionId = sessionId,
@@ -82,10 +82,9 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show favourite icon and session banner image`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme() {
+            ChaiDCKE22Theme() {
                 Body(
                     paddingValues = PaddingValues(1.dp),
-                    darkTheme = false,
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
                     unBookmarkSession = { }
@@ -103,10 +102,9 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme() {
+            ChaiDCKE22Theme() {
                 Body(
                     paddingValues = PaddingValues(10.dp),
-                    darkTheme = false,
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
                     unBookmarkSession = { }
@@ -136,10 +134,9 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme() {
+            ChaiDCKE22Theme() {
                 Body(
                     paddingValues = PaddingValues(10.dp),
-                    darkTheme = false,
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
                     unBookmarkSession = { }

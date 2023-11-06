@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.components.CustomSwitch
@@ -48,6 +48,9 @@ import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiGrey90
+import com.droidconke.chai.chaiColorsPalette
 import kotlinx.coroutines.launch
 
 @Composable
@@ -109,6 +112,10 @@ fun SessionsScreen(
         mutableStateOf(false)
     }
 
+    val sessionScreenSessionsState = rememberSaveable {
+        mutableStateOf(SessionScreenState.ALL)
+    }
+
     BackHandler(bottomSheetState.isVisible) {
         scope.launch { bottomSheetState.hide() }
     }
@@ -131,13 +138,13 @@ fun SessionsScreen(
                     }
                 }
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
 
         Column(
             Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues)
                 .padding(horizontal = 20.dp)
         ) {
@@ -157,8 +164,10 @@ fun SessionsScreen(
                     showMySessions.value = it
                     isFilterActive.value = !it
                     if (showMySessions.value) {
+                        sessionScreenSessionsState.value = SessionScreenState.MYSESSIONS
                         toggleBookmarkFilter()
                     } else {
+                        sessionScreenSessionsState.value = SessionScreenState.ALL
                         clearSelectedFilterList()
                     }
                 })
@@ -168,7 +177,9 @@ fun SessionsScreen(
                 navigateToSessionDetails = navigateToSessionDetails,
                 refreshSessionsList = refreshSessionList,
                 retry = { },
-                isRefreshing = isRefreshing
+                isRefreshing = isRefreshing,
+                sessionScreenState = sessionScreenSessionsState.value,
+                isSessionLayoutList = isSessionLayoutList.value
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(
@@ -177,7 +188,10 @@ fun SessionsScreen(
                         scope.launch {
                             bottomSheetState.hide()
                         }
-                    }
+                    },
+                    shape = RoundedCornerShape(0.dp),
+                    containerColor = ChaiGrey90.copy(alpha = 0.52f),
+                    dragHandle = {}
                 ) {
                     SessionsFilterPanel(
                         onDismiss = {
@@ -199,7 +213,7 @@ fun SessionsScreen(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun SessionsScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         SessionsScreen(
             sessionsUiState = SessionsUiState(),
             selectedEventDate = EventDate("1", day = 1),
@@ -214,4 +228,8 @@ fun SessionsScreenPreview() {
             clearSelectedFilterList = {}
         )
     }
+}
+
+enum class SessionScreenState {
+    ALL, MYSESSIONS
 }

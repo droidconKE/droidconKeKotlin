@@ -27,20 +27,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -56,17 +55,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.common.theme.Montserrat
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiGrey90
+import com.droidconke.chai.atoms.ChaiLightGrey
+import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
+import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiBodySmall
+import com.droidconke.chai.components.ChaiBodyXSmallBold
+import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -111,20 +114,8 @@ private fun FeedBackScreen(
                             }
                         },
                         colors = TopAppBarDefaults.topAppBarColors(
-                            titleContentColor = if (darkTheme) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                Color(
-                                    0xFF1B1B1F
-                                )
-                            },
-                            navigationIconContentColor = if (darkTheme) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                Color(
-                                    0xFF1B1B1F
-                                )
-                            },
+                            titleContentColor = ChaiWhite,
+                            navigationIconContentColor = ChaiWhite,
                             containerColor = Color.Transparent
                         )
                     )
@@ -156,12 +147,13 @@ private fun FeedBackScreen(
                     scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.largeTopAppBarColors(
                         containerColor = Color.Transparent,
-                        titleContentColor = if (darkTheme) Color(0xFFF2F0F4) else MaterialTheme.colorScheme.onPrimary,
-                        navigationIconContentColor = if (darkTheme) Color(0xFFF2F0F4) else MaterialTheme.colorScheme.onPrimary
+                        titleContentColor = ChaiWhite,
+                        navigationIconContentColor = ChaiWhite
                     )
                 )
             }
         },
+        containerColor = MaterialTheme.chaiColorsPalette.background,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         Column(
@@ -172,106 +164,123 @@ private fun FeedBackScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(30.dp))
-            Text(
-                text = stringResource(R.string.feedback_improve_label),
-                style = TextStyle(
-                    fontWeight = FontWeight.ExtraBold,
-                    color = colorResource(id = R.color.blue),
-                    fontSize = 18.sp,
-                    fontFamily = Montserrat
-                )
+            ChaiSubTitle(
+                titleText = stringResource(R.string.feedback_improve_label),
+                titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Card(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .background(Color.White)
+                    .background(
+                        color = MaterialTheme.chaiColorsPalette.cardsBackground,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Spacer(modifier = Modifier.height(40.dp))
+                ChaiBodySmall(
+                    bodyText = stringResource(R.string.feedback_event_label),
+                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                )
+                Spacer(modifier = Modifier.height(30.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Text(text = stringResource(R.string.feedback_event_label))
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                    Column(
+                        modifier = Modifier
+                            .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                            .size(68.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Card {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(40.dp),
-                                    painter = painterResource(id = R.drawable.ic_feedback_bad_face),
-                                    contentDescription = stringResource(id = R.string.sign_in_label)
-                                )
-                                Text(
-                                    text = stringResource(R.string.Bad)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Card {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(40.dp),
-                                    painter = painterResource(id = R.drawable.ic_feedback_neutral_face),
-                                    contentDescription = stringResource(id = R.string.sign_in_label)
-                                )
-                                Text(
-                                    text = stringResource(R.string.Okay)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Card {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Image(
-                                    modifier = Modifier
-                                        .height(40.dp)
-                                        .width(40.dp),
-                                    painter = painterResource(id = R.drawable.ic_feedback_smiling_face),
-                                    contentDescription = stringResource(id = R.string.sign_in_label)
-                                )
-                                Text(
-                                    text = stringResource(R.string.Great)
-                                )
-                            }
-                        }
+                        Image(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(40.dp),
+                            painter = painterResource(id = R.drawable.ic_feedback_bad_face),
+                            contentDescription = stringResource(id = R.string.Bad)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        ChaiBodyXSmallBold(
+                            bodyText = stringResource(R.string.Bad),
+                            textColor = ChaiGrey90
+                        )
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                            .size(68.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(40.dp),
+                            painter = painterResource(id = R.drawable.ic_feedback_neutral_face),
+                            contentDescription = stringResource(id = R.string.Okay)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        ChaiBodyXSmallBold(
+                            bodyText = stringResource(R.string.Okay),
+                            textColor = ChaiGrey90
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                            .size(68.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .height(40.dp)
+                                .width(40.dp),
+                            painter = painterResource(id = R.drawable.ic_feedback_smiling_face),
+                            contentDescription = stringResource(id = R.string.Great)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        ChaiBodyXSmallBold(
+                            bodyText = stringResource(R.string.Great),
+                            textColor = ChaiGrey90
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(40.dp))
             }
             Spacer(modifier = Modifier.height(10.dp))
-            TextField(
-                value = value,
-                onValueChange = { value = it },
-                label = { Text(stringResource(R.string.feedback_type_message_label)) },
+            OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
                     .height(120.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                value = value,
+                onValueChange = { value = it },
+                label = {
+                    ChaiBodySmall(bodyText = stringResource(R.string.feedback_type_message_label))
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
+                    unfocusedContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
+                    disabledContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
+                    focusedBorderColor = MaterialTheme.chaiColorsPalette.textFieldBorderColor,
+                    unfocusedBorderColor = MaterialTheme.chaiColorsPalette.textFieldBorderColor
                 ),
-                shape = RoundedCornerShape(7.dp)
+                shape = RoundedCornerShape(8.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
             CButton(
@@ -279,18 +288,17 @@ private fun FeedBackScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
+                    .height(48.dp)
                     .testTag("submit_feedback_button"),
                 isEnabled = true,
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (darkTheme) Color.Black else colorResource(id = R.color.blue),
+                    containerColor = MaterialTheme.chaiColorsPalette.primary,
                     contentColor = Color.White
                 )
             ) {
-                Text(
-                    text = stringResource(R.string.feedback_label).uppercase(),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                ChaiBodyMediumBold(
+                    bodyText = stringResource(R.string.feedback_button).uppercase()
                 )
             }
         }
@@ -299,9 +307,9 @@ private fun FeedBackScreen(
 
 @Composable
 fun FeedbackTitle() {
-    Text(
-        stringResource(R.string.feedback_label),
-        modifier = Modifier.testTag("heading")
+    ChaiBodyLarge(
+        modifier = Modifier.testTag("heading"),
+        bodyText = stringResource(R.string.feedback_label)
     )
 }
 
@@ -315,7 +323,7 @@ fun FeedbackTitle() {
 )
 @Composable
 fun FeedBackScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         FeedBackScreen(darkTheme = isSystemInDarkTheme())
     }
 }

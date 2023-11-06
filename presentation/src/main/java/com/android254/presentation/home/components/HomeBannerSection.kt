@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,14 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.home.viewstate.HomeViewState
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.components.ChaiTextLabelMedium
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -99,17 +97,13 @@ fun HomeCallForSpeakersLink() {
                     .padding(end = 20.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(id = R.string.home_banner_call_for_speakers_label),
-                    fontFamily = MontserratBold,
-                    color = ChaiWhite,
-                    fontSize = 17.sp
+                ChaiSubTitle(
+                    titleText = stringResource(id = R.string.home_banner_call_for_speakers_label),
+                    titleColor = ChaiWhite
                 )
-                Text(
-                    text = stringResource(id = R.string.home_banner_call_for_speakers_apply_to_speak_label),
-                    fontFamily = MontserratRegular,
-                    color = ChaiBlack,
-                    fontSize = 10.sp
+                ChaiTextLabelMedium(
+                    bodyText = stringResource(id = R.string.home_banner_call_for_speakers_apply_to_speak_label),
+                    textColor = ChaiBlack
                 )
             }
 
@@ -126,7 +120,7 @@ fun HomeCallForSpeakersLink() {
 @Preview
 @Composable
 fun HomeBannerSectionPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeBannerSection(HomeViewState())
     }
 }
@@ -134,7 +128,7 @@ fun HomeBannerSectionPreview() {
 @Preview
 @Composable
 fun HomeEventBannerPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeEventPoster()
     }
 }
@@ -142,7 +136,7 @@ fun HomeEventBannerPreview() {
 @Preview
 @Composable
 fun HomeCallForSpeakersLinkPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeCallForSpeakersLink()
     }
 }

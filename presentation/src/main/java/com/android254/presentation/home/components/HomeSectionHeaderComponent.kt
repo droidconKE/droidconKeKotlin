@@ -27,24 +27,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratMedium
-import com.droidconke.chai.atoms.MontserratRegular
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyXSmallBold
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.components.ChaiTextLabelMedium
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -61,16 +55,9 @@ fun HomeSectionHeaderComponent(
             .padding(vertical = 16.dp)
             .testTag("sectionHeader")
     ) {
-        Text(
-            text = sectionLabel,
-            textAlign = TextAlign.Start,
-            style = TextStyle(
-                color = MaterialTheme.chaiColorsPalette.titleTextColorPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                lineHeight = 25.sp,
-                fontFamily = MontserratBold
-            )
+        ChaiSubTitle(
+            titleText = sectionLabel,
+            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -79,17 +66,9 @@ fun HomeSectionHeaderComponent(
                 .clickable { onViewAllClicked() }
                 .testTag("viewAll")
         ) {
-            Text(
-                text = stringResource(id = R.string.view_all_label),
-                textAlign = TextAlign.Start,
-                style = TextStyle(
-                    color = ChaiBlue,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    lineHeight = 14.sp,
-                    fontFamily = MontserratMedium
-                ),
-                color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary
+            ChaiBodyXSmallBold(
+                bodyText = stringResource(id = R.string.view_all_label),
+                textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary
             )
             Spacer(modifier = Modifier.width(4.dp))
             Box(
@@ -101,14 +80,10 @@ fun HomeSectionHeaderComponent(
                         shape = RoundedCornerShape(14.dp)
                     )
             ) {
-                Text(
-                    text = stringResource(id = R.string.format_plus_label, sectionSize),
+                ChaiTextLabelMedium(
                     modifier = Modifier.align(Alignment.Center),
-                    style = TextStyle(
-                        color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary,
-                        fontSize = 10.sp,
-                        fontFamily = MontserratRegular
-                    )
+                    bodyText = stringResource(id = R.string.format_plus_label, sectionSize),
+                    textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary
                 )
             }
         }

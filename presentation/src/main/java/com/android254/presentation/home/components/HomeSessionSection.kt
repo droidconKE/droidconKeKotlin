@@ -27,7 +27,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -35,19 +35,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SessionPresentationModel
-import com.droidconke.chai.atoms.ChaiBlack
-import com.droidconke.chai.atoms.ChaiLightGrey
-import com.droidconke.chai.atoms.ChaiSmokeyGrey
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodySmallBold
+import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -90,7 +84,7 @@ fun HomeSessionContent(
         modifier = modifier
             .width(300.dp)
             .height(intrinsicSize = IntrinsicSize.Max),
-        colors = CardDefaults.cardColors(containerColor = ChaiLightGrey),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
         onClick = { onSessionClick(session.id) }
     ) {
         AsyncImage(
@@ -107,34 +101,21 @@ fun HomeSessionContent(
         Spacer(Modifier.height(8.dp))
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(12.dp)
                 .fillMaxWidth()
                 .height(80.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = session.title,
-                textAlign = TextAlign.Start,
-                style = TextStyle(
-                    color = ChaiBlack,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp,
-                    fontFamily = MontserratBold
-                ),
+            ChaiBodySmallBold(
+                bodyText = session.title,
+                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                 maxLines = 2
             )
             Spacer(Modifier.height(4.dp))
-            Text(
-                text = "@ ${session.startTime} | ${session.venue} ",
-                textAlign = TextAlign.Start,
-                style = TextStyle(
-                    color = ChaiSmokeyGrey,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 11.sp,
-                    lineHeight = 14.sp,
-                    fontFamily = MontserratRegular
-                )
+
+            ChaiTextLabelLarge(
+                bodyText = "@ ${session.startTime} | ${session.venue} ",
+                textColor = MaterialTheme.chaiColorsPalette.textWeakColor
             )
         }
     }
