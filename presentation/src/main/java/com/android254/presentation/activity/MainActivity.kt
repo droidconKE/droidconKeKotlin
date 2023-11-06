@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
-        Timber.e("Notification permission is :$isGranted")
+        Timber.i("Notification permission is :$isGranted")
     }
 
     @Inject
@@ -95,9 +95,9 @@ class MainActivity : ComponentActivity() {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
             ) {
-                Timber.e("Permission Granted")
+                Timber.i("Permission Granted")
             } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
-                Timber.e("Should Show Rationale")
+                Timber.i("Should Show Rationale")
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
