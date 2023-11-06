@@ -26,13 +26,15 @@ import android.os.Build
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.android254.presentation.activity.MainActivity
 import ke.droidcon.kotlin.presentation.R
 
 private const val CHANNEL_ID = "DROIDCON_CHANNEL_ID"
 
 class DroidconNotificationManager(private val context: Context) {
+    private val notificationManager by lazy {
+        context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     fun createNotificationChannel(channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -40,8 +42,7 @@ class DroidconNotificationManager(private val context: Context) {
                 lightColor = Color.Blue.toArgb()
                 enableLights(true)
             }
-            val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -59,8 +60,13 @@ class DroidconNotificationManager(private val context: Context) {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-        with(NotificationManagerCompat.from(context)) {
-            notify(0, builder.build())
+
+        notificationManager.notify(0, builder.build())
+    }
+
+    fun deleteNotificationChannel(channelName: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.deleteNotificationChannel(channelName)
         }
     }
 }
