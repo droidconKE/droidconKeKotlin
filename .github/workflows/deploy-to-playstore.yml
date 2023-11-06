@@ -17,7 +17,7 @@ jobs:
           java-version: '17'
 
       - name: Combine strings
-        uses: michpohl/action-concatenate-strings@v1
+        uses: michpohl/action-concatenate-strings@v1.0.1
         with:
           first: 1.0
           second: ${{ github.run_number }}
