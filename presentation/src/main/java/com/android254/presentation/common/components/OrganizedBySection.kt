@@ -19,21 +19,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -46,23 +42,17 @@ fun OrganizedBySection(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.chaiColorsPalette.surfaces,
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(vertical = 20.dp)
             .testTag("organized_by_section")
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.organized_by),
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
-                lineHeight = 25.sp,
-                fontFamily = MontserratBold
-            ),
-            textAlign = TextAlign.Center
+        ChaiTitle(
+            modifier = Modifier
+                .fillMaxWidth(),
+            titleText = stringResource(id = R.string.organized_by),
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
 
         Spacer(modifier = Modifier.height(40.dp))

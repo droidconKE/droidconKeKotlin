@@ -20,7 +20,6 @@ import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +43,7 @@ import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.material3.AlertDialogDefaults.titleContentColor
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -53,39 +53,45 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiRed
+import com.droidconke.chai.atoms.ChaiTeal90
+import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.COutlinedButton
+import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.components.ChaiBodyLargeBold
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiBodySmall
+import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chai.components.ChaiTextLabelLarge
+import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionDetailsRoute(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     viewModel: SessionDetailsViewModel = hiltViewModel(),
     sessionId: String,
     onNavigationIconClick: () -> Unit
@@ -93,8 +99,8 @@ fun SessionDetailsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SessionDetailsScreen(
-        darkTheme = darkTheme,
         uiState = uiState,
+        sessionId = sessionId,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick
@@ -103,8 +109,8 @@ fun SessionDetailsRoute(
 
 @Composable
 private fun SessionDetailsScreen(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     uiState: SessionDetailsUiState,
+    sessionId: String,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit
@@ -117,17 +123,18 @@ private fun SessionDetailsScreen(
                 modifier = Modifier
                     .size(44.dp)
                     .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                containerColor = colorResource(id = R.color.red_orange),
+                containerColor = ChaiRed,
                 shape = CircleShape
             ) {
                 Icon(
                     modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
                     imageVector = Icons.Filled.Reply,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = ChaiWhite
                 )
             }
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         when (uiState) {
             is SessionDetailsUiState.Loading -> {
@@ -142,9 +149,10 @@ private fun SessionDetailsScreen(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Text(
+                    ChaiBodyMediumBold(
                         modifier = Modifier.align(Alignment.Center),
-                        text = uiState.message
+                        bodyText = uiState.message,
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                     )
                 }
             }
@@ -152,7 +160,6 @@ private fun SessionDetailsScreen(
             is SessionDetailsUiState.Success -> {
                 Body(
                     paddingValues = paddingValues,
-                    darkTheme = darkTheme,
                     sessionDetails = uiState.data,
                     bookmarkSession = bookmarkSession,
                     unBookmarkSession = unBookmarkSession
@@ -165,7 +172,6 @@ private fun SessionDetailsScreen(
 @Composable
 fun Body(
     paddingValues: PaddingValues,
-    darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit
@@ -183,7 +189,6 @@ fun Body(
             Spacer(modifier = Modifier.height(24.dp))
 
             SessionSpeakerNameAndFavouriteIcon(
-                darkTheme = darkTheme,
                 sessionDetails = sessionDetails,
                 bookmarkSession = bookmarkSession,
                 unBookmarkSession = unBookmarkSession
@@ -191,7 +196,7 @@ fun Body(
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            SessionTitleAndDescription(darkTheme, sessionDetails)
+            SessionTitleAndDescription(sessionDetails)
 
             Spacer(modifier = Modifier.height(15.dp))
 
@@ -205,11 +210,11 @@ fun Body(
         Spacer(modifier = Modifier.height(19.dp))
 
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
-            SessionTimeAndRoom(darkTheme, sessionDetails)
+            SessionTimeAndRoom(sessionDetails)
 
             Spacer(modifier = Modifier.height(15.dp))
 
-            SessionLevel(darkTheme, sessionDetails.level)
+            SessionLevel(sessionDetails.level)
 
             Spacer(modifier = Modifier.height(18.dp))
         }
@@ -221,7 +226,7 @@ fun Body(
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
             sessionDetails.speakers.forEach { speaker ->
                 if (speaker.twitterHandle.isNotEmpty()) {
-                    SpeakerTwitterHandle(darkTheme, speaker)
+                    SpeakerTwitterHandle(speaker)
                 }
             }
         }
@@ -232,7 +237,6 @@ fun Body(
 
 @Composable
 private fun SpeakerTwitterHandle(
-    darkTheme: Boolean,
     speaker: SessionDetailsSpeakerPresentationModel
 ) {
     val context = LocalContext.current
@@ -248,20 +252,17 @@ private fun SpeakerTwitterHandle(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(id = R.string.twitter_handle_label),
-            color = colorResource(id = if (darkTheme) R.color.smoke_white else R.color.dark),
-            style = TextStyle(
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                lineHeight = 19.sp
-            )
+        ChaiBodyMedium(
+            bodyText = stringResource(R.string.twitter_handle_label),
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
         )
+
         COutlinedButton(
             onClick = { context.startActivity(intent) },
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(colorResource(id = if (darkTheme) R.color.black else R.color.white))
+            colors = ButtonDefaults.buttonColors(
+                MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor
+            )
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_twitter_logo),
@@ -269,21 +270,15 @@ private fun SpeakerTwitterHandle(
                 modifier = Modifier
                     .height(20.dp)
                     .width(20.dp),
-                tint = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue)
+                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
             )
 
             Spacer(modifier = Modifier.width(5.dp))
 
-            Text(
+            ChaiBodyMedium(
                 modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
-                text = speaker.twitterHandle,
-                color = colorResource(id = if (darkTheme) R.color.aqua else R.color.blue),
-                style = TextStyle(
-                    fontFamily = Montserrat,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    lineHeight = 19.sp
-                )
+                bodyText = speaker.twitterHandle,
+                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
             )
         }
     }
@@ -297,14 +292,14 @@ private fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) 
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .border(1.dp, colorResource(id = R.color.aqua), RoundedCornerShape(10.dp))
+            .border(1.dp, ChaiTeal90, RoundedCornerShape(10.dp))
             .testTag(TestTag.IMAGE_BANNER)
+            .clip(RoundedCornerShape(10.dp))
     )
 }
 
 @Composable
 private fun SessionSpeakerNameAndFavouriteIcon(
-    darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit
@@ -319,52 +314,45 @@ private fun SessionSpeakerNameAndFavouriteIcon(
             modifier = Modifier
                 .height(14.dp)
                 .width(15.dp),
-            tint = colorResource(R.color.red_orange)
+            tint = ChaiRed
         )
 
         Spacer(modifier = Modifier.width(6.dp))
 
-        Text(
-            text = stringResource(id = R.string.speaker_label),
-            color = colorResource(id = R.color.red_orange),
-            style = MaterialTheme.typography.labelSmall.copy(
-                fontWeight = FontWeight.Normal
-            )
+        ChaiTextLabelLarge(
+            bodyText = stringResource(id = R.string.speaker_label),
+            textColor = ChaiRed
         )
     }
 
     Row(
         modifier = Modifier
-            .padding(end = 15.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
+        ChaiTitle(
             modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
-            text = sessionDetails.speakers.joinToString(" & ") { it.name },
-            color = colorResource(id = if (darkTheme) R.color.white else R.color.blue),
-            style = TextStyle(
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                lineHeight = 18.sp
-            )
+            titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
+            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
         )
-        IconButton(onClick = {
-            if (sessionDetails.isStarred) {
-                unBookmarkSession(sessionDetails.id)
-            } else {
-                bookmarkSession(sessionDetails.id)
+
+        IconButton(
+            modifier = Modifier.size(32.dp),
+            onClick = {
+                if (sessionDetails.isStarred) {
+                    unBookmarkSession(sessionDetails.id)
+                } else {
+                    bookmarkSession(sessionDetails.id)
+                }
             }
-        }) {
+        ) {
             Icon(
-                imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                contentDescription = null,
                 modifier = Modifier
-                    .size(21.dp)
                     .testTag(TestTag.FAVOURITE_ICON),
-                tint = colorResource(id = if (darkTheme) R.color.cyan else R.color.blue)
+                imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                contentDescription = stringResource(R.string.star_session_icon_description),
+                tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor
             )
         }
     }
@@ -372,111 +360,69 @@ private fun SessionSpeakerNameAndFavouriteIcon(
 
 @Composable
 private fun SessionTitleAndDescription(
-    darkTheme: Boolean,
     sessionDetails: SessionDetailsPresentationModel
 ) {
-    Text(
+    ChaiBodyLargeBold(
         modifier = Modifier.testTag(TestTag.SESSION_TITLE),
-        text = sessionDetails.title,
-        color = colorResource(id = if (darkTheme) R.color.white else R.color.eerie_black),
-        style = TextStyle(
-            fontFamily = Montserrat,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            lineHeight = 22.sp
-        )
+        bodyText = sessionDetails.title,
+        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
     )
 
     Spacer(modifier = Modifier.height(15.dp))
 
-    Text(
+    ChaiBodyMedium(
         modifier = Modifier.testTag(TestTag.SESSION_DESCRIPTION),
-        text = sessionDetails.description,
-        color = colorResource(id = if (darkTheme) R.color.smoke_white else R.color.grey),
-        style = TextStyle(
-            fontFamily = Montserrat,
-            fontWeight = FontWeight.Light,
-            fontSize = 16.sp,
-            lineHeight = 19.sp
-        )
+        bodyText = sessionDetails.description,
+        textColor = MaterialTheme.chaiColorsPalette.textWeakColor
     )
 }
 
 @Composable
-private fun SessionLevel(darkTheme: Boolean = isSystemInDarkTheme(), sessionLevel: String) {
-    Text(
-        text = "#$sessionLevel".uppercase(),
-        style = TextStyle(
-            fontFamily = Montserrat,
-            fontWeight = FontWeight.Normal,
-            fontSize = 13.sp,
-            lineHeight = 17.sp,
-            color = Color.White
-        ),
+private fun SessionLevel(sessionLevel: String) {
+    ChaiBodySmall(
         modifier = Modifier
             .background(
-                colorResource(id = if (darkTheme) R.color.black else R.color.eerie_black),
-                RoundedCornerShape(5.dp)
+                color = MaterialTheme.chaiColorsPalette.badgeBackgroundColor,
+                shape = RoundedCornerShape(5.dp)
             )
             .padding(vertical = 3.dp, horizontal = 9.dp)
-            .testTag(TestTag.LEVEL)
+            .testTag(TestTag.LEVEL),
+        bodyText = "#$sessionLevel".uppercase(),
+        textColor = ChaiWhite
     )
 }
 
 @Composable
 private fun SessionTimeAndRoom(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     sessionDetails: SessionDetailsPresentationModel
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
+        ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.TIME_SLOT),
-            text = sessionDetails.timeSlot.uppercase(),
-            color = colorResource(id = if (darkTheme) R.color.light_grey else R.color.grey),
-            style = TextStyle(
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                lineHeight = 17.sp
-            )
+            bodyText = sessionDetails.timeSlot.uppercase(),
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Text(
-            text = "|",
-            color = colorResource(id = if (darkTheme) R.color.light_grey else R.color.grey),
-            style = TextStyle(
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                lineHeight = 17.sp
-            )
+        Spacer(modifier = Modifier.width(16.dp))
+        ChaiBodyXSmall(
+            bodyText = "|",
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
-
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Text(
+        Spacer(modifier = Modifier.width(16.dp))
+        ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.ROOM),
-            text = sessionDetails.venue.uppercase(),
-            color = colorResource(id = if (darkTheme) R.color.light_grey else R.color.grey),
-            style = TextStyle(
-                fontFamily = Montserrat,
-                fontWeight = FontWeight.Normal,
-                fontSize = 12.sp,
-                lineHeight = 17.sp
-            )
+            bodyText = sessionDetails.venue.uppercase(),
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
     }
 }
 
 @Composable
-private fun CustomDivider(darkTheme: Boolean = isSystemInDarkTheme()) {
+private fun CustomDivider() {
     Divider(
         thickness = 1.dp,
-        color = colorResource(id = if (darkTheme) R.color.black else R.color.smoke_white)
+        color = MaterialTheme.chaiColorsPalette.surfaces
     )
 }
 
@@ -484,13 +430,17 @@ private fun CustomDivider(darkTheme: Boolean = isSystemInDarkTheme()) {
 private fun TopBar(onNavigationIconClick: () -> Unit) {
     SmallTopAppBar(
         modifier = Modifier.testTag(TestTag.TOP_BAR),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.chaiColorsPalette.background,
+            navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            scrolledContainerColor = MaterialTheme.chaiColorsPalette.background,
+            titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            actionIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
+        ),
         title = {
-            Text(
-                text = stringResource(id = R.string.session_details_label),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontSize = 18.sp,
-                    lineHeight = 28.sp
-                )
+            ChaiBodyLarge(
+                bodyText = stringResource(id = R.string.session_details_label),
+                textColor = MaterialTheme.chaiColorsPalette.textBoldColor
             )
         },
         navigationIcon = {
@@ -499,7 +449,8 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.back_arrow_icon_description)
+                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                    tint = MaterialTheme.chaiColorsPalette.textBoldColor
                 )
             }
         }
@@ -532,8 +483,9 @@ object TestTag {
 )
 @Composable
 fun SessionDetailsScreenPreview() {
-    DroidconKE2023Theme() {
+    ChaiDCKE22Theme() {
         SessionDetailsScreen(
+            onNavigationIconClick = {},
             uiState = SessionDetailsUiState.Success(
                 data = SessionDetailsPresentationModel(
                     id = "1",
@@ -551,8 +503,9 @@ fun SessionDetailsScreenPreview() {
                     speakers = listOf()
                 )
             ),
+            sessionId = "1",
             bookmarkSession = {},
             unBookmarkSession = {}
-        ) {}
+        )
     }
 }

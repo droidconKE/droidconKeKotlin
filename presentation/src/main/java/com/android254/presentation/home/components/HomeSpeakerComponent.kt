@@ -18,13 +18,11 @@ package com.android254.presentation.home.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,18 +32,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.SpeakerUI
-import com.droidconke.chai.atoms.MontserratMedium
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -53,9 +49,7 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
     ConstraintLayout(
         modifier = Modifier
             .width(90.dp)
-            .padding(end = 16.dp)
             .clickable { onClick.invoke() }
-
     ) {
         val (headShot, speakerName) = createRefs()
         AsyncImage(
@@ -76,26 +70,21 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
                     ),
                     shape = RoundedCornerShape(12.dp)
                 )
-                .height(85.dp)
-                .width(85.dp)
+                .size(85.dp)
                 .constrainAs(headShot) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
         )
-        Text(
-            text = speaker.name,
+        ChaiBodyXSmallBold(
             modifier = Modifier.constrainAs(speakerName) {
                 top.linkTo(headShot.bottom, 10.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             },
-            style = TextStyle(
-                color = MaterialTheme.chaiColorsPalette.textColorPrimary,
-                fontSize = 12.sp,
-                fontFamily = MontserratMedium
-            ),
+            bodyText = speaker.name,
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
             textAlign = TextAlign.Center
         )
     }
@@ -104,9 +93,14 @@ fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun HomeSpeakerComponentPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         Surface(color = Color.White) {
-            HomeSpeakerComponent(speaker = SpeakerUI(name = "Harun Wangereka", bio = "Staff Engineer"))
+            HomeSpeakerComponent(
+                speaker = SpeakerUI(
+                    name = "Harun Wangereka",
+                    bio = "Staff Engineer"
+                )
+            )
         }
     }
 }

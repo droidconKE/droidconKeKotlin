@@ -28,22 +28,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
+import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiDarkGrey
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiSubTitle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -55,7 +54,9 @@ fun SessionsStateComponent(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     refreshSessionsList: () -> Unit,
     retry: () -> Unit,
-    isRefreshing: Boolean
+    isRefreshing: Boolean,
+    sessionScreenState: SessionScreenState,
+    isSessionLayoutList: Boolean
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -77,14 +78,10 @@ fun SessionsStateComponent(
                 tint = ChaiBlue
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = sessionsUiState.isEmptyMessage,
-                style = TextStyle(
-                    color = ChaiDarkGrey,
-                    fontSize = 18.sp,
-                    fontFamily = MontserratRegular,
-                    textAlign = TextAlign.Center
-                )
+
+            ChaiBodyMediumBold(
+                bodyText = sessionsUiState.isEmptyMessage,
+                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
             )
         }
     }
@@ -98,7 +95,9 @@ fun SessionsStateComponent(
             swipeRefreshState = swipeRefreshState,
             sessions = sessionsUiState.sessions,
             navigateToSessionDetails = navigateToSessionDetails,
-            refreshSessionsList = refreshSessionsList
+            refreshSessionsList = refreshSessionsList,
+            sessionScreenState = sessionScreenState,
+            isSessionLayoutList = isSessionLayoutList
         )
     }
 }
@@ -108,34 +107,58 @@ fun SessionListComponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit
+    refreshSessionsList: () -> Unit,
+    sessionScreenState: SessionScreenState,
+    isSessionLayoutList: Boolean
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+
+                ChaiSubTitle(
+                    titleText = when (sessionScreenState) {
+                        SessionScreenState.ALL -> "All Sessions"
+                        SessionScreenState.MYSESSIONS -> "My sessions"
+                    },
+                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+            }
             itemsIndexed(
                 items = sessions,
                 key = { _, session -> session.remoteId }
             ) { index, session ->
-                SessionsCard(
-                    session = session,
-                    navigateToSessionDetails = navigateToSessionDetails
-                )
-                if (index != sessions.lastIndex) {
-                    Box(
-                        Modifier.padding(
-                            start = 40.dp,
-                            end = 0.dp,
-                            top = 10.dp,
-                            bottom = 10.dp
-                        )
-                    ) {
-                        Image(
-                            painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                            contentDescription = stringResource(R.string.spacer_icon_descript)
-                        )
+
+                if (isSessionLayoutList) {
+                    SessionsCard(
+                        session = session,
+                        navigateToSessionDetails = navigateToSessionDetails
+                    )
+                    if (index != sessions.lastIndex) {
+                        Box(
+                            Modifier.padding(
+                                start = 40.dp,
+                                end = 0.dp,
+                                top = 10.dp,
+                                bottom = 10.dp
+                            )
+                        ) {
+                            Image(
+                                painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
+                                contentDescription = stringResource(R.string.spacer_icon_descript)
+                            )
+                        }
                     }
+                } else {
+                    SessionsCardWithBannerImage(
+                        session = session,
+                        navigateToSessionDetails = navigateToSessionDetails
+                    )
+
+                    Spacer(Modifier.height(16.dp))
                 }
             }
         }

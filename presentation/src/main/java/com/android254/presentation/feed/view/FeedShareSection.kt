@@ -16,6 +16,8 @@
 package com.android254.presentation.feed.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,8 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,22 +37,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.atoms.ChaiSmokeyGrey
-import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.atoms.ChaiTeal90
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun FeedShareSection() {
+fun FeedShareSection(
+    onCancelClicked: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 48.dp)
+            .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
+            .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
             .testTag("share_bottom_sheet")
     ) {
         Row(
@@ -61,33 +64,25 @@ fun FeedShareSection() {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            TextButton(
-                onClick = {
-                }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.share),
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    lineHeight = 25.sp,
-                    fontFamily = MontserratBold
-                )
-
+            Row {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = stringResource(id = R.string.share),
-                    modifier = Modifier.padding(start = 8.dp),
-                    tint = Color.Black
+                    modifier = Modifier.padding(end = 12.dp),
+                    tint = MaterialTheme.chaiColorsPalette.textNormalColor
+                )
+                ChaiSubTitle(
+                    titleText = stringResource(id = R.string.share),
+                    titleColor = MaterialTheme.chaiColorsPalette.textNormalColor
                 )
             }
 
-            Text(
-                text = stringResource(id = R.string.cancel).uppercase(),
-                color = ChaiSmokeyGrey,
-                fontSize = MaterialTheme.typography.labelLarge.fontSize,
-                fontWeight = MaterialTheme.typography.labelLarge.fontWeight,
-                fontStyle = MaterialTheme.typography.labelLarge.fontStyle
+            ChaiTextButtonLight(
+                modifier = Modifier.clickable {
+                    onCancelClicked()
+                },
+                bodyText = stringResource(id = R.string.cancel),
+                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
             )
         }
 
@@ -119,7 +114,7 @@ fun PlatformButton(platform: String, icon: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(6.dp),
-        border = BorderStroke(1.dp, ChaiTeal),
+        border = BorderStroke(1.dp, ChaiTeal90),
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = Color.White
         )
@@ -127,18 +122,19 @@ fun PlatformButton(platform: String, icon: Int) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = stringResource(id = R.string.share),
-            tint = Color.Black
+            tint = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor
         )
-        Text(
-            text = platform,
-            color = Color.Black,
+        ChaiBodyMedium(
             modifier = Modifier
-                .padding(start = 24.dp)
+                .padding(start = 22.dp),
+            bodyText = platform,
+            textColor = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor
+
         )
     }
 }
 
-@Preview(showBackground = true)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun PlatformButtonPreview() {
     ChaiDCKE22Theme {
@@ -146,7 +142,7 @@ fun PlatformButtonPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@ChaiLightAndDarkComposePreview
 @Composable
 fun PFeedShareSectionPreview() {
     ChaiDCKE22Theme {

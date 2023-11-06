@@ -17,19 +17,22 @@ package com.android254.presentation.sessions.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -38,21 +41,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiTextLabelSmall
 
 @Composable
 fun CustomSwitch(
-    width: Dp = 72.dp,
-    height: Dp = 40.dp,
-    checkedTrackColor: Color = Color(0xFF35898F),
-    uncheckedTrackColor: Color = Color(0xFFe0e0e0),
-    gapBetweenThumbAndTrackEdge: Dp = 8.dp,
-    borderWidth: Dp = 2.dp,
-    cornerSize: Int = 50,
+    width: Dp = 56.dp,
+    height: Dp = 32.dp,
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
     checked: Boolean,
@@ -66,47 +66,53 @@ fun CustomSwitch(
     // for moving the thumb
     val alignment by animateAlignmentAsState(if (checked) 1f else -1f)
 
-    // outer rectangle with border
-    Box(
-        modifier = Modifier
-            .size(width = width, height = height)
-            .border(
-                width = borderWidth,
-                color = if (checked) checkedTrackColor else uncheckedTrackColor,
-                shape = RoundedCornerShape(percent = cornerSize)
-            )
-            .clickable(
-                indication = null,
-                interactionSource = interactionSource
-            ) {
-                onCheckedChange(!checked)
-            },
-        contentAlignment = Alignment.Center
+    Column(
+        modifier = Modifier.wrapContentSize(),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // this is to add padding at the each horizontal side
+        // outer toggle container
         Box(
             modifier = Modifier
-                .padding(
-                    start = gapBetweenThumbAndTrackEdge,
-                    end = gapBetweenThumbAndTrackEdge
-                )
-                .fillMaxSize(),
-            contentAlignment = alignment
+                .size(width = width, height = height)
+                .clickable(
+                    indication = null,
+                    interactionSource = interactionSource
+                ) {
+                    onCheckedChange(!checked)
+                },
+            contentAlignment = Alignment.Center
         ) {
+            // this is the horizontal rounded rectangle
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffBackgroundColor
+                    )
+                    .height(17.dp)
+                    .width(54.dp)
+            )
             // thumb with icon
             Icon(
-                imageVector = if (checked) Icons.Filled.Star else Icons.Filled.StarOutline,
-                contentDescription = if (checked) "Enabled" else "Disabled",
                 modifier = Modifier
                     .size(size = thumbSize)
                     .background(
-                        color = if (checked) checkedTrackColor else uncheckedTrackColor,
+                        color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffIconBackgroundColor,
                         shape = CircleShape
                     )
-                    .padding(all = iconInnerPadding),
-                tint = Color.White
+                    .padding(all = iconInnerPadding)
+                    .align(alignment),
+                imageVector = Icons.Filled.Star,
+                contentDescription = if (checked) "Enabled" else "Disabled",
+                tint = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconColor else MaterialTheme.chaiColorsPalette.toggleOffIconColor
             )
         }
+
+        ChaiTextLabelSmall(
+            bodyText = "My sessions",
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+        )
     }
 }
 
@@ -125,6 +131,12 @@ private fun animateAlignmentAsState(
 @Composable
 private fun CustomSwitchPreview() {
     ChaiDCKE22Theme {
-        CustomSwitch(checked = false, onCheckedChange = {})
+        Column(
+            modifier = Modifier.background(color = MaterialTheme.chaiColorsPalette.background),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            CustomSwitch(checked = false, onCheckedChange = {})
+            CustomSwitch(checked = true, onCheckedChange = {})
+        }
     }
 }

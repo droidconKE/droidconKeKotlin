@@ -28,15 +28,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun SessionsLoadingCard() {
@@ -46,13 +46,13 @@ fun SessionsLoadingCard() {
             .wrapContentHeight(),
         shape = RoundedCornerShape(5),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground)
     ) {
         AnimatedShimmerEffect(
             gradientColors = listOf(
-                Color.LightGray.copy(alpha = 0.6f),
-                Color.LightGray.copy(alpha = 0.2f),
-                Color.LightGray.copy(alpha = 0.6f)
+                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
+                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f)
             )
         ) { brush ->
             Row(
@@ -95,10 +95,10 @@ fun SessionsLoadingCard() {
     }
 }
 
-@Preview
+@ChaiLightAndDarkComposePreview
 @Composable
 fun SessionsLoadingComponentPreview() {
-    Surface(color = Color.White) {
+    ChaiDCKE22Theme {
         SessionsLoadingCard()
     }
 }

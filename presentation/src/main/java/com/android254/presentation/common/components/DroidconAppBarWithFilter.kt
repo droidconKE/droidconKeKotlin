@@ -21,20 +21,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.*
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -81,8 +80,8 @@ fun LayoutIconButtons(
     onListIconClick: () -> Unit,
     onAgendaIconClick: () -> Unit
 ) {
-    val listIconColor = if (isListActive) ChaiBlue else ChaiSmokeyGrey
-    val agendaIconColor = if (!isListActive) ChaiBlue else ChaiSmokeyGrey
+    val listIconColor = if (isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
+    val agendaIconColor = if (!isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
 
     Row(
         modifier = modifier,
@@ -119,7 +118,7 @@ fun FilterButton(
     isActive: Boolean,
     onButtonClick: () -> Unit
 ) {
-    val stateColors = if (isActive) ChaiBlue else ChaiGrey
+    val stateColors = if (isActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else ChaiGrey
 
     Row(
         modifier = modifier
@@ -130,15 +129,10 @@ fun FilterButton(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        ChaiBodyLarge(
             modifier = Modifier,
-            text = stringResource(id = R.string.top_bar_filter),
-            style = TextStyle(
-                color = stateColors,
-                fontSize = 18.sp,
-                lineHeight = 14.sp,
-                fontFamily = MontserratRegular
-            )
+            bodyText = stringResource(id = R.string.top_bar_filter),
+            textColor = stateColors
         )
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -150,10 +144,10 @@ fun FilterButton(
     }
 }
 
-@Preview
+@ChaiLightAndDarkComposePreview
 @Composable
 fun ToolbarPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         Column() {
             DroidconAppBarWithFilter(
                 isListActive = true,
@@ -169,7 +163,6 @@ fun ToolbarPreview() {
             )
 
             DroidconAppBarWithFilter(
-                modifier = Modifier.background(color = ChaiLightGrey),
                 isListActive = true,
                 onListIconClick = {},
                 onAgendaIconClick = {},

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 
 @Composable
 fun HomeSpeakersLoadingItem() {
@@ -42,7 +42,7 @@ fun HomeSpeakersLoadingItem() {
 @Preview(showBackground = true)
 @Composable
 fun HomeSpeakersLoadingItemPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeSpeakersLoadingItem()
     }
 }
