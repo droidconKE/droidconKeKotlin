@@ -16,6 +16,7 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -73,25 +74,25 @@ fun SponsorsCard(
 
             FlowRow(
                 modifier = Modifier.padding(top = 16.dp),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.Start,
                 maxItemsInEachRow = 3
             ) {
-                sponsors.forEach { sponsorLogo ->
-                    val customModifier = if (sponsorLogo.sponsorType.equals("platinum", ignoreCase = true)) {
+                sponsors.forEach { sponsor ->
+                    val customModifier = if (sponsor.sponsorType.equals("platinum", ignoreCase = true)) {
                         Modifier
                             .fillMaxWidth()
                             .height(70.dp)
                     } else {
                         Modifier
-                            .weight(0.3f)
+                            .weight(0.5f)
                             .height(50.dp)
                     }
+                    val logo = if (isSystemInDarkTheme()) sponsor.logo.replace(".png", "-dark.png") else sponsor.logo
                     AsyncImage(
-                        modifier = customModifier
-                            .padding(horizontal = 4.dp),
+                        modifier = customModifier,
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(sponsorLogo.logo)
+                            .data(logo)
                             .crossfade(true)
                             .build(),
                         contentScale = ContentScale.Fit,
