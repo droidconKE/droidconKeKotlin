@@ -15,17 +15,18 @@
  */
 package ke.droidcon.kotlin.datasource.local.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "sponsors")
 data class SponsorEntity(
-    // We are using this as a primary key since the API does not return an ID so we can be able to use the mappers
     @PrimaryKey
     val name: String,
     val tagline: String,
     val link: String,
     val logo: String,
-    var createdAt: String
-
+    val createdAt: String,
+    @ColumnInfo(defaultValue = "")
+    val sponsorType: String
 )

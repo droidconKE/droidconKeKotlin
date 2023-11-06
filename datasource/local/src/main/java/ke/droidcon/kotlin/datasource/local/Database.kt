@@ -15,7 +15,6 @@
  */
 package ke.droidcon.kotlin.datasource.local
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -42,12 +41,8 @@ import ke.droidcon.kotlin.datasource.local.util.InstantConverter
         SponsorEntity::class,
         FeedEntity::class
     ],
-    version = 3,
-    exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2),
-        AutoMigration(from = 2, to = 3)
-    ]
+    version = 4,
+    exportSchema = false
 )
 @TypeConverters(
     InstantConverter::class

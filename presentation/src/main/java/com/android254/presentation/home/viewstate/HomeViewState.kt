@@ -17,6 +17,7 @@ package com.android254.presentation.home.viewstate
 
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
+import com.android254.presentation.models.SponsorPresentationModel
 
 data class HomeViewState(
     val isPosterVisible: Boolean = true,
@@ -25,7 +26,7 @@ data class HomeViewState(
     val isSignedIn: Boolean = false,
     val speakers: List<SpeakerUI> = emptyList(),
     val isSpeakersSectionVisible: Boolean = false,
-    val sponsors: List<String> = emptyList(),
+    val sponsors: List<SponsorPresentationModel> = emptyList(),
     val organizedBy: List<String> = emptyList(),
     val sessions: List<SessionPresentationModel> = emptyList(),
     val isSessionsSectionVisible: Boolean = false

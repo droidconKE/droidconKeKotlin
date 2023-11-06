@@ -142,7 +142,7 @@ private fun HomeScreen(
                         }
                     }
                 }
-                SponsorsCard(sponsorsLogos = viewState.sponsors)
+                SponsorsCard(sponsors = viewState.sponsors)
                 HomeSpacer()
             }
         }
