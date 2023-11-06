@@ -18,6 +18,7 @@ package com.android254.presentation.sessions.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
+import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
@@ -34,7 +35,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
@@ -159,9 +159,16 @@ class SessionsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchFilteredSessions(query: String) {
+    private suspend fun fetchFilteredSessions() {
         updateIsLoadingState()
-        sessionsRepo.fetchFilteredSessions(query = query).collectLatest { sessions ->
+        sessionsRepo.fetchFilteredSessions(
+            filter = SessionFilter(
+                levels = _filterState.value?.levels ?: emptyList(),
+                rooms = _filterState.value?.rooms ?: emptyList(),
+                sessionFormats = _filterState.value?.sessionTypes ?: emptyList(),
+                bookmarked = _filterState.value?.isBookmarked ?: false
+            )
+        ).collectLatest { sessions ->
             updateSessions(sessions)
         }
     }
@@ -186,61 +193,13 @@ class SessionsViewModel @Inject constructor(
         _sessionsUiState.value = newState
     }
 
-    private suspend fun fetchBookmarkSessions() {
-        updateIsLoadingState()
-        sessionsRepo.fetchBookmarkedSessions().collectLatest { sessions ->
-            updateSessions(sessions)
-        }
-    }
-
     private fun updateIsLoadingState() {
         _sessionsUiState.value = _sessionsUiState.value.copy(isLoading = true)
     }
 
-    private fun getQuery(): String {
-        val separator = ","
-        val prefix = "("
-        val postfix = ")"
-        val stringBuilder = StringBuilder()
-        _filterState.value?.let {
-            if (it.levels.isNotEmpty()) {
-                val items =
-                    it.levels.joinToString(
-                        separator,
-                        prefix,
-                        postfix
-                    ) { value -> value.lowercase() }
-                stringBuilder.append("LOWER (sessionLevel) IN $items")
-            }
-            if (it.sessionTypes.isNotEmpty()) {
-                val items = it.sessionTypes.joinToString(
-                    separator,
-                    prefix,
-                    postfix
-                ) { value -> "'${value.lowercase()}'" }
-                if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
-                stringBuilder.append("LOWER (sessionFormat) IN $items")
-            }
-            if (it.rooms.isNotEmpty()) {
-                val items =
-                    it.rooms.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
-                if (stringBuilder.isNotEmpty()) {
-                    stringBuilder.append(" AND ")
-                }
-                stringBuilder.append("LOWER (rooms) IN $items")
-            }
-        }
-        val where = if (stringBuilder.isNotEmpty()) {
-            "WHERE $stringBuilder"
-        } else {
-            stringBuilder
-        }
-        return "SELECT * FROM sessions $where".also { Timber.i("QUERY = $it") }
-    }
-
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
-            fetchFilteredSessions(query = getQuery())
+            fetchFilteredSessions()
         }
     }
 
@@ -257,7 +216,7 @@ class SessionsViewModel @Inject constructor(
             selectedEventDay = date
         )
         viewModelScope.launch {
-            fetchFilteredSessions(query = getQuery())
+            fetchFilteredSessions()
         }
     }
 
@@ -283,7 +242,7 @@ class SessionsViewModel @Inject constructor(
             val previousState = _filterState.value?.isBookmarked ?: false
             _filterState.value = _filterState.value?.copy(isBookmarked = !previousState)
             if (_filterState.value?.isBookmarked == true) {
-                fetchBookmarkSessions()
+                fetchFilteredSessions()
             } else {
                 fetchAllSessions()
             }
