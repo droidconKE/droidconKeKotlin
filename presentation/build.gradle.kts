@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
 
+    implementation(libs.firebase.messaging)
+
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.navigation)
     testImplementation(libs.test.mockk)
