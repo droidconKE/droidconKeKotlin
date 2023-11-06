@@ -22,5 +22,8 @@ data class OrganizingPartners(
 
 data class Sponsors(
     val sponsorName: String,
-    val sponsorLogoUrl: String
+    val sponsorLogoUrl: String,
+    val link: String,
+    val sponsorType: String,
+    val createdAt: String
 )
