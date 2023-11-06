@@ -29,6 +29,8 @@ data class SponsorDTO(
     val tagline: String,
     val link: String,
     val logo: String,
-    @SerialName("created_at") var createdAt: String
-
+    @SerialName("created_at")
+    var createdAt: String,
+    @SerialName("sponsor_type")
+    var sponsorType: String
 )

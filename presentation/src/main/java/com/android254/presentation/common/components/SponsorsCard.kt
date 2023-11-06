@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
@@ -46,7 +48,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun SponsorsCard(
     modifier: Modifier = Modifier,
-    sponsorsLogos: List<String>
+    sponsors: List<SponsorPresentationModel>
 ) {
     Card {
         Column(
@@ -67,28 +69,32 @@ fun SponsorsCard(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
-
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.ic_droidcon_logo)
-                    .build(),
-                placeholder = painterResource(R.drawable.ic_google_logo_icon),
-                contentDescription = stringResource(id = R.string.logo)
-            )
+            Spacer(modifier = Modifier.height(10.dp))
 
             FlowRow(
                 modifier = Modifier.padding(top = 16.dp),
                 verticalArrangement = Arrangement.Center,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Start,
+                maxItemsInEachRow = 3
             ) {
-                sponsorsLogos.forEach { sponsorLogo ->
+                sponsors.forEach { sponsorLogo ->
+                    val customModifier = if (sponsorLogo.sponsorType.equals("platinum", ignoreCase = true)) {
+                        Modifier
+                            .fillMaxWidth()
+                            .height(70.dp)
+                    } else {
+                        Modifier
+                            .weight(0.3f)
+                            .height(50.dp)
+                    }
                     AsyncImage(
-                        modifier = Modifier.padding(6.dp),
+                        modifier = customModifier
+                            .padding(horizontal = 4.dp),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(sponsorLogo)
+                            .data(sponsorLogo.logo)
                             .crossfade(true)
                             .build(),
+                        contentScale = ContentScale.Fit,
                         placeholder = painterResource(R.drawable.ic_google_logo_icon),
                         contentDescription = stringResource(id = R.string.logo)
                     )
