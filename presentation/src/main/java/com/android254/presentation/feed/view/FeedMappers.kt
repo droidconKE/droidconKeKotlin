@@ -17,6 +17,7 @@ package com.android254.presentation.feed.view
 
 import com.android254.domain.models.Feed
 import com.android254.presentation.models.FeedUI
+import com.android254.presentation.utils.getTimeDifference
 
 fun Feed.toPresentation() = FeedUI(
     title = title,
@@ -24,5 +25,5 @@ fun Feed.toPresentation() = FeedUI(
     topic = topic,
     url = url,
     image = image,
-    createdAt = createdAt
+    createdAt = createdAt.getTimeDifference()
 )
