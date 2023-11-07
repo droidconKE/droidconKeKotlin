@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
+import com.android254.presentation.utils.getTimeDifference
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -65,8 +66,6 @@ fun FeedComponent(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        val textFromNetwork = stringResource(id = R.string.placeholder_long_text)
-
         ChaiBodyMedium(
             bodyText = feedPresentationModel.body,
             textColor = MaterialTheme.chaiColorsPalette.textNormalColor
@@ -112,7 +111,7 @@ fun FeedComponent(
             }
 
             ChaiBodyXSmall(
-                bodyText = feedPresentationModel.createdAt,
+                bodyText = getTimeDifference(feedPresentationModel.createdAt),
                 textColor = MaterialTheme.chaiColorsPalette.textWeakColor
             )
         }
