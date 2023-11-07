@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
-import com.android254.presentation.utils.getTimeDifference
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -53,7 +52,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun FeedComponent(
     modifier: Modifier,
-    feedPresentationModel: FeedUI,
+    feed: FeedUI,
     onClickItem: (Int) -> Unit
 ) {
     Column(
@@ -67,18 +66,18 @@ fun FeedComponent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ChaiBodyMedium(
-            bodyText = feedPresentationModel.body,
+            bodyText = feed.body,
             textColor = MaterialTheme.chaiColorsPalette.textNormalColor
         )
 
-        feedPresentationModel.image?.let {
+        feed.image?.let {
             AsyncImage(
                 modifier = Modifier.fillMaxWidth()
                     .height(209.dp)
                     .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.FillHeight,
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(feedPresentationModel.image)
+                    .data(feed.image)
                     .build(),
                 contentDescription = stringResource(id = R.string.feed_image)
             )
@@ -111,7 +110,7 @@ fun FeedComponent(
             }
 
             ChaiBodyXSmall(
-                bodyText = getTimeDifference(feedPresentationModel.createdAt),
+                bodyText = feed.createdAt,
                 textColor = MaterialTheme.chaiColorsPalette.textWeakColor
             )
         }
@@ -124,7 +123,7 @@ fun Preview() {
     ChaiDCKE22Theme {
         FeedComponent(
             modifier = Modifier,
-            feedPresentationModel =
+            feed =
             FeedUI("Feed", "Feed feed", "test", "", "", ""),
             onClickItem = {}
         )

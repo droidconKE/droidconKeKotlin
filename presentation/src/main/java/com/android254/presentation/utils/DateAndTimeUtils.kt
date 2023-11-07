@@ -15,21 +15,27 @@
  */
 package com.android254.presentation.utils
 
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
-fun getTimeDifference(timestamp: String): String {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-    val timePosted = dateFormat.parse(timestamp)
-    val currentTime = Date()
+fun String.getTimeDifference(): String {
+    return try {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val timePosted = dateFormat.parse(this)
+        val currentTime = Date()
 
-    // Calculate the time difference in milliseconds
-    val timeDifference = currentTime.time - timePosted.time
+        val timeDifference = currentTime.time - timePosted.time
 
-    val minutesDifference = timeDifference / (1000 * 60)
-    return if (minutesDifference <= 60) {
-        "$minutesDifference mins ago"
-    } else {
-        "${minutesDifference / 60} hours ago"
+        val minutesDifference = timeDifference / (1000 * 60)
+        if (minutesDifference <= 60) {
+            "$minutesDifference mins ago"
+        } else {
+            "${minutesDifference / 60} hours ago"
+        }
+    } catch (e: Exception) {
+        Timber.e(e)
+        this
     }
 }
