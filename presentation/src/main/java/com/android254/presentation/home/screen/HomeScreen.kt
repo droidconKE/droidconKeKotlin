@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.SponsorsCard
-import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
 import com.android254.presentation.home.components.HomeSessionSection
@@ -108,7 +107,7 @@ private fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 HomeHeaderSectionComponent()
-                HomeBannerSection(viewState)
+//                HomeBannerSection(viewState)
                 HomeSpacer()
                 when {
                     isSyncing -> {
