@@ -95,7 +95,7 @@ class HomeScreenTest {
     @Test
     fun `Test sponsors card is displayed`() {
         composeTestRule.setContent {
-            SponsorsCard(sponsors = listOf(SponsorPresentationModel("","","","")))
+            SponsorsCard(sponsors = listOf(SponsorPresentationModel("", "", "", "")))
         }
         composeTestRule.onNodeWithTag("sponsors_section")
     }
