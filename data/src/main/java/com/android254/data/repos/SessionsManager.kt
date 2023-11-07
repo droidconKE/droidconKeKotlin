@@ -69,7 +69,7 @@ class SessionsManager @Inject constructor(
             sessions = sessions.map { session ->
                 session.toDomainModel().copy(
                     isBookmarked = bookmarks.map { it.sessionId }
-                        .contains(session.id.toString())
+                        .contains(session.remote_id)
                 )
             },
             eventDays = eventDays

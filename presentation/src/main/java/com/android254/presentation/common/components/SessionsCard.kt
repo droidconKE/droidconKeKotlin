@@ -155,9 +155,9 @@ fun SessionTitleComponent(
             onClick = {
                 scope.launch {
                     if (session.isStarred) {
-                        viewModel.unBookmarkSession(session.id)
+                        viewModel.unBookmarkSession(session.remoteId)
                     } else {
-                        viewModel.bookmarkSession(session.id)
+                        viewModel.bookmarkSession(session.remoteId)
                     }
                 }
             }
