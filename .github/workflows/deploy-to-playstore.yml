@@ -29,7 +29,7 @@ jobs:
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{github.run_number}}
-          versionName: "$VERSION_NAME_STRING"
+          versionName: "1.0.7"
 
       - name: Assemble Release Bundle
         run: ./gradlew bundleRelease
