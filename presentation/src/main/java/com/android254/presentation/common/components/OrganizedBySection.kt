@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTitle
@@ -50,7 +51,7 @@ fun OrganizedBySection(
     ) {
         ChaiTitle(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth().padding(start = 20.dp),
             titleText = stringResource(id = R.string.organized_by),
             titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
@@ -61,16 +62,24 @@ fun OrganizedBySection(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             organizationLogos.forEach { logo ->
 
                 AsyncImage(
                     modifier = Modifier
+                        .height(200.dp)
                         .padding(6.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(logo)
-                        .build(),
+                    model = if (logo.endsWith("svg")) {
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(logo)
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build()
+                    } else {
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(logo)
+                            .build()
+                    },
                     placeholder = painterResource(R.drawable.ic_google_logo_icon),
                     contentDescription = stringResource(id = R.string.logo)
                 )
