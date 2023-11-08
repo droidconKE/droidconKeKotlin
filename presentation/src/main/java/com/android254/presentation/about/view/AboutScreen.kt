@@ -117,8 +117,7 @@ private fun AboutScreen(
                         .testTag("about_screen")
                 ) {
                     AboutDroidconSection(
-                        droidconDesc = stringResource(id = R.string.about_droidcon),
-                        droidconImage = ""
+                        droidconDesc = stringResource(id = R.string.about_droidcon)
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
@@ -148,8 +147,7 @@ private fun AboutScreen(
 @Composable
 fun AboutDroidconSection(
     modifier: Modifier = Modifier,
-    droidconDesc: String,
-    droidconImage: String
+    droidconDesc: String
 ) {
     Column(
         modifier = modifier
