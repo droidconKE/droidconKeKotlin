@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -47,13 +48,15 @@ fun OrganizedBySection(
                 shape = RoundedCornerShape(10.dp)
             )
             .padding(vertical = 20.dp)
-            .testTag("organized_by_section")
+            .testTag("organized_by_section"),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ChaiTitle(
             modifier = Modifier
-                .fillMaxWidth().padding(start = 20.dp),
+                .padding(start = 20.dp),
             titleText = stringResource(id = R.string.organized_by),
             titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
+
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -61,14 +64,15 @@ fun OrganizedBySection(
         FlowRow(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            maxItemsInEachRow = 3
         ) {
             organizationLogos.forEach { logo ->
 
                 AsyncImage(
                     modifier = Modifier
-                        .height(200.dp)
+                        .height(80.dp)
                         .padding(6.dp),
                     model = if (logo.endsWith("svg")) {
                         ImageRequest.Builder(LocalContext.current)

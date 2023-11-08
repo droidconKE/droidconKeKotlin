@@ -16,20 +16,12 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Combine strings
-        uses: michpohl/action-concatenate-strings@v1.0.1
-        with:
-          first: 1.0
-          second: ${{ github.run_number }}
-          separator: '.'
-          output-var-name: 'VERSION_NAME_STRING'
-
       - name: Bump version
         uses: chkfung/android-version-actions@v1.1
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{github.run_number}}
-          versionName: "$VERSION_NAME_STRING"
+          versionName: ${{ format('1.0.{0}', github.run_number ) }}
 
       - name: Assemble Release Bundle
         run: ./gradlew bundleRelease
