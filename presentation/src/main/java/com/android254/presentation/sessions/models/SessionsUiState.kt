@@ -38,5 +38,5 @@ data class SessionsUiState(
     val isError: Boolean = false,
     val errorMessage: String = "",
     val eventDays: List<EventDate> = emptyList(),
-    val selectedEventDay: EventDate = EventDate("1", 1)
+    val selectedEventDay: EventDate = EventDate("-1", 1)
 )

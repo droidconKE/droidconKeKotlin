@@ -162,7 +162,7 @@ class SessionsViewModel @Inject constructor(
             _sessionsUiState.update {
                 it.copy(
                     eventDays = sessionDays,
-                    selectedEventDay = sessionDays.first()
+                    selectedEventDay = if (it.selectedEventDay.value == "-1") { sessionDays.first() } else { it.selectedEventDay }
                 )
             }
         }
