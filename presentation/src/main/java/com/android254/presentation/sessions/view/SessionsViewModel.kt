@@ -27,14 +27,16 @@ import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class SessionsViewModel @Inject constructor(
@@ -46,11 +48,12 @@ class SessionsViewModel @Inject constructor(
         MutableStateFlow(emptyList())
     val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
-    private val _filterState: MutableStateFlow<SessionsFilterState?> =
-        MutableStateFlow(SessionsFilterState())
+    private var filterState = SessionsFilterState()
 
     private val _sessionsUiState = MutableStateFlow(SessionsUiState())
     val sessionsUiState = _sessionsUiState.asStateFlow()
+
+    private val sessionsCache = mutableListOf<Session>()
 
     val isRefreshing = syncDataWorkManager.isSyncing
         .stateIn(
@@ -84,21 +87,7 @@ class SessionsViewModel @Inject constructor(
     private fun updateFilterState(option: SessionsFilterOption) {
         when (option.type) {
             SessionsFilterCategory.Level -> {
-                val newValue = _filterState.value?.levels?.toMutableList()?.apply {
-                    val index = this.indexOf(option.value)
-                    if (index < 0) {
-                        add(option.value)
-                    } else {
-                        removeAt(index)
-                    }
-                }?.toList()
-                _filterState.value = _filterState.value?.copy(
-                    levels = newValue!!
-                )
-            }
-
-            SessionsFilterCategory.Topic -> {
-                val newValue = _filterState.value!!.topics.toMutableList().apply {
+                val newValue = filterState.levels.toMutableList().apply {
                     val index = this.indexOf(option.value)
                     if (index < 0) {
                         add(option.value)
@@ -106,13 +95,27 @@ class SessionsViewModel @Inject constructor(
                         removeAt(index)
                     }
                 }.toList()
-                _filterState.value = _filterState.value?.copy(
+                filterState = filterState.copy(
+                    levels = newValue
+                )
+            }
+
+            SessionsFilterCategory.Topic -> {
+                val newValue = filterState.topics.toMutableList().apply {
+                    val index = this.indexOf(option.value)
+                    if (index < 0) {
+                        add(option.value)
+                    } else {
+                        removeAt(index)
+                    }
+                }.toList()
+                filterState = filterState.copy(
                     topics = newValue
                 )
             }
 
             SessionsFilterCategory.Room -> {
-                val newValue = _filterState.value!!.rooms.toMutableList().apply {
+                val newValue = filterState.rooms.toMutableList().apply {
                     val index = this.indexOf(option.value)
                     if (index < 0) {
                         add(option.value)
@@ -120,13 +123,13 @@ class SessionsViewModel @Inject constructor(
                         removeAt(index)
                     }
                 }.toList()
-                _filterState.value = _filterState.value?.copy(
+                filterState = filterState.copy(
                     rooms = newValue
                 )
             }
 
             SessionsFilterCategory.SessionType -> {
-                val newValue = _filterState.value!!.sessionTypes.toMutableList().apply {
+                val newValue = filterState.sessionTypes.toMutableList().apply {
                     val index = this.indexOf(option.value)
                     if (index < 0) {
                         add(option.value)
@@ -134,7 +137,7 @@ class SessionsViewModel @Inject constructor(
                         removeAt(index)
                     }
                 }.toList()
-                _filterState.value = _filterState.value!!.copy(
+                filterState = filterState.copy(
                     sessionTypes = newValue
                 )
             }
@@ -143,112 +146,97 @@ class SessionsViewModel @Inject constructor(
 
     private suspend fun fetchAllSessions() {
         updateIsLoadingState()
-        sessionsRepo.fetchSessionsInformation().collectLatest { sessionsInformation ->
-            updateSessionDays(sessionsInformation)
-            updateSessions(sessionsInformation.sessions)
+        if (sessionsCache.isEmpty()) {
+            sessionsRepo.fetchSessionsInformation().collectLatest { sessionsInformation ->
+                sessionsCache.addAll(sessionsInformation.sessions)
+
+                updateSessionDays(sessionsInformation)
+                fetchFilteredSessions()
+            }
         }
     }
 
     private fun updateSessionDays(sessionsInformation: SessionsInformationDomainModel) {
         if (sessionsInformation.eventDays.isNotEmpty()) {
             val sessionDays = sessionsInformation.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
-            _sessionsUiState.value = _sessionsUiState.value.copy(
-                eventDays = sessionDays,
-                selectedEventDay = sessionDays.first()
-            )
+            _sessionsUiState.update {
+                it.copy(
+                    eventDays = sessionDays,
+                    selectedEventDay = if (it.selectedEventDay.value == "-1") { sessionDays.first() } else { it.selectedEventDay }
+                )
+            }
         }
     }
 
-    private suspend fun fetchFilteredSessions(query: String) {
+    private suspend fun fetchFilteredSessions() = withContext(Dispatchers.Default) {
         updateIsLoadingState()
-        sessionsRepo.fetchFilteredSessions(query = query).collectLatest { sessions ->
-            updateSessions(sessions)
-        }
+        updateSessions(
+            sessionsCache.asSequence().filter {
+                if (filterState.levels.isNotEmpty()) {
+                    filterState.levels.contains(it.sessionLevel)
+                } else {
+                    true
+                }
+            }.filter {
+                if (filterState.rooms.isNotEmpty()) {
+                    filterState.rooms.contains(it.rooms)
+                } else {
+                    true
+                }
+            }.filter {
+                if (filterState.sessionTypes.isNotEmpty()) {
+                    filterState.sessionTypes.contains(it.sessionFormat)
+                } else {
+                    true
+                }
+            }.filter {
+                if (filterState.isBookmarked) {
+                    it.isBookmarked
+                } else {
+                    true
+                }
+            }.distinctBy { it.remoteId }.toList()
+        )
     }
 
     private fun updateSessions(sessions: List<Session>) {
-        val state = _sessionsUiState.value
-        val newState = if (sessions.isEmpty()) {
-            state.copy(
-                isEmpty = true,
-                sessions = emptyList(),
-                isEmptyMessage = "No sessions found",
-                isLoading = false
-            )
-        } else {
-            state.copy(
-                isEmpty = false,
-                sessions = sessions.map { session -> session.toPresentationModel() }.filter { session -> session.eventDay == state.selectedEventDay.value },
-                isEmptyMessage = "",
-                isLoading = false
-            )
-        }
-        _sessionsUiState.value = newState
-    }
-
-    private suspend fun fetchBookmarkSessions() {
-        updateIsLoadingState()
-        sessionsRepo.fetchBookmarkedSessions().collectLatest { sessions ->
-            updateSessions(sessions)
+        val selectedDay = _sessionsUiState.value.selectedEventDay.value
+        _sessionsUiState.update {
+            if (sessions.isEmpty()) {
+                it.copy(
+                    isEmpty = true,
+                    sessions = emptyList(),
+                    isEmptyMessage = "No sessions found",
+                    isLoading = false
+                )
+            } else {
+                it.copy(
+                    isEmpty = false,
+                    sessions = sessions.map { session -> session.toPresentationModel() }.filter { session -> session.eventDay == selectedDay },
+                    isEmptyMessage = "",
+                    isLoading = false
+                )
+            }
         }
     }
 
     private fun updateIsLoadingState() {
-        _sessionsUiState.value = _sessionsUiState.value.copy(isLoading = true)
-    }
-
-    private fun getQuery(): String {
-        val separator = ","
-        val prefix = "("
-        val postfix = ")"
-        val stringBuilder = StringBuilder()
-        _filterState.value?.let {
-            if (it.levels.isNotEmpty()) {
-                val items =
-                    it.levels.joinToString(
-                        separator,
-                        prefix,
-                        postfix
-                    ) { value -> value.lowercase() }
-                stringBuilder.append("LOWER (sessionLevel) IN $items")
-            }
-            if (it.sessionTypes.isNotEmpty()) {
-                val items = it.sessionTypes.joinToString(
-                    separator,
-                    prefix,
-                    postfix
-                ) { value -> "'${value.lowercase()}'" }
-                if (stringBuilder.isNotEmpty()) stringBuilder.append(" AND ")
-                stringBuilder.append("LOWER (sessionFormat) IN $items")
-            }
-            if (it.rooms.isNotEmpty()) {
-                val items =
-                    it.rooms.joinToString(separator, prefix, postfix) { value -> value.lowercase() }
-                if (stringBuilder.isNotEmpty()) {
-                    stringBuilder.append(" AND ")
-                }
-                stringBuilder.append("LOWER (rooms) IN $items")
-            }
+        _sessionsUiState.update {
+            it.copy(isLoading = true)
         }
-        val where = if (stringBuilder.isNotEmpty()) {
-            "WHERE $stringBuilder"
-        } else {
-            stringBuilder
-        }
-        return "SELECT * FROM sessions $where".also { Timber.i("QUERY = $it") }
     }
 
     fun fetchSessionWithFilter() {
         viewModelScope.launch {
-            fetchFilteredSessions(query = getQuery())
+            fetchFilteredSessions()
         }
     }
 
     fun clearSelectedFilterList() {
         _selectedFilterOptions.value = listOf()
-        _filterState.value = SessionsFilterState()
+        filterState = SessionsFilterState()
         viewModelScope.launch {
-            fetchAllSessions()
+            fetchFilteredSessions()
         }
     }
 
@@ -257,13 +245,14 @@ class SessionsViewModel @Inject constructor(
             selectedEventDay = date
         )
         viewModelScope.launch {
-            fetchFilteredSessions(query = getQuery())
+            fetchFilteredSessions()
         }
     }
 
     fun refreshSessionList() {
         _selectedFilterOptions.value = listOf()
-        _filterState.value = SessionsFilterState()
+        filterState = SessionsFilterState(isBookmarked = filterState.isBookmarked)
+        sessionsCache.clear()
         viewModelScope.launch {
             syncDataWorkManager.startSync()
         }
@@ -271,22 +260,20 @@ class SessionsViewModel @Inject constructor(
 
     suspend fun bookmarkSession(id: String) {
         sessionsRepo.bookmarkSession(id = id)
+        sessionsCache.clear()
+        fetchAllSessions()
     }
 
     suspend fun unBookmarkSession(id: String) {
         sessionsRepo.unBookmarkSession(id = id)
+        sessionsCache.clear()
+        fetchAllSessions()
     }
 
     fun toggleBookmarkFilter() {
+        filterState = filterState.copy(isBookmarked = !filterState.isBookmarked)
         viewModelScope.launch {
-            _filterState.value = SessionsFilterState()
-            val previousState = _filterState.value?.isBookmarked ?: false
-            _filterState.value = _filterState.value?.copy(isBookmarked = !previousState)
-            if (_filterState.value?.isBookmarked == true) {
-                fetchBookmarkSessions()
-            } else {
-                fetchAllSessions()
-            }
+            fetchFilteredSessions()
         }
     }
 }

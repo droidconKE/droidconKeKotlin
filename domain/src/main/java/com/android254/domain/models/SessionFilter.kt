@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ke.droidcon.kotlin.datasource.local.model
+package com.android254.domain.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "sponsors")
-data class SponsorEntity(
-    @PrimaryKey
-    val name: String,
-    val tagline: String,
-    val link: String,
-    val logo: String,
-    val createdAt: String,
-    @ColumnInfo(defaultValue = "")
-    val sponsorType: String
+data class SessionFilter(
+    val rooms: List<String> = emptyList(),
+    val levels: List<String> = emptyList(),
+    val sessionFormats: List<String> = emptyList(),
+    val bookmarked: Boolean = false,
+    val keynote: Boolean = false
 )

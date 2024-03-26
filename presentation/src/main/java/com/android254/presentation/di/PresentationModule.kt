@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ke.droidcon.kotlin.datasource.local.model
+package com.android254.presentation.di
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
+import com.android254.presentation.notifications.DroidconNotificationManager
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Entity(tableName = "sponsors")
-data class SponsorEntity(
-    @PrimaryKey
-    val name: String,
-    val tagline: String,
-    val link: String,
-    val logo: String,
-    val createdAt: String,
-    @ColumnInfo(defaultValue = "")
-    val sponsorType: String
-)
+@Module
+@InstallIn(SingletonComponent::class)
+object PresentationModule {
+
+    @Provides
+    @Singleton
+    fun providesDroidconNotificationManager(@ApplicationContext context: Context) = DroidconNotificationManager(context)
+}

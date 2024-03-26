@@ -18,6 +18,7 @@ package com.android254.data.repos
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Session
+import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import java.text.SimpleDateFormat
@@ -51,7 +52,10 @@ class SessionsManager @Inject constructor(
         return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
             sessions
                 .map { session ->
-                    session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()))
+                    session.toDomainModel().copy(
+                        isBookmarked = bookmarks.map { it.sessionId }
+                            .contains(session.id.toString())
+                    )
                 }
         }.flowOn(ioDispatcher)
     }
@@ -62,7 +66,12 @@ class SessionsManager @Inject constructor(
     ) { sessions, bookmarks ->
         val eventDays = sessions.groupBy { it.startTimestamp.toEventDay() }.keys.toList()
         SessionsInformationDomainModel(
-            sessions = sessions.map { session -> session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())) },
+            sessions = sessions.map { session ->
+                session.toDomainModel().copy(
+                    isBookmarked = bookmarks.map { it.sessionId }
+                        .contains(session.remote_id)
+                )
+            },
             eventDays = eventDays
         )
     }
@@ -73,31 +82,34 @@ class SessionsManager @Inject constructor(
         return sdf.format(date)
     }
 
-    override fun fetchBookmarkedSessions(): Flow<List<Session>> {
-        val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        val sessionsFlow = localSessionsDataSource.getCachedSessions()
-        return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
-            sessions.map { session ->
-                session.toDomainModel().copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()))
-            }
-                .filter { session -> session.isBookmarked }
-        }.flowOn(ioDispatcher)
-    }
-
-    override fun fetchFilteredSessions(query: String): Flow<List<Session>> {
-        val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query)
+    override fun fetchFilteredSessions(filter: SessionFilter): Flow<List<Session>> {
+        var query = "SELECT * FROM sessions WHERE 1 "
+        if (filter.rooms.isNotEmpty()) {
+            query += " AND (${filter.rooms.joinToString(" OR ") { "rooms = '$it'" }})"
+        }
+        if (filter.levels.isNotEmpty()) {
+            query += " AND (${filter.levels.joinToString(" OR ") { "sessionLevel = '$it'" }})"
+        }
+        if (filter.sessionFormats.isNotEmpty()) {
+            query += " AND (${filter.sessionFormats.joinToString(" OR ") { "sessionFormat = '$it'" }})"
+        }
+        val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query.trim())
         val bookmarksFlow = bookmarkDao.getBookmarkIds()
         return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
-            sessions.map { session ->
-                session.toDomainModel().copy(
-                    isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
-                )
+            if (filter.bookmarked) {
+                sessions.map { session ->
+                    session.toDomainModel().copy(
+                        isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
+                    )
+                }.filter { it.isBookmarked }
+            } else {
+                sessions.map { session ->
+                    session.toDomainModel().copy(
+                        isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
+                    )
+                }
             }
         }.flowOn(ioDispatcher)
-    }
-
-    override fun fetchFilteredSessions(vararg filters: List<String>) {
-        //
     }
 
     override fun fetchSessionById(id: String): Flow<Session?> {

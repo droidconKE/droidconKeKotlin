@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.home.viewstate
+package com.android254.presentation.home.mappers
 
-import com.android254.presentation.models.SessionPresentationModel
+import com.android254.domain.models.Speaker
+import com.android254.domain.models.Sponsors
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 
-data class HomeViewState(
-    val isPosterVisible: Boolean = true,
-    val isCallForSpeakersVisible: Boolean = false,
-    val linkToCallForSpeakers: String = "",
-    val isSignedIn: Boolean = false,
-    val speakers: List<SpeakerUI> = emptyList(),
-    val isSpeakersSectionVisible: Boolean = false,
-    val sponsors: List<SponsorPresentationModel> = emptyList(),
-    val organizedBy: List<String> = emptyList(),
-    val sessions: List<SessionPresentationModel> = emptyList(),
-    val isSessionsSectionVisible: Boolean = false
+fun List<Speaker>.toSpeakersPresentation() =
+    map {
+        SpeakerUI(
+            imageUrl = it.avatar,
+            name = it.name,
+            tagline = it.tagline,
+            bio = it.biography,
+            twitterHandle = it.twitter
+        )
+    }
+
+fun Sponsors.toPresentation() = SponsorPresentationModel(
+    name = sponsorName,
+    link = link,
+    logo = sponsorLogoUrl,
+    sponsorType = sponsorType
 )

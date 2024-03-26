@@ -39,7 +39,7 @@ class OrganizersManager @Inject constructor(
 
     override fun getOrganizers(): Flow<List<Organizer>> {
         return localOrganizersDataSource.getOrganizers()
-            .map { it.map { it.toDomain() } }
+            .map { it.distinctBy { organizer -> organizer.name }.map { organizer -> organizer.toDomain() } }
     }
 
     override suspend fun syncOrganizers() {

@@ -15,8 +15,8 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -36,25 +36,26 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratSemiBold
+import com.droidconke.chai.atoms.ChaiRed
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyLargeBold
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiBodySmall
+import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
@@ -67,22 +68,23 @@ fun SessionsCard(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        shape = RoundedCornerShape(5),
+        shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onPrimary),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground),
         onClick = { navigateToSessionDetails(session.id) }
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(PaddingValues(top = 20.dp, bottom = 8.dp))
+                .padding(16.dp),
+            verticalAlignment = Alignment.Top
         ) {
             SessionTimeComponent(
                 session.startTime,
                 session.amOrPm
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(24.dp))
             SessionDetails(session = session)
         }
     }
@@ -91,22 +93,18 @@ fun SessionsCard(
 @Composable
 fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: String) {
     Column(
-        modifier = Modifier.weight(0.15f),
+        modifier = Modifier
+            .weight(0.2f),
         horizontalAlignment = Alignment.End
     ) {
-        Text(
-            text = sessionStartTime,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontSize = 18.sp,
-                fontFamily = MontserratSemiBold
-            )
+        ChaiBodyLargeBold(
+            bodyText = sessionStartTime,
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor
         )
-        Text(
-            text = sessionAmOrPm,
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontSize = 18.sp,
-                fontFamily = MontserratSemiBold
-            )
+
+        ChaiBodyMediumBold(
+            bodyText = sessionAmOrPm,
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor
         )
     }
 }
@@ -115,44 +113,19 @@ fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: Strin
 fun RowScope.SessionDetails(session: SessionPresentationModel) {
     Column(
         modifier = Modifier
-            .weight(0.85f)
-            .padding(PaddingValues(start = 10.dp, end = 10.dp, bottom = 10.dp))
+            .weight(0.8f)
     ) {
         SessionTitleComponent(session)
-        Spacer(modifier = Modifier.height(6.dp))
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = session.level.replaceFirstChar { it.uppercase() },
-                fontSize = 12.sp,
-                style = TextStyle(fontFamily = MontserratSemiBold),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            if (session.format.isNotEmpty() && session.level.isNotEmpty()) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "|",
-                    fontSize = 12.sp,
-                    style = TextStyle(fontFamily = MontserratSemiBold)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-            Text(
-                text = session.format.replaceFirstChar { it.uppercase() },
-                fontSize = 12.sp,
-                style = TextStyle(fontFamily = MontserratSemiBold),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         SessionsDescriptionComponent(session.description)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         TimeAndVenueComponent(session)
         Spacer(modifier = Modifier.height(12.dp))
         if (session.speakers.isNotEmpty()) {
             Column {
                 session.speakers.forEach { speaker ->
                     SessionPresenterComponents(speaker = speaker)
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -166,32 +139,33 @@ fun SessionTitleComponent(
 ) {
     val scope = rememberCoroutineScope()
     Row(
-        Modifier.fillMaxWidth()
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = session.title,
-            style = MaterialTheme.typography.titleSmall.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontFamily = MontserratBold,
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.weight(1f)
+        ChaiSubTitle(
+            modifier = Modifier.weight(1f),
+            titleText = session.title,
+            titleColor = MaterialTheme.chaiColorsPalette.textBoldColor
         )
-        IconButton(onClick = {
-            scope.launch {
-                if (session.isStarred) {
-                    viewModel.unBookmarkSession(session.id)
-                } else {
-                    viewModel.bookmarkSession(session.id)
+
+        IconButton(
+            modifier = Modifier.size(32.dp),
+            onClick = {
+                scope.launch {
+                    if (session.isStarred) {
+                        viewModel.unBookmarkSession(session.remoteId)
+                    } else {
+                        viewModel.bookmarkSession(session.remoteId)
+                    }
                 }
             }
-        }) {
+        ) {
             Icon(
                 imageVector = if (session.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (session.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor
             )
         }
     }
@@ -199,54 +173,52 @@ fun SessionTitleComponent(
 
 @Composable
 fun SessionsDescriptionComponent(sessionDescription: String) {
-    Text(
-        text = sessionDescription,
-        style = MaterialTheme.typography.bodyLarge,
-        maxLines = 5,
-        overflow = TextOverflow.Ellipsis
+    ChaiBodyMedium(
+        bodyText = sessionDescription,
+        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+        maxLines = 3
     )
 }
 
 @Composable
 fun TimeAndVenueComponent(session: SessionPresentationModel) {
     Row() {
-        Text(
-            text = "${session.startTime} - ${session.endTime}",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
+        ChaiBodyXSmall(
+            bodyText = "${session.startTime} - ${session.endTime}",
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = "|",
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
+        Spacer(modifier = Modifier.width(16.dp))
+        ChaiBodyXSmall(
+            bodyText = "|",
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
-        Spacer(modifier = Modifier.width(4.dp))
-        Text(
-            text = session.venue.uppercase(),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
+        Spacer(modifier = Modifier.width(12.dp))
+        ChaiBodyXSmall(
+            bodyText = session.venue.uppercase(),
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
         )
     }
 }
 
 @Composable
-fun SessionPresenterComponents(speaker: SessionSpeakersPresentationModel) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+fun SessionPresenterComponents(
+    speaker: SessionSpeakersPresentationModel
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         AsyncImage(
             model = speaker.speakerImage,
             contentDescription = "session speaker image",
             modifier = Modifier
-                .size(30.dp)
+                .size(24.dp)
                 .clip(CircleShape)
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = speaker.name,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.primary,
-                fontFamily = MontserratSemiBold
-            )
+
+        ChaiBodySmall(
+            bodyText = speaker.name,
+            textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
     }
 }

@@ -13,20 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ke.droidcon.kotlin.datasource.local.model
+package com.android254.presentation.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "sponsors")
-data class SponsorEntity(
-    @PrimaryKey
+data class SponsorPresentationModel(
     val name: String,
-    val tagline: String,
     val link: String,
     val logo: String,
-    val createdAt: String,
-    @ColumnInfo(defaultValue = "")
     val sponsorType: String
 )

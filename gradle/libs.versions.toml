@@ -29,7 +29,7 @@ hiltsecond = "1.1.0-rc01"
 runtime = "2.8.1"
 material = "1.10.0"
 junit = "1.1.5"
-coli = "2.4.0"
+coil = "2.4.0"
 activity = "1.8.0"
 preview_customview = "1.2.0-alpha02"
 poolingcontainer = "1.0.0"
@@ -70,7 +70,8 @@ android-test-espresso = { module = "androidx.test.espresso:espresso-core", versi
 android-test-idling = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
 android-test-junit4 = { module = "androidx.test.ext:junit", version.ref = "junit"}
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coli"}
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
+coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composecompiler"}
 compose-material-3 = { module = "androidx.compose.material3:material3" }
@@ -145,7 +146,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [bundles]
-compose = ["coil-compose", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
+compose = ["coil-compose", "coil-svg", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation", "ktor-auth", "ktor-logging", "ktor-okhttp"]

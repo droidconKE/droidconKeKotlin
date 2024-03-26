@@ -15,8 +15,14 @@
  */
 package com.android254.presentation.common.bottomnav
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -32,59 +38,87 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationDestinations
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiTextLabelSmall
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.background
+        modifier = Modifier
+            .background(MaterialTheme.chaiColorsPalette.bottomNavBorderColor)
+            .padding(top = 1.dp),
+        containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
         bottomNavigationDestinations.forEach { destination ->
-            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
-            NavigationBarItem(
-                selected = selected,
-                icon = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(id = destination.icon),
-                            contentDescription = destination.title
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = 8.dp),
-                            text = destination.title,
-                            color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground,
-                            fontSize = MaterialTheme.typography.labelMedium.fontSize
-                        )
-                    }
-                },
-                alwaysShowLabel = false,
+            val selected =
+                currentDestination?.hierarchy?.any { it.route == destination.route } == true
+
+            BottomNavItem(
+                isSelected = selected,
+                destination = destination,
                 onClick = {
                     navController.navigate(destination.route) {
                         launchSingleTop = true
                         restoreState = true
                         popUpTo(Screens.Home.route)
                     }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
-                    indicatorColor = MaterialTheme.colorScheme.background.copy(alpha = 0f)
-                )
+                }
             )
         }
+    }
+}
+
+@Composable
+fun RowScope.BottomNavItem(
+    isSelected: Boolean,
+    destination: Screens,
+    onClick: () -> Unit
+) {
+    val iconColor = if (isSelected) {
+        MaterialTheme.chaiColorsPalette.activeBottomNavIconColor
+    } else {
+        MaterialTheme.chaiColorsPalette.inactiveBottomNavIconColor
+    }
+
+    val textColor = if (isSelected) {
+        MaterialTheme.chaiColorsPalette.activeBottomNavTextColor
+    } else {
+        MaterialTheme.chaiColorsPalette.textNormalColor
+    }
+
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxHeight()
+            .clickable(
+                onClick = onClick
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter = painterResource(id = destination.icon),
+            contentDescription = destination.title,
+            tint = iconColor
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+
+        ChaiTextLabelSmall(
+            modifier = Modifier,
+            bodyText = destination.title,
+            textColor = textColor
+        )
     }
 }
 
 @Preview
 @Composable
 fun BottomNavigationBarPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         BottomNavigationBar(rememberNavController())
     }
 }

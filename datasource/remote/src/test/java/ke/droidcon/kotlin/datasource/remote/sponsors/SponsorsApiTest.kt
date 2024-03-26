@@ -15,8 +15,12 @@
  */
 package ke.droidcon.kotlin.datasource.remote.sponsors
 
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorsPagedResponse
@@ -55,7 +59,8 @@ class SponsorsApiTest {
                     tagline = "abc",
                     link = "abc",
                     createdAt = "abc",
-                    logo = "abc"
+                    logo = "abc",
+                    sponsorType = "platinum"
                 )
             )
         )

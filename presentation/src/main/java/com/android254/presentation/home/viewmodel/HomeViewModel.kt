@@ -17,11 +17,11 @@ package com.android254.presentation.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.Speaker
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.presentation.home.mappers.toPresentation
+import com.android254.presentation.home.mappers.toSpeakersPresentation
 import com.android254.presentation.home.viewstate.HomeViewState
-import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
                 speakers = it.speakers.toSpeakersPresentation(),
                 isSpeakersSectionVisible = it.isSpeakersSessionEnable,
                 isSessionsSectionVisible = it.isSessionsSectionEnable,
-                sponsors = it.sponsors.map { sponsor -> sponsor.sponsorLogoUrl },
+                sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() },
                 organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
                 sessions = it.sessions.map { session -> session.toPresentationModel() }
             )
@@ -70,15 +70,4 @@ class HomeViewModel @Inject constructor(
             syncDataWorkManager.startSync()
         }
     }
-
-    private fun List<Speaker>.toSpeakersPresentation() =
-        map {
-            SpeakerUI(
-                imageUrl = it.avatar,
-                name = it.name,
-                tagline = it.tagline,
-                bio = it.biography,
-                twitterHandle = it.twitter
-            )
-        }
 }

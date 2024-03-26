@@ -218,6 +218,20 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Raynafs">
             <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
             <br />
@@ -230,7 +244,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Kenneth Mathari</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/jumaallan">
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
@@ -243,14 +258,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
             <br />
             <sub><b>MamboBryan</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/kibettheophilus">
-            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
-            <br />
-            <sub><b>Kibet Theo</b></sub>
         </a>
     </td>
     <td align="center">
@@ -280,15 +287,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Michael Ndiritu</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/mog-rn">
             <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
             <br />
             <sub><b>Amos Nyaburi</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/etonotieno">
             <img src="https://avatars.githubusercontent.com/u/25648109?v=4" width="100;" alt="etonotieno"/>
@@ -308,13 +315,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
             <br />
             <sub><b>Martin Thuo</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/michaelbukachi">
-            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
-            <br />
-            <sub><b>Michael Bukachi</b></sub>
         </a>
     </td>
     <td align="center">

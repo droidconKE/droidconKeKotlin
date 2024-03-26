@@ -22,19 +22,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.droidconke.chai.atoms.ChaiDarkGrey
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.CPrimaryButtonText
+import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -47,26 +46,17 @@ fun SessionsErrorComponent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = errorMessage,
-            style = TextStyle(
-                color = ChaiDarkGrey,
-                fontSize = 24.sp,
-                fontFamily = MontserratRegular
-            )
+        ChaiBodyMediumBold(
+            bodyText = errorMessage,
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
         )
         Spacer(
             modifier = Modifier.height(32.dp)
         )
 
         Button(onClick = { retry() }) {
-            Text(
-                modifier = Modifier,
-                text = stringResource(R.string.retry_label),
-                style = TextStyle(
-                    fontSize = 24.sp,
-                    fontFamily = MontserratRegular
-                )
+            CPrimaryButtonText(
+                text = stringResource(R.string.retry_label)
             )
         }
     }

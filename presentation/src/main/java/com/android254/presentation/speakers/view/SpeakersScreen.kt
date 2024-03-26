@@ -16,6 +16,7 @@
 package com.android254.presentation.speakers.view
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,27 +31,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
@@ -79,11 +77,9 @@ private fun SpeakersScreen(
         topBar = {
             SmallTopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(id = R.string.speakers_label),
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.montserrat_regular)),
-                        color = MaterialTheme.chaiColorsPalette.textColorPrimary
+                    ChaiBodyLarge(
+                        bodyText = stringResource(id = R.string.speakers_label),
+                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor
                     )
                 },
                 navigationIcon = {
@@ -93,17 +89,18 @@ private fun SpeakersScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_arrow),
                             contentDescription = stringResource(R.string.back_arrow_icon_description),
-                            tint = colorResource(id = R.color.dark)
+                            tint = MaterialTheme.chaiColorsPalette.textBoldColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = Color.Transparent,
-                    titleContentColor = colorResource(id = R.color.dark),
-                    navigationIconContentColor = Color.White
+                    titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                    navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
                 )
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = uiState is SpeakersScreenUiState.Loading),
@@ -125,17 +122,20 @@ private fun SpeakersScreen(
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        Text(
+                        ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
-                            text = uiState.message
+                            bodyText = uiState.message,
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                         )
                     }
                 }
 
                 is SpeakersScreenUiState.Success -> {
                     LazyVerticalGrid(
-                        columns = GridCells.Adaptive(160.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(items = uiState.speakers) { speaker ->
                             SpeakerComponent(
@@ -162,7 +162,7 @@ private fun SpeakersScreen(
 )
 @Composable
 fun SpeakersScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         SpeakersScreen(
             uiState = SpeakersScreenUiState.Success(speakers = listOf())
         )

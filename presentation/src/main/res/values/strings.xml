@@ -24,10 +24,11 @@
     <string name="feedback_event_label">How is/was the event</string>
     <string name="feedback_improve_label">Your feedback helps us improve</string>
     <string name="feedback_label">Feedback</string>
+    <string name="feedback_button">Submit Feedback</string>
     <string name="about">About</string>
     <string name="about_droidcon">Droidcon is a global conference focused on the engineering of Android applications. Droidcon provides a forum for developers to network with other developers, share techniques, announce apps and products, and to learn and teach.\n\nThis three-day developer focused gathering will be held in Nairobi, Kenya on November 8th to 10th 2023 and will be the largest of its kind in Africa.\n\nIt will have workshops and codelabs focused on the building of Android applications and will give participants an excellent chance to learn about the local Android development ecosystem, opportunities and services as well as meet the engineers and companies who work on them.</string>
     <string name="about_organizing_team">Organizing Team</string>
-    <string name="organized_by">Organized by;</string>
+    <string name="organized_by">Organizers</string>
     <string name="logo">Logo</string>
     <string name="user_profile">User profile</string>
     <string name="about_droidcon_image">droidcon Image</string>

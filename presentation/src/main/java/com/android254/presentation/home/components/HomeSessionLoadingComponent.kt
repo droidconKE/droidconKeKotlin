@@ -22,20 +22,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android254.presentation.common.components.LoadingBox
-import com.android254.presentation.common.theme.DroidconKE2023Theme
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -51,16 +47,9 @@ fun HomeSessionLoadingComponent() {
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = stringResource(id = R.string.sessions_label),
-                textAlign = TextAlign.Start,
-                style = TextStyle(
-                    color = ChaiBlue,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    lineHeight = 25.sp,
-                    fontFamily = MontserratBold
-                )
+            ChaiSubTitle(
+                titleText = stringResource(id = R.string.sessions_label),
+                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
             )
             LoadingBox(height = 20.dp, width = 80.dp)
         }
@@ -76,7 +65,7 @@ fun HomeSessionLoadingComponent() {
 @Preview(showBackground = true)
 @Composable
 fun HomeSessionLoadingComponentPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         HomeSessionLoadingComponent()
     }
 }

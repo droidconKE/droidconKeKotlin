@@ -20,7 +20,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
-import com.android254.presentation.common.theme.DroidconKE2023Theme
+import com.droidconke.chai.ChaiDCKE22Theme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -45,7 +45,7 @@ class FeedBackScreenTest {
     @Test
     fun `should should show FeedBack Screen and show the heading`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme {
+            ChaiDCKE22Theme {
                 FeedBackRoute()
             }
         }
@@ -57,7 +57,7 @@ class FeedBackScreenTest {
     @Test
     fun `should should show FeedBack Heading onCollapse`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme {
+            ChaiDCKE22Theme {
                 FeedBackRoute()
             }
         }
@@ -69,7 +69,7 @@ class FeedBackScreenTest {
     @Test
     fun `should show submit Button`() {
         composeTestRule.setContent {
-            DroidconKE2023Theme {
+            ChaiDCKE22Theme {
                 FeedBackRoute()
             }
         }

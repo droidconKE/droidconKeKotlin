@@ -28,18 +28,17 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.theme.Montserrat
 import com.android254.presentation.models.SessionsFilterOption
-import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.atoms.ChaiGrey90
+import com.droidconke.chai.atoms.ChaiTeal
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodySmall
 
 @Composable
 fun MultiToggleButton(
@@ -48,15 +47,13 @@ fun MultiToggleButton(
     modifier: Modifier = Modifier,
     borderSize: Dp = 1.dp,
     buttonHeight: Dp = 40.dp,
-    selectedColor: Color = MaterialTheme.colorScheme.primary,
-    borderColor: Color = selectedColor,
-    border: BorderStroke = BorderStroke(borderSize, selectedColor),
+    selectedColor: Color = ChaiTeal,
     enabled: Boolean = true,
     onClick: (SessionsFilterOption) -> Unit
 ) {
     val unselectedColor = Color.Unspecified
-    val selectedContentColor = MaterialTheme.colorScheme.onPrimary
-    val unselectedContentColor = MaterialTheme.colorScheme.primary
+    val selectedContentColor = ChaiGrey90
+    val unselectedContentColor = MaterialTheme.chaiColorsPalette.textNormalColor
     val chunkedOptions = toggleStates.chunked(3)
 
     chunkedOptions.forEach { filterOptions ->
@@ -72,20 +69,13 @@ fun MultiToggleButton(
                         topStart = squareCorner,
                         bottomStart = squareCorner
                     )
+
                     else -> shape.copy(all = squareCorner)
                 }
                 val isButtonSelected = currentSelections.contains(sessionsFilterOption)
                 val backgroundColor = if (isButtonSelected) selectedColor else unselectedColor
                 val contentColor =
                     if (isButtonSelected) selectedContentColor else unselectedContentColor
-                val textStyle =
-                    if (isButtonSelected) {
-                        TextStyle(fontFamily = MontserratBold)
-                    } else {
-                        TextStyle(
-                            fontFamily = Montserrat
-                        )
-                    }
                 val offset = borderSize * -index
 
                 ToggleButton(
@@ -94,7 +84,14 @@ fun MultiToggleButton(
                         .defaultMinSize(minHeight = buttonHeight)
                         .offset(x = offset),
                     buttonShape = buttonShape,
-                    border = border,
+                    border = BorderStroke(
+                        width = borderSize,
+                        color = if (isButtonSelected) {
+                            ChaiGrey90
+                        } else {
+                            MaterialTheme.chaiColorsPalette.inactiveMultiSelectButtonBorderColor
+                        }
+                    ),
                     backgroundColor = backgroundColor,
                     elevation = ButtonDefaults.buttonElevation(),
                     enabled = enabled,
@@ -103,7 +100,6 @@ fun MultiToggleButton(
                     },
                     index = index,
                     contentColor = contentColor,
-                    textStyle = textStyle,
                     onClick = {
                         onClick(sessionsFilterOption)
                     }
@@ -124,8 +120,7 @@ private fun ToggleButton(
     buttonTexts: List<String>,
     index: Int,
     contentColor: Color,
-    onClick: () -> Unit,
-    textStyle: TextStyle
+    onClick: () -> Unit
 ) {
     OutlinedButton(
         modifier = modifier,
@@ -140,7 +135,6 @@ private fun ToggleButton(
         ButtonContent(
             buttonTexts = buttonTexts,
             index = index,
-            textStyle = textStyle,
             contentColor = contentColor
         )
     }
@@ -150,16 +144,14 @@ private fun ToggleButton(
 private fun RowScope.ButtonContent(
     buttonTexts: List<String>,
     index: Int,
-    contentColor: Color,
-    textStyle: TextStyle
+    contentColor: Color
 ) {
     when {
         buttonTexts.all { it != "" } -> TextContent(
             modifier = Modifier.align(Alignment.CenterVertically),
             buttonTexts = buttonTexts,
             index = index,
-            contentColor = contentColor,
-            textStyle = textStyle
+            contentColor = contentColor
         )
     }
 }
@@ -169,15 +161,12 @@ private fun TextContent(
     modifier: Modifier,
     buttonTexts: List<String>,
     index: Int,
-    contentColor: Color,
-    textStyle: TextStyle
+    contentColor: Color
 ) {
-    Text(
+    ChaiBodySmall(
         modifier = modifier.padding(horizontal = 8.dp),
-        text = buttonTexts[index],
-        color = contentColor,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        style = textStyle
+        bodyText = buttonTexts[index],
+        textColor = contentColor,
+        maxLines = 1
     )
 }

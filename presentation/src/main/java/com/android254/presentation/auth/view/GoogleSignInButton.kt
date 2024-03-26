@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,9 +29,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.components.ChaiBodySmallBold
 
 @Composable
 fun GoogleSignInButton(
@@ -75,11 +75,11 @@ fun GoogleSignInButton(
             )
             Spacer(modifier = Modifier.width(24.dp))
 
-            Text(
-                text = if (isLoading) loadingText else text,
-                color = Color.Black,
-                fontSize = 14.sp
+            ChaiBodySmallBold(
+                bodyText = if (isLoading) loadingText else text,
+                textColor = ChaiBlack
             )
+
             if (isLoading) {
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(

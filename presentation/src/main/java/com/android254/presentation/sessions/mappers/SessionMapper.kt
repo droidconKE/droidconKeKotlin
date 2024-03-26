@@ -27,13 +27,14 @@ import java.util.Locale
 
 fun Session.toPresentationModel(): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
+    val endTime = getTimePeriod(this.endDateTime)
     return SessionPresentationModel(
         id = this.id,
         title = this.title,
         description = this.description,
         venue = this.rooms,
         startTime = startTime.time,
-        endTime = this.endTime,
+        endTime = "${endTime.time} ${endTime.period}",
         amOrPm = startTime.period,
         isStarred = this.isBookmarked,
         level = this.sessionLevel,

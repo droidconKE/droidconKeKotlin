@@ -32,7 +32,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,21 +41,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
-import com.android254.presentation.common.theme.DroidconKE2023Theme
 import com.android254.presentation.models.OrganizingTeamMember
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -85,13 +83,13 @@ private fun AboutScreen(
                 },
                 userProfile = ""
             )
-        }
+        },
+        containerColor = MaterialTheme.chaiColorsPalette.background
     ) { paddingValues ->
         when (uiState) {
             is AboutScreenUiState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize()
-
                 ) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -101,9 +99,10 @@ private fun AboutScreen(
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = uiState.message,
-                        modifier = Modifier.align(Alignment.Center)
+                    ChaiBodyMediumBold(
+                        modifier = Modifier.align(Alignment.Center),
+                        bodyText = uiState.message,
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
                     )
                 }
             }
@@ -118,8 +117,7 @@ private fun AboutScreen(
                         .testTag("about_screen")
                 ) {
                     AboutDroidconSection(
-                        droidconDesc = stringResource(id = R.string.about_droidcon),
-                        droidconImage = ""
+                        droidconDesc = stringResource(id = R.string.about_droidcon)
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
@@ -149,8 +147,7 @@ private fun AboutScreen(
 @Composable
 fun AboutDroidconSection(
     modifier: Modifier = Modifier,
-    droidconDesc: String,
-    droidconImage: String
+    droidconDesc: String
 ) {
     Column(
         modifier = modifier
@@ -168,33 +165,22 @@ fun AboutDroidconSection(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
+        ChaiTitle(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp),
-            text = stringResource(id = R.string.about),
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.surfaceTint,
-                fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
-                lineHeight = 25.sp,
-                fontFamily = MontserratBold
-            )
+            titleText = stringResource(id = R.string.about),
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Text(
+        ChaiBodyMedium(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp),
-            text = droidconDesc,
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 16.sp,
-                lineHeight = 19.sp,
-                fontFamily = MontserratRegular
-            )
+            bodyText = droidconDesc,
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
         )
     }
 }
@@ -211,16 +197,11 @@ fun OrganizingTeamSection(
             .padding(start = 20.dp, end = 20.dp)
             .testTag("organizing_team_section")
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(id = R.string.about_organizing_team),
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.surfaceTint,
-                fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
-                lineHeight = 25.sp,
-                fontFamily = MontserratBold
-            )
+        ChaiTitle(
+            modifier = Modifier
+                .fillMaxWidth(),
+            titleText = stringResource(id = R.string.about_organizing_team),
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -250,7 +231,7 @@ fun OrganizingTeamSection(
 )
 @Composable
 fun AboutScreenPreview() {
-    DroidconKE2023Theme {
+    ChaiDCKE22Theme {
         AboutScreen(
             uiState = AboutScreenUiState.Success(
                 teamMembers = listOf(
