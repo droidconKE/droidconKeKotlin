@@ -40,6 +40,8 @@ dependencies {
     releaseImplementation(libs.chucker.release)
     debugImplementation(libs.chucker.debug)
 
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     testImplementation(libs.app.cash.turbine.turbine)
     testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.test.androidx.core)

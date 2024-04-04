@@ -29,6 +29,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
 
     signingConfigs {
         getByName("debug") {
