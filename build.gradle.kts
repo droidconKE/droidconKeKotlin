@@ -64,4 +64,14 @@ subprojects {
             licenseHeaderFile(rootProject.file("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
         }
     }
+
+    apply(plugin = "jacoco")
+
+    configure<JacocoPluginExtension> { toolVersion = "0.8.7" }
+
+    tasks.register<JacocoReport>("debugCoverage") {
+        group = "Reporting"
+        description = "Generate Jacoco coverage reports for the debug build."
+        dependsOn("testDebugUnitTest")
+    }
 }
