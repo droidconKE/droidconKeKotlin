@@ -63,15 +63,19 @@ jobs:
         with:
             token: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Run tests with coverage
+        run: ./gradlew debugCoverage
+
+
       - name: Upload test results
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
             name: test-results
-            path: "${{ github.workspace }}/**/build/reports/tests"
+            path: "build/reports/tests"
 
       - name: Upload jacoco report
         uses: actions/upload-artifact@v4
         with:
             name: jacoco-report
-            path: "${{ github.workspace }}/**/build/reports/jacoco"
+            path: "build/reports/jacoco"

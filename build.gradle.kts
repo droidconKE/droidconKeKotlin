@@ -72,6 +72,10 @@ subprojects {
     tasks.register<JacocoReport>("debugCoverage") {
         group = "Reporting"
         description = "Generate Jacoco coverage reports for the debug build."
-        dependsOn("testDebugUnitTest")
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
     }
+
 }
