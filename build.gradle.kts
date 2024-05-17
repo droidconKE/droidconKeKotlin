@@ -16,6 +16,12 @@ plugins {
 }
 
 allprojects {
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     ktlint {
         android.set(true)
@@ -27,7 +33,7 @@ allprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 }

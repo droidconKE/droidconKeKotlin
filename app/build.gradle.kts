@@ -42,7 +42,6 @@ android {
     buildTypes {
         debug {
             isDebuggable = true
-            isMinifyEnabled = true
             signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -89,6 +88,4 @@ dependencies {
     androidTestImplementation(libs.android.test.junit4)
 
     testImplementation(libs.bundles.test)
-
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

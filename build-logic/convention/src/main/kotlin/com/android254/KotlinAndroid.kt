@@ -34,12 +34,12 @@ internal fun Project.configureKotlinAndroid(
         compileSdk = 34
 
         defaultConfig {
-            minSdk = 21
+            minSdk = 24
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
 
         kotlinOptions {
@@ -56,8 +56,8 @@ internal fun Project.configureKotlinAndroid(
                 "-opt-in=kotlin.Experimental",
             )
 
-            // Set JVM target to 11
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            // Set JVM target to 17
+            jvmTarget = JavaVersion.VERSION_17.toString()
         }
     }
 

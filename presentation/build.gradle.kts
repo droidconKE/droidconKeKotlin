@@ -45,6 +45,8 @@ dependencies {
     implementation(project(":chai"))
     implementation(project(":datasource:remote"))
 
+    implementation(project(":shared"))
+
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
     implementation(libs.lifecycle.runtimeKtx)
