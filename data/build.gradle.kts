@@ -22,10 +22,6 @@ plugins {
 
 android {
     namespace = "ke.droidcon.kotlin.data"
-
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
 }
 
 dependencies {
@@ -41,7 +37,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.android)
     implementation(libs.bundles.ktor)
 
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.lifecycle.livedataKtx)
 
     implementation(libs.work.runtime)
