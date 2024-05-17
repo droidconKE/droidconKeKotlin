@@ -2,9 +2,8 @@
 composecompiler = "1.5.3"
 coroutines = "1.7.3"
 coroutines_datetime = "0.4.0"
-desugar_jdk_libs = "2.0.3"
 espresso = "3.5.1"
-gradleplugin = "8.1.2"
+gradleplugin = "8.4.0"
 gmsPlugin = "4.4.0"
 hilt = "2.48.1"
 kotlin = "1.9.10"
@@ -88,7 +87,6 @@ compose-preview-customview-poolingcontainer = { module = "androidx.customview:cu
 compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayout"}
 compose-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swiperefresh"}
-desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 gson-gson = { module = "com.google.code.gson:gson", version.ref = "gson"}
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
@@ -163,6 +161,7 @@ gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless =  { id = "com.diffplug.spotless", version.ref = "spotless" }
