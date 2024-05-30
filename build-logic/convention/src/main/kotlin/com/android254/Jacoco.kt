@@ -37,7 +37,7 @@ private fun String.capitalize() = replaceFirstChar {
  * `create{variant}CombinedCoverageReport`
  *
  * Note that coverage data must exist before running the task. This allows us to run device
- * tests on CI using a different Github Action or an external device farm.
+ * tests on CI using a different Github Action or an external device.
  */
 internal fun Project.configureJacoco(
     androidComponentsExtension: AndroidComponentsExtension<*, *, *>,
