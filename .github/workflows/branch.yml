@@ -92,10 +92,29 @@ jobs:
           subdirectory: fastlane
           bundle-install-path: CACHE_BUNDLER
 
+      - name: Run local tests for the combined coverage report (only API 30)
+        if: matrix.api-level == 30
+        run: ./gradlew testDemoDebugUnitTest
+
+      - name: Generate coverage reports for Debug variants (only API 30)
+        if: matrix.api-level == 30
+        run: ./gradlew createDemoDebugCombinedCoverageReport
+
       - name: Upload App module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
         working-directory: android
         run: bash <(curl -s https://codecov.io/bash) -F app -f "**/build/reports/jacoco/"
+
+      - name: Run DataSource module unit and instrumentation tests and generate coverage report
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+            working-directory: android
+            api-level: ${{ matrix.api-level }}
+            arch: x86_64
+            force-avd-creation: true
+            emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+            disable-animations: true
+            script: ./gradlew :datasource:clean :datasource:createDebugCombinedCoverageReport --stacktrace
 
       - name: Upload DataSource module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
