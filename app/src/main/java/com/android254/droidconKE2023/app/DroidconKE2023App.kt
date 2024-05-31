@@ -40,13 +40,6 @@ class DroidconKE2023App : Application(), Configuration.Provider {
         initTimber()
         setUpWorkerManagerNotificationChannel()
     }
-
-    override fun getWorkManagerConfiguration(): Configuration =
-        Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.DEBUG)
-            .setWorkerFactory(workerFactory)
-            .build()
-
     private fun initTimber() = when {
         BuildConfig.DEBUG -> {
             Timber.plant(object : Timber.DebugTree() {
@@ -76,4 +69,10 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             Configuration.Builder().setWorkerFactory(workerFactory).build()
         )
     }
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .setWorkerFactory(workerFactory)
+            .build()
 }
