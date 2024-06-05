@@ -21,3 +21,4 @@ build-logic/convention/build
 /datasource/remote/build
 /datasource/build
 **/build
+/shared/build
