@@ -42,8 +42,6 @@ dependencies {
     testImplementation(libs.test.robolectric)
     testImplementation(libs.ktor.mock)
     testImplementation(libs.test.mockk)
-
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 kotlin {
