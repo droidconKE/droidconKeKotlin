@@ -21,13 +21,13 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,19 +45,14 @@ class SpeakerDetailsScreenTest {
     @Test
     fun `all components should be displayed properly`() {
         every { mockSavedStateHandle.get<Int>("speakerId") } returns 0
-        coEvery { speakersRepo.getSpeakerByName(any()) } returns ResourceResult.Success(
-            Speaker(
-                name = "Harun Wangereka",
-                tagline = "kenya partner lead"
-            )
-        )
+
+        coEvery { speakersRepo.getSpeakerByName("Harun Wangereka") }.returns(flowOf(Speaker(name = "John Doe", tagline = "some tag line")))
 
         composeTestRule.setContent {
             SpeakerDetailsRoute(
                 name = "Harun Wangereka",
                 SpeakerDetailsScreenViewModel(
-                    speakersRepo = speakersRepo,
-                    savedStateHandle = mockSavedStateHandle
+                    speakersRepo = speakersRepo
                 )
             )
         }

@@ -15,9 +15,8 @@
  */
 package com.android254.presentation.speakers
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.android254.domain.models.ResourceResult
+import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,35 +37,24 @@ sealed interface SpeakerDetailsScreenUiState {
 
 @HiltViewModel
 class SpeakerDetailsScreenViewModel @Inject constructor(
-    private val speakersRepo: SpeakersRepo,
-    private val savedStateHandle: SavedStateHandle
+    private val speakersRepo: SpeakersRepo
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
     suspend fun getSpeakerByName(name: String) {
-        when (val result = speakersRepo.getSpeakerByName(name)) {
-            is ResourceResult.Success -> {
-                val data = result.data
-                if (data == null) {
-                    _uiState.value = SpeakerDetailsScreenUiState.SpeakerNotFound(message = "Speaker Not found")
-                } else {
-                    val speaker = SpeakerUI(
-                        id = 1,
-                        imageUrl = data.avatar,
-                        name = data.name,
-                        tagline = data.tagline,
-                        bio = data.biography,
-                        twitterHandle = data.twitter
-                    )
-                    _uiState.value = SpeakerDetailsScreenUiState.Success(speaker = speaker)
-                }
-            }
-            is ResourceResult.Error -> {
-                _uiState.value = SpeakerDetailsScreenUiState.Error(message = result.message)
-            }
-            else -> {}
+        speakersRepo.getSpeakerByName(name).collect { speaker ->
+            _uiState.value = SpeakerDetailsScreenUiState.Success(speaker.toPresentation())
         }
     }
+
+    private fun Speaker.toPresentation() = SpeakerUI(
+        id = 1,
+        imageUrl = avatar,
+        name = name,
+        tagline = tagline,
+        bio = biography,
+        twitterHandle = twitter
+    )
 }
