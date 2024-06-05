@@ -36,11 +36,7 @@ class LocalSpeakersDataSourceImpl @Inject constructor(
     override suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>) =
         speakerDao.insert(items = speakers)
 
-    override suspend fun getCachedSpeakerByName(speakerName: String): SpeakerEntity? {
-        return withContext(localSourceIoDispatcher) {
-            speakerDao.getSpeakerByName(name = speakerName)
-        }
-    }
+    override fun getCachedSpeakerByName(speakerName: String) = speakerDao.getSpeakerByName(speakerName).flowOn(localSourceIoDispatcher)
 
     override fun fetchCachedSpeakerCount(): Flow<Int> =
         speakerDao.fetchSpeakerCount().flowOn(localSourceIoDispatcher)

@@ -38,7 +38,7 @@ class SpeakersManager @Inject constructor(
 
     override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
 
-    override suspend fun getSpeakerByName(name: String): ResourceResult<Speaker> = ResourceResult.Success(localSpeakersDataSource.getCachedSpeakerByName(name)?.toDomainModel())
+    override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
 
     override suspend fun syncSpeakers() {
         when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
