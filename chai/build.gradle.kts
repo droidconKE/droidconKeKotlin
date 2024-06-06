@@ -16,6 +16,7 @@
 plugins {
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.library.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {

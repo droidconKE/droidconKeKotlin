@@ -18,5 +18,4 @@ kotlin {
 
 android {
     namespace = "ke.droidcon.kotlin.shared.domain"
-    compileSdk = 34
 }
