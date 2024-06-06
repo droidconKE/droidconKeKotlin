@@ -175,6 +175,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/kibettheophilus">
+            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
+            <br />
+            <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/yveskalume">
             <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
             <br />
@@ -194,27 +201,20 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Hannah Olukoye</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Borwe">
             <img src="https://avatars.githubusercontent.com/u/3319843?v=4" width="100;" alt="Borwe"/>
             <br />
             <sub><b>Brian Orwe</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/chege4179">
             <img src="https://avatars.githubusercontent.com/u/62762943?v=4" width="100;" alt="chege4179"/>
             <br />
             <sub><b>Peter Chege</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/kibettheophilus">
-            <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
-            <br />
-            <sub><b>Kibet Theo</b></sub>
         </a>
     </td>
     <td align="center">
@@ -225,17 +225,17 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/michaelbukachi">
-            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
-            <br />
-            <sub><b>Michael Bukachi</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/Raynafs">
             <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
             <br />
             <sub><b>Rachel Murabula</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/michaelbukachi">
+            <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
+            <br />
+            <sub><b>Michael Bukachi</b></sub>
         </a>
     </td>
     <td align="center">

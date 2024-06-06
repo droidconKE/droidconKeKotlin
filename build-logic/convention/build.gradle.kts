@@ -53,5 +53,9 @@ gradlePlugin {
             id = "droidconke.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("multiplatform") {
+            id = "droidconke.multiplatform"
+            implementationClass = "MultiplaftormConventionPlugin"
+        }
     }
 }
