@@ -22,3 +22,6 @@ build-logic/convention/build
 /datasource/build
 **/build
 /shared/build
+/shared/data/build
+/shared/datasource/build
+shared/domain/build
