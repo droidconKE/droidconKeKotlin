@@ -23,6 +23,7 @@ kotlin {
             dependencies {
                 implementation(project(":shared:datasource"))
                 implementation(project(":shared:domain"))
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
         val commonTest by getting {
