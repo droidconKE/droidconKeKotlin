@@ -1,4 +1,6 @@
 [versions]
+android-compile-sdk = "34"
+android-min-sdk = "24"
 composecompiler = "1.5.3"
 coroutines = "1.7.3"
 coroutines_datetime = "0.4.0"

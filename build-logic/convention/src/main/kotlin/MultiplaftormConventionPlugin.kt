@@ -1,4 +1,5 @@
 import com.android.build.gradle.LibraryExtension
+import com.android254.libs
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -34,9 +35,9 @@ class MultiplaftormConventionPlugin : Plugin<Project> {
                 }
 
                 extensions.configure<LibraryExtension> {
-                    compileSdk = 34
+                    compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
                     defaultConfig {
-                        minSdk = 24
+                        minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
                     }
                     compileOptions {
                         sourceCompatibility = JavaVersion.VERSION_17
