@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
+import com.android254.domain.models.ResourceResult
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import javax.inject.Inject

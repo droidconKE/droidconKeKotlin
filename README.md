@@ -239,20 +239,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/emmanuelmuturia">
-            <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
-            <br />
-            <sub><b>Emmanuel Muturia</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
         <a href="https://github.com/KennethMathari">
             <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
             <br />
             <sub><b>Kenneth Mathari</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/jumaallan">
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
@@ -287,20 +280,27 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>N3</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/paulodhiambo">
             <img src="https://avatars.githubusercontent.com/u/44492906?v=4" width="100;" alt="paulodhiambo"/>
             <br />
             <sub><b>Odhiambo Paul</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/jumapaul">
             <img src="https://avatars.githubusercontent.com/u/68422810?v=4" width="100;" alt="jumapaul"/>
             <br />
             <sub><b>Paul Juma</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/emmanuelmuturia">
+            <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
+            <br />
+            <sub><b>Emmanuel Muturia</b></sub>
         </a>
     </td>
     <td align="center">
