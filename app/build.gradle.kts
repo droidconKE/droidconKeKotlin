@@ -16,7 +16,7 @@
 plugins {
     alias(libs.plugins.droidconke.android.application)
     alias(libs.plugins.droidconke.android.hilt)
-    alias(notation = libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.droidconke.android.application.firebase)
 }
 
