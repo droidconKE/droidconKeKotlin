@@ -21,8 +21,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":shared:datasource"))
-                implementation(project(":shared:domain"))
+                implementation(projects.shared.datasource)
+                implementation(projects.shared.domain)
                 implementation(libs.kotlinx.coroutines.core)
             }
         }
