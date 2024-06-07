@@ -25,3 +25,4 @@ build-logic/convention/build
 /shared/data/build
 /shared/datasource/build
 shared/domain/build
+.kotlin
