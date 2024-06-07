@@ -15,15 +15,15 @@
  */
 package com.android254.shared.data.repos
 
-import com.android254.shared.domain.models.HomeDetails
-import com.android254.shared.domain.repos.HomeRepo
+import com.android254.shared.domain.models.HomeDetailsDomainModel
+import com.android254.shared.domain.repos.HomeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class HomeRepoImpl : HomeRepo {
-    override fun fetchHomeDetails(): Flow<HomeDetails> {
+class HomeRepositoryImpl : HomeRepository {
+    override fun fetchHomeDetails(): Flow<HomeDetailsDomainModel> {
         return flowOf(
-            HomeDetails(
+            HomeDetailsDomainModel(
                 isCallForSpeakersEnable = true,
                 linkToCallForSpeakers = "https://droidcon.co.ke",
                 isEventBannerEnable = true,
