@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.shared.domain.repos
+package com.android254.shared.domain.models
 
-import com.android254.shared.domain.models.HomeDetails
-import kotlinx.coroutines.flow.Flow
-
-interface HomeRepo {
-    fun fetchHomeDetails(): Flow<HomeDetails>
-}
+data class SpeakerDomainModel(
+    val avatar: String = "",
+    val biography: String = "",
+    val blog: String = "",
+    val company_website: String = "",
+    val facebook: String = "",
+    val instagram: String = "",
+    val linkedin: String = "",
+    val name: String,
+    val tagline: String = "",
+    val twitter: String = ""
+)

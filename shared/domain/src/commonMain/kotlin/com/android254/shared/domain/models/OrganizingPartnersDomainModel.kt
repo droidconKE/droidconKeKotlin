@@ -15,23 +15,15 @@
  */
 package com.android254.shared.domain.models
 
-data class Session(
-    val id: String,
-    val endDateTime: String,
-    val endTime: String,
-    val isBookmarked: Boolean,
-    val isKeynote: Boolean,
-    val isServiceSession: Boolean,
-    val sessionImage: String?,
-    val startDateTime: String,
-    val startTime: String,
-    val rooms: String,
-    val speakers: List<Speaker>,
-    val remoteId: String,
-    val description: String,
-    val sessionFormat: String,
-    val sessionLevel: String,
-    val slug: String,
-    val title: String,
-    val eventDay: String
+data class OrganizingPartnersDomainModel(
+    val organizerName: String,
+    val organizerLogoUrl: String
+)
+
+data class SponsorsDomainModel(
+    val sponsorName: String,
+    val sponsorLogoUrl: String,
+    val link: String,
+    val sponsorType: String,
+    val createdAt: String
 )

@@ -15,15 +15,16 @@
  */
 package com.android254.shared.domain.models
 
-data class OrganizingPartners(
-    val organizerName: String,
-    val organizerLogoUrl: String
-)
-
-data class Sponsors(
-    val sponsorName: String,
-    val sponsorLogoUrl: String,
-    val link: String,
-    val sponsorType: String,
-    val createdAt: String
+data class HomeDetailsDomainModel(
+    val isCallForSpeakersEnable: Boolean,
+    val linkToCallForSpeakers: String,
+    val isEventBannerEnable: Boolean,
+    val sessions: List<SessionDomainModel>,
+    val sessionsCount: Int,
+    val isSessionsSectionEnable: Boolean,
+    val speakers: List<SpeakerDomainModel>,
+    val speakersCount: Int,
+    val isSpeakersSessionEnable: Boolean,
+    val sponsors: List<SponsorsDomainModel>,
+    val organizers: List<OrganizingPartnersDomainModel>
 )
