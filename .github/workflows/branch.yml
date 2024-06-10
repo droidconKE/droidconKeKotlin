@@ -97,7 +97,7 @@ jobs:
 
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
-        run: ./gradlew testDemoDebugUnitTest
+        run: ./gradlew testDemoDebug
 
       - name: Generate coverage reports for Debug variants (only API 30)
         if: matrix.api-level == 30
