@@ -95,6 +95,9 @@ jobs:
           subdirectory: fastlane
           bundle-install-path: CACHE_BUNDLER
 
+      - name: Ensure android directory exists
+        run: mkdir -p android
+
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
         run: ./gradlew testDebugUnitTest
