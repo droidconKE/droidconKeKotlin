@@ -120,7 +120,7 @@ jobs:
             force-avd-creation: true
             emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
             disable-animations: true
-            script: ./gradlew :datasource:remote:clean :datasource:remote:createDebugCombinedCoverageReport --stacktrace
+            script: ./gradlew datasource:remote:clean datasource:remote:createDebugCombinedCoverageReport --stacktrace
 
       - name: Upload DataSource module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
