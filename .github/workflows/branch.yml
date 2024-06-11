@@ -99,15 +99,15 @@ jobs:
       - name: Ensure android directory exists
         run: mkdir -p android
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-        working-directory: android
+      - name: Setup Gradle cache
+        uses: gradle/gradle-build-action@v2
 
       - name: Copy CI gradle.properties
         run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties && cat ~/.gradle/gradle.properties
 
-      - name: Setup Gradle cache
-        uses: gradle/gradle-build-action@v2
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: android
 
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
