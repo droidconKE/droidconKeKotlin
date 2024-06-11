@@ -127,7 +127,6 @@ jobs:
       - name: Run DataSource remote module unit and instrumentation tests and generate coverage report
         uses: reactivecircus/android-emulator-runner@v2
         with:
-            working-directory: android
             api-level: ${{ matrix.api-level }}
             arch: x86_64
             force-avd-creation: true
@@ -137,5 +136,4 @@ jobs:
 
       - name: Upload DataSource module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
-        working-directory: android
         run: bash <(curl -s https://codecov.io/bash) -F datasource -f "**/build/reports/jacoco/"
