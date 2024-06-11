@@ -103,6 +103,12 @@ jobs:
         run: chmod +x gradlew
         working-directory: android
 
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties && cat ~/.gradle/gradle.properties
+
+      - name: Setup Gradle cache
+        uses: gradle/gradle-build-action@v2
+
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
         run: ./gradlew testDebugUnitTest
