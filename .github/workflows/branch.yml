@@ -97,18 +97,18 @@ jobs:
 
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
-        run: ./gradlew testDemoDebug
+        run: ./gradlew testDebugUnitTest
 
       - name: Generate coverage reports for Debug variants (only API 30)
         if: matrix.api-level == 30
-        run: ./gradlew createDemoDebugCombinedCoverageReport
+        run: ./gradlew createDebugCombinedCoverageReport
 
       - name: Upload App module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
         working-directory: android
         run: bash <(curl -s https://codecov.io/bash) -F app -f "**/build/reports/jacoco/"
 
-      - name: Run DataSource module unit and instrumentation tests and generate coverage report
+      - name: Run DataSource remote module unit and instrumentation tests and generate coverage report
         uses: reactivecircus/android-emulator-runner@v2
         with:
             working-directory: android
@@ -117,7 +117,7 @@ jobs:
             force-avd-creation: true
             emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
             disable-animations: true
-            script: ./gradlew :datasource:clean :datasource:createDebugCombinedCoverageReport --stacktrace
+            script: ./gradlew :datasource:remote:clean :datasource:remote:createDebugCombinedCoverageReport --stacktrace
 
       - name: Upload DataSource module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30

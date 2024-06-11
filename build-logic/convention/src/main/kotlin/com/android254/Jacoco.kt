@@ -67,7 +67,7 @@ internal fun Project.configureJacoco(
                     html.required.set(true)
                 }
 
-                // TODO: This is missing files in src/debug/, src/prod, src/demo, src/demoDebug...
+
                 sourceDirectories.setFrom(files("$projectDir/src/main/java", "$projectDir/src/main/kotlin"))
 
                 executionData.setFrom(
