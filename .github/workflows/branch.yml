@@ -110,7 +110,6 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-        working-directory: android
 
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
