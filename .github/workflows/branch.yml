@@ -95,8 +95,13 @@ jobs:
           subdirectory: fastlane
           bundle-install-path: CACHE_BUNDLER
 
+
       - name: Ensure android directory exists
         run: mkdir -p android
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: android
 
       - name: Run local tests for the combined coverage report (only API 30)
         if: matrix.api-level == 30
@@ -120,7 +125,7 @@ jobs:
             force-avd-creation: true
             emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
             disable-animations: true
-            script: ./gradlew datasource:remote:clean datasource:remote:createDebugCombinedCoverageReport --stacktrace
+            script: ./gradlew :datasource:remote:clean :datasource:remote:createDebugCombinedCoverageReport --stacktrace
 
       - name: Upload DataSource module test coverage report to Codecov
         if: matrix.api-level == 30 # Only upload coverage on API level 30
