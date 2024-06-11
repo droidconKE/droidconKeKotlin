@@ -102,6 +102,12 @@ jobs:
       - name: Setup Gradle cache
         uses: gradle/gradle-build-action@v2
 
+      - name: List root diretory contents
+        run: ls -la
+
+      - name: List android directory contents
+        run: ls -la android
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         working-directory: android
