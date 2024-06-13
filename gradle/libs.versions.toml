@@ -56,25 +56,25 @@ toml_updater = "0.3.1"
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxComposeBom" }
-android-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+android-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"}
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 android-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-android-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltsecond" }
-android-hilt-androidx-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltsecond" }
+android-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltsecond"}
+android-hilt-androidx-compiler = { module = "androidx.hilt:hilt-compiler" ,version.ref = "hiltsecond"}
 android-hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
-work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "runtime" }
-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltsecond" }
-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltsecond" }
-android-material = { module = "com.google.android.material:material", version.ref = "material" }
+work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "runtime"}
+hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltsecond"}
+hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltsecond"}
+android-material = { module = "com.google.android.material:material", version.ref = "material"}
 android-test-compose = { module = "androidx.compose.ui:ui-test-junit4" }
 android-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 android-test-idling = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
-android-test-junit4 = { module = "androidx.test.ext:junit", version.ref = "junit" }
+android-test-junit4 = { module = "androidx.test.ext:junit", version.ref = "junit"}
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity" }
-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composecompiler" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
+coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
+compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
+compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composecompiler"}
 compose-material-3 = { module = "androidx.compose.material3:material3" }
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
 compose-runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata" }
@@ -84,35 +84,36 @@ compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-compose-preview-customview = { module = "androidx.customview:customview", version.ref = "preview_customview" }
-compose-preview-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "poolingcontainer" }
-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayout" }
-compose-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swiperefresh" }
-gson-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+compose-preview-customview = { module = "androidx.customview:customview", version.ref = "preview_customview"}
+compose-preview-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "poolingcontainer"}
+compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayout"}
+compose-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "swiperefresh"}
+desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+gson-gson = { module = "com.google.code.gson:gson", version.ref = "gson"}
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
-kotlin-coroutines-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "coroutines_datetime" }
+kotlin-coroutines-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "coroutines_datetime"}
 kotlin-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
-gms-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "auth" }
+gms-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "auth"}
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
-paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging" }
-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+paging-common = { module = "androidx.paging:paging-common-ktx", version.ref = "paging"}
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging"}
 result-jvm = { module = "com.github.kittinunf.result:result-jvm", version.ref = "result_jvm" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-test-androidx-core = { module = "androidx.test:core-ktx", version.ref = "test_corektx" }
-test-robolectric = { module = "org.robolectric:robolectric", version.ref = "test_robolectric" }
-test-navigation = { module = "androidx.navigation:navigation-testing", version.ref = "test_navigation" }
-test-mockk = { module = "io.mockk:mockk", version.ref = "test_mockk" }
+datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore"}
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
+test-androidx-core = { module = "androidx.test:core-ktx", version.ref = "test_corektx"}
+test-robolectric = { module = "org.robolectric:robolectric", version.ref = "test_robolectric"}
+test-navigation = { module = "androidx.navigation:navigation-testing", version.ref = "test_navigation"}
+test-mockk = { module = "io.mockk:mockk", version.ref = "test_mockk"}
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
@@ -121,21 +122,21 @@ ktor-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = 
 ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom"}
 firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
 firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
 firebase-remote-config = { module = "com.google.firebase:firebase-config-ktx", version.ref = "remote_config" }
-firebase-common = { module = "com.google.firebase:firebase-common-ktx", version.ref = "firebase_common" }
+firebase-common = { module = "com.google.firebase:firebase-common-ktx", version.ref = "firebase_common"}
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
-app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-junit-androidx = { module = "androidx.test.ext:junit", version.ref = "junit" }
-junit-androidx-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit" }
-test-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit" }
+app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
+junit-androidx = { module = "androidx.test.ext:junit", version.ref = "junit"}
+junit-androidx-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit"}
+test-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit"}
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 
 # Dependencies of the included build-logic
@@ -146,7 +147,7 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [bundles]
-compose = ["coil-compose", "coil-svg", "compose-activity", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
+compose = ["coil-compose", "coil-svg", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
 room = ["room-ktx", "room-paging", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation", "ktor-auth", "ktor-logging", "ktor-okhttp"]
@@ -180,4 +181,6 @@ droidconke-android-application-firebase = { id = "droidconke.android.application
 droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }
 droidconke-android-application = { id = "droidconke.android.application", version = "unspecified" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+droidconke-android-application-jacoco = { id = "droidconke.android.application.jacoco", version = "unspecified" }
+droidconke-android-library-jacoco = { id = "droidconke.android.library.jacoco", version = "unspecified" }
 droidconke-multiplatform = { id = "droidconke.multiplatform", version = "unspecified" }

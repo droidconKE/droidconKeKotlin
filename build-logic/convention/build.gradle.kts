@@ -53,6 +53,14 @@ gradlePlugin {
             id = "droidconke.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidApplicationJacoco") {
+            id = "droidconke.android.application.jacoco"
+            implementationClass = "AndroidApplicationJacocoConventionPlugin"
+        }
+        register("androidLibraryJacoco") {
+            id = "droidconke.android.library.jacoco"
+            implementationClass = "AndroidLibraryJacocoConventionPlugin"
+        }
         register("multiplatform") {
             id = "droidconke.multiplatform"
             implementationClass = "MultiplaftormConventionPlugin"

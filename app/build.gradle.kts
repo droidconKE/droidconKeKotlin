@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.droidconke.android.application.firebase)
+    alias(libs.plugins.droidconke.android.application.jacoco)
 }
 
 android {
