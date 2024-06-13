@@ -7,6 +7,7 @@ on:
 env:
   APP_SIGN_KEYSTORE_PATH: /tmp/keystore
   CACHE_BUNDLER: ~/.bundler
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 jobs:
   build:
@@ -90,3 +91,13 @@ jobs:
           skip-tracking: false
           subdirectory: fastlane
           bundle-install-path: CACHE_BUNDLER
+
+      - name: Upload App module test coverage report to Codecov
+        if: matrix.api-level == 30 # Only upload coverage on API level 30
+        working-directory: android
+        run: bash <(curl -s https://codecov.io/bash) -F app -f "**/build/reports/jacoco/"
+
+      - name: Upload DataSource module test coverage report to Codecov
+        if: matrix.api-level == 30 # Only upload coverage on API level 30
+        working-directory: android
+        run: bash <(curl -s https://codecov.io/bash) -F datasource -f "**/build/reports/jacoco/"

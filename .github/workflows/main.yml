@@ -56,26 +56,3 @@ jobs:
           skip-tracking: false
           subdirectory: fastlane
           bundle-install-path: CACHE_BUNDLER
-
-      - name: Upload test coverage report to Codecov
-        if: matrix.api-level == 30
-        uses: codecov/codecov-action@v4
-        with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Run tests with coverage
-        run: ./gradlew debugCoverage
-
-
-      - name: Upload test results
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-            name: test-results
-            path: "build/reports/tests"
-
-      - name: Upload jacoco report
-        uses: actions/upload-artifact@v4
-        with:
-            name: jacoco-report
-            path: "build/reports/jacoco"

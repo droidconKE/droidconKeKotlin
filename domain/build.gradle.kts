@@ -15,6 +15,7 @@
  */
 plugins {
     alias(libs.plugins.droidconke.android.library)
+    alias(libs.plugins.droidconke.android.library.jacoco)
 }
 
 android {

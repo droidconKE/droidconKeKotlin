@@ -1,0 +1,23 @@
+codecov:
+  notify:
+    wait_for_ci: true
+  max_report_age: off
+  require_ci_to_pass: true
+comment:
+  behavior: default
+  layout: "reach, diff, flags, files"
+  show_carryforward_flags: false
+coverage:
+  precision: 1
+  status:
+    changes: false
+    patch:
+      default:
+        target: 60.0
+    project:
+      default:
+        enabled: true
+        target: 25.0
+flag_management:
+  default_rules:
+    carryforward: true
