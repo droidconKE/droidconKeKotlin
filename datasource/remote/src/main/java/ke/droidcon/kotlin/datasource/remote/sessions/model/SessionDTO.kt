@@ -28,7 +28,7 @@ data class SessionDTO(
     val id: String,
     val backgroundColor: String,
     val borderColor: String,
-    val description: String,
+    @SerialName("description") val description: String? = "",
     @SerialName("end_date_time") val endDateTime: String,
     @SerialName("end_time") val endTime: String,
     @SerialName("is_bookmarked") val isBookmarked: Boolean,

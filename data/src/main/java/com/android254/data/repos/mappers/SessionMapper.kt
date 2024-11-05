@@ -53,7 +53,7 @@ fun SessionEntity.toDomainModel() = Session(
 fun SessionDTO.toEntity(): SessionEntity {
     return SessionEntity(
         id = 0,
-        description = description,
+        description = description.orEmpty(),
         title = title,
         sessionFormat = sessionFormat,
         sessionLevel = sessionLevel,
