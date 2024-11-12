@@ -82,7 +82,7 @@ fun HomeSessionContent(
 ) {
     Card(
         modifier = modifier
-            .width(300.dp)
+            .width(140.dp)
             .height(intrinsicSize = IntrinsicSize.Max),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
         onClick = { onSessionClick(session.id) }
@@ -96,7 +96,7 @@ fun HomeSessionContent(
             modifier = Modifier
                 .height(140.dp)
                 .fillMaxWidth(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.Crop
         )
         Spacer(Modifier.height(8.dp))
         Column(
