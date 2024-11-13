@@ -390,6 +390,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/donald-okara">
+            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
+            <br />
+            <sub><b>Don Okara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
             <br />
