@@ -8,9 +8,7 @@ and is optimized for phones and tablets of all shapes and sizes.
 
 ## Running the Project
 
-To ensure the project runs on your local environment ensure you have Java 17 on your PC or if you
-don't have you can install it
-from [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
+To ensure the project runs on your local environment ensure you have Java 17 on your PC. If you don't have it, you can install it from [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 
 If you have multiple installations of Java make sure to set Java 17 as your preferred version to run
 the project.
