@@ -41,7 +41,7 @@ class DroidconKE2023App : Application(), Configuration.Provider {
         setUpWorkerManagerNotificationChannel()
     }
 
-    override fun getWorkManagerConfiguration(): Configuration =
+    override val workManagerConfiguration: Configuration =
         Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .setWorkerFactory(workerFactory)

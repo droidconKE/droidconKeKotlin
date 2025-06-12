@@ -29,6 +29,7 @@ import com.android254.domain.work.SyncDataWorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -37,8 +38,9 @@ class SyncDataWorkManagerImpl @Inject constructor(
 ) : SyncDataWorkManager {
 
     override val isSyncing: Flow<Boolean> =
-        WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
-            .map(MutableList<WorkInfo>::anyRunning)
+        WorkManager.getInstance(context)
+            .getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
+            .map(List<WorkInfo>::anyRunning)
             .asFlow()
             .conflate()
 

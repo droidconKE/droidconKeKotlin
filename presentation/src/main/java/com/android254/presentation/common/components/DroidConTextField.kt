@@ -37,8 +37,11 @@ fun DroidConTextField(label: String) {
         value = value,
         onValueChange = { value = it },
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(0.dp).height(48.dp),
-        colors = TextFieldDefaults.textFieldColors(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp)
+            .height(48.dp),
+        colors = TextFieldDefaults.colors(
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
