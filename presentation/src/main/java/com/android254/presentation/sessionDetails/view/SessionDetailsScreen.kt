@@ -52,7 +52,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -428,7 +428,7 @@ private fun CustomDivider() {
 
 @Composable
 private fun TopBar(onNavigationIconClick: () -> Unit) {
-    SmallTopAppBar(
+    TopAppBar(
         modifier = Modifier.testTag(TestTag.TOP_BAR),
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.chaiColorsPalette.background,
