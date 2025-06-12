@@ -14,4 +14,5 @@ rootProject.name = "DroidconKE2023"
 include(":app")
 include(":chai")
 include(":datasource:remote", ":datasource:local", ":data", ":domain", ":presentation")
-include(":shared", ":shared:data", ":shared:domain", ":shared:datasource")
+include(":multiplatform:android")
+include(":multiplatform:data", ":multiplatform:domain", ":multiplatform:presentation", ":multiplatform:datasource:local", ":multiplatform:datasource:remote")
