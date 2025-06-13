@@ -35,17 +35,20 @@ class DroidconKE2023App : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+    private lateinit var _workManagerConfiguration: Configuration
+
     override fun onCreate() {
         super.onCreate()
         initTimber()
         setUpWorkerManagerNotificationChannel()
-    }
-
-    override val workManagerConfiguration: Configuration =
-        Configuration.Builder()
+        _workManagerConfiguration = Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
             .setWorkerFactory(workerFactory)
             .build()
+    }
+
+    override val workManagerConfiguration: Configuration
+        get() = _workManagerConfiguration
 
     private fun initTimber() = when {
         BuildConfig.DEBUG -> {
@@ -71,9 +74,5 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-        WorkManager.initialize(
-            this,
-            Configuration.Builder().setWorkerFactory(workerFactory).build()
-        )
     }
 }
