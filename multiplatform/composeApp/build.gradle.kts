@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.droidconke.multiplatform)
-   // alias(libs.plugins.droidconke.android.application)
     alias(libs.plugins.droidconke.composeMultiplatform)
     alias(libs.plugins.compose.compiler)
 }
@@ -11,23 +10,9 @@ plugins {
 
 
 kotlin {
-    androidTarget {
 
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
 
-//    listOf(
-//        iosX64(),
-//        iosArm64(),
-//        iosSimulatorArm64()
-//    ).forEach { target ->
-//        target.binaries.framework {
-//            baseName = "omposeApp"
-//            isStatic = true
-//        }
-//    }
+
 
     sourceSets {
 
@@ -71,19 +56,7 @@ android {
             )
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
+
 
 }
 
-dependencies {
-
-    implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
-    testImplementation(libs.junit4)
-    androidTestImplementation(libs.android.test.junit4)
-    androidTestImplementation(libs.android.test.espresso)
-}
