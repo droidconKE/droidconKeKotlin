@@ -1,6 +1,8 @@
 [versions]
 android-compile-sdk = "36"
 android-min-sdk = "24"
+androidx-activity = "1.10.1"
+androidx-lifecycle = "2.9.0"
 composecompiler = "1.5.15"
 coroutines = "1.10.2"
 coroutines_datetime = "0.6.2"
@@ -57,6 +59,7 @@ kotlinStdlib = "2.1.21"
 kotlinTest = "2.1.21"
 runner = "1.6.2"
 core = "1.6.1"
+composeMultiplatform = "1.8.1"
 
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
@@ -76,6 +79,10 @@ android-test-espresso = { module = "androidx.test.espresso:espresso-core", versi
 android-test-idling = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }
 android-test-junit4 = { module = "androidx.test.ext:junit", version.ref = "junit"}
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
@@ -156,6 +163,7 @@ kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.re
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 
+
 [bundles]
 compose = ["coil-compose", "coil-svg", "compose-activity", "compose-compiler", "compose-material-3", "compose-materialIcons", "compose-runtimeLivedata", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "paging-compose", "compose-preview-customview", "compose-preview-customview-poolingcontainer", "compose-constraintlayout", "compose-lifecycle-runtime"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx", "lifecycle-viewmodel-compose"]
@@ -181,6 +189,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 toml-checker = { id = "com.github.ben-manes.versions", version.ref = "toml_checker" }
 toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "toml_updater" }
+droidconke-composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 
 # Convention plugins defined in the project
 droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
