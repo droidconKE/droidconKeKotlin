@@ -21,28 +21,33 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.qualifiers.ApplicationContext
+import ke.droidcon.kotlin.presentation.R
 import timber.log.Timber
 import javax.inject.Inject
-import ke.droidcon.kotlin.presentation.R
 
-class GoogleSignInHandler @Inject constructor(@ApplicationContext private val context: Context) {
-    private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken(context.getString(R.string.default_web_client_id))
-        .requestEmail()
-        .build()
+class GoogleSignInHandler
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) {
+        private val gso =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
-    private val googleSignInClient = GoogleSignIn.getClient(context, gso)
+        private val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-    fun getSignInIntent() = googleSignInClient.signInIntent
+        fun getSignInIntent() = googleSignInClient.signInIntent
 
-    fun getIdToken(intent: Intent?): String? {
-        return try {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
-            val account = task.getResult(ApiException::class.java)
-            return account.idToken
-        } catch (e: ApiException) {
-            Timber.e("Google sign in failed: $e")
-            null
+        fun getIdToken(intent: Intent?): String? {
+            return try {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
+                val account = task.getResult(ApiException::class.java)
+                return account.idToken
+            } catch (e: ApiException) {
+                Timber.e("Google sign in failed: $e")
+                null
+            }
         }
     }
-}

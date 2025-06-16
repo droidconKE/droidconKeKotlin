@@ -25,16 +25,16 @@ import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {
-
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
     override fun onCreate() {
         super.onCreate()
         initTimber()
@@ -47,33 +47,40 @@ class DroidconKE2023App : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
-    private fun initTimber() = when {
-        BuildConfig.DEBUG -> {
-            Timber.plant(object : Timber.DebugTree() {
-                override fun createStackElementTag(@NotNull element: StackTraceElement): String {
-                    return super.createStackElementTag(element) + ":" + element.lineNumber
-                }
-            })
-        }
+    private fun initTimber() =
+        when {
+            BuildConfig.DEBUG -> {
+                Timber.plant(
+                    object : Timber.DebugTree() {
+                        override fun createStackElementTag(
+                            @NotNull element: StackTraceElement,
+                        ): String {
+                            return super
+                                .createStackElementTag(element) + ":" + element.lineNumber
+                        }
+                    },
+                )
+            }
 
-        else -> {
-            Timber.plant(CrashlyticsTree())
+            else -> {
+                Timber.plant(CrashlyticsTree())
+            }
         }
-    }
 
     private fun setUpWorkerManagerNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                WorkConstants.NOTIFICATION_CHANNEL,
-                WorkConstants.syncDataWorkerName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
+            val channel =
+                NotificationChannel(
+                    WorkConstants.NOTIFICATION_CHANNEL,
+                    WorkConstants.SyncDataWorkerName,
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
         WorkManager.initialize(
             this,
-            Configuration.Builder().setWorkerFactory(workerFactory).build()
+            Configuration.Builder().setWorkerFactory(workerFactory).build(),
         )
     }
 }

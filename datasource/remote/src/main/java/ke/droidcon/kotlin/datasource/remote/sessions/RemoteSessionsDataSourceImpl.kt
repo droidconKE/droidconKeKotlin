@@ -25,9 +25,8 @@ import kotlinx.coroutines.withContext
 
 class RemoteSessionsDataSourceImpl(
     private val api: SessionsApi,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : RemoteSessionsDataSource {
-
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun getAllSessionsRemote(): DataResult<List<SessionDTO>> {
         return withContext(ioDispatcher) {

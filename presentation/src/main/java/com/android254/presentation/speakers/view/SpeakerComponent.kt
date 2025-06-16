@@ -56,106 +56,115 @@ import ke.droidcon.kotlin.presentation.R
 fun SpeakerComponent(
     modifier: Modifier = Modifier,
     speaker: SpeakerUI,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Card(
-        modifier = modifier
-            .wrapContentHeight()
-            .clickable {
-                onClick.invoke()
-            }
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
-                shape = RoundedCornerShape(8.dp)
-            ),
+        modifier =
+            modifier
+                .wrapContentHeight()
+                .clickable {
+                    onClick.invoke()
+                }
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+                    shape = RoundedCornerShape(8.dp),
+                ),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.chaiColorsPalette.surfaces
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.chaiColorsPalette.surfaces,
+            ),
     ) {
         ConstraintLayout(
-            modifier = modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .wrapContentHeight()
+            modifier =
+                modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
         ) {
             val (image, nameText, bioText, button) = createRefs()
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(speaker.imageUrl)
-                    .build(),
+                model =
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(speaker.imageUrl)
+                        .build(),
                 placeholder = painterResource(R.drawable.smiling),
                 contentDescription = stringResource(R.string.head_shot),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .clip(
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .border(
-                        border = BorderStroke(
-                            2.5.dp,
-                            color = ChaiTeal
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .height(120.dp)
-                    .width(120.dp)
-                    .constrainAs(image) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-
+                modifier =
+                    Modifier
+                        .clip(
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .border(
+                            border =
+                                BorderStroke(
+                                    2.5.dp,
+                                    color = ChaiTeal,
+                                ),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .height(120.dp)
+                        .width(120.dp)
+                        .constrainAs(image) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
             )
             ChaiBodyMediumBold(
-                modifier = modifier
-                    .testTag("name")
-                    .constrainAs(nameText) {
-                        top.linkTo(image.bottom, margin = 16.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .wrapContentHeight(),
+                modifier =
+                    modifier
+                        .testTag("name")
+                        .constrainAs(nameText) {
+                            top.linkTo(image.bottom, margin = 16.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .wrapContentHeight(),
                 bodyText = speaker.name,
                 textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 textAlign = TextAlign.Center,
-                maxLines = 1
+                maxLines = 1,
             )
 
             ChaiBodySmall(
-                modifier = modifier
-                    .testTag("bio")
-                    .constrainAs(bioText) {
-                        top.linkTo(nameText.bottom, margin = 6.dp)
-                        bottom.linkTo(button.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .wrapContentHeight(),
+                modifier =
+                    modifier
+                        .testTag("bio")
+                        .constrainAs(bioText) {
+                            top.linkTo(nameText.bottom, margin = 6.dp)
+                            bottom.linkTo(button.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .wrapContentHeight(),
                 bodyText = speaker.tagline ?: "",
                 textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
                 textAlign = TextAlign.Center,
                 maxLines = 3,
-                minLines = 3
+                minLines = 3,
             )
             OutlinedButton(
                 onClick = { },
                 shape = RoundedCornerShape(8.dp),
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = ChaiTeal90
-                ),
-                modifier = modifier
-                    .constrainAs(button) {
-                        top.linkTo(bioText.bottom, margin = 28.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
+                border =
+                    BorderStroke(
+                        width = 2.dp,
+                        color = ChaiTeal90,
+                    ),
+                modifier =
+                    modifier
+                        .constrainAs(button) {
+                            top.linkTo(bioText.bottom, margin = 28.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
             ) {
                 ChaiBodySmallBold(
                     bodyText = stringResource(R.string.session_label).uppercase(),
-                    textColor = ChaiTeal90
+                    textColor = ChaiTeal90,
                 )
             }
         }
@@ -167,12 +176,13 @@ fun SpeakerComponent(
 fun SpeakerComponentPreview() {
     ChaiDCKE22Theme {
         SpeakerComponent(
-            speaker = SpeakerUI(
-                imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",
-                name = "Harun Wangereka",
-                bio = "Kenya Partner Lead at droidcon Berlin | Android | Kotlin | Flutter | C++",
-                tagline = "An android engineer | Content creator | Mentor"
-            )
+            speaker =
+                SpeakerUI(
+                    imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",
+                    name = "Harun Wangereka",
+                    bio = "Kenya Partner Lead at droidcon Berlin | Android | Kotlin | Flutter | C++",
+                    tagline = "An android engineer | Content creator | Mentor",
+                ),
         )
     }
 }

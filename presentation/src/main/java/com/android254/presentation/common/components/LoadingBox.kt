@@ -38,25 +38,34 @@ fun LoadingBox(
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
     brush: Brush? = null,
-    color: Color = MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f)
+    color: Color = MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
 ) {
     Box(
-        modifier = Modifier
-            .customWidth(widthRatio, width)
-            .height(height)
-            .clip(RoundedCornerShape(cornerRadius))
-            .customBackground(brush, color)
+        modifier =
+            Modifier
+                .customWidth(widthRatio, width)
+                .height(height)
+                .clip(RoundedCornerShape(cornerRadius))
+                .customBackground(brush, color),
     )
 }
 
-fun Modifier.customBackground(brush: Brush?, color: Color) = if (brush != null) {
-    background(brush)
-} else {
-    background(color)
-}
+fun Modifier.customBackground(
+    brush: Brush?,
+    color: Color,
+) =
+    if (brush != null) {
+        background(brush)
+    } else {
+        background(color)
+    }
 
-fun Modifier.customWidth(ratio: Float?, width: Dp) = if (ratio != null) {
-    fillMaxWidth(ratio)
-} else {
-    width(width)
-}
+fun Modifier.customWidth(
+    ratio: Float?,
+    width: Dp,
+) =
+    if (ratio != null) {
+        fillMaxWidth(ratio)
+    } else {
+        width(width)
+    }

@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SessionsRoute(
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
-    navigateToSessionDetails: (sessionId: String) -> Unit = {}
+    navigateToSessionDetails: (sessionId: String) -> Unit = {},
 ) {
     val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
@@ -73,7 +73,7 @@ fun SessionsRoute(
         refreshSessionList = { sessionsViewModel.refreshSessionList() },
         updateSelectedFilterOptionList = { sessionsViewModel.updateSelectedFilterOptionList(it) },
         fetchSessionWithFilter = { sessionsViewModel.fetchSessionWithFilter() },
-        clearSelectedFilterList = { sessionsViewModel.clearSelectedFilterList() }
+        clearSelectedFilterList = { sessionsViewModel.clearSelectedFilterList() },
     )
 }
 
@@ -89,32 +89,38 @@ fun SessionsScreen(
     refreshSessionList: () -> Unit,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     fetchSessionWithFilter: () -> Unit,
-    clearSelectedFilterList: () -> Unit
+    clearSelectedFilterList: () -> Unit,
 ) {
-    val showMySessions = remember {
-        mutableStateOf(false)
-    }
+    val showMySessions =
+        remember {
+            mutableStateOf(false)
+        }
 
     val scope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
+    val bottomSheetState =
+        rememberModalBottomSheetState(
+            skipPartiallyExpanded = true,
+        )
 
-    val isSessionLayoutList = rememberSaveable {
-        mutableStateOf(true)
-    }
+    val isSessionLayoutList =
+        rememberSaveable {
+            mutableStateOf(true)
+        }
 
-    val isFilterActive = rememberSaveable {
-        mutableStateOf(true)
-    }
+    val isFilterActive =
+        rememberSaveable {
+            mutableStateOf(true)
+        }
 
-    val isFilterDialogOpen = rememberSaveable {
-        mutableStateOf(false)
-    }
+    val isFilterDialogOpen =
+        rememberSaveable {
+            mutableStateOf(false)
+        }
 
-    val sessionScreenSessionsState = rememberSaveable {
-        mutableStateOf(SessionScreenState.ALL)
-    }
+    val sessionScreenSessionsState =
+        rememberSaveable {
+            mutableStateOf(SessionScreenState.ALL)
+        }
 
     BackHandler(bottomSheetState.isVisible) {
         scope.launch { bottomSheetState.hide() }
@@ -136,29 +142,30 @@ fun SessionsScreen(
                     scope.launch {
                         bottomSheetState.show()
                     }
-                }
+                },
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background
+        containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
 
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp),
             ) {
                 EventDaySelector(
                     selectedDate = selectedEventDate,
                     updateSelectedDay = updateSelectedDay,
-                    eventDates = sessionsUiState.eventDays
+                    eventDates = sessionsUiState.eventDays,
                 )
                 CustomSwitch(checked = showMySessions.value, onCheckedChange = {
                     showMySessions.value = it
@@ -179,7 +186,7 @@ fun SessionsScreen(
                 retry = { },
                 isRefreshing = isRefreshing,
                 sessionScreenState = sessionScreenSessionsState.value,
-                isSessionLayoutList = isSessionLayoutList.value
+                isSessionLayoutList = isSessionLayoutList.value,
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(
@@ -191,7 +198,7 @@ fun SessionsScreen(
                     },
                     shape = RoundedCornerShape(0.dp),
                     containerColor = ChaiGrey90.copy(alpha = 0.52f),
-                    dragHandle = {}
+                    dragHandle = {},
                 ) {
                     SessionsFilterPanel(
                         onDismiss = {
@@ -202,7 +209,7 @@ fun SessionsScreen(
                         currentSelections = currentSelections,
                         updateSelectedFilterOptionList = updateSelectedFilterOptionList,
                         fetchSessionWithFilter = fetchSessionWithFilter,
-                        clearSelectedFilterList = clearSelectedFilterList
+                        clearSelectedFilterList = clearSelectedFilterList,
                     )
                 }
             }
@@ -225,11 +232,12 @@ fun SessionsScreenPreview() {
             refreshSessionList = {},
             updateSelectedFilterOptionList = {},
             fetchSessionWithFilter = {},
-            clearSelectedFilterList = {}
+            clearSelectedFilterList = {},
         )
     }
 }
 
 enum class SessionScreenState {
-    ALL, MYSESSIONS
+    ALL,
+    MYSESSIONS,
 }

@@ -24,50 +24,53 @@ import com.android254.presentation.home.mappers.toSpeakersPresentation
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    homeRepo: HomeRepo,
-    private val syncDataWorkManager: SyncDataWorkManager
-) : ViewModel() {
+class HomeViewModel
+    @Inject
+    constructor(
+        homeRepo: HomeRepo,
+        private val syncDataWorkManager: SyncDataWorkManager,
+    ) : ViewModel() {
+        val isSyncing =
+            syncDataWorkManager.isSyncing
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = false,
+                )
 
-    val isSyncing = syncDataWorkManager.isSyncing
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = false
-        )
+        val viewState: StateFlow<HomeViewState> =
+            homeRepo.fetchHomeDetails()
+                .map {
+                    HomeViewState(
+                        isPosterVisible = it.isEventBannerEnable,
+                        isCallForSpeakersVisible = it.isCallForSpeakersEnable,
+                        linkToCallForSpeakers = it.linkToCallForSpeakers,
+                        isSignedIn = false,
+                        speakers = it.speakers.toSpeakersPresentation(),
+                        isSpeakersSectionVisible = it.isSpeakersSessionEnable,
+                        isSessionsSectionVisible = it.isSessionsSectionEnable,
+                        sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() },
+                        organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
+                        sessions = it.sessions.map { session -> session.toPresentationModel() },
+                    )
+                }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = HomeViewState(),
+                )
 
-    val viewState: StateFlow<HomeViewState> = homeRepo.fetchHomeDetails()
-        .map {
-            HomeViewState(
-                isPosterVisible = it.isEventBannerEnable,
-                isCallForSpeakersVisible = it.isCallForSpeakersEnable,
-                linkToCallForSpeakers = it.linkToCallForSpeakers,
-                isSignedIn = false,
-                speakers = it.speakers.toSpeakersPresentation(),
-                isSpeakersSectionVisible = it.isSpeakersSessionEnable,
-                isSessionsSectionVisible = it.isSessionsSectionEnable,
-                sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() },
-                organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
-                sessions = it.sessions.map { session -> session.toPresentationModel() }
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = HomeViewState()
-        )
-
-    fun startRefresh() {
-        viewModelScope.launch {
-            syncDataWorkManager.startSync()
+        fun startRefresh() {
+            viewModelScope.launch {
+                syncDataWorkManager.startSync()
+            }
         }
     }
-}

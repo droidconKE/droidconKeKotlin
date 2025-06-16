@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,10 +47,11 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     BottomAppBar(
-        modifier = Modifier
-            .background(MaterialTheme.chaiColorsPalette.bottomNavBorderColor)
-            .padding(top = 1.dp),
-        containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor
+        modifier =
+            Modifier
+                .background(MaterialTheme.chaiColorsPalette.bottomNavBorderColor)
+                .padding(top = 1.dp),
+        containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
@@ -66,7 +69,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                         restoreState = true
                         popUpTo(Screens.Home.route)
                     }
-                }
+                },
             )
         }
     }
@@ -76,41 +79,44 @@ fun BottomNavigationBar(navController: NavHostController) {
 fun RowScope.BottomNavItem(
     isSelected: Boolean,
     destination: Screens,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-    val iconColor = if (isSelected) {
-        MaterialTheme.chaiColorsPalette.activeBottomNavIconColor
-    } else {
-        MaterialTheme.chaiColorsPalette.inactiveBottomNavIconColor
-    }
+    val iconColor =
+        if (isSelected) {
+            MaterialTheme.chaiColorsPalette.activeBottomNavIconColor
+        } else {
+            MaterialTheme.chaiColorsPalette.inactiveBottomNavIconColor
+        }
 
-    val textColor = if (isSelected) {
-        MaterialTheme.chaiColorsPalette.activeBottomNavTextColor
-    } else {
-        MaterialTheme.chaiColorsPalette.textNormalColor
-    }
+    val textColor =
+        if (isSelected) {
+            MaterialTheme.chaiColorsPalette.activeBottomNavTextColor
+        } else {
+            MaterialTheme.chaiColorsPalette.textNormalColor
+        }
 
     Column(
-        modifier = Modifier
-            .weight(1f)
-            .fillMaxHeight()
-            .clickable(
-                onClick = onClick
-            ),
+        modifier =
+            Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .clickable(
+                    onClick = onClick,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painterResource(id = destination.icon),
             contentDescription = destination.title,
-            tint = iconColor
+            tint = iconColor,
         )
         Spacer(modifier = Modifier.height(6.dp))
 
         ChaiTextLabelSmall(
             modifier = Modifier,
             bodyText = destination.title,
-            textColor = textColor
+            textColor = textColor,
         )
     }
 }

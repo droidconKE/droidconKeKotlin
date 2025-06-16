@@ -49,19 +49,19 @@ import com.android254.presentation.common.navigation.Navigation
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        Timber.i("Notification permission is :$isGranted")
-    }
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            Timber.i("Notification permission is :$isGranted")
+        }
 
     @Inject
     lateinit var remoteFeatureToggle: RemoteFeatureToggle
@@ -116,17 +116,18 @@ fun MainScreen() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController) },
-        containerColor = MaterialTheme.chaiColorsPalette.background
+        containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { padding ->
 
         Column(
-            modifier = Modifier
-                .padding(padding)
+            modifier =
+                Modifier
+                    .padding(padding),
         ) {
             if (showAuthDialog) {
                 AuthDialog(
                     onDismiss = { showAuthDialog = false },
-                    viewModel = { authViewModel }
+                    viewModel = { authViewModel },
                 )
             }
             Navigation(
@@ -134,7 +135,7 @@ fun MainScreen() {
                 updateBottomBarState = { bottomBarState.value = it },
                 onActionClicked = {
                     showAuthDialog = !showAuthDialog
-                }
+                },
             )
         }
     }

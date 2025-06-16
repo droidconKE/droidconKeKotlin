@@ -37,12 +37,12 @@ fun SessionLoadingComponent() {
                         start = 40.dp,
                         end = 0.dp,
                         top = 10.dp,
-                        bottom = 10.dp
-                    )
+                        bottom = 10.dp,
+                    ),
                 ) {
                     Image(
                         painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                        contentDescription = stringResource(R.string.spacer_icon_descript)
+                        contentDescription = stringResource(R.string.spacer_icon_descript),
                     )
                 }
             }

@@ -19,7 +19,6 @@ import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalOrganizersDataSource {
-
     fun getOrganizers(): Flow<List<OrganizerEntity>>
 
     suspend fun deleteAllOrganizers()

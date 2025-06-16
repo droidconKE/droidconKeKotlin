@@ -31,19 +31,21 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(
-    private val feedRepo: FeedRepo
-) : ViewModel() {
-
-    val uiState = feedRepo.fetchFeed()
-        .map { feeds ->
-            FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
-        }
-        .onStart { FeedUIState.Loading }
-        .catch { FeedUIState.Error(message = "An unexpected error occurred") }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = FeedUIState.Empty
-        )
-}
+class FeedViewModel
+    @Inject
+    constructor(
+        private val feedRepo: FeedRepo,
+    ) : ViewModel() {
+        val uiState =
+            feedRepo.fetchFeed()
+                .map { feeds ->
+                    FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
+                }
+                .onStart { FeedUIState.Loading }
+                .catch { FeedUIState.Error(message = "An unexpected error occurred") }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = FeedUIState.Empty,
+                )
+    }

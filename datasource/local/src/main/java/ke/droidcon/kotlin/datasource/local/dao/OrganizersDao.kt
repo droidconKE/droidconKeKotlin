@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface OrganizersDao : BaseDao<OrganizerEntity> {
-
     @Query("SELECT * FROM ORGANIZERS")
     fun fetchOrganizers(): Flow<List<OrganizerEntity>>
 

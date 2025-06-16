@@ -17,7 +17,12 @@ package com.android254.presentation.auth.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -44,50 +49,53 @@ fun GoogleSignInButton(
     borderColor: Color = Color.LightGray,
     backgroundColor: Color = ChaiWhite,
     progressIndicatorColor: Color = ChaiTeal,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
-        modifier = modifier
-            .clickable(
-                enabled = !isLoading,
-                onClick = onClick
-            )
-            .shadow(elevation = 2.dp),
+        modifier =
+            modifier
+                .clickable(
+                    enabled = !isLoading,
+                    onClick = onClick,
+                )
+                .shadow(elevation = 2.dp),
         border = BorderStroke(width = 1.dp, color = borderColor),
         color = backgroundColor,
-        shape = RoundedCornerShape(4.dp)
+        shape = RoundedCornerShape(4.dp),
     ) {
         Row(
-            modifier = Modifier
-                .padding(
-                    start = 0.dp,
-                    end = 8.dp,
-                    top = 0.dp,
-                    bottom = 0.dp
-                ),
+            modifier =
+                Modifier
+                    .padding(
+                        start = 0.dp,
+                        end = 8.dp,
+                        top = 0.dp,
+                        bottom = 0.dp,
+                    ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             Icon(
                 painter = icon,
                 contentDescription = "SignInButton",
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
             Spacer(modifier = Modifier.width(24.dp))
 
             ChaiBodySmallBold(
                 bodyText = if (isLoading) loadingText else text,
-                textColor = ChaiBlack
+                textColor = ChaiBlack,
             )
 
             if (isLoading) {
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .height(16.dp)
-                        .width(16.dp),
+                    modifier =
+                        Modifier
+                            .height(16.dp)
+                            .width(16.dp),
                     strokeWidth = 2.dp,
-                    color = progressIndicatorColor
+                    color = progressIndicatorColor,
                 )
             } else {
                 Spacer(modifier = Modifier.width(8.dp))

@@ -35,19 +35,20 @@ import ke.droidcon.kotlin.presentation.R
 fun HomeSpeakersSection(
     speakers: List<SpeakerUI>,
     navigateToSpeakers: () -> Unit = {},
-    navigateToSpeaker: (String) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {},
 ) {
     Column {
         HomeSectionHeaderComponent(
             sectionLabel = stringResource(id = R.string.speakers_label),
             sectionSize = speakers.size,
-            onViewAllClicked = navigateToSpeakers
+            onViewAllClicked = navigateToSpeakers,
         )
         LazyRow(
-            modifier = Modifier
-                .testTag("speakersRow")
-                .padding(top = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .testTag("speakersRow")
+                    .padding(top = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(speakers.take(8)) { speaker ->
                 HomeSpeakerComponent(speaker = speaker, onClick = {

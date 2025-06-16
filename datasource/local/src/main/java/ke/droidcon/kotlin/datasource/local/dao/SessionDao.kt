@@ -37,7 +37,10 @@ interface SessionDao : BaseDao<SessionEntity> {
     fun fetchSessionsWithFilters(query: SupportSQLiteQuery): Flow<List<SessionEntity>>
 
     @Query("UPDATE sessions SET isBookmarked = :isBookmarked WHERE remote_id = :id")
-    suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
+    suspend fun updateBookmarkedStatus(
+        id: String,
+        isBookmarked: Boolean,
+    )
 
     @Query("SELECT isBookmarked FROM sessions WHERE remote_id = :id")
     suspend fun getBookmarkStatus(id: String): Boolean

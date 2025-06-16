@@ -21,5 +21,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "bookmarks")
 class BookmarkEntity(
     @PrimaryKey(autoGenerate = false)
-    var sessionId: String
+    var sessionId: String,
 )

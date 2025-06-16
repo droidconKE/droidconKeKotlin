@@ -15,8 +15,6 @@
  */
 package ke.droidcon.kotlin.datasource.remote.organizers
 
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizersPagedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
@@ -36,7 +34,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class OrganizersApiTest {
-
     private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
@@ -46,7 +43,8 @@ class OrganizersApiTest {
 
     @Test
     fun `organizers api should return object on valid json`() {
-        val validContent = """
+        val validContent =
+            """
             {
                 "data": [{
                     "name": "droidconKE",
@@ -60,23 +58,25 @@ class OrganizersApiTest {
                     "bio": "type"
                 }]
             }
-        """.trimIndent()
-        val mockEngine = MockEngine {
-            Json {
-                ignoreUnknownKeys = true
+            """.trimIndent()
+        val mockEngine =
+            MockEngine {
+                Json {
+                    ignoreUnknownKeys = true
+                }
+                respond(
+                    content = validContent,
+                    status = HttpStatusCode.OK,
+                    headersOf(HttpHeaders.ContentType, "application/json"),
+                )
             }
-            respond(
-                content = validContent,
-                status = HttpStatusCode.OK,
-                headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = OrganizersApi(httpClient)
         runBlocking {
-            val expected = DataResult.Success(
-                data = Json.decodeFromString<OrganizersPagedResponse>(validContent)
-            )
+            val expected =
+                DataResult.Success(
+                    data = Json.decodeFromString<OrganizersPagedResponse>(validContent),
+                )
             val actual = api.fetchOrganizers("individual")
             assertEquals(expected, actual)
         }
@@ -84,7 +84,8 @@ class OrganizersApiTest {
 
     @Test
     fun `organizers api should throw exception on invalid json`() {
-        val invalidContent = """
+        val invalidContent =
+            """
             {
                 "data": [{
                     "id": 21,
@@ -119,14 +120,15 @@ class OrganizersApiTest {
                     }
                 }
             }
-        """.trimIndent()
-        val mockEngine = MockEngine {
-            respond(
-                content = invalidContent,
-                status = HttpStatusCode.OK,
-                headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
+            """.trimIndent()
+        val mockEngine =
+            MockEngine {
+                respond(
+                    content = invalidContent,
+                    status = HttpStatusCode.OK,
+                    headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = OrganizersApi(httpClient)
 

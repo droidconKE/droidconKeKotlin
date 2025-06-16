@@ -19,11 +19,12 @@ import com.android254.domain.models.Feed
 import com.android254.presentation.models.FeedUI
 import com.android254.presentation.utils.getTimeDifference
 
-fun Feed.toPresentation() = FeedUI(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.getTimeDifference()
-)
+fun Feed.toPresentation() =
+    FeedUI(
+        title = title,
+        body = body,
+        topic = topic,
+        url = url,
+        image = image,
+        createdAt = createdAt.getTimeDifference(),
+    )

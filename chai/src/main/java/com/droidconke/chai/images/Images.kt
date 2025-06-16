@@ -14,3 +14,9 @@
  * limitations under the License.
  */
 package com.droidconke.chai.images
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun CImage() {
+}

@@ -37,7 +37,6 @@ import org.robolectric.shadows.ShadowLog
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class FeedScreenTest {
-
     private val repo = mockk<FeedRepo>()
 
     @get:Rule
@@ -51,18 +50,19 @@ class FeedScreenTest {
 
     @Test
     fun `should display feed items`() {
-        coEvery { repo.fetchFeed() } returns flowOf(
-            listOf(
-                Feed(
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                )
+        coEvery { repo.fetchFeed() } returns
+            flowOf(
+                listOf(
+                    Feed(
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    ),
+                ),
             )
-        )
 
         composeTestRule.setContent {
             ChaiDCKE22Theme {
@@ -79,18 +79,19 @@ class FeedScreenTest {
 
     @Test
     fun `test share bottom sheet is shown`() {
-        coEvery { repo.fetchFeed() } returns flowOf(
-            listOf(
-                Feed(
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                )
+        coEvery { repo.fetchFeed() } returns
+            flowOf(
+                listOf(
+                    Feed(
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    ),
+                ),
             )
-        )
 
         composeTestRule.setContent {
             ChaiDCKE22Theme {

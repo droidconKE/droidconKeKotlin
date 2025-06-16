@@ -18,8 +18,6 @@ package com.android254.data.repos
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
-import javax.inject.Inject
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
@@ -28,29 +26,33 @@ import ke.droidcon.kotlin.datasource.remote.utils.ServerError
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
-class AuthManager @Inject constructor(
-    private val api: AuthApi,
-    private val tokenProvider: TokenProvider,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : AuthRepo {
-    override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
-        return withContext(ioDispatcher) {
-            try {
-                val result = api.googleLogin(GoogleToken(idToken))
-                tokenProvider.update(result.token)
-                DataResult.Success(Success)
-            } catch (e: Exception) {
-                when (e) {
-                    is ServerError, is NetworkError -> {
-                        DataResult.Error("Login failed", networkError = true, exc = e)
-                    }
-                    else -> {
-                        DataResult.Error("Login failed", exc = e)
+class AuthManager
+    @Inject
+    constructor(
+        private val api: AuthApi,
+        private val tokenProvider: TokenProvider,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : AuthRepo {
+        override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
+            return withContext(ioDispatcher) {
+                try {
+                    val result = api.googleLogin(GoogleToken(idToken))
+                    tokenProvider.update(result.token)
+                    DataResult.Success(Success)
+                } catch (e: Exception) {
+                    when (e) {
+                        is ServerError, is NetworkError -> {
+                            DataResult.Error("Login failed", networkError = true, exc = e)
+                        }
+                        else -> {
+                            DataResult.Error("Login failed", exc = e)
+                        }
                     }
                 }
             }
         }
     }
-}

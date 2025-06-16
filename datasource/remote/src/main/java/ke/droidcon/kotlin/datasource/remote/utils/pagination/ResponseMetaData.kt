@@ -19,5 +19,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseMetaData(
-    val paginator: PaginationMetaData
+    val paginator: PaginationMetaData,
 )

@@ -19,20 +19,21 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorsPagedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
+import javax.inject.Inject
 
-class SponsorsApi @Inject constructor(
-    private val client: HttpClient
-) {
-
-    suspend fun fetchSponsors(): DataResult<SponsorsPagedResponse> =
-        dataResultSafeApiCall {
-            client.get("${provideEventBaseUrl()}/sponsors") {
-                parameter("per_page", 10)
-            }.body()
-        }
-}
+class SponsorsApi
+    @Inject
+    constructor(
+        private val client: HttpClient,
+    ) {
+        suspend fun fetchSponsors(): DataResult<SponsorsPagedResponse> =
+            dataResultSafeApiCall {
+                client.get("${provideEventBaseUrl()}/sponsors") {
+                    parameter("per_page", 10)
+                }.body()
+            }
+    }

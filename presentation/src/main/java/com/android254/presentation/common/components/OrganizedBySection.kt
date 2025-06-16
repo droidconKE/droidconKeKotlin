@@ -16,7 +16,14 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,54 +45,58 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun OrganizedBySection(
     modifier: Modifier = Modifier,
-    organizationLogos: List<String>
+    organizationLogos: List<String>,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = MaterialTheme.chaiColorsPalette.surfaces,
-                shape = RoundedCornerShape(10.dp)
-            )
-            .padding(vertical = 20.dp)
-            .testTag("organized_by_section"),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.chaiColorsPalette.surfaces,
+                    shape = RoundedCornerShape(10.dp),
+                )
+                .padding(vertical = 20.dp)
+                .testTag("organized_by_section"),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ChaiTitle(
-            modifier = Modifier
-                .padding(start = 20.dp),
+            modifier =
+                Modifier
+                    .padding(start = 20.dp),
             titleText = stringResource(id = R.string.organized_by),
-            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
-
+            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
         )
 
         Spacer(modifier = Modifier.height(40.dp))
 
         FlowRow(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3
+            maxItemsInEachRow = 3,
         ) {
             organizationLogos.forEach { logo ->
 
                 AsyncImage(
-                    modifier = Modifier
-                        .height(80.dp)
-                        .padding(6.dp),
-                    model = if (logo.endsWith("svg")) {
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(logo)
-                            .decoderFactory(SvgDecoder.Factory())
-                            .build()
-                    } else {
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(logo)
-                            .build()
-                    },
+                    modifier =
+                        Modifier
+                            .height(80.dp)
+                            .padding(6.dp),
+                    model =
+                        if (logo.endsWith("svg")) {
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(logo)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build()
+                        } else {
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(logo)
+                                .build()
+                        },
                     placeholder = painterResource(R.drawable.ic_google_logo_icon),
-                    contentDescription = stringResource(id = R.string.logo)
+                    contentDescription = stringResource(id = R.string.logo),
                 )
             }
         }

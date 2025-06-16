@@ -64,34 +64,38 @@ fun SessionsCardWithBannerImage(
     modifier: Modifier = Modifier,
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    viewModel: SessionsViewModel = hiltViewModel()
+    viewModel: SessionsViewModel = hiltViewModel(),
 ) {
     val scope = rememberCoroutineScope()
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
-        onClick = { navigateToSessionDetails(session.id) }
+        onClick = { navigateToSessionDetails(session.id) },
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(if (session.isService) R.drawable.all else session.sessionImage)
-                .build(),
+            model =
+                ImageRequest.Builder(LocalContext.current)
+                    .data(if (session.isService) R.drawable.all else session.sessionImage)
+                    .build(),
             placeholder = painterResource(R.drawable.all),
             contentDescription = stringResource(id = R.string.session_image),
-            modifier = Modifier
-                .height(140.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
+            modifier =
+                Modifier
+                    .height(140.dp)
+                    .fillMaxWidth(),
+            contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(8.dp))
         Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             TimeAndVenueComponent(session = session)
 
@@ -99,7 +103,7 @@ fun SessionsCardWithBannerImage(
 
             ChaiBodySmallBold(
                 bodyText = session.title,
-                textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
             )
             Spacer(Modifier.height(16.dp))
             SpeakerDetailsAndLikeButtonComponent(
@@ -113,7 +117,7 @@ fun SessionsCardWithBannerImage(
                     }
                 },
                 isSessionStarred = session.isStarred,
-                speakers = session.speakers
+                speakers = session.speakers,
             )
         }
     }
@@ -123,26 +127,26 @@ fun SessionsCardWithBannerImage(
 fun SpeakerDetailsAndLikeButtonComponent(
     onBookmarkClicked: () -> Unit,
     isSessionStarred: Boolean,
-    speakers: List<SessionSpeakersPresentationModel>
+    speakers: List<SessionSpeakersPresentationModel>,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         speakers.forEach { speaker ->
             speaker.speakerImage?.let {
                 AsyncImage(
                     model = speaker.speakerImage,
                     contentDescription = "session speaker image",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .border(
-                            width = 1.dp,
-                            color = ChaiTeal,
-                            shape = CircleShape
-                        )
-                        .clip(CircleShape)
+                    modifier =
+                        Modifier
+                            .size(32.dp)
+                            .border(
+                                width = 1.dp,
+                                color = ChaiTeal,
+                                shape = CircleShape,
+                            )
+                            .clip(CircleShape),
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -154,12 +158,12 @@ fun SpeakerDetailsAndLikeButtonComponent(
             modifier = Modifier.size(32.dp),
             onClick = {
                 onBookmarkClicked()
-            }
+            },
         ) {
             Icon(
                 imageVector = if (isSessionStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (isSessionStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                tint = if (isSessionStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
             )
         }
     }

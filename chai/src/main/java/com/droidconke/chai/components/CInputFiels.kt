@@ -14,3 +14,9 @@
  * limitations under the License.
  */
 package com.droidconke.chai.components
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun CInputFields() {
+}

@@ -32,7 +32,7 @@ fun Loader(message: String = "Loading...") {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         LottieAnimation(
-            composition = composition
+            composition = composition,
         )
         Text(text = message)
     }

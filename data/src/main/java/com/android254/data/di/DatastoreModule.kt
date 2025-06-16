@@ -38,17 +38,19 @@ private const val DCKE22_PREFERENCES = "dcke22-pref"
 @InstallIn(SingletonComponent::class)
 @Module
 object DatastoreModule {
-
     @Singleton
     @Provides
-    fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
+    fun providePreferencesDataStore(
+        @ApplicationContext appContext: Context,
+    ): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
-            corruptionHandler = ReplaceFileCorruptionHandler(
-                produceNewData = { emptyPreferences() }
-            ),
+            corruptionHandler =
+                ReplaceFileCorruptionHandler(
+                    produceNewData = { emptyPreferences() },
+                ),
             migrations = listOf(SharedPreferencesMigration(appContext, DCKE22_PREFERENCES)),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = { appContext.preferencesDataStoreFile(DCKE22_PREFERENCES) }
+            produceFile = { appContext.preferencesDataStoreFile(DCKE22_PREFERENCES) },
         )
     }
 }

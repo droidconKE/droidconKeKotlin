@@ -22,12 +22,12 @@ import io.mockk.verify
 import org.junit.Test
 
 class RemoteFeatureToggleTest {
-
     @Test
     fun `test successful api-key fetch`() {
-        val remoteConfig: FirebaseRemoteConfig = mockk {
-            every { getString(any()) } returns "default_api_key"
-        }
+        val remoteConfig: FirebaseRemoteConfig =
+            mockk {
+                every { getString(any()) } returns "default_api_key"
+            }
         val remoteFeatureToggle = RemoteFeatureToggle(remoteConfig = remoteConfig)
         remoteFeatureToggle.getString("default_api_key")
 

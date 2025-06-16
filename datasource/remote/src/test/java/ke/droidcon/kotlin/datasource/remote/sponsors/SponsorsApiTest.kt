@@ -52,26 +52,30 @@ class SponsorsApiTest {
     @Test
     fun `test successful fetching sponsors`() {
         // Arrange
-        val expectedResult = SponsorsPagedResponse(
-            data = listOf(
-                SponsorDTO(
-                    name = "AABC",
-                    tagline = "abc",
-                    link = "abc",
-                    createdAt = "abc",
-                    logo = "abc",
-                    sponsorType = "platinum"
+        val expectedResult =
+            SponsorsPagedResponse(
+                data =
+                    listOf(
+                        SponsorDTO(
+                            name = "AABC",
+                            tagline = "abc",
+                            link = "abc",
+                            createdAt = "abc",
+                            logo = "abc",
+                            sponsorType = "platinum",
+                        ),
+                    ),
+            )
+        val mockHttpEngine =
+            MockEngine {
+                respond(
+                    content = Json.encodeToString(expectedResult),
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
                 )
-            )
-        )
-        val mockHttpEngine = MockEngine {
-            respond(
-                content = Json.encodeToString(expectedResult),
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
-            .create(mockHttpEngine)
+            }
+        val httpClient =
+            HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
+                .create(mockHttpEngine)
 
         runBlocking {
             // Act
@@ -90,9 +94,10 @@ class SponsorsApiTest {
     @Test
     fun `test fetching sponsors fails with an exception`() {
         // Arrange
-        val mockEngine = MockEngine {
-            respondError(HttpStatusCode.InternalServerError)
-        }
+        val mockEngine =
+            MockEngine {
+                respondError(HttpStatusCode.InternalServerError)
+            }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         runBlocking {
             // Act

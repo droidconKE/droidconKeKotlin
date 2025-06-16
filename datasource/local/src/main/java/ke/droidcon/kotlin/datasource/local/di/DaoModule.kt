@@ -30,34 +30,33 @@ import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
 @Module
 @InstallIn(SingletonComponent::class)
 object DaoModule {
-
     @Provides
     fun provideSpeakersDao(
-        database: Database
+        database: Database,
     ): SpeakerDao = database.speakerDao()
 
     @Provides
     fun provideSponsorsDao(
-        database: Database
+        database: Database,
     ): SponsorsDao = database.sponsorsDao()
 
     @Provides
     fun providesAuthorDao(
-        database: Database
+        database: Database,
     ): SessionDao = database.sessionDao()
 
     @Provides
     fun providesBookmarkDao(
-        database: Database
+        database: Database,
     ): BookmarkDao = database.bookmarkDao()
 
     @Provides
     fun providesOrganizersDao(
-        database: Database
+        database: Database,
     ): OrganizersDao = database.organizersDao()
 
     @Provides
     fun providesFeedDao(
-        database: Database
+        database: Database,
     ): FeedDao = database.feedDao()
 }

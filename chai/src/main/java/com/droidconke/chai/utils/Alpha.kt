@@ -16,5 +16,5 @@
 package com.droidconke.chai.utils
 
 object Alpha {
-    const val AlphaDisabled = 0.3f
+    const val ALPHA_DISABLED = 0.3f
 }

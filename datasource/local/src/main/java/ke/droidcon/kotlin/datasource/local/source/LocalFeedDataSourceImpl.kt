@@ -15,35 +15,36 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.FeedDao
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LocalFeedDataSourceImpl @Inject constructor(
-    private val feedDao: FeedDao,
-    private val ioDispatcher: CoroutineDispatcher
-) : LocalFeedDataSource {
-
-    override suspend fun deleteAllFeed() {
-        withContext(ioDispatcher) {
-            feedDao.deleteAllFeed()
+class LocalFeedDataSourceImpl
+    @Inject
+    constructor(
+        private val feedDao: FeedDao,
+        private val ioDispatcher: CoroutineDispatcher,
+    ) : LocalFeedDataSource {
+        override suspend fun deleteAllFeed() {
+            withContext(ioDispatcher) {
+                feedDao.deleteAllFeed()
+            }
         }
-    }
 
-    override suspend fun insertFeed(feedItems: List<FeedEntity>) {
-        withContext(ioDispatcher) {
-            feedDao.insert(items = feedItems)
+        override suspend fun insertFeed(feedItems: List<FeedEntity>) {
+            withContext(ioDispatcher) {
+                feedDao.insert(items = feedItems)
+            }
         }
+
+        override fun fetchFeed() =
+            feedDao.fetchFeed()
+                .flowOn(ioDispatcher)
+
+        override fun getFeedById(feedId: Int) =
+            feedDao.fetchFeedById(feedId)
+                .flowOn(ioDispatcher)
     }
-
-    override fun fetchFeed() =
-        feedDao.fetchFeed()
-            .flowOn(ioDispatcher)
-
-    override fun getFeedById(feedId: Int) =
-        feedDao.fetchFeedById(feedId)
-            .flowOn(ioDispatcher)
-}

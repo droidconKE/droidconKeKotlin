@@ -15,8 +15,10 @@
  */
 package com.android254.presentation.speakers.view
 
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
@@ -46,14 +48,15 @@ class SpeakersScreenTest {
     fun `should show heading and show speaker details card`() {
         every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
         coEvery { mockSyncDataWorkManager.startSync() } just runs
-        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(
-            listOf(
-                Speaker(
-                    name = "John Doe",
-                    tagline = "kenya partner lead"
-                )
+        coEvery { speakersRepo.fetchSpeakers() } returns
+            flowOf(
+                listOf(
+                    Speaker(
+                        name = "John Doe",
+                        tagline = "kenya partner lead",
+                    ),
+                ),
             )
-        )
         composeTestRule.setContent {
             SpeakersRoute(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
         }

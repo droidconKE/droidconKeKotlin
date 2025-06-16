@@ -23,9 +23,8 @@ import kotlinx.coroutines.withContext
 
 class RemoteSponsorsDataSourceImpl(
     private val api: SponsorsApi,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : RemoteSponsorsDataSource {
-
     override suspend fun getAllSponsorsRemote(): DataResult<List<SponsorDTO>> {
         return withContext(ioDispatcher) {
             when (val response = api.fetchSponsors()) {

@@ -19,5 +19,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RoomDTO(
-    val title: String
+    val title: String,
 )

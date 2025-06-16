@@ -28,8 +28,9 @@ class DateStringConverter {
     @RequiresApi(Build.VERSION_CODES.O)
     @TypeConverter
     fun fromLong(timestamp: Long): String {
-        val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ZoneId.systemDefault())
+        val pattern =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault())
         return pattern.format(Instant.ofEpochMilli(timestamp))
     }
 

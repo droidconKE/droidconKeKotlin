@@ -27,5 +27,5 @@ data class FeedEntity(
     val topic: String,
     val url: String,
     val image: String?,
-    val createdAt: String
+    val createdAt: String,
 )

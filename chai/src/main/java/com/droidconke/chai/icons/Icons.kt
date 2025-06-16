@@ -14,3 +14,9 @@
  * limitations under the License.
  */
 package com.droidconke.chai.icons
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun CIcons() {
+}

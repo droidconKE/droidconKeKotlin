@@ -14,3 +14,10 @@
  * limitations under the License.
  */
 package com.android254.presentation.common.components
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+fun ImageAvatar(modifier: Modifier = Modifier) {
+}

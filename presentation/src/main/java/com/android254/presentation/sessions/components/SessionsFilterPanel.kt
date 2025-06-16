@@ -58,64 +58,63 @@ private fun loadFilters(context: Context): List<SessionsFilterOption> {
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_keynote),
-            value = "keynote"
+            value = "keynote",
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_codelab),
-            value = "codelab"
+            value = "codelab",
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_session),
-            value = "Session"
+            value = "Session",
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_workshop),
-            value = "Workshop"
+            value = "Workshop",
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_lightning_talk),
-            value = "Lightning talk"
+            value = "Lightning talk",
         ),
         SessionsFilterOption(
             type = SessionsFilterCategory.SessionType,
             label = resources.getString(R.string.session_filter_label_panel_discussion),
-            value = "Panel discussion"
+            value = "Panel discussion",
         ),
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_room_a),
             value = "Room A",
-            type = SessionsFilterCategory.Room
+            type = SessionsFilterCategory.Room,
         ),
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_room_b),
             value = "Room B",
-            type = SessionsFilterCategory.Room
+            type = SessionsFilterCategory.Room,
         ),
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_room_c),
             value = "Room C",
-            type = SessionsFilterCategory.Room
+            type = SessionsFilterCategory.Room,
         ),
-
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_beginner),
             value = "Introductory and overview",
-            type = SessionsFilterCategory.Level
+            type = SessionsFilterCategory.Level,
         ),
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_intermediate),
             value = "Intermediate",
-            type = SessionsFilterCategory.Level
+            type = SessionsFilterCategory.Level,
         ),
         SessionsFilterOption(
             label = resources.getString(R.string.session_filter_label_advanced),
             value = "Advanced",
-            type = SessionsFilterCategory.Level
-        )
+            type = SessionsFilterCategory.Level,
+        ),
     )
 }
 
@@ -125,71 +124,76 @@ fun SessionsFilterPanel(
     currentSelections: List<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     fetchSessionWithFilter: () -> Unit,
-    clearSelectedFilterList: () -> Unit
+    clearSelectedFilterList: () -> Unit,
 ) {
     val context = LocalContext.current
 
     val selectableFilters = loadFilters(context)
 
-    val groupedFilters = selectableFilters.groupBy {
-        it.type
-    }
+    val groupedFilters =
+        selectableFilters.groupBy {
+            it.type
+        }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                color = ChaiGrey90.copy(alpha = 0.52f)
-            )
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    color = ChaiGrey90.copy(alpha = 0.52f),
+                ),
     ) {
         // The Visible Content
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .background(
-                    color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
-                    shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp)
-                )
-                .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .background(
+                        color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
+                        shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp),
+                    )
+                    .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 32.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp),
             ) {
                 Row {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_filter),
                         contentDescription = null,
                         modifier = Modifier.padding(end = 12.dp),
-                        tint = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                        tint = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     )
                     ChaiBodyLarge(
                         bodyText = stringResource(id = R.string.filter_button_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                        textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     )
                 }
 
                 ChaiTextButtonLight(
-                    modifier = Modifier.clickable {
-                        clearSelectedFilterList()
-                        onDismiss()
-                    },
+                    modifier =
+                        Modifier.clickable {
+                            clearSelectedFilterList()
+                            onDismiss()
+                        },
                     bodyText = stringResource(id = R.string.cancel),
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
                 )
             }
 
             groupedFilters.forEach { filter ->
                 Column(
                     Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
                 ) {
                     ChaiSubTitle(
                         titleText = filter.key.name,
-                        titleColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     MultiToggleButton(
@@ -197,7 +201,7 @@ fun SessionsFilterPanel(
                         onClick = {
                             updateSelectedFilterOptionList(it)
                         },
-                        currentSelections = currentSelections
+                        currentSelections = currentSelections,
                     )
                 }
                 Spacer(modifier = Modifier.height(32.dp))
@@ -210,28 +214,31 @@ fun SessionsFilterPanel(
                 },
                 isEnabled = true,
                 shape = MaterialTheme.shapes.small,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-                    contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                        contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor,
+                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
             ) {
                 CPrimaryButtonText(
                     text = stringResource(R.string.filter_button_label).uppercase(),
-                    textColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor
+                    textColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor,
                 )
             }
             Spacer(modifier = Modifier.height(40.dp))
         }
         Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .clickable {
-                    onDismiss()
-                }
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clickable {
+                        onDismiss()
+                    },
         )
     }
 }

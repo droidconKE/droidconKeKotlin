@@ -18,14 +18,16 @@ package ke.droidcon.kotlin.datasource.remote.utils
 import ke.droidcon.kotlin.datasource.remote.utils.pagination.PaginationMetaData
 import ke.droidcon.kotlin.datasource.remote.utils.pagination.ResponseMetaData
 
-val SamplePaginationMetaData = ResponseMetaData(
-    paginator = PaginationMetaData(
-        count = 0,
-        currentPage = 1,
-        hasMorePages = false,
-        nextPage = null,
-        nextPageUrl = null,
-        perPage = "20",
-        previousPageUrl = null
+val SamplePaginationMetaData =
+    ResponseMetaData(
+        paginator =
+            PaginationMetaData(
+                count = 0,
+                currentPage = 1,
+                hasMorePages = false,
+                nextPage = null,
+                nextPageUrl = null,
+                perPage = "20",
+                previousPageUrl = null,
+            ),
     )
-)

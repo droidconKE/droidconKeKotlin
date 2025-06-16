@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrganizersPagedResponse(
-    val data: List<OrganizerDTO>
+    val data: List<OrganizerDTO>,
 )
 
 @Serializable
@@ -42,5 +42,5 @@ data class OrganizerDTO(
     @SerialName("twitter_handle")
     val twitterHandle: String? = "",
     @SerialName("type")
-    val type: String? = ""
+    val type: String? = "",
 )

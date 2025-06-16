@@ -45,7 +45,7 @@ fun Session.toPresentationModel(): SessionPresentationModel {
         isService = this.isServiceSession,
         sessionImage = this.sessionImage ?: "",
         eventDay = eventDay,
-        speakers = speakers.toSessionSpeaker()
+        speakers = speakers.toSessionSpeaker(),
     )
 }
 
@@ -64,36 +64,38 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
         format = this.sessionFormat,
         sessionImageUrl = this.sessionImage.toString(),
         timeSlot = "${startTime.time} - ${this.endTime}",
-        speakers = speakers.toSessionDetailsSpeaker()
+        speakers = speakers.toSessionDetailsSpeaker(),
     )
 }
 
-fun List<Speaker>.toSessionDetailsSpeaker() = map { speaker ->
-    SessionDetailsSpeakerPresentationModel(
-        speakerImage = speaker.avatar,
-        name = speaker.name,
-        twitterHandle = speaker.twitter.split("/").lastOrNull().toString()
-    )
-}
+fun List<Speaker>.toSessionDetailsSpeaker() =
+    map { speaker ->
+        SessionDetailsSpeakerPresentationModel(
+            speakerImage = speaker.avatar,
+            name = speaker.name,
+            twitterHandle = speaker.twitter.split("/").lastOrNull().toString(),
+        )
+    }
 
-fun List<Speaker>.toSessionSpeaker() = map { speaker ->
-    SessionSpeakersPresentationModel(
-        speakerImage = speaker.avatar,
-        name = speaker.name,
-        twitterHandle = speaker.twitter
-    )
-}
+fun List<Speaker>.toSessionSpeaker() =
+    map { speaker ->
+        SessionSpeakersPresentationModel(
+            speakerImage = speaker.avatar,
+            name = speaker.name,
+            twitterHandle = speaker.twitter,
+        )
+    }
 
 fun getTimePeriod(time: String): FormattedTime {
     val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val date: Date = format.parse(time) ?: Date()
     return FormattedTime(
         time = SimpleDateFormat("hh:mm", Locale.getDefault()).format(date),
-        period = SimpleDateFormat("a", Locale.getDefault()).format(date)
+        period = SimpleDateFormat("a", Locale.getDefault()).format(date),
     )
 }
 
 data class FormattedTime(
     val time: String,
-    val period: String
+    val period: String,
 )

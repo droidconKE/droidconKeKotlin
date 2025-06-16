@@ -38,7 +38,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepoModule {
-
     @Binds
     @Singleton
     abstract fun provideAuthRepo(repo: AuthManager): AuthRepo

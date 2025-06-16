@@ -36,10 +36,11 @@ import com.droidconke.chai.chaiColorsPalette
 @Composable
 fun FeedLoadingComponent() {
     Column(
-        modifier = Modifier
-            .background(color = MaterialTheme.chaiColorsPalette.background)
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+        modifier =
+            Modifier
+                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 10.dp),
     ) {
         LoadingBox(height = 20.dp, widthRatio = 1.0f)
         Spacer(modifier = Modifier.height(10.dp))
@@ -50,7 +51,7 @@ fun FeedLoadingComponent() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             LoadingBox(height = 40.dp, width = 80.dp)
             LoadingBox(height = 20.dp, width = 50.dp)

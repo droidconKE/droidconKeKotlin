@@ -29,7 +29,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RemoteConfigModule {
-
     @Provides
     @Singleton
     fun provideRemoteFeatureToggle(): RemoteFeatureToggle =

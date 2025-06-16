@@ -15,7 +15,6 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
 import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
@@ -23,26 +22,28 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LocalSponsorsDataSourceImpl @Inject constructor(
-    private val sponsorsDao: SponsorsDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
-) : LocalSponsorsDataSource {
+class LocalSponsorsDataSourceImpl
+    @Inject
+    constructor(
+        private val sponsorsDao: SponsorsDao,
+        @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
+    ) : LocalSponsorsDataSource {
+        override fun fetchCachedSponsors(): Flow<List<SponsorEntity>> {
+            return sponsorsDao.fetchCachedSponsors()
+                .flowOn(localSourceIoDispatcher)
+        }
 
-    override fun fetchCachedSponsors(): Flow<List<SponsorEntity>> {
-        return sponsorsDao.fetchCachedSponsors()
-            .flowOn(localSourceIoDispatcher)
-    }
+        override suspend fun deleteCachedSponsors() {
+            withContext(localSourceIoDispatcher) {
+                sponsorsDao.deleteAllCachedSponsors()
+            }
+        }
 
-    override suspend fun deleteCachedSponsors() {
-        withContext(localSourceIoDispatcher) {
-            sponsorsDao.deleteAllCachedSponsors()
+        override suspend fun saveCachedSponsors(sponsors: List<SponsorEntity>) {
+            withContext(localSourceIoDispatcher) {
+                sponsorsDao.insert(items = sponsors)
+            }
         }
     }
-
-    override suspend fun saveCachedSponsors(sponsors: List<SponsorEntity>) {
-        withContext(localSourceIoDispatcher) {
-            sponsorsDao.insert(items = sponsors)
-        }
-    }
-}

@@ -26,8 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.droidconke.chai.atoms.*
+import com.droidconke.chai.atoms.ChaiBlack
+import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.atoms.ChaiRed
+import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.atoms.MontserratLight
+import com.droidconke.chai.atoms.MontserratMedium
 import com.droidconke.chai.atoms.MontserratRegular
+import com.droidconke.chai.atoms.MontserratSemiBold
 import com.droidconke.chai.atoms.MontserratThin
 import com.droidconke.chai.chaiColorsPalette
 
@@ -44,9 +50,6 @@ import com.droidconke.chai.chaiColorsPalette
  *
  * */
 
-/**
- * Title based fonts
- * */
 @Composable
 fun CParagraph(dParagraph: String) {
     Text(
@@ -55,9 +58,9 @@ fun CParagraph(dParagraph: String) {
             color = ChaiBlack,
             fontSize = 12.sp,
             fontWeight = FontWeight.W500,
-            fontFamily = MontserratRegular
+            fontFamily = MontserratRegular,
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -69,10 +72,9 @@ fun CPageTitle(pageTitle: String) {
             color = ChaiBlue,
             fontSize = 33.sp,
             fontWeight = FontWeight.W300,
-            fontFamily = MontserratThin
-
+            fontFamily = MontserratThin,
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -84,10 +86,9 @@ fun CSubtitle(dSubtitle: String) {
             color = ChaiRed,
             fontSize = 15.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = MontserratRegular
-
+            fontFamily = MontserratRegular,
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -99,10 +100,9 @@ fun CActionText(cAction: String) {
             color = ChaiRed,
             fontSize = 15.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = MontserratRegular
-
+            fontFamily = MontserratRegular,
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -110,7 +110,7 @@ fun CActionText(cAction: String) {
 fun ChaiTitle(
     modifier: Modifier = Modifier,
     titleText: String,
-    titleColor: Color = Color.Unspecified
+    titleColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -119,9 +119,9 @@ fun ChaiTitle(
             color = titleColor,
             fontSize = 20.sp,
             fontWeight = FontWeight.W700,
-            fontFamily = MontserratBold
+            fontFamily = MontserratBold,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -130,7 +130,7 @@ fun ChaiSubTitle(
     modifier: Modifier = Modifier,
     titleText: String,
     titleColor: Color = Color.Unspecified,
-    textAlign: TextAlign? = TextAlign.Start
+    textAlign: TextAlign? = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -140,9 +140,9 @@ fun ChaiSubTitle(
             fontSize = 18.sp,
             fontWeight = FontWeight.W700,
             fontFamily = MontserratBold,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
         ),
-        textAlign = textAlign
+        textAlign = textAlign,
     )
 }
 
@@ -151,7 +151,7 @@ fun ChaiBodyXSmallBold(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
-    textAlign: TextAlign? = TextAlign.Start
+    textAlign: TextAlign? = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -161,9 +161,9 @@ fun ChaiBodyXSmallBold(
             fontSize = 12.sp,
             fontWeight = FontWeight.W500,
             fontFamily = MontserratMedium,
-            lineHeight = 16.sp
+            lineHeight = 16.sp,
         ),
-        textAlign = textAlign
+        textAlign = textAlign,
     )
 }
 
@@ -171,7 +171,7 @@ fun ChaiBodyXSmallBold(
 fun ChaiBodyXSmall(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -181,9 +181,9 @@ fun ChaiBodyXSmall(
             fontSize = 12.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 16.sp
+            lineHeight = 16.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -192,7 +192,7 @@ fun ChaiBodySmallBold(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         modifier = modifier,
@@ -202,10 +202,10 @@ fun ChaiBodySmallBold(
             fontSize = 14.sp,
             fontWeight = FontWeight.W700,
             fontFamily = MontserratBold,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         ),
         textAlign = TextAlign.Start,
-        maxLines = maxLines
+        maxLines = maxLines,
     )
 }
 
@@ -216,7 +216,7 @@ fun ChaiBodySmall(
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
-    minLines: Int = 1
+    minLines: Int = 1,
 ) {
     Text(
         modifier = modifier,
@@ -226,12 +226,12 @@ fun ChaiBodySmall(
             fontSize = 14.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         ),
         textAlign = textAlign,
         maxLines = maxLines,
         minLines = minLines,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -241,7 +241,7 @@ fun ChaiBodyMediumBold(
     bodyText: String,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         modifier = modifier,
@@ -251,11 +251,11 @@ fun ChaiBodyMediumBold(
             fontSize = 16.sp,
             fontWeight = FontWeight.W600,
             fontFamily = MontserratSemiBold,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         ),
         textAlign = textAlign,
         maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -264,7 +264,7 @@ fun ChaiBodyMedium(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         modifier = modifier,
@@ -274,11 +274,11 @@ fun ChaiBodyMedium(
             fontSize = 16.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 20.sp
+            lineHeight = 20.sp,
         ),
         textAlign = TextAlign.Start,
         maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -286,7 +286,7 @@ fun ChaiBodyMedium(
 fun ChaiBodyLargeBold(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -296,9 +296,9 @@ fun ChaiBodyLargeBold(
             fontSize = 18.sp,
             fontWeight = FontWeight.W600,
             fontFamily = MontserratSemiBold,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -306,7 +306,7 @@ fun ChaiBodyLargeBold(
 fun ChaiBodyLarge(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -316,9 +316,9 @@ fun ChaiBodyLarge(
             fontSize = 18.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -326,7 +326,7 @@ fun ChaiBodyLarge(
 fun ChaiTextButtonLight(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -336,9 +336,9 @@ fun ChaiTextButtonLight(
             fontSize = 13.sp,
             fontWeight = FontWeight.W300,
             fontFamily = MontserratLight,
-            lineHeight = 16.sp
+            lineHeight = 16.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -347,7 +347,7 @@ fun CPrimaryButtonText(
     modifier: Modifier = Modifier,
     text: String,
     textAllCaps: Boolean = false,
-    textColor: Color = MaterialTheme.chaiColorsPalette.textButtonColor
+    textColor: Color = MaterialTheme.chaiColorsPalette.textButtonColor,
 ) {
     Text(
         modifier = modifier,
@@ -357,9 +357,9 @@ fun CPrimaryButtonText(
             fontSize = 18.sp,
             fontWeight = FontWeight.W600,
             fontFamily = MontserratSemiBold,
-            lineHeight = 22.sp
+            lineHeight = 22.sp,
         ),
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 
@@ -368,7 +368,7 @@ fun ChaiTextLabelLarge(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
-    textAlign: TextAlign = TextAlign.Start
+    textAlign: TextAlign = TextAlign.Start,
 ) {
     Text(
         modifier = modifier,
@@ -378,9 +378,9 @@ fun ChaiTextLabelLarge(
             fontSize = 11.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 16.sp
+            lineHeight = 16.sp,
         ),
-        textAlign = textAlign
+        textAlign = textAlign,
     )
 }
 
@@ -388,7 +388,7 @@ fun ChaiTextLabelLarge(
 fun ChaiTextLabelMedium(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -398,9 +398,9 @@ fun ChaiTextLabelMedium(
             fontSize = 10.sp,
             fontWeight = FontWeight.W400,
             fontFamily = MontserratRegular,
-            lineHeight = 14.sp
+            lineHeight = 14.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
 
@@ -408,7 +408,7 @@ fun ChaiTextLabelMedium(
 fun ChaiTextLabelSmall(
     modifier: Modifier = Modifier,
     bodyText: String,
-    textColor: Color = Color.Unspecified
+    textColor: Color = Color.Unspecified,
 ) {
     Text(
         modifier = modifier,
@@ -418,8 +418,8 @@ fun ChaiTextLabelSmall(
             fontSize = 9.sp,
             fontWeight = FontWeight.W300,
             fontFamily = MontserratLight,
-            lineHeight = 14.sp
+            lineHeight = 14.sp,
         ),
-        textAlign = TextAlign.Start
+        textAlign = TextAlign.Start,
     )
 }
