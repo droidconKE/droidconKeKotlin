@@ -44,9 +44,13 @@ allprojects {
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     detekt {
-        config = files("${project.rootDir}/detekt.yml")
+        config.setFrom("${project.rootDir}/detekt.yml")
         parallel = true
         buildUponDefaultConfig = true
+    }
+
+    dependencies {
+        detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
     }
 
     apply(plugin = "com.diffplug.spotless")
@@ -56,7 +60,7 @@ subprojects {
             targetExclude("${project.rootDir}/build-logic/**/*.kt")
             licenseHeaderFile(
                 rootProject.file("${project.rootDir}/spotless/copyright.kt"),
-                "^(package|object|import|interface)"
+                "^(package|object|import|interface)",
             )
         }
         format("kts") {
