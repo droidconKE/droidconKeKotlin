@@ -359,25 +359,39 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/princemill">
+            <img src="https://avatars.githubusercontent.com/u/128790519?v=4" width="100;" alt="princemill"/>
+            <br />
+            <sub><b>Chris Matee</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Dbriane208">
             <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
             <br />
             <sub><b>Null</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/Jeremy-Gitau">
             <img src="https://avatars.githubusercontent.com/u/56400436?v=4" width="100;" alt="Jeremy-Gitau"/>
             <br />
             <sub><b>Jeremy</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/josphatmwania">
             <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
             <br />
             <sub><b>Josphat Mwania</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/stephenWanjala">
+            <img src="https://avatars.githubusercontent.com/u/74505448?v=4" width="100;" alt="stephenWanjala"/>
+            <br />
+            <sub><b>Wanjala Stephen</b></sub>
         </a>
     </td>
     <td align="center">
@@ -400,7 +414,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Don Okara</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
