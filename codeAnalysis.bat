@@ -1,2 +1,2 @@
 @echo off
-.\gradlew ktlintFormat && .\gradlew ktlintCheck && .\gradlew detekt && .\gradlew spotlessApply
+.\gradlew :multiplatform:ktlintFormat && .\gradlew :multiplatform:ktlintCheck && .\gradlew :multiplatform:detekt && .\gradlew :multiplatform:spotlessApply
