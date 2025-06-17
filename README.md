@@ -388,6 +388,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/stephenWanjala">
+            <img src="https://avatars.githubusercontent.com/u/74505448?v=4" width="100;" alt="stephenWanjala"/>
+            <br />
+            <sub><b>Wanjala Stephen</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/anuragkanojiya1">
             <img src="https://avatars.githubusercontent.com/u/144598258?v=4" width="100;" alt="anuragkanojiya1"/>
             <br />
@@ -407,7 +414,8 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Don Okara</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
