@@ -52,7 +52,9 @@ class OrganizersManager
 
                 val individualOrganizersResponse = individualOrganizersResponseDeffered.await()
                 val companyOrganizersResponse = companyOrganizersResponseDeffered.await()
-                if ((individualOrganizersResponse is DataResult.Success) && (companyOrganizersResponse is DataResult.Success)) {
+                if ((individualOrganizersResponse is DataResult.Success) &&
+                    (companyOrganizersResponse is DataResult.Success)
+                ) {
                     val individualOrganizers = individualOrganizersResponse.data.data
                     val companyOrganizers = companyOrganizersResponse.data.data
 

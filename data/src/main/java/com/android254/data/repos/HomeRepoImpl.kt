@@ -42,7 +42,12 @@ class HomeRepoImpl
             val speakersflow = speakersRepo.fetchSpeakers()
             val sessionsflow = sessionsRepo.fetchSessions()
             val organizerflow = organizersRepo.getOrganizers()
-            return combine(sponsorsflow, speakersflow, sessionsflow, organizerflow) { sponsors, speakers, sessions, organizers ->
+            return combine(
+                sponsorsflow,
+                speakersflow,
+                sessionsflow,
+                organizerflow,
+            ) { sponsors, speakers, sessions, organizers ->
                 HomeDetails(
                     isCallForSpeakersEnable = true,
                     linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",

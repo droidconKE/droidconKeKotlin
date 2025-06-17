@@ -1,5 +1,9 @@
 [*.{kt,kts}]
 insert_final_newline=false
 max_line_length=off
+indent_style = space
+indent_size = 4
+continuation_indent_size = 4
+insert_final_newline = true
 ktlint_disabled_rules=no-wildcard-imports,import-ordering,trailing-comma
 ktlint_function_naming_ignore_when_annotated_with = Composable
