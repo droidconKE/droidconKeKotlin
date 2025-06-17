@@ -192,7 +192,7 @@ formatting:
   ImportOrdering:
     active: true
   Indentation:
-    active: true
+    active: false
     indentSize: 4
   MaximumLineLength:
     active: true

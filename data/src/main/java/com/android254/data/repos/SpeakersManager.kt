@@ -34,11 +34,19 @@ class SpeakersManager
         private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
     ) : SpeakersRepo {
         override fun fetchSpeakers(): Flow<List<Speaker>> =
-            localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
+            localSpeakersDataSource.getCachedSpeakers().map { speakers ->
+                speakers.map { speaker ->
+
+                    speaker.toDomainModel()
+                }
+            }
 
         override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
 
-        override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
+        override suspend fun getSpeakerByName(name: String): Flow<Speaker> =
+            localSpeakersDataSource.getCachedSpeakerByName(
+                name,
+            ).map { it.toDomainModel() }
 
         override suspend fun syncSpeakers() {
             when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
