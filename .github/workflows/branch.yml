@@ -3,6 +3,11 @@ name: branch
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - 'multiplatform/**'
+      - 'build-logic/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
 
 env:
   APP_SIGN_KEYSTORE_PATH: /tmp/keystore
@@ -54,29 +59,11 @@ jobs:
       - name: Install Dependencies
         run: gem install bundler && bundle install
 
-      - name: Run ktlintFormat
-        uses: maierj/fastlane-action@v2.0.0
-        with:
-          lane: ktlintFormat
-          skip-tracking: false
-          subdirectory: fastlane
-          bundle-install-path: CACHE_BUNDLER
-
       - name: Run ktlintCheck
-        uses: maierj/fastlane-action@v2.0.0
-        with:
-          lane: ktlintCheck
-          skip-tracking: false
-          subdirectory: fastlane
-          bundle-install-path: CACHE_BUNDLER
+        run: ./gradlew :multiplatform:ktlintCheck
 
       - name: Run detekt
-        uses: maierj/fastlane-action@v2.0.0
-        with:
-          lane: detekt
-          skip-tracking: false
-          subdirectory: fastlane
-          bundle-install-path: CACHE_BUNDLER
+        run: ./gradlew :multiplatform:detekt
 
       - name: Run tests
         uses: maierj/fastlane-action@v2.0.0
