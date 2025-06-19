@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.chaiColorsPalette
 
 @Composable
 fun SessionsLoadingCard() {

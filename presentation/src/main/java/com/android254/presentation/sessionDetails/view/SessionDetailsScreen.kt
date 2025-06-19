@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -52,6 +51,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,11 +73,10 @@ import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.COutlinedButton
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyLargeBold
@@ -87,6 +86,7 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -482,7 +482,7 @@ object TestTag {
 )
 @Composable
 fun SessionDetailsScreenPreview() {
-    ChaiDCKE22Theme() {
+    ChaiDCKE22Theme {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             uiState = SessionDetailsUiState.Success(

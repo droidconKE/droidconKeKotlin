@@ -49,13 +49,13 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
@@ -182,7 +182,7 @@ fun SessionsDescriptionComponent(sessionDescription: String) {
 
 @Composable
 fun TimeAndVenueComponent(session: SessionPresentationModel) {
-    Row() {
+    Row {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor

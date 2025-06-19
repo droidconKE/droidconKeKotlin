@@ -29,9 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable

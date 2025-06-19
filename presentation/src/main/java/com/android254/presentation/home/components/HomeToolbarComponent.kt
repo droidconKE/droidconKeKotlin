@@ -19,7 +19,7 @@ import androidx.compose.runtime.Composable
 import com.android254.presentation.common.components.DroidconAppBar
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 
 @Composable
 fun HomeToolbarComponent(

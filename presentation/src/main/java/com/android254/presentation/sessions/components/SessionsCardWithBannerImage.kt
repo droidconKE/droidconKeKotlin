@@ -54,8 +54,8 @@ import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 

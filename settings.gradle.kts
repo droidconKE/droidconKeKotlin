@@ -17,4 +17,3 @@ include(":datasource:remote", ":datasource:local", ":data", ":domain", ":present
 include(":multiplatform:android")
 
 include(":multiplatform:data", ":multiplatform:domain", ":multiplatform:presentation", ":multiplatform:datasource:local", ":multiplatform:datasource:remote", ":multiplatform:composeApp")
-

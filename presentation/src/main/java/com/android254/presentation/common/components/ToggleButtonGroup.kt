@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionsFilterOption
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
+import com.droidconke.chaiColorsPalette
 
 @Composable
 fun MultiToggleButton(

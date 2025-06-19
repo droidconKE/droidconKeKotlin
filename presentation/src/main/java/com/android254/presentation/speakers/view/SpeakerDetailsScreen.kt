@@ -38,7 +38,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,10 +60,9 @@ import coil.request.ImageRequest
 import com.android254.presentation.models.speakersDummyData
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -70,6 +70,7 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
