@@ -21,7 +21,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -78,7 +78,7 @@ class SessionScreenTest {
     @Test
     fun `should show topBar`() = runTest {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 SessionsScreen(
                     sessionsUiState = SessionsUiState(),
                     isRefreshing = true,
