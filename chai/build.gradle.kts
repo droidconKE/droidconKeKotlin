@@ -71,6 +71,8 @@ kotlin {
                 implementation(libs.material3)
                 implementation(compose.components.resources)
                 implementation(libs.material.icons.extended)
+                implementation(libs.components.ui.tooling.preview)
+
 
             }
         }
@@ -88,6 +90,7 @@ kotlin {
                 // dependencies declared in commonMain.
                 implementation(libs.android.coreKtx)
                 implementation(libs.android.appCompat)
+                implementation(libs.compose.ui.tooling.preview)
             }
         }
 

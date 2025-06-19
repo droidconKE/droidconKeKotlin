@@ -30,12 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.utils.Alpha.AlphaDisabled
 import com.droidconke.chai.utils.CShapes
 import com.droidconke.chai.utils.SeparatorSpace
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CButton(
@@ -117,7 +117,7 @@ fun COutlinedPrimaryButton(
 private const val PREVIEW_BUTTON_TITLE = "Filter"
 private const val PREVIEW_OUTLINE_BUTTON_TITLE = "Twitter"
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryButtonDarkPreview() {
     ChaiDCKE22Theme(darkTheme = true) {
@@ -130,7 +130,7 @@ fun CPrimaryButtonDarkPreview() {
     }
 }
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryButtonDisableDarkPreview() {
     ChaiDCKE22Theme(darkTheme = true) {
@@ -143,7 +143,7 @@ fun CPrimaryButtonDisableDarkPreview() {
     }
 }
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryButtonDisableLightPreview() {
     ChaiDCKE22Theme(darkTheme = false) {
@@ -156,7 +156,7 @@ fun CPrimaryButtonDisableLightPreview() {
     }
 }
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryButtonLightPreview() {
     ChaiDCKE22Theme {
@@ -169,7 +169,7 @@ fun CPrimaryButtonLightPreview() {
     }
 }
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryOutlinedButtonLightPreview() {
     ChaiDCKE22Theme(darkTheme = false) {
@@ -182,7 +182,7 @@ fun CPrimaryOutlinedButtonLightPreview() {
     }
 }
 
-//@Preview
+@Preview
 @Composable
 fun CPrimaryOutlinedButtonDarktPreview() {
     ChaiDCKE22Theme(darkTheme = true) {
