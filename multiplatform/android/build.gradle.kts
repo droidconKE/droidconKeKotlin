@@ -72,4 +72,6 @@ dependencies {
     androidTestImplementation(libs.android.test.compose)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
+
+    implementation(projects.multiplatform.composeApp)
 }
