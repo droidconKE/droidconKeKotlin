@@ -166,10 +166,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/Raynafs">
-            <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
+        <a href="https://github.com/ndiritumichael">
+            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
             <br />
-            <sub><b>Rachel Murabula</b></sub>
+            <sub><b>Michael Ndiritu</b></sub>
         </a>
     </td>
     <td align="center">
@@ -177,6 +177,13 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
             <sub><b>Kibet Theo</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Raynafs">
+            <img src="https://avatars.githubusercontent.com/u/110402503?v=4" width="100;" alt="Raynafs"/>
+            <br />
+            <sub><b>Rachel Murabula</b></sub>
         </a>
     </td>
     <td align="center">
@@ -192,15 +199,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Yves Kalume</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
             <sub><b>Harun Wangereka</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
@@ -235,20 +242,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/KennethMathari">
             <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
             <br />
             <sub><b>Kenneth Mathari</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/MamboBryan">
-            <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
-            <br />
-            <sub><b>MamboBryan</b></sub>
         </a>
     </td>
     <td align="center">
@@ -256,6 +256,13 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/25085146?v=4" width="100;" alt="jumaallan"/>
             <br />
             <sub><b>Juma Allan</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/MamboBryan">
+            <img src="https://avatars.githubusercontent.com/u/40160345?v=4" width="100;" alt="MamboBryan"/>
+            <br />
+            <sub><b>MamboBryan</b></sub>
         </a>
     </td>
     <td align="center">
@@ -277,13 +284,6 @@ We would endlessly like to thank the following contributors
             <img src="https://avatars.githubusercontent.com/u/77957614?v=4" width="100;" alt="kanake10"/>
             <br />
             <sub><b>N3</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/ndiritumichael">
-            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
-            <br />
-            <sub><b>Michael Ndiritu</b></sub>
         </a>
     </td></tr>
 <tr>
