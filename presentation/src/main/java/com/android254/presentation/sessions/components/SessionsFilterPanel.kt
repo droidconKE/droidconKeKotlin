@@ -44,12 +44,12 @@ import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 private fun loadFilters(context: Context): List<SessionsFilterOption> {

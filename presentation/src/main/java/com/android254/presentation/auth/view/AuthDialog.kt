@@ -42,10 +42,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextButtonLight
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
@@ -77,7 +77,8 @@ fun AuthDialog(
         onDismissRequest = onDismiss,
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(color = MaterialTheme.chaiColorsPalette.surfaces)
             ) {
                 Spacer(
@@ -124,7 +125,7 @@ fun AuthDialog(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun AuthDialogPreview() {
-    ChaiDCKE22Theme() {
+    ChaiDCKE22Theme {
         AuthDialog()
     }
 }

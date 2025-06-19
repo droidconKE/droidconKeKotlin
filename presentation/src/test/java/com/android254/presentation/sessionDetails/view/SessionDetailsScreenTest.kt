@@ -16,8 +16,10 @@
 package com.android254.presentation.sessionDetails.view
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
@@ -26,7 +28,7 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -64,7 +66,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show top bar and floating action button`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 SessionDetailsRoute(
                     viewModel = viewModel,
                     sessionId = sessionId,
@@ -82,7 +84,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show favourite icon and session banner image`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(1.dp),
                     sessionDetails = sessionPresentationModel,
@@ -102,7 +104,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,
@@ -134,7 +136,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,
