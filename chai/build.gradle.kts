@@ -72,8 +72,6 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(libs.material.icons.extended)
                 implementation(libs.components.ui.tooling.preview)
-
-
             }
         }
 
@@ -112,5 +110,4 @@ kotlin {
             }
         }
     }
-
 }

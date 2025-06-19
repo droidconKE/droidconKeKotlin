@@ -19,7 +19,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

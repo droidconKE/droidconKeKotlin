@@ -18,7 +18,7 @@ package com.android254.presentation.about.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDCKE22Theme
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
