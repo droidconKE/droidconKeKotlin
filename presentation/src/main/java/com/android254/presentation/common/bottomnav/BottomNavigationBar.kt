@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.*
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,9 +40,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationDestinations
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.components.ChaiTextLabelSmall
+import com.droidconke.chaiColorsPalette
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {

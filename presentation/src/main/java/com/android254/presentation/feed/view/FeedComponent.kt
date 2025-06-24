@@ -42,11 +42,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -72,7 +72,8 @@ fun FeedComponent(
 
         feed.image?.let {
             AsyncImage(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .height(209.dp)
                     .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.FillHeight,
@@ -93,7 +94,8 @@ fun FeedComponent(
                 onClick = {
                     onClickItem(1)
                 },
-                modifier = Modifier.testTag("share_button")
+                modifier = Modifier
+                    .testTag("share_button")
                     .offset(x = (-12).dp)
             ) {
                 ChaiBodySmallBold(
@@ -124,7 +126,7 @@ fun Preview() {
         FeedComponent(
             modifier = Modifier,
             feed =
-            FeedUI("Feed", "Feed feed", "test", "", "", ""),
+                FeedUI("Feed", "Feed feed", "test", "", "", ""),
             onClickItem = {}
         )
     }

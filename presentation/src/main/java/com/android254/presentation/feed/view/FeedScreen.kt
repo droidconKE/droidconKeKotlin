@@ -54,9 +54,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDCKE22Theme
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
 
