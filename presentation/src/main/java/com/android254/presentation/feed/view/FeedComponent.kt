@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiBodyXSmall
@@ -122,7 +122,7 @@ fun FeedComponent(
 @Preview
 @Composable
 fun Preview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         FeedComponent(
             modifier = Modifier,
             feed =

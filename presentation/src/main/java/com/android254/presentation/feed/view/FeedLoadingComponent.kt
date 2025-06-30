@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chaiColorsPalette
 
 @Composable
@@ -61,7 +61,7 @@ fun FeedLoadingComponent() {
 @ChaiLightAndDarkComposePreview
 @Composable
 fun FeedLoadingComponentPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         FeedLoadingComponent()
     }
 }

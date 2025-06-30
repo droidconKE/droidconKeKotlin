@@ -23,7 +23,7 @@ import com.droidconke.chai.colors.ChaiColors
 import com.droidconke.chai.colors.LocalChaiColorsPalette
 
 @Composable
-expect fun ChaiDCKE22Theme(
+expect fun ChaiDcKeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 )

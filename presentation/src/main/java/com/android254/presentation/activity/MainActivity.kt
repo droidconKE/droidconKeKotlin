@@ -46,7 +46,7 @@ import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
 import com.android254.presentation.common.navigation.Navigation
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
             keepSplashScreen = false
         }
         setContent {
-            ChaiDCKE22Theme {
+            ChaiDcKeTheme {
                 MainScreen()
             }
         }

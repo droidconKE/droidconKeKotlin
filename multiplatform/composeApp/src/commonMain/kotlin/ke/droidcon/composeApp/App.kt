@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chaiColorsPalette
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -19,7 +19,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
             modifier = Modifier.fillMaxSize()

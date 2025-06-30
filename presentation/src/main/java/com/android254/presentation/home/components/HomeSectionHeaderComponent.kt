@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelMedium
@@ -100,7 +100,7 @@ fun HomeSectionHeaderComponent(
 )
 @Composable
 private fun HomeSectionHeaderComponentPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         HomeSectionHeaderComponent(
             sectionLabel = "Sessions",
             sectionSize = 20,

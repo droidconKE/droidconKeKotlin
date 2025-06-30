@@ -73,7 +73,7 @@ import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
@@ -482,7 +482,7 @@ object TestTag {
 )
 @Composable
 fun SessionDetailsScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             uiState = SessionDetailsUiState.Success(

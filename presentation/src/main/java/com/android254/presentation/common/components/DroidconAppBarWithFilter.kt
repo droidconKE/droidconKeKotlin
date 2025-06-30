@@ -37,7 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chaiColorsPalette
@@ -154,7 +154,7 @@ fun FilterButton(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun ToolbarPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         Column {
             DroidconAppBarWithFilter(
                 isListActive = true,

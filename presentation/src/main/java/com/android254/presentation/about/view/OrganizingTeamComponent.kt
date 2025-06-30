@@ -38,7 +38,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.OrganizingTeamMember
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiTextLabelLarge
@@ -93,7 +93,7 @@ fun OrganizingTeamComponent(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun Preview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         OrganizingTeamComponent(
             modifier = Modifier,
             teamMember = OrganizingTeamMember(

@@ -59,7 +59,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiWhite
@@ -323,7 +323,7 @@ fun FeedbackTitle() {
 )
 @Composable
 fun FeedBackScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         FeedBackScreen(darkTheme = isSystemInDarkTheme())
     }
 }

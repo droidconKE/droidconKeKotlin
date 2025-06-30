@@ -45,7 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chaiColorsPalette
@@ -162,7 +162,7 @@ private fun SpeakersScreen(
 )
 @Composable
 fun SpeakersScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         SpeakersScreen(
             uiState = SpeakersScreenUiState.Success(speakers = listOf())
         )

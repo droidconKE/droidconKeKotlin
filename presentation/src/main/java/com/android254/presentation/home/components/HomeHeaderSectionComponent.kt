@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
@@ -38,7 +38,7 @@ fun HomeHeaderSectionComponent() {
 @ChaiLightAndDarkComposePreview
 @Composable
 private fun HomeHeaderSectionComponentPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         HomeHeaderSectionComponent()
     }
 }

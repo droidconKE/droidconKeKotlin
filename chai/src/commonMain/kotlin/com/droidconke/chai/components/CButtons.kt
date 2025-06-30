@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.utils.Alpha.AlphaDisabled
 import com.droidconke.chai.utils.CShapes
 import com.droidconke.chai.utils.SeparatorSpace
@@ -120,7 +120,7 @@ private const val PREVIEW_OUTLINE_BUTTON_TITLE = "Twitter"
 @Preview
 @Composable
 fun CPrimaryButtonDarkPreview() {
-    ChaiDCKE22Theme(darkTheme = true) {
+    ChaiDcKeTheme(darkTheme = true) {
         CPrimaryButton(
             onClick = { },
             isEnabled = true,
@@ -133,7 +133,7 @@ fun CPrimaryButtonDarkPreview() {
 @Preview
 @Composable
 fun CPrimaryButtonDisableDarkPreview() {
-    ChaiDCKE22Theme(darkTheme = true) {
+    ChaiDcKeTheme(darkTheme = true) {
         CPrimaryButton(
             onClick = { },
             isEnabled = false,
@@ -146,7 +146,7 @@ fun CPrimaryButtonDisableDarkPreview() {
 @Preview
 @Composable
 fun CPrimaryButtonDisableLightPreview() {
-    ChaiDCKE22Theme(darkTheme = false) {
+    ChaiDcKeTheme(darkTheme = false) {
         CPrimaryButton(
             onClick = { },
             isEnabled = false,
@@ -159,7 +159,7 @@ fun CPrimaryButtonDisableLightPreview() {
 @Preview
 @Composable
 fun CPrimaryButtonLightPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         CPrimaryButton(
             onClick = { },
             isEnabled = true,
@@ -172,7 +172,7 @@ fun CPrimaryButtonLightPreview() {
 @Preview
 @Composable
 fun CPrimaryOutlinedButtonLightPreview() {
-    ChaiDCKE22Theme(darkTheme = false) {
+    ChaiDcKeTheme(darkTheme = false) {
         COutlinedPrimaryButton(
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,
@@ -185,7 +185,7 @@ fun CPrimaryOutlinedButtonLightPreview() {
 @Preview
 @Composable
 fun CPrimaryOutlinedButtonDarktPreview() {
-    ChaiDCKE22Theme(darkTheme = true) {
+    ChaiDcKeTheme(darkTheme = true) {
         COutlinedPrimaryButton(
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,

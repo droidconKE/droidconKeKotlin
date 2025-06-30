@@ -24,7 +24,7 @@ import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.models.SponsorPresentationModel
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -49,7 +49,7 @@ class HomeScreenTest {
     @Test
     fun `Test home title is displayed`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiDcKeTheme {
                 HomeHeaderSectionComponent()
             }
         }
@@ -71,7 +71,7 @@ class HomeScreenTest {
     @Test
     fun `Not signedIn droidcon topBar is displayed`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiDcKeTheme {
                 HomeToolbarComponent(isSignedIn = false)
             }
         }
@@ -83,7 +83,7 @@ class HomeScreenTest {
     @Test
     fun `SignedIn droidcon topBar is displayed`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiDcKeTheme {
                 HomeToolbarComponent(isSignedIn = true)
             }
         }

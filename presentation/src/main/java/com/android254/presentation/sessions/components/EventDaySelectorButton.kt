@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chaiColorsPalette
@@ -67,7 +67,7 @@ fun EventDaySelectorButton(
 @ChaiLightAndDarkComposePreview
 @Composable
 private fun EventDaySelectorButtonPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         Row {
             EventDaySelectorButton(
                 title = "10th",

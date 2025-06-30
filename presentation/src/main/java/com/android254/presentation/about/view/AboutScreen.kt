@@ -50,7 +50,7 @@ import coil.request.ImageRequest
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.models.OrganizingTeamMember
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiTitle
@@ -231,7 +231,7 @@ fun OrganizingTeamSection(
 )
 @Composable
 fun AboutScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         AboutScreen(
             uiState = AboutScreenUiState.Success(
                 teamMembers = listOf(

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 
 @Composable
 fun HomeSessionLoadingItem() {
@@ -45,7 +45,7 @@ fun HomeSessionLoadingItem() {
 @Preview(showBackground = true)
 @Composable
 fun HomeSessionLoadingItemPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         HomeSessionLoadingItem()
     }
 }

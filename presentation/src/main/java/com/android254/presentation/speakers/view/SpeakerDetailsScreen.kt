@@ -60,7 +60,7 @@ import coil.request.ImageRequest
 import com.android254.presentation.models.speakersDummyData
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
-import com.droidconke.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.CButton
@@ -319,7 +319,7 @@ private fun SpeakerDetailsScreen(
 )
 @Composable
 fun SpeakerDetailsScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         SpeakerDetailsScreen(
             uiState = SpeakerDetailsScreenUiState.Success(
                 speaker = speakersDummyData.first()
