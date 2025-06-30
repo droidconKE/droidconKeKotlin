@@ -43,13 +43,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodySmallBold
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -165,7 +165,7 @@ fun SpeakerComponent(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun SpeakerComponentPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         SpeakerComponent(
             speaker = SpeakerUI(
                 imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",

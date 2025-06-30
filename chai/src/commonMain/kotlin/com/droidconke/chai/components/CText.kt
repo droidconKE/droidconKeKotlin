@@ -29,7 +29,8 @@ import androidx.compose.ui.unit.sp
 import com.droidconke.chai.atoms.*
 import com.droidconke.chai.atoms.MontserratRegular
 import com.droidconke.chai.atoms.MontserratThin
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chaiColorsPalette
+
 
 /**
  * CText:

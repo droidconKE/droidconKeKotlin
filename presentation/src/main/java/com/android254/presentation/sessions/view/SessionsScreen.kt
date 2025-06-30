@@ -16,7 +16,6 @@
 package com.android254.presentation.sessions.view
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,9 +47,9 @@ import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chaiColorsPalette
 import kotlinx.coroutines.launch
 
 @Composable
@@ -213,7 +212,7 @@ fun SessionsScreen(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun SessionsScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         SessionsScreen(
             sessionsUiState = SessionsUiState(),
             selectedEventDate = EventDate("1", day = 1),

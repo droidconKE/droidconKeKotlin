@@ -40,8 +40,8 @@ import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.ChaiDcKeTheme
+import com.droidconke.chaiColorsPalette
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
@@ -151,7 +151,7 @@ private fun HomeScreen(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun HomeScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         HomeScreen(
             viewState = HomeViewState(
                 isPosterVisible = true,

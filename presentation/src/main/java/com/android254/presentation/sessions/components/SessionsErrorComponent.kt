@@ -31,9 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -42,7 +42,9 @@ fun SessionsErrorComponent(
     retry: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

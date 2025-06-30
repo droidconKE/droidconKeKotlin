@@ -39,12 +39,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiTeal90
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -137,7 +137,7 @@ fun PlatformButton(platform: String, icon: Int) {
 @ChaiLightAndDarkComposePreview
 @Composable
 fun PlatformButtonPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         PlatformButton("Twitter", R.drawable.ic_whatsapp)
     }
 }
@@ -145,7 +145,7 @@ fun PlatformButtonPreview() {
 @ChaiLightAndDarkComposePreview
 @Composable
 fun PFeedShareSectionPreview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         FeedShareSection()
     }
 }

@@ -19,7 +19,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,10 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -101,7 +106,7 @@ fun FeedbackButton(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun Preview() {
-    ChaiDCKE22Theme {
+    ChaiDcKeTheme {
         DroidconAppBarWithFeedbackButton(
             onButtonClick = {},
             userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
