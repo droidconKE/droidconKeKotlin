@@ -18,22 +18,19 @@ package com.android254.data.repos
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
-import javax.inject.Inject
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.utils.NetworkError
 import ke.droidcon.kotlin.datasource.remote.utils.ServerError
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-@Singleton
-class AuthManager @Inject constructor(
+
+class AuthManager(
     private val api: AuthApi,
     private val tokenProvider: TokenProvider,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : AuthRepo {
     override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
         return withContext(ioDispatcher) {
@@ -46,6 +43,7 @@ class AuthManager @Inject constructor(
                     is ServerError, is NetworkError -> {
                         DataResult.Error("Login failed", networkError = true, exc = e)
                     }
+
                     else -> {
                         DataResult.Error("Login failed", exc = e)
                     }

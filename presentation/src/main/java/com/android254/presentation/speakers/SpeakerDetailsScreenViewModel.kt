@@ -19,10 +19,8 @@ import androidx.lifecycle.ViewModel
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.models.SpeakerUI
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
 sealed interface SpeakerDetailsScreenUiState {
 
@@ -35,8 +33,8 @@ sealed interface SpeakerDetailsScreenUiState {
     data class SpeakerNotFound(val message: String) : SpeakerDetailsScreenUiState
 }
 
-@HiltViewModel
-class SpeakerDetailsScreenViewModel @Inject constructor(
+
+class SpeakerDetailsScreenViewModel(
     private val speakersRepo: SpeakersRepo
 ) : ViewModel() {
 

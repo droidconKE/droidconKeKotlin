@@ -22,7 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
-class LocalFeedDataSourceImpl @Inject constructor(
+class LocalFeedDataSourceImpl(
     private val feedDao: FeedDao,
     private val ioDispatcher: CoroutineDispatcher
 ) : LocalFeedDataSource {

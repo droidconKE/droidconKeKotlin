@@ -25,7 +25,7 @@ import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
 
-class SponsorsApi @Inject constructor(
+class SponsorsApi  constructor(
     private val client: HttpClient
 ) {
 

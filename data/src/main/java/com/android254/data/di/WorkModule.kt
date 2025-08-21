@@ -17,15 +17,9 @@ package com.android254.data.di
 
 import com.android254.data.work.SyncDataWorkManagerImpl
 import com.android254.domain.work.SyncDataWorkManager
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class WorkModule {
-
-    @Binds
-    abstract fun provideSyncDataWorkManager(impl: SyncDataWorkManagerImpl): SyncDataWorkManager
+val workModule = module {
+    single { SyncDataWorkManagerImpl(get()) } binds arrayOf(SyncDataWorkManager::class)
 }

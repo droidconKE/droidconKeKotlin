@@ -15,10 +15,6 @@
  */
 package ke.droidcon.kotlin.datasource.local.di
 
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import ke.droidcon.kotlin.datasource.local.Database
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.dao.FeedDao
@@ -26,38 +22,14 @@ import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import org.koin.dsl.module
+import org.koin.core.module.Module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DaoModule {
-
-    @Provides
-    fun provideSpeakersDao(
-        database: Database
-    ): SpeakerDao = database.speakerDao()
-
-    @Provides
-    fun provideSponsorsDao(
-        database: Database
-    ): SponsorsDao = database.sponsorsDao()
-
-    @Provides
-    fun providesAuthorDao(
-        database: Database
-    ): SessionDao = database.sessionDao()
-
-    @Provides
-    fun providesBookmarkDao(
-        database: Database
-    ): BookmarkDao = database.bookmarkDao()
-
-    @Provides
-    fun providesOrganizersDao(
-        database: Database
-    ): OrganizersDao = database.organizersDao()
-
-    @Provides
-    fun providesFeedDao(
-        database: Database
-    ): FeedDao = database.feedDao()
+val daoModule: Module = module {
+    single<SpeakerDao> { get<Database>().speakerDao() }
+    single<SponsorsDao> { get<Database>().sponsorsDao() }
+    single<SessionDao> { get<Database>().sessionDao() }
+    single<BookmarkDao> { get<Database>().bookmarkDao() }
+    single<OrganizersDao> { get<Database>().organizersDao() }
+    single<FeedDao> { get<Database>().feedDao() }
 }

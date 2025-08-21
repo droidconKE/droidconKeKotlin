@@ -23,7 +23,6 @@ import com.android254.presentation.home.mappers.toPresentation
 import com.android254.presentation.home.mappers.toSpeakersPresentation
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.sessions.mappers.toPresentationModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +30,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+
+class HomeViewModel(
     homeRepo: HomeRepo,
     private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {

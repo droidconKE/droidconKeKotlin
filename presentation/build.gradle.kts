@@ -15,7 +15,6 @@
  */
 plugins {
     alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.hilt)
     alias(notation = libs.plugins.compose.compiler)
     alias(libs.plugins.droidconke.android.library.compose)
     alias(libs.plugins.droidconke.android.library.jacoco)
@@ -59,6 +58,12 @@ dependencies {
     implementation(libs.kotlin.coroutines.datetime)
 
     implementation(libs.firebase.messaging)
+
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.compose.viewmodel.navigation)
 
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.navigation)

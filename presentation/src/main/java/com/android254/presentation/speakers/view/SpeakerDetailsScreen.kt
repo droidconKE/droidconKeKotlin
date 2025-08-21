@@ -53,7 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.hilt.navigation.compose.hiltViewModel
+
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -72,11 +72,12 @@ import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
 import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SpeakerDetailsRoute(
     name: String,
-    speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = hiltViewModel(),
+    speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = koinViewModel(),
     navigateBack: () -> Unit = {}
 ) {
     val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle()

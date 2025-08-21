@@ -49,7 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
@@ -59,10 +58,11 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FeedRoute(
-    feedViewModel: FeedViewModel = hiltViewModel(),
+    feedViewModel: FeedViewModel = koinViewModel(),
     navigateToFeedbackScreen: () -> Unit = {}
 ) {
     val feedUIState by feedViewModel.uiState.collectAsStateWithLifecycle()

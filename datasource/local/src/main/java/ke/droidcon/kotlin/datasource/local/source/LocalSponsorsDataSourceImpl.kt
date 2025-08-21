@@ -15,18 +15,18 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
-import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import javax.inject.Inject
 
-class LocalSponsorsDataSourceImpl @Inject constructor(
+class LocalSponsorsDataSourceImpl(
     private val sponsorsDao: SponsorsDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
+    private val localSourceIoDispatcher: CoroutineDispatcher
 ) : LocalSponsorsDataSource {
 
     override fun fetchCachedSponsors(): Flow<List<SponsorEntity>> {

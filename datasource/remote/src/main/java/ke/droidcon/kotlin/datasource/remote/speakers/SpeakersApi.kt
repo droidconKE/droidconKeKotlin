@@ -18,13 +18,12 @@ package ke.droidcon.kotlin.datasource.remote.speakers
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakersPagedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
 
-class SpeakersApi @Inject constructor(
+class SpeakersApi(
     private val client: HttpClient
 ) {
     suspend fun fetchSpeakers(): DataResult<SpeakersPagedResponse> = dataResultSafeApiCall {

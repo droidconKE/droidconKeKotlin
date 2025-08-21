@@ -36,7 +36,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import com.android254.presentation.models.EventDate
@@ -51,10 +50,11 @@ import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chaiColorsPalette
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SessionsRoute(
-    sessionsViewModel: SessionsViewModel = hiltViewModel(),
+    sessionsViewModel: SessionsViewModel = koinViewModel(),
     navigateToSessionDetails: (sessionId: String) -> Unit = {}
 ) {
     val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()

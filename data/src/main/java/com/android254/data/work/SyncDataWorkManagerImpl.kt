@@ -26,15 +26,11 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants.syncDataWorkerName
 import com.android254.domain.work.SyncDataWorkManager
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class SyncDataWorkManagerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+class SyncDataWorkManagerImpl(
+    private val context: Context
 ) : SyncDataWorkManager {
 
     override val isSyncing: Flow<Boolean> =

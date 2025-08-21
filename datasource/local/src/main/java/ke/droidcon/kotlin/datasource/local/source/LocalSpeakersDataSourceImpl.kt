@@ -15,18 +15,16 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
-import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
-class LocalSpeakersDataSourceImpl @Inject constructor(
+class LocalSpeakersDataSourceImpl(
     private val speakerDao: SpeakerDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
+    private val localSourceIoDispatcher: CoroutineDispatcher
 ) : LocalSpeakersDataSource {
 
     override fun getCachedSpeakers(): Flow<List<SpeakerEntity>> =

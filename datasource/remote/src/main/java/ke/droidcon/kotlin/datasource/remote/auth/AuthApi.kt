@@ -19,14 +19,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.auth.model.StatusDTO
 import ke.droidcon.kotlin.datasource.remote.utils.provideBaseUrl
 import ke.droidcon.kotlin.datasource.remote.utils.safeApiCall
 
-class AuthApi @Inject constructor(
+
+class AuthApi(
     private val client: HttpClient
 ) {
     suspend fun googleLogin(token: GoogleToken): AccessTokenDTO = safeApiCall {

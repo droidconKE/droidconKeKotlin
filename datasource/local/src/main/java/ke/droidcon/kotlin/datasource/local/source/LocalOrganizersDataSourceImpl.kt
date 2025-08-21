@@ -15,18 +15,16 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
-import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
-class LocalOrganizersDataSourceImpl @Inject constructor(
+class LocalOrganizersDataSourceImpl(
     private val organizersDao: OrganizersDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
+    private val localSourceIoDispatcher: CoroutineDispatcher
 ) : LocalOrganizersDataSource {
 
     override fun getOrganizers(): Flow<List<OrganizerEntity>> {

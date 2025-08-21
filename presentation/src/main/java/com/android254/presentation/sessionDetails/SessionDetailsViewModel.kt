@@ -22,14 +22,13 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
-import dagger.hilt.android.lifecycle.HiltViewModel
+
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed interface SessionDetailsUiState {
 
@@ -39,8 +38,8 @@ sealed interface SessionDetailsUiState {
     data class Error(val message: String) : SessionDetailsUiState
 }
 
-@HiltViewModel
-class SessionDetailsViewModel @Inject constructor(
+
+class SessionDetailsViewModel(
     private val sessionsRepo: SessionsRepo,
     private val savedStateHandle: SavedStateHandle
 

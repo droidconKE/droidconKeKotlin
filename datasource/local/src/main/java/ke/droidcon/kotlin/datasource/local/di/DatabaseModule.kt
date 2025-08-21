@@ -15,29 +15,18 @@
  */
 package ke.droidcon.kotlin.datasource.local.di
 
-import android.content.Context
 import androidx.room.Room
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.local.Database
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object DatabaseModule {
-
-    @Provides
-    @Singleton
-    fun providesDatabase(
-        @ApplicationContext context: Context
-    ): Database = Room.databaseBuilder(
-        context,
-        Database::class.java,
-        "dcke22-database"
-    )
-        .fallbackToDestructiveMigration()
-        .build()
+val databaseModule: Module = module {
+    single<Database> {
+        Room.databaseBuilder(
+                androidContext(),
+                Database::class.java,
+                "dcke22-database"
+            ).fallbackToDestructiveMigration(false).build()
+    }
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package com.android254.data.work
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
@@ -26,27 +25,28 @@ import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import org.koin.core.qualifier.named
+import kotlin.random.Random
 
-@HiltWorker
-class SyncDataWorker @AssistedInject constructor(
-    @Assisted val appContext: Context,
-    @Assisted val workerParameters: WorkerParameters,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val speakersRepo: SpeakersRepo,
-    private val sponsorsRepo: SponsorsRepo,
-    private val sessionsRepo: SessionsRepo,
-    private val organizersRepo: OrganizersRepo,
-    private val feedRepo: FeedRepo
-) : CoroutineWorker(appContext, workerParameters) {
+class SyncDataWorker(
+    val appContext: Context,
+    val workerParameters: WorkerParameters
+) : CoroutineWorker(appContext, workerParameters), KoinComponent {
+
+
+    private val ioDispatcher: CoroutineDispatcher by inject(named("IoDispatcher"))
+    private val speakersRepo: SpeakersRepo by inject()
+    private val sponsorsRepo: SponsorsRepo by inject()
+    private val sessionsRepo: SessionsRepo by inject()
+    private val organizersRepo: OrganizersRepo by inject()
+    private val feedRepo: FeedRepo by inject()
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(
@@ -55,7 +55,6 @@ class SyncDataWorker @AssistedInject constructor(
                 .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
                 .setContentTitle(appContext.getString(R.string.sync_notification_message))
                 .build()
-
         )
     }
 

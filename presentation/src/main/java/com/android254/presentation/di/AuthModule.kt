@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.di
+package com.android254.presentation.di
 
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import ke.droidcon.kotlin.datasource.remote.utils.RemoteConfigConfig
-import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
-import org.koin.core.module.Module
+import com.android254.presentation.auth.GoogleSignInHandler
 import org.koin.dsl.module
+import org.koin.android.ext.koin.androidContext
 
-val remoteConfigModule: Module = module {
-    single<FirebaseRemoteConfig> { RemoteConfigConfig.setup() }
-    single<RemoteFeatureToggle> { RemoteFeatureToggle(Firebase.remoteConfig) }
+val authModule = module {
+    single { GoogleSignInHandler(androidContext()) }
 }

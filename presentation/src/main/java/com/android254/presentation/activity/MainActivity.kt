@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.android254.domain.work.SyncDataWorkManager
@@ -48,13 +47,13 @@ import com.android254.presentation.common.bottomnav.BottomNavigationBar
 import com.android254.presentation.common.navigation.Navigation
 import com.droidconke.ChaiDcKeTheme
 import com.droidconke.chaiColorsPalette
-import dagger.hilt.android.AndroidEntryPoint
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.compose.viewmodel.koinViewModel
 import timber.log.Timber
-import javax.inject.Inject
 
-@AndroidEntryPoint
+
 class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -63,11 +62,11 @@ class MainActivity : ComponentActivity() {
         Timber.i("Notification permission is :$isGranted")
     }
 
-    @Inject
-    lateinit var remoteFeatureToggle: RemoteFeatureToggle
 
-    @Inject
-    lateinit var syncDataWorkManager: SyncDataWorkManager
+    private val remoteFeatureToggle: RemoteFeatureToggle by inject()
+
+
+    private val syncDataWorkManager: SyncDataWorkManager by inject ()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +106,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    val authViewModel = hiltViewModel<AuthViewModel>()
+    val authViewModel = koinViewModel<AuthViewModel>()
     val navController = rememberNavController()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     var showAuthDialog by remember {

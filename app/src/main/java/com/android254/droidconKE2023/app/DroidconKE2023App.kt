@@ -19,31 +19,24 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
-import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
 
-@HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
     private lateinit var _workManagerConfiguration: Configuration
 
     override fun onCreate() {
         super.onCreate()
+        initKoin(this)
         initTimber()
         setUpWorkerManagerNotificationChannel()
         _workManagerConfiguration = Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.DEBUG)
-            .setWorkerFactory(workerFactory)
             .build()
     }
 

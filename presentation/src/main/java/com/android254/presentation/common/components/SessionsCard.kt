@@ -43,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
@@ -58,6 +57,7 @@ import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SessionsCard(
@@ -135,7 +135,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
 @Composable
 fun SessionTitleComponent(
     session: SessionPresentationModel,
-    viewModel: SessionsViewModel = hiltViewModel()
+    viewModel: SessionsViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
     Row(

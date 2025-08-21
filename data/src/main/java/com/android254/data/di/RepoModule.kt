@@ -15,55 +15,19 @@
  */
 package com.android254.data.di
 
-import com.android254.data.repos.AuthManager
-import com.android254.data.repos.FeedManager
-import com.android254.data.repos.HomeRepoImpl
-import com.android254.data.repos.OrganizersManager
-import com.android254.data.repos.SessionsManager
-import com.android254.data.repos.SpeakersManager
-import com.android254.data.repos.SponsorsManager
-import com.android254.domain.repos.AuthRepo
-import com.android254.domain.repos.FeedRepo
-import com.android254.domain.repos.HomeRepo
-import com.android254.domain.repos.OrganizersRepo
-import com.android254.domain.repos.SessionsRepo
-import com.android254.domain.repos.SpeakersRepo
-import com.android254.domain.repos.SponsorsRepo
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.android254.data.repos.*
+import com.android254.domain.repos.*
+import kotlinx.coroutines.CoroutineDispatcher
+import org.koin.core.qualifier.named
+import org.koin.dsl.binds
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepoModule {
-
-    @Binds
-    @Singleton
-    abstract fun provideAuthRepo(repo: AuthManager): AuthRepo
-
-    @Binds
-    @Singleton
-    abstract fun provideSessionsRepo(repo: SessionsManager): SessionsRepo
-
-    @Binds
-    @Singleton
-    abstract fun providesHomeRepo(homeRepoImpl: HomeRepoImpl): HomeRepo
-
-    @Binds
-    @Singleton
-    abstract fun provideSpeakersRepo(manager: SpeakersManager): SpeakersRepo
-
-    @Binds
-    @Singleton
-    abstract fun provideOrganizersRepo(source: OrganizersManager): OrganizersRepo
-
-    @Binds
-    @Singleton
-    abstract fun provideFeedRepo(manager: FeedManager): FeedRepo
-
-    @Binds
-    @Singleton
-    abstract fun provideSponsorsRepo(manager: SponsorsManager): SponsorsRepo
+val repoModule = module {
+    single { AuthManager(get(), get(), get<CoroutineDispatcher>(named("IoDispatcher"))) } binds arrayOf(AuthRepo::class)
+    single { SessionsManager(get(), get(), get(), get<CoroutineDispatcher>(named("IoDispatcher"))) } binds arrayOf(SessionsRepo::class)
+    single { HomeRepoImpl(get(), get(), get(), get(), get<CoroutineDispatcher>(named("IoDispatcher"))) } binds arrayOf(HomeRepo::class)
+    single { SpeakersManager(get(), get()) } binds arrayOf(SpeakersRepo::class)
+    single { OrganizersManager(get(), get(), get<CoroutineDispatcher>(named("IoDispatcher"))) } binds arrayOf(OrganizersRepo::class)
+    single { FeedManager(get(), get()) } binds arrayOf(FeedRepo::class)
+    single { SponsorsManager(get(), get()) } binds arrayOf(SponsorsRepo::class)
 }

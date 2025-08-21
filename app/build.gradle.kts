@@ -15,7 +15,6 @@
  */
 plugins {
     alias(libs.plugins.droidconke.android.application)
-    alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.droidconke.android.application.firebase)
     alias(libs.plugins.droidconke.android.application.jacoco)
@@ -78,7 +77,9 @@ dependencies {
     implementation(project(":datasource:remote"))
     implementation(project(":domain"))
     implementation(project(":presentation"))
-
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose)
     implementation(libs.android.coreKtx)
     implementation(libs.android.appCompat)
     implementation(libs.android.material)

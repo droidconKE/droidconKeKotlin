@@ -26,9 +26,7 @@ import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,8 +36,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@HiltViewModel
-class SessionsViewModel @Inject constructor(
+
+class SessionsViewModel(
     private val sessionsRepo: SessionsRepo,
     private val syncDataWorkManager: SyncDataWorkManager
 ) : ViewModel() {
@@ -162,7 +160,11 @@ class SessionsViewModel @Inject constructor(
             _sessionsUiState.update {
                 it.copy(
                     eventDays = sessionDays,
-                    selectedEventDay = if (it.selectedEventDay.value == "-1") { sessionDays.first() } else { it.selectedEventDay }
+                    selectedEventDay = if (it.selectedEventDay.value == "-1") {
+                        sessionDays.first()
+                    } else {
+                        it.selectedEventDay
+                    }
                 )
             }
         }

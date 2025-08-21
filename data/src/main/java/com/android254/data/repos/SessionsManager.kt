@@ -21,14 +21,9 @@ import com.android254.domain.models.Session
 import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,12 +33,15 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class SessionsManager @Inject constructor(
+class SessionsManager(
     private val localSessionsDataSource: LocalSessionsDataSource,
     private val remoteSessionsDataSource: RemoteSessionsDataSource,
     private val bookmarkDao: BookmarkDao,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : SessionsRepo {
 
     override fun fetchSessions(): Flow<List<Session>> {

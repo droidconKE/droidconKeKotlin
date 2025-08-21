@@ -19,13 +19,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.presentation.models.OrganizingTeamMember
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
 sealed interface AboutScreenUiState {
     object Loading : AboutScreenUiState
@@ -38,8 +36,8 @@ sealed interface AboutScreenUiState {
     data class Error(val message: String) : AboutScreenUiState
 }
 
-@HiltViewModel
-class AboutViewModel @Inject constructor(
+
+class AboutViewModel(
     private val organizersRepo: OrganizersRepo
 ) : ViewModel() {
 

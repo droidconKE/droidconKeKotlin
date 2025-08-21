@@ -24,7 +24,7 @@ import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.pagination.PaginatedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
 
-class FeedApi @Inject constructor(private val client: HttpClient) {
+class FeedApi constructor(private val client: HttpClient) {
 
     suspend fun fetchFeed(page: Int = 1, size: Int = 100) = dataResultSafeApiCall {
         val response: PaginatedResponse<List<FeedDTO>> =

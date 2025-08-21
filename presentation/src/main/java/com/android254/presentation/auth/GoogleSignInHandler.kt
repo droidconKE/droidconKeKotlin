@@ -20,12 +20,12 @@ import android.content.Intent
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
-import javax.inject.Inject
 import ke.droidcon.kotlin.presentation.R
+import org.koin.core.component.KoinComponent
+import timber.log.Timber
 
-class GoogleSignInHandler @Inject constructor(@ApplicationContext private val context: Context) {
+
+class GoogleSignInHandler(private val context: Context) : KoinComponent {
     private val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
         .requestIdToken(context.getString(R.string.default_web_client_id))
         .requestEmail()

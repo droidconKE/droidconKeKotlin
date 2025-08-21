@@ -16,7 +16,6 @@
 
 plugins {
     alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.droidconke.android.library.firebase)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.droidconke.android.library.jacoco)
@@ -43,6 +42,7 @@ dependencies {
     testImplementation(libs.test.robolectric)
     testImplementation(libs.ktor.mock)
     testImplementation(libs.test.mockk)
+    api(libs.koin.core)
 }
 
 kotlin {

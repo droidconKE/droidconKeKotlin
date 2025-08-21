@@ -19,7 +19,6 @@ import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
@@ -27,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
-class FeedManager @Inject constructor(
+class FeedManager(
     private val localFeedDataSource: LocalFeedDataSource,
     private val remoteFeedDataSource: RemoteFeedDataSource
 ) : FeedRepo {

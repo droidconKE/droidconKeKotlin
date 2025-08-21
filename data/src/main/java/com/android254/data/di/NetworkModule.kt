@@ -15,60 +15,55 @@
  */
 package com.android254.data.di
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.android254.data.preferences.DefaultTokenProvider
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import io.ktor.client.*
-import io.ktor.client.engine.*
-import io.ktor.client.engine.android.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.observer.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.feed.FeedApi
+import ke.droidcon.kotlin.datasource.remote.organizers.OrganizersApi
+import ke.droidcon.kotlin.datasource.remote.sessions.SessionsApi
+import ke.droidcon.kotlin.datasource.remote.sponsors.SponsorsApi
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.Module
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
-
-    @Provides
-    @Singleton
-    fun provideHttpClientEngine(chuckerInterceptor: ChuckerInterceptor): HttpClientEngine = OkHttp.create {
-        addInterceptor(chuckerInterceptor)
-    }
-
-    @Provides
-    @Singleton
-    fun provideHttpClient(engine: HttpClientEngine, tokenProvider: TokenProvider, remoteFeatureToggle: RemoteFeatureToggle): HttpClient = HttpClientFactory(tokenProvider, remoteFeatureToggle).create(engine)
-
-    @Provides
-    @Singleton
-    fun provideTokenProvider(datastore: DataStore<Preferences>): TokenProvider = DefaultTokenProvider(datastore)
-
-    @Provides
-    @Singleton
-    fun provideChuckerInterceptor(@ApplicationContext context: Context): ChuckerInterceptor {
-        return ChuckerInterceptor.Builder(context)
-            .collector(ChuckerCollector(context))
+val networkModule: Module = module {
+    single<ChuckerInterceptor> {
+        ChuckerInterceptor.Builder(androidContext())
+            .collector(ChuckerCollector(androidContext()))
             .maxContentLength(250000L)
             .redactHeaders(emptySet())
             .alwaysReadResponseBody(false)
             .build()
     }
+
+    single<HttpClientEngine> {
+        OkHttp.create { addInterceptor(get<ChuckerInterceptor>()) }
+    }
+
+    single<TokenProvider> {
+        DefaultTokenProvider(get<DataStore<Preferences>>())
+    }
+
+    single<HttpClient> {
+        HttpClientFactory(get<TokenProvider>(), get<RemoteFeatureToggle>()).create(get<HttpClientEngine>())
+    }
+
+    single<ke.droidcon.kotlin.datasource.remote.speakers.SpeakersApi> {
+        ke.droidcon.kotlin.datasource.remote.speakers.SpeakersApi(get())
+    }
+
+    single<SessionsApi> { SessionsApi(get()) }
+
+
+    single<SponsorsApi> { SponsorsApi(get()) }
+    single<OrganizersApi> { OrganizersApi(get()) }
+    single<FeedApi> { FeedApi(get()) }
 }

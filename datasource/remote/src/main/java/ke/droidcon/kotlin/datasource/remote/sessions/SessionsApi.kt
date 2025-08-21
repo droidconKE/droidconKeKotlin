@@ -23,7 +23,7 @@ import ke.droidcon.kotlin.datasource.remote.sessions.model.EventScheduleGroupedR
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
 import ke.droidcon.kotlin.datasource.remote.utils.safeApiCall
 
-class SessionsApi @Inject constructor(
+class SessionsApi  constructor(
     private val client: HttpClient
 ) {
     suspend fun fetchSessions(): EventScheduleGroupedResponse = safeApiCall {

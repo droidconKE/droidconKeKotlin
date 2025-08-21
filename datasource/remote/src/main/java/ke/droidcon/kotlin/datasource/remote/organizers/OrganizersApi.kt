@@ -24,7 +24,7 @@ import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideOrgBaseUrl
 
-class OrganizersApi @Inject constructor(
+class OrganizersApi constructor(
     private val client: HttpClient
 ) {
 

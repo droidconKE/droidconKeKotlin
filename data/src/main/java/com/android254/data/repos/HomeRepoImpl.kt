@@ -22,18 +22,16 @@ import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
-import javax.inject.Inject
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-class HomeRepoImpl @Inject constructor(
+class HomeRepoImpl(
     private val speakersRepo: SpeakersRepo,
     private val sessionsRepo: SessionsRepo,
     private val sponsorsRepo: SponsorsRepo,
     private val organizersRepo: OrganizersRepo,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : HomeRepo {
 
     override fun fetchHomeDetails(): Flow<HomeDetails> {

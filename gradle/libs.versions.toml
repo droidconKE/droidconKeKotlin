@@ -10,7 +10,6 @@ desugar_jdk_libs = "2.1.5"
 espresso = "3.6.1"
 gradleplugin = "8.10.1"
 gmsPlugin = "4.4.2"
-hilt = "2.56.2"
 kotlin = "2.1.21"
 ksp = "2.1.21-2.0.2"
 lifecycle = "2.9.1"
@@ -31,7 +30,6 @@ klint = "12.3.0"
 spotless = "7.0.4"
 app_compat = "1.7.1"
 coreKtx = "1.16.0"
-hiltsecond = "1.2.0"
 runtime = "2.10.1"
 material = "1.12.0"
 junit = "1.2.1"
@@ -61,23 +59,17 @@ kotlinStdlib = "2.1.21"
 kotlinTest = "2.1.21"
 runner = "1.6.2"
 core = "1.6.1"
+koin = "4.1.0"
 composeMultiplatform = "1.8.2"
 
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxComposeBom" }
 android-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"}
-android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-android-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-android-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltsecond"}
-android-hilt-androidx-compiler = { module = "androidx.hilt:hilt-compiler" ,version.ref = "hiltsecond"}
-android-hilt-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
 material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 components-ui-tooling-preview = { module = "org.jetbrains.compose.components:components-ui-tooling-preview", version.ref = "composeMultiplatform" }
 work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "runtime"}
-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltsecond"}
-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltsecond"}
 android-material = { module = "com.google.android.material:material", version.ref = "material"}
 android-test-compose = { module = "androidx.compose.ui:ui-test-junit4" }
 android-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
@@ -149,6 +141,16 @@ firebase-remote-config = { module = "com.google.firebase:firebase-config-ktx", v
 firebase-common = { module = "com.google.firebase:firebase-common-ktx", version.ref = "firebase_common"}
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
+#koin
+koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koin" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koin" }
+koin-android-test = { module = "io.insert-koin:koin-android-test", version.ref = "koin" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 
 app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 junit-androidx = { module = "androidx.test.ext:junit", version.ref = "junit"}
@@ -185,7 +187,6 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
-hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -199,7 +200,6 @@ droidconke-composeMultiplatform = { id = "org.jetbrains.compose", version.ref = 
 # Convention plugins defined in the project
 droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
 droidconke-android-room = { id = "droidconke.android.room", version = "unspecified" }
-droidconke-android-hilt = { id = "droidconke.android.hilt", version = "unspecified" }
 droidconke-android-library-compose = { id = "droidconke.android.library.compose", version = "unspecified" }
 droidconke-android-application-firebase = { id = "droidconke.android.application.firebase", version = "unspecified" }
 droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }

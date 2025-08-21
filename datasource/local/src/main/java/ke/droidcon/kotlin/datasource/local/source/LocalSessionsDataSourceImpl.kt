@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,19 @@
 package ke.droidcon.kotlin.datasource.local.source
 
 import androidx.sqlite.db.SimpleSQLiteQuery
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
-import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
 
-class LocalSessionsDataSourceImpl @Inject constructor(
+class LocalSessionsDataSourceImpl(
     private val sessionDao: SessionDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
-) : LocalSessionsDataSource {
+    private val localSourceIoDispatcher: CoroutineDispatcher
+) : LocalSessionsDataSource, KoinComponent {
+
     override fun getCachedSessions(): Flow<List<SessionEntity>> {
         return sessionDao.fetchSessions()
             .flowOn(localSourceIoDispatcher)

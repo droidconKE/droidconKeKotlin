@@ -15,20 +15,35 @@
  */
 package com.android254.presentation.di
 
-import android.content.Context
+
+import com.android254.presentation.about.view.AboutViewModel
+import com.android254.presentation.auth.AuthViewModel
+import com.android254.presentation.feed.FeedViewModel
+import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.notifications.DroidconNotificationManager
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import com.android254.presentation.sessionDetails.SessionDetailsViewModel
+import com.android254.presentation.sessions.view.SessionsViewModel
+import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
+import com.android254.presentation.speakers.SpeakersScreenViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object PresentationModule {
-
-    @Provides
-    @Singleton
-    fun providesDroidconNotificationManager(@ApplicationContext context: Context) = DroidconNotificationManager(context)
+val presentationModule: Module = module {
+    single { DroidconNotificationManager(androidContext()) }
+    viewModelOf(::AuthViewModel)
+    viewModelOf(::AboutViewModel)
+    viewModelOf(::FeedViewModel)
+    viewModelOf(::SessionsViewModel)
+    viewModelOf(::HomeViewModel)
+    viewModelOf(:: SpeakerDetailsScreenViewModel)
+    viewModelOf(:: SpeakersScreenViewModel)
+    viewModel {
+        SessionDetailsViewModel(
+            sessionsRepo = get(),
+            savedStateHandle = get()
+        )
+    }
 }

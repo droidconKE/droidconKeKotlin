@@ -45,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.TimeAndVenueComponent
@@ -58,13 +57,14 @@ import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chaiColorsPalette
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SessionsCardWithBannerImage(
     modifier: Modifier = Modifier,
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    viewModel: SessionsViewModel = hiltViewModel()
+    viewModel: SessionsViewModel = koinViewModel()
 ) {
     val scope = rememberCoroutineScope()
     Card(
