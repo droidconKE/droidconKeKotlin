@@ -18,8 +18,6 @@ package com.droidconke
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.ReadOnlyComposable
-import com.droidconke.chai.colors.ChaiColors
 import com.droidconke.chai.colors.ChaiDarkColorPalette
 import com.droidconke.chai.colors.ChaiLightColorPalette
 import com.droidconke.chai.colors.LocalChaiColorsPalette
