@@ -61,9 +61,5 @@ gradlePlugin {
             id = "droidconke.android.library.jacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
-        register("multiplatform") {
-            id = "droidconke.multiplatform"
-            implementationClass = "MultiplaftormConventionPlugin"
-        }
     }
 }
