@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">Compose Multiplatform</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_main_two">MainActivityTwo</string>
-</resources>
