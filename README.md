@@ -309,6 +309,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/AmenyaEngr">
+            <img src="https://avatars.githubusercontent.com/u/202018386?v=4" width="100;" alt="AmenyaEngr"/>
+            <br />
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/Terry-Mochire">
             <img src="https://avatars.githubusercontent.com/u/82908547?v=4" width="100;" alt="Terry-Mochire"/>
             <br />
@@ -321,15 +328,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Titan</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
             <br />
             <sub><b>Martin Thuo</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/joelmuraguri">
             <img src="https://avatars.githubusercontent.com/u/97348446?v=4" width="100;" alt="joelmuraguri"/>
@@ -352,53 +359,25 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/BKinya">
-            <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
+        <a href="https://github.com/lokified">
+            <img src="https://avatars.githubusercontent.com/u/87479198?v=4" width="100;" alt="lokified"/>
             <br />
-            <sub><b>Beatrice Kinya</b></sub>
+            <sub><b>Sheldon Okware</b></sub>
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/princemill">
-            <img src="https://avatars.githubusercontent.com/u/128790519?v=4" width="100;" alt="princemill"/>
+        <a href="https://github.com/joenjogu">
+            <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
             <br />
-            <sub><b>Chris Matee</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/Dbriane208">
-            <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
-            <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Joenjogu</b></sub>
         </a>
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/Jeremy-Gitau">
-            <img src="https://avatars.githubusercontent.com/u/56400436?v=4" width="100;" alt="Jeremy-Gitau"/>
+        <a href="https://github.com/donald-okara">
+            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
             <br />
-            <sub><b>Jeremy</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/josphatmwania">
-            <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
-            <br />
-            <sub><b>Josphat Mwania</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/stephenWanjala">
-            <img src="https://avatars.githubusercontent.com/u/74505448?v=4" width="100;" alt="stephenWanjala"/>
-            <br />
-            <sub><b>Wanjala Stephen</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/anuragkanojiya1">
-            <img src="https://avatars.githubusercontent.com/u/144598258?v=4" width="100;" alt="anuragkanojiya1"/>
-            <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Don Okara</b></sub>
         </a>
     </td>
     <td align="center">
@@ -409,25 +388,60 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/donald-okara">
-            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
+        <a href="https://github.com/anuragkanojiya1">
+            <img src="https://avatars.githubusercontent.com/u/144598258?v=4" width="100;" alt="anuragkanojiya1"/>
             <br />
-            <sub><b>Don Okara</b></sub>
+            <sub><b>Null</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/stephenWanjala">
+            <img src="https://avatars.githubusercontent.com/u/74505448?v=4" width="100;" alt="stephenWanjala"/>
+            <br />
+            <sub><b>Wanjala Stephen</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/josphatmwania">
+            <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
+            <br />
+            <sub><b>Josphat Mwania</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Jeremy-Gitau">
+            <img src="https://avatars.githubusercontent.com/u/56400436?v=4" width="100;" alt="Jeremy-Gitau"/>
+            <br />
+            <sub><b>Jeremy</b></sub>
         </a>
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/joenjogu">
-            <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
+        <a href="https://github.com/Dbriane208">
+            <img src="https://avatars.githubusercontent.com/u/99172711?v=4" width="100;" alt="Dbriane208"/>
             <br />
-            <sub><b>Joenjogu</b></sub>
+            <sub><b>Null</b></sub>
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/lokified">
-            <img src="https://avatars.githubusercontent.com/u/87479198?v=4" width="100;" alt="lokified"/>
+        <a href="https://github.com/princemill">
+            <img src="https://avatars.githubusercontent.com/u/128790519?v=4" width="100;" alt="princemill"/>
             <br />
-            <sub><b>Sheldon Okware</b></sub>
+            <sub><b>Chris Matee</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/BKinya">
+            <img src="https://avatars.githubusercontent.com/u/30239692?v=4" width="100;" alt="BKinya"/>
+            <br />
+            <sub><b>Beatrice Kinya</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/tamzi">
+            <img src="https://avatars.githubusercontent.com/u/3008932?v=4" width="100;" alt="tamzi"/>
+            <br />
+            <sub><b>Tamzi</b></sub>
         </a>
     </td></tr>
 </table>
