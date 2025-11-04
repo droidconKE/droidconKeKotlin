@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.10.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.10.1)" variant="all" version="8.10.1">
+
+    <issue
+        id="Instantiatable"
+        message="`MessagingService` must extend android.app.Service"
+        errorLine1="            android:name=&quot;com.android254.presentation.notifications.MessagingService&quot;"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="38"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="KotlinNullnessAnnotation"
+        message="Do not use `@NotNull` in Kotlin; the nullability is already implied by the Kotlin type `StackTraceElement` **not** ending with `?`"
+        errorLine1="                            @NotNull element: StackTraceElement,"
+        errorLine2="                            ~~~~~~~~">
+        <location
+            file="src/main/java/com/android254/droidconKE2023/app/DroidconKE2023App.kt"
+            line="58"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="KotlinNullnessAnnotation"
+        message="Do not use `@NotNull` in Kotlin; the nullability is already implied by the Kotlin type `String` **not** ending with `?`"
+        errorLine1="                            @NotNull element: StackTraceElement,"
+        errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/android254/droidconKE2023/app/DroidconKE2023App.kt"
+            line="58"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of Gradle than 8.11.1 is available: 8.14.3"
+        errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/wrapper/gradle-wrapper.properties"
+            line="3"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.10.1 is available: 8.13.0"
+        errorLine1="gradleplugin = &quot;8.10.1&quot;"
+        errorLine2="               ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="11"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.library than 8.10.1 is available: 8.13.0"
+        errorLine1="gradleplugin = &quot;8.10.1&quot;"
+        errorLine2="               ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="11"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.tools.build:gradle than 8.10.1 is available: 8.13.0"
+        errorLine1="agp = &quot;8.10.1&quot;"
+        errorLine2="      ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="23"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.11.0"
+        errorLine1="androidx-activity = &quot;1.10.1&quot;"
+        errorLine2="                    ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="4"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose than 2.9.0 is available: 2.9.4"
+        errorLine1="androidx-lifecycle = &quot;2.9.0&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="5"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.androidx.lifecycle:lifecycle-viewmodel than 2.9.0 is available: 2.9.4"
+        errorLine1="androidx-lifecycle = &quot;2.9.0&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="5"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.6.1 is available: 3.7.0"
+        errorLine1="espresso = &quot;3.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="10"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.espresso:espresso-idling-resource than 3.6.1 is available: 3.7.0"
+        errorLine1="espresso = &quot;3.6.1&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="10"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.gms.google-services than 4.4.2 is available: 4.4.4"
+        errorLine1="gmsPlugin = &quot;4.4.2&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="12"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.dagger.hilt.android than 2.56.2 is available: 2.57.2"
+        errorLine1="hilt = &quot;2.56.2&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="13"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.android than 2.1.21 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.1.21&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="14"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.1.21 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.1.21&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="14"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.plugin.serialization than 2.1.21 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.1.21&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="14"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.devtools.ksp than 2.1.21-2.0.2 is available: 2.2.21-2.0.4"
+        errorLine1="ksp = &quot;2.1.21-2.0.2&quot;"
+        errorLine2="      ~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="15"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.9.1 is available: 2.9.4"
+        errorLine1="lifecycle = &quot;2.9.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="16"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.1 is available: 2.9.4"
+        errorLine1="lifecycle = &quot;2.9.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="16"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.9.1 is available: 2.9.4"
+        errorLine1="lifecycle = &quot;2.9.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="16"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.1 is available: 2.9.4"
+        errorLine1="lifecycle = &quot;2.9.1&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="16"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-compiler than 2.7.1 is available: 2.8.3"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="17"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-ktx than 2.7.1 is available: 2.8.3"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="17"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-paging than 2.7.1 is available: 2.8.3"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="17"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.room:room-runtime than 2.7.1 is available: 2.8.3"
+        errorLine1="room = &quot;2.7.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="17"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.firebase.crashlytics than 2.9.9 is available: 3.0.6"
+        errorLine1="firebaseCrashlyticsPlugin = &quot;2.9.9&quot;"
+        errorLine2="                            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="20"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.firebase:firebase-crashlytics-gradle than 2.9.9 is available: 3.0.6"
+        errorLine1="firebaseCrashlyticsPlugin = &quot;2.9.9&quot;"
+        errorLine2="                            ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="20"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.firebase.firebase-perf than 1.4.2 is available: 2.0.2"
+        errorLine1="firebasePerfPlugin = &quot;1.4.2&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="21"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.firebase:perf-plugin than 1.4.2 is available: 2.0.2"
+        errorLine1="firebasePerfPlugin = &quot;1.4.2&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="21"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.github.chuckerteam.chucker:library than 4.1.0 is available: 4.2.0"
+        errorLine1="chucker = &quot;4.1.0&quot;"
+        errorLine2="          ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="24"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2025.06.00 is available: 2025.10.01"
+        errorLine1="androidxComposeBom = &quot;2025.06.00&quot;"
+        errorLine2="                     ~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="25"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jlleitschuh.gradle.ktlint than 12.3.0 is available: 13.1.0"
+        errorLine1="klint = &quot;12.3.0&quot;"
+        errorLine2="        ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="28"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.diffplug.spotless than 7.0.4 is available: 8.0.0"
+        errorLine1="spotless = &quot;7.0.4&quot;"
+        errorLine2="           ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="29"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.16.0 is available: 1.17.0"
+        errorLine1="coreKtx = &quot;1.16.0&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="31"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-common than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltsecond = &quot;1.2.0&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="32"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-compiler than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltsecond = &quot;1.2.0&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="32"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-navigation-compose than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltsecond = &quot;1.2.0&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="32"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.hilt:hilt-work than 1.2.0 is available: 1.3.0"
+        errorLine1="hiltsecond = &quot;1.2.0&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="32"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.work:work-runtime-ktx than 2.10.1 is available: 2.11.0"
+        errorLine1="runtime = &quot;2.10.1&quot;"
+        errorLine2="          ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="33"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.13.0"
+        errorLine1="material = &quot;1.12.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="34"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0"
+        errorLine1="junit = &quot;1.2.1&quot;"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="35"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test.ext:junit-ktx than 1.2.1 is available: 1.3.0"
+        errorLine1="junit = &quot;1.2.1&quot;"
+        errorLine2="        ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="35"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.11.0"
+        errorLine1="activity = &quot;1.10.1&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="37"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.gms:play-services-auth than 21.3.0 is available: 21.4.0"
+        errorLine1="auth = &quot;21.3.0&quot;"
+        errorLine2="       ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="43"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.airbnb.android:lottie-compose than 6.6.6 is available: 6.7.1"
+        errorLine1="lottie = &quot;6.6.6&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="44"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:core-ktx than 1.6.1 is available: 1.7.0"
+        errorLine1="test_corektx = &quot;1.6.1&quot;"
+        errorLine2="               ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="49"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.robolectric:robolectric than 4.14.1 is available: 4.16"
+        errorLine1="test_robolectric = &quot;4.14.1&quot;"
+        errorLine2="                   ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="50"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation:navigation-testing than 2.9.0 is available: 2.9.5"
+        errorLine1="test_navigation = &quot;2.9.0&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="51"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of io.mockk:mockk than 1.14.2 is available: 1.14.6"
+        errorLine1="test_mockk = &quot;1.14.2&quot;"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="52"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.firebase:firebase-bom than 33.15.0 is available: 34.5.0"
+        errorLine1="firebase_bom = &quot;33.15.0&quot;"
+        errorLine2="               ~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="53"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin:kotlin-stdlib than 2.1.21 is available: 2.2.20"
+        errorLine1="kotlinStdlib = &quot;2.1.21&quot;"
+        errorLine2="               ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="58"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin:kotlin-test than 2.1.21 is available: 2.2.20"
+        errorLine1="kotlinTest = &quot;2.1.21&quot;"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="59"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0"
+        errorLine1="runner = &quot;1.6.2&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="60"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.test:core than 1.6.1 is available: 1.7.0"
+        errorLine1="core = &quot;1.6.1&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="61"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.test.ext:junit but with different version"
+        errorLine1="android-test-junit4 = { module = &quot;androidx.test.ext:junit&quot;, version.ref = &quot;junit&quot;}"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="79"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.activity:activity-compose but with different version"
+        errorLine1="androidx-activity-compose = { module = &quot;androidx.activity:activity-compose&quot;, version.ref = &quot;androidx-activity&quot; }"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="81"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.activity:activity-compose but with different version"
+        errorLine1="compose-activity = { module = &quot;androidx.activity:activity-compose&quot;, version.ref = &quot;activity&quot;}"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="87"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.test.ext:junit but with different version"
+        errorLine1="junit-androidx = { module = &quot;androidx.test.ext:junit&quot;, version.ref = &quot;junit&quot;}"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="148"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.test.ext:junit-ktx but with different version"
+        errorLine1="junit-androidx-ktx = { module = &quot;androidx.test.ext:junit-ktx&quot;, version.ref = &quot;junit&quot;}"
+        errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="149"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="SimilarGradleDependency"
+        message="There are multiple dependencies androidx.test.ext:junit-ktx but with different version"
+        errorLine1="test-junit-ktx = { module = &quot;androidx.test.ext:junit-ktx&quot;, version.ref = &quot;junit&quot;}"
+        errorLine2="                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="$HOME/Documents/Projects/Multiplatform/droidconKeKotlin/gradle/libs.versions.toml"
+            line="150"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v24`) is unnecessary; `minSdkVersion` is 24. Merge all the resources in this folder into `drawable`.">
+        <location
+            file="src/main/res/drawable-v24"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_launcher_background` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_launcher_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_launcher_foreground` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable-v24/ic_launcher_foreground.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive icon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive roundIcon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+</issues>
