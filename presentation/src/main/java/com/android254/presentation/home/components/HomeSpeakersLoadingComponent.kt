@@ -37,18 +37,20 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun HomeSpeakersLoadingComponent() {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier =
+            Modifier
+                .fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             ChaiSubTitle(
                 titleText = stringResource(id = R.string.speakers_label),
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
             )
             LoadingBox(height = 20.dp, width = 80.dp)
         }

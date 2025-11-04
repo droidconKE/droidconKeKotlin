@@ -18,18 +18,24 @@ package ke.droidcon.kotlin.datasource.remote.feedback
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.feedback.model.Feedback
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
+import javax.inject.Inject
 
-class FeedbackApi @Inject constructor(
-    private val client: HttpClient
-) {
-    suspend fun postFeedback(feedback: Feedback, sessionId: String) = dataResultSafeApiCall {
-        client.post("${provideEventBaseUrl()}/feedback/sessions/$sessionId") {
-            setBody(feedback)
-        }
-        return@dataResultSafeApiCall
+class FeedbackApi
+    @Inject
+    constructor(
+        private val client: HttpClient,
+    ) {
+        suspend fun postFeedback(
+            feedback: Feedback,
+            sessionId: String,
+        ) =
+            dataResultSafeApiCall {
+                client.post("${provideEventBaseUrl()}/feedback/sessions/$sessionId") {
+                    setBody(feedback)
+                }
+                return@dataResultSafeApiCall
+            }
     }
-}

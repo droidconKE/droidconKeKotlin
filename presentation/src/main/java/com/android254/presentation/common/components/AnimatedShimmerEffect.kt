@@ -28,23 +28,27 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AnimatedShimmerEffect(
     gradientColors: List<Color>,
-    content: @Composable ((Brush) -> Unit)
+    content: @Composable ((Brush) -> Unit),
 ) {
     val transition = rememberInfiniteTransition()
-    val translateAnim = transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1000f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 1000,
-                easing = FastOutSlowInEasing
-            )
+    val translateAnim =
+        transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1000f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = 1000,
+                            easing = FastOutSlowInEasing,
+                        ),
+                ),
         )
-    )
-    val brush = Brush.linearGradient(
-        colors = gradientColors,
-        start = Offset.Zero,
-        end = Offset(x = translateAnim.value, y = translateAnim.value)
-    )
+    val brush =
+        Brush.linearGradient(
+            colors = gradientColors,
+            start = Offset.Zero,
+            end = Offset(x = translateAnim.value, y = translateAnim.value),
+        )
     content(brush)
 }

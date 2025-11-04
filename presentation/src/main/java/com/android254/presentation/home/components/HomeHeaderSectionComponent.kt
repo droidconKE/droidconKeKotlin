@@ -31,7 +31,7 @@ fun HomeHeaderSectionComponent() {
     ChaiBodyMediumBold(
         modifier = Modifier.testTag("home_header"),
         bodyText = stringResource(id = R.string.home_header_welcome_label),
-        textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
     )
 }
 

@@ -39,13 +39,13 @@ import ke.droidcon.kotlin.datasource.local.util.InstantConverter
         BookmarkEntity::class,
         OrganizerEntity::class,
         SponsorEntity::class,
-        FeedEntity::class
+        FeedEntity::class,
     ],
     version = 4,
-    exportSchema = false
+    exportSchema = false,
 )
 @TypeConverters(
-    InstantConverter::class
+    InstantConverter::class,
 )
 abstract class Database : RoomDatabase() {
     abstract fun sessionDao(): SessionDao

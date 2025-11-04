@@ -19,42 +19,43 @@ import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import javax.inject.Inject
 
-class SpeakersManager @Inject constructor(
-    private val localSpeakersDataSource: LocalSpeakersDataSource,
-    private val remoteSpeakersDataSource: RemoteSpeakersDataSource
+class SpeakersManager
+    @Inject
+    constructor(
+        private val localSpeakersDataSource: LocalSpeakersDataSource,
+        private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
+    ) : SpeakersRepo {
+        override fun fetchSpeakers(): Flow<List<Speaker>> =
+            localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
 
-) : SpeakersRepo {
-    override fun fetchSpeakers(): Flow<List<Speaker>> =
-        localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
+        override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
 
-    override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
+        override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
 
-    override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
+        override suspend fun syncSpeakers() {
+            when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
+                is DataResult.Success -> {
+                    localSpeakersDataSource.deleteAllCachedSpeakers()
+                    localSpeakersDataSource.saveCachedSpeakers(
+                        speakers = response.data.map { speaker -> speaker.toEntity() },
+                    )
+                    Timber.d("Sync speakers successful")
+                }
 
-    override suspend fun syncSpeakers() {
-        when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
-            is DataResult.Success -> {
-                localSpeakersDataSource.deleteAllCachedSpeakers()
-                localSpeakersDataSource.saveCachedSpeakers(
-                    speakers = response.data.map { speaker -> speaker.toEntity() }
-                )
-                Timber.d("Sync speakers successful")
-            }
+                is DataResult.Error -> {
+                    Timber.d("Sync speakers failed ${response.message}")
+                }
 
-            is DataResult.Error -> {
-                Timber.d("Sync speakers failed ${response.message}")
-            }
-
-            else -> {
+                else -> {
+                }
             }
         }
     }
-}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="build.gradle.kts">
+        <error line="50" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="57" column="37" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/droidconKE2023/app/DroidconKE2023App.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="35" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="38" column="5" source="standard:blank-line-before-declaration" />
+        <error line="50" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="52" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="53" column="52" source="standard:parameter-list-wrapping" />
+        <error line="53" column="52" source="standard:function-signature" />
+        <error line="53" column="87" source="standard:parameter-list-wrapping" />
+        <error line="53" column="87" source="standard:function-signature" />
+        <error line="66" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="52" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="76" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/droidconKE2023/crashlytics/CrashlyticsTree.kt">
+        <error line="25" column="5" source="standard:blank-line-before-declaration" />
+        <error line="25" column="22" source="standard:function-signature" />
+        <error line="25" column="37" source="standard:function-signature" />
+        <error line="25" column="51" source="standard:function-signature" />
+        <error line="25" column="68" source="standard:function-signature" />
+        <error line="25" column="81" source="standard:function-signature" />
+    </file>
+</baseline>

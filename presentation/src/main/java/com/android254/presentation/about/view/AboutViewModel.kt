@@ -32,34 +32,37 @@ sealed interface AboutScreenUiState {
 
     data class Success(
         val teamMembers: List<OrganizingTeamMember>,
-        val stakeHoldersLogos: List<String>
+        val stakeHoldersLogos: List<String>,
     ) : AboutScreenUiState
 
     data class Error(val message: String) : AboutScreenUiState
 }
 
 @HiltViewModel
-class AboutViewModel @Inject constructor(
-    private val organizersRepo: OrganizersRepo
-) : ViewModel() {
-
-    val uiState = organizersRepo.getOrganizers()
-        .map { organizers ->
-            val team = organizers.filter { it.type == "individual" }.map {
-                OrganizingTeamMember(
-                    name = it.name,
-                    desc = it.tagline,
-                    image = it.photo
+class AboutViewModel
+    @Inject
+    constructor(
+        private val organizersRepo: OrganizersRepo,
+    ) : ViewModel() {
+        val uiState =
+            organizersRepo.getOrganizers()
+                .map { organizers ->
+                    val team =
+                        organizers.filter { it.type == "individual" }.map {
+                            OrganizingTeamMember(
+                                name = it.name,
+                                desc = it.tagline,
+                                image = it.photo,
+                            )
+                        }
+                    val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
+                    AboutScreenUiState.Success(teamMembers = team, stakeHoldersLogos = stakeholders)
+                }
+                .onStart { AboutScreenUiState.Loading }
+                .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = AboutScreenUiState.Loading,
                 )
-            }
-            val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
-            AboutScreenUiState.Success(teamMembers = team, stakeHoldersLogos = stakeholders)
-        }
-        .onStart { AboutScreenUiState.Loading }
-        .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = AboutScreenUiState.Loading
-        )
-}
+    }

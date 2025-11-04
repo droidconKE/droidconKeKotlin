@@ -34,16 +34,16 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class DefaultTokenProviderTest {
-
     private lateinit var testDataStore: DataStore<Preferences>
     private lateinit var tokenProvider: DefaultTokenProvider
 
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        testDataStore = PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile("test") }
-        )
+        testDataStore =
+            PreferenceDataStoreFactory.create(
+                produceFile = { context.preferencesDataStoreFile("test") },
+            )
         tokenProvider = DefaultTokenProvider(testDataStore)
     }
 

@@ -27,13 +27,14 @@ fun List<Speaker>.toSpeakersPresentation() =
             name = it.name,
             tagline = it.tagline,
             bio = it.biography,
-            twitterHandle = it.twitter
+            twitterHandle = it.twitter,
         )
     }
 
-fun Sponsors.toPresentation() = SponsorPresentationModel(
-    name = sponsorName,
-    link = link,
-    logo = sponsorLogoUrl,
-    sponsorType = sponsorType
-)
+fun Sponsors.toPresentation() =
+    SponsorPresentationModel(
+        name = sponsorName,
+        link = link,
+        logo = sponsorLogoUrl,
+        sponsorType = sponsorType,
+    )

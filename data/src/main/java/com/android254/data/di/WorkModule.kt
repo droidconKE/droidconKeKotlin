@@ -25,7 +25,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class WorkModule {
-
     @Binds
     abstract fun provideSyncDataWorkManager(impl: SyncDataWorkManagerImpl): SyncDataWorkManager
 }

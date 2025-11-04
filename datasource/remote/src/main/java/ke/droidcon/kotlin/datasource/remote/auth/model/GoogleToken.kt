@@ -19,4 +19,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GoogleToken(@SerialName("access_token") val token: String)
+data class GoogleToken(
+    @SerialName("access_token") val token: String,
+)

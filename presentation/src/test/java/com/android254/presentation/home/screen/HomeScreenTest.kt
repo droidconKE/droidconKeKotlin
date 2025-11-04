@@ -36,7 +36,6 @@ import org.robolectric.shadows.ShadowLog
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class HomeScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -106,7 +105,7 @@ class HomeScreenTest {
             HomeSessionSection(
                 sessions = emptyList(),
                 onViewAllSessionClicked = {},
-                onSessionClick = {}
+                onSessionClick = {},
             )
         }
         composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()

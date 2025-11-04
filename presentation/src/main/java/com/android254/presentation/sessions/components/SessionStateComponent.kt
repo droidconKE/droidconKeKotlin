@@ -56,7 +56,7 @@ fun SessionsStateComponent(
     retry: () -> Unit,
     isRefreshing: Boolean,
     sessionScreenState: SessionScreenState,
-    isSessionLayoutList: Boolean
+    isSessionLayoutList: Boolean,
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -66,22 +66,23 @@ fun SessionsStateComponent(
 
     if (sessionsUiState.isEmpty) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier =
+                Modifier
+                    .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(
                 modifier = Modifier.size(70.dp),
                 painter = painterResource(id = R.drawable.sessions_icon),
                 contentDescription = stringResource(id = R.string.sessions_icon_description),
-                tint = ChaiBlue
+                tint = ChaiBlue,
             )
             Spacer(modifier = Modifier.height(20.dp))
 
             ChaiBodyMediumBold(
                 bodyText = sessionsUiState.isEmptyMessage,
-                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
             )
         }
     }
@@ -97,7 +98,7 @@ fun SessionsStateComponent(
             navigateToSessionDetails = navigateToSessionDetails,
             refreshSessionsList = refreshSessionsList,
             sessionScreenState = sessionScreenState,
-            isSessionLayoutList = isSessionLayoutList
+            isSessionLayoutList = isSessionLayoutList,
         )
     }
 }
@@ -109,33 +110,34 @@ fun SessionListComponent(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     refreshSessionsList: () -> Unit,
     sessionScreenState: SessionScreenState,
-    isSessionLayoutList: Boolean
+    isSessionLayoutList: Boolean,
 ) {
     SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
         LazyColumn(
-            contentPadding = PaddingValues(bottom = 32.dp)
+            contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 ChaiSubTitle(
-                    titleText = when (sessionScreenState) {
-                        SessionScreenState.ALL -> "All Sessions"
-                        SessionScreenState.MYSESSIONS -> "My sessions"
-                    },
-                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                    titleText =
+                        when (sessionScreenState) {
+                            SessionScreenState.ALL -> "All Sessions"
+                            SessionScreenState.MYSESSIONS -> "My sessions"
+                        },
+                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
             itemsIndexed(
                 items = sessions,
-                key = { _, session -> session.remoteId }
+                key = { _, session -> session.remoteId },
             ) { index, session ->
 
                 if (isSessionLayoutList) {
                     SessionsCard(
                         session = session,
-                        navigateToSessionDetails = navigateToSessionDetails
+                        navigateToSessionDetails = navigateToSessionDetails,
                     )
                     if (index != sessions.lastIndex) {
                         Box(
@@ -143,19 +145,19 @@ fun SessionListComponent(
                                 start = 40.dp,
                                 end = 0.dp,
                                 top = 10.dp,
-                                bottom = 10.dp
-                            )
+                                bottom = 10.dp,
+                            ),
                         ) {
                             Image(
                                 painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                                contentDescription = stringResource(R.string.spacer_icon_descript)
+                                contentDescription = stringResource(R.string.spacer_icon_descript),
                             )
                         }
                     }
                 } else {
                     SessionsCardWithBannerImage(
                         session = session,
-                        navigateToSessionDetails = navigateToSessionDetails
+                        navigateToSessionDetails = navigateToSessionDetails,
                     )
 
                     Spacer(Modifier.height(16.dp))

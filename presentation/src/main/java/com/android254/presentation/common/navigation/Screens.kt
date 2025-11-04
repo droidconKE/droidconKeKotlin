@@ -18,13 +18,23 @@ package com.android254.presentation.common.navigation
 import androidx.annotation.DrawableRes
 import ke.droidcon.kotlin.presentation.R
 
-sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: String) {
+sealed class Screens(
+    var route: String,
+    @DrawableRes var icon: Int,
+    var title: String,
+) {
     object Home : Screens("/home", R.drawable.home_icon, "Home")
+
     object Feed : Screens("/feed", R.drawable.feed_icon, "Feed")
+
     object Sessions : Screens("/sessions", R.drawable.sessions_icon, "Sessions")
+
     object About : Screens("/about", R.drawable.about_icon, "About")
+
     object Speakers : Screens("/speakers", R.drawable.droidcon_icon, "Speakers")
+
     object FeedBack : Screens("/feedback", R.drawable.droidcon_icon, "FeedBack")
+
     object SessionDetails :
         Screens("/sessionDetails/{sessionId}", R.drawable.droidcon_icon, "Session Details") {
         const val sessionIdNavigationArgument = "sessionId"
@@ -34,9 +44,10 @@ sealed class Screens(var route: String, @DrawableRes var icon: Int, var title: S
         Screens("/speaker_details/{speakerName}", R.drawable.droidcon_icon, "Speaker Details")
 }
 
-val bottomNavigationDestinations = listOf(
-    Screens.Home,
-    Screens.Feed,
-    Screens.Sessions,
-    Screens.About
-)
+val bottomNavigationDestinations =
+    listOf(
+        Screens.Home,
+        Screens.Feed,
+        Screens.Sessions,
+        Screens.About,
+    )

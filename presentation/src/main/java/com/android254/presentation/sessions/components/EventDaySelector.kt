@@ -36,7 +36,7 @@ fun ordinal(i: Int): String {
 fun EventDaySelector(
     selectedDate: EventDate,
     updateSelectedDay: (EventDate) -> Unit,
-    eventDates: List<EventDate>
+    eventDates: List<EventDate>,
 ) {
     LazyRow {
         items(eventDates) { eventDay ->
@@ -44,7 +44,7 @@ fun EventDaySelector(
                 title = ordinal(eventDay.value.toInt()),
                 subtitle = "Day ${eventDay.day}",
                 onClick = { updateSelectedDay(eventDay) },
-                selected = selectedDate == eventDay
+                selected = selectedDate == eventDay,
             )
             Spacer(Modifier.width(16.dp))
         }

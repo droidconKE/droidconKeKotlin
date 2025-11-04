@@ -42,20 +42,21 @@ import ke.droidcon.kotlin.presentation.R
 fun DroidconAppBarWithFeedbackButton(
     modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
-    userProfile: String
+    userProfile: String,
 ) {
     Row(
-        modifier = modifier
-            .background(color = MaterialTheme.chaiColorsPalette.background)
-            .fillMaxWidth()
-            .height(64.dp)
-            .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
-            .testTag("droidcon_topBar_with_Feedback"),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
+                .testTag("droidcon_topBar_with_Feedback"),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
-            contentDescription = stringResource(id = R.string.logo)
+            contentDescription = stringResource(id = R.string.logo),
         )
         Spacer(modifier = Modifier.weight(1f))
 
@@ -66,34 +67,35 @@ fun DroidconAppBarWithFeedbackButton(
 @Composable
 fun FeedbackButton(
     modifier: Modifier = Modifier,
-    onButtonClick: () -> Unit
+    onButtonClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(
-                color = ChaiTeal.copy(alpha = 0.21f)
-            )
-            .clickable(onClick = onButtonClick)
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    color = ChaiTeal.copy(alpha = 0.21f),
+                )
+                .clickable(onClick = onButtonClick)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_feedback_emoji),
             contentDescription = null,
-            tint = MaterialTheme.chaiColorsPalette.textNormalColor
+            tint = MaterialTheme.chaiColorsPalette.textNormalColor,
         )
 
         ChaiBodyXSmall(
             modifier = Modifier,
             bodyText = stringResource(id = R.string.feedback),
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_send_icon),
             contentDescription = null,
-            tint = ChaiTeal
+            tint = ChaiTeal,
         )
     }
 }
@@ -104,7 +106,7 @@ fun Preview() {
     ChaiDCKE22Theme {
         DroidconAppBarWithFeedbackButton(
             onButtonClick = {},
-            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
+            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI",
         )
     }
 }

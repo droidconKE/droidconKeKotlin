@@ -29,5 +29,5 @@ data class HomeViewState(
     val sponsors: List<SponsorPresentationModel> = emptyList(),
     val organizedBy: List<String> = emptyList(),
     val sessions: List<SessionPresentationModel> = emptyList(),
-    val isSessionsSectionVisible: Boolean = false
+    val isSessionsSectionVisible: Boolean = false,
 )

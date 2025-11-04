@@ -19,7 +19,6 @@ import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSponsorsDataSource {
-
     fun fetchCachedSponsors(): Flow<List<SponsorEntity>>
 
     suspend fun deleteCachedSponsors()

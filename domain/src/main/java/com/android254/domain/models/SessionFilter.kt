@@ -20,5 +20,5 @@ data class SessionFilter(
     val levels: List<String> = emptyList(),
     val sessionFormats: List<String> = emptyList(),
     val bookmarked: Boolean = false,
-    val keynote: Boolean = false
+    val keynote: Boolean = false,
 )

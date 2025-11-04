@@ -25,5 +25,5 @@ data class Organizer(
     val twitterHandle: String,
     val designation: String,
     val photo: String,
-    val createdAt: String
+    val createdAt: String,
 )

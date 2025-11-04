@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/java/com/android254/data/di/DataSourceModule.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="59" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="64" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="72" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="80" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="88" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="96" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="104" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="112" column="56" source="standard:trailing-comma-on-declaration-site" />
+        <error line="119" column="27" source="standard:trailing-comma-on-declaration-site" />
+        <error line="125" column="21" source="standard:trailing-comma-on-declaration-site" />
+        <error line="132" column="56" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/di/DatastoreModule.kt">
+        <error line="41" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="44" column="37" source="standard:parameter-list-wrapping" />
+        <error line="44" column="37" source="standard:function-signature" />
+        <error line="44" column="76" source="standard:parameter-list-wrapping" />
+        <error line="44" column="76" source="standard:function-signature" />
+        <error line="46" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="56" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="86" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/di/NetworkModule.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="49" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="52" column="93" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="27" source="standard:function-signature" />
+        <error line="58" column="53" source="standard:function-signature" />
+        <error line="58" column="83" source="standard:function-signature" />
+        <error line="58" column="123" source="standard:function-signature" />
+        <error line="66" column="35" source="standard:parameter-list-wrapping" />
+        <error line="66" column="35" source="standard:function-signature" />
+        <error line="66" column="71" source="standard:parameter-list-wrapping" />
+        <error line="66" column="71" source="standard:function-signature" />
+    </file>
+    <file name="src/main/java/com/android254/data/di/RemoteConfigModule.kt">
+        <error line="32" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/data/di/RepoModule.kt">
+        <error line="41" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/data/di/WorkModule.kt">
+        <error line="28" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/data/network/models/responses/BookmarkDTO.kt">
+        <error line="22" column="24" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/preferences/DefaultTokenProvider.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="33" column="27" source="standard:annotation" />
+        <error line="33" column="35" source="standard:annotation" />
+        <error line="35" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="36" column="1" source="standard:indent" />
+        <error line="36" column="51" source="standard:multiline-expression-wrapping" />
+        <error line="37" column="1" source="standard:indent" />
+        <error line="38" column="1" source="standard:indent" />
+        <error line="39" column="1" source="standard:indent" />
+        <error line="40" column="1" source="standard:indent" />
+        <error line="41" column="1" source="standard:indent" />
+        <error line="43" column="1" source="standard:indent" />
+        <error line="44" column="1" source="standard:indent" />
+        <error line="45" column="1" source="standard:indent" />
+        <error line="46" column="1" source="standard:indent" />
+        <error line="47" column="1" source="standard:indent" />
+        <error line="48" column="1" source="standard:indent" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/AuthManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="33" column="18" source="standard:annotation" />
+        <error line="33" column="26" source="standard:annotation" />
+        <error line="36" column="64" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/FeedManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="30" column="18" source="standard:annotation" />
+        <error line="30" column="26" source="standard:annotation" />
+        <error line="32" column="59" source="standard:trailing-comma-on-declaration-site" />
+        <error line="34" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/HomeRepoImpl.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="31" column="19" source="standard:annotation" />
+        <error line="31" column="27" source="standard:annotation" />
+        <error line="36" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="38" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="56" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/OrganizersManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="34" column="24" source="standard:annotation" />
+        <error line="34" column="32" source="standard:annotation" />
+        <error line="37" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="39" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/SessionsManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="42" column="22" source="standard:annotation" />
+        <error line="42" column="30" source="standard:annotation" />
+        <error line="46" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="48" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="56" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="57" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="63" column="93" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="69" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="71" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="72" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="75" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="102" column="102" source="standard:trailing-comma-on-call-site" />
+        <error line="108" column="102" source="standard:trailing-comma-on-call-site" />
+        <error line="117" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="142" column="83" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/SpeakersManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="30" column="22" source="standard:annotation" />
+        <error line="30" column="30" source="standard:annotation" />
+        <error line="32" column="67" source="standard:trailing-comma-on-declaration-site" />
+        <error line="33" column="1" source="standard:no-blank-line-in-list" />
+        <error line="47" column="83" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/SponsorsManager.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="30" column="22" source="standard:annotation" />
+        <error line="30" column="30" source="standard:annotation" />
+        <error line="32" column="67" source="standard:trailing-comma-on-declaration-site" />
+        <error line="34" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="43" column="85" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/mappers/FeedMappers.kt">
+        <error line="22" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="28" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="31" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="37" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="40" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="46" column="26" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/mappers/OrganizersMapper.kt">
+        <error line="22" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="32" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="35" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="45" column="30" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/mappers/SessionMapper.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="32" column="37" source="standard:multiline-expression-wrapping" />
+        <error line="50" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="73" column="50" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/mappers/SpeakerMapper.kt">
+        <error line="22" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="28" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="31" column="37" source="standard:multiline-expression-wrapping" />
+        <error line="41" column="25" source="standard:trailing-comma-on-call-site" />
+        <error line="44" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="54" column="25" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/repos/mappers/SponsorsMapper.kt">
+        <error line="22" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="28" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="31" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="36" column="26" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/work/SyncDataWorkManagerImpl.kt">
+        <error line="35" column="30" source="standard:annotation" />
+        <error line="35" column="38" source="standard:annotation" />
+        <error line="36" column="53" source="standard:trailing-comma-on-declaration-site" />
+        <error line="38" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="46" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="50" column="29" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/work/SyncDataWorker.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="40" column="21" source="standard:annotation" />
+        <error line="40" column="37" source="standard:annotation" />
+        <error line="48" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="50" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="57" column="25" source="standard:trailing-comma-on-call-site" />
+        <error line="58" column="1" source="standard:no-blank-line-in-list" />
+        <error line="69" column="46" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/data/work/WorkConstants.kt">
+        <error line="19" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="21" column="15" source="standard:property-naming" />
+    </file>
+    <file name="src/main/java/com/android254/data/work/WorkInitializer.kt">
+        <error line="29" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="34" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="36" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="43" column="24" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/data/preferences/DefaultTokenProviderTest.kt">
+        <error line="37" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="44" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="45" column="71" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/data/repos/AuthManagerTest.kt">
+        <error line="42" column="35" source="standard:multiline-expression-wrapping" />
+        <error line="46" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="53" column="60" source="standard:multiline-expression-wrapping" />
+        <error line="55" column="39" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/data/repos/SampleData.kt">
+        <error line="21" column="15" source="standard:multiline-expression-wrapping" />
+        <error line="22" column="12" source="standard:multiline-expression-wrapping" />
+        <error line="23" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="42" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="43" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="44" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="45" column="6" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/data/repos/SessionsManagerTest.kt">
+        <error line="46" column="52" source="standard:multiline-expression-wrapping" />
+        <error line="56" column="1" source="standard:blank-line-before-declaration" />
+        <error line="56" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="75" column="58" source="standard:trailing-comma-on-call-site" />
+    </file>
+</baseline>

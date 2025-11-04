@@ -28,11 +28,11 @@ data class SessionDetailsPresentationModel(
     val level: String,
     val sessionImageUrl: String?,
     val timeSlot: String,
-    val speakers: List<SessionDetailsSpeakerPresentationModel>
+    val speakers: List<SessionDetailsSpeakerPresentationModel>,
 )
 
 data class SessionDetailsSpeakerPresentationModel(
     val name: String,
     val speakerImage: String,
-    val twitterHandle: String
+    val twitterHandle: String,
 )

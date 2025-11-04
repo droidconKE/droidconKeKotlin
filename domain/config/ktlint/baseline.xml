@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/java/com/android254/domain/models/Creator.kt">
+        <error line="22" column="26" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/DataResult.kt">
+        <error line="20" column="5" source="standard:blank-line-before-declaration" />
+        <error line="23" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="27" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/Feed.kt">
+        <error line="24" column="26" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/HomeDetails.kt">
+        <error line="29" column="45" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/Organizer.kt">
+        <error line="28" column="26" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/OrganizingPartners.kt">
+        <error line="20" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="28" column="26" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/ResourceResult.kt">
+        <error line="20" column="5" source="standard:blank-line-before-declaration" />
+        <error line="23" column="42" source="standard:trailing-comma-on-declaration-site" />
+        <error line="25" column="5" source="standard:blank-line-before-declaration" />
+        <error line="26" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/Session.kt">
+        <error line="36" column="25" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/SessionDomainModel.kt">
+        <error line="36" column="22" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/SessionFilter.kt">
+        <error line="23" column="33" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/SessionsInformationDomainModel.kt">
+        <error line="20" column="32" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/models/Speaker.kt">
+        <error line="28" column="29" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/domain/repos/AuthRepo.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/domain/repos/SpeakersRepo.kt">
+        <error line="23" column="5" source="standard:blank-line-before-declaration" />
+        <error line="24" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/main/java/com/android254/domain/repos/SponsorsRepo.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+</baseline>

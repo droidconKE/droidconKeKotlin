@@ -18,23 +18,28 @@ package ke.droidcon.kotlin.datasource.remote.feed
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.pagination.PaginatedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
+import javax.inject.Inject
 
-class FeedApi @Inject constructor(private val client: HttpClient) {
+class FeedApi
+    @Inject
+    constructor(private val client: HttpClient) {
+        suspend fun fetchFeed(
+            page: Int = 1,
+            size: Int = 100,
+        ) =
+            dataResultSafeApiCall {
+                val response: PaginatedResponse<List<FeedDTO>> =
+                    client.get("${provideEventBaseUrl()}/feeds") {
+                        url {
+                            parameters.append("page", page.toString())
+                            parameters.append("per_page", size.toString())
+                        }
+                    }.body()
 
-    suspend fun fetchFeed(page: Int = 1, size: Int = 100) = dataResultSafeApiCall {
-        val response: PaginatedResponse<List<FeedDTO>> =
-            client.get("${provideEventBaseUrl()}/feeds") {
-                url {
-                    parameters.append("page", page.toString())
-                    parameters.append("per_page", size.toString())
-                }
-            }.body()
-
-        return@dataResultSafeApiCall response.data
+                return@dataResultSafeApiCall response.data
+            }
     }
-}

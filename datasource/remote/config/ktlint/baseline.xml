@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/auth/AuthApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="29" column="14" source="standard:annotation" />
+        <error line="29" column="22" source="standard:annotation" />
+        <error line="30" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="32" column="67" source="standard:multiline-expression-wrapping" />
+        <error line="38" column="39" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/auth/model/AccessTokenDTO.kt">
+        <error line="24" column="49" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/auth/model/GoogleToken.kt">
+        <error line="22" column="24" source="standard:parameter-list-wrapping" />
+        <error line="22" column="69" source="standard:parameter-list-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/auth/model/UserDetailsDTO.kt">
+        <error line="25" column="23" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/di/DispatcherModule.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="29" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feed/FeedApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="27" column="14" source="standard:annotation" />
+        <error line="27" column="22" source="standard:annotation" />
+        <error line="28" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="29" column="27" source="standard:function-signature" />
+        <error line="29" column="42" source="standard:function-signature" />
+        <error line="29" column="57" source="standard:function-signature" />
+        <error line="29" column="61" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feed/RemoteFeedDataSource.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feed/RemoteFeedDataSourceImpl.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="22" column="31" source="standard:annotation" />
+        <error line="22" column="39" source="standard:annotation" />
+        <error line="23" column="29" source="standard:trailing-comma-on-declaration-site" />
+        <error line="25" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feed/deserializer/LocalDateTimeSerializer.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="33" column="28" source="standard:function-signature" />
+        <error line="33" column="46" source="standard:function-signature" />
+        <error line="33" column="66" source="standard:function-signature" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feed/model/FeedDTO.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="32" column="33" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feedback/FeedbackApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="26" column="18" source="standard:annotation" />
+        <error line="26" column="26" source="standard:annotation" />
+        <error line="27" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="29" column="30" source="standard:function-signature" />
+        <error line="29" column="50" source="standard:function-signature" />
+        <error line="29" column="67" source="standard:function-signature" />
+        <error line="29" column="71" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/feedback/model/Feedback.kt">
+        <error line="36" column="28" source="standard:function-signature" />
+        <error line="36" column="46" source="standard:function-signature" />
+        <error line="36" column="67" source="standard:function-signature" />
+        <error line="37" column="20" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/organizers/OrganizersApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="27" column="20" source="standard:annotation" />
+        <error line="27" column="28" source="standard:annotation" />
+        <error line="28" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="30" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/organizers/RemoteOrganizersDataSource.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/organizers/RemoteOrganizersDataSourceImpl.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="22" column="37" source="standard:annotation" />
+        <error line="22" column="45" source="standard:annotation" />
+        <error line="23" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="25" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/organizers/model/OrganizerDTO.kt">
+        <error line="23" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="45" column="27" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sessions/RemoteSessionsDataSource.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sessions/RemoteSessionsDataSourceImpl.kt">
+        <error line="28" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="30" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sessions/SessionsApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="26" column="18" source="standard:annotation" />
+        <error line="26" column="26" source="standard:annotation" />
+        <error line="27" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="29" column="65" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sessions/model/RoomDTO.kt">
+        <error line="22" column="22" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sessions/model/SessionDTO.kt">
+        <error line="23" column="44" source="standard:trailing-comma-on-declaration-site" />
+        <error line="45" column="35" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/speakers/RemoteSpeakersDataSource.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/speakers/RemoteSpeakersDataSourceImpl.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="25" column="35" source="standard:annotation" />
+        <error line="25" column="43" source="standard:annotation" />
+        <error line="27" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="29" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/speakers/SpeakersApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="27" column="18" source="standard:annotation" />
+        <error line="27" column="26" source="standard:annotation" />
+        <error line="28" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="30" column="70" source="standard:multiline-expression-wrapping" />
+        <error line="32" column="61" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/speakers/model/SpeakerDTO.kt">
+        <error line="29" column="25" source="standard:trailing-comma-on-declaration-site" />
+        <error line="35" column="31" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sponsors/RemoteSponsorsDataSource.kt">
+        <error line="22" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sponsors/RemoteSponsorsDataSourceImpl.kt">
+        <error line="26" column="64" source="standard:trailing-comma-on-declaration-site" />
+        <error line="28" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sponsors/SponsorsApi.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="28" column="18" source="standard:annotation" />
+        <error line="28" column="26" source="standard:annotation" />
+        <error line="29" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="31" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/sponsors/model/SponsorDTO.kt">
+        <error line="23" column="31" source="standard:trailing-comma-on-declaration-site" />
+        <error line="35" column="28" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/DataResult.kt">
+        <error line="20" column="5" source="standard:blank-line-before-declaration" />
+        <error line="23" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="27" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/HttpClientFactory.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="39" column="24" source="standard:annotation" />
+        <error line="39" column="32" source="standard:annotation" />
+        <error line="41" column="57" source="standard:trailing-comma-on-declaration-site" />
+        <error line="43" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="44" column="44" source="standard:multiline-expression-wrapping" />
+        <error line="51" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/RemoteConfigConfig.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="26" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="27" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="33" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="35" column="30" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/RemoteFeatureToggle.kt">
+        <error line="23" column="51" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/SafeApiCall.kt">
+        <error line="44" column="1" source="standard:blank-line-before-declaration" />
+        <error line="47" column="29" source="standard:trailing-comma-on-declaration-site" />
+        <error line="48" column="20" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/TokenProvider.kt">
+        <error line="21" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/pagination/PaginatedResponse.kt">
+        <error line="23" column="31" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/pagination/PaginationMetaData.kt">
+        <error line="29" column="66" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/ke/droidcon/kotlin/datasource/remote/utils/pagination/ResponseMetaData.kt">
+        <error line="22" column="38" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/auth/AuthApiTest.kt">
+        <error line="42" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="52" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="71" source="standard:trailing-comma-on-call-site" />
+        <error line="82" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="93" column="9" source="standard:string-template-indent" />
+        <error line="94" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="71" source="standard:trailing-comma-on-call-site" />
+        <error line="104" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="106" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="110" column="94" source="standard:trailing-comma-on-call-site" />
+        <error line="111" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/feed/FeedApiTest.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="41" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="50" column="42" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="60" source="standard:multiline-expression-wrapping" />
+        <error line="66" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="35" source="standard:string-template-indent" />
+        <error line="70" column="21" source="standard:string-template-indent" />
+        <error line="71" column="21" source="standard:string-template-indent" />
+        <error line="72" column="21" source="standard:string-template-indent" />
+        <error line="73" column="21" source="standard:string-template-indent" />
+        <error line="74" column="21" source="standard:string-template-indent" />
+        <error line="75" column="21" source="standard:string-template-indent" />
+        <error line="76" column="21" source="standard:string-template-indent" />
+        <error line="77" column="21" source="standard:string-template-indent" />
+        <error line="78" column="21" source="standard:string-template-indent" />
+        <error line="79" column="21" source="standard:string-template-indent" />
+        <error line="80" column="21" source="standard:string-template-indent" />
+        <error line="81" column="21" source="standard:string-template-indent" />
+        <error line="82" column="21" source="standard:string-template-indent" />
+        <error line="83" column="21" source="standard:string-template-indent" />
+        <error line="84" column="21" source="standard:string-template-indent" />
+        <error line="85" column="21" source="standard:string-template-indent" />
+        <error line="86" column="21" source="standard:string-template-indent" />
+        <error line="87" column="21" source="standard:string-template-indent" />
+        <error line="88" column="21" source="standard:string-template-indent" />
+        <error line="89" column="21" source="standard:string-template-indent" />
+        <error line="90" column="21" source="standard:string-template-indent" />
+        <error line="91" column="21" source="standard:string-template-indent" />
+        <error line="92" column="21" source="standard:string-template-indent" />
+        <error line="93" column="21" source="standard:string-template-indent" />
+        <error line="94" column="21" source="standard:string-template-indent" />
+        <error line="95" column="21" source="standard:string-template-indent" />
+        <error line="96" column="21" source="standard:string-template-indent" />
+        <error line="97" column="21" source="standard:string-template-indent" />
+        <error line="98" column="21" source="standard:string-template-indent" />
+        <error line="99" column="21" source="standard:string-template-indent" />
+        <error line="100" column="21" source="standard:string-template-indent" />
+        <error line="101" column="85" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="119" column="41" source="standard:multiline-expression-wrapping" />
+        <error line="121" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="122" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="130" column="41" source="standard:multiline-expression-wrapping" />
+        <error line="132" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="133" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="134" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="135" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="136" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/feedback/FeedbackApiTest.kt">
+        <error line="50" column="42" source="standard:multiline-expression-wrapping" />
+        <error line="57" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="69" column="67" source="standard:multiline-expression-wrapping" />
+        <error line="74" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="76" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="83" column="56" source="standard:multiline-expression-wrapping" />
+        <error line="88" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="90" column="22" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/organizers/OrganizersApiTest.kt">
+        <error line="39" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="49" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="63" column="9" source="standard:string-template-indent" />
+        <error line="64" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="71" column="71" source="standard:trailing-comma-on-call-site" />
+        <error line="77" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="78" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="87" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="122" column="9" source="standard:string-template-indent" />
+        <error line="123" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="71" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/session/SessionApiTest.kt">
+        <error line="46" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="49" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="53" column="9" source="standard:string-template-indent" />
+        <error line="54" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="57" column="81" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/speaker/SpeakerApiTest.kt">
+        <error line="51" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="54" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="68" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="80" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="81" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="87" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="88" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="90" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="96" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="99" column="26" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/sponsors/SponsorsApiTest.kt">
+        <error line="55" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="56" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="63" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="64" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="70" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="73" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="93" column="26" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/utils/MockTokenProvider.kt">
+        <error line="23" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/utils/RemoteFeatureToggleTest.kt">
+        <error line="25" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="28" column="50" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/test/java/ke/droidcon/kotlin/datasource/remote/utils/SamplePaginationMetaData.kt">
+        <error line="21" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="22" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="29" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="30" column="6" source="standard:trailing-comma-on-call-site" />
+    </file>
+</baseline>

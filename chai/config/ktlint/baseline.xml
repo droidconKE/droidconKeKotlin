@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="build.gradle.kts">
+        <error line="37" column="37" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/Theme.kt">
+        <error line="38" column="36" source="standard:trailing-comma-on-declaration-site" />
+        <error line="53" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="56" column="30" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/colors/ChaiColors.kt">
+        <error line="75" column="72" source="standard:trailing-comma-on-declaration-site" />
+        <error line="80" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="118" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="121" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="159" column="52" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/components/CButtons.kt">
+        <error line="47" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="55" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="72" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="18" source="standard:trailing-comma-on-declaration-site" />
+        <error line="87" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="89" column="97" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="22" source="standard:trailing-comma-on-declaration-site" />
+        <error line="109" column="103" source="standard:trailing-comma-on-call-site" />
+        <error line="128" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="141" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="154" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="167" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="180" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="193" column="39" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/components/CCards.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/components/CInputFiels.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/components/CTabs.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/components/CText.kt">
+        <error line="47" column="1" source="standard:no-consecutive-comments" />
+        <error line="54" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="68" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="72" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="73" column="1" source="standard:no-blank-line-in-list" />
+        <error line="75" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="83" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="87" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="88" column="1" source="standard:no-blank-line-in-list" />
+        <error line="90" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="102" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="1" source="standard:no-blank-line-in-list" />
+        <error line="105" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="113" column="42" source="standard:trailing-comma-on-declaration-site" />
+        <error line="118" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="122" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="124" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="133" column="44" source="standard:trailing-comma-on-declaration-site" />
+        <error line="138" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="143" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="145" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="154" column="44" source="standard:trailing-comma-on-declaration-site" />
+        <error line="159" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="164" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="166" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="174" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="179" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="184" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="186" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="195" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="200" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="205" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="208" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="219" column="22" source="standard:trailing-comma-on-declaration-site" />
+        <error line="224" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="229" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="234" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="244" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="249" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="254" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="258" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="267" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="272" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="277" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="281" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="289" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="294" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="299" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="301" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="309" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="314" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="319" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="321" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="329" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="334" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="339" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="341" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="350" column="71" source="standard:trailing-comma-on-declaration-site" />
+        <error line="355" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="360" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="362" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="371" column="43" source="standard:trailing-comma-on-declaration-site" />
+        <error line="376" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="381" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="383" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="391" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="396" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="401" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="403" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="411" column="41" source="standard:trailing-comma-on-declaration-site" />
+        <error line="416" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="421" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="423" column="36" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/icons/Icons.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/images/Images.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/utils/Alpha.kt">
+        <error line="19" column="15" source="standard:property-naming" />
+    </file>
+    <file name="src/main/java/com/droidconke/chai/utils/Shape.kt">
+        <error line="21" column="15" source="standard:multiline-expression-wrapping" />
+        <error line="25" column="43" source="standard:trailing-comma-on-call-site" />
+    </file>
+</baseline>

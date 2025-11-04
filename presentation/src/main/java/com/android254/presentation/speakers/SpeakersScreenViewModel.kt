@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
-
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 sealed interface SpeakersScreenUiState {
-
     object Loading : SpeakersScreenUiState
 
     data class Success(val speakers: List<SpeakerUI>) : SpeakersScreenUiState
@@ -40,42 +38,44 @@ sealed interface SpeakersScreenUiState {
 }
 
 @HiltViewModel
-class SpeakersScreenViewModel @Inject constructor(
-    private val speakersRepo: SpeakersRepo,
-    private val syncDataWorkManager: SyncDataWorkManager
-) : ViewModel() {
+class SpeakersScreenViewModel
+    @Inject
+    constructor(
+        private val speakersRepo: SpeakersRepo,
+        private val syncDataWorkManager: SyncDataWorkManager,
+    ) : ViewModel() {
+        val isSyncing =
+            syncDataWorkManager.isSyncing
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = false,
+                )
 
-    val isSyncing = syncDataWorkManager.isSyncing
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = false
-        )
-
-    val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
-        speakersRepo.fetchSpeakers()
-            .map {
-                it.map {
-                    SpeakerUI(
-                        id = 1,
-                        imageUrl = it.avatar,
-                        name = it.name,
-                        tagline = it.tagline,
-                        bio = it.biography,
-                        twitterHandle = it.twitter
-                    )
+        val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
+            speakersRepo.fetchSpeakers()
+                .map {
+                    it.map {
+                        SpeakerUI(
+                            id = 1,
+                            imageUrl = it.avatar,
+                            name = it.name,
+                            tagline = it.tagline,
+                            bio = it.biography,
+                            twitterHandle = it.twitter,
+                        )
+                    }
                 }
-            }
-            .map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
-            .onStart {
-                emit(SpeakersScreenUiState.Loading)
-            }
-            .catch {
-                emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = SpeakersScreenUiState.Loading
-            )
-}
+                .map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+                .onStart {
+                    emit(SpeakersScreenUiState.Loading)
+                }
+                .catch {
+                    emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
+                }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = SpeakersScreenUiState.Loading,
+                )
+    }

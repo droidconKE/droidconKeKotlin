@@ -22,41 +22,43 @@ import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
-class HomeRepoImpl @Inject constructor(
-    private val speakersRepo: SpeakersRepo,
-    private val sessionsRepo: SessionsRepo,
-    private val sponsorsRepo: SponsorsRepo,
-    private val organizersRepo: OrganizersRepo,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : HomeRepo {
-
-    override fun fetchHomeDetails(): Flow<HomeDetails> {
-        val sponsorsflow = sponsorsRepo.getAllSponsors()
-        val speakersflow = speakersRepo.fetchSpeakers()
-        val sessionsflow = sessionsRepo.fetchSessions()
-        val organizerflow = organizersRepo.getOrganizers()
-        return combine(sponsorsflow, speakersflow, sessionsflow, organizerflow) { sponsors, speakers, sessions, organizers ->
-            HomeDetails(
-                isCallForSpeakersEnable = true,
-                linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
-                isEventBannerEnable = true,
-                speakers = speakers,
-                speakersCount = speakers.size,
-                isSpeakersSessionEnable = speakers.isNotEmpty(),
-                sessions = sessions,
-                sessionsCount = sessions.size,
-                isSessionsSectionEnable = sessions.isNotEmpty(),
-                sponsors = sponsors,
-                organizers = organizers.map {
-                    OrganizingPartners(organizerName = it.name, organizerLogoUrl = it.photo)
-                }
-            )
+class HomeRepoImpl
+    @Inject
+    constructor(
+        private val speakersRepo: SpeakersRepo,
+        private val sessionsRepo: SessionsRepo,
+        private val sponsorsRepo: SponsorsRepo,
+        private val organizersRepo: OrganizersRepo,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : HomeRepo {
+        override fun fetchHomeDetails(): Flow<HomeDetails> {
+            val sponsorsflow = sponsorsRepo.getAllSponsors()
+            val speakersflow = speakersRepo.fetchSpeakers()
+            val sessionsflow = sessionsRepo.fetchSessions()
+            val organizerflow = organizersRepo.getOrganizers()
+            return combine(sponsorsflow, speakersflow, sessionsflow, organizerflow) { sponsors, speakers, sessions, organizers ->
+                HomeDetails(
+                    isCallForSpeakersEnable = true,
+                    linkToCallForSpeakers = "https://t.co/lEQQ9VZQr4",
+                    isEventBannerEnable = true,
+                    speakers = speakers,
+                    speakersCount = speakers.size,
+                    isSpeakersSessionEnable = speakers.isNotEmpty(),
+                    sessions = sessions,
+                    sessionsCount = sessions.size,
+                    isSessionsSectionEnable = sessions.isNotEmpty(),
+                    sponsors = sponsors,
+                    organizers =
+                        organizers.map {
+                            OrganizingPartners(organizerName = it.name, organizerLogoUrl = it.photo)
+                        },
+                )
+            }
         }
     }
-}

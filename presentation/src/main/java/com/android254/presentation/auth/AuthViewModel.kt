@@ -24,29 +24,30 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
-    private val googleSignInHandler: GoogleSignInHandler,
-    private val authRepo: AuthRepo
-) : ViewModel() {
+class AuthViewModel
+    @Inject
+    constructor(
+        private val googleSignInHandler: GoogleSignInHandler,
+        private val authRepo: AuthRepo,
+    ) : ViewModel() {
+        fun getSignInIntent() = googleSignInHandler.getSignInIntent()
 
-    fun getSignInIntent() = googleSignInHandler.getSignInIntent()
-
-    suspend fun submitGoogleToken(intent: Intent?): Boolean {
-        val idToken = googleSignInHandler.getIdToken(intent)
-        Timber.i("Id token is $idToken")
-        // Submit ID Token to API
-        // to get access token
-        if (idToken == null) {
-            return false
-        }
-        Timber.i("Fetching API token")
-        return when (authRepo.getAndSaveApiToken(idToken)) {
-            is DataResult.Success -> {
-                true
+        suspend fun submitGoogleToken(intent: Intent?): Boolean {
+            val idToken = googleSignInHandler.getIdToken(intent)
+            Timber.i("Id token is $idToken")
+            // Submit ID Token to API
+            // to get access token
+            if (idToken == null) {
+                return false
             }
-            else -> {
-                false
+            Timber.i("Fetching API token")
+            return when (authRepo.getAndSaveApiToken(idToken)) {
+                is DataResult.Success -> {
+                    true
+                }
+                else -> {
+                    false
+                }
             }
         }
     }
-}

@@ -30,9 +30,10 @@ import com.droidconke.chai.ChaiDCKE22Theme
 @Composable
 fun HomeSessionLoadingItem() {
     Column(
-        modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 10.dp),
-        horizontalAlignment = Alignment.Start
+        modifier =
+            Modifier
+                .padding(horizontal = 8.dp, vertical = 10.dp),
+        horizontalAlignment = Alignment.Start,
     ) {
         LoadingBox(height = 120.dp, width = 200.dp)
         Spacer(modifier = Modifier.height(10.dp))

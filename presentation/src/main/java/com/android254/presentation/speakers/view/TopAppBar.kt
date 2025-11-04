@@ -36,34 +36,37 @@ import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun TopAppBar(modifier: Modifier = Modifier, onBackPressed: () -> Unit = {}) {
+fun TopAppBar(
+    modifier: Modifier = Modifier,
+    onBackPressed: () -> Unit = {},
+) {
     Box(
-        modifier = modifier
+        modifier = modifier,
     ) {
         Image(
             painter = painterResource(id = R.drawable.topbar_speaker_bg),
             contentDescription = stringResource(R.string.login_screen_bg_image_description),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
 
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
                 onClick = onBackPressed,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier.padding(start = 10.dp),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back_arrow),
                     contentDescription = stringResource(R.string.back_arrow_icon_description),
-                    tint = ChaiWhite
+                    tint = ChaiWhite,
                 )
             }
             ChaiBodyLarge(
                 modifier = Modifier.padding(start = 10.dp),
                 bodyText = stringResource(id = R.string.speaker_details_label),
-                textColor = ChaiWhite
+                textColor = ChaiWhite,
             )
         }
     }

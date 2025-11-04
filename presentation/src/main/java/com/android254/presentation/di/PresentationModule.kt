@@ -27,8 +27,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object PresentationModule {
-
     @Provides
     @Singleton
-    fun providesDroidconNotificationManager(@ApplicationContext context: Context) = DroidconNotificationManager(context)
+    fun providesDroidconNotificationManager(
+        @ApplicationContext context: Context,
+    ) = DroidconNotificationManager(context)
 }

@@ -28,7 +28,6 @@ import androidx.room.Update
  * @param T takes in the data class
  */
 interface BaseDao<T> {
-
     @Insert(onConflict = REPLACE)
     suspend fun insert(item: T): Long
 

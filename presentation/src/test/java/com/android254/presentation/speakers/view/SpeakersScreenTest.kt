@@ -46,14 +46,15 @@ class SpeakersScreenTest {
     fun `should show heading and show speaker details card`() {
         every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
         coEvery { mockSyncDataWorkManager.startSync() } just runs
-        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(
-            listOf(
-                Speaker(
-                    name = "John Doe",
-                    tagline = "kenya partner lead"
-                )
+        coEvery { speakersRepo.fetchSpeakers() } returns
+            flowOf(
+                listOf(
+                    Speaker(
+                        name = "John Doe",
+                        tagline = "kenya partner lead",
+                    ),
+                ),
             )
-        )
         composeTestRule.setContent {
             SpeakersRoute(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
         }

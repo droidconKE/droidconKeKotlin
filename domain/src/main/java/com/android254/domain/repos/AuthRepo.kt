@@ -19,6 +19,5 @@ import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 
 interface AuthRepo {
-
     suspend fun getAndSaveApiToken(idToken: String): DataResult<Success>
 }

@@ -19,37 +19,40 @@ import com.android254.domain.models.Speaker
 import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 
-fun SpeakerDTO.toEntity() = SpeakerEntity(
-    id = 0,
-    name = name,
-    tagline = tagline,
-    bio = bio,
-    avatar = avatar,
-    twitter = twitter ?: ""
-)
+fun SpeakerDTO.toEntity() =
+    SpeakerEntity(
+        id = 0,
+        name = name,
+        tagline = tagline,
+        bio = bio,
+        avatar = avatar,
+        twitter = twitter ?: "",
+    )
 
-fun SpeakerEntity.toDomainModel() = Speaker(
-    avatar = avatar,
-    name = name,
-    biography = bio,
-    tagline = tagline,
-    twitter = twitter,
-    linkedin = "",
-    instagram = "",
-    facebook = "",
-    blog = "",
-    company_website = ""
-)
+fun SpeakerEntity.toDomainModel() =
+    Speaker(
+        avatar = avatar,
+        name = name,
+        biography = bio,
+        tagline = tagline,
+        twitter = twitter,
+        linkedin = "",
+        instagram = "",
+        facebook = "",
+        blog = "",
+        company_website = "",
+    )
 
-fun SpeakerDTO.toDomain() = Speaker(
-    avatar = avatar,
-    name = name,
-    tagline = tagline,
-    biography = bio,
-    twitter = twitter.orEmpty(),
-    linkedin = "",
-    instagram = "",
-    facebook = "",
-    blog = "",
-    company_website = ""
-)
+fun SpeakerDTO.toDomain() =
+    Speaker(
+        avatar = avatar,
+        name = name,
+        tagline = tagline,
+        biography = bio,
+        twitter = twitter.orEmpty(),
+        linkedin = "",
+        instagram = "",
+        facebook = "",
+        blog = "",
+        company_website = "",
+    )

@@ -24,12 +24,11 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.android254.data.work.WorkConstants.syncDataWorkerName
+import com.android254.data.work.WorkConstants.SYNC_DATA_WORKER_NAME
 import com.android254.domain.work.SyncDataWorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SyncDataWorkManagerImpl @Inject constructor(
@@ -37,8 +36,8 @@ class SyncDataWorkManagerImpl @Inject constructor(
 ) : SyncDataWorkManager {
 
     override val isSyncing: Flow<Boolean> =
-        WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
-            .map(MutableList<WorkInfo>::anyRunning)
+        WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(SYNC_DATA_WORKER_NAME)
+            .map { infos ->  infos.anyRunning }
             .asFlow()
             .conflate()
 
@@ -51,7 +50,7 @@ class SyncDataWorkManagerImpl @Inject constructor(
             )
             .build()
         val workManager = WorkManager.getInstance(context)
-        workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
+        workManager.beginUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, syncDataRequest)
             .enqueue()
     }
 }

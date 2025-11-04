@@ -1,4 +1,5 @@
 [*.{kt,kts}]
 insert_final_newline=false
 max_line_length=off
-ktlint_disabled_rules=no-wildcard-imports,import-ordering,trailing-comma
+ktlint_standard_no-wildcard-imports = disabled
+ktlint_function_naming_ignore_when_annotated_with = Composable

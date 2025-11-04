@@ -52,8 +52,8 @@ class SpeakerDetailsScreenTest {
             SpeakerDetailsRoute(
                 name = "Harun Wangereka",
                 SpeakerDetailsScreenViewModel(
-                    speakersRepo = speakersRepo
-                )
+                    speakersRepo = speakersRepo,
+                ),
             )
         }
 

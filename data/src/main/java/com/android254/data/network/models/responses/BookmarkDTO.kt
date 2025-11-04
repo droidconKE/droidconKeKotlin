@@ -19,5 +19,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookmarkDTO(
-    val message: String
+    val message: String,
 )

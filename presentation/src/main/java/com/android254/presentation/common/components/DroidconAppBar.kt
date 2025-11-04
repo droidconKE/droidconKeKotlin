@@ -36,19 +36,20 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
-    onActionClicked: () -> Unit = {}
+    onActionClicked: () -> Unit = {},
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
-            .testTag("droidcon_topBar_notSignedIn"),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
+                .testTag("droidcon_topBar_notSignedIn"),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
-            contentDescription = stringResource(id = R.string.logo)
+            contentDescription = stringResource(id = R.string.logo),
         )
         Spacer(modifier = Modifier.weight(1f))
 

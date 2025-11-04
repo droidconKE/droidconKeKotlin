@@ -1,0 +1,1210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<baseline version="1.0">
+    <file name="src/main/java/com/android254/presentation/about/view/AboutScreen.kt">
+        <error line="63" column="46" source="standard:trailing-comma-on-declaration-site" />
+        <error line="69" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="46" source="standard:trailing-comma-on-declaration-site" />
+        <error line="84" column="33" source="standard:trailing-comma-on-call-site" />
+        <error line="87" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="100" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="105" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="117" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="120" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="130" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="150" column="25" source="standard:trailing-comma-on-declaration-site" />
+        <error line="153" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="156" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="162" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="163" column="32" source="standard:trailing-comma-on-call-site" />
+        <error line="169" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="173" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="179" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="183" column="72" source="standard:trailing-comma-on-call-site" />
+        <error line="193" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="196" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="198" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="201" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="204" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="211" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="217" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="226" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="230" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="236" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="237" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="241" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="246" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="251" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="256" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="261" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="266" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="267" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="269" column="37" source="standard:multiline-expression-wrapping" />
+        <error line="276" column="23" source="standard:trailing-comma-on-call-site" />
+        <error line="277" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="278" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/about/view/AboutViewModel.kt">
+        <error line="35" column="44" source="standard:trailing-comma-on-declaration-site" />
+        <error line="42" column="21" source="standard:annotation" />
+        <error line="42" column="29" source="standard:annotation" />
+        <error line="43" column="47" source="standard:trailing-comma-on-declaration-site" />
+        <error line="45" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="46" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="52" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="63" column="54" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/about/view/OrganizingTeamComponent.kt">
+        <error line="52" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="55" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="70" column="67" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="88" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="99" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="102" column="203" source="standard:trailing-comma-on-call-site" />
+        <error line="104" column="31" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/activity/MainActivity.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="59" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="60" column="45" source="standard:multiline-expression-wrapping" />
+        <error line="61" column="52" source="standard:trailing-comma-on-call-site" />
+        <error line="119" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="123" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="124" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="129" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/auth/AuthViewModel.kt">
+        <error line="27" column="20" source="standard:annotation" />
+        <error line="27" column="28" source="standard:annotation" />
+        <error line="29" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="31" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/auth/GoogleSignInHandler.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="28" column="26" source="standard:annotation" />
+        <error line="28" column="34" source="standard:annotation" />
+        <error line="28" column="47" source="standard:parameter-list-wrapping" />
+        <error line="28" column="95" source="standard:parameter-list-wrapping" />
+        <error line="29" column="23" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/auth/view/AuthDialog.kt">
+        <error line="55" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="80" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="81" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="84" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="86" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="102" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="105" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="107" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="116" column="42" source="standard:discouraged-comment-location" />
+        <error line="117" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="120" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="127" column="20" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/auth/view/GoogleSignInButton.kt">
+        <error line="47" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="50" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="53" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="58" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="61" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="66" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="69" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="74" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="80" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="86" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="90" column="51" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/bottomnav/BottomNavigationBar.kt">
+        <error line="48" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="51" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="69" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="81" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="87" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="94" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="101" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="106" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="113" column="34" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/bottomsheet/Strings.kt">
+        <error line="26" column="41" source="standard:parameter-list-wrapping" />
+        <error line="26" column="83" source="standard:parameter-list-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/AnimatedShimmerEffect.kt">
+        <error line="31" column="43" source="standard:trailing-comma-on-declaration-site" />
+        <error line="34" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="37" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="38" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="40" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="41" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="42" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="44" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="71" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/DroidConTextField.kt">
+        <error line="41" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="44" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="46" column="41" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/DroidconAppBar.kt">
+        <error line="39" column="37" source="standard:trailing-comma-on-declaration-site" />
+        <error line="42" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="68" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/DroidconAppBarWithFeedbackButton.kt">
+        <error line="45" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="48" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="54" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="58" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="69" column="30" source="standard:trailing-comma-on-declaration-site" />
+        <error line="72" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="75" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="80" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="85" column="67" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="72" source="standard:trailing-comma-on-call-site" />
+        <error line="96" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="205" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/DroidconAppBarWithFilter.kt">
+        <error line="46" column="36" source="standard:trailing-comma-on-declaration-site" />
+        <error line="49" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="54" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="58" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="71" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="89" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="94" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="33" source="standard:trailing-comma-on-call-site" />
+        <error line="104" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="106" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="110" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="119" column="30" source="standard:trailing-comma-on-declaration-site" />
+        <error line="124" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="130" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="135" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="142" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="151" column="15" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="157" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="160" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="162" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="170" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="173" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="175" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="183" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="186" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="188" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="196" column="41" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/FullscreenDialog.kt">
+        <error line="43" column="60" source="standard:trailing-comma-on-declaration-site" />
+        <error line="47" column="17" source="standard:multiline-expression-wrapping" />
+        <error line="49" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="16" source="standard:multiline-expression-wrapping" />
+        <error line="53" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="55" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="64" column="63" source="standard:trailing-comma-on-declaration-site" />
+        <error line="82" column="143" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="103" column="53" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/ImageAvatar.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/Loader.kt">
+        <error line="35" column="38" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/LoadingBox.kt">
+        <error line="41" column="95" source="standard:trailing-comma-on-declaration-site" />
+        <error line="44" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="52" column="31" source="standard:function-signature" />
+        <error line="52" column="46" source="standard:function-signature" />
+        <error line="52" column="58" source="standard:function-signature" />
+        <error line="52" column="62" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="26" source="standard:function-signature" />
+        <error line="58" column="41" source="standard:function-signature" />
+        <error line="58" column="50" source="standard:function-signature" />
+        <error line="58" column="54" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/OrganizedBySection.kt">
+        <error line="41" column="36" source="standard:trailing-comma-on-declaration-site" />
+        <error line="44" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="52" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="55" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="59" column="1" source="standard:no-blank-line-in-list" />
+        <error line="65" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="74" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="77" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="88" column="76" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/PrimaryButton.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/SessionsCard.kt">
+        <error line="65" column="58" source="standard:trailing-comma-on-declaration-site" />
+        <error line="68" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="74" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="85" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="35" source="standard:function-signature" />
+        <error line="94" column="61" source="standard:function-signature" />
+        <error line="94" column="82" source="standard:function-signature" />
+        <error line="96" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="102" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="115" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="116" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="138" column="51" source="standard:trailing-comma-on-declaration-site" />
+        <error line="145" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="150" column="71" source="standard:trailing-comma-on-call-site" />
+        <error line="163" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="168" column="112" source="standard:trailing-comma-on-call-site" />
+        <error line="179" column="21" source="standard:trailing-comma-on-call-site" />
+        <error line="185" column="8" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="188" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="193" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="198" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="205" column="46" source="standard:trailing-comma-on-declaration-site" />
+        <error line="208" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="213" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="215" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="221" column="77" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/SpeakersCard.kt">
+        <error line="1" column="1" source="standard:no-empty-file" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/SponsorsCard.kt">
+        <error line="52" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="56" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="60" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="64" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="70" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="82" column="42" source="standard:multiline-expression-wrapping" />
+        <error line="94" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="100" column="80" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/components/ToggleButtonGroup.kt">
+        <error line="52" column="44" source="standard:trailing-comma-on-declaration-site" />
+        <error line="66" column="35" source="standard:multiline-expression-wrapping" />
+        <error line="68" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="70" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="82" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="87" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="89" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="93" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="35" source="standard:multiline-expression-wrapping" />
+        <error line="105" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="123" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="133" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="138" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="147" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="150" column="41" source="standard:multiline-expression-wrapping" />
+        <error line="154" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="164" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="170" column="21" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/navigation/Navigation.kt">
+        <error line="37" column="37" source="standard:trailing-comma-on-declaration-site" />
+        <error line="48" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="49" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="61" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="66" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="77" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="86" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="89" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="90" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="97" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="94" source="standard:trailing-comma-on-call-site" />
+        <error line="109" column="94" source="standard:trailing-comma-on-call-site" />
+        <error line="120" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="121" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="123" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="129" column="62" source="standard:trailing-comma-on-call-site" />
+        <error line="135" column="89" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="142" column="62" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/common/navigation/Screens.kt">
+        <error line="21" column="22" source="standard:parameter-list-wrapping" />
+        <error line="21" column="41" source="standard:parameter-list-wrapping" />
+        <error line="21" column="69" source="standard:parameter-list-wrapping" />
+        <error line="21" column="86" source="standard:parameter-list-wrapping" />
+        <error line="23" column="5" source="standard:blank-line-before-declaration" />
+        <error line="24" column="5" source="standard:blank-line-before-declaration" />
+        <error line="25" column="5" source="standard:blank-line-before-declaration" />
+        <error line="26" column="5" source="standard:blank-line-before-declaration" />
+        <error line="27" column="5" source="standard:blank-line-before-declaration" />
+        <error line="28" column="5" source="standard:blank-line-before-declaration" />
+        <error line="30" column="19" source="standard:property-naming" />
+        <error line="37" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="41" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/di/PresentationModule.kt">
+        <error line="30" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="33" column="45" source="standard:parameter-list-wrapping" />
+        <error line="33" column="45" source="standard:function-signature" />
+        <error line="33" column="81" source="standard:parameter-list-wrapping" />
+        <error line="33" column="81" source="standard:function-signature" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/FeedViewModel.kt">
+        <error line="34" column="20" source="standard:annotation" />
+        <error line="34" column="28" source="standard:annotation" />
+        <error line="35" column="35" source="standard:trailing-comma-on-declaration-site" />
+        <error line="37" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="38" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="45" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedComponent.kt">
+        <error line="56" column="31" source="standard:trailing-comma-on-declaration-site" />
+        <error line="59" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="66" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="70" column="72" source="standard:trailing-comma-on-call-site" />
+        <error line="75" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="79" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="82" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="87" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="90" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="96" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="97" column="42" source="standard:trailing-comma-on-call-site" />
+        <error line="101" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="108" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="114" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="127" column="1" source="standard:indent" />
+        <error line="128" column="29" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedLoadingComponent.kt">
+        <error line="39" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="42" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="53" column="61" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedMappers.kt">
+        <error line="22" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="28" column="46" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedScreen.kt">
+        <error line="66" column="46" source="standard:trailing-comma-on-declaration-site" />
+        <error line="72" column="60" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="46" source="standard:trailing-comma-on-declaration-site" />
+        <error line="81" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="82" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="76" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="79" source="standard:trailing-comma-on-call-site" />
+        <error line="104" column="209" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="110" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="112" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="119" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="122" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="92" source="standard:trailing-comma-on-call-site" />
+        <error line="133" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="140" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="150" column="73" source="standard:trailing-comma-on-call-site" />
+        <error line="155" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="169" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="175" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="181" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="192" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="196" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="203" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="204" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="211" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="219" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="220" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="221" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="222" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedShareSection.kt">
+        <error line="52" column="37" source="standard:trailing-comma-on-declaration-site" />
+        <error line="55" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="59" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="64" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="65" column="32" source="standard:trailing-comma-on-call-site" />
+        <error line="72" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="85" column="76" source="standard:trailing-comma-on-call-site" />
+        <error line="89" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="93" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="104" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="110" column="20" source="standard:function-signature" />
+        <error line="110" column="38" source="standard:function-signature" />
+        <error line="110" column="47" source="standard:function-signature" />
+        <error line="114" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="118" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="119" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="120" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="125" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="128" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="131" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="132" column="1" source="standard:no-blank-line-in-list" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feed/view/FeedUIState.kt">
+        <error line="22" column="5" source="standard:blank-line-before-declaration" />
+        <error line="23" column="5" source="standard:blank-line-before-declaration" />
+        <error line="24" column="5" source="standard:blank-line-before-declaration" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/feedback/view/FeedBackScreen.kt">
+        <error line="78" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="82" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="89" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="108" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="112" column="110" source="standard:trailing-comma-on-call-site" />
+        <error line="116" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="119" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="120" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="124" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="126" column="35" source="standard:multiline-expression-wrapping" />
+        <error line="132" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="139" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="143" column="106" source="standard:trailing-comma-on-call-site" />
+        <error line="148" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="151" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="152" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="157" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="160" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="164" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="169" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="173" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="178" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="181" column="67" source="standard:trailing-comma-on-call-site" />
+        <error line="186" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="191" column="63" source="standard:trailing-comma-on-call-site" />
+        <error line="194" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="198" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="201" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="205" column="83" source="standard:trailing-comma-on-call-site" />
+        <error line="211" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="218" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="222" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="225" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="229" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="235" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="242" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="246" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="249" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="253" column="85" source="standard:trailing-comma-on-call-site" />
+        <error line="259" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="267" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="276" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="281" column="96" source="standard:trailing-comma-on-call-site" />
+        <error line="283" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="288" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="295" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="297" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="298" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="301" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="312" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="318" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="322" column="45" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeBannerSection.kt">
+        <error line="64" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="68" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="80" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="83" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="85" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="95" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="102" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="106" column="42" source="standard:trailing-comma-on-call-site" />
+        <error line="114" column="33" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeHeaderSectionComponent.kt">
+        <error line="34" column="66" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSectionHeaderComponent.kt">
+        <error line="49" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="54" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="56" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="79" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="67" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="71" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="75" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="80" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="86" column="85" source="standard:trailing-comma-on-call-site" />
+        <error line="95" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="99" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="34" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSessionLoadingComponent.kt">
+        <error line="40" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="42" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="45" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="48" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="52" column="83" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSessionLoadingItem.kt">
+        <error line="33" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="35" column="46" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSessionSection.kt">
+        <error line="52" column="40" source="standard:trailing-comma-on-declaration-site" />
+        <error line="55" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="52" source="standard:trailing-comma-on-call-site" />
+        <error line="70" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="84" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="88" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="96" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="99" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="107" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="112" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="118" column="74" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSpeakerComponent.kt">
+        <error line="48" column="26" source="standard:function-signature" />
+        <error line="48" column="46" source="standard:function-signature" />
+        <error line="48" column="70" source="standard:function-signature" />
+        <error line="50" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="52" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="56" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="62" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="64" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="69" column="65" source="standard:trailing-comma-on-call-site" />
+        <error line="71" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="78" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="88" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="99" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="101" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="102" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSpeakersLoadingComponent.kt">
+        <error line="40" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="41" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="44" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="47" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="83" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSpeakersLoadingItem.kt">
+        <error line="34" column="59" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeSpeakersSection.kt">
+        <error line="38" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="44" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="47" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="50" column="64" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/components/HomeToolbarComponent.kt">
+        <error line="28" column="37" source="standard:trailing-comma-on-declaration-site" />
+        <error line="35" column="205" source="standard:trailing-comma-on-call-site" />
+        <error line="39" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="33" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/mappers/DomainToPresentationMappers.kt">
+        <error line="30" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="34" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="38" column="30" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/screen/HomeScreen.kt">
+        <error line="56" column="55" source="standard:trailing-comma-on-declaration-site" />
+        <error line="69" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="83" column="31" source="standard:trailing-comma-on-declaration-site" />
+        <error line="90" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="93" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="100" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="107" column="67" source="standard:trailing-comma-on-call-site" />
+        <error line="122" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="138" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="156" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="166" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="168" column="30" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/viewmodel/HomeViewModel.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="35" column="20" source="standard:annotation" />
+        <error line="35" column="28" source="standard:annotation" />
+        <error line="37" column="57" source="standard:trailing-comma-on-declaration-site" />
+        <error line="39" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="40" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="44" column="33" source="standard:trailing-comma-on-call-site" />
+        <error line="47" column="47" source="standard:multiline-expression-wrapping" />
+        <error line="59" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="43" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/home/viewstate/HomeViewState.kt">
+        <error line="32" column="50" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/EventDate.kt">
+        <error line="20" column="17" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/FeedUI.kt">
+        <error line="24" column="26" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/OrganizingTeamMember.kt">
+        <error line="22" column="22" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SessionDetailsPresentationModel.kt">
+        <error line="31" column="63" source="standard:trailing-comma-on-declaration-site" />
+        <error line="37" column="30" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SessionPresentationModel.kt">
+        <error line="35" column="57" source="standard:trailing-comma-on-declaration-site" />
+        <error line="41" column="30" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SessionsFilterAdapter.kt">
+        <error line="21" column="83" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SessionsFilterOption.kt">
+        <error line="23" column="37" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/Speaker.kt">
+        <error line="28" column="25" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SpeakerUI.kt">
+        <error line="24" column="49" source="standard:trailing-comma-on-declaration-site" />
+        <error line="27" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="31" column="89" source="standard:trailing-comma-on-call-site" />
+        <error line="36" column="89" source="standard:trailing-comma-on-call-site" />
+        <error line="37" column="6" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/models/SponsorPresentationModel.kt">
+        <error line="22" column="28" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/notifications/DroidconNotificationManager.kt">
+        <error line="41" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="50" column="26" source="standard:function-signature" />
+        <error line="50" column="41" source="standard:function-signature" />
+        <error line="50" column="56" source="standard:function-signature" />
+        <error line="51" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="56" column="23" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/notifications/MessagingService.kt">
+        <error line="25" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessionDetails/SessionDetailsViewModel.kt">
+        <error line="35" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="37" column="5" source="standard:blank-line-before-declaration" />
+        <error line="43" column="30" source="standard:annotation" />
+        <error line="43" column="38" source="standard:annotation" />
+        <error line="45" column="51" source="standard:trailing-comma-on-declaration-site" />
+        <error line="46" column="1" source="standard:no-blank-line-in-list" />
+        <error line="48" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="51" column="19" source="standard:multiline-expression-wrapping" />
+        <error line="64" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="46" source="standard:multiline-expression-wrapping" />
+        <error line="71" column="48" source="standard:multiline-expression-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessionDetails/view/SessionDetailsScreen.kt">
+        <error line="97" column="38" source="standard:trailing-comma-on-declaration-site" />
+        <error line="106" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="116" column="38" source="standard:trailing-comma-on-declaration-site" />
+        <error line="123" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="133" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="142" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="150" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="155" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="165" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="177" column="40" source="standard:trailing-comma-on-declaration-site" />
+        <error line="180" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="185" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="194" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="240" column="52" source="standard:trailing-comma-on-declaration-site" />
+        <error line="243" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="246" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="253" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="257" column="72" source="standard:trailing-comma-on-call-site" />
+        <error line="263" column="22" source="standard:multiline-expression-wrapping" />
+        <error line="264" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="265" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="270" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="273" column="76" source="standard:trailing-comma-on-call-site" />
+        <error line="281" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="292" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="297" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="305" column="40" source="standard:trailing-comma-on-declaration-site" />
+        <error line="309" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="314" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="317" column="27" source="standard:trailing-comma-on-call-site" />
+        <error line="324" column="32" source="standard:trailing-comma-on-call-site" />
+        <error line="329" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="332" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="337" column="79" source="standard:trailing-comma-on-call-site" />
+        <error line="348" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="351" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="355" column="119" source="standard:trailing-comma-on-call-site" />
+        <error line="363" column="52" source="standard:trailing-comma-on-declaration-site" />
+        <error line="368" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="376" column="66" source="standard:trailing-comma-on-call-site" />
+        <error line="383" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="386" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="391" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="397" column="52" source="standard:trailing-comma-on-declaration-site" />
+        <error line="400" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="405" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="410" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="416" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="425" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="433" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="438" column="83" source="standard:trailing-comma-on-call-site" />
+        <error line="443" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="448" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="453" column="73" source="standard:trailing-comma-on-call-site" />
+        <error line="456" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="478" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="482" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="486" column="20" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="489" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="490" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="503" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="504" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="508" column="35" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/CustomSwitch.kt">
+        <error line="59" column="39" source="standard:trailing-comma-on-declaration-site" />
+        <error line="62" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="72" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="80" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="84" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="88" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="91" column="163" source="standard:trailing-comma-on-call-site" />
+        <error line="94" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="102" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="108" column="142" source="standard:trailing-comma-on-call-site" />
+        <error line="114" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="121" column="27" source="standard:trailing-comma-on-declaration-site" />
+        <error line="136" column="62" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/EventDaySelector.kt">
+        <error line="39" column="32" source="standard:trailing-comma-on-declaration-site" />
+        <error line="47" column="52" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/EventDaySelectorButton.kt">
+        <error line="42" column="24" source="standard:trailing-comma-on-declaration-site" />
+        <error line="47" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="52" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="54" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="58" column="174" source="standard:trailing-comma-on-call-site" />
+        <error line="62" column="173" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="82" column="29" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionLoadingCard.kt">
+        <error line="44" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="49" column="107" source="standard:trailing-comma-on-call-site" />
+        <error line="52" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="55" column="92" source="standard:trailing-comma-on-call-site" />
+        <error line="56" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="62" column="65" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="67" column="56" source="standard:trailing-comma-on-call-site" />
+        <error line="75" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="76" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="86" column="66" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionLoadingComponent.kt">
+        <error line="40" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="41" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="45" column="91" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionStateComponent.kt">
+        <error line="59" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="69" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="72" column="53" source="standard:trailing-comma-on-call-site" />
+        <error line="78" column="32" source="standard:trailing-comma-on-call-site" />
+        <error line="84" column="76" source="standard:trailing-comma-on-call-site" />
+        <error line="100" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="112" column="33" source="standard:trailing-comma-on-declaration-site" />
+        <error line="116" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="122" column="33" source="standard:multiline-expression-wrapping" />
+        <error line="126" column="87" source="standard:trailing-comma-on-call-site" />
+        <error line="132" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="138" column="76" source="standard:trailing-comma-on-call-site" />
+        <error line="146" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="147" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="151" column="99" source="standard:trailing-comma-on-call-site" />
+        <error line="158" column="76" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionsCardWithBannerImage.kt">
+        <error line="67" column="51" source="standard:trailing-comma-on-declaration-site" />
+        <error line="71" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="75" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="78" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="83" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="86" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="90" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="94" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="102" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="116" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="126" column="53" source="standard:trailing-comma-on-declaration-site" />
+        <error line="130" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="131" column="1" source="standard:no-blank-line-in-list" />
+        <error line="138" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="143" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="145" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="157" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="162" column="111" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionsErrorComponent.kt">
+        <error line="42" column="27" source="standard:trailing-comma-on-declaration-site" />
+        <error line="47" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="72" source="standard:trailing-comma-on-call-site" />
+        <error line="54" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="59" column="60" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/components/SessionsFilterPanel.kt">
+        <error line="61" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="66" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="71" column="30" source="standard:trailing-comma-on-call-site" />
+        <error line="76" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="81" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="86" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="96" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="101" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="1" source="standard:no-blank-line-in-list" />
+        <error line="107" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="112" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="117" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="118" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="128" column="40" source="standard:trailing-comma-on-declaration-site" />
+        <error line="134" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="138" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="141" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="142" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="146" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="151" column="87" source="standard:trailing-comma-on-call-site" />
+        <error line="153" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="158" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="160" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="167" column="85" source="standard:trailing-comma-on-call-site" />
+        <error line="171" column="90" source="standard:trailing-comma-on-call-site" />
+        <error line="176" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="181" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="188" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="192" column="85" source="standard:trailing-comma-on-call-site" />
+        <error line="200" column="62" source="standard:trailing-comma-on-call-site" />
+        <error line="213" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="215" column="92" source="standard:trailing-comma-on-call-site" />
+        <error line="217" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="219" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="223" column="89" source="standard:trailing-comma-on-call-site" />
+        <error line="229" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="234" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/mappers/SessionMapper.kt">
+        <error line="48" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="67" column="54" source="standard:trailing-comma-on-call-site" />
+        <error line="71" column="47" source="standard:multiline-expression-wrapping" />
+        <error line="75" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="83" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="73" source="standard:trailing-comma-on-call-site" />
+        <error line="98" column="23" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/models/SessionsUiState.kt">
+        <error line="41" column="57" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/utils/FilterKeys.kt">
+        <error line="19" column="20" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/utils/SessionsFilterCategory.kt">
+        <error line="24" column="52" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/view/SessionsFilterState.kt">
+        <error line="23" column="38" source="standard:trailing-comma-on-declaration-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/view/SessionsScreen.kt">
+        <error line="59" column="63" source="standard:trailing-comma-on-declaration-site" />
+        <error line="76" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="40" source="standard:trailing-comma-on-declaration-site" />
+        <error line="94" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="99" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="100" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="107" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="111" column="30" source="standard:multiline-expression-wrapping" />
+        <error line="115" column="38" source="standard:multiline-expression-wrapping" />
+        <error line="139" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="142" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="149" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="154" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="156" column="83" source="standard:trailing-comma-on-call-site" />
+        <error line="161" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="182" column="64" source="standard:trailing-comma-on-call-site" />
+        <error line="194" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="205" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="228" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="234" column="10" source="standard:enum-wrapping" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/sessions/view/SessionsViewModel.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="42" column="24" source="standard:annotation" />
+        <error line="42" column="32" source="standard:annotation" />
+        <error line="44" column="57" source="standard:trailing-comma-on-declaration-site" />
+        <error line="46" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="58" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="62" column="33" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="44" source="standard:multiline-expression-wrapping" />
+        <error line="90" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="99" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="104" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="112" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="113" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="118" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="126" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="127" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="132" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="140" column="31" source="standard:multiline-expression-wrapping" />
+        <error line="141" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="165" column="79" source="standard:if-else-wrapping" />
+        <error line="165" column="81" source="standard:statement-wrapping" />
+        <error line="165" column="101" source="standard:statement-wrapping" />
+        <error line="165" column="108" source="standard:if-else-wrapping" />
+        <error line="165" column="110" source="standard:statement-wrapping" />
+        <error line="165" column="130" source="standard:statement-wrapping" />
+        <error line="165" column="131" source="standard:trailing-comma-on-call-site" />
+        <error line="171" column="51" source="standard:multiline-expression-wrapping" />
+        <error line="198" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="210" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="217" column="38" source="standard:trailing-comma-on-call-site" />
+        <error line="244" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="245" column="36" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/SpeakerDetailsScreenViewModel.kt">
+        <error line="28" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="39" column="36" source="standard:annotation" />
+        <error line="39" column="44" source="standard:annotation" />
+        <error line="40" column="43" source="standard:trailing-comma-on-declaration-site" />
+        <error line="42" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="52" column="44" source="standard:multiline-expression-wrapping" />
+        <error line="58" column="32" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/SpeakersScreenViewModel.kt">
+        <error line="18" column="1" source="standard:import-ordering" />
+        <error line="34" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="43" column="30" source="standard:annotation" />
+        <error line="43" column="38" source="standard:annotation" />
+        <error line="45" column="57" source="standard:trailing-comma-on-declaration-site" />
+        <error line="47" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="48" column="21" source="standard:multiline-expression-wrapping" />
+        <error line="52" column="33" source="standard:trailing-comma-on-call-site" />
+        <error line="65" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="61" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/view/SpeakerComponent.kt">
+        <error line="59" column="29" source="standard:trailing-comma-on-declaration-site" />
+        <error line="62" column="20" source="standard:multiline-expression-wrapping" />
+        <error line="70" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="73" column="18" source="standard:multiline-expression-wrapping" />
+        <error line="74" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="75" column="10" source="standard:trailing-comma-on-call-site" />
+        <error line="78" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="81" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="85" column="25" source="standard:multiline-expression-wrapping" />
+        <error line="91" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="93" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="96" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="98" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="100" column="57" source="standard:trailing-comma-on-call-site" />
+        <error line="108" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="109" column="1" source="standard:no-blank-line-in-list" />
+        <error line="112" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="123" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="127" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="140" column="29" source="standard:trailing-comma-on-call-site" />
+        <error line="145" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="147" column="39" source="standard:trailing-comma-on-call-site" />
+        <error line="149" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="154" column="22" source="standard:trailing-comma-on-call-site" />
+        <error line="158" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="170" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="174" column="75" source="standard:trailing-comma-on-call-site" />
+        <error line="175" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/view/SpeakerDetailsScreen.kt">
+        <error line="79" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="88" column="36" source="standard:trailing-comma-on-call-site" />
+        <error line="95" column="34" source="standard:trailing-comma-on-declaration-site" />
+        <error line="102" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="107" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="114" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="119" column="80" source="standard:trailing-comma-on-call-site" />
+        <error line="126" column="50" source="standard:trailing-comma-on-call-site" />
+        <error line="135" column="28" source="standard:multiline-expression-wrapping" />
+        <error line="138" column="35" source="standard:trailing-comma-on-call-site" />
+        <error line="143" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="151" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="155" column="29" source="standard:multiline-expression-wrapping" />
+        <error line="161" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="164" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="168" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="176" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="180" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="186" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="189" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="193" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="197" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="201" column="91" source="standard:trailing-comma-on-call-site" />
+        <error line="205" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="211" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="215" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="217" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="222" column="91" source="standard:trailing-comma-on-call-site" />
+        <error line="226" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="230" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="235" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="239" column="77" source="standard:trailing-comma-on-call-site" />
+        <error line="243" column="26" source="standard:trailing-comma-on-call-site" />
+        <error line="246" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="253" column="69" source="standard:trailing-comma-on-call-site" />
+        <error line="257" column="84" source="standard:trailing-comma-on-call-site" />
+        <error line="262" column="36" source="standard:multiline-expression-wrapping" />
+        <error line="266" column="42" source="standard:multiline-expression-wrapping" />
+        <error line="268" column="89" source="standard:trailing-comma-on-call-site" />
+        <error line="270" column="66" source="standard:trailing-comma-on-call-site" />
+        <error line="278" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="282" column="104" source="standard:trailing-comma-on-call-site" />
+        <error line="285" column="41" source="standard:trailing-comma-on-call-site" />
+        <error line="290" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="293" column="40" source="standard:multiline-expression-wrapping" />
+        <error line="300" column="70" source="standard:trailing-comma-on-call-site" />
+        <error line="312" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="317" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="323" column="23" source="standard:multiline-expression-wrapping" />
+        <error line="324" column="52" source="standard:trailing-comma-on-call-site" />
+        <error line="325" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/view/SpeakersScreen.kt">
+        <error line="60" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="66" column="46" source="standard:trailing-comma-on-call-site" />
+        <error line="74" column="45" source="standard:trailing-comma-on-declaration-site" />
+        <error line="82" column="82" source="standard:trailing-comma-on-call-site" />
+        <error line="87" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="81" source="standard:trailing-comma-on-call-site" />
+        <error line="96" column="26" source="standard:multiline-expression-wrapping" />
+        <error line="99" column="95" source="standard:trailing-comma-on-call-site" />
+        <error line="100" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="103" column="68" source="standard:trailing-comma-on-call-site" />
+        <error line="108" column="24" source="standard:multiline-expression-wrapping" />
+        <error line="110" column="40" source="standard:trailing-comma-on-call-site" />
+        <error line="115" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="123" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="128" column="88" source="standard:trailing-comma-on-call-site" />
+        <error line="138" column="74" source="standard:trailing-comma-on-call-site" />
+        <error line="145" column="34" source="standard:trailing-comma-on-call-site" />
+        <error line="157" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="161" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="167" column="73" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/speakers/view/TopAppBar.kt">
+        <error line="39" column="15" source="standard:function-signature" />
+        <error line="39" column="46" source="standard:function-signature" />
+        <error line="39" column="76" source="standard:function-signature" />
+        <error line="41" column="28" source="standard:trailing-comma-on-call-site" />
+        <error line="46" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="51" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="55" column="59" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="37" source="standard:trailing-comma-on-call-site" />
+        <error line="66" column="38" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/main/java/com/android254/presentation/utils/ChaiLightAndDarkComposePreview.kt">
+        <error line="23" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="27" column="45" source="standard:trailing-comma-on-call-site" />
+        <error line="28" column="1" source="standard:no-blank-line-in-list" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/about/view/AboutScreenTest.kt">
+        <error line="34" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/auth/view/AuthDialogTest.kt">
+        <error line="32" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/feed/view/FeedScreenTest.kt">
+        <error line="40" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="54" column="46" source="standard:multiline-expression-wrapping" />
+        <error line="62" column="23" source="standard:trailing-comma-on-call-site" />
+        <error line="63" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="64" column="14" source="standard:trailing-comma-on-call-site" />
+        <error line="82" column="46" source="standard:multiline-expression-wrapping" />
+        <error line="90" column="23" source="standard:trailing-comma-on-call-site" />
+        <error line="91" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="92" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/feedback/view/FeedBackScreenTest.kt">
+        <error line="35" column="1" source="standard:no-empty-first-line-in-class-body" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/home/screen/HomeScreenTest.kt">
+        <error line="39" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="109" column="36" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/sessionDetails/view/SessionDetailsScreenTest.kt">
+        <error line="46" column="58" source="standard:multiline-expression-wrapping" />
+        <error line="67" column="28" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="71" column="47" source="standard:trailing-comma-on-call-site" />
+        <error line="85" column="28" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="90" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="105" column="28" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="110" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="115" column="78" source="standard:trailing-comma-on-call-site" />
+        <error line="118" column="43" source="standard:trailing-comma-on-call-site" />
+        <error line="121" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="124" column="58" source="standard:trailing-comma-on-call-site" />
+        <error line="127" column="55" source="standard:trailing-comma-on-call-site" />
+        <error line="130" column="61" source="standard:trailing-comma-on-call-site" />
+        <error line="137" column="28" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="142" column="44" source="standard:trailing-comma-on-call-site" />
+        <error line="152" column="27" source="standard:multiline-expression-wrapping" />
+        <error line="170" column="26" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/sessions/mappers/TimePeriodTest.kt">
+        <error line="27" column="37" source="standard:trailing-comma-on-declaration-site" />
+        <error line="29" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="44" column="62" source="standard:trailing-comma-on-call-site" />
+        <error line="55" column="31" source="standard:trailing-comma-on-call-site" />
+        <error line="60" column="45" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/sessions/view/SessionScreenTest.kt">
+        <error line="41" column="1" source="standard:no-empty-first-line-in-class-body" />
+        <error line="52" column="32" source="standard:multiline-expression-wrapping" />
+        <error line="66" column="49" source="standard:trailing-comma-on-call-site" />
+        <error line="79" column="34" source="standard:multiline-expression-wrapping" />
+        <error line="81" column="28" source="standard:unnecessary-parentheses-before-trailing-lambda" />
+        <error line="93" column="49" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/speakers/view/SpeakerDetailsScreenTest.kt">
+        <error line="55" column="48" source="standard:trailing-comma-on-call-site" />
+        <error line="56" column="18" source="standard:trailing-comma-on-call-site" />
+    </file>
+    <file name="src/test/java/com/android254/presentation/speakers/view/SpeakersScreenTest.kt">
+        <error line="49" column="58" source="standard:multiline-expression-wrapping" />
+        <error line="53" column="51" source="standard:trailing-comma-on-call-site" />
+        <error line="54" column="18" source="standard:trailing-comma-on-call-site" />
+        <error line="55" column="14" source="standard:trailing-comma-on-call-site" />
+    </file>
+</baseline>

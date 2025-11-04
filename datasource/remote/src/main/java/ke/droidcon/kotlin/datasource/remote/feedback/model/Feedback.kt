@@ -33,12 +33,16 @@ private class FeedbackRatingSerializer : KSerializer<FeedbackRating> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("FeedbackRating", PrimitiveKind.INT)
 
-    override fun serialize(encoder: Encoder, value: FeedbackRating) {
-        val code = when (value) {
-            FeedbackRating.BAD -> 1
-            FeedbackRating.OKAY -> 2
-            FeedbackRating.GOOD -> 3
-        }
+    override fun serialize(
+        encoder: Encoder,
+        value: FeedbackRating,
+    ) {
+        val code =
+            when (value) {
+                FeedbackRating.BAD -> 1
+                FeedbackRating.OKAY -> 2
+                FeedbackRating.GOOD -> 3
+            }
         encoder.encodeInt(code)
     }
 

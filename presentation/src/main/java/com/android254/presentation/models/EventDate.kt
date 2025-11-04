@@ -17,5 +17,5 @@ package com.android254.presentation.models
 
 data class EventDate(
     val value: String,
-    val day: Int
+    val day: Int,
 )

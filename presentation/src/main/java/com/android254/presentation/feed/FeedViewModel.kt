@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.feed
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.FeedRepo
@@ -31,19 +29,21 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(
-    private val feedRepo: FeedRepo
-) : ViewModel() {
-
-    val uiState = feedRepo.fetchFeed()
-        .map { feeds ->
-            FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
-        }
-        .onStart { FeedUIState.Loading }
-        .catch { FeedUIState.Error(message = "An unexpected error occurred") }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = FeedUIState.Empty
-        )
-}
+class FeedViewModel
+    @Inject
+    constructor(
+        private val feedRepo: FeedRepo,
+    ) : ViewModel() {
+        val uiState =
+            feedRepo.fetchFeed()
+                .map { feeds ->
+                    FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
+                }
+                .onStart { FeedUIState.Loading }
+                .catch { FeedUIState.Error(message = "An unexpected error occurred") }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = FeedUIState.Empty,
+                )
+    }

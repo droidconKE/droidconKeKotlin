@@ -19,7 +19,6 @@ import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSpeakersDataSource {
-
     fun getCachedSpeakers(): Flow<List<SpeakerEntity>>
 
     fun getCachedSpeakerByName(speakerName: String): Flow<SpeakerEntity>

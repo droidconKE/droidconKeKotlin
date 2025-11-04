@@ -26,5 +26,5 @@ data class HomeDetails(
     val speakersCount: Int,
     val isSpeakersSessionEnable: Boolean,
     val sponsors: List<Sponsors>,
-    val organizers: List<OrganizingPartners>
+    val organizers: List<OrganizingPartners>,
 )
