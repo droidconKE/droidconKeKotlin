@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>UseCheckOrError:Theme.kt$throw IllegalStateException("Activity absent")</ID>
+  </CurrentIssues>
+</SmellBaseline>
