@@ -32,6 +32,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     signingConfigs {
         getByName("debug") {
             storeFile = file("../keystore/dckedebug.keystore")
