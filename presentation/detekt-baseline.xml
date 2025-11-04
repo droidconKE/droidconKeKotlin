@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>DestructuringDeclarationWithTooManyEntries:SpeakerComponent.kt$val (image, nameText, bioText, button) = createRefs()</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:SpeakerDetailsScreen.kt$val (topBar, speakerDetails, speakerImage, divider, twitterContainer) = createRefs()</ID>
+    <ID>UnusedParameter:DroidconAppBar.kt$onActionClicked: () -&gt; Unit = {}</ID>
+    <ID>UnusedParameter:DroidconAppBarWithFeedbackButton.kt$userProfile: String</ID>
+    <ID>UnusedParameter:SessionDetailsScreen.kt$sessionId: String</ID>
+    <ID>UseCheckOrError:Navigation.kt$throw IllegalStateException("Speaker data missing.")</ID>
+  </CurrentIssues>
+</SmellBaseline>

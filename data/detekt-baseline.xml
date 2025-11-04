@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>UnusedPrivateProperty:HomeRepoImpl.kt$HomeRepoImpl$@IoDispatcher private val ioDispatcher: CoroutineDispatcher</ID>
+    <ID>UnusedPrivateProperty:SessionsManagerTest.kt$SessionsManagerTest$private lateinit var bookmarkDao: BookmarkDao</ID>
+    <ID>UnusedPrivateProperty:SessionsManagerTest.kt$SessionsManagerTest$private lateinit var database: Database</ID>
+    <ID>UnusedPrivateProperty:SessionsManagerTest.kt$SessionsManagerTest$private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO</ID>
+    <ID>UnusedPrivateProperty:SessionsManagerTest.kt$SessionsManagerTest$private val mockRemoteSessionsDataSource = mockk&lt;RemoteSessionsDataSource&gt;()</ID>
+  </CurrentIssues>
+</SmellBaseline>

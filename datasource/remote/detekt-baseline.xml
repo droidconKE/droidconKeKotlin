@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>UnusedPrivateProperty:RemoteFeatureToggle.kt$RemoteFeatureToggle$private var intialized = false</ID>
+  </CurrentIssues>
+</SmellBaseline>
