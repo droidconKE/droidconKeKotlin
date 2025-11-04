@@ -15,7 +15,6 @@
  */
 package ke.droidcon.kotlin.datasource.local.source
 
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.di.LocalSourceIoDispatcher
 import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
@@ -23,26 +22,28 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LocalOrganizersDataSourceImpl @Inject constructor(
-    private val organizersDao: OrganizersDao,
-    @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher
-) : LocalOrganizersDataSource {
+class LocalOrganizersDataSourceImpl
+    @Inject
+    constructor(
+        private val organizersDao: OrganizersDao,
+        @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
+    ) : LocalOrganizersDataSource {
+        override fun getOrganizers(): Flow<List<OrganizerEntity>> {
+            return organizersDao.fetchOrganizers()
+                .flowOn(localSourceIoDispatcher)
+        }
 
-    override fun getOrganizers(): Flow<List<OrganizerEntity>> {
-        return organizersDao.fetchOrganizers()
-            .flowOn(localSourceIoDispatcher)
-    }
+        override suspend fun deleteAllOrganizers() {
+            withContext(localSourceIoDispatcher) {
+                organizersDao.deleteAllOrganizers()
+            }
+        }
 
-    override suspend fun deleteAllOrganizers() {
-        withContext(localSourceIoDispatcher) {
-            organizersDao.deleteAllOrganizers()
+        override suspend fun insertOrganizers(organizers: List<OrganizerEntity>) {
+            withContext(localSourceIoDispatcher) {
+                organizersDao.insert(items = organizers)
+            }
         }
     }
-
-    override suspend fun insertOrganizers(organizers: List<OrganizerEntity>) {
-        withContext(localSourceIoDispatcher) {
-            organizersDao.insert(items = organizers)
-        }
-    }
-}

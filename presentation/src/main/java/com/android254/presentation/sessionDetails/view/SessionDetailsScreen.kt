@@ -43,7 +43,6 @@ import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -52,6 +51,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -93,7 +93,7 @@ import ke.droidcon.kotlin.presentation.R
 fun SessionDetailsRoute(
     viewModel: SessionDetailsViewModel = hiltViewModel(),
     sessionId: String,
-    onNavigationIconClick: () -> Unit
+    onNavigationIconClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -102,7 +102,7 @@ fun SessionDetailsRoute(
         sessionId = sessionId,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
-        onNavigationIconClick = onNavigationIconClick
+        onNavigationIconClick = onNavigationIconClick,
     )
 }
 
@@ -112,33 +112,34 @@ private fun SessionDetailsScreen(
     sessionId: String,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
-    onNavigationIconClick: () -> Unit
+    onNavigationIconClick: () -> Unit,
 ) {
     Scaffold(
         topBar = { TopBar(onNavigationIconClick) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {},
-                modifier = Modifier
-                    .size(44.dp)
-                    .testTag(TestTag.FLOATING_ACTION_BUTTON),
+                modifier =
+                    Modifier
+                        .size(44.dp)
+                        .testTag(TestTag.FLOATING_ACTION_BUTTON),
                 containerColor = ChaiRed,
-                shape = CircleShape
+                shape = CircleShape,
             ) {
                 Icon(
                     modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
                     imageVector = Icons.Filled.Reply,
                     contentDescription = null,
-                    tint = ChaiWhite
+                    tint = ChaiWhite,
                 )
             }
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background
+        containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
         when (uiState) {
             is SessionDetailsUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -146,12 +147,12 @@ private fun SessionDetailsScreen(
 
             is SessionDetailsUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     ChaiBodyMediumBold(
                         modifier = Modifier.align(Alignment.Center),
                         bodyText = uiState.message,
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )
                 }
             }
@@ -161,7 +162,7 @@ private fun SessionDetailsScreen(
                     paddingValues = paddingValues,
                     sessionDetails = uiState.data,
                     bookmarkSession = bookmarkSession,
-                    unBookmarkSession = unBookmarkSession
+                    unBookmarkSession = unBookmarkSession,
                 )
             }
         }
@@ -173,15 +174,16 @@ fun Body(
     paddingValues: PaddingValues,
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
-    unBookmarkSession: (String) -> Unit
+    unBookmarkSession: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .padding(paddingValues)
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CustomDivider()
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
@@ -190,7 +192,7 @@ fun Body(
             SessionSpeakerNameAndFavouriteIcon(
                 sessionDetails = sessionDetails,
                 bookmarkSession = bookmarkSession,
-                unBookmarkSession = unBookmarkSession
+                unBookmarkSession = unBookmarkSession,
             )
 
             Spacer(modifier = Modifier.height(25.dp))
@@ -236,40 +238,43 @@ fun Body(
 
 @Composable
 private fun SpeakerTwitterHandle(
-    speaker: SessionDetailsSpeakerPresentationModel
+    speaker: SessionDetailsSpeakerPresentationModel,
 ) {
     val context = LocalContext.current
-    val intent = remember {
-        Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("https://www.twitter.com/${speaker.twitterHandle}")
-        )
-    }
+    val intent =
+        remember {
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://www.twitter.com/${speaker.twitterHandle}"),
+            )
+        }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         ChaiBodyMedium(
             bodyText = stringResource(R.string.twitter_handle_label),
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
         )
 
         COutlinedButton(
             onClick = { context.startActivity(intent) },
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(
-                MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor
-            )
+            colors =
+                ButtonDefaults.buttonColors(
+                    MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                ),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_twitter_logo),
                 contentDescription = null,
-                modifier = Modifier
-                    .height(20.dp)
-                    .width(20.dp),
-                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                modifier =
+                    Modifier
+                        .height(20.dp)
+                        .width(20.dp),
+                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
             )
 
             Spacer(modifier = Modifier.width(5.dp))
@@ -277,7 +282,7 @@ private fun SpeakerTwitterHandle(
             ChaiBodyMedium(
                 modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
                 bodyText = speaker.twitterHandle,
-                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
             )
         }
     }
@@ -288,12 +293,13 @@ private fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) 
     AsyncImage(
         model = sessionDetails.sessionImageUrl,
         contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .border(1.dp, ChaiTeal90, RoundedCornerShape(10.dp))
-            .testTag(TestTag.IMAGE_BANNER)
-            .clip(RoundedCornerShape(10.dp))
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .border(1.dp, ChaiTeal90, RoundedCornerShape(10.dp))
+                .testTag(TestTag.IMAGE_BANNER)
+                .clip(RoundedCornerShape(10.dp)),
     )
 }
 
@@ -301,39 +307,41 @@ private fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) 
 private fun SessionSpeakerNameAndFavouriteIcon(
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
-    unBookmarkSession: (String) -> Unit
+    unBookmarkSession: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = Icons.Filled.Android,
             contentDescription = null,
-            modifier = Modifier
-                .height(14.dp)
-                .width(15.dp),
-            tint = ChaiRed
+            modifier =
+                Modifier
+                    .height(14.dp)
+                    .width(15.dp),
+            tint = ChaiRed,
         )
 
         Spacer(modifier = Modifier.width(6.dp))
 
         ChaiTextLabelLarge(
             bodyText = stringResource(id = R.string.speaker_label),
-            textColor = ChaiRed
+            textColor = ChaiRed,
         )
     }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         ChaiTitle(
             modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
             titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
-            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
         )
 
         IconButton(
@@ -344,14 +352,15 @@ private fun SessionSpeakerNameAndFavouriteIcon(
                 } else {
                     bookmarkSession(sessionDetails.id)
                 }
-            }
+            },
         ) {
             Icon(
-                modifier = Modifier
-                    .testTag(TestTag.FAVOURITE_ICON),
+                modifier =
+                    Modifier
+                        .testTag(TestTag.FAVOURITE_ICON),
                 imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
             )
         }
     }
@@ -359,12 +368,12 @@ private fun SessionSpeakerNameAndFavouriteIcon(
 
 @Composable
 private fun SessionTitleAndDescription(
-    sessionDetails: SessionDetailsPresentationModel
+    sessionDetails: SessionDetailsPresentationModel,
 ) {
     ChaiBodyLargeBold(
         modifier = Modifier.testTag(TestTag.SESSION_TITLE),
         bodyText = sessionDetails.title,
-        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
     )
 
     Spacer(modifier = Modifier.height(15.dp))
@@ -372,47 +381,48 @@ private fun SessionTitleAndDescription(
     ChaiBodyMedium(
         modifier = Modifier.testTag(TestTag.SESSION_DESCRIPTION),
         bodyText = sessionDetails.description,
-        textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+        textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
     )
 }
 
 @Composable
 private fun SessionLevel(sessionLevel: String) {
     ChaiBodySmall(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.chaiColorsPalette.badgeBackgroundColor,
-                shape = RoundedCornerShape(5.dp)
-            )
-            .padding(vertical = 3.dp, horizontal = 9.dp)
-            .testTag(TestTag.LEVEL),
+        modifier =
+            Modifier
+                .background(
+                    color = MaterialTheme.chaiColorsPalette.badgeBackgroundColor,
+                    shape = RoundedCornerShape(5.dp),
+                )
+                .padding(vertical = 3.dp, horizontal = 9.dp)
+                .testTag(TestTag.LEVEL),
         bodyText = "#$sessionLevel".uppercase(),
-        textColor = ChaiWhite
+        textColor = ChaiWhite,
     )
 }
 
 @Composable
 private fun SessionTimeAndRoom(
-    sessionDetails: SessionDetailsPresentationModel
+    sessionDetails: SessionDetailsPresentationModel,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.TIME_SLOT),
             bodyText = sessionDetails.timeSlot.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChaiBodyXSmall(
             bodyText = "|",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.ROOM),
             bodyText = sessionDetails.venue.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
     }
 }
@@ -421,7 +431,7 @@ private fun SessionTimeAndRoom(
 private fun CustomDivider() {
     Divider(
         thickness = 1.dp,
-        color = MaterialTheme.chaiColorsPalette.surfaces
+        color = MaterialTheme.chaiColorsPalette.surfaces,
     )
 }
 
@@ -429,30 +439,31 @@ private fun CustomDivider() {
 private fun TopBar(onNavigationIconClick: () -> Unit) {
     TopAppBar(
         modifier = Modifier.testTag(TestTag.TOP_BAR),
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.chaiColorsPalette.background,
-            navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-            scrolledContainerColor = MaterialTheme.chaiColorsPalette.background,
-            titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-            actionIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.chaiColorsPalette.background,
+                navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                scrolledContainerColor = MaterialTheme.chaiColorsPalette.background,
+                titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                actionIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            ),
         title = {
             ChaiBodyLarge(
                 bodyText = stringResource(id = R.string.session_details_label),
-                textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
             )
         },
         navigationIcon = {
             IconButton(
-                onClick = { onNavigationIconClick() }
+                onClick = { onNavigationIconClick() },
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_back_arrow),
                     contentDescription = stringResource(R.string.back_arrow_icon_description),
-                    tint = MaterialTheme.chaiColorsPalette.textBoldColor
+                    tint = MaterialTheme.chaiColorsPalette.textBoldColor,
                 )
             }
-        }
+        },
     )
 }
 
@@ -474,37 +485,39 @@ object TestTag {
 
 @Preview(
     name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 fun SessionDetailsScreenPreview() {
-    ChaiDCKE22Theme() {
+    ChaiDCKE22Theme {
         SessionDetailsScreen(
             onNavigationIconClick = {},
-            uiState = SessionDetailsUiState.Success(
-                data = SessionDetailsPresentationModel(
-                    id = "1",
-                    title = "Welcome at DroidconKE",
-                    description = "Welcome to DroidconKE 2022. We are excited to have you here. We hope you will have a great time.",
-                    venue = "Main Hall",
-                    startTime = "10:00",
-                    endTime = "11:00",
-                    amOrPm = "AM",
-                    isStarred = false,
-                    format = "Keynote",
-                    level = "Beginner",
-                    sessionImageUrl = "",
-                    timeSlot = "10:00 - 11:00 AM",
-                    speakers = listOf()
-                )
-            ),
+            uiState =
+                SessionDetailsUiState.Success(
+                    data =
+                        SessionDetailsPresentationModel(
+                            id = "1",
+                            title = "Welcome at DroidconKE",
+                            description = "Welcome to DroidconKE 2022. We are excited to have you here. We hope you will have a great time.",
+                            venue = "Main Hall",
+                            startTime = "10:00",
+                            endTime = "11:00",
+                            amOrPm = "AM",
+                            isStarred = false,
+                            format = "Keynote",
+                            level = "Beginner",
+                            sessionImageUrl = "",
+                            timeSlot = "10:00 - 11:00 AM",
+                            speakers = listOf(),
+                        ),
+                ),
             sessionId = "1",
             bookmarkSession = {},
-            unBookmarkSession = {}
+            unBookmarkSession = {},
         )
     }
 }

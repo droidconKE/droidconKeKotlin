@@ -38,24 +38,28 @@ import io.ktor.client.plugins.observer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    @Provides
+    @Singleton
+    fun provideHttpClientEngine(chuckerInterceptor: ChuckerInterceptor): HttpClientEngine =
+        OkHttp.create {
+            addInterceptor(chuckerInterceptor)
+        }
 
     @Provides
     @Singleton
-    fun provideHttpClientEngine(chuckerInterceptor: ChuckerInterceptor): HttpClientEngine = OkHttp.create {
-        addInterceptor(chuckerInterceptor)
-    }
-
-    @Provides
-    @Singleton
-    fun provideHttpClient(engine: HttpClientEngine, tokenProvider: TokenProvider, remoteFeatureToggle: RemoteFeatureToggle): HttpClient = HttpClientFactory(tokenProvider, remoteFeatureToggle).create(engine)
+    fun provideHttpClient(
+        engine: HttpClientEngine,
+        tokenProvider: TokenProvider,
+        remoteFeatureToggle: RemoteFeatureToggle,
+    ): HttpClient = HttpClientFactory(tokenProvider, remoteFeatureToggle).create(engine)
 
     @Provides
     @Singleton
@@ -63,7 +67,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideChuckerInterceptor(@ApplicationContext context: Context): ChuckerInterceptor {
+    fun provideChuckerInterceptor(
+        @ApplicationContext context: Context,
+    ): ChuckerInterceptor {
         return ChuckerInterceptor.Builder(context)
             .collector(ChuckerCollector(context))
             .maxContentLength(250000L)

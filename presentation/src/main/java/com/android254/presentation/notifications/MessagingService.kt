@@ -22,7 +22,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MessagingService : FirebaseMessagingService() {
-
     @Inject
     lateinit var notificationManager: DroidconNotificationManager
 

@@ -18,7 +18,6 @@ package ke.droidcon.kotlin.datasource.remote.utils
 import kotlinx.coroutines.flow.Flow
 
 interface TokenProvider {
-
     suspend fun fetch(): Flow<String?>
 
     suspend fun update(accessToken: String)

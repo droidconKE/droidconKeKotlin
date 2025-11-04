@@ -47,51 +47,56 @@ class FeedbackApiTest {
     }
 
     @Test
-    fun `sends correct http request`() = runTest {
-        val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
+    fun `sends correct http request`() =
+        runTest {
+            val mockEngine = MockEngine { respondOk() }
+            val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
-        val sessionId = "1"
-        FeedbackApi(httpClient).postFeedback(
-            Feedback(rating = FeedbackRating.GOOD, message = "Was nice"),
-            sessionId
-        )
+            val sessionId = "1"
+            FeedbackApi(httpClient).postFeedback(
+                Feedback(rating = FeedbackRating.GOOD, message = "Was nice"),
+                sessionId,
+            )
 
-        mockEngine.requestHistory.first().run {
-            val expectedUrl = "${provideEventBaseUrl()}/feedback/sessions/$sessionId"
-            assertThat(url.toString(), `is`(expectedUrl))
-            assertThat(method, `is`(HttpMethod.Post))
-            assertThat(body.toJsonString(), `is`("""{"rating":3,"message":"Was nice"}"""))
+            mockEngine.requestHistory.first().run {
+                val expectedUrl = "${provideEventBaseUrl()}/feedback/sessions/$sessionId"
+                assertThat(url.toString(), `is`(expectedUrl))
+                assertThat(method, `is`(HttpMethod.Post))
+                assertThat(body.toJsonString(), `is`("""{"rating":3,"message":"Was nice"}"""))
+            }
         }
-    }
 
     @Test
-    fun `when request succeeds, returns empty Success result`() = runTest {
-        val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
+    fun `when request succeeds, returns empty Success result`() =
+        runTest {
+            val mockEngine = MockEngine { respondOk() }
+            val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
-        val sessionId = "1"
-        val result = FeedbackApi(httpClient).postFeedback(
-            Feedback(rating = FeedbackRating.GOOD, message = "Was nice"),
-            sessionId
-        )
+            val sessionId = "1"
+            val result =
+                FeedbackApi(httpClient).postFeedback(
+                    Feedback(rating = FeedbackRating.GOOD, message = "Was nice"),
+                    sessionId,
+                )
 
-        assertThat(result, `is`(DataResult.Success(Unit)))
-    }
+            assertThat(result, `is`(DataResult.Success(Unit)))
+        }
 
     @Test
-    fun `when request fails, returns Error result`() = runTest {
-        val mockEngine = MockEngine { respondError(HttpStatusCode.InternalServerError) }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
+    fun `when request fails, returns Error result`() =
+        runTest {
+            val mockEngine = MockEngine { respondError(HttpStatusCode.InternalServerError) }
+            val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
-        val sessionId = "1"
-        val result = FeedbackApi(httpClient).postFeedback(
-            Feedback(rating = FeedbackRating.BAD, message = "Food haikuwa na nyama"),
-            sessionId
-        )
+            val sessionId = "1"
+            val result =
+                FeedbackApi(httpClient).postFeedback(
+                    Feedback(rating = FeedbackRating.BAD, message = "Food haikuwa na nyama"),
+                    sessionId,
+                )
 
-        assertThat(result, `is`(instanceOf(DataResult.Error::class.java)))
-    }
+            assertThat(result, `is`(instanceOf(DataResult.Error::class.java)))
+        }
 
     private suspend fun OutgoingContent.toJsonString() =
         // Parse to JsonElement to remove pretty-print formatting

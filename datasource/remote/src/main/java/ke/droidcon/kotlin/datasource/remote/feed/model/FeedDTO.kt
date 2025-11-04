@@ -15,10 +15,10 @@
  */
 package ke.droidcon.kotlin.datasource.remote.feed.model
 
-import java.time.LocalDateTime
 import ke.droidcon.kotlin.datasource.remote.feed.deserializer.LocalDateTimeSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 @Serializable
 data class FeedDTO(
@@ -29,5 +29,5 @@ data class FeedDTO(
     val image: String?,
     @Serializable(with = LocalDateTimeSerializer::class)
     @SerialName("created_at")
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
 )

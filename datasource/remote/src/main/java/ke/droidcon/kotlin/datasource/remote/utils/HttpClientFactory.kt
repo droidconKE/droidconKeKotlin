@@ -31,56 +31,58 @@ import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.BuildConfig
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
-class HttpClientFactory @Inject constructor(
-    private val tokenProvider: TokenProvider,
-    private val remoteFeatureToggle: RemoteFeatureToggle
-) {
-
-    fun create(engine: HttpClientEngine) = HttpClient(engine) {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
+class HttpClientFactory
+    @Inject
+    constructor(
+        private val tokenProvider: TokenProvider,
+        private val remoteFeatureToggle: RemoteFeatureToggle,
+    ) {
+        fun create(engine: HttpClientEngine) =
+            HttpClient(engine) {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            prettyPrint = true
+                            isLenient = true
+                            ignoreUnknownKeys = true
+                        },
+                    )
                 }
-            )
-        }
 
-        install(DefaultRequest) {
-            header(HttpHeaders.ContentType, ContentType.Application.Json)
-            header("Api-Authorization-Key", remoteFeatureToggle.getString("API_KEY"))
-        }
+                install(DefaultRequest) {
+                    header(HttpHeaders.ContentType, ContentType.Application.Json)
+                    header("Api-Authorization-Key", remoteFeatureToggle.getString("API_KEY"))
+                }
 
-        expectSuccess = true
+                expectSuccess = true
 
-        addDefaultResponseValidation()
+                addDefaultResponseValidation()
 
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    // Load tokens from datastore
-                    tokenProvider.fetch().firstOrNull()?.let { accessToken ->
-                        BearerTokens(accessToken, "")
+                install(Auth) {
+                    bearer {
+                        loadTokens {
+                            // Load tokens from datastore
+                            tokenProvider.fetch().firstOrNull()?.let { accessToken ->
+                                BearerTokens(accessToken, "")
+                            }
+                        }
+
+                        sendWithoutRequest { request ->
+                            request.url.toString().contains("social_login/google")
+                        }
                     }
                 }
 
-                sendWithoutRequest { request ->
-                    request.url.toString().contains("social_login/google")
+                if (BuildConfig.DEBUG) {
+                    install(Logging) {
+                        logger = Logger.DEFAULT
+                        level = LogLevel.ALL
+                    }
                 }
             }
-        }
-
-        if (BuildConfig.DEBUG) {
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.ALL
-            }
-        }
     }
-}

@@ -20,5 +20,5 @@ data class SessionsFilterState(
     val topics: List<String> = listOf(),
     val rooms: List<String> = listOf(),
     val sessionTypes: List<String> = listOf(),
-    val isBookmarked: Boolean = false
+    val isBookmarked: Boolean = false,
 )

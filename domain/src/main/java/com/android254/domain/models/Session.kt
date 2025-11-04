@@ -33,5 +33,5 @@ data class Session(
     val sessionLevel: String,
     val slug: String,
     val title: String,
-    val eventDay: String
+    val eventDay: String,
 )

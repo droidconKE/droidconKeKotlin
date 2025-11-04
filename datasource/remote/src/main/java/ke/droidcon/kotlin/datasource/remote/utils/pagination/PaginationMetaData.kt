@@ -26,5 +26,5 @@ data class PaginationMetaData(
     @SerialName("next_page") val nextPage: String?,
     @SerialName("next_page_url") val nextPageUrl: String?,
     @SerialName("per_page") val perPage: String,
-    @SerialName("previous_page_url") val previousPageUrl: String?
+    @SerialName("previous_page_url") val previousPageUrl: String?,
 )

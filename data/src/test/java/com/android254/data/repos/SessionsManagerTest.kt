@@ -43,34 +43,37 @@ class SessionsManagerTest {
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Test
-    fun `test it fetches from the local cache`() = runTest {
-        coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
-            flowOf(listOf(sessionEntity))
-        val sessions = mockLocalSessionsDataSource.getCachedSessions().first()
-        assert(sessions[0].description == sessionEntity.description)
-        coVerify(atLeast = 1) {
-            mockLocalSessionsDataSource.getCachedSessions()
+    fun `test it fetches from the local cache`() =
+        runTest {
+            coEvery { mockLocalSessionsDataSource.getCachedSessions() } returns
+                flowOf(listOf(sessionEntity))
+            val sessions = mockLocalSessionsDataSource.getCachedSessions().first()
+            assert(sessions[0].description == sessionEntity.description)
+            coVerify(atLeast = 1) {
+                mockLocalSessionsDataSource.getCachedSessions()
+            }
         }
-    }
 }
-val sessionEntity = SessionEntity(
-    id = 1,
-    remote_id = "1234567890",
-    description = "This is a keynote session about the future of technology.",
-    sessionFormat = "Keynote",
-    sessionLevel = "Beginner",
-    slug = "keynote-session",
-    title = "The Future of Technology",
-    endDateTime = "2023-08-17T12:00:00Z",
-    endTime = "12:00 PM",
-    isBookmarked = false,
-    isKeynote = true,
-    isServiceSession = false,
-    sessionImage = "https://example.com/session-1.jpg",
-    startDateTime = "2023-08-17T10:00:00Z",
-    startTime = "10:00 AM",
-    rooms = "Room 1",
-    speakers = "John Doe, Jane Doe",
-    startTimestamp = 1638457600000,
-    sessionImageUrl = "https://example.com/session-1.jpg"
-)
+
+val sessionEntity =
+    SessionEntity(
+        id = 1,
+        remote_id = "1234567890",
+        description = "This is a keynote session about the future of technology.",
+        sessionFormat = "Keynote",
+        sessionLevel = "Beginner",
+        slug = "keynote-session",
+        title = "The Future of Technology",
+        endDateTime = "2023-08-17T12:00:00Z",
+        endTime = "12:00 PM",
+        isBookmarked = false,
+        isKeynote = true,
+        isServiceSession = false,
+        sessionImage = "https://example.com/session-1.jpg",
+        startDateTime = "2023-08-17T10:00:00Z",
+        startTime = "10:00 AM",
+        rooms = "Room 1",
+        speakers = "John Doe, Jane Doe",
+        startTimestamp = 1638457600000,
+        sessionImageUrl = "https://example.com/session-1.jpg",
+    )

@@ -33,5 +33,5 @@ data class SessionDomainModel(
     val session_format: String,
     val session_level: String,
     val slug: String,
-    val title: String
+    val title: String,
 )

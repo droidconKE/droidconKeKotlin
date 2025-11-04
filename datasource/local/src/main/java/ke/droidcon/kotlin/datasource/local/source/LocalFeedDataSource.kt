@@ -19,7 +19,6 @@ import ke.droidcon.kotlin.datasource.local.model.FeedEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalFeedDataSource {
-
     suspend fun insertFeed(feedItems: List<FeedEntity>)
 
     fun fetchFeed(): Flow<List<FeedEntity>>

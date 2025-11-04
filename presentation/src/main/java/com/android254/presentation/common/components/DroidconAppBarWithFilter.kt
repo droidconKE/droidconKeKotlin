@@ -43,32 +43,33 @@ fun DroidconAppBarWithFilter(
     onListIconClick: () -> Unit,
     onAgendaIconClick: () -> Unit,
     isFilterActive: Boolean,
-    onFilterButtonClick: () -> Unit
+    onFilterButtonClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
-            .testTag("droidcon_topBar_with_Filter"),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
+                .testTag("droidcon_topBar_with_Filter"),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
-            contentDescription = stringResource(id = R.string.logo)
+            contentDescription = stringResource(id = R.string.logo),
         )
         Spacer(modifier = Modifier.weight(1f))
 
         LayoutIconButtons(
             isListActive = isListActive,
             onListIconClick = onListIconClick,
-            onAgendaIconClick = onAgendaIconClick
+            onAgendaIconClick = onAgendaIconClick,
         )
         Spacer(modifier = Modifier.weight(1f))
 
         FilterButton(
             isActive = isFilterActive,
-            onButtonClick = onFilterButtonClick
+            onButtonClick = onFilterButtonClick,
         )
     }
 }
@@ -78,7 +79,7 @@ fun LayoutIconButtons(
     modifier: Modifier = Modifier,
     isListActive: Boolean,
     onListIconClick: () -> Unit,
-    onAgendaIconClick: () -> Unit
+    onAgendaIconClick: () -> Unit,
 ) {
     val listIconColor = if (isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
     val agendaIconColor = if (!isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
@@ -86,28 +87,30 @@ fun LayoutIconButtons(
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier
-                .clickable(
-                    onClick = onListIconClick
-                ),
+            modifier =
+                Modifier
+                    .clickable(
+                        onClick = onListIconClick,
+                    ),
             painter = painterResource(id = R.drawable.ic_listalt),
             contentDescription = null,
-            tint = listIconColor
+            tint = listIconColor,
         )
 
         Spacer(modifier = Modifier.width(35.dp))
 
         Icon(
-            modifier = Modifier
-                .clickable(
-                    onClick = onAgendaIconClick
-                ),
+            modifier =
+                Modifier
+                    .clickable(
+                        onClick = onAgendaIconClick,
+                    ),
             painter = painterResource(id = R.drawable.ic_view_agenda),
             contentDescription = null,
-            tint = agendaIconColor
+            tint = agendaIconColor,
         )
     }
 }
@@ -116,30 +119,31 @@ fun LayoutIconButtons(
 fun FilterButton(
     modifier: Modifier = Modifier,
     isActive: Boolean,
-    onButtonClick: () -> Unit
+    onButtonClick: () -> Unit,
 ) {
     val stateColors = if (isActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else ChaiGrey
 
     Row(
-        modifier = modifier
-            .clickable(
-                enabled = isActive,
-                onClick = onButtonClick
-            ),
+        modifier =
+            modifier
+                .clickable(
+                    enabled = isActive,
+                    onClick = onButtonClick,
+                ),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         ChaiBodyLarge(
             modifier = Modifier,
             bodyText = stringResource(id = R.string.top_bar_filter),
-            textColor = stateColors
+            textColor = stateColors,
         )
         Spacer(modifier = Modifier.width(8.dp))
 
         Icon(
             painter = painterResource(id = R.drawable.ic_filter),
             contentDescription = null,
-            tint = stateColors
+            tint = stateColors,
         )
     }
 }
@@ -148,18 +152,19 @@ fun FilterButton(
 @Composable
 fun ToolbarPreview() {
     ChaiDCKE22Theme {
-        Column() {
+        Column {
             DroidconAppBarWithFilter(
                 isListActive = true,
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = true,
-                onFilterButtonClick = {}
+                onFilterButtonClick = {},
             )
             Spacer(
-                modifier = Modifier
-                    .height(32.dp)
-                    .background(color = ChaiGrey)
+                modifier =
+                    Modifier
+                        .height(32.dp)
+                        .background(color = ChaiGrey),
             )
 
             DroidconAppBarWithFilter(
@@ -167,12 +172,13 @@ fun ToolbarPreview() {
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = false,
-                onFilterButtonClick = {}
+                onFilterButtonClick = {},
             )
             Spacer(
-                modifier = Modifier
-                    .height(32.dp)
-                    .background(color = ChaiGrey)
+                modifier =
+                    Modifier
+                        .height(32.dp)
+                        .background(color = ChaiGrey),
             )
 
             DroidconAppBarWithFilter(
@@ -180,12 +186,13 @@ fun ToolbarPreview() {
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = true,
-                onFilterButtonClick = {}
+                onFilterButtonClick = {},
             )
             Spacer(
-                modifier = Modifier
-                    .height(32.dp)
-                    .background(color = ChaiGrey)
+                modifier =
+                    Modifier
+                        .height(32.dp)
+                        .background(color = ChaiGrey),
             )
 
             DroidconAppBarWithFilter(
@@ -193,7 +200,7 @@ fun ToolbarPreview() {
                 onListIconClick = {},
                 onAgendaIconClick = {},
                 isFilterActive = false,
-                onFilterButtonClick = {}
+                onFilterButtonClick = {},
             )
         }
     }

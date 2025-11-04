@@ -31,7 +31,6 @@ import org.robolectric.shadows.ShadowLog
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class AboutScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 

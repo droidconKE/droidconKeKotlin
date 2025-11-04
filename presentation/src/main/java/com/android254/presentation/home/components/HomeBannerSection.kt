@@ -61,11 +61,12 @@ fun HomeEventPoster() {
     Image(
         painter = painterResource(id = R.drawable.droidcon_event_banner),
         contentDescription = stringResource(id = R.string.home_banner_event_poster_description),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
-            .testTag("home_event_poster"),
-        contentScale = ContentScale.FillWidth
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(20.dp))
+                .testTag("home_event_poster"),
+        contentScale = ContentScale.FillWidth,
     )
 }
 
@@ -73,37 +74,40 @@ fun HomeEventPoster() {
 fun HomeCallForSpeakersLink() {
     Card(
         shape = RoundedCornerShape(20.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(4.2f)
-            .testTag("home_call_for_speakers_link"),
-        colors = CardDefaults.cardColors(containerColor = ChaiTeal)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(4.2f)
+                .testTag("home_call_for_speakers_link"),
+        colors = CardDefaults.cardColors(containerColor = ChaiTeal),
     ) {
         Row(
-            modifier = Modifier
-                .background(Color.Transparent)
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .background(Color.Transparent)
+                    .fillMaxSize(),
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_home_speakers_card_drawable),
                 contentDescription = stringResource(id = R.string.home_banner_call_for_speakers_image_description),
                 modifier = Modifier.padding(start = 15.dp, end = 19.dp),
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
             )
 
             Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(end = 20.dp),
-                verticalArrangement = Arrangement.Center
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .padding(end = 20.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
                 ChaiSubTitle(
                     titleText = stringResource(id = R.string.home_banner_call_for_speakers_label),
-                    titleColor = ChaiWhite
+                    titleColor = ChaiWhite,
                 )
                 ChaiTextLabelMedium(
                     bodyText = stringResource(id = R.string.home_banner_call_for_speakers_apply_to_speak_label),
-                    textColor = ChaiBlack
+                    textColor = ChaiBlack,
                 )
             }
 
@@ -111,7 +115,7 @@ fun HomeCallForSpeakersLink() {
                 painter = painterResource(id = R.drawable.ic_home_speakers_card_play),
                 contentDescription = stringResource(id = R.string.home_banner_call_for_speakers_image_description),
                 modifier = Modifier.align(Alignment.CenterVertically),
-                tint = ChaiWhite
+                tint = ChaiWhite,
             )
         }
     }

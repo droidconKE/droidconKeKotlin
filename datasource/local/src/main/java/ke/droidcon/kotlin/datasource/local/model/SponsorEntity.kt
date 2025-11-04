@@ -28,5 +28,5 @@ data class SponsorEntity(
     val logo: String,
     val createdAt: String,
     @ColumnInfo(defaultValue = "")
-    val sponsorType: String
+    val sponsorType: String,
 )

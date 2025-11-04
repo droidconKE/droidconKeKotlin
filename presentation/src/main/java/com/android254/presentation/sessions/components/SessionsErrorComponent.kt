@@ -39,24 +39,24 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun SessionsErrorComponent(
     errorMessage: String,
-    retry: () -> Unit = {}
+    retry: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ChaiBodyMediumBold(
             bodyText = errorMessage,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
         )
         Spacer(
-            modifier = Modifier.height(32.dp)
+            modifier = Modifier.height(32.dp),
         )
 
         Button(onClick = { retry() }) {
             CPrimaryButtonText(
-                text = stringResource(R.string.retry_label)
+                text = stringResource(R.string.retry_label),
             )
         }
     }

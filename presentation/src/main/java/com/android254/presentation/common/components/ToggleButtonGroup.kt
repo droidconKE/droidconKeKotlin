@@ -49,7 +49,7 @@ fun MultiToggleButton(
     buttonHeight: Dp = 40.dp,
     selectedColor: Color = ChaiTeal,
     enabled: Boolean = true,
-    onClick: (SessionsFilterOption) -> Unit
+    onClick: (SessionsFilterOption) -> Unit,
 ) {
     val unselectedColor = Color.Unspecified
     val selectedContentColor = ChaiGrey90
@@ -63,15 +63,17 @@ fun MultiToggleButton(
             val shape = MaterialTheme.shapes.small
 
             filterOptions.forEachIndexed { index, sessionsFilterOption ->
-                val buttonShape = when (index) {
-                    0 -> shape.copy(bottomEnd = squareCorner, topEnd = squareCorner)
-                    buttonCount - 1 -> shape.copy(
-                        topStart = squareCorner,
-                        bottomStart = squareCorner
-                    )
+                val buttonShape =
+                    when (index) {
+                        0 -> shape.copy(bottomEnd = squareCorner, topEnd = squareCorner)
+                        buttonCount - 1 ->
+                            shape.copy(
+                                topStart = squareCorner,
+                                bottomStart = squareCorner,
+                            )
 
-                    else -> shape.copy(all = squareCorner)
-                }
+                        else -> shape.copy(all = squareCorner)
+                    }
                 val isButtonSelected = currentSelections.contains(sessionsFilterOption)
                 val backgroundColor = if (isButtonSelected) selectedColor else unselectedColor
                 val contentColor =
@@ -79,30 +81,34 @@ fun MultiToggleButton(
                 val offset = borderSize * -index
 
                 ToggleButton(
-                    modifier = Modifier
-                        .weight(weight = 1f)
-                        .defaultMinSize(minHeight = buttonHeight)
-                        .offset(x = offset),
+                    modifier =
+                        Modifier
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = buttonHeight)
+                            .offset(x = offset),
                     buttonShape = buttonShape,
-                    border = BorderStroke(
-                        width = borderSize,
-                        color = if (isButtonSelected) {
-                            ChaiGrey90
-                        } else {
-                            MaterialTheme.chaiColorsPalette.inactiveMultiSelectButtonBorderColor
-                        }
-                    ),
+                    border =
+                        BorderStroke(
+                            width = borderSize,
+                            color =
+                                if (isButtonSelected) {
+                                    ChaiGrey90
+                                } else {
+                                    MaterialTheme.chaiColorsPalette.inactiveMultiSelectButtonBorderColor
+                                },
+                        ),
                     backgroundColor = backgroundColor,
                     elevation = ButtonDefaults.buttonElevation(),
                     enabled = enabled,
-                    buttonTexts = filterOptions.map {
-                        it.label
-                    },
+                    buttonTexts =
+                        filterOptions.map {
+                            it.label
+                        },
                     index = index,
                     contentColor = contentColor,
                     onClick = {
                         onClick(sessionsFilterOption)
-                    }
+                    },
                 )
             }
         }
@@ -120,7 +126,7 @@ private fun ToggleButton(
     buttonTexts: List<String>,
     index: Int,
     contentColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         modifier = modifier,
@@ -130,12 +136,12 @@ private fun ToggleButton(
         onClick = onClick,
         colors = ButtonDefaults.outlinedButtonColors(containerColor = backgroundColor),
         elevation = elevation,
-        enabled = enabled
+        enabled = enabled,
     ) {
         ButtonContent(
             buttonTexts = buttonTexts,
             index = index,
-            contentColor = contentColor
+            contentColor = contentColor,
         )
     }
 }
@@ -144,15 +150,16 @@ private fun ToggleButton(
 private fun RowScope.ButtonContent(
     buttonTexts: List<String>,
     index: Int,
-    contentColor: Color
+    contentColor: Color,
 ) {
     when {
-        buttonTexts.all { it != "" } -> TextContent(
-            modifier = Modifier.align(Alignment.CenterVertically),
-            buttonTexts = buttonTexts,
-            index = index,
-            contentColor = contentColor
-        )
+        buttonTexts.all { it != "" } ->
+            TextContent(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                buttonTexts = buttonTexts,
+                index = index,
+                contentColor = contentColor,
+            )
     }
 }
 
@@ -161,12 +168,12 @@ private fun TextContent(
     modifier: Modifier,
     buttonTexts: List<String>,
     index: Int,
-    contentColor: Color
+    contentColor: Color,
 ) {
     ChaiBodySmall(
         modifier = modifier.padding(horizontal = 8.dp),
         bodyText = buttonTexts[index],
         textColor = contentColor,
-        maxLines = 1
+        maxLines = 1,
     )
 }

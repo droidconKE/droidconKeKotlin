@@ -38,5 +38,5 @@ data class SessionEntity(
     val rooms: String,
     val speakers: String,
     val startTimestamp: Long,
-    val sessionImageUrl: String
+    val sessionImageUrl: String,
 )

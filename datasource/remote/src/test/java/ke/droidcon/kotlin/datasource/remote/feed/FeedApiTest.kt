@@ -22,9 +22,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.headersOf
 import io.mockk.mockk
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
@@ -36,9 +33,11 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 class FeedApiTest {
-
     private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
@@ -47,94 +46,101 @@ class FeedApiTest {
     }
 
     @Test
-    fun `sends correct http request`() = runTest {
-        val mockEngine = MockEngine { respondOk() }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
+    fun `sends correct http request`() =
+        runTest {
+            val mockEngine = MockEngine { respondOk() }
+            val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
 
-        FeedApi(httpClient).fetchFeed(page = 2, size = 50)
+            FeedApi(httpClient).fetchFeed(page = 2, size = 50)
 
-        assertThat(mockEngine.requestHistory.size, `is`(1))
-        mockEngine.requestHistory.first().run {
-            val expectedUrl = "${provideEventBaseUrl()}/feeds?page=2&per_page=50"
-            assertThat(url.toString(), `is`(expectedUrl))
-            assertThat(method, `is`(HttpMethod.Get))
+            assertThat(mockEngine.requestHistory.size, `is`(1))
+            mockEngine.requestHistory.first().run {
+                val expectedUrl = "${provideEventBaseUrl()}/feeds?page=2&per_page=50"
+                assertThat(url.toString(), `is`(expectedUrl))
+                assertThat(method, `is`(HttpMethod.Get))
+            }
         }
-    }
 
     @Test
-    fun `when successful returns a list of feed items`() = runTest {
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(
-            MockEngine {
-                respond(
-                    content = """{
-                        "data": [
-                            {
-                              "title": "Test",
-                              "body": "Good one",
-                              "topic": "droidconweb",
-                              "url": "https://droidcon.co.ke",
-                              "image": "http://localhost:8000/upload/event/feeds/dangyntvmaet8jgjpg.jpg",
-                              "created_at": "2020-03-19 18:45:49"
-                            },
-                            {
-                              "title": "niko fine",
-                              "body": "this is a test",
-                              "topic": "droidconweb",
-                              "url": "https://droidcon.co.ke",
-                              "image": null,
-                              "created_at": "2020-03-19 18:43:38"
-                            }
-                        ],
-                        "meta": {
-                            "paginator": {
-                              "count": 2,
-                              "per_page": "10",
-                              "current_page": 1,
-                              "next_page": null,
-                              "has_more_pages": false,
-                              "next_page_url": null,
-                              "previous_page_url": null
-                            }
-                        }
-                    }
-                    """.trimIndent(),
-                    headers = headersOf(HttpHeaders.ContentType, "application/json")
-                )
-            }
-        )
-
-        val feed = FeedApi(httpClient).fetchFeed()
-
-        assertThat(
-            feed,
-            `is`(
-                DataResult.Success(
-                    listOf(
-                        FeedDTO(
-                            title = "Test",
-                            body = "Good one",
-                            topic = "droidconweb",
-                            url = "https://droidcon.co.ke",
-                            image = "http://localhost:8000/upload/event/feeds/dangyntvmaet8jgjpg.jpg",
-                            createdAt = LocalDateTime.of(
-                                LocalDate.parse("2020-03-19"),
-                                LocalTime.parse("18:45:49")
-                            )
-                        ),
-                        FeedDTO(
-                            title = "niko fine",
-                            body = "this is a test",
-                            topic = "droidconweb",
-                            url = "https://droidcon.co.ke",
-                            image = null,
-                            createdAt = LocalDateTime.of(
-                                LocalDate.parse("2020-03-19"),
-                                LocalTime.parse("18:43:38")
-                            )
+    fun `when successful returns a list of feed items`() =
+        runTest {
+            val httpClient =
+                HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(
+                    MockEngine {
+                        respond(
+                            content =
+                                """
+                                {
+                                    "data": [
+                                        {
+                                          "title": "Test",
+                                          "body": "Good one",
+                                          "topic": "droidconweb",
+                                          "url": "https://droidcon.co.ke",
+                                          "image": "http://localhost:8000/upload/event/feeds/dangyntvmaet8jgjpg.jpg",
+                                          "created_at": "2020-03-19 18:45:49"
+                                        },
+                                        {
+                                          "title": "niko fine",
+                                          "body": "this is a test",
+                                          "topic": "droidconweb",
+                                          "url": "https://droidcon.co.ke",
+                                          "image": null,
+                                          "created_at": "2020-03-19 18:43:38"
+                                        }
+                                    ],
+                                    "meta": {
+                                        "paginator": {
+                                          "count": 2,
+                                          "per_page": "10",
+                                          "current_page": 1,
+                                          "next_page": null,
+                                          "has_more_pages": false,
+                                          "next_page_url": null,
+                                          "previous_page_url": null
+                                        }
+                                    }
+                                }
+                                """.trimIndent(),
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
                         )
-                    )
+                    },
                 )
+
+            val feed = FeedApi(httpClient).fetchFeed()
+
+            assertThat(
+                feed,
+                `is`(
+                    DataResult.Success(
+                        listOf(
+                            FeedDTO(
+                                title = "Test",
+                                body = "Good one",
+                                topic = "droidconweb",
+                                url = "https://droidcon.co.ke",
+                                image = "http://localhost:8000/upload/event/feeds/dangyntvmaet8jgjpg.jpg",
+                                createdAt =
+                                    LocalDateTime.of(
+                                        LocalDate.parse("2020-03-19"),
+                                        LocalTime.parse("18:45:49"),
+                                    ),
+                            ),
+                            FeedDTO(
+                                title = "niko fine",
+                                body = "this is a test",
+                                topic = "droidconweb",
+                                url = "https://droidcon.co.ke",
+                                image = null,
+                                createdAt =
+                                    LocalDateTime.of(
+                                        LocalDate.parse("2020-03-19"),
+                                        LocalTime.parse("18:43:38"),
+                                    ),
+                            ),
+                        ),
+                    ),
+                ),
             )
-        )
-    }
+        }
 }

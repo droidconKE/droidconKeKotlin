@@ -38,11 +38,12 @@ fun DroidConTextField(label: String) {
         onValueChange = { value = it },
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth().padding(0.dp).height(48.dp),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(7.dp)
+        colors =
+            TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+            ),
+        shape = RoundedCornerShape(7.dp),
     )
 }

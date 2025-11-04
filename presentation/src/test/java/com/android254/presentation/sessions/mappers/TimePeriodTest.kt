@@ -24,9 +24,8 @@ import org.junit.runners.Parameterized
 class TimePeriodTest(
     private val input: String,
     private val timeResult: String,
-    private val periodResult: String
+    private val periodResult: String,
 ) {
-
     companion object {
         @JvmStatic
         @Parameterized.Parameters
@@ -41,7 +40,7 @@ class TimePeriodTest(
                 arrayOf("1998-01-23 04:09:19", "04:09", "am"),
                 arrayOf("2022-01-23 21:21:05", "09:21", "pm"),
                 arrayOf("2003-01-23 10:56:44", "10:56", "am"),
-                arrayOf("1990-01-23 16:12:52", "04:12", "pm")
+                arrayOf("1990-01-23 16:12:52", "04:12", "pm"),
             )
         }
     }
@@ -52,12 +51,12 @@ class TimePeriodTest(
         assertEquals(
             "Should be valid time",
             timeResult,
-            formattedTime.time
+            formattedTime.time,
         )
         assertEquals(
             "Should be valid period",
             periodResult.lowercase(),
-            formattedTime.period.lowercase()
+            formattedTime.period.lowercase(),
         )
     }
 }

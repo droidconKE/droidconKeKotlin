@@ -18,7 +18,6 @@ package ke.droidcon.kotlin.datasource.local.dao
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import java.io.IOException
 import ke.droidcon.kotlin.datasource.local.Database
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import kotlinx.coroutines.flow.first
@@ -31,23 +30,24 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.IOException
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class SessionDaoTest {
-
     private lateinit var sessionDao: SessionDao
     private lateinit var db: Database
 
     @Before
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context,
-            Database::class.java
-        )
-            .allowMainThreadQueries() // TODO Please delete me
-            .build()
+        db =
+            Room.inMemoryDatabaseBuilder(
+                context,
+                Database::class.java,
+            )
+                .allowMainThreadQueries() // TODO Please delete me
+                .build()
         sessionDao = db.sessionDao()
     }
 
@@ -58,30 +58,32 @@ class SessionDaoTest {
     }
 
     @Test
-    fun `test sessionDao fetches all sessions`() = runTest {
-        val session = SessionEntity(
-            id = 0,
-            title = "Retrofiti: A Pragmatic Approach to using Retrofit in Android",
-            description = "This session is codelab covering some of the best practices and recommended approaches to building an application using the retrofit library.",
-            slug = "retrofiti-a-pragmatic-approach-to-using-retrofit-in-android-1583941090",
-            sessionFormat = "Codelab / Workshop",
-            sessionLevel = "Intermediate",
-            speakers = "",
-            rooms = "",
-            startTime = "",
-            sessionImage = "",
-            startDateTime = "",
-            isServiceSession = false,
-            isKeynote = false,
-            endTime = "",
-            isBookmarked = true,
-            endDateTime = "",
-            sessionImageUrl = "",
-            remote_id = "",
-            startTimestamp = 0L
-        )
-        sessionDao.insert(session)
-        val result = sessionDao.fetchSessions().first()
-        assertThat(session.title, `is`(result[0].title))
-    }
+    fun `test sessionDao fetches all sessions`() =
+        runTest {
+            val session =
+                SessionEntity(
+                    id = 0,
+                    title = "Retrofiti: A Pragmatic Approach to using Retrofit in Android",
+                    description = "This session is codelab covering some of the best practices and recommended approaches to building an application using the retrofit library.",
+                    slug = "retrofiti-a-pragmatic-approach-to-using-retrofit-in-android-1583941090",
+                    sessionFormat = "Codelab / Workshop",
+                    sessionLevel = "Intermediate",
+                    speakers = "",
+                    rooms = "",
+                    startTime = "",
+                    sessionImage = "",
+                    startDateTime = "",
+                    isServiceSession = false,
+                    isKeynote = false,
+                    endTime = "",
+                    isBookmarked = true,
+                    endDateTime = "",
+                    sessionImageUrl = "",
+                    remote_id = "",
+                    startTimestamp = 0L,
+                )
+            sessionDao.insert(session)
+            val result = sessionDao.fetchSessions().first()
+            assertThat(session.title, `is`(result[0].title))
+        }
 }

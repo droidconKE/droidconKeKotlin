@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AuthDialog(
     onDismiss: () -> Unit = {},
-    viewModel: (() -> AuthViewModel)? = null
+    viewModel: (() -> AuthViewModel)? = null,
 ) {
     val context = LocalContext.current
     var loading by remember { mutableStateOf(false) }
@@ -77,13 +77,15 @@ fun AuthDialog(
         onDismissRequest = onDismiss,
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth()
-                    .background(color = MaterialTheme.chaiColorsPalette.surfaces)
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .background(color = MaterialTheme.chaiColorsPalette.surfaces),
             ) {
                 Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(155.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(155.dp),
                 )
                 GoogleSignInButton(
                     text = stringResource(id = R.string.sign_in_with_google_label),
@@ -91,20 +93,22 @@ fun AuthDialog(
                     borderColor = ChaiWhite,
                     backgroundColor = ChaiWhite,
                     isLoading = loading,
-                    modifier = Modifier
-                        .width(288.dp)
-                        .testTag("google_button"),
+                    modifier =
+                        Modifier
+                            .width(288.dp)
+                            .testTag("google_button"),
                     onClick = {
                         viewModel?.invoke()?.let {
                             loading = true
                             googleSignInLauncher.launch(it.getSignInIntent())
                         }
-                    }
+                    },
                 )
                 Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(175.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(175.dp),
                 )
             }
         },
@@ -114,17 +118,17 @@ fun AuthDialog(
                 ChaiTextButtonLight(
                     modifier = Modifier.testTag("cancel_button"),
                     bodyText = "Cancel", // Strangely, using stringResource(..) causes a build error,
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
                 )
             }
-        }
+        },
     )
 }
 
 @ChaiLightAndDarkComposePreview
 @Composable
 fun AuthDialogPreview() {
-    ChaiDCKE22Theme() {
+    ChaiDCKE22Theme {
         AuthDialog()
     }
 }

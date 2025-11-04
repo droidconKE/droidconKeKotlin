@@ -19,19 +19,21 @@ import com.android254.domain.models.Sponsors
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 
-fun SponsorDTO.toEntity() = SponsorEntity(
-    name = name,
-    logo = logo,
-    tagline = tagline,
-    createdAt = createdAt,
-    link = link,
-    sponsorType = sponsorType
-)
+fun SponsorDTO.toEntity() =
+    SponsorEntity(
+        name = name,
+        logo = logo,
+        tagline = tagline,
+        createdAt = createdAt,
+        link = link,
+        sponsorType = sponsorType,
+    )
 
-fun SponsorEntity.toDomain() = Sponsors(
-    sponsorLogoUrl = logo,
-    sponsorName = name,
-    link = link,
-    sponsorType = sponsorType,
-    createdAt = createdAt
-)
+fun SponsorEntity.toDomain() =
+    Sponsors(
+        sponsorLogoUrl = logo,
+        sponsorName = name,
+        link = link,
+        sponsorType = sponsorType,
+        createdAt = createdAt,
+    )

@@ -19,24 +19,28 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.auth.model.StatusDTO
 import ke.droidcon.kotlin.datasource.remote.utils.provideBaseUrl
 import ke.droidcon.kotlin.datasource.remote.utils.safeApiCall
+import javax.inject.Inject
 
-class AuthApi @Inject constructor(
-    private val client: HttpClient
-) {
-    suspend fun googleLogin(token: GoogleToken): AccessTokenDTO = safeApiCall {
-        return@safeApiCall client.post("${provideBaseUrl()}/social_login/google") {
-            setBody(token)
-        }.body()
-    }
+class AuthApi
+    @Inject
+    constructor(
+        private val client: HttpClient,
+    ) {
+        suspend fun googleLogin(token: GoogleToken): AccessTokenDTO =
+            safeApiCall {
+                return@safeApiCall client.post("${provideBaseUrl()}/social_login/google") {
+                    setBody(token)
+                }.body()
+            }
 
-    suspend fun logout(): StatusDTO = safeApiCall {
-        val url = "${provideBaseUrl()}/logout"
-        return@safeApiCall client.post(url).body()
+        suspend fun logout(): StatusDTO =
+            safeApiCall {
+                val url = "${provideBaseUrl()}/logout"
+                return@safeApiCall client.post(url).body()
+            }
     }
-}

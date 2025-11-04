@@ -21,5 +21,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccessTokenDTO(
     @SerialName("token") val token: String,
-    @SerialName("user") val user: UserDetailsDTO
+    @SerialName("user") val user: UserDetailsDTO,
 )

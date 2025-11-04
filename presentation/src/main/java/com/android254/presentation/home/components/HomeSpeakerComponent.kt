@@ -45,47 +45,55 @@ import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun HomeSpeakerComponent(speaker: SpeakerUI, onClick: () -> Unit = {}) {
+fun HomeSpeakerComponent(
+    speaker: SpeakerUI,
+    onClick: () -> Unit = {},
+) {
     ConstraintLayout(
-        modifier = Modifier
-            .width(90.dp)
-            .clickable { onClick.invoke() }
+        modifier =
+            Modifier
+                .width(90.dp)
+                .clickable { onClick.invoke() },
     ) {
         val (headShot, speakerName) = createRefs()
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(speaker.imageUrl)
-                .build(),
+            model =
+                ImageRequest.Builder(LocalContext.current)
+                    .data(speaker.imageUrl)
+                    .build(),
             placeholder = painterResource(R.drawable.smiling),
             contentDescription = stringResource(R.string.head_shot),
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .clip(
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .border(
-                    border = BorderStroke(
-                        2.dp,
-                        color = colorResource(id = R.color.cyan)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .size(85.dp)
-                .constrainAs(headShot) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+            modifier =
+                Modifier
+                    .clip(
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    .border(
+                        border =
+                            BorderStroke(
+                                2.dp,
+                                color = colorResource(id = R.color.cyan),
+                            ),
+                        shape = RoundedCornerShape(12.dp),
+                    )
+                    .size(85.dp)
+                    .constrainAs(headShot) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
         )
         ChaiBodyXSmallBold(
-            modifier = Modifier.constrainAs(speakerName) {
-                top.linkTo(headShot.bottom, 10.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            },
+            modifier =
+                Modifier.constrainAs(speakerName) {
+                    top.linkTo(headShot.bottom, 10.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
             bodyText = speaker.name,
             textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -96,10 +104,11 @@ fun HomeSpeakerComponentPreview() {
     ChaiDCKE22Theme {
         Surface(color = Color.White) {
             HomeSpeakerComponent(
-                speaker = SpeakerUI(
-                    name = "Harun Wangereka",
-                    bio = "Staff Engineer"
-                )
+                speaker =
+                    SpeakerUI(
+                        name = "Harun Wangereka",
+                        bio = "Staff Engineer",
+                    ),
             )
         }
     }

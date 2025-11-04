@@ -49,25 +49,27 @@ import ke.droidcon.kotlin.presentation.R
 fun OrganizingTeamComponent(
     modifier: Modifier = Modifier,
     teamMember: OrganizingTeamMember,
-    onClickMember: (Int) -> Unit
+    onClickMember: (Int) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .padding(3.dp)
-            .clickable(
-                onClick = { onClickMember(teamMember.id) }
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            modifier
+                .padding(3.dp)
+                .clickable(
+                    onClick = { onClickMember(teamMember.id) },
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
             placeholder = painterResource(R.drawable.droidcon_icon),
             contentDescription = "Member profile",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(99.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .border(2.dp, ChaiTeal, RoundedCornerShape(12.dp))
+            modifier =
+                Modifier
+                    .size(99.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(2.dp, ChaiTeal, RoundedCornerShape(12.dp)),
         )
 
         Spacer(Modifier.height(6.dp))
@@ -76,7 +78,7 @@ fun OrganizingTeamComponent(
             modifier = Modifier.fillMaxWidth(),
             bodyText = teamMember.name,
             textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Spacer(Modifier.height(2.dp))
@@ -85,7 +87,7 @@ fun OrganizingTeamComponent(
             modifier = Modifier.fillMaxWidth(),
             bodyText = teamMember.desc,
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -96,12 +98,13 @@ fun Preview() {
     ChaiDCKE22Theme {
         OrganizingTeamComponent(
             modifier = Modifier,
-            teamMember = OrganizingTeamMember(
-                name = "Frank Tamre",
-                desc = "Main Man",
-                image = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI"
-            ),
-            onClickMember = {}
+            teamMember =
+                OrganizingTeamMember(
+                    name = "Frank Tamre",
+                    desc = "Main Man",
+                    image = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI",
+                ),
+            onClickMember = {},
         )
     }
 }

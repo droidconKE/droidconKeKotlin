@@ -19,7 +19,6 @@ import com.android254.domain.models.Sponsors
 import kotlinx.coroutines.flow.Flow
 
 interface SponsorsRepo {
-
     fun getAllSponsors(): Flow<List<Sponsors>>
 
     suspend fun syncSponsors()

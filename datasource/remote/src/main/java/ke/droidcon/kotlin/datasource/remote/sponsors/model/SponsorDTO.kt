@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SponsorsPagedResponse(
-    val data: List<SponsorDTO>
+    val data: List<SponsorDTO>,
 )
 
 @Serializable
@@ -32,5 +32,5 @@ data class SponsorDTO(
     @SerialName("created_at")
     var createdAt: String,
     @SerialName("sponsor_type")
-    var sponsorType: String
+    var sponsorType: String,
 )

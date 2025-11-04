@@ -41,30 +41,33 @@ import com.droidconke.chai.chaiColorsPalette
 @Composable
 fun SessionsLoadingCard() {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
         shape = RoundedCornerShape(5),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground),
     ) {
         AnimatedShimmerEffect(
-            gradientColors = listOf(
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f)
-            )
+            gradientColors =
+                listOf(
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                ),
         ) { brush ->
             Row(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
             ) {
                 Column(
-                    modifier = Modifier
-                        .weight(0.15f),
-                    horizontalAlignment = Alignment.End
+                    modifier =
+                        Modifier
+                            .weight(0.15f),
+                    horizontalAlignment = Alignment.End,
                 ) {
                     LoadingBox(height = 22.dp, widthRatio = 1.0f, brush = brush)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -72,8 +75,9 @@ fun SessionsLoadingCard() {
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
-                    modifier = Modifier
-                        .weight(0.85f)
+                    modifier =
+                        Modifier
+                            .weight(0.85f),
                 ) {
                     LoadingBox(height = 20.dp, widthRatio = 1.0f, brush = brush)
                     Spacer(modifier = Modifier.height(10.dp))
@@ -83,7 +87,7 @@ fun SessionsLoadingCard() {
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start
+                        horizontalArrangement = Arrangement.Start,
                     ) {
                         LoadingBox(height = 20.dp, width = 80.dp, brush = brush)
                         Spacer(modifier = Modifier.width(10.dp))

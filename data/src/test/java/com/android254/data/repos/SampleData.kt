@@ -18,29 +18,32 @@ package com.android254.data.repos
 import ke.droidcon.kotlin.datasource.remote.sessions.model.EventScheduleGroupedResponse
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 
-val results = EventScheduleGroupedResponse(
-    data = mapOf(
-        "2022-11-16" to listOf(
-            SessionDTO(
-                id = "String",
-                backgroundColor = "String",
-                borderColor = "String",
-                description = "String",
-                endDateTime = "String",
-                endTime = "String",
-                isBookmarked = false,
-                isKeynote = false,
-                isServiceSession = false,
-                sessionFormat = "String",
-                sessionImage = "String",
-                sessionLevel = "String",
-                slug = "String",
-                startDateTime = "String",
-                startTime = "String",
-                title = "String",
-                rooms = listOf(),
-                speakers = listOf()
-            )
-        )
+val results =
+    EventScheduleGroupedResponse(
+        data =
+            mapOf(
+                "2022-11-16" to
+                    listOf(
+                        SessionDTO(
+                            id = "String",
+                            backgroundColor = "String",
+                            borderColor = "String",
+                            description = "String",
+                            endDateTime = "String",
+                            endTime = "String",
+                            isBookmarked = false,
+                            isKeynote = false,
+                            isServiceSession = false,
+                            sessionFormat = "String",
+                            sessionImage = "String",
+                            sessionLevel = "String",
+                            slug = "String",
+                            startDateTime = "String",
+                            startTime = "String",
+                            title = "String",
+                            rooms = listOf(),
+                            speakers = listOf(),
+                        ),
+                    ),
+            ),
     )
-)

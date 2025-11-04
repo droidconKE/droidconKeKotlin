@@ -38,7 +38,6 @@ import org.robolectric.shadows.ShadowLog
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SessionScreenTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -49,53 +48,55 @@ class SessionScreenTest {
     }
 
     @Test
-    fun hasExpectedButtons() = runTest {
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                SessionsScreen(
-                    sessionsUiState = SessionsUiState(eventDays = listOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
-                    isRefreshing = true,
-                    selectedEventDate = EventDate("1", 1),
-                    currentSelections = emptyList(),
-                    updateSelectedDay = {},
-                    navigateToSessionDetails = {},
-                    toggleBookmarkFilter = {},
-                    refreshSessionList = {},
-                    updateSelectedFilterOptionList = {},
-                    fetchSessionWithFilter = {},
-                    clearSelectedFilterList = {}
-                )
+    fun hasExpectedButtons() =
+        runTest {
+            composeTestRule.setContent {
+                ChaiDCKE22Theme {
+                    SessionsScreen(
+                        sessionsUiState = SessionsUiState(eventDays = listOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
+                        isRefreshing = true,
+                        selectedEventDate = EventDate("1", 1),
+                        currentSelections = emptyList(),
+                        updateSelectedDay = {},
+                        navigateToSessionDetails = {},
+                        toggleBookmarkFilter = {},
+                        refreshSessionList = {},
+                        updateSelectedFilterOptionList = {},
+                        fetchSessionWithFilter = {},
+                        clearSelectedFilterList = {},
+                    )
+                }
             }
-        }
 
-        composeTestRule.onNodeWithText("Day 1").assertExists()
-        composeTestRule.onNodeWithText("Day 2").assertExists()
-        composeTestRule.onNodeWithText("Day 3").assertExists()
-        composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertExists()
-        composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertIsDisplayed()
-    }
+            composeTestRule.onNodeWithText("Day 1").assertExists()
+            composeTestRule.onNodeWithText("Day 2").assertExists()
+            composeTestRule.onNodeWithText("Day 3").assertExists()
+            composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertExists()
+            composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertIsDisplayed()
+        }
 
     @Test
-    fun `should show topBar`() = runTest {
-        composeTestRule.setContent {
-            ChaiDCKE22Theme() {
-                SessionsScreen(
-                    sessionsUiState = SessionsUiState(),
-                    isRefreshing = true,
-                    selectedEventDate = EventDate("1", 1),
-                    currentSelections = emptyList(),
-                    updateSelectedDay = {},
-                    navigateToSessionDetails = {},
-                    toggleBookmarkFilter = {},
-                    refreshSessionList = {},
-                    updateSelectedFilterOptionList = {},
-                    fetchSessionWithFilter = {},
-                    clearSelectedFilterList = {}
-                )
+    fun `should show topBar`() =
+        runTest {
+            composeTestRule.setContent {
+                ChaiDCKE22Theme {
+                    SessionsScreen(
+                        sessionsUiState = SessionsUiState(),
+                        isRefreshing = true,
+                        selectedEventDate = EventDate("1", 1),
+                        currentSelections = emptyList(),
+                        updateSelectedDay = {},
+                        navigateToSessionDetails = {},
+                        toggleBookmarkFilter = {},
+                        refreshSessionList = {},
+                        updateSelectedFilterOptionList = {},
+                        fetchSessionWithFilter = {},
+                        clearSelectedFilterList = {},
+                    )
+                }
             }
-        }
 
-        composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertExists()
-        composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertIsDisplayed()
-    }
+            composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertExists()
+            composeTestRule.onNodeWithTag("droidcon_topBar_with_Filter").assertIsDisplayed()
+        }
 }

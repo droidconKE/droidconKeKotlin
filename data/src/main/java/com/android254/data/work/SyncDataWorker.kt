@@ -30,45 +30,45 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @HiltWorker
-class SyncDataWorker @AssistedInject constructor(
-    @Assisted val appContext: Context,
-    @Assisted val workerParameters: WorkerParameters,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val speakersRepo: SpeakersRepo,
-    private val sponsorsRepo: SponsorsRepo,
-    private val sessionsRepo: SessionsRepo,
-    private val organizersRepo: OrganizersRepo,
-    private val feedRepo: FeedRepo
-) : CoroutineWorker(appContext, workerParameters) {
-
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            Random.nextInt(),
-            NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
-                .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
-                .setContentTitle(appContext.getString(R.string.sync_notification_message))
-                .build()
-
-        )
-    }
-
-    override suspend fun doWork(): Result {
-        withContext(ioDispatcher) {
-            awaitAll(
-                async { sessionsRepo.syncSessions() },
-                async { speakersRepo.syncSpeakers() },
-                async { sponsorsRepo.syncSponsors() },
-                async { organizersRepo.syncOrganizers() },
-                async { feedRepo.syncFeed() }
+class SyncDataWorker
+    @AssistedInject
+    constructor(
+        @Assisted val appContext: Context,
+        @Assisted val workerParameters: WorkerParameters,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+        private val speakersRepo: SpeakersRepo,
+        private val sponsorsRepo: SponsorsRepo,
+        private val sessionsRepo: SessionsRepo,
+        private val organizersRepo: OrganizersRepo,
+        private val feedRepo: FeedRepo,
+    ) : CoroutineWorker(appContext, workerParameters) {
+        override suspend fun getForegroundInfo(): ForegroundInfo {
+            return ForegroundInfo(
+                Random.nextInt(),
+                NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
+                    .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
+                    .setContentTitle(appContext.getString(R.string.sync_notification_message))
+                    .build(),
             )
         }
-        return Result.success()
+
+        override suspend fun doWork(): Result {
+            withContext(ioDispatcher) {
+                awaitAll(
+                    async { sessionsRepo.syncSessions() },
+                    async { speakersRepo.syncSpeakers() },
+                    async { sponsorsRepo.syncSponsors() },
+                    async { organizersRepo.syncOrganizers() },
+                    async { feedRepo.syncFeed() },
+                )
+            }
+            return Result.success()
+        }
     }
-}

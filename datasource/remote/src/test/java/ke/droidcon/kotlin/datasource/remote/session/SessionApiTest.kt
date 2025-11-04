@@ -43,20 +43,22 @@ class SessionApiTest {
     fun `sessions are fetched successfully`() {
         val expectedResponse =
             EventScheduleGroupedResponse(
-                data = emptyMap()
+                data = emptyMap(),
             )
 
-        val responseText = """
+        val responseText =
+            """
             {
                data: {}
             }
-        """.trimIndent()
-        val mockHttpEngine = MockEngine {
-            respond(
-                content = responseText,
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
+            """.trimIndent()
+        val mockHttpEngine =
+            MockEngine {
+                respond(
+                    content = responseText,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
 
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockHttpEngine)
 

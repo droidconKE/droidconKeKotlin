@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 sealed interface SpeakerDetailsScreenUiState {
-
     object Loading : SpeakerDetailsScreenUiState
 
     data class Success(val speaker: SpeakerUI) : SpeakerDetailsScreenUiState
@@ -36,25 +35,27 @@ sealed interface SpeakerDetailsScreenUiState {
 }
 
 @HiltViewModel
-class SpeakerDetailsScreenViewModel @Inject constructor(
-    private val speakersRepo: SpeakersRepo
-) : ViewModel() {
+class SpeakerDetailsScreenViewModel
+    @Inject
+    constructor(
+        private val speakersRepo: SpeakersRepo,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
+        val uiState = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
-    suspend fun getSpeakerByName(name: String) {
-        speakersRepo.getSpeakerByName(name).collect { speaker ->
-            _uiState.value = SpeakerDetailsScreenUiState.Success(speaker.toPresentation())
+        suspend fun getSpeakerByName(name: String) {
+            speakersRepo.getSpeakerByName(name).collect { speaker ->
+                _uiState.value = SpeakerDetailsScreenUiState.Success(speaker.toPresentation())
+            }
         }
-    }
 
-    private fun Speaker.toPresentation() = SpeakerUI(
-        id = 1,
-        imageUrl = avatar,
-        name = name,
-        tagline = tagline,
-        bio = biography,
-        twitterHandle = twitter
-    )
-}
+        private fun Speaker.toPresentation() =
+            SpeakerUI(
+                id = 1,
+                imageUrl = avatar,
+                name = name,
+                tagline = tagline,
+                bio = biography,
+                twitterHandle = twitter,
+            )
+    }
