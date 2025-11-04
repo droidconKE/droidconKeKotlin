@@ -4,7 +4,6 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - 'multiplatform/**'
       - 'build-logic/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
@@ -60,10 +59,10 @@ jobs:
         run: gem install bundler && bundle install
 
       - name: Run ktlintCheck
-        run: ./gradlew :multiplatform:ktlintCheck
+        run: ./gradlew :ktlintCheck
 
       - name: Run detekt
-        run: ./gradlew :multiplatform:detekt
+        run: ./gradlew :detekt
 
       - name: Run tests
         uses: maierj/fastlane-action@v2.0.0
