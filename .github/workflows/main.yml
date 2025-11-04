@@ -1,4 +1,4 @@
-name: develop
+name: main
 
 on:
   push:
@@ -27,14 +27,15 @@ jobs:
           java-version: '17'
 
       - name: Cache gradle
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - name: Bundler cache
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: $CACHE_BUNDLER
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
