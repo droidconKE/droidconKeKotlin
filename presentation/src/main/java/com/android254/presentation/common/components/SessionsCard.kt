@@ -62,27 +62,28 @@ import kotlinx.coroutines.launch
 @Composable
 fun SessionsCard(
     session: SessionPresentationModel,
-    navigateToSessionDetails: (sessionId: String) -> Unit
+    navigateToSessionDetails: (sessionId: String) -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground),
-        onClick = { navigateToSessionDetails(session.id) }
+        onClick = { navigateToSessionDetails(session.id) },
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(16.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
             SessionTimeComponent(
                 session.startTime,
-                session.amOrPm
+                session.amOrPm,
             )
             Spacer(modifier = Modifier.width(24.dp))
             SessionDetails(session = session)
@@ -91,20 +92,24 @@ fun SessionsCard(
 }
 
 @Composable
-fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: String) {
+fun RowScope.SessionTimeComponent(
+    sessionStartTime: String,
+    sessionAmOrPm: String,
+) {
     Column(
-        modifier = Modifier
-            .weight(0.2f),
-        horizontalAlignment = Alignment.End
+        modifier =
+            Modifier
+                .weight(0.2f),
+        horizontalAlignment = Alignment.End,
     ) {
         ChaiBodyLargeBold(
             bodyText = sessionStartTime,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
         )
 
         ChaiBodyMediumBold(
             bodyText = sessionAmOrPm,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
         )
     }
 }
@@ -112,8 +117,9 @@ fun RowScope.SessionTimeComponent(sessionStartTime: String, sessionAmOrPm: Strin
 @Composable
 fun RowScope.SessionDetails(session: SessionPresentationModel) {
     Column(
-        modifier = Modifier
-            .weight(0.8f)
+        modifier =
+            Modifier
+                .weight(0.8f),
     ) {
         SessionTitleComponent(session)
         Spacer(modifier = Modifier.height(12.dp))
@@ -135,19 +141,19 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
 @Composable
 fun SessionTitleComponent(
     session: SessionPresentationModel,
-    viewModel: SessionsViewModel = hiltViewModel()
+    viewModel: SessionsViewModel = hiltViewModel(),
 ) {
     val scope = rememberCoroutineScope()
     Row(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         ChaiSubTitle(
             modifier = Modifier.weight(1f),
             titleText = session.title,
-            titleColor = MaterialTheme.chaiColorsPalette.textBoldColor
+            titleColor = MaterialTheme.chaiColorsPalette.textBoldColor,
         )
 
         IconButton(
@@ -160,12 +166,12 @@ fun SessionTitleComponent(
                         viewModel.bookmarkSession(session.remoteId)
                     }
                 }
-            }
+            },
         ) {
             Icon(
                 imageVector = if (session.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (session.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                tint = if (session.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
             )
         }
     }
@@ -176,49 +182,50 @@ fun SessionsDescriptionComponent(sessionDescription: String) {
     ChaiBodyMedium(
         bodyText = sessionDescription,
         textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-        maxLines = 3
+        maxLines = 3,
     )
 }
 
 @Composable
 fun TimeAndVenueComponent(session: SessionPresentationModel) {
-    Row() {
+    Row {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChaiBodyXSmall(
             bodyText = "|",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
         Spacer(modifier = Modifier.width(12.dp))
         ChaiBodyXSmall(
             bodyText = session.venue.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
     }
 }
 
 @Composable
 fun SessionPresenterComponents(
-    speaker: SessionSpeakersPresentationModel
+    speaker: SessionSpeakersPresentationModel,
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = speaker.speakerImage,
             contentDescription = "session speaker image",
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
+            modifier =
+                Modifier
+                    .size(24.dp)
+                    .clip(CircleShape),
         )
         Spacer(modifier = Modifier.width(10.dp))
 
         ChaiBodySmall(
             bodyText = speaker.name,
-            textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings
+            textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
         )
     }
 }

@@ -39,7 +39,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class AuthApiTest {
-
     private lateinit var remoteFeatureToggleTest: RemoteFeatureToggle
 
     @Before
@@ -49,10 +48,11 @@ class AuthApiTest {
 
     @Test(expected = ServerError::class)
     fun `test ServerError is thrown when a server exception occurs`() {
-        val mockEngine = MockEngine {
-            delay(500)
-            respondError(HttpStatusCode.InternalServerError)
-        }
+        val mockEngine =
+            MockEngine {
+                delay(500)
+                respondError(HttpStatusCode.InternalServerError)
+            }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
@@ -62,13 +62,14 @@ class AuthApiTest {
 
     @Test
     fun `test successful logout`() {
-        val mockEngine = MockEngine {
-            respond(
-                content = """{"message": "Success"}""",
-                status = HttpStatusCode.OK,
-                headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
+        val mockEngine =
+            MockEngine {
+                respond(
+                    content = """{"message": "Success"}""",
+                    status = HttpStatusCode.OK,
+                    headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
@@ -79,7 +80,8 @@ class AuthApiTest {
 
     @Test
     fun `test successful google login`() {
-        val content = """
+        val content =
+            """
             {
               "token": "test",
               "user": {
@@ -90,26 +92,29 @@ class AuthApiTest {
                 "created_at": "2020-03-18 17:50:28"
               }
             }
-        """.trimIndent()
-        val mockEngine = MockEngine {
-            respond(
-                content = content,
-                status = HttpStatusCode.OK,
-                headersOf(HttpHeaders.ContentType, "application/json")
-            )
-        }
+            """.trimIndent()
+        val mockEngine =
+            MockEngine {
+                respond(
+                    content = content,
+                    status = HttpStatusCode.OK,
+                    headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
-            val accessToken = AccessTokenDTO(
-                token = "test",
-                user = UserDetailsDTO(
-                    name = "Magak Emmanuel",
-                    email = "emashmagak@gmail.com",
-                    gender = null,
-                    avatar = "http://localhost:8000/upload/avatar/img-20181016-wa0026jpg.jpg"
+            val accessToken =
+                AccessTokenDTO(
+                    token = "test",
+                    user =
+                        UserDetailsDTO(
+                            name = "Magak Emmanuel",
+                            email = "emashmagak@gmail.com",
+                            gender = null,
+                            avatar = "http://localhost:8000/upload/avatar/img-20181016-wa0026jpg.jpg",
+                        ),
                 )
-            )
             val response = api.googleLogin(GoogleToken("some token"))
             assertThat(response, `is`(accessToken))
         }

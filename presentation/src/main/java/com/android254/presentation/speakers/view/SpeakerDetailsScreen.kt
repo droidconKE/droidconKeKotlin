@@ -76,7 +76,7 @@ import ke.droidcon.kotlin.presentation.R
 fun SpeakerDetailsRoute(
     name: String,
     speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = hiltViewModel(),
-    navigateBack: () -> Unit = {}
+    navigateBack: () -> Unit = {},
 ) {
     val uiState = speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = true) {
@@ -85,45 +85,45 @@ fun SpeakerDetailsRoute(
 
     SpeakerDetailsScreen(
         uiState = uiState.value,
-        navigateBack = navigateBack
+        navigateBack = navigateBack,
     )
 }
 
 @Composable
 private fun SpeakerDetailsScreen(
     uiState: SpeakerDetailsScreenUiState,
-    navigateBack: () -> Unit = {}
+    navigateBack: () -> Unit = {},
 ) {
     val uriHandler = LocalUriHandler.current
 
     when (uiState) {
         is SpeakerDetailsScreenUiState.SpeakerNotFound -> {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 ChaiBodyMediumBold(
                     modifier = Modifier.align(Alignment.Center),
                     bodyText = uiState.message,
-                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                 )
             }
         }
 
         is SpeakerDetailsScreenUiState.Error -> {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 ChaiBodyMediumBold(
                     modifier = Modifier.align(Alignment.Center),
                     bodyText = uiState.message,
-                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                 )
             }
         }
 
         is SpeakerDetailsScreenUiState.Loading -> {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
@@ -132,172 +132,188 @@ private fun SpeakerDetailsScreen(
         is SpeakerDetailsScreenUiState.Success -> {
             val speaker = uiState.speaker
             ConstraintLayout(
-                modifier = Modifier
-                    .background(color = MaterialTheme.chaiColorsPalette.background)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .background(color = MaterialTheme.chaiColorsPalette.background)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize(),
             ) {
                 val (topBar, speakerDetails, speakerImage, divider, twitterContainer) = createRefs()
 
                 TopAppBar(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(136.dp)
-                        .constrainAs(topBar) {
-                            start.linkTo(parent.start)
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end)
-                        },
-                    onBackPressed = navigateBack
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(136.dp)
+                            .constrainAs(topBar) {
+                                start.linkTo(parent.start)
+                                top.linkTo(parent.top)
+                                end.linkTo(parent.end)
+                            },
+                    onBackPressed = navigateBack,
                 )
 
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(speaker.imageUrl)
-                        .build(),
+                    model =
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(speaker.imageUrl)
+                            .build(),
                     placeholder = painterResource(R.drawable.smiling),
                     contentDescription = stringResource(R.string.head_shot),
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .testTag("speaker_image")
-                        .clip(
-                            shape = CircleShape
-                        )
-                        .border(
-                            BorderStroke(2.dp, color = ChaiTeal),
-                            shape = CircleShape
-                        )
-                        .size(105.dp)
-                        .constrainAs(speakerImage) {
-                            top.linkTo(topBar.bottom)
-                            bottom.linkTo(topBar.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
+                    modifier =
+                        Modifier
+                            .testTag("speaker_image")
+                            .clip(
+                                shape = CircleShape,
+                            )
+                            .border(
+                                BorderStroke(2.dp, color = ChaiTeal),
+                                shape = CircleShape,
+                            )
+                            .size(105.dp)
+                            .constrainAs(speakerImage) {
+                                top.linkTo(topBar.bottom)
+                                bottom.linkTo(topBar.bottom)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            },
                 )
 
                 Column(
-                    modifier = Modifier
-                        .padding(horizontal = 30.dp)
-                        .constrainAs(speakerDetails) {
-                            top.linkTo(speakerImage.bottom, 10.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 30.dp)
+                            .constrainAs(speakerDetails) {
+                                top.linkTo(speakerImage.bottom, 10.dp)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            },
                 ) {
                     ChaiTextLabelLarge(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .align(Alignment.CenterHorizontally),
+                        modifier =
+                            Modifier
+                                .padding(top = 10.dp)
+                                .align(Alignment.CenterHorizontally),
                         bodyText = stringResource(id = R.string.speaker_details_label),
-                        textColor = ChaiRed
+                        textColor = ChaiRed,
                     )
 
                     ChaiTitle(
-                        modifier = Modifier
-                            .testTag("speaker_name")
-                            .align(Alignment.CenterHorizontally),
+                        modifier =
+                            Modifier
+                                .testTag("speaker_name")
+                                .align(Alignment.CenterHorizontally),
                         titleText = speaker.name,
-                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     )
 
                     ChaiBodySmall(
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .testTag("speaker_tagline")
-                            .align(Alignment.CenterHorizontally),
+                        modifier =
+                            Modifier
+                                .padding(top = 8.dp)
+                                .testTag("speaker_tagline")
+                                .align(Alignment.CenterHorizontally),
                         bodyText = speaker.tagline.toString(),
                         textAlign = TextAlign.Center,
-                        textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                        textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
                     )
 
                     Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(32.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(32.dp),
                     )
 
                     ChaiSubTitle(
                         titleText = stringResource(id = R.string.bio_label),
-                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+                        titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     )
 
                     ChaiBodySmall(
-                        modifier = Modifier
-                            .testTag("speaker_bio")
-                            .padding(top = 8.dp),
+                        modifier =
+                            Modifier
+                                .testTag("speaker_bio")
+                                .padding(top = 8.dp),
                         bodyText = speaker.bio ?: "",
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )
                 }
 
                 Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(
-                            color = MaterialTheme.chaiColorsPalette.surfaces
-                        )
-                        .constrainAs(divider) {
-                            top.linkTo(speakerDetails.bottom, 20.dp)
-                        }
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(
+                                color = MaterialTheme.chaiColorsPalette.surfaces,
+                            )
+                            .constrainAs(divider) {
+                                top.linkTo(speakerDetails.bottom, 20.dp)
+                            },
                 )
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 30.dp, vertical = 20.dp)
-                        .constrainAs(twitterContainer) {
-                            top.linkTo(divider.bottom)
-                        },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 30.dp, vertical = 20.dp)
+                            .constrainAs(twitterContainer) {
+                                top.linkTo(divider.bottom)
+                            },
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     ChaiBodyMedium(
                         bodyText = stringResource(R.string.twitter_handle_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )
                     Spacer(modifier = Modifier.width(12.dp))
 
                     CButton(
-                        modifier = Modifier
-                            .testTag("twitter_button")
-                            .align(Alignment.CenterVertically)
-                            .border(
-                                border = BorderStroke(
-                                    1.dp,
-                                    MaterialTheme.chaiColorsPalette.secondaryButtonColor
-                                ),
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .clip(RoundedCornerShape(10.dp)),
+                        modifier =
+                            Modifier
+                                .testTag("twitter_button")
+                                .align(Alignment.CenterVertically)
+                                .border(
+                                    border =
+                                        BorderStroke(
+                                            1.dp,
+                                            MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                                        ),
+                                    shape = RoundedCornerShape(10.dp),
+                                )
+                                .clip(RoundedCornerShape(10.dp)),
                         onClick = {
                             if (speaker.twitterHandle != null) {
                                 uriHandler.openUri(speaker.twitterHandle.toString())
                             }
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
-                            contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-                            disabledContainerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
-                            disabledContentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                                contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                                disabledContainerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                                disabledContentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                            ),
                         shape = RoundedCornerShape(10.dp),
-                        isEnabled = true
+                        isEnabled = true,
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_twitter),
                             contentDescription = stringResource(id = R.string.share),
-                            tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor
+                            tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
                         )
                         ChaiBodyMedium(
-                            bodyText = if (speaker.twitterHandle != null) {
-                                speaker.twitterHandle.toString()
-                                    .replace("https://twitter.com/", "")
-                            } else {
-                                ""
-                            },
+                            bodyText =
+                                if (speaker.twitterHandle != null) {
+                                    speaker.twitterHandle.toString()
+                                        .replace("https://twitter.com/", "")
+                                } else {
+                                    ""
+                                },
                             textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-                            modifier = Modifier.padding(start = 6.dp)
+                            modifier = Modifier.padding(start = 6.dp),
                         )
                     }
                 }
@@ -309,20 +325,21 @@ private fun SpeakerDetailsScreen(
 @Preview(
     name = "Light",
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_NO
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "Dark",
     showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 fun SpeakerDetailsScreenPreview() {
     ChaiDCKE22Theme {
         SpeakerDetailsScreen(
-            uiState = SpeakerDetailsScreenUiState.Success(
-                speaker = speakersDummyData.first()
-            )
+            uiState =
+                SpeakerDetailsScreenUiState.Success(
+                    speaker = speakersDummyData.first(),
+                ),
         )
     }
 }

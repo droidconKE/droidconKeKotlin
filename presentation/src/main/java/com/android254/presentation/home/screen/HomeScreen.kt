@@ -53,7 +53,7 @@ fun HomeRoute(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
-    onSessionClicked: (sessionId: String) -> Unit = {}
+    onSessionClicked: (sessionId: String) -> Unit = {},
 ) {
     val homeViewState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
@@ -66,7 +66,7 @@ fun HomeRoute(
         navigateToSessionScreen = navigateToSessionScreen,
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
-        onRefresh = { homeViewModel.startRefresh() }
+        onRefresh = { homeViewModel.startRefresh() },
     )
 }
 
@@ -80,31 +80,33 @@ private fun HomeScreen(
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
-    onRefresh: () -> Unit = {}
+    onRefresh: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             HomeToolbarComponent(
                 isSignedIn = viewState.isSignedIn,
                 navigateToFeedbackScreen = navigateToFeedbackScreen,
-                onActionClicked = onActionClicked
+                onActionClicked = onActionClicked,
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background
+        containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isSyncing),
             onRefresh = onRefresh,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 HomeHeaderSectionComponent()
 //                HomeBannerSection(viewState)
@@ -119,7 +121,7 @@ private fun HomeScreen(
                             HomeSessionSection(
                                 sessions = viewState.sessions,
                                 onSessionClick = onSessionClicked,
-                                onViewAllSessionClicked = navigateToSessionScreen
+                                onViewAllSessionClicked = navigateToSessionScreen,
                             )
                             HomeSpacer()
                         }
@@ -135,7 +137,7 @@ private fun HomeScreen(
                             HomeSpeakersSection(
                                 speakers = viewState.speakers,
                                 navigateToSpeakers = navigateToSpeakers,
-                                navigateToSpeaker = navigateToSpeaker
+                                navigateToSpeaker = navigateToSpeaker,
                             )
                             HomeSpacer()
                         }
@@ -153,19 +155,20 @@ private fun HomeScreen(
 fun HomeScreenPreview() {
     ChaiDCKE22Theme {
         HomeScreen(
-            viewState = HomeViewState(
-                isPosterVisible = true,
-                isCallForSpeakersVisible = true,
-                linkToCallForSpeakers = "https://droidconke.com",
-                isSignedIn = false,
-                speakers = listOf(),
-                isSpeakersSectionVisible = true,
-                isSessionsSectionVisible = true,
-                sponsors = listOf(),
-                organizedBy = listOf(),
-                sessions = listOf()
-            ),
-            isSyncing = false
+            viewState =
+                HomeViewState(
+                    isPosterVisible = true,
+                    isCallForSpeakersVisible = true,
+                    linkToCallForSpeakers = "https://droidconke.com",
+                    isSignedIn = false,
+                    speakers = listOf(),
+                    isSpeakersSectionVisible = true,
+                    isSessionsSectionVisible = true,
+                    sponsors = listOf(),
+                    organizedBy = listOf(),
+                    sessions = listOf(),
+                ),
+            isSyncing = false,
         )
     }
 }

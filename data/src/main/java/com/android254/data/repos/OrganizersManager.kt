@@ -19,7 +19,6 @@ import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSource
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
@@ -30,36 +29,38 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import javax.inject.Inject
 
-class OrganizersManager @Inject constructor(
-    private val localOrganizersDataSource: LocalOrganizersDataSource,
-    private val remoteOrganizersDataSource: RemoteOrganizersDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : OrganizersRepo {
+class OrganizersManager
+    @Inject
+    constructor(
+        private val localOrganizersDataSource: LocalOrganizersDataSource,
+        private val remoteOrganizersDataSource: RemoteOrganizersDataSource,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : OrganizersRepo {
+        override fun getOrganizers(): Flow<List<Organizer>> {
+            return localOrganizersDataSource.getOrganizers()
+                .map { it.distinctBy { organizer -> organizer.name }.map { organizer -> organizer.toDomain() } }
+        }
 
-    override fun getOrganizers(): Flow<List<Organizer>> {
-        return localOrganizersDataSource.getOrganizers()
-            .map { it.distinctBy { organizer -> organizer.name }.map { organizer -> organizer.toDomain() } }
-    }
+        override suspend fun syncOrganizers() {
+            withContext(ioDispatcher) {
+                val individualOrganizersResponseDeffered =
+                    async { remoteOrganizersDataSource.getIndividualOrganizers() }
+                val companyOrganizersResponseDeffered =
+                    async { remoteOrganizersDataSource.getCompanyOrganizers() }
 
-    override suspend fun syncOrganizers() {
-        withContext(ioDispatcher) {
-            val individualOrganizersResponseDeffered =
-                async { remoteOrganizersDataSource.getIndividualOrganizers() }
-            val companyOrganizersResponseDeffered =
-                async { remoteOrganizersDataSource.getCompanyOrganizers() }
+                val individualOrganizersResponse = individualOrganizersResponseDeffered.await()
+                val companyOrganizersResponse = companyOrganizersResponseDeffered.await()
+                if ((individualOrganizersResponse is DataResult.Success) && (companyOrganizersResponse is DataResult.Success)) {
+                    val individualOrganizers = individualOrganizersResponse.data.data
+                    val companyOrganizers = companyOrganizersResponse.data.data
 
-            val individualOrganizersResponse = individualOrganizersResponseDeffered.await()
-            val companyOrganizersResponse = companyOrganizersResponseDeffered.await()
-            if ((individualOrganizersResponse is DataResult.Success) && (companyOrganizersResponse is DataResult.Success)) {
-                val individualOrganizers = individualOrganizersResponse.data.data
-                val companyOrganizers = companyOrganizersResponse.data.data
+                    localOrganizersDataSource.insertOrganizers(organizers = individualOrganizers.map { it.toEntity() })
+                    localOrganizersDataSource.insertOrganizers(organizers = companyOrganizers.map { it.toEntity() })
 
-                localOrganizersDataSource.insertOrganizers(organizers = individualOrganizers.map { it.toEntity() })
-                localOrganizersDataSource.insertOrganizers(organizers = companyOrganizers.map { it.toEntity() })
-
-                Timber.d(message = "Sync Organizers successful")
+                    Timber.d(message = "Sync Organizers successful")
+                }
             }
         }
     }
-}

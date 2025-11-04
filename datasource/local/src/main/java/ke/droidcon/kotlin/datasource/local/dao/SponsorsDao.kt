@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SponsorsDao : BaseDao<SponsorEntity> {
-
     @Query("SELECT * FROM sponsors")
     fun fetchCachedSponsors(): Flow<List<SponsorEntity>>
 

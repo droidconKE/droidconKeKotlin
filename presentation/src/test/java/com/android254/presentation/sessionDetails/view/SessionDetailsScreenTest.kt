@@ -43,9 +43,10 @@ import org.robolectric.shadows.ShadowLog
 class SessionDetailsScreenTest {
     private val sessionId = "randomSessionId"
 
-    private val mockSavedStateHandle: SavedStateHandle = SavedStateHandle().apply {
-        set(Screens.SessionDetails.sessionIdNavigationArgument, sessionId)
-    }
+    private val mockSavedStateHandle: SavedStateHandle =
+        SavedStateHandle().apply {
+            set(Screens.SessionDetails.sessionIdNavigationArgument, sessionId)
+        }
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -64,11 +65,11 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show top bar and floating action button`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 SessionDetailsRoute(
                     viewModel = viewModel,
                     sessionId = sessionId,
-                    onNavigationIconClick = {}
+                    onNavigationIconClick = {},
                 )
             }
         }
@@ -82,12 +83,12 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show favourite icon and session banner image`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(1.dp),
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
-                    unBookmarkSession = { }
+                    unBookmarkSession = { },
                 )
             }
         }
@@ -102,44 +103,44 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
-                    unBookmarkSession = { }
+                    unBookmarkSession = { },
                 )
             }
         }
         composeTestRule.onNodeWithTag(testTag = TestTag.SPEAKER_NAME).assertTextEquals(
-            sessionPresentationModel.speakers.joinToString(" & ") { it.name }
+            sessionPresentationModel.speakers.joinToString(" & ") { it.name },
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_TITLE).assertTextEquals(
-            sessionPresentationModel.title
+            sessionPresentationModel.title,
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.SESSION_DESCRIPTION).assertTextEquals(
-            sessionPresentationModel.description
+            sessionPresentationModel.description,
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.TIME_SLOT).assertTextEquals(
-            sessionPresentationModel.timeSlot.uppercase()
+            sessionPresentationModel.timeSlot.uppercase(),
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.ROOM).assertTextEquals(
-            sessionPresentationModel.venue.uppercase()
+            sessionPresentationModel.venue.uppercase(),
         )
         composeTestRule.onNodeWithTag(testTag = TestTag.LEVEL).assertTextEquals(
-            "#${sessionPresentationModel.level.uppercase()}"
+            "#${sessionPresentationModel.level.uppercase()}",
         )
     }
 
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme() {
+            ChaiDCKE22Theme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,
                     bookmarkSession = { },
-                    unBookmarkSession = { }
+                    unBookmarkSession = { },
                 )
             }
         }
@@ -149,26 +150,27 @@ class SessionDetailsScreenTest {
     }
 
     companion object {
-        val mockSession = Session(
-            title = "Compose Beyond Material Design",
-            description = "Been in the tech industry for over 20 years. Am passionate about developer communities, motivating people and building successfulBeen in the tech industry for over 20 years.",
-            id = "",
-            endTime = "",
-            startTime = "2022-10-15 18:30:00",
-            isBookmarked = true,
-            isKeynote = true,
-            isServiceSession = true,
-            remoteId = "",
-            sessionLevel = "",
-            endDateTime = "",
-            sessionImage = "",
-            sessionFormat = "",
-            startDateTime = "2022-10-15 18:30:00",
-            slug = "",
-            rooms = "",
-            speakers = listOf(Speaker("", "", "", "", "", "", "", "John Doe", twitter = "johnDoe")),
-            eventDay = ""
-        )
+        val mockSession =
+            Session(
+                title = "Compose Beyond Material Design",
+                description = "Been in the tech industry for over 20 years. Am passionate about developer communities, motivating people and building successfulBeen in the tech industry for over 20 years.",
+                id = "",
+                endTime = "",
+                startTime = "2022-10-15 18:30:00",
+                isBookmarked = true,
+                isKeynote = true,
+                isServiceSession = true,
+                remoteId = "",
+                sessionLevel = "",
+                endDateTime = "",
+                sessionImage = "",
+                sessionFormat = "",
+                startDateTime = "2022-10-15 18:30:00",
+                slug = "",
+                rooms = "",
+                speakers = listOf(Speaker("", "", "", "", "", "", "", "John Doe", twitter = "johnDoe")),
+                eventDay = "",
+            )
         val sessionPresentationModel = mockSession.toSessionDetailsPresentationModal()
     }
 }

@@ -41,25 +41,27 @@ suspend fun <T> safeApiCall(block: suspend () -> T): T {
 }
 
 class ServerError(cause: Throwable) : Exception(cause)
+
 class NetworkError : Exception()
 
 suspend fun <T : Any> dataResultSafeApiCall(
-    apiCall: suspend () -> T
-): DataResult<T> = try {
-    DataResult.Success(apiCall.invoke())
-} catch (throwable: Throwable) {
-    Timber.e(throwable)
-    when (throwable) {
-        is ServerResponseException, is NoTransformationFoundException -> {
-            DataResult.Error("Server error", exc = throwable)
-        }
+    apiCall: suspend () -> T,
+): DataResult<T> =
+    try {
+        DataResult.Success(apiCall.invoke())
+    } catch (throwable: Throwable) {
+        Timber.e(throwable)
+        when (throwable) {
+            is ServerResponseException, is NoTransformationFoundException -> {
+                DataResult.Error("Server error", exc = throwable)
+            }
 
-        is ConnectTimeoutException -> {
-            DataResult.Error("Network error", exc = throwable, networkError = true)
-        }
+            is ConnectTimeoutException -> {
+                DataResult.Error("Network error", exc = throwable, networkError = true)
+            }
 
-        else -> {
-            DataResult.Error("Client error", exc = throwable)
+            else -> {
+                DataResult.Error("Client error", exc = throwable)
+            }
         }
     }
-}

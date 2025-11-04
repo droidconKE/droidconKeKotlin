@@ -57,13 +57,13 @@ import ke.droidcon.kotlin.presentation.R
 fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (String) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {},
 ) {
     val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
     SpeakersScreen(
         uiState = uiState,
         navigateToHomeScreen = navigateToHomeScreen,
-        navigateToSpeaker = navigateToSpeaker
+        navigateToSpeaker = navigateToSpeaker,
     )
 }
 
@@ -71,7 +71,7 @@ fun SpeakersRoute(
 private fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
     navigateToHomeScreen: () -> Unit = {},
-    navigateToSpeaker: (String) -> Unit = {}
+    navigateToSpeaker: (String) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -79,40 +79,42 @@ private fun SpeakersScreen(
                 title = {
                     ChaiBodyLarge(
                         bodyText = stringResource(id = R.string.speakers_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                     )
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = navigateToHomeScreen
+                        onClick = navigateToHomeScreen,
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_back_arrow),
                             contentDescription = stringResource(R.string.back_arrow_icon_description),
-                            tint = MaterialTheme.chaiColorsPalette.textBoldColor
+                            tint = MaterialTheme.chaiColorsPalette.textBoldColor,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                    navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor
-                )
+                colors =
+                    TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                        navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                    ),
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background
+        containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = uiState is SpeakersScreenUiState.Loading),
             onRefresh = { /*TODO*/ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues),
         ) {
             when (uiState) {
                 is SpeakersScreenUiState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
@@ -120,12 +122,12 @@ private fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Error -> {
                     Box(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
                     ) {
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
                             bodyText = uiState.message,
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                         )
                     }
                 }
@@ -135,14 +137,14 @@ private fun SpeakersScreen(
                         columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         items(items = uiState.speakers) { speaker ->
                             SpeakerComponent(
                                 speaker = speaker,
                                 onClick = {
                                     navigateToSpeaker.invoke(speaker.name)
-                                }
+                                },
                             )
                         }
                     }
@@ -154,17 +156,17 @@ private fun SpeakersScreen(
 
 @Preview(
     name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 fun SpeakersScreenPreview() {
     ChaiDCKE22Theme {
         SpeakersScreen(
-            uiState = SpeakersScreenUiState.Success(speakers = listOf())
+            uiState = SpeakersScreenUiState.Success(speakers = listOf()),
         )
     }
 }

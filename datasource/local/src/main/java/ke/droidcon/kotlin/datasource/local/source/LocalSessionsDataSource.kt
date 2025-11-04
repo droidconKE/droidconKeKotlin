@@ -19,7 +19,6 @@ import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalSessionsDataSource {
-
     fun getCachedSessions(): Flow<List<SessionEntity>>
 
     suspend fun deleteCachedSessions()
@@ -28,7 +27,10 @@ interface LocalSessionsDataSource {
 
     fun fetchSessionWithFilters(query: String): Flow<List<SessionEntity>>
 
-    suspend fun updateBookmarkedStatus(id: String, isBookmarked: Boolean)
+    suspend fun updateBookmarkedStatus(
+        id: String,
+        isBookmarked: Boolean,
+    )
 
     suspend fun getBookmarkStatus(id: String): Boolean
 

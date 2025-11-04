@@ -34,7 +34,7 @@ import com.android254.presentation.speakers.view.SpeakersRoute
 fun Navigation(
     navController: NavHostController,
     updateBottomBarState: (Boolean) -> Unit,
-    onActionClicked: () -> Unit = {}
+    onActionClicked: () -> Unit = {},
 ) {
     NavHost(navController, startDestination = Screens.Home.route) {
         composable(Screens.Home.route) {
@@ -45,8 +45,8 @@ fun Navigation(
                     navController.navigate(
                         Screens.SpeakerDetails.route.replace(
                             "{speakerName}",
-                            speakerName
-                        )
+                            speakerName,
+                        ),
                     )
                 },
                 navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
@@ -57,13 +57,13 @@ fun Navigation(
                     navController.navigate(
                         Screens.SessionDetails.route.replace(
                             oldValue = "{sessionId}",
-                            newValue = sessionId
-                        )
+                            newValue = sessionId,
+                        ),
                     ) {
                         launchSingleTop = true
                         restoreState = true
                     }
-                }
+                },
             )
         }
         composable(Screens.Sessions.route) {
@@ -73,8 +73,8 @@ fun Navigation(
                 navController.navigate(
                     Screens.SessionDetails.route.replace(
                         oldValue = "{sessionId}",
-                        newValue = sessionId
-                    )
+                        newValue = sessionId,
+                    ),
                 ) {
                     launchSingleTop = true
                     restoreState = true
@@ -83,30 +83,31 @@ fun Navigation(
         }
         composable(
             Screens.SessionDetails.route,
-            arguments = listOf(
-                navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
-                    type = NavType.StringType
-                }
-            )
+            arguments =
+                listOf(
+                    navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
+                        type = NavType.StringType
+                    },
+                ),
         ) { backStackEntry ->
             updateBottomBarState(false)
             SessionDetailsRoute(
                 sessionId = requireNotNull(backStackEntry.arguments?.getString(Screens.SessionDetails.sessionIdNavigationArgument)),
                 onNavigationIconClick = {
                     navController.popBackStack()
-                }
+                },
             )
         }
         composable(Screens.Feed.route) {
             updateBottomBarState(true)
             FeedRoute(
-                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) }
+                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
             )
         }
         composable(Screens.About.route) {
             updateBottomBarState(true)
             AboutRoute(
-                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) }
+                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
             )
         }
         composable(Screens.Speakers.route) {
@@ -117,29 +118,30 @@ fun Navigation(
                     navController.navigate(
                         Screens.SpeakerDetails.route.replace(
                             "{speakerName}",
-                            speakerName
-                        )
+                            speakerName,
+                        ),
                     )
-                }
+                },
             )
         }
         composable(Screens.FeedBack.route) {
             updateBottomBarState(false)
             FeedBackRoute(
-                navigateBack = { navController.navigateUp() }
+                navigateBack = { navController.navigateUp() },
             )
         }
 
         composable(
             Screens.SpeakerDetails.route,
-            arguments = listOf(navArgument("speakerName") { type = NavType.StringType })
+            arguments = listOf(navArgument("speakerName") { type = NavType.StringType }),
         ) {
-            val speakerName = it.arguments?.getString("speakerName")
-                ?: throw IllegalStateException("Speaker data missing.")
+            val speakerName =
+                it.arguments?.getString("speakerName")
+                    ?: throw IllegalStateException("Speaker data missing.")
             updateBottomBarState(false)
             SpeakerDetailsRoute(
                 name = speakerName,
-                navigateBack = { navController.navigateUp() }
+                navigateBack = { navController.navigateUp() },
             )
         }
     }

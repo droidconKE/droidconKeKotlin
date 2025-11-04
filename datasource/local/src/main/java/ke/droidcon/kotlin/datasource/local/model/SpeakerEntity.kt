@@ -26,5 +26,5 @@ data class SpeakerEntity(
     val tagline: String,
     val bio: String,
     val avatar: String,
-    val twitter: String
+    val twitter: String,
 )

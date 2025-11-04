@@ -19,5 +19,5 @@ data class Creator(
     val id: Int?,
     val name: String?,
     val email: String?,
-    val createdAt: String
+    val createdAt: String,
 )

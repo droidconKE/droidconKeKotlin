@@ -26,11 +26,11 @@ data class SpeakerDTO(
     val bio: String,
     val tagline: String,
     val avatar: String,
-    val twitter: String?
+    val twitter: String?,
 )
 
 @Serializable
 data class SpeakersPagedResponse(
     val data: List<SpeakerDTO>,
-    val meta: ResponseMetaData
+    val meta: ResponseMetaData,
 )

@@ -19,29 +19,32 @@ import com.android254.domain.models.Feed
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 
-fun FeedDTO.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+fun FeedDTO.toDomain() =
+    Feed(
+        title = title,
+        body = body,
+        topic = topic,
+        url = url,
+        image = image,
+        createdAt = createdAt.toString(),
+    )
 
-fun FeedDTO.toEntity() = FeedEntity(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt.toString()
-)
+fun FeedDTO.toEntity() =
+    FeedEntity(
+        title = title,
+        body = body,
+        topic = topic,
+        url = url,
+        image = image,
+        createdAt = createdAt.toString(),
+    )
 
-fun FeedEntity.toDomain() = Feed(
-    title = title,
-    body = body,
-    topic = topic,
-    url = url,
-    image = image,
-    createdAt = createdAt
-)
+fun FeedEntity.toDomain() =
+    Feed(
+        title = title,
+        body = body,
+        topic = topic,
+        url = url,
+        image = image,
+        createdAt = createdAt,
+    )

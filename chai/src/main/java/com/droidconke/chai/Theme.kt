@@ -35,7 +35,7 @@ import com.droidconke.chai.colors.LocalChaiColorsPalette
 @Composable
 fun ChaiDCKE22Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val view = LocalView.current
     val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
@@ -50,10 +50,10 @@ fun ChaiDCKE22Theme(
     }
 
     CompositionLocalProvider(
-        LocalChaiColorsPalette provides customColorsPalette
+        LocalChaiColorsPalette provides customColorsPalette,
     ) {
         MaterialTheme(
-            content = content
+            content = content,
         )
     }
 }

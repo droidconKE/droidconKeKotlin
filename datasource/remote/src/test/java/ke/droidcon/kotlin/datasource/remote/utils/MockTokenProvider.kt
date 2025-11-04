@@ -20,5 +20,6 @@ import kotlinx.coroutines.flow.emptyFlow
 
 class MockTokenProvider : TokenProvider {
     override suspend fun fetch(): Flow<String?> = emptyFlow()
+
     override suspend fun update(accessToken: String) {}
 }

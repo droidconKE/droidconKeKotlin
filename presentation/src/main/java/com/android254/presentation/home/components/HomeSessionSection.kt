@@ -49,25 +49,25 @@ fun HomeSessionSection(
     modifier: Modifier = Modifier,
     sessions: List<SessionPresentationModel>,
     onSessionClick: (sessionId: String) -> Unit,
-    onViewAllSessionClicked: () -> Unit
+    onViewAllSessionClicked: () -> Unit,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         HomeSectionHeaderComponent(
             sectionLabel = stringResource(id = R.string.sessions_label),
             sectionSize = sessions.size,
-            onViewAllClicked = onViewAllSessionClicked
+            onViewAllClicked = onViewAllSessionClicked,
         )
         Spacer(modifier = Modifier.height(16.dp))
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.testTag("sessions")
+            modifier = Modifier.testTag("sessions"),
         ) {
             items(sessions) { session ->
                 HomeSessionContent(
                     session = session,
-                    onSessionClick = { onSessionClick(session.id) }
+                    onSessionClick = { onSessionClick(session.id) },
                 )
             }
         }
@@ -78,44 +78,48 @@ fun HomeSessionSection(
 fun HomeSessionContent(
     session: SessionPresentationModel,
     onSessionClick: (sessionId: String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier
-            .width(140.dp)
-            .height(intrinsicSize = IntrinsicSize.Max),
+        modifier =
+            modifier
+                .width(140.dp)
+                .height(intrinsicSize = IntrinsicSize.Max),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
-        onClick = { onSessionClick(session.id) }
+        onClick = { onSessionClick(session.id) },
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(if (session.isService) R.drawable.all else session.sessionImage)
-                .build(),
+            model =
+                ImageRequest.Builder(LocalContext.current)
+                    .data(if (session.isService) R.drawable.all else session.sessionImage)
+                    .build(),
             placeholder = painterResource(R.drawable.all),
             contentDescription = stringResource(id = R.string.session_image),
-            modifier = Modifier
-                .height(140.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
+            modifier =
+                Modifier
+                    .height(140.dp)
+                    .fillMaxWidth(),
+            contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(8.dp))
         Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .height(80.dp),
-            verticalArrangement = Arrangement.SpaceBetween
+            modifier =
+                Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .height(80.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
         ) {
             ChaiBodySmallBold(
                 bodyText = session.title,
                 textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                maxLines = 2
+                maxLines = 2,
             )
             Spacer(Modifier.height(4.dp))
 
             ChaiTextLabelLarge(
                 bodyText = "@ ${session.startTime} | ${session.venue} ",
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
             )
         }
     }

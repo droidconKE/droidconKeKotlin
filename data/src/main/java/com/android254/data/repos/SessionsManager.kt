@@ -21,10 +21,6 @@ import com.android254.domain.models.Session
 import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
@@ -38,118 +34,128 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import javax.inject.Inject
 
-class SessionsManager @Inject constructor(
-    private val localSessionsDataSource: LocalSessionsDataSource,
-    private val remoteSessionsDataSource: RemoteSessionsDataSource,
-    private val bookmarkDao: BookmarkDao,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : SessionsRepo {
+class SessionsManager
+    @Inject
+    constructor(
+        private val localSessionsDataSource: LocalSessionsDataSource,
+        private val remoteSessionsDataSource: RemoteSessionsDataSource,
+        private val bookmarkDao: BookmarkDao,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    ) : SessionsRepo {
+        override fun fetchSessions(): Flow<List<Session>> {
+            val bookmarksFlow = bookmarkDao.getBookmarkIds()
+            val sessionsFlow = localSessionsDataSource.getCachedSessions()
+            return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
+                sessions
+                    .map { session ->
+                        session.toDomainModel().copy(
+                            isBookmarked =
+                                bookmarks.map { it.sessionId }
+                                    .contains(session.id.toString()),
+                        )
+                    }
+            }.flowOn(ioDispatcher)
+        }
 
-    override fun fetchSessions(): Flow<List<Session>> {
-        val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        val sessionsFlow = localSessionsDataSource.getCachedSessions()
-        return combine(sessionsFlow, bookmarksFlow) { sessions, bookmarks ->
-            sessions
-                .map { session ->
-                    session.toDomainModel().copy(
-                        isBookmarked = bookmarks.map { it.sessionId }
-                            .contains(session.id.toString())
-                    )
-                }
-        }.flowOn(ioDispatcher)
-    }
-
-    override suspend fun fetchSessionsInformation(): Flow<SessionsInformationDomainModel> = combine(
-        localSessionsDataSource.getCachedSessions(),
-        bookmarkDao.getBookmarkIds()
-    ) { sessions, bookmarks ->
-        val eventDays = sessions.groupBy { it.startTimestamp.toEventDay() }.keys.toList()
-        SessionsInformationDomainModel(
-            sessions = sessions.map { session ->
-                session.toDomainModel().copy(
-                    isBookmarked = bookmarks.map { it.sessionId }
-                        .contains(session.remote_id)
+        override suspend fun fetchSessionsInformation(): Flow<SessionsInformationDomainModel> =
+            combine(
+                localSessionsDataSource.getCachedSessions(),
+                bookmarkDao.getBookmarkIds(),
+            ) { sessions, bookmarks ->
+                val eventDays = sessions.groupBy { it.startTimestamp.toEventDay() }.keys.toList()
+                SessionsInformationDomainModel(
+                    sessions =
+                        sessions.map { session ->
+                            session.toDomainModel().copy(
+                                isBookmarked =
+                                    bookmarks.map { it.sessionId }
+                                        .contains(session.remote_id),
+                            )
+                        },
+                    eventDays = eventDays,
                 )
-            },
-            eventDays = eventDays
-        )
-    }
+            }
 
-    private fun Long.toEventDay(): String {
-        val date = Date(this)
-        val sdf = SimpleDateFormat("dd", Locale.getDefault())
-        return sdf.format(date)
-    }
+        private fun Long.toEventDay(): String {
+            val date = Date(this)
+            val sdf = SimpleDateFormat("dd", Locale.getDefault())
+            return sdf.format(date)
+        }
 
-    override fun fetchFilteredSessions(filter: SessionFilter): Flow<List<Session>> {
-        var query = "SELECT * FROM sessions WHERE 1 "
-        if (filter.rooms.isNotEmpty()) {
-            query += " AND (${filter.rooms.joinToString(" OR ") { "rooms = '$it'" }})"
+        override fun fetchFilteredSessions(filter: SessionFilter): Flow<List<Session>> {
+            var query = "SELECT * FROM sessions WHERE 1 "
+            if (filter.rooms.isNotEmpty()) {
+                query += " AND (${filter.rooms.joinToString(" OR ") { "rooms = '$it'" }})"
+            }
+            if (filter.levels.isNotEmpty()) {
+                query += " AND (${filter.levels.joinToString(" OR ") { "sessionLevel = '$it'" }})"
+            }
+            if (filter.sessionFormats.isNotEmpty()) {
+                query += " AND (${filter.sessionFormats.joinToString(" OR ") { "sessionFormat = '$it'" }})"
+            }
+            val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query.trim())
+            val bookmarksFlow = bookmarkDao.getBookmarkIds()
+            return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
+                if (filter.bookmarked) {
+                    sessions.map { session ->
+                        session.toDomainModel().copy(
+                            isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
+                        )
+                    }.filter { it.isBookmarked }
+                } else {
+                    sessions.map { session ->
+                        session.toDomainModel().copy(
+                            isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
+                        )
+                    }
+                }
+            }.flowOn(ioDispatcher)
         }
-        if (filter.levels.isNotEmpty()) {
-            query += " AND (${filter.levels.joinToString(" OR ") { "sessionLevel = '$it'" }})"
+
+        override fun fetchSessionById(id: String): Flow<Session?> {
+            val bookmarksFlow = bookmarkDao.getBookmarkIds()
+            val sessionFlow =
+                localSessionsDataSource.getCachedSessionById(id).map {
+                    it?.toDomainModel()
+                }
+            return combine(sessionFlow, bookmarksFlow) { session, bookmarks ->
+                session?.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
+            }.flowOn(ioDispatcher)
         }
-        if (filter.sessionFormats.isNotEmpty()) {
-            query += " AND (${filter.sessionFormats.joinToString(" OR ") { "sessionFormat = '$it'" }})"
+
+        override suspend fun bookmarkSession(id: String) {
+            withContext(ioDispatcher) {
+                bookmarkDao.insert(BookmarkEntity(id))
+            }
         }
-        val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query.trim())
-        val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
-            if (filter.bookmarked) {
-                sessions.map { session ->
-                    session.toDomainModel().copy(
-                        isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
+
+        override suspend fun unBookmarkSession(id: String) {
+            withContext(ioDispatcher) {
+                bookmarkDao.delete(BookmarkEntity(id))
+            }
+        }
+
+        override suspend fun syncSessions() {
+            when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
+                is DataResult.Success -> {
+                    localSessionsDataSource.deleteCachedSessions()
+                    localSessionsDataSource.saveCachedSessions(
+                        sessions = response.data.map { session -> session.toEntity() },
                     )
-                }.filter { it.isBookmarked }
-            } else {
-                sessions.map { session ->
-                    session.toDomainModel().copy(
-                        isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString())
-                    )
+                    Timber.d("Sync sessions successful")
+                }
+
+                is DataResult.Error -> {
+                    Timber.d("Sync sessions failed ${response.message}")
+                }
+
+                else -> {
                 }
             }
-        }.flowOn(ioDispatcher)
-    }
-
-    override fun fetchSessionById(id: String): Flow<Session?> {
-        val bookmarksFlow = bookmarkDao.getBookmarkIds()
-        val sessionFlow = localSessionsDataSource.getCachedSessionById(id).map {
-            it?.toDomainModel()
-        }
-        return combine(sessionFlow, bookmarksFlow) { session, bookmarks ->
-            session?.copy(isBookmarked = bookmarks.map { it.sessionId }.contains(session.id))
-        }.flowOn(ioDispatcher)
-    }
-
-    override suspend fun bookmarkSession(id: String) {
-        withContext(ioDispatcher) {
-            bookmarkDao.insert(BookmarkEntity(id))
         }
     }
-
-    override suspend fun unBookmarkSession(id: String) {
-        withContext(ioDispatcher) {
-            bookmarkDao.delete(BookmarkEntity(id))
-        }
-    }
-
-    override suspend fun syncSessions() {
-        when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
-            is DataResult.Success -> {
-                localSessionsDataSource.deleteCachedSessions()
-                localSessionsDataSource.saveCachedSessions(
-                    sessions = response.data.map { session -> session.toEntity() }
-                )
-                Timber.d("Sync sessions successful")
-            }
-
-            is DataResult.Error -> {
-                Timber.d("Sync sessions failed ${response.message}")
-            }
-
-            else -> {
-            }
-        }
-    }
-}

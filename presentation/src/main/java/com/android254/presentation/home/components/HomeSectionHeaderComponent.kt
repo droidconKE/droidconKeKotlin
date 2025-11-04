@@ -46,44 +46,47 @@ fun HomeSectionHeaderComponent(
     sectionLabel: String,
     sectionSize: Int,
     onViewAllClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier
-            .padding(vertical = 16.dp)
-            .testTag("sectionHeader")
+        modifier =
+            modifier
+                .padding(vertical = 16.dp)
+                .testTag("sectionHeader"),
     ) {
         ChaiSubTitle(
             titleText = sectionLabel,
-            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor
+            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clickable { onViewAllClicked() }
-                .testTag("viewAll")
+            modifier =
+                Modifier
+                    .clickable { onViewAllClicked() }
+                    .testTag("viewAll"),
         ) {
             ChaiBodyXSmallBold(
                 bodyText = stringResource(id = R.string.view_all_label),
-                textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary
+                textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Box(
-                modifier = Modifier
-                    .height(22.dp)
-                    .width(34.dp)
-                    .background(
-                        color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary.copy(alpha = 0.11f),
-                        shape = RoundedCornerShape(14.dp)
-                    )
+                modifier =
+                    Modifier
+                        .height(22.dp)
+                        .width(34.dp)
+                        .background(
+                            color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary.copy(alpha = 0.11f),
+                            shape = RoundedCornerShape(14.dp),
+                        ),
             ) {
                 ChaiTextLabelMedium(
                     modifier = Modifier.align(Alignment.Center),
                     bodyText = stringResource(id = R.string.format_plus_label, sectionSize),
-                    textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary
+                    textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary,
                 )
             }
         }
@@ -92,11 +95,11 @@ fun HomeSectionHeaderComponent(
 
 @Preview(
     name = "Light",
-    uiMode = Configuration.UI_MODE_NIGHT_NO
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "Dark",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 private fun HomeSectionHeaderComponentPreview() {
@@ -104,7 +107,7 @@ private fun HomeSectionHeaderComponentPreview() {
         HomeSectionHeaderComponent(
             sectionLabel = "Sessions",
             sectionSize = 20,
-            onViewAllClicked = {}
+            onViewAllClicked = {},
         )
     }
 }

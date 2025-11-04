@@ -39,21 +39,23 @@ class AuthManagerTest {
     private val mockTokenProvider = mockk<TokenProvider>()
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    private val fakeUserDetails = UserDetailsDTO(
-        name = "Test",
-        email = "test@gmail.com",
-        gender = null,
-        avatar = "http://test.com"
-    )
+    private val fakeUserDetails =
+        UserDetailsDTO(
+            name = "Test",
+            email = "test@gmail.com",
+            gender = null,
+            avatar = "http://test.com",
+        )
 
     @Test
     fun `test getAndSaveApiToken successfully`() {
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
-            coEvery { mockApi.googleLogin(any()) } returns AccessTokenDTO(
-                "test",
-                user = fakeUserDetails
-            )
+            coEvery { mockApi.googleLogin(any()) } returns
+                AccessTokenDTO(
+                    "test",
+                    user = fakeUserDetails,
+                )
             coEvery { mockTokenProvider.update(any()) } just Runs
 
             val result = repo.getAndSaveApiToken("test")

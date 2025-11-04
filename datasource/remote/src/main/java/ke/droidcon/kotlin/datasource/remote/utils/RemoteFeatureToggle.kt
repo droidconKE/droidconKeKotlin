@@ -20,7 +20,7 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 class RemoteFeatureToggle(
-    private val remoteConfig: FirebaseRemoteConfig
+    private val remoteConfig: FirebaseRemoteConfig,
 ) {
     private var intialized = false
 

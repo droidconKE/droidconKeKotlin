@@ -20,7 +20,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface SpeakersRepo {
     fun fetchSpeakers(): Flow<List<Speaker>>
+
     suspend fun fetchSpeakerCount(): Flow<Int>
+
     suspend fun getSpeakerByName(name: String): Flow<Speaker>
 
     suspend fun syncSpeakers()

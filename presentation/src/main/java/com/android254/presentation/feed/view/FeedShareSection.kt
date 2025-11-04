@@ -49,49 +49,53 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedShareSection(
-    onCancelClicked: () -> Unit = {}
+    onCancelClicked: () -> Unit = {},
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
-            .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
-            .testTag("share_bottom_sheet")
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
+                .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
+                .testTag("share_bottom_sheet"),
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
         ) {
             Row {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = stringResource(id = R.string.share),
                     modifier = Modifier.padding(end = 12.dp),
-                    tint = MaterialTheme.chaiColorsPalette.textNormalColor
+                    tint = MaterialTheme.chaiColorsPalette.textNormalColor,
                 )
                 ChaiSubTitle(
                     titleText = stringResource(id = R.string.share),
-                    titleColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                    titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                 )
             }
 
             ChaiTextButtonLight(
-                modifier = Modifier.clickable {
-                    onCancelClicked()
-                },
+                modifier =
+                    Modifier.clickable {
+                        onCancelClicked()
+                    },
                 bodyText = stringResource(id = R.string.cancel),
-                textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+                textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
             )
         }
 
-        val platforms = mapOf(
-            "Twitter" to R.drawable.ic_twitter,
-            "Facebook" to R.drawable.ic_facebook,
-            "WhatsApp" to R.drawable.ic_whatsapp,
-            "Telegram" to R.drawable.ic_telegram
-        ).toList()
+        val platforms =
+            mapOf(
+                "Twitter" to R.drawable.ic_twitter,
+                "Facebook" to R.drawable.ic_facebook,
+                "WhatsApp" to R.drawable.ic_whatsapp,
+                "Telegram" to R.drawable.ic_telegram,
+            ).toList()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -100,36 +104,42 @@ fun FeedShareSection(
                     PlatformButton(platform = platform.first, icon = platform.second)
                 }
             },
-            modifier = Modifier
-                .padding(top = 16.dp)
+            modifier =
+                Modifier
+                    .padding(top = 16.dp),
         )
     }
 }
 
 @Composable
-fun PlatformButton(platform: String, icon: Int) {
+fun PlatformButton(
+    platform: String,
+    icon: Int,
+) {
     OutlinedButton(
         onClick = { /*TODO*/ },
         shape = MaterialTheme.shapes.small,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(6.dp),
         border = BorderStroke(1.dp, ChaiTeal90),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = Color.White
-        )
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                contentColor = Color.White,
+            ),
     ) {
         Icon(
             painter = painterResource(id = icon),
             contentDescription = stringResource(id = R.string.share),
-            tint = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor
+            tint = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor,
         )
         ChaiBodyMedium(
-            modifier = Modifier
-                .padding(start = 22.dp),
+            modifier =
+                Modifier
+                    .padding(start = 22.dp),
             bodyText = platform,
-            textColor = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor
-
+            textColor = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor,
         )
     }
 }

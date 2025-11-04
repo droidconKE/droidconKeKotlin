@@ -19,7 +19,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import ke.droidcon.kotlin.datasource.local.dao.FeedDao
 import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
@@ -52,16 +51,16 @@ import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSourceImpl
 import ke.droidcon.kotlin.datasource.remote.sponsors.SponsorsApi
 import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataSourceModule {
-
     @Provides
     @Singleton
     fun provideRemoteSpeakersDataSource(
         api: SpeakersApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): RemoteSpeakersDataSource =
         RemoteSpeakersDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
@@ -69,7 +68,7 @@ object DataSourceModule {
     @Singleton
     fun provideRemoteSponsorsDataSource(
         api: SponsorsApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): RemoteSponsorsDataSource =
         RemoteSponsorsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
@@ -77,7 +76,7 @@ object DataSourceModule {
     @Singleton
     fun provideRemoteSessionsDataSource(
         api: SessionsApi,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): RemoteSessionsDataSource =
         RemoteSessionsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
@@ -85,7 +84,7 @@ object DataSourceModule {
     @Singleton
     fun provideLocalSessionsDataSource(
         sessionDao: SessionDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): LocalSessionsDataSource =
         LocalSessionsDataSourceImpl(sessionDao = sessionDao, localSourceIoDispatcher = ioDispatcher)
 
@@ -93,7 +92,7 @@ object DataSourceModule {
     @Singleton
     fun provideLocalSpeakersDataSource(
         speakersDao: SpeakerDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): LocalSpeakersDataSource =
         LocalSpeakersDataSourceImpl(speakerDao = speakersDao, localSourceIoDispatcher = ioDispatcher)
 
@@ -101,7 +100,7 @@ object DataSourceModule {
     @Singleton
     fun provideLocalSponsorsDataSource(
         sponsorsDao: SponsorsDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): LocalSponsorsDataSource =
         LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, localSourceIoDispatcher = ioDispatcher)
 
@@ -109,26 +108,26 @@ object DataSourceModule {
     @Singleton
     fun provideLocalOrganizersDataSource(
         organizersDao: OrganizersDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): LocalOrganizersDataSource =
         LocalOrganizersDataSourceImpl(organizersDao = organizersDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideRemoteOrganizersDataSource(
-        api: OrganizersApi
+        api: OrganizersApi,
     ): RemoteOrganizersDataSource = RemoteOrganizersDataSourceImpl(api = api)
 
     @Provides
     @Singleton
     fun provideFeedDataSource(
-        api: FeedApi
+        api: FeedApi,
     ): RemoteFeedDataSource = RemoteFeedDataSourceImpl(api = api)
 
     @Provides
     @Singleton
     fun provideLocalFeedDataSource(
         feedDao: FeedDao,
-        @IoDispatcher ioDispatcher: CoroutineDispatcher
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ): LocalFeedDataSource = LocalFeedDataSourceImpl(feedDao = feedDao, ioDispatcher = ioDispatcher)
 }

@@ -56,12 +56,13 @@ fun CustomSwitch(
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     // this is to disable the ripple effect
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
+    val interactionSource =
+        remember {
+            MutableInteractionSource()
+        }
 
     // for moving the thumb
     val alignment by animateAlignmentAsState(if (checked) 1f else -1f)
@@ -69,56 +70,59 @@ fun CustomSwitch(
     Column(
         modifier = Modifier.wrapContentSize(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // outer toggle container
         Box(
-            modifier = Modifier
-                .size(width = width, height = height)
-                .clickable(
-                    indication = null,
-                    interactionSource = interactionSource
-                ) {
-                    onCheckedChange(!checked)
-                },
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(width = width, height = height)
+                    .clickable(
+                        indication = null,
+                        interactionSource = interactionSource,
+                    ) {
+                        onCheckedChange(!checked)
+                    },
+            contentAlignment = Alignment.Center,
         ) {
             // this is the horizontal rounded rectangle
             Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(
-                        color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffBackgroundColor
-                    )
-                    .height(17.dp)
-                    .width(54.dp)
+                modifier =
+                    Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffBackgroundColor,
+                        )
+                        .height(17.dp)
+                        .width(54.dp),
             )
             // thumb with icon
             Icon(
-                modifier = Modifier
-                    .size(size = thumbSize)
-                    .background(
-                        color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffIconBackgroundColor,
-                        shape = CircleShape
-                    )
-                    .padding(all = iconInnerPadding)
-                    .align(alignment),
+                modifier =
+                    Modifier
+                        .size(size = thumbSize)
+                        .background(
+                            color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffIconBackgroundColor,
+                            shape = CircleShape,
+                        )
+                        .padding(all = iconInnerPadding)
+                        .align(alignment),
                 imageVector = Icons.Filled.Star,
                 contentDescription = if (checked) "Enabled" else "Disabled",
-                tint = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconColor else MaterialTheme.chaiColorsPalette.toggleOffIconColor
+                tint = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconColor else MaterialTheme.chaiColorsPalette.toggleOffIconColor,
             )
         }
 
         ChaiTextLabelSmall(
             bodyText = "My sessions",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
         )
     }
 }
 
 @Composable
 private fun animateAlignmentAsState(
-    targetBiasValue: Float
+    targetBiasValue: Float,
 ): State<BiasAlignment> {
     val bias by animateFloatAsState(targetValue = targetBiasValue, label = "")
 
@@ -133,7 +137,7 @@ private fun CustomSwitchPreview() {
     ChaiDCKE22Theme {
         Column(
             modifier = Modifier.background(color = MaterialTheme.chaiColorsPalette.background),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             CustomSwitch(checked = false, onCheckedChange = {})
             CustomSwitch(checked = true, onCheckedChange = {})

@@ -29,7 +29,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class AuthDialogTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 

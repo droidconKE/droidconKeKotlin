@@ -32,43 +32,46 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface SessionDetailsUiState {
-
     object Loading : SessionDetailsUiState
+
     data class Success(val data: SessionDetailsPresentationModel) : SessionDetailsUiState
 
     data class Error(val message: String) : SessionDetailsUiState
 }
 
 @HiltViewModel
-class SessionDetailsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo,
-    private val savedStateHandle: SavedStateHandle
+class SessionDetailsViewModel
+    @Inject
+    constructor(
+        private val sessionsRepo: SessionsRepo,
+        private val savedStateHandle: SavedStateHandle,
+    ) : ViewModel() {
+        private val sessionId = savedStateHandle.get<String>(Screens.SessionDetails.sessionIdNavigationArgument)
 
-) : ViewModel() {
+        val uiState =
+            sessionsRepo.fetchSessionById(id = sessionId ?: "")
+                .map {
+                    if (it == null) {
+                        SessionDetailsUiState.Error(message = "Session Info not found")
+                    } else {
+                        SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
+                    }
+                }
+                .onStart { SessionDetailsUiState.Loading }
+                .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = SessionDetailsUiState.Loading,
+                )
 
-    private val sessionId = savedStateHandle.get<String>(Screens.SessionDetails.sessionIdNavigationArgument)
-
-    val uiState = sessionsRepo.fetchSessionById(id = sessionId ?: "")
-        .map {
-            if (it == null) {
-                SessionDetailsUiState.Error(message = "Session Info not found")
-            } else {
-                SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
+        fun bookmarkSession(sessionId: String) =
+            viewModelScope.launch {
+                sessionsRepo.bookmarkSession(sessionId)
             }
-        }
-        .onStart { SessionDetailsUiState.Loading }
-        .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = SessionDetailsUiState.Loading
-        )
 
-    fun bookmarkSession(sessionId: String) = viewModelScope.launch {
-        sessionsRepo.bookmarkSession(sessionId)
+        fun unBookmarkSession(sessionId: String) =
+            viewModelScope.launch {
+                sessionsRepo.unBookmarkSession(sessionId)
+            }
     }
-
-    fun unBookmarkSession(sessionId: String) = viewModelScope.launch {
-        sessionsRepo.unBookmarkSession(sessionId)
-    }
-}

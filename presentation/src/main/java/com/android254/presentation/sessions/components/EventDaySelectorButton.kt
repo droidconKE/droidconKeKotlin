@@ -39,27 +39,28 @@ fun EventDaySelectorButton(
     title: String,
     subtitle: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .size(51.dp)
-            .clickable { onClick() }
-            .background(
-                color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveSurfaceColor else (MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveSurfaceColor).copy(alpha = 0.11f),
-                shape = RoundedCornerShape(5.dp)
-            )
-            .padding(start = 5.dp)
+        modifier =
+            Modifier
+                .size(51.dp)
+                .clickable { onClick() }
+                .background(
+                    color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveSurfaceColor else (MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveSurfaceColor).copy(alpha = 0.11f),
+                    shape = RoundedCornerShape(5.dp),
+                )
+                .padding(start = 5.dp),
     ) {
         ChaiSubTitle(
             titleText = title,
-            titleColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+            titleColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor,
         )
         ChaiTextLabelLarge(
             bodyText = subtitle,
-            textColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor
+            textColor = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveTextColor else MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveTextColor,
         )
     }
 }
@@ -73,13 +74,13 @@ private fun EventDaySelectorButtonPreview() {
                 title = "10th",
                 subtitle = "Day 1",
                 selected = true,
-                onClick = {}
+                onClick = {},
             )
             EventDaySelectorButton(
                 title = "10th",
                 subtitle = "Day 1",
                 selected = false,
-                onClick = {}
+                onClick = {},
             )
         }
     }

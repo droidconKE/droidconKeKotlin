@@ -44,7 +44,7 @@ fun CButton(
     isEnabled: Boolean,
     colors: ButtonColors,
     shape: Shape,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     Button(
         onClick = onClick,
@@ -52,7 +52,7 @@ fun CButton(
         modifier = modifier,
         colors = colors,
         content = content,
-        shape = shape
+        shape = shape,
     )
 }
 
@@ -62,14 +62,14 @@ fun COutlinedButton(
     modifier: Modifier = Modifier,
     colors: ButtonColors,
     shape: Shape,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
         colors = colors,
         content = content,
-        shape = shape
+        shape = shape,
     )
 }
 
@@ -78,20 +78,21 @@ fun CPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean,
-    title: String
+    title: String,
 ) {
     CButton(
         onClick = onClick,
         isEnabled = isEnabled,
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.primary,
-            disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaDisabled)
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaDisabled),
+            ),
         shape = CShapes.extraLarge,
         content = {
             CPrimaryButtonText(text = title, textAllCaps = true)
-        }
+        },
     )
 }
 
@@ -100,13 +101,13 @@ fun COutlinedPrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     title: String,
-    icon: ImageVector
+    icon: ImageVector,
 ) {
     COutlinedButton(
         onClick = onClick,
         modifier = modifier,
         shape = CShapes.extraLarge,
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
     ) {
         Icon(imageVector = icon, contentDescription = "", modifier = Modifier.padding(5.dp))
         SeparatorSpace()
@@ -125,7 +126,7 @@ fun CPrimaryButtonDarkPreview() {
             onClick = { },
             isEnabled = true,
             title = PREVIEW_BUTTON_TITLE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -138,7 +139,7 @@ fun CPrimaryButtonDisableDarkPreview() {
             onClick = { },
             isEnabled = false,
             title = PREVIEW_BUTTON_TITLE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -151,7 +152,7 @@ fun CPrimaryButtonDisableLightPreview() {
             onClick = { },
             isEnabled = false,
             title = PREVIEW_BUTTON_TITLE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -164,7 +165,7 @@ fun CPrimaryButtonLightPreview() {
             onClick = { },
             isEnabled = true,
             title = PREVIEW_BUTTON_TITLE,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -177,7 +178,7 @@ fun CPrimaryOutlinedButtonLightPreview() {
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Outlined.Save
+            icon = Icons.Outlined.Save,
         )
     }
 }
@@ -190,7 +191,7 @@ fun CPrimaryOutlinedButtonDarktPreview() {
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Outlined.Save
+            icon = Icons.Outlined.Save,
         )
     }
 }

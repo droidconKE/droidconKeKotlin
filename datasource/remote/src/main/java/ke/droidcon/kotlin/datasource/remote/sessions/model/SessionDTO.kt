@@ -20,7 +20,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable data class EventScheduleGroupedResponse(
-    val data: Map<String, List<SessionDTO>>
+    val data: Map<String, List<SessionDTO>>,
 )
 
 @Serializable
@@ -42,5 +42,5 @@ data class SessionDTO(
     @SerialName("start_time") val startTime: String,
     val title: String,
     val rooms: List<RoomDTO>,
-    val speakers: List<SpeakerDTO>
+    val speakers: List<SpeakerDTO>,
 )

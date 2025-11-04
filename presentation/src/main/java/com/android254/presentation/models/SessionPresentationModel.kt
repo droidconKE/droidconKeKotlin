@@ -32,11 +32,11 @@ data class SessionPresentationModel(
     val isService: Boolean = false,
     val sessionImage: String = "",
     val eventDay: String,
-    val speakers: List<SessionSpeakersPresentationModel>
+    val speakers: List<SessionSpeakersPresentationModel>,
 )
 
 data class SessionSpeakersPresentationModel(
     val name: String,
     val speakerImage: String,
-    val twitterHandle: String
+    val twitterHandle: String,
 )

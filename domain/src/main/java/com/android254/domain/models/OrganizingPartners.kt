@@ -17,7 +17,7 @@ package com.android254.domain.models
 
 data class OrganizingPartners(
     val organizerName: String,
-    val organizerLogoUrl: String
+    val organizerLogoUrl: String,
 )
 
 data class Sponsors(
@@ -25,5 +25,5 @@ data class Sponsors(
     val sponsorLogoUrl: String,
     val link: String,
     val sponsorType: String,
-    val createdAt: String
+    val createdAt: String,
 )

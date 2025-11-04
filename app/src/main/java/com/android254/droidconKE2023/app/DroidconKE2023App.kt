@@ -21,18 +21,16 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
 import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconKE2023App : Application(), Configuration.Provider {
-
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
     private lateinit var _workManagerConfiguration: Configuration
@@ -41,36 +39,43 @@ class DroidconKE2023App : Application(), Configuration.Provider {
         super.onCreate()
         initTimber()
         setUpWorkerManagerNotificationChannel()
-        _workManagerConfiguration = Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.DEBUG)
-            .setWorkerFactory(workerFactory)
-            .build()
+        _workManagerConfiguration =
+            Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                .setWorkerFactory(workerFactory)
+                .build()
     }
 
     override val workManagerConfiguration: Configuration
         get() = _workManagerConfiguration
 
-    private fun initTimber() = when {
-        BuildConfig.DEBUG -> {
-            Timber.plant(object : Timber.DebugTree() {
-                override fun createStackElementTag(@NotNull element: StackTraceElement): String {
-                    return super.createStackElementTag(element) + ":" + element.lineNumber
-                }
-            })
-        }
+    private fun initTimber() =
+        when {
+            BuildConfig.DEBUG -> {
+                Timber.plant(
+                    object : Timber.DebugTree() {
+                        override fun createStackElementTag(
+                            @NotNull element: StackTraceElement,
+                        ): String {
+                            return super.createStackElementTag(element) + ":" + element.lineNumber
+                        }
+                    },
+                )
+            }
 
-        else -> {
-            Timber.plant(CrashlyticsTree())
+            else -> {
+                Timber.plant(CrashlyticsTree())
+            }
         }
-    }
 
     private fun setUpWorkerManagerNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                WorkConstants.NOTIFICATION_CHANNEL,
-                WorkConstants.syncDataWorkerName,
-                NotificationManager.IMPORTANCE_HIGH
-            )
+            val channel =
+                NotificationChannel(
+                    WorkConstants.NOTIFICATION_CHANNEL,
+                    WorkConstants.syncDataWorkerName,
+                    NotificationManager.IMPORTANCE_HIGH,
+                )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }

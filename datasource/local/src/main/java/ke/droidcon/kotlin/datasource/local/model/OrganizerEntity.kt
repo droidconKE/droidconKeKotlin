@@ -30,5 +30,5 @@ class OrganizerEntity(
     val bio: String,
     val twitterHandle: String,
     val designation: String,
-    val createdAt: String
+    val createdAt: String,
 )

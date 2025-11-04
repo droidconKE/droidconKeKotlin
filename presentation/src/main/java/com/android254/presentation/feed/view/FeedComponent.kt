@@ -53,65 +53,70 @@ import ke.droidcon.kotlin.presentation.R
 fun FeedComponent(
     modifier: Modifier,
     feed: FeedUI,
-    onClickItem: (Int) -> Unit
+    onClickItem: (Int) -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .background(color = MaterialTheme.chaiColorsPalette.surfaces)
-            .padding(vertical = (0.5).dp)
-            .background(color = MaterialTheme.chaiColorsPalette.background)
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 16.dp)
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier =
+            modifier
+                .background(color = MaterialTheme.chaiColorsPalette.surfaces)
+                .padding(vertical = (0.5).dp)
+                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .wrapContentHeight(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         ChaiBodyMedium(
             bodyText = feed.body,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
         )
 
         feed.image?.let {
             AsyncImage(
-                modifier = Modifier.fillMaxWidth()
-                    .height(209.dp)
-                    .clip(shape = RoundedCornerShape(8.dp)),
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .height(209.dp)
+                        .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.FillHeight,
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(feed.image)
-                    .build(),
-                contentDescription = stringResource(id = R.string.feed_image)
+                model =
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(feed.image)
+                        .build(),
+                contentDescription = stringResource(id = R.string.feed_image),
             )
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 onClick = {
                     onClickItem(1)
                 },
-                modifier = Modifier.testTag("share_button")
-                    .offset(x = (-12).dp)
+                modifier =
+                    Modifier.testTag("share_button")
+                        .offset(x = (-12).dp),
             ) {
                 ChaiBodySmallBold(
                     bodyText = stringResource(id = R.string.share),
-                    textColor = MaterialTheme.chaiColorsPalette.textButtonColor
+                    textColor = MaterialTheme.chaiColorsPalette.textButtonColor,
                 )
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = stringResource(id = R.string.share),
                     modifier = Modifier.padding(start = 8.dp),
-                    tint = MaterialTheme.chaiColorsPalette.textButtonColor
+                    tint = MaterialTheme.chaiColorsPalette.textButtonColor,
                 )
             }
 
             ChaiBodyXSmall(
                 bodyText = feed.createdAt,
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
             )
         }
     }
@@ -124,8 +129,8 @@ fun Preview() {
         FeedComponent(
             modifier = Modifier,
             feed =
-            FeedUI("Feed", "Feed feed", "test", "", "", ""),
-            onClickItem = {}
+                FeedUI("Feed", "Feed feed", "test", "", "", ""),
+            onClickItem = {},
         )
     }
 }

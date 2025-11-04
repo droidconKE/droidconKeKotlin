@@ -29,33 +29,34 @@ import com.android254.domain.work.SyncDataWorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class SyncDataWorkManagerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
-) : SyncDataWorkManager {
+class SyncDataWorkManagerImpl
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) : SyncDataWorkManager {
+        override val isSyncing: Flow<Boolean> =
+            WorkManager.getInstance(context)
+                .getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
+                .map(List<WorkInfo>::anyRunning)
+                .asFlow()
+                .conflate()
 
-    override val isSyncing: Flow<Boolean> =
-        WorkManager.getInstance(context)
-            .getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
-            .map(List<WorkInfo>::anyRunning)
-            .asFlow()
-            .conflate()
-
-    override suspend fun startSync() {
-        val syncDataRequest = OneTimeWorkRequestBuilder<SyncDataWorker>()
-            .setConstraints(
-                Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
+        override suspend fun startSync() {
+            val syncDataRequest =
+                OneTimeWorkRequestBuilder<SyncDataWorker>()
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build(),
+                    )
                     .build()
-            )
-            .build()
-        val workManager = WorkManager.getInstance(context)
-        workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
-            .enqueue()
+            val workManager = WorkManager.getInstance(context)
+            workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
+                .enqueue()
+        }
     }
-}
 
 val List<WorkInfo>.anyRunning get() = any { it.state == WorkInfo.State.RUNNING }

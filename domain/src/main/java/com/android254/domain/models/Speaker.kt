@@ -25,5 +25,5 @@ data class Speaker(
     val linkedin: String = "",
     val name: String,
     val tagline: String = "",
-    val twitter: String = ""
+    val twitter: String = "",
 )

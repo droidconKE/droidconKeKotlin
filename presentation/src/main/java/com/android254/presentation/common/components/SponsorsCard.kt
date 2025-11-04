@@ -49,25 +49,26 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun SponsorsCard(
     modifier: Modifier = Modifier,
-    sponsors: List<SponsorPresentationModel>
+    sponsors: List<SponsorPresentationModel>,
 ) {
     Card {
         Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.chaiColorsPalette.surfaces,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(horizontal = 30.dp, vertical = 10.dp)
-                .testTag("sponsors_section"),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.chaiColorsPalette.surfaces,
+                        shape = RoundedCornerShape(10.dp),
+                    )
+                    .padding(horizontal = 30.dp, vertical = 10.dp)
+                    .testTag("sponsors_section"),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             ChaiSubTitle(
                 modifier = Modifier.fillMaxWidth(),
                 titleText = stringResource(id = R.string.sponsors_title),
                 titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -76,28 +77,30 @@ fun SponsorsCard(
                 modifier = Modifier.padding(top = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.Start,
-                maxItemsInEachRow = 3
+                maxItemsInEachRow = 3,
             ) {
                 sponsors.forEach { sponsor ->
-                    val customModifier = if (sponsor.sponsorType.equals("platinum", ignoreCase = true)) {
-                        Modifier
-                            .fillMaxWidth()
-                            .height(70.dp)
-                    } else {
-                        Modifier
-                            .weight(0.5f)
-                            .height(50.dp)
-                    }
+                    val customModifier =
+                        if (sponsor.sponsorType.equals("platinum", ignoreCase = true)) {
+                            Modifier
+                                .fillMaxWidth()
+                                .height(70.dp)
+                        } else {
+                            Modifier
+                                .weight(0.5f)
+                                .height(50.dp)
+                        }
                     val logo = if (isSystemInDarkTheme()) sponsor.logo.replace(".png", "-dark.png") else sponsor.logo
                     AsyncImage(
                         modifier = customModifier,
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(logo)
-                            .crossfade(true)
-                            .build(),
+                        model =
+                            ImageRequest.Builder(LocalContext.current)
+                                .data(logo)
+                                .crossfade(true)
+                                .build(),
                         contentScale = ContentScale.Fit,
                         placeholder = painterResource(R.drawable.ic_google_logo_icon),
-                        contentDescription = stringResource(id = R.string.logo)
+                        contentDescription = stringResource(id = R.string.logo),
                     )
                 }
             }

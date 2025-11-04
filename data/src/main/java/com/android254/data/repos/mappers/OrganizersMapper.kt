@@ -19,28 +19,30 @@ import com.android254.domain.models.Organizer
 import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizerDTO
 
-fun OrganizerDTO.toEntity() = OrganizerEntity(
-    id = 0,
-    name = name.orEmpty(),
-    tagline = tagline.orEmpty(),
-    link = link.orEmpty(),
-    type = type.orEmpty(),
-    photo = photo.orEmpty(),
-    createdAt = createdAt.orEmpty(),
-    designation = designation.orEmpty(),
-    bio = bio.orEmpty(),
-    twitterHandle = twitterHandle.orEmpty()
-)
+fun OrganizerDTO.toEntity() =
+    OrganizerEntity(
+        id = 0,
+        name = name.orEmpty(),
+        tagline = tagline.orEmpty(),
+        link = link.orEmpty(),
+        type = type.orEmpty(),
+        photo = photo.orEmpty(),
+        createdAt = createdAt.orEmpty(),
+        designation = designation.orEmpty(),
+        bio = bio.orEmpty(),
+        twitterHandle = twitterHandle.orEmpty(),
+    )
 
-fun OrganizerEntity.toDomain() = Organizer(
-    id = id,
-    name = name,
-    tagline = tagline,
-    link = link,
-    type = type,
-    photo = photo,
-    createdAt = createdAt,
-    bio = bio,
-    twitterHandle = twitterHandle,
-    designation = designation
-)
+fun OrganizerEntity.toDomain() =
+    Organizer(
+        id = id,
+        name = name,
+        tagline = tagline,
+        link = link,
+        type = type,
+        photo = photo,
+        createdAt = createdAt,
+        bio = bio,
+        twitterHandle = twitterHandle,
+        designation = designation,
+    )

@@ -48,11 +48,13 @@ class SpeakerApiTest {
 
     @Test
     fun `test DataResult error is returned when http client returns server error response`() {
-        val mockHttpEngine = MockEngine {
-            respondError(HttpStatusCode.InternalServerError)
-        }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
-            .create(mockHttpEngine)
+        val mockHttpEngine =
+            MockEngine {
+                respondError(HttpStatusCode.InternalServerError)
+            }
+        val httpClient =
+            HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
+                .create(mockHttpEngine)
 
         runBlocking {
             val result = SpeakersApi(httpClient).fetchSpeakers()
@@ -62,11 +64,13 @@ class SpeakerApiTest {
 
     @Test
     fun `test DataResult error is returned when http client returns error response beside server error`() {
-        val mockHttpEngine = MockEngine {
-            respondError(HttpStatusCode.NotFound)
-        }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
-            .create(mockHttpEngine)
+        val mockHttpEngine =
+            MockEngine {
+                respondError(HttpStatusCode.NotFound)
+            }
+        val httpClient =
+            HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
+                .create(mockHttpEngine)
 
         runBlocking {
             val result = SpeakersApi(httpClient).fetchSpeakers()
@@ -77,27 +81,31 @@ class SpeakerApiTest {
     @Test
     fun `test successful speakers fetch`() {
         // GIVEN
-        val expectedResponse = SpeakersPagedResponse(
-            data = listOf(
-                SpeakerDTO(
-                    name = "John Doe",
-                    bio = "Very cool guy",
-                    avatar = "https://example.com",
-                    tagline = "Wassup",
-                    twitter = null
-                )
-            ),
-            meta = SamplePaginationMetaData
-        )
-        val mockHttpEngine = MockEngine {
-            // To ensure correct http method and url are used
-            respond(
-                content = Json.encodeToString(expectedResponse),
-                headers = headersOf(HttpHeaders.ContentType, "application/json")
+        val expectedResponse =
+            SpeakersPagedResponse(
+                data =
+                    listOf(
+                        SpeakerDTO(
+                            name = "John Doe",
+                            bio = "Very cool guy",
+                            avatar = "https://example.com",
+                            tagline = "Wassup",
+                            twitter = null,
+                        ),
+                    ),
+                meta = SamplePaginationMetaData,
             )
-        }
-        val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
-            .create(mockHttpEngine)
+        val mockHttpEngine =
+            MockEngine {
+                // To ensure correct http method and url are used
+                respond(
+                    content = Json.encodeToString(expectedResponse),
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
+        val httpClient =
+            HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
+                .create(mockHttpEngine)
 
         runBlocking {
             // WHEN
