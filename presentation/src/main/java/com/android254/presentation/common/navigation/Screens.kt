@@ -22,38 +22,34 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screens(
-    var route: String,
     @DrawableRes var icon: Int,
     var title: String,
 ): NavKey {
     @Serializable
-    object Home : Screens("/home", R.drawable.home_icon, "Home")
+    object Home : Screens(R.drawable.home_icon, "Home")
 
     @Serializable
-    object Feed : Screens("/feed", R.drawable.feed_icon, "Feed")
+    object Feed : Screens(R.drawable.feed_icon, "Feed")
 
     @Serializable
-    object Sessions : Screens("/sessions", R.drawable.sessions_icon, "Sessions")
+    object Sessions : Screens(R.drawable.sessions_icon, "Sessions")
 
     @Serializable
-    object About : Screens("/about", R.drawable.about_icon, "About")
+    object About : Screens(R.drawable.about_icon, "About")
 
     @Serializable
-    object Speakers : Screens("/speakers", R.drawable.droidcon_icon, "Speakers")
+    object Speakers : Screens(R.drawable.droidcon_icon, "Speakers")
 
     @Serializable
-    object FeedBack : Screens("/feedback", R.drawable.droidcon_icon, "FeedBack")
+    object FeedBack : Screens(R.drawable.droidcon_icon, "FeedBack")
 
     @Serializable
     class SessionDetails(val sessionId: String) :
-        Screens("/sessionDetails/{sessionId}", R.drawable.droidcon_icon, "Session Details") {
-        val sessionIdNavigationArgument = "sessionId"
-        //TODO: Figure out a better way to access arguments for view model and saved handle state
-    }
+        Screens(R.drawable.droidcon_icon, "Session Details")
 
     @Serializable
     class SpeakerDetails(val speakerName: String) :
-        Screens("/speaker_details/{speakerName}", R.drawable.droidcon_icon, "Speaker Details")
+        Screens(R.drawable.droidcon_icon, "Speaker Details")
 }
 
 val bottomNavigationDestinations =

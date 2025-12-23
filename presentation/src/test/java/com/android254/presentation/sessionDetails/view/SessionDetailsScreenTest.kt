@@ -43,16 +43,14 @@ import org.robolectric.shadows.ShadowLog
 class SessionDetailsScreenTest {
     private val sessionId = "randomSessionId"
 
-    private val mockSavedStateHandle: SavedStateHandle =
-        SavedStateHandle().apply {
-            set(Screens.SessionDetails(sessionId).sessionIdNavigationArgument, sessionId)
-        }
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val repo = mockk<SessionsRepo>(relaxed = true)
-    private val viewModel = SessionDetailsViewModel(sessionsRepo = repo, mockSavedStateHandle)
+    private val viewModel = SessionDetailsViewModel(
+        navKey = Screens.SessionDetails(sessionId),
+        sessionsRepo = repo
+    )
 
     @Before
     @Throws(Exception::class)
