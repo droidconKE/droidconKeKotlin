@@ -40,7 +40,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.compose.rememberNavController
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
@@ -111,9 +110,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen() {
-    val navigationState = rememberNavigationState(
-        startRoute = Screens.Home, topLevelRoutes = bottomNavigationDestinations
-    )
+    val navigationState =
+        rememberNavigationState(
+            startRoute = Screens.Home,
+            topLevelRoutes = bottomNavigationDestinations,
+        )
     val navController = remember { NavigationController(navigationState) }
     val authViewModel = hiltViewModel<AuthViewModel>()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
