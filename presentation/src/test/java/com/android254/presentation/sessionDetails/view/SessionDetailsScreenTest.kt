@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
@@ -42,15 +43,16 @@ import org.robolectric.shadows.ShadowLog
 class SessionDetailsScreenTest {
     private val sessionId = "randomSessionId"
 
+    private val mockSavedStateHandle: SavedStateHandle =
+        SavedStateHandle().apply {
+            set(Screens.SessionDetails(sessionId).sessionIdNavigationArgument, sessionId)
+        }
+
     @get:Rule
     val composeTestRule = createComposeRule()
 
     private val repo = mockk<SessionsRepo>(relaxed = true)
-    private val viewModel =
-        SessionDetailsViewModel(
-            navKey = Screens.SessionDetails(sessionId),
-            sessionsRepo = repo,
-        )
+    private val viewModel = SessionDetailsViewModel(sessionsRepo = repo, mockSavedStateHandle)
 
     @Before
     @Throws(Exception::class)

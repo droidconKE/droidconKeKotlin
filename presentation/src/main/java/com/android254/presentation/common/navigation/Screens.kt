@@ -45,13 +45,14 @@ sealed class Screens(
     object FeedBack : Screens("/feedback", R.drawable.droidcon_icon, "FeedBack")
 
     @Serializable
-    object SessionDetails :
+    class SessionDetails(val sessionId: String) :
         Screens("/sessionDetails/{sessionId}", R.drawable.droidcon_icon, "Session Details") {
-        const val sessionIdNavigationArgument = "sessionId"
+        val sessionIdNavigationArgument = "sessionId"
+        //TODO: Figure out a better way to access arguments for view model and saved handle state
     }
 
     @Serializable
-    object SpeakerDetails :
+    class SpeakerDetails(val speakerName: String) :
         Screens("/speaker_details/{speakerName}", R.drawable.droidcon_icon, "Speaker Details")
 }
 

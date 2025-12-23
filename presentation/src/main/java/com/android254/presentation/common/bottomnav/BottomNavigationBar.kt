@@ -32,10 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
-import com.android254.presentation.common.navigation.bottomNavigationSet
+import com.android254.presentation.common.navigation.bottomNavigationDestinations
 import com.android254.presentation.common.navigation.rememberNavigationState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
@@ -44,7 +45,7 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 @Composable
 fun BottomNavigationBar(
     navController: NavigationController,
-    navigationState: NavigationState,
+    navigationState: NavigationState
 ) {
     BottomAppBar(
         modifier =
@@ -54,8 +55,9 @@ fun BottomNavigationBar(
         containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
     ) {
         val topLevelRoute = navigationState.topLevelRoute
+        val navBackStackEntry = navigationState.backStacks[topLevelRoute]?.last()
 
-        bottomNavigationSet.forEach { destination ->
+        bottomNavigationDestinations.forEach { destination ->
             val selected = destination == topLevelRoute
 
             BottomNavItem(
@@ -63,6 +65,11 @@ fun BottomNavigationBar(
                 destination = destination,
                 onClick = {
                     navController.navigate(destination)
+//                    {
+//                        launchSingleTop = true
+//                        restoreState = true
+//                        popUpTo(Screens.Home.route)
+//                    }
                 },
             )
         }
@@ -119,11 +126,9 @@ fun RowScope.BottomNavItem(
 @Composable
 fun BottomNavigationBarPreview() {
     ChaiDCKE22Theme {
-        val navigationState =
-            rememberNavigationState(
-                startRoute = Screens.Home,
-                topLevelRoutes = bottomNavigationSet,
-            )
+        val navigationState = rememberNavigationState(
+            startRoute = Screens.Home, topLevelRoutes = bottomNavigationDestinations
+        )
         val navController = remember { NavigationController(navigationState) }
 
         BottomNavigationBar(navController, navigationState)

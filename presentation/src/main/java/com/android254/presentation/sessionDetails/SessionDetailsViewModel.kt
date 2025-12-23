@@ -15,15 +15,13 @@
  */
 package com.android254.presentation.sessionDetails
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -31,6 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed interface SessionDetailsUiState {
     object Loading : SessionDetailsUiState
@@ -40,44 +39,40 @@ sealed interface SessionDetailsUiState {
     data class Error(val message: String) : SessionDetailsUiState
 }
 
-@HiltViewModel(assistedFactory = SessionDetailsViewModel.Factory::class)
+@HiltViewModel
 class SessionDetailsViewModel
-    @AssistedInject
-    constructor(
-        @Assisted val navKey: Screens.SessionDetails,
-        private val sessionsRepo: SessionsRepo,
-    ) : ViewModel() {
-        @AssistedFactory
-        interface Factory {
-            fun create(navKey: Screens.SessionDetails): SessionDetailsViewModel
+@Inject
+constructor(
+    private val sessionsRepo: SessionsRepo,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+
+    private val sessionId = savedStateHandle.get<String>("sessionId")
+
+    val uiState =
+        sessionsRepo.fetchSessionById(id = sessionId ?: "")
+            .map {
+                if (it == null) {
+                    SessionDetailsUiState.Error(message = "Session Info not found")
+                } else {
+                    SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
+                }
+            }
+            .onStart { SessionDetailsUiState.Loading }
+            .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = SessionDetailsUiState.Loading,
+            )
+
+    fun bookmarkSession(sessionId: String) =
+        viewModelScope.launch {
+            sessionsRepo.bookmarkSession(sessionId)
         }
 
-        private val sessionId = navKey.sessionId
-
-        val uiState =
-            sessionsRepo.fetchSessionById(id = sessionId)
-                .map {
-                    if (it == null) {
-                        SessionDetailsUiState.Error(message = "Session Info not found")
-                    } else {
-                        SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
-                    }
-                }
-                .onStart { SessionDetailsUiState.Loading }
-                .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5000L),
-                    initialValue = SessionDetailsUiState.Loading,
-                )
-
-        fun bookmarkSession(sessionId: String) =
-            viewModelScope.launch {
-                sessionsRepo.bookmarkSession(sessionId)
-            }
-
-        fun unBookmarkSession(sessionId: String) =
-            viewModelScope.launch {
-                sessionsRepo.unBookmarkSession(sessionId)
-            }
-    }
+    fun unBookmarkSession(sessionId: String) =
+        viewModelScope.launch {
+            sessionsRepo.unBookmarkSession(sessionId)
+        }
+}
