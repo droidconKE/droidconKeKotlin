@@ -65,11 +65,6 @@ fun BottomNavigationBar(
                 destination = destination,
                 onClick = {
                     navController.navigate(destination)
-//                    {
-//                        launchSingleTop = true
-//                        restoreState = true
-//                        popUpTo(Screens.Home.route)
-//                    }
                 },
             )
         }

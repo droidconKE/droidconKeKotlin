@@ -22,6 +22,9 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
@@ -39,18 +42,21 @@ sealed interface SessionDetailsUiState {
     data class Error(val message: String) : SessionDetailsUiState
 }
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = SessionDetailsViewModel.Factory::class)
 class SessionDetailsViewModel
-@Inject
+@AssistedInject
 constructor(
+    @Assisted val navKey: Screens.SessionDetails,
     private val sessionsRepo: SessionsRepo,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-
-    private val sessionId = savedStateHandle.get<String>("sessionId")
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Screens.SessionDetails): SessionDetailsViewModel
+    }
+    private val sessionId = navKey.sessionId
 
     val uiState =
-        sessionsRepo.fetchSessionById(id = sessionId ?: "")
+        sessionsRepo.fetchSessionById(id = sessionId)
             .map {
                 if (it == null) {
                     SessionDetailsUiState.Error(message = "Session Info not found")
