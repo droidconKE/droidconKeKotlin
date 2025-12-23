@@ -16,40 +16,137 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.ui.NavDisplay
+import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.android254.presentation.about.view.AboutRoute
+import com.android254.presentation.feed.view.FeedRoute
+import com.android254.presentation.feedback.view.FeedBackRoute
+import com.android254.presentation.home.screen.HomeRoute
+import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
+import com.android254.presentation.sessions.view.SessionsRoute
+import com.android254.presentation.speakers.view.SpeakerDetailsRoute
+import com.android254.presentation.speakers.view.SpeakersRoute
 
 @Composable
 fun Navigation(
-    modifier: Modifier = Modifier,
-    navController: NavigationController,
-    navigationState: NavigationState,
+    navController: NavHostController,
     updateBottomBarState: (Boolean) -> Unit,
     onActionClicked: () -> Unit = {},
-    entryProvider: (NavKey) -> NavEntry<NavKey> = droidconEntryProvider(
-        updateBottomBarState,
-        navController,
-        onActionClicked,
-    ),
 ) {
-    val transitionSpec = when (navigationState.lastDirection) {
-        NavDirection.LEFT -> horizontalSlideIn(reverse = false)
-        NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
-        NavDirection.INNER -> zoomInTransition()
-    }
-    val backTransitionSpec = when (navigationState.lastDirection) {
-        NavDirection.LEFT, NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
-        else -> zoomOutTransition()
-    }
-    NavDisplay(
-        modifier = modifier.testTag("navigation_display"),
-        entries = navigationState.toEntries(entryProvider),
-        transitionSpec = { transitionSpec },
-        popTransitionSpec = { backTransitionSpec },
-        predictivePopTransitionSpec = { backTransitionSpec },
-        onBack = navController::goBack ,
+    val navigationState = rememberNavigationState(
+        startRoute = Screens.Home, topLevelRoutes = bottomNavigationDestinations
     )
+
+    val navigator = remember { NavigationController(navigationState) }
+
+    NavHost(navController, startDestination = Screens.Home.route) {
+        composable(Screens.Home.route) {
+            updateBottomBarState(true)
+            HomeRoute(
+                navigateToSpeakers = { navController.navigate(Screens.Speakers.route) },
+                navigateToSpeaker = { speakerName ->
+                    navController.navigate(
+                        Screens.SpeakerDetails.route.replace(
+                            "{speakerName}",
+                            speakerName,
+                        ),
+                    )
+                },
+                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
+                navigateToSessionScreen = { navController.navigate(Screens.Sessions.route) },
+                onActionClicked = onActionClicked,
+                onSessionClicked = { sessionId ->
+
+                    navController.navigate(
+                        Screens.SessionDetails.route.replace(
+                            oldValue = "{sessionId}",
+                            newValue = sessionId,
+                        ),
+                    ) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
+        }
+        composable(Screens.Sessions.route) {
+            updateBottomBarState(true)
+            SessionsRoute(navigateToSessionDetails = { sessionId ->
+
+                navController.navigate(
+                    Screens.SessionDetails.route.replace(
+                        oldValue = "{sessionId}",
+                        newValue = sessionId,
+                    ),
+                ) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            })
+        }
+        composable(
+            Screens.SessionDetails.route,
+            arguments = listOf(
+                navArgument(Screens.SessionDetails.sessionIdNavigationArgument) {
+                    type = NavType.StringType
+                },
+            ),
+        ) { backStackEntry ->
+            updateBottomBarState(false)
+            SessionDetailsRoute(
+                sessionId = requireNotNull(backStackEntry.arguments?.getString(Screens.SessionDetails.sessionIdNavigationArgument)),
+                onNavigationIconClick = {
+                    navController.popBackStack()
+                },
+            )
+        }
+        composable(Screens.Feed.route) {
+            updateBottomBarState(true)
+            FeedRoute(
+                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
+            )
+        }
+        composable(Screens.About.route) {
+            updateBottomBarState(true)
+            AboutRoute(
+                navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack.route) },
+            )
+        }
+        composable(Screens.Speakers.route) {
+            updateBottomBarState(true)
+            SpeakersRoute(
+                navigateToHomeScreen = { navController.navigateUp() },
+                navigateToSpeaker = { speakerName ->
+                    navController.navigate(
+                        Screens.SpeakerDetails.route.replace(
+                            "{speakerName}",
+                            speakerName,
+                        ),
+                    )
+                },
+            )
+        }
+        composable(Screens.FeedBack.route) {
+            updateBottomBarState(false)
+            FeedBackRoute(
+                navigateBack = { navController.navigateUp() },
+            )
+        }
+
+        composable(
+            Screens.SpeakerDetails.route,
+            arguments = listOf(navArgument("speakerName") { type = NavType.StringType }),
+        ) {
+            val speakerName = it.arguments?.getString("speakerName") ?: throw IllegalStateException("Speaker data missing.")
+            updateBottomBarState(false)
+            SpeakerDetailsRoute(
+                name = speakerName,
+                navigateBack = { navController.navigateUp() },
+            )
+        }
+    }
 }
