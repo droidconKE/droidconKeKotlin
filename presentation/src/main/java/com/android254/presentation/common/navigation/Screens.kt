@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 sealed class Screens(
     @DrawableRes var icon: Int,
     var title: String,
-): NavKey {
+) : NavKey {
     @Serializable
     object Home : Screens(R.drawable.home_icon, "Home")
 

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
@@ -47,10 +46,11 @@ class SessionDetailsScreenTest {
     val composeTestRule = createComposeRule()
 
     private val repo = mockk<SessionsRepo>(relaxed = true)
-    private val viewModel = SessionDetailsViewModel(
-        navKey = Screens.SessionDetails(sessionId),
-        sessionsRepo = repo
-    )
+    private val viewModel =
+        SessionDetailsViewModel(
+            navKey = Screens.SessionDetails(sessionId),
+            sessionsRepo = repo,
+        )
 
     @Before
     @Throws(Exception::class)

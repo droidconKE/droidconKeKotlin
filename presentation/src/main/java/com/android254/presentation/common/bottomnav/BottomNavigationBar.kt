@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
@@ -45,7 +44,7 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 @Composable
 fun BottomNavigationBar(
     navController: NavigationController,
-    navigationState: NavigationState
+    navigationState: NavigationState,
 ) {
     BottomAppBar(
         modifier =
@@ -55,7 +54,6 @@ fun BottomNavigationBar(
         containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
     ) {
         val topLevelRoute = navigationState.topLevelRoute
-        val navBackStackEntry = navigationState.backStacks[topLevelRoute]?.last()
 
         bottomNavigationDestinations.forEach { destination ->
             val selected = destination == topLevelRoute
@@ -121,9 +119,11 @@ fun RowScope.BottomNavItem(
 @Composable
 fun BottomNavigationBarPreview() {
     ChaiDCKE22Theme {
-        val navigationState = rememberNavigationState(
-            startRoute = Screens.Home, topLevelRoutes = bottomNavigationDestinations
-        )
+        val navigationState =
+            rememberNavigationState(
+                startRoute = Screens.Home,
+                topLevelRoutes = bottomNavigationDestinations,
+            )
         val navController = remember { NavigationController(navigationState) }
 
         BottomNavigationBar(navController, navigationState)
