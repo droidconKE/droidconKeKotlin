@@ -22,40 +22,43 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Screens(
+    var route: String,
     @DrawableRes var icon: Int,
     var title: String,
-) : NavKey {
+): NavKey {
     @Serializable
-    object Home : Screens(R.drawable.home_icon, "Home")
+    object Home : Screens("/home", R.drawable.home_icon, "Home")
 
     @Serializable
-    object Feed : Screens(R.drawable.feed_icon, "Feed")
+    object Feed : Screens("/feed", R.drawable.feed_icon, "Feed")
 
     @Serializable
-    object Sessions : Screens(R.drawable.sessions_icon, "Sessions")
+    object Sessions : Screens("/sessions", R.drawable.sessions_icon, "Sessions")
 
     @Serializable
-    object About : Screens(R.drawable.about_icon, "About")
+    object About : Screens("/about", R.drawable.about_icon, "About")
 
     @Serializable
-    object Speakers : Screens(R.drawable.droidcon_icon, "Speakers")
+    object Speakers : Screens("/speakers", R.drawable.droidcon_icon, "Speakers")
 
     @Serializable
-    object FeedBack : Screens(R.drawable.droidcon_icon, "FeedBack")
+    object FeedBack : Screens("/feedback", R.drawable.droidcon_icon, "FeedBack")
 
     @Serializable
-    data class SessionDetails(val sessionId: String) :
-        Screens(R.drawable.droidcon_icon, "Session Details")
+    object SessionDetails :
+        Screens("/sessionDetails/{sessionId}", R.drawable.droidcon_icon, "Session Details") {
+        const val sessionIdNavigationArgument = "sessionId"
+    }
 
     @Serializable
-    data class SpeakerDetails(val speakerName: String) :
-        Screens(R.drawable.droidcon_icon, "Speaker Details")
+    object SpeakerDetails :
+        Screens("/speaker_details/{speakerName}", R.drawable.droidcon_icon, "Speaker Details")
 }
-val bottomNavigationRoutes = listOf(
-    Screens.Home,
-    Screens.Feed,
-    Screens.Sessions,
-    Screens.About,
-)
 
-val bottomNavigationSet = bottomNavigationRoutes.toSet()
+val bottomNavigationDestinations =
+    setOf(
+        Screens.Home,
+        Screens.Feed,
+        Screens.Sessions,
+        Screens.About,
+    )

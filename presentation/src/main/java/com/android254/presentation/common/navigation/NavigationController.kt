@@ -1,47 +1,8 @@
-/*
- * Copyright 2025 DroidconKE
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.android254.presentation.common.navigation
 
-/**
- * A controller responsible for managing app navigation and back stack state.
- *
- * This controller handles logic for switching between top-level routes and managing
- * nested navigation stacks within those routes.
- *
- * @property state The current navigation state being managed by this controller.
- */
-class NavigationController(val state: NavigationState) {
-    fun navigate(route: Screens) {
-        val toIndex = bottomNavigationRoutes.indexOf(route)
-        val isNested = toIndex == -1
-
-        val lastDirection = if (isNested) {
-            NavDirection.INNER
-        } else {
-            val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
-            if (fromIndex != -1 && fromIndex != toIndex) {
-                if (toIndex > fromIndex) NavDirection.LEFT else NavDirection.RIGHT
-            } else {
-                NavDirection.INNER
-            }
-        }
-
-        state.lastDirection = lastDirection
-
-        if (!isNested) {
+class NavigationController(val state: NavigationState){
+    fun navigate(route: Screens){
+        if (route in state.backStacks.keys){
             // This is a top level route, just switch to it.
             state.topLevelRoute = route
         } else {
@@ -49,28 +10,15 @@ class NavigationController(val state: NavigationState) {
         }
     }
 
-    fun navigateUp() {
-        val currentStack = state.backStacks[state.topLevelRoute]
-        // Only remove if we are not at the base of the stack
-        if (currentStack != null && currentStack.last() != state.topLevelRoute) {
-            state.lastDirection = NavDirection.INNER
-            currentStack.removeLastOrNull()
-        }
-    }
-
-    fun goBack() {
-        val currentStack = state.backStacks[state.topLevelRoute] ?: error("Stack for ${state.topLevelRoute} not found")
+    fun goBack(){
+        val currentStack = state.backStacks[state.topLevelRoute] ?:
+        error("Stack for ${state.topLevelRoute} not found")
         val currentRoute = currentStack.last()
 
         // If we're at the base of the current route, go back to the start route stack.
-        if (currentRoute == state.topLevelRoute) {
-            if (state.topLevelRoute != state.startRoute) {
-                state.lastDirection = NavDirection.RIGHT
-
-                state.topLevelRoute = state.startRoute
-            }
+        if (currentRoute == state.topLevelRoute){
+            state.topLevelRoute = state.startRoute
         } else {
-            state.lastDirection = NavDirection.INNER
             currentStack.removeLastOrNull()
         }
     }
