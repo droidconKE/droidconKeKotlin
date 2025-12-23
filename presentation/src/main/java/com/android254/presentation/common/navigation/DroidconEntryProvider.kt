@@ -45,55 +45,29 @@ fun droidconEntryProvider(
                 navigateToSpeaker = { speakerName ->
                     navController.navigate(
                         Screens.SpeakerDetails(speakerName)
-//                            .route.replace(
-//                            "{speakerName}",
-//                            speakerName,
-//                        ),
                     )
                 },
                 navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
                 navigateToSessionScreen = { navController.navigate(Screens.Sessions) },
                 onActionClicked = onActionClicked,
                 onSessionClicked = { sessionId ->
-
-                    navController.navigate(
-                        Screens.SessionDetails(sessionId)
-//                            .route.replace(
-//                            oldValue = "{sessionId}",
-//                            newValue = sessionId,
-//                        ),
-                    )
-//                    {
-//                        launchSingleTop = true
-//                        restoreState = true
-//                    }
+                    navController.navigate(Screens.SessionDetails(sessionId))
                 },
             )
         }
         entry<Screens.Sessions> {
             updateBottomBarState(true)
             SessionsRoute(navigateToSessionDetails = { sessionId ->
-
                 navController.navigate(Screens.SessionDetails(sessionId))
-//                        .route.replace(
-//                        oldValue = "{sessionId}",
-//                        newValue = sessionId,
-//                    ),
-//                ) {
-//                    launchSingleTop = true
-//                    restoreState = true
-//                }
             })
         }
         entry<Screens.SessionDetails> { key ->
             updateBottomBarState(false)
             val viewModel = sessionModel(key)
             SessionDetailsRoute(
-                sessionId = key.sessionId,
-                onNavigationIconClick = {
+                sessionId = key.sessionId, onNavigationIconClick = {
                     navController.goBack()
-                },
-                viewModel = viewModel
+                }, viewModel = viewModel
             )
         }
         entry<Screens.Feed> {
@@ -115,11 +89,6 @@ fun droidconEntryProvider(
                 navigateToSpeaker = { speakerName ->
                     navController.navigate(
                         Screens.SpeakerDetails(speakerName)
-//                            .route
-//                            .replace(
-//                            "{speakerName}",
-//                            speakerName,
-//                        ),
                     )
                 },
             )
@@ -147,7 +116,6 @@ private fun sessionModel(key: Screens.SessionDetails): SessionDetailsViewModel {
     val viewModel = hiltViewModel<SessionDetailsViewModel, SessionDetailsViewModel.Factory>(
         creationCallback = { factory ->
             factory.create(key)
-        }
-    )
+        })
     return viewModel
 }
