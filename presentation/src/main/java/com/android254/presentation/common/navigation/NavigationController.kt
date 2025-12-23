@@ -10,6 +10,15 @@ class NavigationController(val state: NavigationState){
         }
     }
 
+    fun navigateUp() {
+        val currentStack = state.backStacks[state.topLevelRoute]
+        // Only remove if we are not at the base of the stack
+        if (currentStack != null && currentStack.last() != state.topLevelRoute) {
+            currentStack.removeLastOrNull()
+        }
+    }
+
+
     fun goBack(){
         val currentStack = state.backStacks[state.topLevelRoute] ?:
         error("Stack for ${state.topLevelRoute} not found")
