@@ -16,6 +16,8 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 
 @Composable
@@ -24,9 +26,12 @@ fun Navigation(
     navigationState: NavigationState,
     updateBottomBarState: (Boolean) -> Unit,
     onActionClicked: () -> Unit = {},
+    entryProvider: (NavKey) -> NavEntry<NavKey> = droidconEntryProvider(
+        updateBottomBarState,
+        navController,
+        onActionClicked,
+    ),
 ) {
-    val entryProvider = droidconEntryProvider(updateBottomBarState, navController, onActionClicked)
-
     NavDisplay(
         entries = navigationState.toEntries(entryProvider),
         onBack = { navController.goBack() },
