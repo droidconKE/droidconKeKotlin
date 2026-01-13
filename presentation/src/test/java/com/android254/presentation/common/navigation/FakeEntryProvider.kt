@@ -12,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 
-// Define this helper inside your test file
 inline fun <reified T : NavKey> EntryProviderScope<NavKey>.fakeEntry() {
     entry<T> { key ->
         FakePlaceholderScreen(screen = key as Screens)
@@ -23,8 +23,9 @@ inline fun <reified T : NavKey> EntryProviderScope<NavKey>.fakeEntry() {
 }
 
 @Composable
-fun fakeEntryProvider(){// Then your provider becomes:
-    entryProvider<NavKey> {
+fun fakeEntryProvider() : (NavKey) -> NavEntry<NavKey> {
+
+    val provider = entryProvider<NavKey> {
         fakeEntry<Screens.Home>()
         fakeEntry<Screens.Sessions>()
         fakeEntry<Screens.SessionDetails>()
@@ -34,13 +35,14 @@ fun fakeEntryProvider(){// Then your provider becomes:
         fakeEntry<Screens.FeedBack>()
         fakeEntry<Screens.SpeakerDetails>()
     }
+    return provider
 }
 
 
 @Composable
 fun FakePlaceholderScreen(screen: Screens) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

@@ -16,12 +16,15 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 
 @Composable
 fun Navigation(
+    modifier: Modifier = Modifier,
     navController: NavigationController,
     navigationState: NavigationState,
     updateBottomBarState: (Boolean) -> Unit,
@@ -33,6 +36,8 @@ fun Navigation(
     ),
 ) {
     NavDisplay(
+        modifier = modifier
+                .testTag("navigation_display"),
         entries = navigationState.toEntries(entryProvider),
         onBack = { navController.goBack() },
     )

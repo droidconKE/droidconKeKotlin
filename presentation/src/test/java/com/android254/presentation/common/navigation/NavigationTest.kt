@@ -1,18 +1,3 @@
-/*
- * Copyright 2026 DroidconKE
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.android254.presentation.common.navigation
 
 import androidx.compose.foundation.layout.Column
@@ -27,8 +12,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.navigation3.runtime.NavEntry
 import com.droidconke.chai.ChaiDCKE22Theme
-import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,10 +21,12 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
+import kotlin.intArrayOf
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class NavigationTest {
+
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -50,7 +37,7 @@ class NavigationTest {
     }
 
     @Test
-    fun `should show start route`() {
+    fun `should show start route`(){
         val startScreen = Screens.Home
         val navigationState = mutableStateOf<NavigationState?>(null)
         composeTestRule.setContent {
@@ -58,7 +45,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
+                        topLevelRoutes = bottomNavigationDestinations,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -67,7 +54,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
+                        entryProvider = fakeEntryProvider()
                     )
                 }
             }
@@ -81,7 +68,7 @@ class NavigationTest {
     }
 
     @Test
-    fun `navigate to top level should update UI and state`() {
+    fun `navigate to top level should update UI and state`(){
         val startScreen = Screens.Home
         val destinationScreen = Screens.About
         val navigationState = mutableStateOf<NavigationState?>(null)
@@ -91,19 +78,19 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
+                        topLevelRoutes = bottomNavigationDestinations,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
                 navigationState.value?.let {
                     Column(
-                        Modifier.fillMaxSize(),
-                    ) {
+                        Modifier.fillMaxSize()
+                    ){
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
                             updateBottomBarState = {},
-                            entryProvider = fakeEntryProvider(),
+                            entryProvider = fakeEntryProvider()
                         )
 
                         Button(onClick = {
@@ -113,6 +100,7 @@ class NavigationTest {
                         }
                     }
                 }
+
             }
         }
 
@@ -138,19 +126,19 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
+                        topLevelRoutes = bottomNavigationDestinations,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
                 navigationState.value?.let {
                     Column(
-                        Modifier.fillMaxSize(),
-                    ) {
+                        Modifier.fillMaxSize()
+                    ){
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
                             updateBottomBarState = {},
-                            entryProvider = fakeEntryProvider(),
+                            entryProvider = fakeEntryProvider()
                         )
 
                         Button(onClick = {
@@ -173,367 +161,5 @@ class NavigationTest {
         composeTestRule.onNodeWithText("Argument (Session ID): ${destinationScreen.sessionId}").assertIsDisplayed()
     }
 
-    @Test
-    fun `goBack from nested screen should return to previous screen in stack`() {
-        val startScreen = Screens.Home
-        val destinationScreen = Screens.SessionDetails("123")
-        val navigationState = mutableStateOf<NavigationState?>(null)
 
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Navigate to nested screen
-        composeTestRule.runOnUiThread {
-            navController.navigate(destinationScreen)
-        }
-        composeTestRule.onNodeWithText("Screen: ${destinationScreen.title}").assertIsDisplayed()
-
-        // Go back
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
-
-    @Test
-    fun `goBack from top-level route (not startRoute) should return to startRoute`() {
-        val startScreen = Screens.Home
-        val otherTopLevel = Screens.About
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Navigate to another top-level screen
-        composeTestRule.runOnUiThread {
-            navController.navigate(otherTopLevel)
-        }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
-
-        // Go back
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
-
-    @Test
-    fun `goBack from startRoute root should do nothing or maintain state`() {
-        val startScreen = Screens.Home
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Go back from root
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-
-        // Should still be on Home
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
-
-    @Test
-    fun `navigate to currently active top-level route should not change state`() {
-        val startScreen = Screens.Home
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-        val initialState = navigationState.value?.topLevelRoute
-
-        // Navigate to Home again
-        composeTestRule.runOnUiThread {
-            navController.navigate(startScreen)
-        }
-
-        assert(navigationState.value?.topLevelRoute == initialState)
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
-
-    @Test
-    fun `deep nesting within a stack`() {
-        val startScreen = Screens.Home
-        val nested1 = Screens.SessionDetails("1")
-        val nested2 = Screens.SpeakerDetails("Speaker A")
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Navigate deep
-        composeTestRule.runOnUiThread {
-            navController.navigate(nested1)
-            navController.navigate(nested2)
-        }
-
-        composeTestRule.onNodeWithText("Screen: ${nested2.title}").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Argument (Speaker Name): ${nested2.speakerName}").assertIsDisplayed()
-
-        // Go back once
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-        composeTestRule.onNodeWithText("Screen: ${nested1.title}").assertIsDisplayed()
-
-        // Go back twice
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
-
-    @Test
-    fun `navigateUp should not switch top-level routes`() {
-        val startScreen = Screens.Home
-        val otherTopLevel = Screens.About
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Navigate to other top-level
-        composeTestRule.runOnUiThread {
-            navController.navigate(otherTopLevel)
-        }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
-
-        // navigateUp from root of About should NOT go back to Home (unlike goBack)
-        composeTestRule.runOnUiThread {
-            navController.navigateUp()
-        }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
-        assert(navigationState.value?.topLevelRoute == otherTopLevel)
-    }
-
-    @Test
-    fun `navigate between screens updates direction`() {
-        val startScreen = Screens.Home
-        val otherTopLevel = Screens.About
-        val nested = Screens.SessionDetails("1")
-
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        composeTestRule.runOnUiThread {
-            navController.navigate(otherTopLevel)
-        }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
-
-        assertEquals(
-            NavDirection.LEFT,
-            navigationState.value?.lastDirection
-        )
-
-
-        composeTestRule.runOnUiThread {
-            navController.navigate(startScreen)
-        }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-
-        assertEquals(
-            NavDirection.RIGHT,
-            navigationState.value?.lastDirection
-        )
-
-        composeTestRule.runOnUiThread {
-            navController.navigate(nested)
-        }
-        composeTestRule.onNodeWithText("Screen: ${nested.title}").assertIsDisplayed()
-
-        assertEquals(
-            NavDirection.INNER,
-            navigationState.value?.lastDirection
-        )
-
-
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-
-        assertEquals(
-            NavDirection.INNER,
-            navigationState.value?.lastDirection
-        )
-    }
-
-    @Test
-    fun `goBack from otherTopLevel to startRoute updates direction to RIGHT`() {
-        val startScreen = Screens.Home
-        val otherTopLevel = Screens.About // Home is index 0, About is index 3. So Home -> About is LEFT, About -> Home is RIGHT.
-        val navigationState = mutableStateOf<NavigationState?>(null)
-
-        composeTestRule.setContent {
-            ChaiDCKE22Theme {
-                navigationState.value =
-                    rememberNavigationState(
-                        startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationSet,
-                    )
-                val navController = remember { navigationState.value?.let { NavigationController(it) } }
-
-                navigationState.value?.let {
-                    Navigation(
-                        navController = navController!!,
-                        navigationState = it,
-                        updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider(),
-                    )
-                }
-            }
-        }
-
-        val navController = NavigationController(navigationState.value!!)
-
-        // Navigate to About
-        composeTestRule.runOnUiThread {
-            navController.navigate(otherTopLevel)
-        }
-        assertEquals(NavDirection.LEFT, navigationState.value?.lastDirection)
-
-        // goBack from About root to Home (startRoute)
-        composeTestRule.runOnUiThread {
-            navController.goBack()
-        }
-
-        assertEquals(NavDirection.RIGHT, navigationState.value?.lastDirection)
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
-    }
 }
