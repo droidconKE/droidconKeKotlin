@@ -33,6 +33,16 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavKeySerializer
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 
+/**
+ * Remembers and creates a [NavigationState] to manage multi-stack navigation.
+ *
+ * This function initializes and persists the current top-level route and maintains
+ * separate back stacks for each provided top-level destination.
+ *
+ * @param startRoute The initial route to be displayed when the app starts.
+ * @param topLevelRoutes A set of all destination keys that represent top-level navigation items.
+ * @return A [NavigationState] instance that tracks the current route and back stacks.
+ */
 @Composable
 fun rememberNavigationState(
     startRoute: NavKey,
@@ -58,6 +68,16 @@ fun rememberNavigationState(
     }
 }
 
+/**
+ * Represents the state of navigation within the application, managing multiple back stacks
+ * typically associated with top-level destinations (e.g., Bottom Navigation tabs).
+ *
+ * @property startRoute The initial root destination of the application.
+ * @property topLevelRoute The currently active top-level destination.
+ * @property backStacks A map associating each top-level route with its respective [NavBackStack].
+ * @property stacksInUse A list of routes currently in the navigation hierarchy, used to determine
+ * which stacks should be active or preserved.
+ */
 class NavigationState(
     val startRoute: NavKey,
     topLevelRoute: MutableState<NavKey>,

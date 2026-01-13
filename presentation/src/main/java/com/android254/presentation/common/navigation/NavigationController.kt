@@ -15,6 +15,14 @@
  */
 package com.android254.presentation.common.navigation
 
+/**
+ * A controller responsible for managing app navigation and back stack state.
+ *
+ * This controller handles logic for switching between top-level routes and managing
+ * nested navigation stacks within those routes.
+ *
+ * @property state The current navigation state being managed by this controller.
+ */
 class NavigationController(val state: NavigationState) {
     fun navigate(route: Screens) {
         if (route in state.backStacks.keys) {
