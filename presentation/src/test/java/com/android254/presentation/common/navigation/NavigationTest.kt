@@ -1,3 +1,18 @@
+/*
+ * Copyright 2026 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.android254.presentation.common.navigation
 
 import androidx.compose.foundation.layout.Column
@@ -20,12 +35,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
-import kotlin.intArrayOf
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class NavigationTest {
-
     @get:Rule
     val composeTestRule = createComposeRule()
 
@@ -36,7 +49,7 @@ class NavigationTest {
     }
 
     @Test
-    fun `should show start route`(){
+    fun `should show start route`() {
         val startScreen = Screens.Home
         val navigationState = mutableStateOf<NavigationState?>(null)
         composeTestRule.setContent {
@@ -53,7 +66,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -67,7 +80,7 @@ class NavigationTest {
     }
 
     @Test
-    fun `navigate to top level should update UI and state`(){
+    fun `navigate to top level should update UI and state`() {
         val startScreen = Screens.Home
         val destinationScreen = Screens.About
         val navigationState = mutableStateOf<NavigationState?>(null)
@@ -83,13 +96,13 @@ class NavigationTest {
 
                 navigationState.value?.let {
                     Column(
-                        Modifier.fillMaxSize()
-                    ){
+                        Modifier.fillMaxSize(),
+                    ) {
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
                             updateBottomBarState = {},
-                            entryProvider = fakeEntryProvider()
+                            entryProvider = fakeEntryProvider(),
                         )
 
                         Button(onClick = {
@@ -99,7 +112,6 @@ class NavigationTest {
                         }
                     }
                 }
-
             }
         }
 
@@ -131,13 +143,13 @@ class NavigationTest {
 
                 navigationState.value?.let {
                     Column(
-                        Modifier.fillMaxSize()
-                    ){
+                        Modifier.fillMaxSize(),
+                    ) {
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
                             updateBottomBarState = {},
-                            entryProvider = fakeEntryProvider()
+                            entryProvider = fakeEntryProvider(),
                         )
 
                         Button(onClick = {
@@ -180,7 +192,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -221,7 +233,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -261,7 +273,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -297,7 +309,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -336,7 +348,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -386,7 +398,7 @@ class NavigationTest {
                         navController = navController!!,
                         navigationState = it,
                         updateBottomBarState = {},
-                        entryProvider = fakeEntryProvider()
+                        entryProvider = fakeEntryProvider(),
                     )
                 }
             }
@@ -407,5 +419,4 @@ class NavigationTest {
         composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
         assert(navigationState.value?.topLevelRoute == otherTopLevel)
     }
-
 }
