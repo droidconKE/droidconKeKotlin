@@ -209,6 +209,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/donald-okara">
+            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
+            <br />
+            <sub><b>Don Okara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/misshannah">
             <img src="https://avatars.githubusercontent.com/u/5990196?v=4" width="100;" alt="misshannah"/>
             <br />
@@ -235,15 +242,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Robert Nganga</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/michaelbukachi">
             <img src="https://avatars.githubusercontent.com/u/10145850?v=4" width="100;" alt="michaelbukachi"/>
             <br />
             <sub><b>Michael Bukachi</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/KennethMathari">
             <img src="https://avatars.githubusercontent.com/u/27956755?v=4" width="100;" alt="KennethMathari"/>
@@ -278,15 +285,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Odhiambo Paul</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/kanake10">
             <img src="https://avatars.githubusercontent.com/u/77957614?v=4" width="100;" alt="kanake10"/>
             <br />
             <sub><b>N3</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/emmanuelmuturia">
             <img src="https://avatars.githubusercontent.com/u/55001497?v=4" width="100;" alt="emmanuelmuturia"/>
@@ -321,15 +328,15 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Terry Mochire</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/whoisnjoguu">
             <img src="https://avatars.githubusercontent.com/u/60213982?v=4" width="100;" alt="whoisnjoguu"/>
             <br />
             <sub><b>Titan</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/mertoenjosh">
             <img src="https://avatars.githubusercontent.com/u/60392385?v=4" width="100;" alt="mertoenjosh"/>
@@ -364,20 +371,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Sheldon Okware</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/joenjogu">
             <img src="https://avatars.githubusercontent.com/u/20142549?v=4" width="100;" alt="joenjogu"/>
             <br />
             <sub><b>Joenjogu</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/donald-okara">
-            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
-            <br />
-            <sub><b>Don Okara</b></sub>
         </a>
     </td>
     <td align="center">
