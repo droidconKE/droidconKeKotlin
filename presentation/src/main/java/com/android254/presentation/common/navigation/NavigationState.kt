@@ -81,8 +81,10 @@ fun rememberNavigationState(
 class NavigationState(
     val startRoute: NavKey,
     topLevelRoute: MutableState<NavKey>,
+    lastDirection: NavDirection = NavDirection.INNER,
     val backStacks: Map<NavKey, NavBackStack<NavKey>>,
 ) {
+    var lastDirection: NavDirection by mutableStateOf(lastDirection)
     var topLevelRoute: NavKey by topLevelRoute
     val stacksInUse: List<NavKey>
         get() =
@@ -113,4 +115,8 @@ fun NavigationState.toEntries(
     return stacksInUse
         .flatMap { decoratedEntries[it] ?: emptyList() }
         .toMutableStateList()
+}
+
+enum class NavDirection {
+    LEFT, RIGHT, INNER
 }
