@@ -25,6 +25,18 @@ package com.android254.presentation.common.navigation
  */
 class NavigationController(val state: NavigationState) {
     fun navigate(route: Screens) {
+        val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
+        val toIndex = bottomNavigationRoutes.indexOf(route)
+
+        val lastDirection = when {
+            fromIndex == -1 || toIndex == -1 -> NavDirection.INNER
+            toIndex > fromIndex -> NavDirection.LEFT
+            toIndex < fromIndex -> NavDirection.RIGHT
+            else -> NavDirection.INNER
+        }
+
+        state.lastDirection = lastDirection
+
         if (route in state.backStacks.keys) {
             // This is a top level route, just switch to it.
             state.topLevelRoute = route
