@@ -57,7 +57,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -90,7 +90,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -137,7 +137,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -183,7 +183,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -224,7 +224,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -264,7 +264,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -300,7 +300,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -339,7 +339,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
@@ -389,7 +389,7 @@ class NavigationTest {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
-                        topLevelRoutes = bottomNavigationDestinations,
+                        topLevelRoutes = bottomNavigationSet,
                     )
                 val navController = remember { navigationState.value?.let { NavigationController(it) } }
 
