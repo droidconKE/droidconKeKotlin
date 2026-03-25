@@ -25,19 +25,23 @@ package com.android254.presentation.common.navigation
  */
 class NavigationController(val state: NavigationState) {
     fun navigate(route: Screens) {
-        val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
         val toIndex = bottomNavigationRoutes.indexOf(route)
+        val isNested = toIndex == -1
 
-        val lastDirection = when {
-            fromIndex == -1 || toIndex == -1 -> NavDirection.INNER
-            toIndex > fromIndex -> NavDirection.LEFT
-            toIndex < fromIndex -> NavDirection.RIGHT
-            else -> NavDirection.INNER
+        val lastDirection = if (isNested) {
+            NavDirection.INNER
+        } else {
+            val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
+            if (fromIndex != -1 && fromIndex != toIndex) {
+                if (toIndex > fromIndex) NavDirection.LEFT else NavDirection.RIGHT
+            } else {
+                NavDirection.INNER
+            }
         }
 
         state.lastDirection = lastDirection
 
-        if (route in state.backStacks.keys) {
+        if (!isNested) {
             // This is a top level route, just switch to it.
             state.topLevelRoute = route
         } else {
@@ -49,6 +53,7 @@ class NavigationController(val state: NavigationState) {
         val currentStack = state.backStacks[state.topLevelRoute]
         // Only remove if we are not at the base of the stack
         if (currentStack != null && currentStack.last() != state.topLevelRoute) {
+            state.lastDirection = NavDirection.INNER
             currentStack.removeLastOrNull()
         }
     }
@@ -59,8 +64,13 @@ class NavigationController(val state: NavigationState) {
 
         // If we're at the base of the current route, go back to the start route stack.
         if (currentRoute == state.topLevelRoute) {
-            state.topLevelRoute = state.startRoute
+            if (state.topLevelRoute != state.startRoute) {
+                state.lastDirection = NavDirection.RIGHT
+
+                state.topLevelRoute = state.startRoute
+            }
         } else {
+            state.lastDirection = NavDirection.INNER
             currentStack.removeLastOrNull()
         }
     }
