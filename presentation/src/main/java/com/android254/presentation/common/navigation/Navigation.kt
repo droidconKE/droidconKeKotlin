@@ -41,7 +41,7 @@ fun Navigation(
         NavDirection.INNER -> zoomInTransition()
     }
     val backTransitionSpec = when (navigationState.lastDirection) {
-        NavDirection.LEFT, NavDirection.RIGHT -> transitionSpec
+        NavDirection.LEFT, NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
         else -> zoomOutTransition()
     }
     NavDisplay(
