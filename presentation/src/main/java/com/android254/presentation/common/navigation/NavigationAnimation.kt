@@ -4,7 +4,7 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 
-const val DEFAULT_DURATION = 1000
+const val DEFAULT_DURATION = 700
 
 fun zoomInTransition(): ContentTransform {
     return ContentTransform(
