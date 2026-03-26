@@ -51,11 +51,13 @@ sealed class Screens(
     data class SpeakerDetails(val speakerName: String) :
         Screens(R.drawable.droidcon_icon, "Speaker Details")
 }
-val bottomNavigationRoutes = listOf(
-    Screens.Home,
-    Screens.Feed,
-    Screens.Sessions,
-    Screens.About,
-)
+
+val bottomNavigationRoutes =
+    listOf(
+        Screens.Home,
+        Screens.Feed,
+        Screens.Sessions,
+        Screens.About,
+    )
 
 val bottomNavigationSet = bottomNavigationRoutes.toSet()

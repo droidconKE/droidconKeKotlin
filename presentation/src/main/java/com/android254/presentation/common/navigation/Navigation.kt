@@ -29,27 +29,30 @@ fun Navigation(
     navigationState: NavigationState,
     updateBottomBarState: (Boolean) -> Unit,
     onActionClicked: () -> Unit = {},
-    entryProvider: (NavKey) -> NavEntry<NavKey> = droidconEntryProvider(
-        updateBottomBarState,
-        navController,
-        onActionClicked,
-    ),
+    entryProvider: (NavKey) -> NavEntry<NavKey> =
+        droidconEntryProvider(
+            updateBottomBarState,
+            navController,
+            onActionClicked,
+        ),
 ) {
-    val transitionSpec = when (navigationState.lastDirection) {
-        NavDirection.LEFT -> horizontalSlideIn(reverse = false)
-        NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
-        NavDirection.INNER -> zoomInTransition()
-    }
-    val backTransitionSpec = when (navigationState.lastDirection) {
-        NavDirection.LEFT, NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
-        else -> zoomOutTransition()
-    }
+    val transitionSpec =
+        when (navigationState.lastDirection) {
+            NavDirection.LEFT -> horizontalSlideIn(reverse = false)
+            NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
+            NavDirection.INNER -> zoomInTransition()
+        }
+    val backTransitionSpec =
+        when (navigationState.lastDirection) {
+            NavDirection.LEFT, NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
+            else -> zoomOutTransition()
+        }
     NavDisplay(
         modifier = modifier.testTag("navigation_display"),
         entries = navigationState.toEntries(entryProvider),
         transitionSpec = { transitionSpec },
         popTransitionSpec = { backTransitionSpec },
         predictivePopTransitionSpec = { backTransitionSpec },
-        onBack = navController::goBack ,
+        onBack = navController::goBack,
     )
 }

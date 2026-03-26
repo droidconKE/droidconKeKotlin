@@ -16,7 +16,6 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -30,7 +29,6 @@ import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
-import timber.log.Timber
 
 @Composable
 fun droidconEntryProvider(

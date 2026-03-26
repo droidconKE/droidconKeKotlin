@@ -458,9 +458,8 @@ class NavigationTest {
 
         assertEquals(
             NavDirection.LEFT,
-            navigationState.value?.lastDirection
+            navigationState.value?.lastDirection,
         )
-
 
         composeTestRule.runOnUiThread {
             navController.navigate(startScreen)
@@ -469,7 +468,7 @@ class NavigationTest {
 
         assertEquals(
             NavDirection.RIGHT,
-            navigationState.value?.lastDirection
+            navigationState.value?.lastDirection,
         )
 
         composeTestRule.runOnUiThread {
@@ -479,9 +478,8 @@ class NavigationTest {
 
         assertEquals(
             NavDirection.INNER,
-            navigationState.value?.lastDirection
+            navigationState.value?.lastDirection,
         )
-
 
         composeTestRule.runOnUiThread {
             navController.goBack()
@@ -490,7 +488,7 @@ class NavigationTest {
 
         assertEquals(
             NavDirection.INNER,
-            navigationState.value?.lastDirection
+            navigationState.value?.lastDirection,
         )
     }
 
