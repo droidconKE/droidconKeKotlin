@@ -44,11 +44,11 @@ sealed class Screens(
     object FeedBack : Screens(R.drawable.droidcon_icon, "FeedBack")
 
     @Serializable
-    class SessionDetails(val sessionId: String) :
+    data class SessionDetails(val sessionId: String) :
         Screens(R.drawable.droidcon_icon, "Session Details")
 
     @Serializable
-    class SpeakerDetails(val speakerName: String) :
+    data class SpeakerDetails(val speakerName: String) :
         Screens(R.drawable.droidcon_icon, "Speaker Details")
 }
 val bottomNavigationRoutes = listOf(
