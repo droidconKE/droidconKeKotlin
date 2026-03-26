@@ -118,5 +118,7 @@ fun NavigationState.toEntries(
 }
 
 enum class NavDirection {
-    LEFT, RIGHT, INNER
+    LEFT,
+    RIGHT,
+    INNER,
 }

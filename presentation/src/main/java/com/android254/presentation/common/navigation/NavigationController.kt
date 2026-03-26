@@ -28,16 +28,17 @@ class NavigationController(val state: NavigationState) {
         val toIndex = bottomNavigationRoutes.indexOf(route)
         val isNested = toIndex == -1
 
-        val lastDirection = if (isNested) {
-            NavDirection.INNER
-        } else {
-            val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
-            if (fromIndex != -1 && fromIndex != toIndex) {
-                if (toIndex > fromIndex) NavDirection.LEFT else NavDirection.RIGHT
-            } else {
+        val lastDirection =
+            if (isNested) {
                 NavDirection.INNER
+            } else {
+                val fromIndex = bottomNavigationRoutes.indexOf(state.topLevelRoute)
+                if (fromIndex != -1 && fromIndex != toIndex) {
+                    if (toIndex > fromIndex) NavDirection.LEFT else NavDirection.RIGHT
+                } else {
+                    NavDirection.INNER
+                }
             }
-        }
 
         state.lastDirection = lastDirection
 
