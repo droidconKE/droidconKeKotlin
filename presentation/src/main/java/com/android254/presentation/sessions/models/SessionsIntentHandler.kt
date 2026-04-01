@@ -6,8 +6,10 @@ import com.android254.presentation.models.SessionsFilterOption
 sealed interface SessionsIntentHandler {
     class UpdateSelectedFilterOptionList(val option: SessionsFilterOption): SessionsIntentHandler
     class UpdateSelectedDay(val day: EventDate): SessionsIntentHandler
+    class BookmarkSession(val sessionId: String): SessionsIntentHandler
     object ToggleBookmarkFilter: SessionsIntentHandler
     object RefreshSessions: SessionsIntentHandler
+    object Retry: SessionsIntentHandler
     object FetchSessionWithFilter: SessionsIntentHandler
     object ClearSelectedFilterList: SessionsIntentHandler
 }

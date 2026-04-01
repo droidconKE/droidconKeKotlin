@@ -177,13 +177,10 @@ fun SessionsScreen(
             SessionsStateComponent(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
-                refreshSessionsList = {
-                    onEvent(SessionsIntentHandler.RefreshSessions)
-                },
-                retry = { },
                 isRefreshing = isRefreshing,
                 sessionScreenState = sessionScreenSessionsState.value,
                 isSessionLayoutList = isSessionLayoutList.value,
+                onEvent = onEvent,
             )
             if (bottomSheetState.isVisible) {
                 ModalBottomSheet(

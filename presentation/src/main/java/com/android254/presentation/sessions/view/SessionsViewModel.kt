@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -76,7 +77,14 @@ constructor(
             SessionsIntentHandler.FetchSessionWithFilter -> fetchSessionWithFilter()
             SessionsIntentHandler.RefreshSessions -> refreshSessionList()
             SessionsIntentHandler.ToggleBookmarkFilter -> toggleBookmarkFilter()
+            SessionsIntentHandler.Retry -> {}
             is SessionsIntentHandler.UpdateSelectedDay -> updateSelectedDay(intent.day)
+            is SessionsIntentHandler.BookmarkSession -> {
+                val session = sessionsCache.find { it.id == intent.sessionId }
+                if (session != null) {
+                    if (session.isBookmarked) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
+                }
+            }
             is SessionsIntentHandler.UpdateSelectedFilterOptionList -> updateSelectedFilterOptionList(intent.option)
         }
     }

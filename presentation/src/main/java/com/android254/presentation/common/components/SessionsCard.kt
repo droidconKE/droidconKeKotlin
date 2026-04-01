@@ -63,6 +63,7 @@ import kotlinx.coroutines.launch
 fun SessionsCard(
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
+    onBookmark: (String) -> Unit,
 ) {
     Card(
         modifier =
@@ -86,7 +87,7 @@ fun SessionsCard(
                 session.amOrPm,
             )
             Spacer(modifier = Modifier.width(24.dp))
-            SessionDetails(session = session)
+            SessionDetails(session = session, onBookMark = onBookmark)
         }
     }
 }
@@ -115,13 +116,13 @@ fun RowScope.SessionTimeComponent(
 }
 
 @Composable
-fun RowScope.SessionDetails(session: SessionPresentationModel) {
+fun RowScope.SessionDetails(session: SessionPresentationModel, onBookMark: (String) -> Unit) {
     Column(
         modifier =
             Modifier
                 .weight(0.8f),
     ) {
-        SessionTitleComponent(session)
+        SessionTitleComponent(session, onBookMark)
         Spacer(modifier = Modifier.height(12.dp))
         SessionsDescriptionComponent(session.description)
         Spacer(modifier = Modifier.height(12.dp))
@@ -141,11 +142,11 @@ fun RowScope.SessionDetails(session: SessionPresentationModel) {
 @Composable
 fun SessionTitleComponent(
     session: SessionPresentationModel,
-    viewModel: SessionsViewModel = hiltViewModel(),
+    onBookmark: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val scope = rememberCoroutineScope()
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.Center,
@@ -159,13 +160,7 @@ fun SessionTitleComponent(
         IconButton(
             modifier = Modifier.size(32.dp),
             onClick = {
-                scope.launch {
-                    if (session.isStarred) {
-                        viewModel.unBookmarkSession(session.remoteId)
-                    } else {
-                        viewModel.bookmarkSession(session.remoteId)
-                    }
-                }
+                onBookmark(session.id)
             },
         ) {
             Icon(
