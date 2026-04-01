@@ -23,6 +23,7 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.common.results_status.ResultStatus
 import com.android254.presentation.models.EventDate
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionsIntentHandler
@@ -33,7 +34,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,12 +59,89 @@ constructor(
         MutableStateFlow(emptyList())
     val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
-    private var filterState = SessionsFilterState()
+    private val _filterState = MutableStateFlow(SessionsFilterState())
+    val filterState = _filterState.asStateFlow()
 
-    private val _sessionsUiState = MutableStateFlow(SessionsUiState())
-    val sessionsUiState = _sessionsUiState.asStateFlow()
+    private val _selectedEventDay = MutableStateFlow(EventDate("-1", 1))
+    val selectedEventDay = _selectedEventDay.asStateFlow()
 
-    private val sessionsCache = mutableListOf<Session>()
+    val sessionsUiState =
+        flow {
+            emitAll(sessionsRepo.fetchSessionsInformation())
+        }.flatMapLatest { sessionsInformation ->
+            combine(
+                _selectedEventDay,
+                _filterState,
+            ) { selectedEventDay, filterState ->
+                val sessionDays = mapEventDays(sessionsInformation.eventDays)
+
+                // Update selected day if not set
+                if (selectedEventDay.value == "-1" && sessionDays.isNotEmpty()) {
+                    _selectedEventDay.value = sessionDays.first()
+                }
+
+                val filteredSessions = filterSessions(
+                    sessionsInformation.sessions,
+                    filterState,
+                    _selectedEventDay.value
+                )
+
+                SessionsUiState(
+                    sessions = filteredSessions,
+                    eventDays = sessionDays,
+                    sessionStatus = getResultStatus(filteredSessions),
+                )
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = SessionsUiState(),
+        )
+
+    private fun mapEventDays(eventDays: List<String>): List<EventDate> =
+        eventDays.mapIndexed { index, day ->
+            EventDate(value = day, day = index + 1)
+        }
+
+    private fun filterSessions(
+        sessions: List<Session>,
+        filterState: SessionsFilterState,
+        selectedEventDay: EventDate
+    ): List<SessionPresentationModel> =
+        sessions.asSequence().filter {
+            if (filterState.levels.isNotEmpty()) {
+                filterState.levels.contains(it.sessionLevel)
+            } else {
+                true
+            }
+        }.filter {
+            if (filterState.rooms.isNotEmpty()) {
+                filterState.rooms.contains(it.rooms)
+            } else {
+                true
+            }
+        }.filter {
+            if (filterState.sessionTypes.isNotEmpty()) {
+                filterState.sessionTypes.contains(it.sessionFormat)
+            } else {
+                true
+            }
+        }.filter {
+            if (filterState.isBookmarked) {
+                it.isBookmarked
+            } else {
+                true
+            }
+        }.distinctBy { it.remoteId }
+            .map { it.toPresentationModel() }
+            .filter { it.eventDay == selectedEventDay.value }.toList()
+
+    private fun getResultStatus(sessions: List<SessionPresentationModel>): ResultStatus =
+        if (sessions.isEmpty()) {
+            ResultStatus.Empty("No sessions found")
+        } else {
+            ResultStatus.Success
+        }
 
     val isRefreshing =
         syncDataWorkManager.isSyncing
@@ -66,10 +150,6 @@ constructor(
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = false,
             )
-
-    init {
-        fetchAllSessions()
-    }
 
     fun handleEvent(intent: SessionsIntentHandler) {
         when(intent){
@@ -80,9 +160,11 @@ constructor(
             SessionsIntentHandler.Retry -> {}
             is SessionsIntentHandler.UpdateSelectedDay -> updateSelectedDay(intent.day)
             is SessionsIntentHandler.BookmarkSession -> {
-                val session = sessionsCache.find { it.id == intent.sessionId }
-                if (session != null) {
-                    if (session.isBookmarked) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
+                viewModelScope.launch {
+                    val session = sessionsUiState.value.sessions.find { it.id == intent.sessionId }
+                    if (session != null) {
+                        if (session.isStarred) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
+                    }
                 }
             }
             is SessionsIntentHandler.UpdateSelectedFilterOptionList -> updateSelectedFilterOptionList(intent.option)
@@ -110,7 +192,7 @@ constructor(
         when (option.type) {
             SessionsFilterCategory.Level -> {
                 val newValue =
-                    filterState.levels.toMutableList().apply {
+                    _filterState.value.levels.toMutableList().apply {
                         val index = this.indexOf(option.value)
                         if (index < 0) {
                             add(option.value)
@@ -118,15 +200,16 @@ constructor(
                             removeAt(index)
                         }
                     }.toList()
-                filterState =
-                    filterState.copy(
+                _filterState.update {
+                    it.copy(
                         levels = newValue,
                     )
+                }
             }
 
             SessionsFilterCategory.Topic -> {
                 val newValue =
-                    filterState.topics.toMutableList().apply {
+                    _filterState.value.topics.toMutableList().apply {
                         val index = this.indexOf(option.value)
                         if (index < 0) {
                             add(option.value)
@@ -134,15 +217,16 @@ constructor(
                             removeAt(index)
                         }
                     }.toList()
-                filterState =
-                    filterState.copy(
+                _filterState.update {
+                    it.copy(
                         topics = newValue,
                     )
+                }
             }
 
             SessionsFilterCategory.Room -> {
                 val newValue =
-                    filterState.rooms.toMutableList().apply {
+                    _filterState.value.rooms.toMutableList().apply {
                         val index = this.indexOf(option.value)
                         if (index < 0) {
                             add(option.value)
@@ -150,15 +234,16 @@ constructor(
                             removeAt(index)
                         }
                     }.toList()
-                filterState =
-                    filterState.copy(
+                _filterState.update {
+                    it.copy(
                         rooms = newValue,
                     )
+                }
             }
 
             SessionsFilterCategory.SessionType -> {
                 val newValue =
-                    filterState.sessionTypes.toMutableList().apply {
+                    _filterState.value.sessionTypes.toMutableList().apply {
                         val index = this.indexOf(option.value)
                         if (index < 0) {
                             add(option.value)
@@ -166,129 +251,32 @@ constructor(
                             removeAt(index)
                         }
                     }.toList()
-                filterState =
-                    filterState.copy(
+                _filterState.update {
+                    it.copy(
                         sessionTypes = newValue,
                     )
-            }
-        }
-    }
-
-    private fun fetchAllSessions() {
-        viewModelScope.launch {
-            updateIsLoadingState()
-            if (sessionsCache.isEmpty()) {
-                sessionsRepo.fetchSessionsInformation().collectLatest { sessionsInformation ->
-                    sessionsCache.addAll(sessionsInformation.sessions)
-
-                    updateSessionDays(sessionsInformation)
-                    fetchFilteredSessions()
                 }
             }
         }
     }
 
-    private fun updateSessionDays(sessionsInformation: SessionsInformationDomainModel) {
-        if (sessionsInformation.eventDays.isNotEmpty()) {
-            val sessionDays = sessionsInformation.eventDays.mapIndexed { index, day -> EventDate(value = day, day = index + 1) }
-            _sessionsUiState.update {
-                it.copy(
-                    eventDays = sessionDays,
-                    selectedEventDay =
-                        if (it.selectedEventDay.value == "-1") {
-                            sessionDays.first()
-                        } else {
-                            it.selectedEventDay
-                        },
-                )
-            }
-        }
-    }
-
-    private fun fetchFilteredSessions() =
-        viewModelScope.launch(Dispatchers.Default) {
-            updateIsLoadingState()
-            updateSessions(
-                sessionsCache.asSequence().filter {
-                    if (filterState.levels.isNotEmpty()) {
-                        filterState.levels.contains(it.sessionLevel)
-                    } else {
-                        true
-                    }
-                }.filter {
-                    if (filterState.rooms.isNotEmpty()) {
-                        filterState.rooms.contains(it.rooms)
-                    } else {
-                        true
-                    }
-                }.filter {
-                    if (filterState.sessionTypes.isNotEmpty()) {
-                        filterState.sessionTypes.contains(it.sessionFormat)
-                    } else {
-                        true
-                    }
-                }.filter {
-                    if (filterState.isBookmarked) {
-                        it.isBookmarked
-                    } else {
-                        true
-                    }
-                }.distinctBy { it.remoteId }.toList(),
-            )
-        }
-
-    private fun updateSessions(sessions: List<Session>) {
-        val selectedDay = _sessionsUiState.value.selectedEventDay.value
-        _sessionsUiState.update {
-            if (sessions.isEmpty()) {
-                it.copy(
-                    sessionStatus = ResultStatus.Empty("No sessions found"),
-                )
-            } else {
-                it.copy(
-                    sessions = sessions.map { session -> session.toPresentationModel() }.filter { session -> session.eventDay == selectedDay },
-                    sessionStatus = ResultStatus.Success
-                )
-            }
-        }
-    }
-
-    private fun updateIsLoadingState() {
-        _sessionsUiState.update {
-            it.copy(
-                sessionStatus = ResultStatus.Loading
-            )
-        }
-    }
-
     fun fetchSessionWithFilter() {
-        viewModelScope.launch {
-            fetchFilteredSessions()
-        }
     }
 
     fun clearSelectedFilterList() {
         _selectedFilterOptions.value = listOf()
-        filterState = SessionsFilterState()
-        viewModelScope.launch {
-            fetchFilteredSessions()
-        }
+        _filterState.value = SessionsFilterState()
     }
 
     fun updateSelectedDay(date: EventDate) {
-        _sessionsUiState.value =
-            _sessionsUiState.value.copy(
-                selectedEventDay = date,
-            )
-        viewModelScope.launch {
-            fetchFilteredSessions()
-        }
+        _selectedEventDay.value = date
     }
 
     fun refreshSessionList() {
         _selectedFilterOptions.value = listOf()
-        filterState = SessionsFilterState(isBookmarked = filterState.isBookmarked)
-        sessionsCache.clear()
+        _filterState.update {
+            SessionsFilterState(isBookmarked = it.isBookmarked)
+        }
         viewModelScope.launch {
             syncDataWorkManager.startSync()
         }
@@ -297,23 +285,18 @@ constructor(
     fun bookmarkSession(id: String) {
         viewModelScope.launch {
             sessionsRepo.bookmarkSession(id = id)
-            sessionsCache.clear()
-            fetchAllSessions()
         }
     }
 
     fun unBookmarkSession(id: String) {
         viewModelScope.launch {
             sessionsRepo.unBookmarkSession(id = id)
-            sessionsCache.clear()
-            fetchAllSessions()
         }
     }
 
     fun toggleBookmarkFilter() {
-        filterState = filterState.copy(isBookmarked = !filterState.isBookmarked)
-        viewModelScope.launch {
-            fetchFilteredSessions()
+        _filterState.update {
+            it.copy(isBookmarked = !it.isBookmarked)
         }
     }
 }
