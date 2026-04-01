@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,6 +37,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.SessionsCard
+import com.android254.presentation.common.results_status.ResultStatus
+import com.android254.presentation.common.results_status.emptyMessage
+import com.android254.presentation.common.results_status.errorMessage
+import com.android254.presentation.common.results_status.isEmpty
+import com.android254.presentation.common.results_status.isError
+import com.android254.presentation.common.results_status.isLoading
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
@@ -60,46 +67,50 @@ fun SessionsStateComponent(
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
-    if (sessionsUiState.isLoading) {
-        SessionLoadingComponent()
-    }
+    AnimatedContent(sessionsUiState.sessionStatus){ status ->
+        when (status) {
+            is ResultStatus.Empty -> {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(70.dp),
+                        painter = painterResource(id = R.drawable.sessions_icon),
+                        contentDescription = stringResource(id = R.string.sessions_icon_description),
+                        tint = ChaiBlue,
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
 
-    if (sessionsUiState.isEmpty) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Icon(
-                modifier = Modifier.size(70.dp),
-                painter = painterResource(id = R.drawable.sessions_icon),
-                contentDescription = stringResource(id = R.string.sessions_icon_description),
-                tint = ChaiBlue,
-            )
-            Spacer(modifier = Modifier.height(20.dp))
+                    ChaiBodyMediumBold(
+                        bodyText = sessionsUiState.sessionStatus.emptyMessage,
+                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    )
+                }
+            }
 
-            ChaiBodyMediumBold(
-                bodyText = sessionsUiState.isEmptyMessage,
-                textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
-            )
+            is ResultStatus.Error -> {
+                SessionsErrorComponent(errorMessage = sessionsUiState.sessionStatus.errorMessage, retry = retry)
+            }
+
+            ResultStatus.Loading -> {
+                SessionLoadingComponent()
+            }
+
+            ResultStatus.Success -> {
+                SessionListComponent(
+                    swipeRefreshState = swipeRefreshState,
+                    sessions = sessionsUiState.sessions,
+                    navigateToSessionDetails = navigateToSessionDetails,
+                    refreshSessionsList = refreshSessionsList,
+                    sessionScreenState = sessionScreenState,
+                    isSessionLayoutList = isSessionLayoutList,
+                )
+            }
         }
-    }
-
-    if (sessionsUiState.isError) {
-        SessionsErrorComponent(errorMessage = sessionsUiState.errorMessage, retry = retry)
-    }
-
-    if (!sessionsUiState.isEmpty) {
-        SessionListComponent(
-            swipeRefreshState = swipeRefreshState,
-            sessions = sessionsUiState.sessions,
-            navigateToSessionDetails = navigateToSessionDetails,
-            refreshSessionsList = refreshSessionsList,
-            sessionScreenState = sessionScreenState,
-            isSessionLayoutList = isSessionLayoutList,
-        )
     }
 }
 
