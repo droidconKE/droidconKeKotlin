@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
-import com.android254.presentation.common.navigation.bottomNavigationDestinations
+import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
@@ -55,7 +55,7 @@ fun BottomNavigationBar(
     ) {
         val topLevelRoute = navigationState.topLevelRoute
 
-        bottomNavigationDestinations.forEach { destination ->
+        bottomNavigationSet.forEach { destination ->
             val selected = destination == topLevelRoute
 
             BottomNavItem(
@@ -122,7 +122,7 @@ fun BottomNavigationBarPreview() {
         val navigationState =
             rememberNavigationState(
                 startRoute = Screens.Home,
-                topLevelRoutes = bottomNavigationDestinations,
+                topLevelRoutes = bottomNavigationSet,
             )
         val navController = remember { NavigationController(navigationState) }
 

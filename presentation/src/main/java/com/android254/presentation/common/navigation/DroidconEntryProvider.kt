@@ -117,6 +117,7 @@ fun droidconEntryProvider(
 private fun sessionModel(key: Screens.SessionDetails): SessionDetailsViewModel {
     val viewModel =
         hiltViewModel<SessionDetailsViewModel, SessionDetailsViewModel.Factory>(
+            key = key.sessionId,
             creationCallback = { factory ->
                 factory.create(key)
             },
