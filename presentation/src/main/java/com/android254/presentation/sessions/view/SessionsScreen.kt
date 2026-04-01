@@ -46,6 +46,7 @@ import com.android254.presentation.sessions.components.CustomSwitch
 import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
+import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
@@ -62,18 +63,15 @@ fun SessionsRoute(
     val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
     val currentSelections by sessionsViewModel.selectedFilterOptions.collectAsStateWithLifecycle()
 
+    val onEvent = sessionsViewModel::handleEvent
+
     SessionsScreen(
         sessionsUiState = sessionsUiState,
         isRefreshing = isRefreshing,
         navigateToSessionDetails = navigateToSessionDetails,
         selectedEventDate = sessionsUiState.selectedEventDay,
         currentSelections = currentSelections,
-        updateSelectedDay = { sessionsViewModel.updateSelectedDay(it) },
-        toggleBookmarkFilter = { sessionsViewModel.toggleBookmarkFilter() },
-        refreshSessionList = { sessionsViewModel.refreshSessionList() },
-        updateSelectedFilterOptionList = { sessionsViewModel.updateSelectedFilterOptionList(it) },
-        fetchSessionWithFilter = { sessionsViewModel.fetchSessionWithFilter() },
-        clearSelectedFilterList = { sessionsViewModel.clearSelectedFilterList() },
+        onEvent = onEvent
     )
 }
 
@@ -83,13 +81,8 @@ fun SessionsScreen(
     selectedEventDate: EventDate,
     isRefreshing: Boolean,
     currentSelections: List<SessionsFilterOption>,
-    updateSelectedDay: (EventDate) -> Unit,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    toggleBookmarkFilter: () -> Unit,
-    refreshSessionList: () -> Unit,
-    updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
-    fetchSessionWithFilter: () -> Unit,
-    clearSelectedFilterList: () -> Unit,
+    onEvent: (SessionsIntentHandler) -> Unit,
 ) {
     val showMySessions =
         remember {
@@ -164,7 +157,9 @@ fun SessionsScreen(
             ) {
                 EventDaySelector(
                     selectedDate = selectedEventDate,
-                    updateSelectedDay = updateSelectedDay,
+                    updateSelectedDay = {
+                        onEvent(SessionsIntentHandler.UpdateSelectedDay(it))
+                    },
                     eventDates = sessionsUiState.eventDays,
                 )
                 CustomSwitch(checked = showMySessions.value, onCheckedChange = {
@@ -172,17 +167,19 @@ fun SessionsScreen(
                     isFilterActive.value = !it
                     if (showMySessions.value) {
                         sessionScreenSessionsState.value = SessionScreenState.MYSESSIONS
-                        toggleBookmarkFilter()
+                        onEvent(SessionsIntentHandler.ToggleBookmarkFilter)
                     } else {
                         sessionScreenSessionsState.value = SessionScreenState.ALL
-                        clearSelectedFilterList()
+                        onEvent(SessionsIntentHandler.ClearSelectedFilterList)
                     }
                 })
             }
             SessionsStateComponent(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
-                refreshSessionsList = refreshSessionList,
+                refreshSessionsList = {
+                    onEvent(SessionsIntentHandler.RefreshSessions)
+                },
                 retry = { },
                 isRefreshing = isRefreshing,
                 sessionScreenState = sessionScreenSessionsState.value,
@@ -207,9 +204,15 @@ fun SessionsScreen(
                             }
                         },
                         currentSelections = currentSelections,
-                        updateSelectedFilterOptionList = updateSelectedFilterOptionList,
-                        fetchSessionWithFilter = fetchSessionWithFilter,
-                        clearSelectedFilterList = clearSelectedFilterList,
+                        updateSelectedFilterOptionList = {
+                            onEvent(SessionsIntentHandler.UpdateSelectedFilterOptionList(it))
+                        },
+                        fetchSessionWithFilter = {
+                            onEvent(SessionsIntentHandler.FetchSessionWithFilter)
+                        },
+                        clearSelectedFilterList = {
+                            onEvent(SessionsIntentHandler.ClearSelectedFilterList)
+                        },
                     )
                 }
             }
@@ -226,13 +229,8 @@ fun SessionsScreenPreview() {
             selectedEventDate = EventDate("1", day = 1),
             isRefreshing = false,
             currentSelections = listOf(),
-            updateSelectedDay = {},
             navigateToSessionDetails = {},
-            toggleBookmarkFilter = {},
-            refreshSessionList = {},
-            updateSelectedFilterOptionList = {},
-            fetchSessionWithFilter = {},
-            clearSelectedFilterList = {},
+            onEvent = {},
         )
     }
 }
