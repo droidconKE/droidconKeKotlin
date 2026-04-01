@@ -22,6 +22,5 @@ import com.android254.presentation.models.SessionPresentationModel
 data class SessionsUiState(
     val sessions: List<SessionPresentationModel> = emptyList(),
     val eventDays: List<EventDate> = emptyList(),
-    val selectedEventDay: EventDate = EventDate("-1", 1),
     val sessionStatus: ResultStatus = ResultStatus.Loading,
 )

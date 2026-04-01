@@ -62,6 +62,7 @@ fun SessionsRoute(
     val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
     val currentSelections by sessionsViewModel.selectedFilterOptions.collectAsStateWithLifecycle()
+    val selectedEventDate by sessionsViewModel.selectedEventDay.collectAsStateWithLifecycle()
 
     val onEvent = sessionsViewModel::handleEvent
 
@@ -69,7 +70,7 @@ fun SessionsRoute(
         sessionsUiState = sessionsUiState,
         isRefreshing = isRefreshing,
         navigateToSessionDetails = navigateToSessionDetails,
-        selectedEventDate = sessionsUiState.selectedEventDay,
+        selectedEventDate = selectedEventDate,
         currentSelections = currentSelections,
         onEvent = onEvent
     )
