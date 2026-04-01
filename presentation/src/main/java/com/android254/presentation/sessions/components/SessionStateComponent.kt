@@ -44,6 +44,7 @@ import com.android254.presentation.common.results_status.isEmpty
 import com.android254.presentation.common.results_status.isError
 import com.android254.presentation.common.results_status.isLoading
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.atoms.ChaiBlue
@@ -59,11 +60,10 @@ import ke.droidcon.kotlin.presentation.R
 fun SessionsStateComponent(
     sessionsUiState: SessionsUiState,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit,
-    retry: () -> Unit,
     isRefreshing: Boolean,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
+    onEvent: (SessionsIntentHandler) -> Unit,
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
@@ -93,7 +93,12 @@ fun SessionsStateComponent(
             }
 
             is ResultStatus.Error -> {
-                SessionsErrorComponent(errorMessage = sessionsUiState.sessionStatus.errorMessage, retry = retry)
+                SessionsErrorComponent(
+                    errorMessage = sessionsUiState.sessionStatus.errorMessage,
+                    retry = {
+                        onEvent(SessionsIntentHandler.Retry)
+                    }
+                )
             }
 
             ResultStatus.Loading -> {
@@ -105,9 +110,9 @@ fun SessionsStateComponent(
                     swipeRefreshState = swipeRefreshState,
                     sessions = sessionsUiState.sessions,
                     navigateToSessionDetails = navigateToSessionDetails,
-                    refreshSessionsList = refreshSessionsList,
                     sessionScreenState = sessionScreenState,
                     isSessionLayoutList = isSessionLayoutList,
+                    onEvent = onEvent
                 )
             }
         }
@@ -118,12 +123,12 @@ fun SessionsStateComponent(
 fun SessionListComponent(
     swipeRefreshState: SwipeRefreshState,
     sessions: List<SessionPresentationModel>,
-    navigateToSessionDetails: (sessionId: String) -> Unit,
-    refreshSessionsList: () -> Unit,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
+    navigateToSessionDetails: (sessionId: String) -> Unit,
+    onEvent: (SessionsIntentHandler) -> Unit
 ) {
-    SwipeRefresh(state = swipeRefreshState, onRefresh = refreshSessionsList) {
+    SwipeRefresh(state = swipeRefreshState, onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) }) {
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
@@ -149,6 +154,9 @@ fun SessionListComponent(
                     SessionsCard(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
+                        onBookmark = {
+                            onEvent(SessionsIntentHandler.BookmarkSession(it))
+                        }
                     )
                     if (index != sessions.lastIndex) {
                         Box(
