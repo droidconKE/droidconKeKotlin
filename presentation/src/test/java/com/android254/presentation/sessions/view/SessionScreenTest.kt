@@ -31,10 +31,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
-/**
- * TODO - add more tests as we work with API data
- *
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SessionScreenTest {
@@ -55,15 +51,10 @@ class SessionScreenTest {
                     SessionsScreen(
                         sessionsUiState = SessionsUiState(eventDays = listOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
                         isRefreshing = true,
-                        selectedEventDate = EventDate("1", 1),
+                        selectedEventDate = EventDate("16", 1),
                         currentSelections = emptyList(),
-                        updateSelectedDay = {},
                         navigateToSessionDetails = {},
-                        toggleBookmarkFilter = {},
-                        refreshSessionList = {},
-                        updateSelectedFilterOptionList = {},
-                        fetchSessionWithFilter = {},
-                        clearSelectedFilterList = {},
+                        onEvent = {},
                     )
                 }
             }
@@ -83,15 +74,10 @@ class SessionScreenTest {
                     SessionsScreen(
                         sessionsUiState = SessionsUiState(),
                         isRefreshing = true,
-                        selectedEventDate = EventDate("1", 1),
+                        selectedEventDate = EventDate("16", 1),
                         currentSelections = emptyList(),
-                        updateSelectedDay = {},
                         navigateToSessionDetails = {},
-                        toggleBookmarkFilter = {},
-                        refreshSessionList = {},
-                        updateSelectedFilterOptionList = {},
-                        fetchSessionWithFilter = {},
-                        clearSelectedFilterList = {},
+                        onEvent = {},
                     )
                 }
             }

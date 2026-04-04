@@ -30,22 +30,20 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -77,7 +75,9 @@ constructor(
 
                 // Update selected day if not set
                 if (selectedEventDay.value == "-1" && sessionDays.isNotEmpty()) {
-                    _selectedEventDay.value = sessionDays.first()
+                    val currentDay = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
+                    val defaultSelectedDay = sessionDays.find { it.value == currentDay } ?: sessionDays.first()
+                    _selectedEventDay.value = defaultSelectedDay
                 }
 
                 val filteredSessions = filterSessions(
