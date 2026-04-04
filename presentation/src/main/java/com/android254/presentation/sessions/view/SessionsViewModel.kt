@@ -154,7 +154,6 @@ constructor(
     fun handleEvent(intent: SessionsIntentHandler) {
         when(intent){
             SessionsIntentHandler.ClearSelectedFilterList -> clearSelectedFilterList()
-            SessionsIntentHandler.FetchSessionWithFilter -> fetchSessionWithFilter()
             SessionsIntentHandler.RefreshSessions -> refreshSessionList()
             SessionsIntentHandler.ToggleBookmarkFilter -> toggleBookmarkFilter()
             SessionsIntentHandler.Retry -> {}
@@ -258,9 +257,6 @@ constructor(
                 }
             }
         }
-    }
-
-    fun fetchSessionWithFilter() {
     }
 
     fun clearSelectedFilterList() {
