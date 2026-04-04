@@ -123,7 +123,6 @@ fun SessionsFilterPanel(
     onDismiss: () -> Unit,
     currentSelections: List<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
-    fetchSessionWithFilter: () -> Unit,
     clearSelectedFilterList: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -209,7 +208,6 @@ fun SessionsFilterPanel(
 
             CButton(
                 onClick = {
-                    fetchSessionWithFilter()
                     onDismiss()
                 },
                 isEnabled = true,

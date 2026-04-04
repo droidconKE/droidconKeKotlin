@@ -205,9 +205,6 @@ fun SessionsScreen(
                         updateSelectedFilterOptionList = {
                             onEvent(SessionsIntentHandler.UpdateSelectedFilterOptionList(it))
                         },
-                        fetchSessionWithFilter = {
-                            onEvent(SessionsIntentHandler.FetchSessionWithFilter)
-                        },
                         clearSelectedFilterList = {
                             onEvent(SessionsIntentHandler.ClearSelectedFilterList)
                         },
