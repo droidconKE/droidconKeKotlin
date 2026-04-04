@@ -183,9 +183,9 @@ fun CurrentSessionPreview(
         eventDay = "1",
         speakers = listOf(
             SessionSpeakersPresentationModel(
-                name = "Greg Fawson",
+                name = "Lisa F Temecula",
                 speakerImage = "",
-                twitterHandle = "greg"
+                twitterHandle = "lisa"
             )
         )
     )
