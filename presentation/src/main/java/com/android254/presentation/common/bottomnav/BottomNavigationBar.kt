@@ -37,6 +37,7 @@ import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
+import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
@@ -45,6 +46,8 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 fun BottomNavigationBar(
     navController: NavigationController,
     navigationState: NavigationState,
+    currentSessions: List<SessionPresentationModel> = emptyList(),
+    upNextSessions: List<SessionPresentationModel> = emptyList()
 ) {
     BottomAppBar(
         modifier =

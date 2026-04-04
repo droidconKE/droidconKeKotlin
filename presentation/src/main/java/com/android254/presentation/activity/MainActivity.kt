@@ -28,19 +28,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
-import com.android254.domain.work.SyncDataWorkManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
@@ -52,48 +51,34 @@ import com.android254.presentation.common.navigation.rememberNavigationState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
-import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission(),
-        ) { isGranted: Boolean ->
-            Timber.i("Notification permission is :$isGranted")
-        }
-
-    @Inject
-    lateinit var remoteFeatureToggle: RemoteFeatureToggle
-
-    @Inject
-    lateinit var syncDataWorkManager: SyncDataWorkManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var keepSplashScreen = true
-        val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition {
-            keepSplashScreen
-        }
-        checkForNotificationPermission()
-        lifecycleScope.launch {
-            if (remoteFeatureToggle.syncNowIfEmpty()) {
-                syncDataWorkManager.startSync()
-            }
-            keepSplashScreen = false
-        }
+        installSplashScreen()
         setContent {
             ChaiDCKE22Theme {
                 MainScreen()
             }
         }
+        askNotificationPermission()
     }
 
-    private fun checkForNotificationPermission() {
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Timber.i("Permission Granted")
+            } else {
+                Timber.i("Permission Denied")
+            }
+        }
+
+    private fun askNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
                 PackageManager.PERMISSION_GRANTED
@@ -109,7 +94,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainViewModel = hiltViewModel()
+) {
     val navigationState =
         rememberNavigationState(
             startRoute = Screens.Home,
@@ -118,12 +105,22 @@ fun MainScreen() {
     val navController = remember { NavigationController(navigationState) }
     val authViewModel = hiltViewModel<AuthViewModel>()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+    val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
         mutableStateOf(false)
     }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController, navigationState) },
+        bottomBar = {
+            if (bottomBarState.value)
+                BottomNavigationBar(
+                    navController,
+                    navigationState,
+                    currentSessions = sessionsState.current,
+                    upNextSessions = sessionsState.upNext
+                )
+        },
         containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { padding ->
 
@@ -138,6 +135,7 @@ fun MainScreen() {
                     viewModel = { authViewModel },
                 )
             }
+
             Navigation(
                 navController = navController,
                 navigationState = navigationState,
@@ -146,12 +144,7 @@ fun MainScreen() {
                     showAuthDialog = !showAuthDialog
                 },
             )
+
         }
     }
-}
-
-@Preview
-@Composable
-fun MainScreenPreview() {
-    MainScreen()
 }

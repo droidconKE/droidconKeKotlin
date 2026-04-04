@@ -35,4 +35,8 @@ interface LocalSessionsDataSource {
     suspend fun getBookmarkStatus(id: String): Boolean
 
     suspend fun saveCachedSessions(sessions: List<SessionEntity>)
+
+    fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>>
+
+    fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>>
 }

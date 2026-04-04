@@ -47,6 +47,7 @@ fun Navigation(
             NavDirection.LEFT, NavDirection.RIGHT -> horizontalSlideIn(reverse = true)
             else -> zoomOutTransition()
         }
+
     NavDisplay(
         modifier = modifier.testTag("navigation_display"),
         entries = navigationState.toEntries(entryProvider),
