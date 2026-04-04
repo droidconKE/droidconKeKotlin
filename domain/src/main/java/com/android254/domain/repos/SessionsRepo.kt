@@ -34,4 +34,8 @@ interface SessionsRepo {
     suspend fun unBookmarkSession(id: String)
 
     suspend fun syncSessions()
+
+    fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>>
+
+    fun fetchUpNextSessions(currentTime: Long): Flow<List<Session>>
 }

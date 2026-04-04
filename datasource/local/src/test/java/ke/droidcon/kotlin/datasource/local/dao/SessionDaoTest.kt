@@ -46,7 +46,7 @@ class SessionDaoTest {
                 context,
                 Database::class.java,
             )
-                .allowMainThreadQueries() // TODO Please delete me
+                .allowMainThreadQueries()
                 .build()
         sessionDao = db.sessionDao()
     }
@@ -60,30 +60,74 @@ class SessionDaoTest {
     @Test
     fun `test sessionDao fetches all sessions`() =
         runTest {
-            val session =
-                SessionEntity(
-                    id = 0,
-                    title = "Retrofiti: A Pragmatic Approach to using Retrofit in Android",
-                    description = "This session is codelab covering some of the best practices and recommended approaches to building an application using the retrofit library.",
-                    slug = "retrofiti-a-pragmatic-approach-to-using-retrofit-in-android-1583941090",
-                    sessionFormat = "Codelab / Workshop",
-                    sessionLevel = "Intermediate",
-                    speakers = "",
-                    rooms = "",
-                    startTime = "",
-                    sessionImage = "",
-                    startDateTime = "",
-                    isServiceSession = false,
-                    isKeynote = false,
-                    endTime = "",
-                    isBookmarked = true,
-                    endDateTime = "",
-                    sessionImageUrl = "",
-                    remote_id = "",
-                    startTimestamp = 0L,
-                )
+            val session = createSession(id = 1, title = "Title", startTimestamp = 0L)
             sessionDao.insert(session)
             val result = sessionDao.fetchSessions().first()
-            assertThat(session.title, `is`(result[0].title))
+            assertThat(result.size, `is`(1))
+            assertThat(result[0].title, `is`("Title"))
         }
+
+    @Test
+    fun `test fetchCurrentSessions returns sessions happening now`() = runTest {
+        val currentTime = 1000L
+        val currentSession = createSession(id = 1, title = "Current", startTimestamp = 500L) // Started before, still on
+        val futureSession = createSession(id = 2, title = "Future", startTimestamp = 5000L)
+        
+        sessionDao.insert(currentSession)
+        sessionDao.insert(futureSession)
+        
+        val result = sessionDao.fetchCurrentSessions(currentTime).first()
+        assertThat(result.size, `is`(1))
+        assertThat(result[0].title, `is`("Current"))
+    }
+
+    @Test
+    fun `test fetchUpNextSessions returns future sessions`() = runTest {
+        val currentTime = 1000L
+        val pastSession = createSession(id = 1, title = "Past", startTimestamp = 500L)
+        val nextSession1 = createSession(id = 2, title = "Next 1", startTimestamp = 2000L)
+        val nextSession2 = createSession(id = 3, title = "Next 2", startTimestamp = 3000L)
+        
+        sessionDao.insert(pastSession)
+        sessionDao.insert(nextSession1)
+        sessionDao.insert(nextSession2)
+        
+        val result = sessionDao.fetchUpNextSessions(currentTime).first()
+        assertThat(result.size, `is`(2))
+        assertThat(result[0].title, `is`("Next 1"))
+        assertThat(result[1].title, `is`("Next 2"))
+    }
+
+    @Test
+    fun `test fetchUpNextSessions limits to 5 sessions`() = runTest {
+        val currentTime = 0L
+        (1..10).forEach { i ->
+            sessionDao.insert(createSession(id = i, title = "Session $i", startTimestamp = i * 1000L))
+        }
+        
+        val result = sessionDao.fetchUpNextSessions(currentTime).first()
+        assertThat(result.size, `is`(5))
+    }
+
+    private fun createSession(id: Int, title: String, startTimestamp: Long) = SessionEntity(
+        id = id,
+        remote_id = id.toString(),
+        description = "Description",
+        sessionFormat = "Format",
+        sessionLevel = "Level",
+        slug = "slug-$id",
+        title = title,
+        endDateTime = "",
+        endTime = "",
+        isBookmarked = false,
+        isKeynote = false,
+        isServiceSession = false,
+        sessionImage = "",
+        startDateTime = "",
+        startTime = "",
+        rooms = "",
+        speakers = "",
+        startTimestamp = startTimestamp,
+        sessionImageUrl = ""
+    )
 }
