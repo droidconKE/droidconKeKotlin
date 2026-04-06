@@ -173,6 +173,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/donald-okara">
+            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
+            <br />
+            <sub><b>Don Okara</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
@@ -192,27 +199,20 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Jane Waitara</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/yveskalume">
             <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
             <br />
             <sub><b>Yves Kalume</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
             <sub><b>Harun Wangereka</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/donald-okara">
-            <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
-            <br />
-            <sub><b>Don Okara</b></sub>
         </a>
     </td>
     <td align="center">
