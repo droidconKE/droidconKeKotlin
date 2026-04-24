@@ -132,7 +132,7 @@ fun CurrentSessionComponent(
                         bodyText = session.title,
                         textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                         modifier = Modifier.weight(1f),
-                        maxLines = 2
+                        maxLines = 1
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
