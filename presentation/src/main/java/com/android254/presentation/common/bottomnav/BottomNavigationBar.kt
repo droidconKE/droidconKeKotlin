@@ -68,7 +68,7 @@ fun BottomNavigationBar(
         ) {
             items(currentSessions) { session ->
                 CurrentSessionComponent(
-                    modifier = Modifier.width(350.dp),
+                    modifier = Modifier.width(400.dp),
                     session = session,
                     isNow = true,
                 ){ id ->
@@ -77,7 +77,7 @@ fun BottomNavigationBar(
             }
             items(upNextSessions) { session ->
                 CurrentSessionComponent(
-                    modifier = Modifier.width(300.dp),
+                    modifier = Modifier.width(400.dp),
                     session = session,
                     isNow = false,
                 ){ id ->
