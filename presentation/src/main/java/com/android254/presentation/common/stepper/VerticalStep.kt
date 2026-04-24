@@ -7,5 +7,6 @@ data class VerticalStep<T>(
     val id: Any,
     val color: Color,
     val icon: ImageVector,
+    val glowing: Boolean = false,
     val data: T
 )

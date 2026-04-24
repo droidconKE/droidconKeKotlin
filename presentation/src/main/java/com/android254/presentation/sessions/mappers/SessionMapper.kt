@@ -21,6 +21,8 @@ import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -28,11 +30,20 @@ import java.util.Locale
 fun Session.toPresentationModel(): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val endTime = getTimePeriod(this.endDateTime)
+
+    val now = Clock.System.now()
+
+    val sessionStart = Instant.parse(this.startDateTime)
+    val sessionEnd = Instant.parse(this.endDateTime)
+
+    val isNow = now in sessionStart..sessionEnd
+
     return SessionPresentationModel(
         id = this.id,
         title = this.title,
         description = this.description,
         venue = this.rooms,
+        isNow = isNow,
         startTime = startTime.time,
         endTime = "${endTime.time} ${endTime.period}",
         amOrPm = startTime.period,

@@ -15,7 +15,14 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -36,11 +43,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -82,10 +93,15 @@ fun SessionsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            SessionTimeComponent(
-                session.startTime,
-                session.amOrPm,
-            )
+            if(session.isNow){
+                NowIndicator(session.color)
+            } else {
+                SessionTimeComponent(
+                    session.startTime,
+                    session.amOrPm,
+                )
+            }
+
             Spacer(modifier = Modifier.width(24.dp))
             SessionDetails(session = session, onBookMark = onBookmark)
         }
@@ -111,6 +127,51 @@ fun RowScope.SessionTimeComponent(
         ChaiBodyMediumBold(
             bodyText = sessionAmOrPm,
             textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.NowIndicator(
+    accentColor: Color,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .clip(CircleShape)
+                .background(accentColor)
+                .then(
+                    Modifier // pulsing dot
+                )
+        ) {
+            val transition = rememberInfiniteTransition(label = "pulse")
+
+            val alpha by transition.animateFloat(
+                initialValue = 0.6f,
+                targetValue = 0f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(900),
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "alpha"
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer { this.alpha = alpha }
+                    .clip(CircleShape)
+                    .background(accentColor)
+            )
+        }
+
+        ChaiBodyLargeBold(
+            bodyText = "Now",
+            textColor = accentColor,
         )
     }
 }

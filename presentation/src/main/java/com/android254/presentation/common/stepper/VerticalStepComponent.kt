@@ -1,12 +1,20 @@
 package com.android254.presentation.common.stepper
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -19,11 +27,14 @@ import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -52,8 +63,8 @@ fun <T> LazyListScope.verticalSteps(
 @Composable
 fun <T> VerticalStepItem(
     step: VerticalStep<T>,
-    nextStepColor: Color? = null,
     modifier: Modifier = Modifier,
+    nextStepColor: Color? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false,
     bottomSpacing: Dp = 0.dp,
@@ -110,9 +121,10 @@ fun <T> VerticalStepItem(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 IconBox(
-                    icon = step.icon ?: Icons.Outlined.Circle,
+                    icon = step.icon,
                     accentColor = currentColor,
-                    sizeInt = 30,
+                    sizeInt = 48,
+                    glowing = step.glowing,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -165,19 +177,65 @@ private fun IconBox(
     icon: ImageVector,
     accentColor: Color,
     sizeInt: Int,
+    glowing: Boolean = false,
 ) {
     Box(
         modifier = modifier
             .size(sizeInt.dp)
-            .clip(CircleShape)
-            .background(accentColor.copy(0.2f)),
+            .aspectRatio(1f), // prevents distortion in weird constraints
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = accentColor,
-            modifier = Modifier.size((sizeInt / 2).dp),
-        )
+        // glow
+        if (glowing) {
+            val transition = rememberInfiniteTransition(label = "ping")
+
+            val scale by transition.animateFloat(
+                initialValue = 1f,
+                targetValue = 1.8f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1400),
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "scale"
+            )
+
+            val alpha by transition.animateFloat(
+                initialValue = 0.5f,
+                targetValue = 0f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1400),
+                    repeatMode = RepeatMode.Restart
+                ),
+                label = "alpha"
+            )
+
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        this.alpha = alpha
+                    }
+                    .clip(CircleShape)
+                    .background(accentColor)
+            )
+        }
+
+        // core circle
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(CircleShape)
+                .background(accentColor),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier.size((sizeInt / 2).dp),
+            )
+        }
     }
 }
