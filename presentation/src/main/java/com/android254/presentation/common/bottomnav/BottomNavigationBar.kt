@@ -19,11 +19,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
@@ -38,6 +44,7 @@ import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.sessions.components.CurrentSessionComponent
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
@@ -49,25 +56,55 @@ fun BottomNavigationBar(
     currentSessions: List<SessionPresentationModel> = emptyList(),
     upNextSessions: List<SessionPresentationModel> = emptyList()
 ) {
-    BottomAppBar(
-        modifier =
-            Modifier
-                .background(MaterialTheme.chaiColorsPalette.bottomNavBorderColor)
-                .padding(top = 1.dp),
-        containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-    ) {
-        val topLevelRoute = navigationState.topLevelRoute
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
+    ){
+        LazyRow(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(currentSessions) { session ->
+                CurrentSessionComponent(
+                    modifier = Modifier.width(350.dp),
+                    session = session,
+                    isNow = true,
+                ){ id ->
+                    navController.navigate(Screens.SessionDetails(id))
+                }
+            }
+            items(upNextSessions) { session ->
+                CurrentSessionComponent(
+                    modifier = Modifier.width(300.dp),
+                    session = session,
+                    isNow = false,
+                ){ id ->
+                    navController.navigate(Screens.SessionDetails(id))
+                }
+            }
+        }
+        BottomAppBar(
+            modifier =
+                Modifier
+                    .background(MaterialTheme.chaiColorsPalette.bottomNavBorderColor)
+                    .padding(top = 1.dp),
+            containerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
+        ) {
+            val topLevelRoute = navigationState.topLevelRoute
 
-        bottomNavigationSet.forEach { destination ->
-            val selected = destination == topLevelRoute
+            bottomNavigationSet.forEach { destination ->
+                val selected = destination == topLevelRoute
 
-            BottomNavItem(
-                isSelected = selected,
-                destination = destination,
-                onClick = {
-                    navController.navigate(destination)
-                },
-            )
+                BottomNavItem(
+                    isSelected = selected,
+                    destination = destination,
+                    onClick = {
+                        navController.navigate(destination)
+                    },
+                )
+            }
         }
     }
 }
@@ -118,7 +155,7 @@ fun RowScope.BottomNavItem(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun BottomNavigationBarPreview() {
     ChaiDCKE22Theme {
@@ -129,6 +166,15 @@ fun BottomNavigationBarPreview() {
             )
         val navController = remember { NavigationController(navigationState) }
 
-        BottomNavigationBar(navController, navigationState)
+        Surface(
+            color = MaterialTheme.chaiColorsPalette.background,
+        ){
+            BottomNavigationBar(
+                navController = navController,
+                navigationState = navigationState,
+                currentSessions = fakeSessions,
+                upNextSessions = fakeSessions
+            )
+        }
     }
 }
