@@ -66,6 +66,7 @@ fun CurrentSessionComponent(
     session: SessionPresentationModel,
     isNow: Boolean,
     modifier: Modifier = Modifier,
+    onClicked: (String) -> Unit = {}
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")
     val alpha by infiniteTransition.animateFloat(
@@ -83,6 +84,7 @@ fun CurrentSessionComponent(
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(12.dp),
+        onClick = { onClicked(session.id) },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.chaiColorsPalette.cardsBackground
         )
@@ -125,12 +127,15 @@ fun CurrentSessionComponent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ){
                     ChaiBodyLargeBold(
                         bodyText = session.title,
-                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor
+                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 2
                     )
+
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     // Status Badge
                     Box(
@@ -150,7 +155,8 @@ fun CurrentSessionComponent(
                 val speakerInfo = session.speakers.joinToString(", ") { it.name }
                 ChaiBodyMedium(
                     bodyText = "$speakerInfo • ${session.venue}",
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    maxLines = 1
                 )
             }
         }
@@ -168,7 +174,7 @@ fun CurrentSessionPreview(
 ) {
     val session = SessionPresentationModel(
         id = "1",
-        title = "Keynote",
+        title = "Modern Android Development",
         description = "Keynote description",
         venue = "Main Hall",
         startTime = "09:00",

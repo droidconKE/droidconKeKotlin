@@ -296,6 +296,8 @@ fun ChaiBodyLargeBold(
     modifier: Modifier = Modifier,
     bodyText: String,
     textColor: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
 ) {
     Text(
         modifier = modifier,
@@ -308,6 +310,8 @@ fun ChaiBodyLargeBold(
                 fontFamily = MontserratSemiBold,
                 lineHeight = 22.sp,
             ),
+        maxLines = maxLines,
+        overflow = overflow,
         textAlign = TextAlign.Start,
     )
 }
