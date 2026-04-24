@@ -89,10 +89,18 @@ fun <T> VerticalStepItem(
                     .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                val topWeight = when {
+                    isFirst -> 0.2f
+                    isLast -> 0.8f
+                    else -> 0.5f
+                }
+
+                val bottomWeight = 1f - topWeight
+
                 // Top connector: Solid color of CURRENT step (matches previous bridge)
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(topWeight)
                         .width(2.dp)
                         .then(
                             if (isFirst) Modifier else Modifier.background(currentConnectorColor),
@@ -112,7 +120,7 @@ fun <T> VerticalStepItem(
                 // Bottom connector: Gradient from CURRENT to NEXT
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(bottomWeight)
                         .width(2.dp)
                         .then(
                             if (isLast) Modifier else Modifier.background(lineBrush),

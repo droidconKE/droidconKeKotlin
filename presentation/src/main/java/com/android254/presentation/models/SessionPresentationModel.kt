@@ -18,6 +18,7 @@ package com.android254.presentation.models
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Build
 import androidx.compose.material.icons.outlined.CoPresent
+import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.MicExternalOn
 import com.android254.presentation.common.stepper.VerticalStep
 import com.droidconke.chai.atoms.ChaiBlue
@@ -49,19 +50,23 @@ data class SessionPresentationModel(
         "Sapphire" -> ChaiTeal
         else -> ChaiBlue
     }
-    val icon = when (format) {
-        "Workshop" -> Icons.Outlined.Build
-        "Lightning talk" -> Icons.Outlined.MicExternalOn
-        "Session" -> Icons.Outlined.CoPresent
-        else -> Icons.Outlined.CoPresent
-    }
+
 
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
     val isWorkshop = format.contains("Workshop", ignoreCase = true)
     val isTalk = format.contains("Talk", ignoreCase = true)
+    val isSession = format.contains("Session", ignoreCase = true)
 
-    val toVerticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
+    val icon = when  {
+        isWorkshop -> Icons.Outlined.Build
+        isKeynote -> Icons.Outlined.MicExternalOn
+        isTalk || isSession -> Icons.Outlined.CoPresent
+        isServiceSession -> Icons.Outlined.Coffee
+        else -> Icons.Outlined.CoPresent
+    }
+
+    val verticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
         id = this.id,
         color = color,
         icon = icon,

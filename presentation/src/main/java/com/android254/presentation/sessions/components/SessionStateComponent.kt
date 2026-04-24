@@ -30,23 +30,28 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.SessionsCard
+import com.android254.presentation.common.fake_data.fakeSessions
 import com.android254.presentation.common.results_status.ResultStatus
 import com.android254.presentation.common.results_status.emptyMessage
 import com.android254.presentation.common.results_status.errorMessage
 import com.android254.presentation.common.results_status.isEmpty
 import com.android254.presentation.common.results_status.isError
 import com.android254.presentation.common.results_status.isLoading
+import com.android254.presentation.common.stepper.verticalSteps
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
+import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -67,7 +72,7 @@ fun SessionsStateComponent(
 ) {
     val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
 
-    AnimatedContent(sessionsUiState.sessionStatus){ status ->
+    AnimatedContent(sessionsUiState.sessionStatus) { status ->
         when (status) {
             is ResultStatus.Empty -> {
                 Column(
@@ -145,12 +150,13 @@ fun SessionListComponent(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
-            itemsIndexed(
-                items = sessions,
-                key = { _, session -> session.remoteId },
-            ) { index, session ->
-
-                if (isSessionLayoutList) {
+            if (isSessionLayoutList) {
+                verticalSteps(
+                    spacing = 16.dp,
+                    items = sessions.map { session ->
+                        session.verticalStep
+                    }
+                ) { session ->
                     SessionsCard(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
@@ -158,22 +164,12 @@ fun SessionListComponent(
                             onEvent(SessionsIntentHandler.BookmarkSession(it))
                         }
                     )
-                    if (index != sessions.lastIndex) {
-                        Box(
-                            Modifier.padding(
-                                start = 40.dp,
-                                end = 0.dp,
-                                top = 10.dp,
-                                bottom = 10.dp,
-                            ),
-                        ) {
-                            Image(
-                                painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                                contentDescription = stringResource(R.string.spacer_icon_descript),
-                            )
-                        }
-                    }
-                } else {
+                }
+            } else {
+                itemsIndexed(
+                    items = sessions,
+                    key = { _, session -> session.id }
+                ) { _, session ->
                     SessionsCardWithBannerImage(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
@@ -181,7 +177,29 @@ fun SessionListComponent(
 
                     Spacer(Modifier.height(16.dp))
                 }
+
             }
+
+
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun SessionListPreview() {
+    ChaiDCKE22Theme {
+        Surface(
+            color = MaterialTheme.chaiColorsPalette.background,
+        ) {
+            SessionListComponent(
+                swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false),
+                sessions = fakeSessions,
+                navigateToSessionDetails = {},
+                sessionScreenState = SessionScreenState.ALL,
+                isSessionLayoutList = true,
+                onEvent = {}
+            )
         }
     }
 }
