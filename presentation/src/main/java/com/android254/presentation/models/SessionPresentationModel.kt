@@ -15,6 +15,15 @@
  */
 package com.android254.presentation.models
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.CoPresent
+import androidx.compose.material.icons.outlined.MicExternalOn
+import com.android254.presentation.common.stepper.VerticalStep
+import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.atoms.ChaiRed
+import com.droidconke.chai.atoms.ChaiTeal
+
 data class SessionPresentationModel(
     val id: String,
     val title: String,
@@ -33,7 +42,32 @@ data class SessionPresentationModel(
     val sessionImage: String = "",
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
-)
+) {
+    val color = when (venue) {
+        "Sapphire,Opal" -> ChaiBlue
+        "Opal" -> ChaiRed
+        "Sapphire" -> ChaiTeal
+        else -> ChaiBlue
+    }
+    val icon = when (format) {
+        "Workshop" -> Icons.Outlined.Build
+        "Lightning talk" -> Icons.Outlined.MicExternalOn
+        "Session" -> Icons.Outlined.CoPresent
+        else -> Icons.Outlined.CoPresent
+    }
+
+    val isServiceSession = isService && speakers.isEmpty()
+    val isKeynote = format.contains("Keynote", ignoreCase = true)
+    val isWorkshop = format.contains("Workshop", ignoreCase = true)
+    val isTalk = format.contains("Talk", ignoreCase = true)
+
+    val toVerticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
+        id = this.id,
+        color = color,
+        icon = icon,
+        data = this
+    )
+}
 
 data class SessionSpeakersPresentationModel(
     val name: String,
