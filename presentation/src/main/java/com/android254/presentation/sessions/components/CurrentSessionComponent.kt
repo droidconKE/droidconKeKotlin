@@ -112,7 +112,7 @@ fun CurrentSessionComponent(
                             .size(14.dp)
                             .align(Alignment.BottomStart)
                             .offset(x = 2.dp, y = (-2).dp)
-                            .background(Color(0xFFC15533).copy(alpha), CircleShape)
+                            .background(session.color.copy(alpha), CircleShape)
                             .border(2.dp, MaterialTheme.chaiColorsPalette.cardsBackground, CircleShape)
                     )
                 }
@@ -142,13 +142,13 @@ fun CurrentSessionComponent(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
                             .background(
-                                Color(0xFFC15533).copy(alpha = if (isNow) 0.15f * alpha else 0.15f)
+                                session.color.copy(alpha = if (isNow) 0.15f * alpha else 0.15f)
                             )
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         ChaiBodySmallBold(
                             bodyText = if (isNow) "NOW" else "UP NEXT",
-                            textColor = Color(0xFFC15533)
+                            textColor = session.color
                         )
                     }
                 }

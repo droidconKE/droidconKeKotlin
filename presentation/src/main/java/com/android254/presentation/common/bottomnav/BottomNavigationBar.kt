@@ -35,9 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.fake_data.fakeSessions
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
@@ -172,8 +172,8 @@ fun BottomNavigationBarPreview() {
             BottomNavigationBar(
                 navController = navController,
                 navigationState = navigationState,
-                currentSessions = fakeSessions,
-                upNextSessions = fakeSessions
+                currentSessions = fakeSessions.take(2),
+                upNextSessions = fakeSessions.take(2)
             )
         }
     }
