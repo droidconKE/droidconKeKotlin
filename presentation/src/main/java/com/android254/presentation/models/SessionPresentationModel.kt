@@ -16,10 +16,10 @@
 package com.android254.presentation.models
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.CoPresent
-import androidx.compose.material.icons.outlined.Coffee
-import androidx.compose.material.icons.outlined.MicExternalOn
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.CoPresent
+import androidx.compose.material.icons.filled.Coffee
+import androidx.compose.material.icons.filled.MicExternalOn
 import com.android254.presentation.common.stepper.VerticalStep
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiRed
@@ -40,17 +40,16 @@ data class SessionPresentationModel(
     val endDate: String,
     val remoteId: String,
     val isService: Boolean = false,
+    val isNow: Boolean = false,
     val sessionImage: String = "",
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
 ) {
     val color = when (venue) {
-        "Sapphire,Opal" -> ChaiBlue
         "Opal" -> ChaiRed
         "Sapphire" -> ChaiTeal
         else -> ChaiBlue
     }
-
 
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
@@ -59,16 +58,17 @@ data class SessionPresentationModel(
     val isSession = format.contains("Session", ignoreCase = true)
 
     val icon = when  {
-        isWorkshop -> Icons.Outlined.Build
-        isKeynote -> Icons.Outlined.MicExternalOn
-        isTalk || isSession -> Icons.Outlined.CoPresent
-        isServiceSession -> Icons.Outlined.Coffee
-        else -> Icons.Outlined.CoPresent
+        isWorkshop -> Icons.Default.Build
+        isKeynote -> Icons.Default.MicExternalOn
+        isTalk || isSession -> Icons.Default.CoPresent
+        isServiceSession -> Icons.Default.Coffee
+        else -> Icons.Default.CoPresent
     }
 
     val verticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
         id = this.id,
         color = color,
+        glowing = isNow,
         icon = icon,
         data = this
     )

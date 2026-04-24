@@ -28,10 +28,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -133,8 +135,18 @@ fun SessionListComponent(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit
 ) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(sessions) {
+        val index = sessions.indexOfFirst { it.isNow }
+        if (index != -1) {
+            listState.animateScrollToItem(index + 1) // +1 for the header item
+        }
+    }
+
     SwipeRefresh(state = swipeRefreshState, onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) }) {
         LazyColumn(
+            state = listState,
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item {

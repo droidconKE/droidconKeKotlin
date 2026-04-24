@@ -92,6 +92,7 @@ val fakeSessions = listOf(
         endTime = "12:15",
         amOrPm = "AM",
         isStarred = true,
+        isNow = true,
         format = "Session",
         level = "Advanced",
         startDate = "2026-08-14",
