@@ -33,8 +33,8 @@ fun Session.toPresentationModel(): SessionPresentationModel {
 
     val now = Clock.System.now()
 
-    val sessionStart = Instant.parse(this.startDateTime)
-    val sessionEnd = Instant.parse(this.endDateTime)
+    val sessionStart = this.startDateTime.toInstant()
+    val sessionEnd = this.endDateTime.toInstant()
 
     val isNow = now in sessionStart..sessionEnd
 
@@ -104,6 +104,12 @@ fun getTimePeriod(time: String): FormattedTime {
         time = SimpleDateFormat("hh:mm", Locale.getDefault()).format(date),
         period = SimpleDateFormat("a", Locale.getDefault()).format(date),
     )
+}
+
+private fun String.toInstant(): Instant {
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val date = format.parse(this) ?: return Instant.fromEpochMilliseconds(0)
+    return Instant.fromEpochMilliseconds(date.time)
 }
 
 data class FormattedTime(
