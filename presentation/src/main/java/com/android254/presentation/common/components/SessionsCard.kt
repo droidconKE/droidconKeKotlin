@@ -217,7 +217,7 @@ private fun RowScope.NowIndicator(
         }
 
         ChaiBodyLargeBold(
-            bodyText = "Now",
+            bodyText = stringResource(R.string.now),
             textColor = accentColor,
         )
     }

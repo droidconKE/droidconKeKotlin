@@ -83,6 +83,10 @@
     <string name="Okay">Okay</string>
     <string name="Great">Great</string>
     <string name="feed_image">Feed Image</string>
+    <string name="all_sessions">All Sessions</string>
+    <string name="my_sessions">My sessions</string>
+    <string name="now">Now</string>
+    <string name="up_next">Up Next</string>
 
 
 </resources>

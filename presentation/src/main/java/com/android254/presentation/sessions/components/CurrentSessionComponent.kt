@@ -47,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -60,6 +62,8 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
+import ke.droidcon.kotlin.presentation.R
+import java.util.Locale
 
 @Composable
 fun CurrentSessionComponent(
@@ -147,7 +151,9 @@ fun CurrentSessionComponent(
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                     ) {
                         ChaiBodySmallBold(
-                            bodyText = if (isNow) "NOW" else "UP NEXT",
+                            bodyText =
+                                if (isNow) stringResource(R.string.now).capitalize(Locale.ROOT)
+                                else stringResource(R.string.up_next).capitalize(Locale.ROOT),
                             textColor = session.color
                         )
                     }
