@@ -15,37 +15,50 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CoPresent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import ke.droidcon.kotlin.presentation.R
+import com.android254.presentation.common.stepper.Intensity
+import com.android254.presentation.common.stepper.VerticalStep
+import com.android254.presentation.common.stepper.verticalSteps
+import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.atoms.ChaiBlue
+import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun SessionLoadingComponent() {
-    Column {
-        repeat(3) { index ->
+    val data = List(3) { index ->
+        VerticalStep(
+            id = index,
+            color = ChaiBlue,
+            icon = Icons.Default.CoPresent,
+            intensity = Intensity.Low,
+            data = Unit,
+        )
+    }
+    LazyColumn {
+        verticalSteps(
+            items = data,
+            spacing = 16.dp,
+        ) {
             SessionsLoadingCard()
-            if (index != 2) {
-                Box(
-                    Modifier.padding(
-                        start = 40.dp,
-                        end = 0.dp,
-                        top = 10.dp,
-                        bottom = 10.dp,
-                    ),
-                ) {
-                    Image(
-                        painter = painterResource(id = if (index % 2 == 0) R.drawable.ic_green_session_card_spacer else R.drawable.ic_orange_session_card_spacer),
-                        contentDescription = stringResource(R.string.spacer_icon_descript),
-                    )
-                }
-            }
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun SessionLoadingPreview(){
+    ChaiDCKE22Theme {
+        Surface(
+            color = MaterialTheme.chaiColorsPalette.background
+        ) {
+            SessionLoadingComponent()
         }
     }
 }
