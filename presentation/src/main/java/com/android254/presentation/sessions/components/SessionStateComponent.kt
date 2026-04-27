@@ -156,8 +156,8 @@ fun SessionListComponent(
                 ChaiSubTitle(
                     titleText =
                         when (sessionScreenState) {
-                            SessionScreenState.ALL -> "All Sessions"
-                            SessionScreenState.MYSESSIONS -> "My sessions"
+                            SessionScreenState.ALL -> stringResource(R.string.all_sessions)
+                            SessionScreenState.MYSESSIONS -> stringResource(R.string.my_sessions)
                         },
                     titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 )
