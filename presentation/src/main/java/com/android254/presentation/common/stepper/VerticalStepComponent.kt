@@ -45,10 +45,9 @@ fun <T> LazyListScope.verticalSteps(
         items = items,
         key = { _, item -> item.id },
     ) { index, step ->
-        val nextStep = items.getOrNull(index + 1)
         VerticalStepItem(
             step = step,
-            nextStepColor = nextStep?.color,
+            nextStep = items.getOrNull(index + 1),
             isFirst = index == 0,
             isLast = index == items.lastIndex,
             bottomSpacing = if (index == items.lastIndex) 0.dp else spacing,
@@ -61,24 +60,26 @@ fun <T> LazyListScope.verticalSteps(
 fun <T> VerticalStepItem(
     step: VerticalStep<T>,
     modifier: Modifier = Modifier,
-    nextStepColor: Color? = null,
+    nextStep: VerticalStep<*>? = null,
     isFirst: Boolean = false,
     isLast: Boolean = false,
     bottomSpacing: Dp = 0.dp,
     content: @Composable (T) -> Unit,
 ) {
     val primary = MaterialTheme.colorScheme.primary
+    val outline = MaterialTheme.colorScheme.outline
     val currentColor =
         if (step.intensity == Intensity.Low) {
-            MaterialTheme.colorScheme.outline
+            outline
         } else {
-            step.color ?: primary
+            step.color
         }
     val nextColor =
-        if (step.intensity == Intensity.Low) {
-            MaterialTheme.colorScheme.outline
-        } else {
-            nextStepColor ?: (if (isLast) currentColor else primary)
+        when {
+            isLast -> currentColor
+            nextStep == null -> primary
+            nextStep.intensity == Intensity.Low -> outline
+            else -> nextStep.color
         }
 
     val connectorAlpha = 0.4f
@@ -207,13 +208,6 @@ private fun IconBox(
             Intensity.Low -> Color.Transparent
         }
 
-    val borderColor =
-        when (intensity) {
-            Intensity.High -> Color.Transparent
-            Intensity.Medium -> accentColor
-            Intensity.Low -> colorScheme.outline
-        }
-
     val iconTint =
         when (intensity) {
             Intensity.High -> Color.White
@@ -226,6 +220,13 @@ private fun IconBox(
             Intensity.High -> 1f
             Intensity.Medium -> 1f
             Intensity.Low -> 0.6f
+        }
+
+    val borderColor =
+        when (intensity) {
+            Intensity.High -> Color.Transparent
+            Intensity.Medium -> accentColor
+            Intensity.Low -> colorScheme.outline.copy(iconAlpha)
         }
 
     val shouldGlow = intensity == Intensity.High
