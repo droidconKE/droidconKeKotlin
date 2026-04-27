@@ -7,6 +7,10 @@ data class VerticalStep<T>(
     val id: Any,
     val color: Color,
     val icon: ImageVector,
-    val glowing: Boolean = false,
+    val intensity: Intensity = Intensity.Medium,
     val data: T
 )
+
+enum class Intensity{
+    Low, Medium, High
+}

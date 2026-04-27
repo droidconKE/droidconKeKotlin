@@ -17,6 +17,7 @@ package com.android254.presentation.common.fake_data
 
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
+import com.android254.presentation.models.SessionStatus
 
 val fakeSessions = listOf(
     SessionPresentationModel(
@@ -30,6 +31,7 @@ val fakeSessions = listOf(
         isStarred = true,
         format = "Keynote",
         level = "All Levels",
+        sessionStatus = SessionStatus.Past,
         startDate = "2026-08-14",
         endDate = "2026-08-14",
         remoteId = "remote_1",
@@ -51,6 +53,7 @@ val fakeSessions = listOf(
         endTime = "11:00",
         amOrPm = "AM",
         isStarred = false,
+        sessionStatus = SessionStatus.Past,
         format = "Talk",
         level = "Intermediate",
         startDate = "2026-08-14",
@@ -74,6 +77,7 @@ val fakeSessions = listOf(
         endTime = "11:30",
         amOrPm = "AM",
         isStarred = false,
+        sessionStatus = SessionStatus.Past,
         format = "Break",
         level = "",
         startDate = "2026-08-14",
@@ -92,7 +96,7 @@ val fakeSessions = listOf(
         endTime = "12:15",
         amOrPm = "AM",
         isStarred = true,
-        isNow = true,
+        sessionStatus = SessionStatus.Ongoing,
         format = "Session",
         level = "Advanced",
         startDate = "2026-08-14",
@@ -118,6 +122,7 @@ val fakeSessions = listOf(
         isStarred = false,
         format = "Break",
         level = "",
+        sessionStatus = SessionStatus.Ongoing,
         startDate = "2026-08-14",
         endDate = "2026-08-14",
         remoteId = "remote_5",

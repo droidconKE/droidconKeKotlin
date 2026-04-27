@@ -50,6 +50,7 @@ import com.android254.presentation.common.results_status.isError
 import com.android254.presentation.common.results_status.isLoading
 import com.android254.presentation.common.stepper.verticalSteps
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionStatus
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
@@ -138,7 +139,7 @@ fun SessionListComponent(
     val listState = rememberLazyListState()
 
     LaunchedEffect(sessions) {
-        val index = sessions.indexOfFirst { it.isNow }
+        val index = sessions.indexOfFirst { it.sessionStatus == SessionStatus.Ongoing }
         if (index != -1) {
             listState.animateScrollToItem(index + 1) // +1 for the header item
         }

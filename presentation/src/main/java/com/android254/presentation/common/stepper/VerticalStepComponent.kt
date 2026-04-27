@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -71,8 +72,12 @@ fun <T> VerticalStepItem(
     content: @Composable (T) -> Unit,
 ) {
     val primary = MaterialTheme.colorScheme.primary
-    val currentColor = step.color ?: primary
-    val nextColor = nextStepColor ?: (if (isLast) currentColor else primary)
+    val currentColor =
+        if (step.intensity == Intensity.Low) MaterialTheme.colorScheme.outline
+        else step.color ?: primary
+    val nextColor =
+        if (step.intensity == Intensity.Low) MaterialTheme.colorScheme.outline
+        else nextStepColor ?: (if (isLast) currentColor else primary)
 
     val connectorAlpha = 0.4f
     val currentConnectorColor = currentColor.copy(alpha = connectorAlpha)
@@ -112,6 +117,7 @@ fun <T> VerticalStepItem(
                 Box(
                     modifier = Modifier
                         .weight(topWeight)
+                        .clip(CircleShape)
                         .width(2.dp)
                         .then(
                             if (isFirst) Modifier else Modifier.background(currentConnectorColor),
@@ -124,7 +130,7 @@ fun <T> VerticalStepItem(
                     icon = step.icon,
                     accentColor = currentColor,
                     sizeInt = 48,
-                    glowing = step.glowing,
+                    intensity = step.intensity
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -134,6 +140,7 @@ fun <T> VerticalStepItem(
                     modifier = Modifier
                         .weight(bottomWeight)
                         .width(2.dp)
+                        .clip(CircleShape)
                         .then(
                             if (isLast) Modifier else Modifier.background(lineBrush),
                         ),
@@ -177,16 +184,45 @@ private fun IconBox(
     icon: ImageVector,
     accentColor: Color,
     sizeInt: Int,
-    glowing: Boolean = false,
+    intensity: Intensity = Intensity.Medium,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
+    val backgroundColor = when (intensity) {
+        Intensity.High -> accentColor
+        Intensity.Medium -> Color.Transparent
+        Intensity.Low -> Color.Transparent
+    }
+
+    val borderColor = when (intensity) {
+        Intensity.High -> Color.Transparent
+        Intensity.Medium -> accentColor
+        Intensity.Low -> colorScheme.outline
+    }
+
+    val iconTint = when (intensity) {
+        Intensity.High -> Color.White
+        Intensity.Medium -> accentColor
+        Intensity.Low -> colorScheme.outline
+    }
+
+    val iconAlpha = when (intensity) {
+        Intensity.High -> 1f
+        Intensity.Medium -> 1f
+        Intensity.Low -> 0.6f
+    }
+
+    val shouldGlow = intensity == Intensity.High
+
     Box(
         modifier = modifier
             .size(sizeInt.dp)
-            .aspectRatio(1f), // prevents distortion in weird constraints
+            .aspectRatio(1f),
         contentAlignment = Alignment.Center,
     ) {
+
         // glow
-        if (glowing) {
+        if (shouldGlow) {
             val transition = rememberInfiniteTransition(label = "ping")
 
             val scale by transition.animateFloat(
@@ -227,13 +263,18 @@ private fun IconBox(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(CircleShape)
-                .background(accentColor),
+                .background(backgroundColor)
+                .border(
+                    width = 1.5.dp,
+                    color = borderColor,
+                    shape = CircleShape
+                ),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.White,
+                tint = iconTint.copy(alpha = iconAlpha),
                 modifier = Modifier.size((sizeInt / 2).dp),
             )
         }
