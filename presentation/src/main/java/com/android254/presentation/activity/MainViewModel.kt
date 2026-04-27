@@ -17,7 +17,6 @@ package com.android254.presentation.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
@@ -32,39 +31,44 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo
-) : ViewModel() {
-
-    private val ticker = flow {
-        while (true) {
-            emit(System.currentTimeMillis())
-            delay(60000) // Refresh every minute
-        }
-    }
-
-    val sessionState: StateFlow<SessionUIState> = ticker.flatMapLatest { currentTime ->
-        combine(
-            sessionsRepo.fetchCurrentSessions(currentTime),
-            sessionsRepo.fetchUpNextSessions(currentTime)
-        ) { current, upNext ->
-            SessionUIState(
-                current = current.map {
-                    it.toPresentationModel()
-                },
-                upNext = upNext.map {
-                    it.toPresentationModel()
+class MainViewModel
+    @Inject
+    constructor(
+        private val sessionsRepo: SessionsRepo,
+    ) : ViewModel() {
+        private val ticker =
+            flow {
+                while (true) {
+                    emit(System.currentTimeMillis())
+                    delay(60000) // Refresh every minute
                 }
+            }
+
+        val sessionState: StateFlow<SessionUIState> =
+            ticker.flatMapLatest { currentTime ->
+                combine(
+                    sessionsRepo.fetchCurrentSessions(currentTime),
+                    sessionsRepo.fetchUpNextSessions(currentTime),
+                ) { current, upNext ->
+                    SessionUIState(
+                        current =
+                            current.map {
+                                it.toPresentationModel()
+                            },
+                        upNext =
+                            upNext.map {
+                                it.toPresentationModel()
+                            },
+                    )
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = SessionUIState(),
             )
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SessionUIState()
-    )
-}
+    }
 
 data class SessionUIState(
     val current: List<SessionPresentationModel> = emptyList(),
-    val upNext: List<SessionPresentationModel> = emptyList()
+    val upNext: List<SessionPresentationModel> = emptyList(),
 )

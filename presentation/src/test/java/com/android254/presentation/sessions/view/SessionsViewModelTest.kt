@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessions.view
 
-import com.android254.domain.models.Session
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
@@ -24,7 +23,6 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,113 +60,123 @@ class SessionsViewModelTest {
     }
 
     @Test
-    fun `should set initial selected date to current date if it exists in event days`() = runTest {
-        val currentDay = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
-        val eventDays = listOf(currentDay, "17", "18")
-        coEvery { sessionsRepo.fetchSessionsInformation() } returns flowOf(
-            SessionsInformationDomainModel(
-                sessions = emptyList(),
-                eventDays = eventDays
-            )
-        )
+    fun `should set initial selected date to current date if it exists in event days`() =
+        runTest {
+            val currentDay = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
+            val eventDays = listOf(currentDay, "17", "18")
+            coEvery { sessionsRepo.fetchSessionsInformation() } returns
+                flowOf(
+                    SessionsInformationDomainModel(
+                        sessions = emptyList(),
+                        eventDays = eventDays,
+                    ),
+                )
 
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        
-        val job = launch { viewModel.sessionsUiState.collect() }
-        advanceUntilIdle()
-        
-        assertThat(viewModel.selectedEventDay.value.value, `is`(currentDay))
-        job.cancel()
-    }
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
 
-    @Test
-    fun `should set initial selected date to first event day if current date is not an event day`() = runTest {
-        val eventDays = listOf("10", "11", "12")
-        coEvery { sessionsRepo.fetchSessionsInformation() } returns flowOf(
-            SessionsInformationDomainModel(
-                sessions = emptyList(),
-                eventDays = eventDays
-            )
-        )
+            val job = launch { viewModel.sessionsUiState.collect() }
+            advanceUntilIdle()
 
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        
-        val job = launch { viewModel.sessionsUiState.collect() }
-        advanceUntilIdle()
-        
-        assertThat(viewModel.selectedEventDay.value.value, `is`("10"))
-        job.cancel()
-    }
+            assertThat(viewModel.selectedEventDay.value.value, `is`(currentDay))
+            job.cancel()
+        }
 
     @Test
-    fun `should update selected day when UpdateSelectedDay intent is handled`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        val newDay = EventDate("17", 2)
-        
-        viewModel.handleEvent(SessionsIntentHandler.UpdateSelectedDay(newDay))
-        
-        assertThat(viewModel.selectedEventDay.value, `is`(newDay))
-    }
+    fun `should set initial selected date to first event day if current date is not an event day`() =
+        runTest {
+            val eventDays = listOf("10", "11", "12")
+            coEvery { sessionsRepo.fetchSessionsInformation() } returns
+                flowOf(
+                    SessionsInformationDomainModel(
+                        sessions = emptyList(),
+                        eventDays = eventDays,
+                    ),
+                )
+
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+
+            val job = launch { viewModel.sessionsUiState.collect() }
+            advanceUntilIdle()
+
+            assertThat(viewModel.selectedEventDay.value.value, `is`("10"))
+            job.cancel()
+        }
 
     @Test
-    fun `should call bookmarkSession in repo when BookmarkSession intent is handled`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        val sessionId = "session_id"
-        
-        viewModel.bookmarkSession(sessionId)
-        advanceUntilIdle()
-        
-        coVerify { sessionsRepo.bookmarkSession(sessionId) }
-    }
+    fun `should update selected day when UpdateSelectedDay intent is handled`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val newDay = EventDate("17", 2)
+
+            viewModel.handleEvent(SessionsIntentHandler.UpdateSelectedDay(newDay))
+
+            assertThat(viewModel.selectedEventDay.value, `is`(newDay))
+        }
 
     @Test
-    fun `should call unBookmarkSession in repo when unBookmarkSession is called`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        val sessionId = "session_id"
-        
-        viewModel.unBookmarkSession(sessionId)
-        advanceUntilIdle()
-        
-        coVerify { sessionsRepo.unBookmarkSession(sessionId) }
-    }
+    fun `should call bookmarkSession in repo when BookmarkSession intent is handled`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val sessionId = "session_id"
+
+            viewModel.bookmarkSession(sessionId)
+            advanceUntilIdle()
+
+            coVerify { sessionsRepo.bookmarkSession(sessionId) }
+        }
 
     @Test
-    fun `should toggle bookmark filter when ToggleBookmarkFilter intent is handled`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
-        
-        viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
-        assertThat(viewModel.filterState.value.isBookmarked, `is`(true))
-        
-        viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
-        assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
-    }
+    fun `should call unBookmarkSession in repo when unBookmarkSession is called`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val sessionId = "session_id"
+
+            viewModel.unBookmarkSession(sessionId)
+            advanceUntilIdle()
+
+            coVerify { sessionsRepo.unBookmarkSession(sessionId) }
+        }
 
     @Test
-    fun `should clear filters when ClearSelectedFilterList intent is handled`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        val filterOption = SessionsFilterOption("Beginner", "beginner", SessionsFilterCategory.Level)
-        
-        viewModel.updateSelectedFilterOptionList(filterOption)
-        assertThat(viewModel.selectedFilterOptions.value.size, `is`(1))
-        
-        viewModel.handleEvent(SessionsIntentHandler.ClearSelectedFilterList)
-        
-        assertThat(viewModel.selectedFilterOptions.value.isEmpty(), `is`(true))
-        assertThat(viewModel.filterState.value.levels.isEmpty(), `is`(true))
-    }
+    fun `should toggle bookmark filter when ToggleBookmarkFilter intent is handled`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
+
+            viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
+            assertThat(viewModel.filterState.value.isBookmarked, `is`(true))
+
+            viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
+            assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
+        }
 
     @Test
-    fun `should update filter state when updateSelectedFilterOptionList is called`() = runTest {
-        val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
-        val levelFilter = SessionsFilterOption("Beginner", "Beginner", SessionsFilterCategory.Level)
-        val roomFilter = SessionsFilterOption("Room 1", "Room 1", SessionsFilterCategory.Room)
-        
-        viewModel.updateSelectedFilterOptionList(levelFilter)
-        viewModel.updateSelectedFilterOptionList(roomFilter)
-        
-        assertThat(viewModel.filterState.value.levels.contains("Beginner"), `is`(true))
-        assertThat(viewModel.filterState.value.rooms.contains("Room 1"), `is`(true))
-        assertThat(viewModel.selectedFilterOptions.value.size, `is`(2))
-    }
+    fun `should clear filters when ClearSelectedFilterList intent is handled`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val filterOption = SessionsFilterOption("Beginner", "beginner", SessionsFilterCategory.Level)
+
+            viewModel.updateSelectedFilterOptionList(filterOption)
+            assertThat(viewModel.selectedFilterOptions.value.size, `is`(1))
+
+            viewModel.handleEvent(SessionsIntentHandler.ClearSelectedFilterList)
+
+            assertThat(viewModel.selectedFilterOptions.value.isEmpty(), `is`(true))
+            assertThat(viewModel.filterState.value.levels.isEmpty(), `is`(true))
+        }
+
+    @Test
+    fun `should update filter state when updateSelectedFilterOptionList is called`() =
+        runTest {
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val levelFilter = SessionsFilterOption("Beginner", "Beginner", SessionsFilterCategory.Level)
+            val roomFilter = SessionsFilterOption("Room 1", "Room 1", SessionsFilterCategory.Room)
+
+            viewModel.updateSelectedFilterOptionList(levelFilter)
+            viewModel.updateSelectedFilterOptionList(roomFilter)
+
+            assertThat(viewModel.filterState.value.levels.contains("Beginner"), `is`(true))
+            assertThat(viewModel.filterState.value.rooms.contains("Room 1"), `is`(true))
+            assertThat(viewModel.selectedFilterOptions.value.size, `is`(2))
+        }
 }

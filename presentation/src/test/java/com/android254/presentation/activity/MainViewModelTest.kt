@@ -26,8 +26,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
@@ -52,70 +52,77 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `should fetch current and up next sessions`() = runTest {
-        val session = createSession(id = "1", title = "Title")
-        val currentSessions = listOf(session)
-        val upNextSessions = listOf(session)
+    fun `should fetch current and up next sessions`() =
+        runTest {
+            val session = createSession(id = "1", title = "Title")
+            val currentSessions = listOf(session)
+            val upNextSessions = listOf(session)
 
-        coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
-        coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
+            coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
+            coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-        val viewModel = MainViewModel(sessionsRepo)
+            val viewModel = MainViewModel(sessionsRepo)
 
-        val job = launch { viewModel.sessionState.collect() }
-        runCurrent()
+            val job = launch { viewModel.sessionState.collect() }
+            runCurrent()
 
-        assertThat(viewModel.sessionState.value.current.size, `is`(1))
-        assertThat(viewModel.sessionState.value.current[0].title, `is`("Title"))
-        assertThat(viewModel.sessionState.value.upNext.size, `is`(1))
-        assertThat(viewModel.sessionState.value.upNext[0].title, `is`("Title"))
-        job.cancel()
-    }
+            assertThat(viewModel.sessionState.value.current.size, `is`(1))
+            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title"))
+            assertThat(viewModel.sessionState.value.upNext.size, `is`(1))
+            assertThat(viewModel.sessionState.value.upNext[0].title, `is`("Title"))
+            job.cancel()
+        }
 
     @Test
-    fun `should refresh sessions after ticker interval`() = runTest {
-        val session1 = createSession(id = "1", title = "Title 1")
-        val session2 = createSession(id = "2", title = "Title 2")
+    fun `should refresh sessions after ticker interval`() =
+        runTest {
+            val session1 = createSession(id = "1", title = "Title 1")
+            val session2 = createSession(id = "2", title = "Title 2")
 
-        coEvery { sessionsRepo.fetchCurrentSessions(any()) } returnsMany listOf(
-            flowOf(listOf(session1)),
-            flowOf(listOf(session2))
+            coEvery { sessionsRepo.fetchCurrentSessions(any()) } returnsMany
+                listOf(
+                    flowOf(listOf(session1)),
+                    flowOf(listOf(session2)),
+                )
+            coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
+
+            val viewModel = MainViewModel(sessionsRepo)
+
+            val job = launch { viewModel.sessionState.collect() }
+            runCurrent()
+
+            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 1"))
+
+            // Advance time by 1 minute to trigger ticker
+            advanceTimeBy(60001)
+            runCurrent()
+
+            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 2"))
+            job.cancel()
+        }
+
+    private fun createSession(
+        id: String,
+        title: String,
+    ) =
+        Session(
+            id = id,
+            description = "Description",
+            sessionFormat = "Format",
+            sessionLevel = "Level",
+            slug = "slug-$id",
+            title = title,
+            endDateTime = "2023-11-17 10:00:00",
+            endTime = "10:00 AM",
+            isBookmarked = false,
+            isKeynote = false,
+            isServiceSession = false,
+            sessionImage = "",
+            startDateTime = "2023-11-17 09:00:00",
+            startTime = "09:00 AM",
+            rooms = "Room 1",
+            speakers = listOf(),
+            remoteId = id,
+            eventDay = "1",
         )
-        coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
-
-        val viewModel = MainViewModel(sessionsRepo)
-
-        val job = launch { viewModel.sessionState.collect() }
-        runCurrent()
-
-        assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 1"))
-
-        // Advance time by 1 minute to trigger ticker
-        advanceTimeBy(60001)
-        runCurrent()
-
-        assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 2"))
-        job.cancel()
-    }
-
-    private fun createSession(id: String, title: String) = Session(
-        id = id,
-        description = "Description",
-        sessionFormat = "Format",
-        sessionLevel = "Level",
-        slug = "slug-$id",
-        title = title,
-        endDateTime = "2023-11-17 10:00:00",
-        endTime = "10:00 AM",
-        isBookmarked = false,
-        isKeynote = false,
-        isServiceSession = false,
-        sessionImage = "",
-        startDateTime = "2023-11-17 09:00:00",
-        startTime = "09:00 AM",
-        rooms = "Room 1",
-        speakers = listOf(),
-        remoteId = id,
-        eventDay = "1"
-    )
 }

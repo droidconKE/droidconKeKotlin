@@ -37,11 +37,12 @@ fun Session.toPresentationModel(): SessionPresentationModel {
     val sessionStart = this.startDateTime.toInstant()
     val sessionEnd = this.endDateTime.toInstant()
 
-    val sessionStatus = when {
-        now < sessionStart -> SessionStatus.Upcoming
-        now > sessionEnd -> SessionStatus.Past
-        else -> SessionStatus.Ongoing
-    }
+    val sessionStatus =
+        when {
+            now < sessionStart -> SessionStatus.Upcoming
+            now > sessionEnd -> SessionStatus.Past
+            else -> SessionStatus.Ongoing
+        }
 
     return SessionPresentationModel(
         id = this.id,

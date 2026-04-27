@@ -16,15 +16,12 @@
 package com.android254.presentation.sessions.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -45,9 +42,6 @@ import com.android254.presentation.common.fake_data.fakeSessions
 import com.android254.presentation.common.results_status.ResultStatus
 import com.android254.presentation.common.results_status.emptyMessage
 import com.android254.presentation.common.results_status.errorMessage
-import com.android254.presentation.common.results_status.isEmpty
-import com.android254.presentation.common.results_status.isError
-import com.android254.presentation.common.results_status.isLoading
 import com.android254.presentation.common.stepper.verticalSteps
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
@@ -105,7 +99,7 @@ fun SessionsStateComponent(
                     errorMessage = sessionsUiState.sessionStatus.errorMessage,
                     retry = {
                         onEvent(SessionsIntentHandler.Retry)
-                    }
+                    },
                 )
             }
 
@@ -120,7 +114,7 @@ fun SessionsStateComponent(
                     navigateToSessionDetails = navigateToSessionDetails,
                     sessionScreenState = sessionScreenState,
                     isSessionLayoutList = isSessionLayoutList,
-                    onEvent = onEvent
+                    onEvent = onEvent,
                 )
             }
         }
@@ -134,7 +128,7 @@ fun SessionListComponent(
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     navigateToSessionDetails: (sessionId: String) -> Unit,
-    onEvent: (SessionsIntentHandler) -> Unit
+    onEvent: (SessionsIntentHandler) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -166,22 +160,23 @@ fun SessionListComponent(
             if (isSessionLayoutList) {
                 verticalSteps(
                     spacing = 16.dp,
-                    items = sessions.map { session ->
-                        session.verticalStep
-                    }
+                    items =
+                        sessions.map { session ->
+                            session.verticalStep
+                        },
                 ) { session ->
                     SessionsCard(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
                         onBookmark = {
                             onEvent(SessionsIntentHandler.BookmarkSession(it))
-                        }
+                        },
                     )
                 }
             } else {
                 itemsIndexed(
                     items = sessions,
-                    key = { _, session -> session.id }
+                    key = { _, session -> session.id },
                 ) { _, session ->
                     SessionsCardWithBannerImage(
                         session = session,
@@ -190,10 +185,7 @@ fun SessionListComponent(
 
                     Spacer(Modifier.height(16.dp))
                 }
-
             }
-
-
         }
     }
 }
@@ -211,7 +203,7 @@ fun SessionListPreview() {
                 navigateToSessionDetails = {},
                 sessionScreenState = SessionScreenState.ALL,
                 isSessionLayoutList = true,
-                onEvent = {}
+                onEvent = {},
             )
         }
     }

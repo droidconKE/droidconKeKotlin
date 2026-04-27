@@ -19,230 +19,239 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
 
-val fakeSessions = listOf(
-    SessionPresentationModel(
-        id = "1",
-        title = "Opening Keynote: Building for Africa",
-        description = "The future of Android development across Africa.",
-        venue = "Sapphire,Opal",
-        startTime = "09:00",
-        endTime = "10:00",
-        amOrPm = "AM",
-        isStarred = true,
-        format = "Keynote",
-        level = "All Levels",
-        sessionStatus = SessionStatus.Past,
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_1",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Florence Mwangangi",
-                speakerImage = "",
-                twitterHandle = "florencedev"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "2",
-        title = "Compose Animations That Don’t Jank",
-        description = "Practical animation performance tips in Compose.",
-        venue = "Sapphire",
-        startTime = "10:15",
-        endTime = "11:00",
-        amOrPm = "AM",
-        isStarred = false,
-        sessionStatus = SessionStatus.Past,
-        format = "Talk",
-        level = "Intermediate",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_2",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Donald Okara",
-                speakerImage = "",
-                twitterHandle = "donnycodes"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "3",
-        title = "Coffee Break",
-        description = "Grab coffee and network with attendees.",
-        venue = "Opal",
-        startTime = "11:00",
-        endTime = "11:30",
-        amOrPm = "AM",
-        isStarred = false,
-        sessionStatus = SessionStatus.Past,
-        format = "Break",
-        level = "",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_3",
-        isService = true,
-        eventDay = "14",
-        speakers = emptyList()
-    ),
-    SessionPresentationModel(
-        id = "4",
-        title = "Kotlin Multiplatform in Production",
-        description = "Lessons from shipping KMP apps at scale.",
-        venue = "Sapphire",
-        startTime = "11:30",
-        endTime = "12:15",
-        amOrPm = "AM",
-        isStarred = true,
-        sessionStatus = SessionStatus.Ongoing,
-        format = "Session",
-        level = "Advanced",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_4",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Brian Kimani",
-                speakerImage = "",
-                twitterHandle = "briankimani"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "5",
-        title = "Lunch Break",
-        description = "Lunch served at the networking hall.",
-        venue = "Sapphire,Opal",
-        startTime = "12:15",
-        endTime = "01:30",
-        amOrPm = "PM",
-        isStarred = false,
-        format = "Break",
-        level = "",
-        sessionStatus = SessionStatus.Ongoing,
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_5",
-        isService = true,
-        eventDay = "14",
-        speakers = emptyList()
-    ),
-    SessionPresentationModel(
-        id = "6",
-        title = "State Management in Compose",
-        description = "Handling complex UI state without pain.",
-        venue = "Opal",
-        startTime = "01:30",
-        endTime = "02:15",
-        amOrPm = "PM",
-        isStarred = false,
-        format = "Talk",
-        level = "Beginner",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_6",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Amina Yusuf",
-                speakerImage = "",
-                twitterHandle = "aminadev"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "7",
-        title = "Workshop: Advanced Coroutines",
-        description = "Deep dive into structured concurrency.",
-        venue = "Sapphire",
-        startTime = "02:30",
-        endTime = "04:00",
-        amOrPm = "PM",
-        isStarred = true,
-        format = "Workshop",
-        level = "Advanced",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_7",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Kevin Omondi",
-                speakerImage = "",
-                twitterHandle = "kevinomondi"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "8",
-        title = "Building Offline-First Apps",
-        description = "Designing resilient mobile experiences.",
-        venue = "Opal",
-        startTime = "04:15",
-        endTime = "05:00",
-        amOrPm = "PM",
-        isStarred = false,
-        format = "Session",
-        level = "Intermediate",
-        startDate = "2026-08-14",
-        endDate = "2026-08-14",
-        remoteId = "remote_8",
-        eventDay = "14",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Sarah Njeri",
-                speakerImage = "",
-                twitterHandle = "sarahcodes"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "9",
-        title = "Day Two Keynote: AI on Android",
-        description = "Exploring practical AI experiences on mobile.",
-        venue = "Sapphire,Opal",
-        startTime = "09:00",
-        endTime = "10:00",
-        amOrPm = "AM",
-        isStarred = true,
-        format = "Keynote",
-        level = "All Levels",
-        startDate = "2026-08-15",
-        endDate = "2026-08-15",
-        remoteId = "remote_9",
-        eventDay = "15",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Grace Wambui",
-                speakerImage = "",
-                twitterHandle = "gracewambui"
-            )
-        )
-    ),
-    SessionPresentationModel(
-        id = "10",
-        title = "Compose for Tablets and Foldables",
-        description = "Adaptive UI patterns that scale.",
-        venue = "Sapphire",
-        startTime = "10:15",
-        endTime = "11:00",
-        amOrPm = "AM",
-        isStarred = false,
-        format = "Talk",
-        level = "Intermediate",
-        startDate = "2026-08-15",
-        endDate = "2026-08-15",
-        remoteId = "remote_10",
-        eventDay = "15",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Ian Otieno",
-                speakerImage = "",
-                twitterHandle = "ianotieno"
-            )
-        )
+val fakeSessions =
+    listOf(
+        SessionPresentationModel(
+            id = "1",
+            title = "Opening Keynote: Building for Africa",
+            description = "The future of Android development across Africa.",
+            venue = "Sapphire,Opal",
+            startTime = "09:00",
+            endTime = "10:00",
+            amOrPm = "AM",
+            isStarred = true,
+            format = "Keynote",
+            level = "All Levels",
+            sessionStatus = SessionStatus.Past,
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_1",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Florence Mwangangi",
+                        speakerImage = "",
+                        twitterHandle = "florencedev",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "2",
+            title = "Compose Animations That Don’t Jank",
+            description = "Practical animation performance tips in Compose.",
+            venue = "Sapphire",
+            startTime = "10:15",
+            endTime = "11:00",
+            amOrPm = "AM",
+            isStarred = false,
+            sessionStatus = SessionStatus.Past,
+            format = "Talk",
+            level = "Intermediate",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_2",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Donald Okara",
+                        speakerImage = "",
+                        twitterHandle = "donnycodes",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "3",
+            title = "Coffee Break",
+            description = "Grab coffee and network with attendees.",
+            venue = "Opal",
+            startTime = "11:00",
+            endTime = "11:30",
+            amOrPm = "AM",
+            isStarred = false,
+            sessionStatus = SessionStatus.Past,
+            format = "Break",
+            level = "",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_3",
+            isService = true,
+            eventDay = "14",
+            speakers = emptyList(),
+        ),
+        SessionPresentationModel(
+            id = "4",
+            title = "Kotlin Multiplatform in Production",
+            description = "Lessons from shipping KMP apps at scale.",
+            venue = "Sapphire",
+            startTime = "11:30",
+            endTime = "12:15",
+            amOrPm = "AM",
+            isStarred = true,
+            sessionStatus = SessionStatus.Ongoing,
+            format = "Session",
+            level = "Advanced",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_4",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Brian Kimani",
+                        speakerImage = "",
+                        twitterHandle = "briankimani",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "5",
+            title = "Lunch Break",
+            description = "Lunch served at the networking hall.",
+            venue = "Sapphire,Opal",
+            startTime = "12:15",
+            endTime = "01:30",
+            amOrPm = "PM",
+            isStarred = false,
+            format = "Break",
+            level = "",
+            sessionStatus = SessionStatus.Ongoing,
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_5",
+            isService = true,
+            eventDay = "14",
+            speakers = emptyList(),
+        ),
+        SessionPresentationModel(
+            id = "6",
+            title = "State Management in Compose",
+            description = "Handling complex UI state without pain.",
+            venue = "Opal",
+            startTime = "01:30",
+            endTime = "02:15",
+            amOrPm = "PM",
+            isStarred = false,
+            format = "Talk",
+            level = "Beginner",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_6",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Amina Yusuf",
+                        speakerImage = "",
+                        twitterHandle = "aminadev",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "7",
+            title = "Workshop: Advanced Coroutines",
+            description = "Deep dive into structured concurrency.",
+            venue = "Sapphire",
+            startTime = "02:30",
+            endTime = "04:00",
+            amOrPm = "PM",
+            isStarred = true,
+            format = "Workshop",
+            level = "Advanced",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_7",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Kevin Omondi",
+                        speakerImage = "",
+                        twitterHandle = "kevinomondi",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "8",
+            title = "Building Offline-First Apps",
+            description = "Designing resilient mobile experiences.",
+            venue = "Opal",
+            startTime = "04:15",
+            endTime = "05:00",
+            amOrPm = "PM",
+            isStarred = false,
+            format = "Session",
+            level = "Intermediate",
+            startDate = "2026-08-14",
+            endDate = "2026-08-14",
+            remoteId = "remote_8",
+            eventDay = "14",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Sarah Njeri",
+                        speakerImage = "",
+                        twitterHandle = "sarahcodes",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "9",
+            title = "Day Two Keynote: AI on Android",
+            description = "Exploring practical AI experiences on mobile.",
+            venue = "Sapphire,Opal",
+            startTime = "09:00",
+            endTime = "10:00",
+            amOrPm = "AM",
+            isStarred = true,
+            format = "Keynote",
+            level = "All Levels",
+            startDate = "2026-08-15",
+            endDate = "2026-08-15",
+            remoteId = "remote_9",
+            eventDay = "15",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Grace Wambui",
+                        speakerImage = "",
+                        twitterHandle = "gracewambui",
+                    ),
+                ),
+        ),
+        SessionPresentationModel(
+            id = "10",
+            title = "Compose for Tablets and Foldables",
+            description = "Adaptive UI patterns that scale.",
+            venue = "Sapphire",
+            startTime = "10:15",
+            endTime = "11:00",
+            amOrPm = "AM",
+            isStarred = false,
+            format = "Talk",
+            level = "Intermediate",
+            startDate = "2026-08-15",
+            endDate = "2026-08-15",
+            remoteId = "remote_10",
+            eventDay = "15",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Ian Otieno",
+                        speakerImage = "",
+                        twitterHandle = "ianotieno",
+                    ),
+                ),
+        ),
     )
-)

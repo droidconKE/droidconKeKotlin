@@ -1,6 +1,5 @@
 package com.android254.presentation.common.stepper
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -23,15 +22,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -73,55 +69,67 @@ fun <T> VerticalStepItem(
 ) {
     val primary = MaterialTheme.colorScheme.primary
     val currentColor =
-        if (step.intensity == Intensity.Low) MaterialTheme.colorScheme.outline
-        else step.color ?: primary
+        if (step.intensity == Intensity.Low) {
+            MaterialTheme.colorScheme.outline
+        } else {
+            step.color ?: primary
+        }
     val nextColor =
-        if (step.intensity == Intensity.Low) MaterialTheme.colorScheme.outline
-        else nextStepColor ?: (if (isLast) currentColor else primary)
+        if (step.intensity == Intensity.Low) {
+            MaterialTheme.colorScheme.outline
+        } else {
+            nextStepColor ?: (if (isLast) currentColor else primary)
+        }
 
     val connectorAlpha = 0.4f
     val currentConnectorColor = currentColor.copy(alpha = connectorAlpha)
     val nextConnectorColor = nextColor.copy(alpha = connectorAlpha)
 
     // Gradient that transitions the line from this step's color to the next
-    val lineBrush = Brush.verticalGradient(
-        colorStops = arrayOf(
-            0.0f to currentConnectorColor,
-            0.6f to currentConnectorColor,
-            0.85f to nextConnectorColor,
-            1.0f to nextConnectorColor,
-        ),
-    )
+    val lineBrush =
+        Brush.verticalGradient(
+            colorStops =
+                arrayOf(
+                    0.0f to currentConnectorColor,
+                    0.6f to currentConnectorColor,
+                    0.85f to nextConnectorColor,
+                    1.0f to nextConnectorColor,
+                ),
+        )
 
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min),
         ) {
             Column(
-                modifier = Modifier
-                    .width(36.dp)
-                    .fillMaxHeight(),
+                modifier =
+                    Modifier
+                        .width(36.dp)
+                        .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                val topWeight = when {
-                    isFirst -> 0.2f
-                    isLast -> 0.8f
-                    else -> 0.5f
-                }
+                val topWeight =
+                    when {
+                        isFirst -> 0.2f
+                        isLast -> 0.8f
+                        else -> 0.5f
+                    }
 
                 val bottomWeight = 1f - topWeight
 
                 // Top connector: Solid color of CURRENT step (matches previous bridge)
                 Box(
-                    modifier = Modifier
-                        .weight(topWeight)
-                        .clip(CircleShape)
-                        .width(2.dp)
-                        .then(
-                            if (isFirst) Modifier else Modifier.background(currentConnectorColor),
-                        ),
+                    modifier =
+                        Modifier
+                            .weight(topWeight)
+                            .clip(CircleShape)
+                            .width(2.dp)
+                            .then(
+                                if (isFirst) Modifier else Modifier.background(currentConnectorColor),
+                            ),
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -130,29 +138,31 @@ fun <T> VerticalStepItem(
                     icon = step.icon,
                     accentColor = currentColor,
                     sizeInt = 48,
-                    intensity = step.intensity
+                    intensity = step.intensity,
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // Bottom connector: Gradient from CURRENT to NEXT
                 Box(
-                    modifier = Modifier
-                        .weight(bottomWeight)
-                        .width(2.dp)
-                        .clip(CircleShape)
-                        .then(
-                            if (isLast) Modifier else Modifier.background(lineBrush),
-                        ),
+                    modifier =
+                        Modifier
+                            .weight(bottomWeight)
+                            .width(2.dp)
+                            .clip(CircleShape)
+                            .then(
+                                if (isLast) Modifier else Modifier.background(lineBrush),
+                            ),
                 )
             }
 
             Spacer(Modifier.width(16.dp))
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
             ) {
                 content(step.data)
             }
@@ -161,17 +171,19 @@ fun <T> VerticalStepItem(
         // Bridge the gap for spacing between items
         if (!isLast && bottomSpacing > 0.dp) {
             Box(
-                modifier = Modifier
-                    .width(36.dp)
-                    .height(bottomSpacing),
+                modifier =
+                    Modifier
+                        .width(36.dp)
+                        .height(bottomSpacing),
                 contentAlignment = Alignment.Center,
             ) {
                 // The bridge uses the NEXT color solid, as the gradient above already finished
                 Box(
-                    modifier = Modifier
-                        .width(2.dp)
-                        .fillMaxHeight()
-                        .background(nextConnectorColor),
+                    modifier =
+                        Modifier
+                            .width(2.dp)
+                            .fillMaxHeight()
+                            .background(nextConnectorColor),
                 )
             }
         }
@@ -188,39 +200,43 @@ private fun IconBox(
 ) {
     val colorScheme = MaterialTheme.colorScheme
 
-    val backgroundColor = when (intensity) {
-        Intensity.High -> accentColor
-        Intensity.Medium -> Color.Transparent
-        Intensity.Low -> Color.Transparent
-    }
+    val backgroundColor =
+        when (intensity) {
+            Intensity.High -> accentColor
+            Intensity.Medium -> Color.Transparent
+            Intensity.Low -> Color.Transparent
+        }
 
-    val borderColor = when (intensity) {
-        Intensity.High -> Color.Transparent
-        Intensity.Medium -> accentColor
-        Intensity.Low -> colorScheme.outline
-    }
+    val borderColor =
+        when (intensity) {
+            Intensity.High -> Color.Transparent
+            Intensity.Medium -> accentColor
+            Intensity.Low -> colorScheme.outline
+        }
 
-    val iconTint = when (intensity) {
-        Intensity.High -> Color.White
-        Intensity.Medium -> accentColor
-        Intensity.Low -> colorScheme.outline
-    }
+    val iconTint =
+        when (intensity) {
+            Intensity.High -> Color.White
+            Intensity.Medium -> accentColor
+            Intensity.Low -> colorScheme.outline
+        }
 
-    val iconAlpha = when (intensity) {
-        Intensity.High -> 1f
-        Intensity.Medium -> 1f
-        Intensity.Low -> 0.6f
-    }
+    val iconAlpha =
+        when (intensity) {
+            Intensity.High -> 1f
+            Intensity.Medium -> 1f
+            Intensity.Low -> 0.6f
+        }
 
     val shouldGlow = intensity == Intensity.High
 
     Box(
-        modifier = modifier
-            .size(sizeInt.dp)
-            .aspectRatio(1f),
+        modifier =
+            modifier
+                .size(sizeInt.dp)
+                .aspectRatio(1f),
         contentAlignment = Alignment.Center,
     ) {
-
         // glow
         if (shouldGlow) {
             val transition = rememberInfiniteTransition(label = "ping")
@@ -228,47 +244,51 @@ private fun IconBox(
             val scale by transition.animateFloat(
                 initialValue = 1f,
                 targetValue = 1.8f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1400),
-                    repeatMode = RepeatMode.Restart
-                ),
-                label = "scale"
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(1400),
+                        repeatMode = RepeatMode.Restart,
+                    ),
+                label = "scale",
             )
 
             val alpha by transition.animateFloat(
                 initialValue = 0.5f,
                 targetValue = 0f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(1400),
-                    repeatMode = RepeatMode.Restart
-                ),
-                label = "alpha"
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(1400),
+                        repeatMode = RepeatMode.Restart,
+                    ),
+                label = "alpha",
             )
 
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
-                        this.alpha = alpha
-                    }
-                    .clip(CircleShape)
-                    .background(accentColor)
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                            this.alpha = alpha
+                        }
+                        .clip(CircleShape)
+                        .background(accentColor),
             )
         }
 
         // core circle
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape)
-                .background(backgroundColor)
-                .border(
-                    width = 1.5.dp,
-                    color = borderColor,
-                    shape = CircleShape
-                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+                    .background(backgroundColor)
+                    .border(
+                        width = 1.5.dp,
+                        color = borderColor,
+                        shape = CircleShape,
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             Icon(

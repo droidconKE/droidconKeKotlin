@@ -49,7 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.capitalize
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -70,54 +69,60 @@ fun CurrentSessionComponent(
     session: SessionPresentationModel,
     isNow: Boolean,
     modifier: Modifier = Modifier,
-    onClicked: (String) -> Unit = {}
+    onClicked: (String) -> Unit = {},
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")
     val alpha by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "alpha"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(1000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "alpha",
     )
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
         shape = RoundedCornerShape(12.dp),
         onClick = { onClicked(session.id) },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.chaiColorsPalette.cardsBackground
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Box {
                 AsyncImage(
                     model = session.speakers.firstOrNull()?.speakerImage,
                     contentDescription = "Speaker image",
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape)
-                        .border(1.dp, Color.Gray.copy(alpha = 0.5f), CircleShape),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .size(54.dp)
+                            .clip(CircleShape)
+                            .border(1.dp, Color.Gray.copy(alpha = 0.5f), CircleShape),
+                    contentScale = ContentScale.Crop,
                 )
                 // Status Indicator Dot
                 if (isNow) {
                     Box(
-                        modifier = Modifier
-                            .size(14.dp)
-                            .align(Alignment.BottomStart)
-                            .offset(x = 2.dp, y = (-2).dp)
-                            .background(session.color.copy(alpha), CircleShape)
-                            .border(2.dp, MaterialTheme.chaiColorsPalette.cardsBackground, CircleShape)
+                        modifier =
+                            Modifier
+                                .size(14.dp)
+                                .align(Alignment.BottomStart)
+                                .offset(x = 2.dp, y = (-2).dp)
+                                .background(session.color.copy(alpha), CircleShape)
+                                .border(2.dp, MaterialTheme.chaiColorsPalette.cardsBackground, CircleShape),
                     )
                 }
             }
@@ -126,35 +131,39 @@ fun CurrentSessionComponent(
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                ){
+                ) {
                     ChaiBodyLargeBold(
                         bodyText = session.title,
                         textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                         modifier = Modifier.weight(1f),
-                        maxLines = 1
+                        maxLines = 1,
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     // Status Badge
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(
-                                session.color.copy(alpha = if (isNow) 0.15f * alpha else 0.15f)
-                            )
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(
+                                    session.color.copy(alpha = if (isNow) 0.15f * alpha else 0.15f),
+                                )
+                                .padding(horizontal = 10.dp, vertical = 4.dp),
                     ) {
                         ChaiBodySmallBold(
                             bodyText =
-                                if (isNow) stringResource(R.string.now).capitalize(Locale.ROOT)
-                                else stringResource(R.string.up_next).capitalize(Locale.ROOT),
-                            textColor = session.color
+                                if (isNow) {
+                                    stringResource(R.string.now).capitalize(Locale.ROOT)
+                                } else {
+                                    stringResource(R.string.up_next).capitalize(Locale.ROOT)
+                                },
+                            textColor = session.color,
                         )
                     }
                 }
@@ -162,7 +171,7 @@ fun CurrentSessionComponent(
                 ChaiBodyMedium(
                     bodyText = "$speakerInfo • ${session.venue}",
                     textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -176,39 +185,41 @@ class CurrentSessionPreviewParameterProvider : PreviewParameterProvider<Boolean>
 @PreviewLightDark
 @Composable
 fun CurrentSessionPreview(
-    @PreviewParameter(CurrentSessionPreviewParameterProvider::class) isNow: Boolean
+    @PreviewParameter(CurrentSessionPreviewParameterProvider::class) isNow: Boolean,
 ) {
-    val session = SessionPresentationModel(
-        id = "1",
-        title = "Modern Android Development",
-        description = "Keynote description",
-        venue = "Main Hall",
-        startTime = "09:00",
-        endTime = "10:00 AM",
-        amOrPm = "AM",
-        isStarred = false,
-        format = "Keynote",
-        level = "Beginner",
-        startDate = "2023-11-17 09:00:00",
-        endDate = "2023-11-17 10:00:00",
-        remoteId = "1",
-        eventDay = "1",
-        speakers = listOf(
-            SessionSpeakersPresentationModel(
-                name = "Lisa F Temecula",
-                speakerImage = "",
-                twitterHandle = "lisa"
-            )
+    val session =
+        SessionPresentationModel(
+            id = "1",
+            title = "Modern Android Development",
+            description = "Keynote description",
+            venue = "Main Hall",
+            startTime = "09:00",
+            endTime = "10:00 AM",
+            amOrPm = "AM",
+            isStarred = false,
+            format = "Keynote",
+            level = "Beginner",
+            startDate = "2023-11-17 09:00:00",
+            endDate = "2023-11-17 10:00:00",
+            remoteId = "1",
+            eventDay = "1",
+            speakers =
+                listOf(
+                    SessionSpeakersPresentationModel(
+                        name = "Lisa F Temecula",
+                        speakerImage = "",
+                        twitterHandle = "lisa",
+                    ),
+                ),
         )
-    )
     ChaiDCKE22Theme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
-        ){
+        ) {
             CurrentSessionComponent(
                 session = session,
                 isNow = isNow,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
