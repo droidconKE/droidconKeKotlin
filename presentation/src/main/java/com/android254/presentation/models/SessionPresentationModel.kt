@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.MicExternalOn
-import com.android254.domain.models.Session
 import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
 import com.droidconke.chai.atoms.ChaiBlue
@@ -47,11 +46,12 @@ data class SessionPresentationModel(
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
 ) {
-    val color = when (venue) {
-        "Opal" -> ChaiRed
-        "Sapphire" -> ChaiTeal
-        else -> ChaiBlue
-    }
+    val color =
+        when (venue) {
+            "Opal" -> ChaiRed
+            "Sapphire" -> ChaiTeal
+            else -> ChaiBlue
+        }
 
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
@@ -59,21 +59,23 @@ data class SessionPresentationModel(
     val isTalk = format.contains("Talk", ignoreCase = true)
     val isSession = format.contains("Session", ignoreCase = true)
 
-    val icon = when  {
-        isWorkshop -> Icons.Default.Build
-        isKeynote -> Icons.Default.MicExternalOn
-        isTalk || isSession -> Icons.Default.CoPresent
-        isServiceSession -> Icons.Default.Coffee
-        else -> Icons.Default.CoPresent
-    }
+    val icon =
+        when {
+            isWorkshop -> Icons.Default.Build
+            isKeynote -> Icons.Default.MicExternalOn
+            isTalk || isSession -> Icons.Default.CoPresent
+            isServiceSession -> Icons.Default.Coffee
+            else -> Icons.Default.CoPresent
+        }
 
-    val verticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
-        id = this.id,
-        color = color,
-        intensity = sessionStatus.toIntensity(),
-        icon = icon,
-        data = this
-    )
+    val verticalStep: VerticalStep<SessionPresentationModel> =
+        VerticalStep(
+            id = this.id,
+            color = color,
+            intensity = sessionStatus.toIntensity(),
+            icon = icon,
+            data = this,
+        )
 }
 
 data class SessionSpeakersPresentationModel(
@@ -82,12 +84,14 @@ data class SessionSpeakersPresentationModel(
     val twitterHandle: String,
 )
 
-enum class SessionStatus{
-    Past, Ongoing, Upcoming
+enum class SessionStatus {
+    Past,
+    Ongoing,
+    Upcoming,
 }
 
 fun SessionStatus.toIntensity(): Intensity {
-    return when(this){
+    return when (this) {
         SessionStatus.Upcoming -> Intensity.Medium
         SessionStatus.Ongoing -> Intensity.High
         SessionStatus.Past -> Intensity.Low

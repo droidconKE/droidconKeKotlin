@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +54,6 @@ import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -95,7 +93,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val navigationState =
         rememberNavigationState(
@@ -113,13 +111,14 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            if (bottomBarState.value)
+            if (bottomBarState.value) {
                 BottomNavigationBar(
                     navController,
                     navigationState,
                     currentSessions = sessionsState.current,
-                    upNextSessions = sessionsState.upNext
+                    upNextSessions = sessionsState.upNext,
                 )
+            }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { padding ->
@@ -144,7 +143,6 @@ fun MainScreen(
                     showAuthDialog = !showAuthDialog
                 },
             )
-
         }
     }
 }

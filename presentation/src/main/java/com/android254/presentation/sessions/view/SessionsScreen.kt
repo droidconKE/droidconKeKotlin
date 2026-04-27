@@ -72,7 +72,7 @@ fun SessionsRoute(
         navigateToSessionDetails = navigateToSessionDetails,
         selectedEventDate = selectedEventDate,
         currentSelections = currentSelections,
-        onEvent = onEvent
+        onEvent = onEvent,
     )
 }
 

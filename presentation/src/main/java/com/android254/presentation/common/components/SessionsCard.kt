@@ -45,10 +45,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -57,12 +55,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
@@ -72,7 +68,6 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
-import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsCard(
@@ -80,52 +75,56 @@ fun SessionsCard(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
 ) {
-
-    val alpha = when (session.sessionStatus) {
-        SessionStatus.Past -> 0.5f
-        SessionStatus.Ongoing -> 1f
-        SessionStatus.Upcoming -> 1f
-    }
+    val alpha =
+        when (session.sessionStatus) {
+            SessionStatus.Past -> 0.5f
+            SessionStatus.Ongoing -> 1f
+            SessionStatus.Upcoming -> 1f
+        }
 
     val animatedBorderAlpha =
         if (session.sessionStatus == SessionStatus.Ongoing) {
-
             val transition = rememberInfiniteTransition(label = "ongoing_border")
 
             transition.animateFloat(
                 initialValue = 0.3f,
                 targetValue = 1f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 1200,
-                        easing = EaseInOut
+                animationSpec =
+                    infiniteRepeatable(
+                        animation =
+                            tween(
+                                durationMillis = 1200,
+                                easing = EaseInOut,
+                            ),
+                        repeatMode = RepeatMode.Reverse,
                     ),
-                    repeatMode = RepeatMode.Reverse
-                ),
-                label = "border_alpha"
+                label = "border_alpha",
             ).value
         } else {
             0f
         }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .alpha(alpha),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .alpha(alpha),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = if (session.sessionStatus == SessionStatus.Ongoing) {
-            BorderStroke(
-                width = 1.5.dp,
-                color = session.color.copy(alpha = animatedBorderAlpha)
-            )
-        } else {
-            null
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.chaiColorsPalette.cardsBackground
-        ),
+        border =
+            if (session.sessionStatus == SessionStatus.Ongoing) {
+                BorderStroke(
+                    width = 1.5.dp,
+                    color = session.color.copy(alpha = animatedBorderAlpha),
+                )
+            } else {
+                null
+            },
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
+            ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
         Row(
@@ -135,7 +134,6 @@ fun SessionsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
-
             if (session.sessionStatus == SessionStatus.Ongoing) {
                 NowIndicator(session.color)
             } else {
@@ -149,7 +147,7 @@ fun SessionsCard(
 
             SessionDetails(
                 session = session,
-                onBookMark = onBookmark
+                onBookMark = onBookmark,
             )
         }
     }
@@ -184,35 +182,38 @@ private fun RowScope.NowIndicator(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
-            modifier = Modifier
-                .size(16.dp)
-                .clip(CircleShape)
-                .background(accentColor)
-                .then(
-                    Modifier // pulsing dot
-                )
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .clip(CircleShape)
+                    .background(accentColor)
+                    .then(
+                        Modifier, // pulsing dot
+                    ),
         ) {
             val transition = rememberInfiniteTransition(label = "pulse")
 
             val alpha by transition.animateFloat(
                 initialValue = 0.6f,
                 targetValue = 0f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(900),
-                    repeatMode = RepeatMode.Restart
-                ),
-                label = "alpha"
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(900),
+                        repeatMode = RepeatMode.Restart,
+                    ),
+                label = "alpha",
             )
 
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .graphicsLayer { this.alpha = alpha }
-                    .clip(CircleShape)
-                    .background(accentColor)
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .graphicsLayer { this.alpha = alpha }
+                        .clip(CircleShape)
+                        .background(accentColor),
             )
         }
 
@@ -224,7 +225,10 @@ private fun RowScope.NowIndicator(
 }
 
 @Composable
-fun RowScope.SessionDetails(session: SessionPresentationModel, onBookMark: (String) -> Unit) {
+fun RowScope.SessionDetails(
+    session: SessionPresentationModel,
+    onBookMark: (String) -> Unit,
+) {
     Column(
         modifier =
             Modifier
@@ -251,7 +255,7 @@ fun RowScope.SessionDetails(session: SessionPresentationModel, onBookMark: (Stri
 fun SessionTitleComponent(
     session: SessionPresentationModel,
     onBookmark: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier

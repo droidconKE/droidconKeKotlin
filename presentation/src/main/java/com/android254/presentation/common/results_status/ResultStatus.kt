@@ -15,11 +15,14 @@
  */
 package com.android254.presentation.common.results_status
 
-sealed interface ResultStatus{
-    object Loading: ResultStatus
-    object Success: ResultStatus
-    data class Empty(val message: String): ResultStatus
-    data class Error(val message: String): ResultStatus
+sealed interface ResultStatus {
+    object Loading : ResultStatus
+
+    object Success : ResultStatus
+
+    data class Empty(val message: String) : ResultStatus
+
+    data class Error(val message: String) : ResultStatus
 }
 
 val ResultStatus.isLoading: Boolean

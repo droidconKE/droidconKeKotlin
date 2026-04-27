@@ -15,16 +15,11 @@
  */
 package com.android254.presentation.sessionDetails.view
 
-import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,42 +27,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarOutline
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
@@ -83,19 +61,9 @@ import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.chaiColorsPalette
-import com.droidconke.chai.components.COutlinedButton
-import com.droidconke.chai.components.ChaiBodyLarge
-import com.droidconke.chai.components.ChaiBodyLargeBold
-import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.components.ChaiBodySmall
-import com.droidconke.chai.components.ChaiBodyXSmall
-import com.droidconke.chai.components.ChaiTextLabelLarge
-import com.droidconke.chai.components.ChaiTitle
-import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SessionDetailsRoute(
@@ -273,13 +241,14 @@ fun SessionDetailsScreenPreview() {
                             level = "Beginner",
                             sessionImageUrl = "",
                             timeSlot = "10:00 - 11:00 AM",
-                            speakers = listOf(
-                                SessionDetailsSpeakerPresentationModel(
-                                    name = "Todd Jason",
-                                    speakerImage = "",
-                                    twitterHandle = ""
-                                )
-                            ),
+                            speakers =
+                                listOf(
+                                    SessionDetailsSpeakerPresentationModel(
+                                        name = "Todd Jason",
+                                        speakerImage = "",
+                                        twitterHandle = "",
+                                    ),
+                                ),
                         ),
                 ),
             sessionId = "1",

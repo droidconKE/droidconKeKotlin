@@ -32,15 +32,16 @@ import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun SessionLoadingComponent() {
-    val data = List(3) { index ->
-        VerticalStep(
-            id = index,
-            color = ChaiBlue,
-            icon = Icons.Default.CoPresent,
-            intensity = Intensity.Low,
-            data = Unit,
-        )
-    }
+    val data =
+        List(3) { index ->
+            VerticalStep(
+                id = index,
+                color = ChaiBlue,
+                icon = Icons.Default.CoPresent,
+                intensity = Intensity.Low,
+                data = Unit,
+            )
+        }
     LazyColumn {
         verticalSteps(
             items = data,
@@ -53,10 +54,10 @@ fun SessionLoadingComponent() {
 
 @PreviewLightDark
 @Composable
-fun SessionLoadingPreview(){
+fun SessionLoadingPreview() {
     ChaiDCKE22Theme {
         Surface(
-            color = MaterialTheme.chaiColorsPalette.background
+            color = MaterialTheme.chaiColorsPalette.background,
         ) {
             SessionLoadingComponent()
         }

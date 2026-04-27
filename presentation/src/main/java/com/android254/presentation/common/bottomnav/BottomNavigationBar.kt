@@ -54,12 +54,12 @@ fun BottomNavigationBar(
     navController: NavigationController,
     navigationState: NavigationState,
     currentSessions: List<SessionPresentationModel> = emptyList(),
-    upNextSessions: List<SessionPresentationModel> = emptyList()
+    upNextSessions: List<SessionPresentationModel> = emptyList(),
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
-    ){
+    ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 20.dp),
@@ -71,7 +71,7 @@ fun BottomNavigationBar(
                     modifier = Modifier.width(400.dp),
                     session = session,
                     isNow = true,
-                ){ id ->
+                ) { id ->
                     navController.navigate(Screens.SessionDetails(id))
                 }
             }
@@ -80,7 +80,7 @@ fun BottomNavigationBar(
                     modifier = Modifier.width(400.dp),
                     session = session,
                     isNow = false,
-                ){ id ->
+                ) { id ->
                     navController.navigate(Screens.SessionDetails(id))
                 }
             }
@@ -168,12 +168,12 @@ fun BottomNavigationBarPreview() {
 
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
-        ){
+        ) {
             BottomNavigationBar(
                 navController = navController,
                 navigationState = navigationState,
                 currentSessions = fakeSessions.take(2),
-                upNextSessions = fakeSessions.take(2)
+                upNextSessions = fakeSessions.take(2),
             )
         }
     }
