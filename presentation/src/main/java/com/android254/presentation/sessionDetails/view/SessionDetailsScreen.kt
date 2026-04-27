@@ -273,7 +273,13 @@ fun SessionDetailsScreenPreview() {
                             level = "Beginner",
                             sessionImageUrl = "",
                             timeSlot = "10:00 - 11:00 AM",
-                            speakers = listOf(),
+                            speakers = listOf(
+                                SessionDetailsSpeakerPresentationModel(
+                                    name = "Todd Jason",
+                                    speakerImage = "",
+                                    twitterHandle = ""
+                                )
+                            ),
                         ),
                 ),
             sessionId = "1",
