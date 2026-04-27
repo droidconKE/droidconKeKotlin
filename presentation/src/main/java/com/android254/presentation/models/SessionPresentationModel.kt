@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.MicExternalOn
+import com.android254.domain.models.Session
+import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.atoms.ChaiRed
@@ -40,7 +42,7 @@ data class SessionPresentationModel(
     val endDate: String,
     val remoteId: String,
     val isService: Boolean = false,
-    val isNow: Boolean = false,
+    val sessionStatus: SessionStatus = SessionStatus.Upcoming,
     val sessionImage: String = "",
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
@@ -68,7 +70,7 @@ data class SessionPresentationModel(
     val verticalStep: VerticalStep<SessionPresentationModel> = VerticalStep(
         id = this.id,
         color = color,
-        glowing = isNow,
+        intensity = sessionStatus.toIntensity(),
         icon = icon,
         data = this
     )
@@ -79,3 +81,15 @@ data class SessionSpeakersPresentationModel(
     val speakerImage: String,
     val twitterHandle: String,
 )
+
+enum class SessionStatus{
+    Past, Ongoing, Upcoming
+}
+
+fun SessionStatus.toIntensity(): Intensity {
+    return when(this){
+        SessionStatus.Upcoming -> Intensity.Medium
+        SessionStatus.Ongoing -> Intensity.High
+        SessionStatus.Past -> Intensity.Low
+    }
+}

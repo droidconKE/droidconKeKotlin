@@ -15,11 +15,13 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -58,6 +61,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
+import com.android254.presentation.models.SessionStatus
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
@@ -76,14 +80,52 @@ fun SessionsCard(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
 ) {
+
+    val alpha = when (session.sessionStatus) {
+        SessionStatus.Past -> 0.5f
+        SessionStatus.Ongoing -> 1f
+        SessionStatus.Upcoming -> 1f
+    }
+
+    val animatedBorderAlpha =
+        if (session.sessionStatus == SessionStatus.Ongoing) {
+
+            val transition = rememberInfiniteTransition(label = "ongoing_border")
+
+            transition.animateFloat(
+                initialValue = 0.3f,
+                targetValue = 1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = 1200,
+                        easing = EaseInOut
+                    ),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "border_alpha"
+            ).value
+        } else {
+            0f
+        }
+
     Card(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .alpha(alpha),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground),
+        border = if (session.sessionStatus == SessionStatus.Ongoing) {
+            BorderStroke(
+                width = 1.5.dp,
+                color = session.color.copy(alpha = animatedBorderAlpha)
+            )
+        } else {
+            null
+        },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.chaiColorsPalette.cardsBackground
+        ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
         Row(
@@ -93,7 +135,8 @@ fun SessionsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            if(session.isNow){
+
+            if (session.sessionStatus == SessionStatus.Ongoing) {
                 NowIndicator(session.color)
             } else {
                 SessionTimeComponent(
@@ -103,7 +146,11 @@ fun SessionsCard(
             }
 
             Spacer(modifier = Modifier.width(24.dp))
-            SessionDetails(session = session, onBookMark = onBookmark)
+
+            SessionDetails(
+                session = session,
+                onBookMark = onBookmark
+            )
         }
     }
 }
