@@ -46,6 +46,7 @@ import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionStatus
 import com.android254.presentation.sessions.components.CurrentSessionComponent
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
@@ -172,8 +173,8 @@ fun BottomNavigationBarPreview() {
             BottomNavigationBar(
                 navController = navController,
                 navigationState = navigationState,
-                currentSessions = fakeSessions.take(2),
-                upNextSessions = fakeSessions.take(2),
+                currentSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Ongoing }.take(2),
+                upNextSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Upcoming }.take(2),
             )
         }
     }
