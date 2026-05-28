@@ -21,4 +21,6 @@ interface SyncDataWorkManager {
     val isSyncing: Flow<Boolean>
 
     suspend fun startSync()
+
+    suspend fun setupPeriodicSync()
 }

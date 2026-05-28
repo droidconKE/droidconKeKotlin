@@ -18,6 +18,7 @@ package com.android254.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import javax.inject.Inject
 
@@ -37,8 +39,15 @@ class MainViewModel
     @Inject
     constructor(
         private val sessionsRepo: SessionsRepo,
+        private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
     ) : ViewModel() {
+        init {
+            viewModelScope.launch {
+                syncDataWorkManager.setupPeriodicSync()
+            }
+        }
+
         private val ticker =
             flow {
                 while (true) {

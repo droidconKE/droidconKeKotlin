@@ -19,9 +19,11 @@ import android.content.Context
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.map
 import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants.syncDataWorkerName
@@ -30,6 +32,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SyncDataWorkManagerImpl
@@ -54,8 +57,24 @@ class SyncDataWorkManagerImpl
                     )
                     .build()
             val workManager = WorkManager.getInstance(context)
-            workManager.beginUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
-                .enqueue()
+            workManager.enqueueUniqueWork(syncDataWorkerName, ExistingWorkPolicy.REPLACE, syncDataRequest)
+        }
+
+        override suspend fun setupPeriodicSync() {
+            val syncDataRequest =
+                PeriodicWorkRequestBuilder<SyncDataWorker>(24, TimeUnit.HOURS)
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build(),
+                    )
+                    .build()
+            val workManager = WorkManager.getInstance(context)
+            workManager.enqueueUniquePeriodicWork(
+                syncDataWorkerName + "_periodic",
+                ExistingPeriodicWorkPolicy.KEEP,
+                syncDataRequest,
+            )
         }
     }
 
