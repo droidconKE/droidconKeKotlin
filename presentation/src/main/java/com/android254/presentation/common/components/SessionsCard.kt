@@ -98,14 +98,15 @@ fun SessionsCard(
         label = "border_alpha",
     )
 
-    val border = if (session.sessionStatus == SessionStatus.Ongoing) {
-        BorderStroke(
-            width = 1.5.dp,
-            color = session.color.copy(alpha = animatedBorderAlpha),
-        )
-    } else {
-        null
-    }
+    val border =
+        if (session.sessionStatus == SessionStatus.Ongoing) {
+            BorderStroke(
+                width = 1.5.dp,
+                color = session.color.copy(alpha = animatedBorderAlpha),
+            )
+        } else {
+            null
+        }
 
     Card(
         modifier =
@@ -199,10 +200,9 @@ private fun RowScope.NowIndicator(
                     .clip(CircleShape)
                     .background(accentColor)
                     .then(
-                        Modifier, // pulsing dot
+                        Modifier,
                     ),
         ) {
-
             Box(
                 modifier =
                     Modifier

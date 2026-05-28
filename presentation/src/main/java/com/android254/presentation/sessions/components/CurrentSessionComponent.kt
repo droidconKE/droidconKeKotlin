@@ -81,7 +81,7 @@ fun CurrentSessionComponent(
         label = "alpha",
     )
 
-    val alpha = if(isNow) pulse else 1f
+    val alpha = if (isNow) pulse else 1f
 
     Card(
         modifier =
