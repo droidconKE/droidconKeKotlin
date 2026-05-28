@@ -47,11 +47,3 @@ fun TopBar(onNavigationIconClick: () -> Unit) {
         },
     )
 }
-
-@Composable
-fun CustomDivider() {
-    Divider(
-        thickness = 1.dp,
-        color = MaterialTheme.chaiColorsPalette.surfaces,
-    )
-}

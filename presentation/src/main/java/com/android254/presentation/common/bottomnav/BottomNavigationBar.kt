@@ -68,18 +68,16 @@ fun BottomNavigationBar(
         ) {
             items(currentSessions) { session ->
                 CurrentSessionComponent(
-                    modifier = Modifier.width(400.dp),
+                    modifier = Modifier.fillParentMaxWidth(0.85f),
                     session = session,
-                    isNow = true,
                 ) { id ->
                     navController.navigate(Screens.SessionDetails(id))
                 }
             }
             items(upNextSessions) { session ->
                 CurrentSessionComponent(
-                    modifier = Modifier.width(400.dp),
+                    modifier = Modifier.fillParentMaxWidth(0.85f),
                     session = session,
-                    isNow = false,
                 ) { id ->
                     navController.navigate(Screens.SessionDetails(id))
                 }

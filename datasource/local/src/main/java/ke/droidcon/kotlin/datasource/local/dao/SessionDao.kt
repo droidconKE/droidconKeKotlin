@@ -45,7 +45,7 @@ interface SessionDao : BaseDao<SessionEntity> {
     @Query("SELECT isBookmarked FROM sessions WHERE remote_id = :id")
     suspend fun getBookmarkStatus(id: String): Boolean
 
-    @Query("SELECT * FROM sessions WHERE startTimestamp <= :currentTime AND :currentTime <= (startTimestamp + 3600000) ORDER BY startTimestamp ASC")
+    @Query("SELECT * FROM sessions WHERE startTimestamp <= :currentTime AND :currentTime < endTimeStamp ORDER BY startTimestamp ASC")
     fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>>
 
     @Query("SELECT * FROM sessions WHERE startTimestamp > :currentTime ORDER BY startTimestamp ASC LIMIT 5")

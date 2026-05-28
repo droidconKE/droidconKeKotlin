@@ -20,6 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
+import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,17 +37,19 @@ class MainViewModel
     @Inject
     constructor(
         private val sessionsRepo: SessionsRepo,
+        private val clock: Clock,
     ) : ViewModel() {
         private val ticker =
             flow {
                 while (true) {
-                    emit(System.currentTimeMillis())
+                    emit(clock.now())
                     delay(60000) // Refresh every minute
                 }
             }
 
         val sessionState: StateFlow<SessionUIState> =
-            ticker.flatMapLatest { currentTime ->
+            ticker.flatMapLatest { now ->
+                val currentTime = now.toEpochMilliseconds()
                 combine(
                     sessionsRepo.fetchCurrentSessions(currentTime),
                     sessionsRepo.fetchUpNextSessions(currentTime),
@@ -53,11 +57,11 @@ class MainViewModel
                     SessionUIState(
                         current =
                             current.map {
-                                it.toPresentationModel()
+                                it.toPresentationModel(now)
                             },
                         upNext =
                             upNext.map {
-                                it.toPresentationModel()
+                                it.toPresentationModel(now)
                             },
                     )
                 }
@@ -67,8 +71,3 @@ class MainViewModel
                 initialValue = SessionUIState(),
             )
     }
-
-data class SessionUIState(
-    val current: List<SessionPresentationModel> = emptyList(),
-    val upNext: List<SessionPresentationModel> = emptyList(),
-)

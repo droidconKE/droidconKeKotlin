@@ -17,6 +17,7 @@ package com.android254.presentation.di
 
 import android.content.Context
 import com.android254.presentation.notifications.DroidconNotificationManager
+import kotlinx.datetime.Clock
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,4 +33,7 @@ object PresentationModule {
     fun providesDroidconNotificationManager(
         @ApplicationContext context: Context,
     ) = DroidconNotificationManager(context)
+
+    @Provides
+    fun providesClock(): Clock = Clock.System
 }

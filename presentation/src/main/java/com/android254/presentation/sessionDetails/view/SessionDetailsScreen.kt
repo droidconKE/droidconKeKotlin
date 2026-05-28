@@ -16,7 +16,6 @@
 package com.android254.presentation.sessionDetails.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,11 +45,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
-import com.android254.presentation.sessionDetails.view.components.CustomDivider
 import com.android254.presentation.sessionDetails.view.components.SessionBannerImage
 import com.android254.presentation.sessionDetails.view.components.SessionLevel
 import com.android254.presentation.sessionDetails.view.components.SessionSpeakerNameAndFavouriteIcon
