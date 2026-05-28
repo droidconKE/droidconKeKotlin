@@ -81,28 +81,31 @@ fun SessionsCard(
             SessionStatus.Ongoing -> 1f
             SessionStatus.Upcoming -> 1f
         }
+    val transition = rememberInfiniteTransition(label = "ongoing_border")
 
-    val animatedBorderAlpha =
-        if (session.sessionStatus == SessionStatus.Ongoing) {
-            val transition = rememberInfiniteTransition(label = "ongoing_border")
-
-            transition.animateFloat(
-                initialValue = 0.3f,
-                targetValue = 1f,
-                animationSpec =
-                    infiniteRepeatable(
-                        animation =
-                            tween(
-                                durationMillis = 1200,
-                                easing = EaseInOut,
-                            ),
-                        repeatMode = RepeatMode.Reverse,
+    val animatedBorderAlpha by transition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec =
+            infiniteRepeatable(
+                animation =
+                    tween(
+                        durationMillis = 1200,
+                        easing = EaseInOut,
                     ),
-                label = "border_alpha",
-            ).value
-        } else {
-            0f
-        }
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "border_alpha",
+    )
+
+    val border = if (session.sessionStatus == SessionStatus.Ongoing) {
+        BorderStroke(
+            width = 1.5.dp,
+            color = session.color.copy(alpha = animatedBorderAlpha),
+        )
+    } else {
+        null
+    }
 
     Card(
         modifier =
@@ -112,15 +115,7 @@ fun SessionsCard(
                 .alpha(alpha),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border =
-            if (session.sessionStatus == SessionStatus.Ongoing) {
-                BorderStroke(
-                    width = 1.5.dp,
-                    color = session.color.copy(alpha = animatedBorderAlpha),
-                )
-            } else {
-                null
-            },
+        border = border,
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
@@ -180,6 +175,19 @@ fun RowScope.SessionTimeComponent(
 private fun RowScope.NowIndicator(
     accentColor: Color,
 ) {
+    val transition = rememberInfiniteTransition(label = "pulse")
+
+    val alpha by transition.animateFloat(
+        initialValue = 0.6f,
+        targetValue = 0f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(900),
+                repeatMode = RepeatMode.Restart,
+            ),
+        label = "alpha",
+    )
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -194,18 +202,6 @@ private fun RowScope.NowIndicator(
                         Modifier, // pulsing dot
                     ),
         ) {
-            val transition = rememberInfiniteTransition(label = "pulse")
-
-            val alpha by transition.animateFloat(
-                initialValue = 0.6f,
-                targetValue = 0f,
-                animationSpec =
-                    infiniteRepeatable(
-                        animation = tween(900),
-                        repeatMode = RepeatMode.Restart,
-                    ),
-                label = "alpha",
-            )
 
             Box(
                 modifier =

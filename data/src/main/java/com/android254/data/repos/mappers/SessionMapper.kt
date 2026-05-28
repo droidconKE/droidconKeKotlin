@@ -72,6 +72,7 @@ fun SessionDTO.toEntity(): SessionEntity {
         startTimestamp = fromString(startDateTime),
         remote_id = this.id,
         sessionImageUrl = sessionImage.toString(),
+        endTimeStamp = fromString(endDateTime),
     )
 }
 

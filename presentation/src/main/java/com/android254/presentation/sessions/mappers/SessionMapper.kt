@@ -28,11 +28,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-fun Session.toPresentationModel(): SessionPresentationModel {
+fun Session.toPresentationModel(now: Instant = Clock.System.now()): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val endTime = getTimePeriod(this.endDateTime)
-
-    val now = Clock.System.now()
 
     val sessionStart = this.startDateTime.toInstant()
     val sessionEnd = this.endDateTime.toInstant()
@@ -104,16 +102,16 @@ fun List<Speaker>.toSessionSpeaker() =
     }
 
 fun getTimePeriod(time: String): FormattedTime {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     val date: Date = format.parse(time) ?: Date()
     return FormattedTime(
-        time = SimpleDateFormat("hh:mm", Locale.getDefault()).format(date),
-        period = SimpleDateFormat("a", Locale.getDefault()).format(date),
+        time = SimpleDateFormat("hh:mm", Locale.US).format(date),
+        period = SimpleDateFormat("a", Locale.US).format(date),
     )
 }
 
 private fun String.toInstant(): Instant {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     val date = format.parse(this) ?: return Instant.fromEpochMilliseconds(0)
     return Instant.fromEpochMilliseconds(date.time)
 }

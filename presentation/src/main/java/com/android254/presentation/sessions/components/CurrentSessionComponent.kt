@@ -48,31 +48,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.android254.presentation.common.fake_data.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
-import com.android254.presentation.models.SessionSpeakersPresentationModel
+import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.presentation.R
-import java.util.Locale
 
 @Composable
 fun CurrentSessionComponent(
     session: SessionPresentationModel,
-    isNow: Boolean,
     modifier: Modifier = Modifier,
     onClicked: (String) -> Unit = {},
 ) {
+    val isNow = session.sessionStatus == SessionStatus.Ongoing
+
     val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")
-    val alpha by infiniteTransition.animateFloat(
+    val pulse by infiniteTransition.animateFloat(
         initialValue = 0.4f,
         targetValue = 1f,
         animationSpec =
@@ -82,6 +80,8 @@ fun CurrentSessionComponent(
             ),
         label = "alpha",
     )
+
+    val alpha = if(isNow) pulse else 1f
 
     Card(
         modifier =
@@ -159,9 +159,9 @@ fun CurrentSessionComponent(
                         ChaiBodySmallBold(
                             bodyText =
                                 if (isNow) {
-                                    stringResource(R.string.now).capitalize(Locale.ROOT)
+                                    stringResource(R.string.now).uppercase()
                                 } else {
-                                    stringResource(R.string.up_next).capitalize(Locale.ROOT)
+                                    stringResource(R.string.up_next).uppercase()
                                 },
                             textColor = session.color,
                         )
@@ -178,47 +178,36 @@ fun CurrentSessionComponent(
     }
 }
 
-class CurrentSessionPreviewParameterProvider : PreviewParameterProvider<Boolean> {
-    override val values = sequenceOf(true, false)
-}
-
 @PreviewLightDark
 @Composable
-fun CurrentSessionPreview(
-    @PreviewParameter(CurrentSessionPreviewParameterProvider::class) isNow: Boolean,
-) {
-    val session =
-        SessionPresentationModel(
-            id = "1",
-            title = "Modern Android Development",
-            description = "Keynote description",
-            venue = "Main Hall",
-            startTime = "09:00",
-            endTime = "10:00 AM",
-            amOrPm = "AM",
-            isStarred = false,
-            format = "Keynote",
-            level = "Beginner",
-            startDate = "2023-11-17 09:00:00",
-            endDate = "2023-11-17 10:00:00",
-            remoteId = "1",
-            eventDay = "1",
-            speakers =
-                listOf(
-                    SessionSpeakersPresentationModel(
-                        name = "Lisa F Temecula",
-                        speakerImage = "",
-                        twitterHandle = "lisa",
-                    ),
-                ),
-        )
+fun CurrentSessionPreview_UpNext() {
+    val defaultSession = fakeSessions.first()
+    val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Upcoming } ?: defaultSession
+
     ChaiDCKE22Theme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {
             CurrentSessionComponent(
                 session = session,
-                isNow = isNow,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun CurrentSessionPreview_Current() {
+    val defaultSession = fakeSessions.first()
+    val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Ongoing } ?: defaultSession
+
+    ChaiDCKE22Theme {
+        Surface(
+            color = MaterialTheme.chaiColorsPalette.background,
+        ) {
+            CurrentSessionComponent(
+                session = session,
                 modifier = Modifier.padding(16.dp),
             )
         }

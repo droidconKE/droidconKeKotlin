@@ -142,6 +142,7 @@ val fakeSessions =
             startTime = "01:30",
             endTime = "02:15",
             amOrPm = "PM",
+            sessionStatus = SessionStatus.Upcoming,
             isStarred = false,
             format = "Talk",
             level = "Beginner",
