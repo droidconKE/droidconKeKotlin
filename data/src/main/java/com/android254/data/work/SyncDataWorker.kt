@@ -24,9 +24,9 @@ import androidx.work.WorkerParameters
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
-import com.android254.domain.repos.SpeakersRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
