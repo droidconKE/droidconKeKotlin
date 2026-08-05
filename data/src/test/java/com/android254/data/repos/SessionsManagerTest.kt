@@ -96,5 +96,6 @@ val sessionEntity =
         rooms = "Room 1",
         speakers = "John Doe, Jane Doe",
         startTimestamp = 1638457600000,
+        endTimeStamp = 1638464800000,
         sessionImageUrl = "https://example.com/session-1.jpg",
     )
