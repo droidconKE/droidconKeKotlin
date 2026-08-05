@@ -17,14 +17,15 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.sync
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
+import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
 class FeedManager
@@ -39,23 +40,25 @@ class FeedManager
         override fun fetchFeedById(id: Int): Flow<Feed?> =
             localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }
 
-        override suspend fun syncFeed() {
-            when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
-                is DataResult.Success -> {
-                    localFeedDataSource.deleteAllFeed()
-                    localFeedDataSource.insertFeed(feedItems = feedResponse.data.map { it.toEntity() })
-                    Timber.d("Sync feed successful")
-                }
-
-                is DataResult.Empty -> {
-                }
-
-                is DataResult.Loading -> {
-                }
-
-                is DataResult.Error -> {
-                    Timber.d("Sync feed error ${feedResponse.message}")
-                }
-            }
-        }
+        override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
+            synchronizer.sync(
+                remoteItemFetcher = {
+                    val feedResponse = remoteFeedDataSource.fetchFeed()
+                    if (feedResponse is DataResult.Success) {
+                        feedResponse.data
+                    } else {
+                        throw Exception("Sync feed failed")
+                    }
+                },
+                localIdFetcher = { localFeedDataSource.getTitles() },
+                localItemUpserter = { remoteItems ->
+                    localFeedDataSource.insertFeed(
+                        feedItems = remoteItems.map { it.toEntity() },
+                    )
+                },
+                localItemDeleter = { titles ->
+                    localFeedDataSource.deleteByTitles(titles)
+                },
+                remoteToLocalIdSelector = { it.title },
+            ).isSuccess
     }

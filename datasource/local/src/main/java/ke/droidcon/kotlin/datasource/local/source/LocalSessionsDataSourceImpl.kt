@@ -77,4 +77,15 @@ class LocalSessionsDataSourceImpl
         override fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>> {
             return sessionDao.fetchUpNextSessions(currentTime)
         }
+
+        override suspend fun getRemoteIds(): List<String> =
+            withContext(localSourceIoDispatcher) {
+                sessionDao.getRemoteIds()
+            }
+
+        override suspend fun deleteByRemoteIds(ids: List<String>) {
+            withContext(localSourceIoDispatcher) {
+                sessionDao.deleteByRemoteIds(ids)
+            }
+        }
     }

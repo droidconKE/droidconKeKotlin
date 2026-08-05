@@ -17,14 +17,15 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.sync
 import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
+import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
 class SponsorsManager
@@ -36,22 +37,25 @@ class SponsorsManager
         override fun getAllSponsors(): Flow<List<Sponsors>> =
             localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }
 
-        override suspend fun syncSponsors() {
-            when (val response = remoteSponsorsDataSource.getAllSponsorsRemote()) {
-                is DataResult.Success -> {
-                    localSponsorsDataSource.deleteCachedSponsors()
+        override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
+            synchronizer.sync(
+                remoteItemFetcher = {
+                    val response = remoteSponsorsDataSource.getAllSponsorsRemote()
+                    if (response is DataResult.Success) {
+                        response.data
+                    } else {
+                        throw Exception("Sync sponsors failed")
+                    }
+                },
+                localIdFetcher = { localSponsorsDataSource.getNames() },
+                localItemUpserter = { remoteItems ->
                     localSponsorsDataSource.saveCachedSponsors(
-                        sponsors = response.data.map { sponsors -> sponsors.toEntity() },
+                        sponsors = remoteItems.map { it.toEntity() },
                     )
-                    Timber.d("Sync sponsors successful")
-                }
-
-                is DataResult.Error -> {
-                    Timber.d("Sync sponsors failed ${response.message}")
-                }
-
-                else -> {
-                }
-            }
-        }
+                },
+                localItemDeleter = { names ->
+                    localSponsorsDataSource.deleteByNames(names)
+                },
+                remoteToLocalIdSelector = { it.name },
+            ).isSuccess
     }

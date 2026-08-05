@@ -15,16 +15,39 @@
  */
 package com.android254.data.di
 
+import android.content.Context
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.android254.data.work.SyncDataWorkManagerImpl
 import com.android254.domain.work.SyncDataWorkManager
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class WorkModule {
     @Binds
     abstract fun provideSyncDataWorkManager(impl: SyncDataWorkManagerImpl): SyncDataWorkManager
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideWorkManager(
+            @ApplicationContext context: Context,
+            workerFactory: HiltWorkerFactory,
+        ): WorkManager {
+            val configuration = Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                .setWorkerFactory(workerFactory)
+                .build()
+            WorkManager.initialize(context, configuration)
+            return WorkManager.getInstance(context)
+        }
+    }
 }

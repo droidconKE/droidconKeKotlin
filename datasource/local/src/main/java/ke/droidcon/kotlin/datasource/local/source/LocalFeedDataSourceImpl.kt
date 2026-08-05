@@ -47,4 +47,15 @@ class LocalFeedDataSourceImpl
         override fun getFeedById(feedId: Int) =
             feedDao.fetchFeedById(feedId)
                 .flowOn(ioDispatcher)
+
+        override suspend fun getTitles(): List<String> =
+            withContext(ioDispatcher) {
+                feedDao.getTitles()
+            }
+
+        override suspend fun deleteByTitles(titles: List<String>) {
+            withContext(ioDispatcher) {
+                feedDao.deleteByTitles(titles)
+            }
+        }
     }

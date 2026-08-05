@@ -24,4 +24,8 @@ interface LocalOrganizersDataSource {
     suspend fun deleteAllOrganizers()
 
     suspend fun insertOrganizers(organizers: List<OrganizerEntity>)
+
+    suspend fun getNames(): List<String>
+
+    suspend fun deleteByNames(names: List<String>)
 }

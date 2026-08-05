@@ -30,4 +30,10 @@ interface FeedDao : BaseDao<FeedEntity> {
 
     @Query("DELETE FROM feed")
     suspend fun deleteAllFeed()
+
+    @Query("SELECT title FROM feed")
+    suspend fun getTitles(): List<String>
+
+    @Query("DELETE FROM feed WHERE title IN (:titles)")
+    suspend fun deleteByTitles(titles: List<String>)
 }

@@ -27,4 +27,10 @@ interface SponsorsDao : BaseDao<SponsorEntity> {
 
     @Query("DELETE FROM sponsors")
     suspend fun deleteAllCachedSponsors()
+
+    @Query("SELECT name FROM sponsors")
+    suspend fun getNames(): List<String>
+
+    @Query("DELETE FROM sponsors WHERE name IN (:names)")
+    suspend fun deleteByNames(names: List<String>)
 }

@@ -16,10 +16,12 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.Organizer
+import com.android254.domain.sync.Syncable
+import com.android254.domain.sync.Synchronizer
 import kotlinx.coroutines.flow.Flow
 
-interface OrganizersRepo {
+interface OrganizersRepo : Syncable {
     fun getOrganizers(): Flow<List<Organizer>>
 
-    suspend fun syncOrganizers()
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 }

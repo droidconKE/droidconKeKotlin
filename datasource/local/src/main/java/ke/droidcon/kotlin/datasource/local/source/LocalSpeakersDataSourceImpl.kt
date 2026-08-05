@@ -47,4 +47,15 @@ class LocalSpeakersDataSourceImpl
                 speakerDao.deleteAll()
             }
         }
+
+        override suspend fun getNames(): List<String> =
+            withContext(localSourceIoDispatcher) {
+                speakerDao.getNames()
+            }
+
+        override suspend fun deleteByNames(names: List<String>) {
+            withContext(localSourceIoDispatcher) {
+                speakerDao.deleteByNames(names)
+            }
+        }
     }

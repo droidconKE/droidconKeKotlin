@@ -18,12 +18,15 @@ package com.android254.data.repos
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.local.Database
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
+import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -52,6 +55,24 @@ class SessionsManagerTest {
             coVerify(atLeast = 1) {
                 mockLocalSessionsDataSource.getCachedSessions()
             }
+        }
+
+    @Test
+    fun `test syncWith reconciles data`() =
+        runTest {
+            val remoteSession = mockk<SessionDTO>()
+            every { remoteSession.id } returns "remote_id_1"
+            coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(listOf(remoteSession))
+            coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1", "remote_id_2")
+            coEvery { mockLocalSessionsDataSource.saveCachedSessions(any()) } returns Unit
+            coEvery { mockLocalSessionsDataSource.deleteByRemoteIds(any()) } returns Unit
+
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher)
+            val result = manager.syncWith(mockk())
+
+            assert(result)
+            coVerify { mockLocalSessionsDataSource.deleteByRemoteIds(listOf("remote_id_2")) }
+            coVerify { mockLocalSessionsDataSource.saveCachedSessions(any()) }
         }
 }
 

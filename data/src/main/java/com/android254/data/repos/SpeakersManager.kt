@@ -17,14 +17,15 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.sync
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
+import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 
 class SpeakersManager
@@ -40,22 +41,25 @@ class SpeakersManager
 
         override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
 
-        override suspend fun syncSpeakers() {
-            when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
-                is DataResult.Success -> {
-                    localSpeakersDataSource.deleteAllCachedSpeakers()
+        override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
+            synchronizer.sync(
+                remoteItemFetcher = {
+                    val response = remoteSpeakersDataSource.getAllSpeakersRemote()
+                    if (response is DataResult.Success) {
+                        response.data
+                    } else {
+                        throw Exception("Sync speakers failed")
+                    }
+                },
+                localIdFetcher = { localSpeakersDataSource.getNames() },
+                localItemUpserter = { remoteItems ->
                     localSpeakersDataSource.saveCachedSpeakers(
-                        speakers = response.data.map { speaker -> speaker.toEntity() },
+                        speakers = remoteItems.map { it.toEntity() },
                     )
-                    Timber.d("Sync speakers successful")
-                }
-
-                is DataResult.Error -> {
-                    Timber.d("Sync speakers failed ${response.message}")
-                }
-
-                else -> {
-                }
-            }
-        }
+                },
+                localItemDeleter = { names ->
+                    localSpeakersDataSource.deleteByNames(names)
+                },
+                remoteToLocalIdSelector = { it.name },
+            ).isSuccess
     }

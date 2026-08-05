@@ -26,6 +26,7 @@ import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
+import com.android254.domain.sync.Synchronizer
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
@@ -48,7 +49,7 @@ class SyncDataWorker
         private val sessionsRepo: SessionsRepo,
         private val organizersRepo: OrganizersRepo,
         private val feedRepo: FeedRepo,
-    ) : CoroutineWorker(appContext, workerParameters) {
+    ) : CoroutineWorker(appContext, workerParameters), Synchronizer {
         override suspend fun getForegroundInfo(): ForegroundInfo {
             return ForegroundInfo(
                 Random.nextInt(),
@@ -59,16 +60,21 @@ class SyncDataWorker
             )
         }
 
-        override suspend fun doWork(): Result {
+        override suspend fun doWork(): Result =
             withContext(ioDispatcher) {
-                awaitAll(
-                    async { sessionsRepo.syncSessions() },
-                    async { speakersRepo.syncSpeakers() },
-                    async { sponsorsRepo.syncSponsors() },
-                    async { organizersRepo.syncOrganizers() },
-                    async { feedRepo.syncFeed() },
-                )
+                val syncedSuccessfully =
+                    awaitAll(
+                        async { sessionsRepo.sync() },
+                        async { speakersRepo.sync() },
+                        async { sponsorsRepo.sync() },
+                        async { organizersRepo.sync() },
+                        async { feedRepo.sync() },
+                    ).all { it }
+
+                if (syncedSuccessfully) {
+                    Result.success()
+                } else {
+                    Result.retry()
+                }
             }
-            return Result.success()
-        }
     }

@@ -16,14 +16,16 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.Speaker
+import com.android254.domain.sync.Syncable
+import com.android254.domain.sync.Synchronizer
 import kotlinx.coroutines.flow.Flow
 
-interface SpeakersRepo {
+interface SpeakersRepo : Syncable {
     fun fetchSpeakers(): Flow<List<Speaker>>
 
     suspend fun fetchSpeakerCount(): Flow<Int>
 
     suspend fun getSpeakerByName(name: String): Flow<Speaker>
 
-    suspend fun syncSpeakers()
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 }

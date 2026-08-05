@@ -27,4 +27,10 @@ interface OrganizersDao : BaseDao<OrganizerEntity> {
 
     @Query("DELETE FROM ORGANIZERS")
     suspend fun deleteAllOrganizers()
+
+    @Query("SELECT name FROM ORGANIZERS")
+    suspend fun getNames(): List<String>
+
+    @Query("DELETE FROM ORGANIZERS WHERE name IN (:names)")
+    suspend fun deleteByNames(names: List<String>)
 }

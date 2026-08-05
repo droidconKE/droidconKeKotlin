@@ -138,6 +138,34 @@ class SessionDaoTest {
             assertThat(result.size, `is`(5))
         }
 
+    @Test
+    fun `test getRemoteIds returns all remote ids`() =
+        runTest {
+            val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 0L, endTimestamp = 1000L)
+            val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 0L, endTimestamp = 1000L)
+            sessionDao.insert(session1)
+            sessionDao.insert(session2)
+
+            val result = sessionDao.getRemoteIds()
+            assertThat(result.size, `is`(2))
+            assertThat(result.containsAll(listOf("1", "2")), `is`(true))
+        }
+
+    @Test
+    fun `test deleteByRemoteIds deletes specified sessions`() =
+        runTest {
+            val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 0L, endTimestamp = 1000L)
+            val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 0L, endTimestamp = 1000L)
+            sessionDao.insert(session1)
+            sessionDao.insert(session2)
+
+            sessionDao.deleteByRemoteIds(listOf("1"))
+
+            val result = sessionDao.fetchSessions().first()
+            assertThat(result.size, `is`(1))
+            assertThat(result[0].remote_id, `is`("2"))
+        }
+
     private fun createSession(
         id: Int,
         title: String,
