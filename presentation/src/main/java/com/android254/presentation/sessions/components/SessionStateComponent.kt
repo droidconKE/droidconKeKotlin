@@ -38,10 +38,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.SessionsCard
-import com.android254.presentation.common.fake_data.fakeSessions
-import com.android254.presentation.common.results_status.ResultStatus
-import com.android254.presentation.common.results_status.emptyMessage
-import com.android254.presentation.common.results_status.errorMessage
+import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.resultstatus.ResultStatus
+import com.android254.presentation.common.resultstatus.emptyMessage
+import com.android254.presentation.common.resultstatus.errorMessage
 import com.android254.presentation.common.stepper.verticalSteps
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus

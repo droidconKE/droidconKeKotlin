@@ -51,7 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.android254.presentation.common.fake_data.fakeSessions
+import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiDCKE22Theme
@@ -180,7 +180,7 @@ fun CurrentSessionComponent(
 
 @PreviewLightDark
 @Composable
-fun CurrentSessionPreview_UpNext() {
+fun CurrentSessionUpNextPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Upcoming } ?: defaultSession
 
@@ -198,7 +198,7 @@ fun CurrentSessionPreview_UpNext() {
 
 @PreviewLightDark
 @Composable
-fun CurrentSessionPreview_Current() {
+fun CurrentSessionCurrentPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Ongoing } ?: defaultSession
 

@@ -20,7 +20,7 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.presentation.common.results_status.ResultStatus
+import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption

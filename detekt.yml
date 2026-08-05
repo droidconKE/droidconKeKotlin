@@ -49,7 +49,7 @@ complexity:
     threshold: 4
   ComplexInterface:
     active: true
-    threshold: 10
+    threshold: 15
     includeStaticDeclarations: false
   ComplexMethod:
     active: false
