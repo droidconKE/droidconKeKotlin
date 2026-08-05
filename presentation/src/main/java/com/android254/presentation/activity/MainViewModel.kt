@@ -18,7 +18,6 @@ package com.android254.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
-import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel

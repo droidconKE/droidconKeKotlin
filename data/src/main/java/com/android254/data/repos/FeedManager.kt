@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.SyncException
 import com.android254.data.util.sync
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
@@ -43,11 +44,10 @@ class FeedManager
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer.sync(
                 remoteItemFetcher = {
-                    val feedResponse = remoteFeedDataSource.fetchFeed()
-                    if (feedResponse is DataResult.Success) {
-                        feedResponse.data
-                    } else {
-                        throw Exception("Sync feed failed")
+                    when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
+                        is DataResult.Success -> feedResponse.data
+                        is DataResult.Error -> throw SyncException(feedResponse.message, feedResponse.exc)
+                        else -> throw SyncException("Sync feed failed")
                     }
                 },
                 localIdFetcher = { localFeedDataSource.getTitles() },

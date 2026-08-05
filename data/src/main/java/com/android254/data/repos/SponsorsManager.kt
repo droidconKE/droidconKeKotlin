@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.SyncException
 import com.android254.data.util.sync
 import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
@@ -40,11 +41,10 @@ class SponsorsManager
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer.sync(
                 remoteItemFetcher = {
-                    val response = remoteSponsorsDataSource.getAllSponsorsRemote()
-                    if (response is DataResult.Success) {
-                        response.data
-                    } else {
-                        throw Exception("Sync sponsors failed")
+                    when (val response = remoteSponsorsDataSource.getAllSponsorsRemote()) {
+                        is DataResult.Success -> response.data
+                        is DataResult.Error -> throw SyncException(response.message, response.exc)
+                        else -> throw SyncException("Sync sponsors failed")
                     }
                 },
                 localIdFetcher = { localSponsorsDataSource.getNames() },

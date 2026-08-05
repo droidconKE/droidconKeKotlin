@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.SyncException
 import com.android254.data.util.sync
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
@@ -44,11 +45,10 @@ class SpeakersManager
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer.sync(
                 remoteItemFetcher = {
-                    val response = remoteSpeakersDataSource.getAllSpeakersRemote()
-                    if (response is DataResult.Success) {
-                        response.data
-                    } else {
-                        throw Exception("Sync speakers failed")
+                    when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
+                        is DataResult.Success -> response.data
+                        is DataResult.Error -> throw SyncException(response.message, response.exc)
+                        else -> throw SyncException("Sync speakers failed")
                     }
                 },
                 localIdFetcher = { localSpeakersDataSource.getNames() },
