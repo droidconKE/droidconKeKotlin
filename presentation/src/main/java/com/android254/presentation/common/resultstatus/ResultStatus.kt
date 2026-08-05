@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.common.results_status
+package com.android254.presentation.common.resultstatus
 
 sealed interface ResultStatus {
     object Loading : ResultStatus

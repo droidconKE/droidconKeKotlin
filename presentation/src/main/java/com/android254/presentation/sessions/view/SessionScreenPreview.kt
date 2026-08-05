@@ -21,31 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.android254.presentation.common.fake_data.fakeSessions
-import com.android254.presentation.common.results_status.ResultStatus
+import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
-
-class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
-    override val values =
-        sequenceOf(
-            SessionsUiState(
-                sessionStatus = ResultStatus.Loading,
-            ),
-            SessionsUiState(
-                sessionStatus = ResultStatus.Error("Something went wrong"),
-            ),
-            SessionsUiState(
-                sessionStatus = ResultStatus.Empty("No sessions found"),
-            ),
-            SessionsUiState(
-                sessions = fakeSessions,
-                sessionStatus = ResultStatus.Success,
-            ),
-        )
-}
 
 @PreviewLightDark
 @Composable
@@ -66,4 +47,23 @@ fun SessionScreenPreview(
             )
         }
     }
+}
+
+class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
+    override val values =
+        sequenceOf(
+            SessionsUiState(
+                sessionStatus = ResultStatus.Loading,
+            ),
+            SessionsUiState(
+                sessionStatus = ResultStatus.Error("Something went wrong"),
+            ),
+            SessionsUiState(
+                sessionStatus = ResultStatus.Empty("No sessions found"),
+            ),
+            SessionsUiState(
+                sessions = fakeSessions,
+                sessionStatus = ResultStatus.Success,
+            ),
+        )
 }

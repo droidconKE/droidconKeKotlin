@@ -39,7 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.fake_data.fakeSessions
+import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
