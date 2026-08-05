@@ -42,10 +42,11 @@ abstract class WorkModule {
             @ApplicationContext context: Context,
             workerFactory: HiltWorkerFactory,
         ): WorkManager {
-            val configuration = Configuration.Builder()
-                .setMinimumLoggingLevel(android.util.Log.DEBUG)
-                .setWorkerFactory(workerFactory)
-                .build()
+            val configuration =
+                Configuration.Builder()
+                    .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                    .setWorkerFactory(workerFactory)
+                    .build()
             WorkManager.initialize(context, configuration)
             return WorkManager.getInstance(context)
         }

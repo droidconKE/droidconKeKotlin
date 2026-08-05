@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.SyncException
 import com.android254.data.util.sync
 import com.android254.domain.models.Session
 import com.android254.domain.models.SessionFilter
@@ -144,11 +145,10 @@ class SessionsManager
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer.sync(
                 remoteItemFetcher = {
-                    val response = remoteSessionsDataSource.getAllSessionsRemote()
-                    if (response is DataResult.Success) {
-                        response.data
-                    } else {
-                        throw Exception("Sync sessions failed")
+                    when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
+                        is DataResult.Success -> response.data
+                        is DataResult.Error -> throw SyncException(response.message, response.exc)
+                        else -> throw SyncException("Sync sessions failed")
                     }
                 },
                 localIdFetcher = { localSessionsDataSource.getRemoteIds() },

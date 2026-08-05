@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomain
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.SyncException
 import com.android254.data.util.sync
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
@@ -48,7 +49,16 @@ class OrganizersManager
                     if (individualOrganizersResponse is DataResult.Success && companyOrganizersResponse is DataResult.Success) {
                         individualOrganizersResponse.data.data + companyOrganizersResponse.data.data
                     } else {
-                        throw Exception("Sync Organizers failed")
+                        val errorMessage =
+                            when {
+                                individualOrganizersResponse is DataResult.Error -> individualOrganizersResponse.message
+                                companyOrganizersResponse is DataResult.Error -> companyOrganizersResponse.message
+                                else -> "Sync Organizers failed"
+                            }
+                        val cause =
+                            (individualOrganizersResponse as? DataResult.Error)?.exc
+                                ?: (companyOrganizersResponse as? DataResult.Error)?.exc
+                        throw SyncException(errorMessage, cause)
                     }
                 },
                 localIdFetcher = { localOrganizersDataSource.getNames() },
