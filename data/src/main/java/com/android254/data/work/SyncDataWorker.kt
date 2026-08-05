@@ -24,13 +24,14 @@ import androidx.work.WorkerParameters
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
-import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
+import com.android254.domain.repos.SpeakersRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.data.R
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -49,6 +50,7 @@ class SyncDataWorker
         private val sessionsRepo: SessionsRepo,
         private val organizersRepo: OrganizersRepo,
         private val feedRepo: FeedRepo,
+        private val remoteFeatureToggle: RemoteFeatureToggle,
     ) : CoroutineWorker(appContext, workerParameters), Synchronizer {
         override suspend fun getForegroundInfo(): ForegroundInfo {
             return ForegroundInfo(
@@ -62,6 +64,7 @@ class SyncDataWorker
 
         override suspend fun doWork(): Result =
             withContext(ioDispatcher) {
+                remoteFeatureToggle.syncNowIfEmpty()
                 val syncedSuccessfully =
                     awaitAll(
                         async { sessionsRepo.sync() },
