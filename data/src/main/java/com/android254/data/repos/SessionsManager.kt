@@ -17,10 +17,12 @@ package com.android254.data.repos
 
 import com.android254.data.repos.mappers.toDomainModel
 import com.android254.data.repos.mappers.toEntity
+import com.android254.data.util.sync
 import com.android254.domain.models.Session
 import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
@@ -33,7 +35,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -140,24 +141,27 @@ class SessionsManager
             }
         }
 
-        override suspend fun syncSessions() {
-            when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
-                is DataResult.Success -> {
-                    localSessionsDataSource.deleteCachedSessions()
+        override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
+            synchronizer.sync(
+                remoteItemFetcher = {
+                    val response = remoteSessionsDataSource.getAllSessionsRemote()
+                    if (response is DataResult.Success) {
+                        response.data
+                    } else {
+                        throw Exception("Sync sessions failed")
+                    }
+                },
+                localIdFetcher = { localSessionsDataSource.getRemoteIds() },
+                localItemUpserter = { remoteItems ->
                     localSessionsDataSource.saveCachedSessions(
-                        sessions = response.data.map { session -> session.toEntity() },
+                        sessions = remoteItems.map { it.toEntity() },
                     )
-                    Timber.d("Sync sessions successful")
-                }
-
-                is DataResult.Error -> {
-                    Timber.d("Sync sessions failed ${response.message}")
-                }
-
-                else -> {
-                }
-            }
-        }
+                },
+                localItemDeleter = { ids ->
+                    localSessionsDataSource.deleteByRemoteIds(ids)
+                },
+                remoteToLocalIdSelector = { it.id },
+            ).isSuccess
 
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>> =
             combine(

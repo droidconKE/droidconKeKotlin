@@ -24,4 +24,8 @@ interface LocalSponsorsDataSource {
     suspend fun deleteCachedSponsors()
 
     suspend fun saveCachedSponsors(sponsors: List<SponsorEntity>)
+
+    suspend fun getNames(): List<String>
+
+    suspend fun deleteByNames(names: List<String>)
 }

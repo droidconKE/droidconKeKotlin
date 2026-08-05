@@ -16,10 +16,12 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.Sponsors
+import com.android254.domain.sync.Syncable
+import com.android254.domain.sync.Synchronizer
 import kotlinx.coroutines.flow.Flow
 
-interface SponsorsRepo {
+interface SponsorsRepo : Syncable {
     fun getAllSponsors(): Flow<List<Sponsors>>
 
-    suspend fun syncSponsors()
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 }

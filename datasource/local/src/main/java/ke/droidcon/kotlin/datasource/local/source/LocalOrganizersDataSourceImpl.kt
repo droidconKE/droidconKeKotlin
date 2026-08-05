@@ -46,4 +46,15 @@ class LocalOrganizersDataSourceImpl
                 organizersDao.insert(items = organizers)
             }
         }
+
+        override suspend fun getNames(): List<String> =
+            withContext(localSourceIoDispatcher) {
+                organizersDao.getNames()
+            }
+
+        override suspend fun deleteByNames(names: List<String>) {
+            withContext(localSourceIoDispatcher) {
+                organizersDao.deleteByNames(names)
+            }
+        }
     }

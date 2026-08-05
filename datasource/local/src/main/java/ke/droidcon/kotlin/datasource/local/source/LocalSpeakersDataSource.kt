@@ -28,4 +28,8 @@ interface LocalSpeakersDataSource {
     suspend fun deleteAllCachedSpeakers()
 
     suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>)
+
+    suspend fun getNames(): List<String>
+
+    suspend fun deleteByNames(names: List<String>)
 }

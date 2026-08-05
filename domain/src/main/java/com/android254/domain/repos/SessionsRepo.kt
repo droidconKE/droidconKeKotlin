@@ -18,9 +18,11 @@ package com.android254.domain.repos
 import com.android254.domain.models.Session
 import com.android254.domain.models.SessionFilter
 import com.android254.domain.models.SessionsInformationDomainModel
+import com.android254.domain.sync.Syncable
+import com.android254.domain.sync.Synchronizer
 import kotlinx.coroutines.flow.Flow
 
-interface SessionsRepo {
+interface SessionsRepo : Syncable {
     fun fetchSessions(): Flow<List<Session>>
 
     suspend fun fetchSessionsInformation(): Flow<SessionsInformationDomainModel>
@@ -33,7 +35,7 @@ interface SessionsRepo {
 
     suspend fun unBookmarkSession(id: String)
 
-    suspend fun syncSessions()
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 
     fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>>
 

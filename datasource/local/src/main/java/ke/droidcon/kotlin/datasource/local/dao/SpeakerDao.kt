@@ -33,4 +33,10 @@ interface SpeakerDao : BaseDao<SpeakerEntity> {
 
     @Query("DELETE FROM speakers")
     suspend fun deleteAll()
+
+    @Query("SELECT name FROM speakers")
+    suspend fun getNames(): List<String>
+
+    @Query("DELETE FROM speakers WHERE name IN (:names)")
+    suspend fun deleteByNames(names: List<String>)
 }

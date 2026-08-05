@@ -19,9 +19,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
 import com.android254.data.work.WorkConstants
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
@@ -30,24 +29,18 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class DroidconKE2023App : Application(), Configuration.Provider {
+class DroidconKE2023App : Application() {
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-    private lateinit var _workManagerConfiguration: Configuration
+    lateinit var syncDataWorkManager: SyncDataWorkManager
 
     override fun onCreate() {
         super.onCreate()
         initTimber()
         setUpWorkerManagerNotificationChannel()
-        _workManagerConfiguration =
-            Configuration.Builder()
-                .setMinimumLoggingLevel(android.util.Log.DEBUG)
-                .setWorkerFactory(workerFactory)
-                .build()
-    }
 
-    override val workManagerConfiguration: Configuration
-        get() = _workManagerConfiguration
+        syncDataWorkManager.setupPeriodicSync()
+        syncDataWorkManager.startSync()
+    }
 
     private fun initTimber() =
         when {

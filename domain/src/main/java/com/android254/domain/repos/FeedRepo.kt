@@ -16,12 +16,14 @@
 package com.android254.domain.repos
 
 import com.android254.domain.models.Feed
+import com.android254.domain.sync.Syncable
+import com.android254.domain.sync.Synchronizer
 import kotlinx.coroutines.flow.Flow
 
-interface FeedRepo {
+interface FeedRepo : Syncable {
     fun fetchFeed(): Flow<List<Feed>>
 
     fun fetchFeedById(id: Int): Flow<Feed?>
 
-    suspend fun syncFeed()
+    override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 }

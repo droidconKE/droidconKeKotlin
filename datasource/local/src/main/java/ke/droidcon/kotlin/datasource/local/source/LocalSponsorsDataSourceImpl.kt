@@ -46,4 +46,15 @@ class LocalSponsorsDataSourceImpl
                 sponsorsDao.insert(items = sponsors)
             }
         }
+
+        override suspend fun getNames(): List<String> =
+            withContext(localSourceIoDispatcher) {
+                sponsorsDao.getNames()
+            }
+
+        override suspend fun deleteByNames(names: List<String>) {
+            withContext(localSourceIoDispatcher) {
+                sponsorsDao.deleteByNames(names)
+            }
+        }
     }
