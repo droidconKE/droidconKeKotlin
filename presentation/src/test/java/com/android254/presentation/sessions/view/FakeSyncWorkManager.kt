@@ -23,6 +23,9 @@ class FakeSyncWorkManager : SyncDataWorkManager {
     override val isSyncing: Flow<Boolean>
         get() = flow { emit(true) }
 
-    override suspend fun startSync() {
+    override fun startSync() {
+    }
+
+    override fun setupPeriodicSync() {
     }
 }

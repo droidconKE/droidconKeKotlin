@@ -39,7 +39,7 @@ class OrganizersManagerTest {
     @Test
     fun `test syncWith reconciles data`() =
         runTest {
-            val remoteOrganizer = mockk<OrganizerDTO>()
+            val remoteOrganizer = mockk<OrganizerDTO>(relaxed = true)
             every { remoteOrganizer.name } returns "Organizer 1"
             coEvery { mockRemoteOrganizersDataSource.getIndividualOrganizers() } returns DataResult.Success(OrganizersPagedResponse(listOf(remoteOrganizer)))
             coEvery { mockRemoteOrganizersDataSource.getCompanyOrganizers() } returns DataResult.Success(OrganizersPagedResponse(emptyList()))

@@ -38,7 +38,7 @@ class SpeakersManagerTest {
     @Test
     fun `test syncWith reconciles data`() =
         runTest {
-            val remoteSpeaker = mockk<SpeakerDTO>()
+            val remoteSpeaker = mockk<SpeakerDTO>(relaxed = true)
             every { remoteSpeaker.name } returns "Speaker 1"
             coEvery { mockRemoteSpeakersDataSource.getAllSpeakersRemote() } returns DataResult.Success(listOf(remoteSpeaker))
             coEvery { mockLocalSpeakersDataSource.getNames() } returns listOf("Speaker 1", "Speaker 2")

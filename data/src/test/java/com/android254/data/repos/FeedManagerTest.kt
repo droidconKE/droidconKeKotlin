@@ -38,7 +38,7 @@ class FeedManagerTest {
     @Test
     fun `test syncWith reconciles data`() =
         runTest {
-            val remoteFeed = mockk<FeedDTO>()
+            val remoteFeed = mockk<FeedDTO>(relaxed = true)
             every { remoteFeed.title } returns "Feed 1"
             coEvery { mockRemoteFeedDataSource.fetchFeed() } returns DataResult.Success(listOf(remoteFeed))
             coEvery { mockLocalFeedDataSource.getTitles() } returns listOf("Feed 1", "Feed 2")
