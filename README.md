@@ -166,17 +166,17 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/ndiritumichael">
-            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
-            <br />
-            <sub><b>Michael Ndiritu</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/donald-okara">
             <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
             <br />
             <sub><b>Don Okara</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/ndiritumichael">
+            <img src="https://avatars.githubusercontent.com/u/17760799?v=4" width="100;" alt="ndiritumichael"/>
+            <br />
+            <sub><b>Michael Ndiritu</b></sub>
         </a>
     </td>
     <td align="center">
@@ -381,10 +381,10 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
-        <a href="https://github.com/bagechengzi">
-            <img src="https://avatars.githubusercontent.com/u/89894288?v=4" width="100;" alt="bagechengzi"/>
+        <a href="https://github.com/zmhfh">
+            <img src="https://avatars.githubusercontent.com/u/89894288?v=4" width="100;" alt="zmhfh"/>
             <br />
-            <sub><b>Null</b></sub>
+            <sub><b>Zmhfh</b></sub>
         </a>
     </td>
     <td align="center">
