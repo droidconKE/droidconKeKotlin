@@ -60,8 +60,10 @@ class SessionsManagerTest {
     @Test
     fun `test syncWith reconciles data`() =
         runTest {
-            val remoteSession = mockk<SessionDTO>()
+            val remoteSession = mockk<SessionDTO>(relaxed = true)
             every { remoteSession.id } returns "remote_id_1"
+            every { remoteSession.startDateTime } returns "2023-11-17 09:00:00"
+            every { remoteSession.endDateTime } returns "2023-11-17 10:00:00"
             coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(listOf(remoteSession))
             coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1", "remote_id_2")
             coEvery { mockLocalSessionsDataSource.saveCachedSessions(any()) } returns Unit

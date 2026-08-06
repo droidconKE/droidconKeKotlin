@@ -24,6 +24,7 @@ import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
+import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
 import com.droidconke.chai.ChaiDCKE22Theme
 import io.mockk.every

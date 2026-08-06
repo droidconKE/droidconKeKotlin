@@ -18,6 +18,7 @@ package com.android254.presentation.activity
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +31,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -39,11 +42,13 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private val sessionsRepo = mockk<SessionsRepo>()
+    private val clock = mockk<Clock>()
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        every { clock.now() } returns Instant.fromEpochMilliseconds(0)
     }
 
     @After
@@ -61,7 +66,7 @@ class MainViewModelTest {
             coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-            val viewModel = MainViewModel(sessionsRepo)
+            val viewModel = MainViewModel(sessionsRepo, clock)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -86,7 +91,7 @@ class MainViewModelTest {
                 )
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
 
-            val viewModel = MainViewModel(sessionsRepo)
+            val viewModel = MainViewModel(sessionsRepo, clock)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()

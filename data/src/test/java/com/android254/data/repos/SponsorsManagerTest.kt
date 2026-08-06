@@ -38,7 +38,7 @@ class SponsorsManagerTest {
     @Test
     fun `test syncWith reconciles data`() =
         runTest {
-            val remoteSponsor = mockk<SponsorDTO>()
+            val remoteSponsor = mockk<SponsorDTO>(relaxed = true)
             every { remoteSponsor.name } returns "Sponsor 1"
             coEvery { mockRemoteSponsorsDataSource.getAllSponsorsRemote() } returns DataResult.Success(listOf(remoteSponsor))
             coEvery { mockLocalSponsorsDataSource.getNames() } returns listOf("Sponsor 1", "Sponsor 2")
