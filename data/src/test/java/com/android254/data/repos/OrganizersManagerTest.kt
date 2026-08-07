@@ -25,6 +25,7 @@ import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSourc
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizerDTO
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizersPagedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +36,7 @@ import org.robolectric.annotation.Config
 class OrganizersManagerTest {
     private val mockLocalOrganizersDataSource = mockk<LocalOrganizersDataSource>()
     private val mockRemoteOrganizersDataSource = mockk<RemoteOrganizersDataSource>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Test
     fun `test syncWith reconciles data`() =
@@ -47,7 +49,7 @@ class OrganizersManagerTest {
             coEvery { mockLocalOrganizersDataSource.insertOrganizers(any()) } returns Unit
             coEvery { mockLocalOrganizersDataSource.deleteByNames(any()) } returns Unit
 
-            val manager = OrganizersManager(mockLocalOrganizersDataSource, mockRemoteOrganizersDataSource)
+            val manager = OrganizersManager(mockLocalOrganizersDataSource, mockRemoteOrganizersDataSource, testDispatcher)
             val result = manager.syncWith(mockk())
 
             assert(result)

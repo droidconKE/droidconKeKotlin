@@ -24,6 +24,7 @@ import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,6 +35,7 @@ import org.robolectric.annotation.Config
 class FeedManagerTest {
     private val mockLocalFeedDataSource = mockk<LocalFeedDataSource>()
     private val mockRemoteFeedDataSource = mockk<RemoteFeedDataSource>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Test
     fun `test syncWith reconciles data`() =
@@ -45,7 +47,7 @@ class FeedManagerTest {
             coEvery { mockLocalFeedDataSource.insertFeed(any()) } returns Unit
             coEvery { mockLocalFeedDataSource.deleteByTitles(any()) } returns Unit
 
-            val manager = FeedManager(mockLocalFeedDataSource, mockRemoteFeedDataSource)
+            val manager = FeedManager(mockLocalFeedDataSource, mockRemoteFeedDataSource, testDispatcher)
             val result = manager.syncWith(mockk())
 
             assert(result)

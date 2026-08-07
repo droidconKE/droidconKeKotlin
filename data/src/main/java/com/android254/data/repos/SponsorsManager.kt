@@ -23,9 +23,12 @@ import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -34,8 +37,10 @@ class SponsorsManager
     constructor(
         private val localSponsorsDataSource: LocalSponsorsDataSource,
         private val remoteSponsorsDataSource: RemoteSponsorsDataSource,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : SponsorsRepo {
-        override fun getAllSponsors(): Flow<List<Sponsors>> = localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }
+        override fun getAllSponsors(): Flow<List<Sponsors>> =
+            localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }.flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer

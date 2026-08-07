@@ -30,9 +30,11 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +42,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,6 +59,7 @@ class SessionsViewModel
         private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
         @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _selectedFilterOptions: MutableStateFlow<PersistentList<SessionsFilterOption>> =
             MutableStateFlow(persistentListOf())
@@ -97,7 +101,8 @@ class SessionsViewModel
                         isFilterActive = filterState.isActive,
                     )
                 }
-            }.stateIn(
+            }.flowOn(ioDispatcher)
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000L),
                 initialValue = SessionsUiState(),
@@ -164,6 +169,7 @@ class SessionsViewModel
 
         val isRefreshing =
             syncDataWorkManager.isSyncing
+                .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),

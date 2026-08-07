@@ -23,9 +23,12 @@ import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSource
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -34,11 +37,13 @@ class OrganizersManager
     constructor(
         private val localOrganizersDataSource: LocalOrganizersDataSource,
         private val remoteOrganizersDataSource: RemoteOrganizersDataSource,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : OrganizersRepo {
         override fun getOrganizers(): Flow<List<Organizer>> =
             localOrganizersDataSource
                 .getOrganizers()
                 .map { it.distinctBy { organizer -> organizer.name }.map { organizer -> organizer.toDomain() } }
+                .flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer

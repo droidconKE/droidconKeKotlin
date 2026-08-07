@@ -27,6 +27,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,6 +39,7 @@ import org.robolectric.annotation.Config
 class SpeakersScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
     private val mockSyncDataWorkManager = mockk<SyncDataWorkManager>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -55,9 +57,9 @@ class SpeakersScreenTest {
                     ),
                 ),
             )
-        val viewModel = SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager)
+        val viewModel = SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager, testDispatcher)
         composeTestRule.setContent {
-            SpeakersRoute(viewModel)
+            SpeakersRoute(speakersScreenViewModel = viewModel)
         }
 
         with(composeTestRule) {
