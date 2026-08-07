@@ -16,7 +16,6 @@
 package com.android254.presentation.sessions.view
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,10 +34,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
+import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.components.CustomSwitch
@@ -195,10 +198,12 @@ fun SessionsScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-private fun SessionsScreenPreview() {
+fun SessionsScreenPreview(
+    @PreviewParameter(SessionsUiStateProvider::class) sessionsUiState: SessionsUiState,
+) {
     ChaiTheme {
         SessionsScreen(
-            sessionsUiState = SessionsUiState(),
+            sessionsUiState = sessionsUiState,
             selectedEventDate = EventDate("1", day = 1),
             isRefreshing = false,
             currentSelections = persistentListOf(),
@@ -206,6 +211,26 @@ private fun SessionsScreenPreview() {
             onEvent = {},
         )
     }
+}
+
+class SessionsUiStateProvider : PreviewParameterProvider<SessionsUiState> {
+    override val values =
+        sequenceOf(
+            SessionsUiState(
+                sessionStatus = ResultStatus.Loading,
+            ),
+            SessionsUiState(
+                sessionStatus = ResultStatus.Empty("No sessions found"),
+            ),
+            SessionsUiState(
+                sessionStatus = ResultStatus.Error("Something went wrong"),
+            ),
+            SessionsUiState(
+                sessions = fakeSessions,
+                sessionStatus = ResultStatus.Success,
+                eventDays = listOf(EventDate("1", day = 1), EventDate("2", day = 2)),
+            ),
+        )
 }
 
 enum class SessionScreenState {
