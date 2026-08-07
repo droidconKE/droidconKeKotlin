@@ -185,7 +185,7 @@ fun SessionListComponent(
             }
             if (isSessionLayoutList) {
                 groupedSessions.forEach { (time, sessions) ->
-                    item(key = "header_$time") {
+                    stickyHeader(key = "header_$time") {
                         TimeHeader(time = time)
                     }
                     items(
