@@ -71,6 +71,8 @@ class SessionsViewModel
         private val _selectedEventDay = MutableStateFlow(EventDate(UNSET_EVENT_DAY, 1))
         val selectedEventDay = _selectedEventDay.asStateFlow()
 
+        private val _optimisticBookmarks = MutableStateFlow<Map<String, Boolean>>(emptyMap())
+
         val sessionsUiState =
             flow {
                 emitAll(sessionsRepo.fetchSessionsInformation())
@@ -78,7 +80,8 @@ class SessionsViewModel
                 combine(
                     _selectedEventDay,
                     _filterState,
-                ) { selectedEventDay, filterState ->
+                    _optimisticBookmarks,
+                ) { selectedEventDay, filterState, optimisticBookmarks ->
                     val sessionDays = mapEventDays(sessionsInformation.eventDays)
 
                     if (selectedEventDay.value == UNSET_EVENT_DAY && sessionDays.isNotEmpty()) {
@@ -90,7 +93,11 @@ class SessionsViewModel
                             sessionsInformation.sessions,
                             filterState,
                             _selectedEventDay.value,
-                        )
+                        ).map { session ->
+                            optimisticBookmarks[session.id]?.let {
+                                session.copy(isStarred = it)
+                            } ?: session
+                        }
 
                     SessionsUiState(
                         sessions = filteredSessions.toImmutableList(),
@@ -184,13 +191,30 @@ class SessionsViewModel
                 SessionsIntentHandler.Retry -> {}
                 is SessionsIntentHandler.UpdateSelectedDay -> updateSelectedDay(intent.day)
                 is SessionsIntentHandler.BookmarkSession -> {
+                    val sessionId = intent.sessionId
+                    if (_optimisticBookmarks.value.containsKey(sessionId)) return
+
                     viewModelScope.launch {
-                        val session = sessionsUiState.value.sessions.find { it.id == intent.sessionId }
+                        val session = sessionsUiState.value.sessions.find { it.id == sessionId }
                         if (session != null) {
-                            if (session.isStarred) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
+                            val newStarredState = !session.isStarred
+                            _optimisticBookmarks.update { it + (sessionId to newStarredState) }
+
+                            try {
+                                if (newStarredState) {
+                                    sessionsRepo.bookmarkSession(session.remoteId)
+                                } else {
+                                    sessionsRepo.unBookmarkSession(session.remoteId)
+                                }
+                            } catch (_: Exception) {
+                                // Revert happens automatically when cleared from optimistic map
+                            } finally {
+                                _optimisticBookmarks.update { it - sessionId }
+                            }
                         }
                     }
                 }
+
                 is SessionsIntentHandler.UpdateSelectedFilterOptionList -> updateSelectedFilterOptionList(intent.option)
             }
         }
@@ -218,18 +242,6 @@ class SessionsViewModel
             }
             viewModelScope.launch {
                 syncDataWorkManager.startSync()
-            }
-        }
-
-        fun bookmarkSession(id: String) {
-            viewModelScope.launch {
-                sessionsRepo.bookmarkSession(id = id)
-            }
-        }
-
-        fun unBookmarkSession(id: String) {
-            viewModelScope.launch {
-                sessionsRepo.unBookmarkSession(id = id)
             }
         }
 
