@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,7 +51,6 @@ import coil.request.ImageRequest
 import com.android254.presentation.common.components.TimeAndVenueComponent
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
-import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
@@ -58,6 +58,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsCardWithBannerImage(
@@ -66,6 +67,7 @@ fun SessionsCardWithBannerImage(
     modifier: Modifier = Modifier,
     viewModel: SessionsViewModel = hiltViewModel(),
 ) {
+    val scope = rememberCoroutineScope()
     Card(
         modifier =
             modifier
@@ -108,7 +110,13 @@ fun SessionsCardWithBannerImage(
             Spacer(Modifier.height(16.dp))
             SpeakerDetailsAndLikeButtonComponent(
                 onBookmarkClicked = {
-                    viewModel.handleEvent(SessionsIntentHandler.BookmarkSession(session.id))
+                    scope.launch {
+                        if (session.isStarred) {
+                            viewModel.unBookmarkSession(session.id)
+                        } else {
+                            viewModel.bookmarkSession(session.id)
+                        }
+                    }
                 },
                 isSessionStarred = session.isStarred,
                 speakers = session.speakers,
