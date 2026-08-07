@@ -16,6 +16,8 @@
 package com.android254.presentation.sessions.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -225,6 +227,7 @@ fun TimeHeader(time: String) {
         verticalAlignment = Alignment.CenterVertically,
         modifier =
             Modifier
+                .background(MaterialTheme.chaiColorsPalette.surfaces)
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
     ) {
