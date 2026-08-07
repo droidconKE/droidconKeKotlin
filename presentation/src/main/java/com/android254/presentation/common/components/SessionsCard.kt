@@ -136,8 +136,9 @@ fun SessionsCard(
                 .padding(16.dp),
         ) {
             SessionTitleComponent(session, onBookmark)
-            Spacer(modifier = Modifier.height(12.dp))
-
+            if(session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus == SessionStatus.Ongoing){
+                Spacer(modifier = Modifier.height(12.dp))
+            }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (session.format.isNotBlank()) {
                     SessionTag(
@@ -161,9 +162,10 @@ fun SessionsCard(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
 
             if (session.speakers.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+
                 session.speakers.forEach { speaker ->
                     SessionPresenterComponents(speaker = speaker)
                     Spacer(modifier = Modifier.height(8.dp))

@@ -147,6 +147,7 @@ fun SessionsScreen(
                         onEvent(SessionsIntentHandler.UpdateSelectedDay(it))
                     },
                     eventDates = sessionsUiState.eventDays,
+                    isLoading = sessionsUiState.sessionStatus is ResultStatus.Loading,
                 )
                 CustomSwitch(
                     checked = showMySessions,
