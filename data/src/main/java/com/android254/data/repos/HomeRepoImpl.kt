@@ -26,6 +26,7 @@ import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class HomeRepoImpl
@@ -59,6 +60,6 @@ class HomeRepoImpl
                             OrganizingPartners(organizerName = it.name, organizerLogoUrl = it.photo)
                         },
                 )
-            }
+            }.flowOn(ioDispatcher)
         }
     }

@@ -23,8 +23,11 @@ import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feed.view.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -35,6 +38,7 @@ class FeedViewModel
     @Inject
     constructor(
         private val feedRepo: FeedRepo,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         val uiState =
             feedRepo
@@ -43,6 +47,7 @@ class FeedViewModel
                     FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
                 }.onStart { FeedUIState.Loading }
                 .catch { FeedUIState.Error(message = "An unexpected error occurred") }
+                .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),

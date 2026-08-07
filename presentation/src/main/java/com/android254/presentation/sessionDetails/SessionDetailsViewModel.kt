@@ -25,8 +25,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -50,6 +53,7 @@ class SessionDetailsViewModel
     constructor(
         @Assisted val navKey: Screens.SessionDetails,
         private val sessionsRepo: SessionsRepo,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         @AssistedFactory
         interface Factory {
@@ -69,6 +73,7 @@ class SessionDetailsViewModel
                     }
                 }.onStart { SessionDetailsUiState.Loading }
                 .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
+                .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),

@@ -30,6 +30,7 @@ import com.droidconke.chai.ChaiTheme
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,11 +48,8 @@ class SessionDetailsScreenTest {
     val composeTestRule = createComposeRule()
 
     private val repo = mockk<SessionsRepo>(relaxed = true)
-    private val viewModel =
-        SessionDetailsViewModel(
-            navKey = Screens.SessionDetails(sessionId),
-            sessionsRepo = repo,
-        )
+    private val testDispatcher = UnconfinedTestDispatcher()
+    private lateinit var viewModel: SessionDetailsViewModel
 
     @Before
     @Throws(Exception::class)
@@ -59,6 +57,12 @@ class SessionDetailsScreenTest {
         ShadowLog.stream = System.out
         val sessionId = "randomSessionId"
         every { repo.fetchSessionById(sessionId) } returns flowOf(mockSession)
+        viewModel =
+            SessionDetailsViewModel(
+                navKey = Screens.SessionDetails(sessionId),
+                sessionsRepo = repo,
+                ioDispatcher = testDispatcher,
+            )
     }
 
     @Test
