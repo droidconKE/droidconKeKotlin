@@ -18,7 +18,8 @@ package com.android254.presentation.home.components
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.android254.presentation.home.viewstate.HomeViewState
+import com.android254.domain.models.HomeBanner
+import com.android254.presentation.home.viewstate.HomeState
 import com.droidconke.chai.ChaiTheme
 import org.junit.Before
 import org.junit.Rule
@@ -31,7 +32,7 @@ import org.robolectric.shadows.ShadowLog
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class HomeBannerSectionTest {
-    private val homeViewState = HomeViewState()
+    private val homeState = HomeState(banner = HomeBanner.EventPoster(link = ""))
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -46,7 +47,7 @@ class HomeBannerSectionTest {
     fun `Test home poster is displayed`() {
         composeTestRule.setContent {
             ChaiTheme {
-                HomeBannerSection(homeViewState)
+                HomeBannerSection(homeState)
             }
         }
         composeTestRule.onNodeWithTag("home_event_poster").assertIsDisplayed()
@@ -56,7 +57,7 @@ class HomeBannerSectionTest {
     fun `Test home poster is hidden`() {
         composeTestRule.setContent {
             ChaiTheme {
-                HomeBannerSection(homeViewState.copy(isPosterVisible = false))
+                HomeBannerSection(homeState.copy(banner = HomeBanner.None))
             }
         }
         composeTestRule.onNodeWithTag("home_event_poster").assertDoesNotExist()
@@ -66,7 +67,7 @@ class HomeBannerSectionTest {
     fun `Test home call for speakers is displayed`() {
         composeTestRule.setContent {
             ChaiTheme {
-                HomeBannerSection(homeViewState.copy(isCallForSpeakersVisible = true))
+                HomeBannerSection(homeState.copy(banner = HomeBanner.CallForSpeakers(link = "")))
             }
         }
         composeTestRule.onNodeWithTag("home_call_for_speakers_link").assertIsDisplayed()
@@ -76,7 +77,7 @@ class HomeBannerSectionTest {
     fun `Test home call for speakers is hidden`() {
         composeTestRule.setContent {
             ChaiTheme {
-                HomeBannerSection(homeViewState.copy(isCallForSpeakersVisible = false))
+                HomeBannerSection(homeState.copy(banner = HomeBanner.None))
             }
         }
         composeTestRule.onNodeWithTag("home_call_for_speakers_link").assertDoesNotExist()
