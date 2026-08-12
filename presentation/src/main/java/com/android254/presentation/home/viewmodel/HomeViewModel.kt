@@ -56,7 +56,7 @@ class HomeViewModel
                 homeRepo.fetchHomeDetails(),
                 isSyncing,
             ) { home, syncing ->
-                home.toHomeState(isSyncing = syncing, isFirstSync = false) // TODO: Handle isFirstSync logic
+                home.toHomeState(isSyncing = syncing)
             }
                 .flowOn(ioDispatcher)
                 .stateIn(

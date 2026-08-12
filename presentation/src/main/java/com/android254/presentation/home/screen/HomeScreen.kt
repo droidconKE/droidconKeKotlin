@@ -52,6 +52,8 @@ import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 
+import kotlinx.collections.immutable.toImmutableList
+
 @Composable
 fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -79,7 +81,7 @@ fun HomeRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeScreen(
+internal fun HomeScreen(
     viewState: HomeState,
     isSyncing: Boolean,
     navigateToSpeakers: () -> Unit = {},
@@ -131,7 +133,7 @@ private fun HomeScreen(
                         HomeSessionLoadingComponent()
                     } else {
                         HomeSessionSection(
-                            sessions = viewState.sessions,
+                            sessions = viewState.sessions.toImmutableList(),
                             onSessionClick = onSessionClicked,
                             onViewAllSessionClicked = navigateToSessionScreen,
                         )
@@ -150,7 +152,7 @@ private fun HomeScreen(
                         HomeSpeakersLoadingComponent()
                     } else {
                         HomeSpeakersSection(
-                            speakers = viewState.speakers,
+                            speakers = viewState.speakers.toImmutableList(),
                             navigateToSpeakers = navigateToSpeakers,
                             navigateToSpeaker = navigateToSpeaker,
                         )
@@ -163,7 +165,7 @@ private fun HomeScreen(
                     enter = fadeIn(),
                     exit = fadeOut(),
                 ) {
-                    SponsorsCard(sponsors = viewState.sponsors)
+                    SponsorsCard(sponsors = viewState.sponsors.toImmutableList())
                 }
                 HomeSpacer()
             }

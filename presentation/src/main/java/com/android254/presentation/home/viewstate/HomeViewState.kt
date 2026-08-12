@@ -26,6 +26,5 @@ data class HomeState(
     val sponsors: List<SponsorPresentationModel> = emptyList(),
     val organizerLogos: List<String> = emptyList(),
     val sessions: List<SessionPresentationModel> = emptyList(),
-    val isFirstSync: Boolean = true,
     val isSyncing: Boolean = true,
 )
