@@ -42,7 +42,7 @@ fun Sponsors.toPresentation() =
         sponsorType = sponsorType,
     )
 
-fun Home.toHomeState(isSyncing: Boolean, isFirstSync: Boolean) =
+fun Home.toHomeState(isSyncing: Boolean) =
     HomeState(
         banner = banner,
         speakers = speakers.toSpeakersPresentation(),
@@ -50,5 +50,4 @@ fun Home.toHomeState(isSyncing: Boolean, isFirstSync: Boolean) =
         organizerLogos = organizerLogos,
         sessions = sessions.map { it.toPresentationModel() },
         isSyncing = isSyncing,
-        isFirstSync = isFirstSync,
     )
