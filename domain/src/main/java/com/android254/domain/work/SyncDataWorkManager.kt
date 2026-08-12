@@ -22,5 +22,7 @@ interface SyncDataWorkManager {
 
     fun startSync()
 
+    suspend fun startSyncIfEmpty()
+
     fun setupPeriodicSync()
 }
