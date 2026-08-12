@@ -19,18 +19,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.HomeRepo
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.presentation.home.mappers.toPresentation
-import com.android254.presentation.home.mappers.toSpeakersPresentation
-import com.android254.presentation.home.viewstate.HomeViewState
-import com.android254.presentation.sessions.mappers.toPresentationModel
+import com.android254.presentation.home.mappers.toHomeState
+import com.android254.presentation.home.viewstate.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,28 +51,18 @@ class HomeViewModel
                     initialValue = false,
                 )
 
-        val viewState: StateFlow<HomeViewState> =
-            homeRepo
-                .fetchHomeDetails()
-                .map {
-                    HomeViewState(
-                        isPosterVisible = it.isEventBannerEnable,
-                        isCallForSpeakersVisible = it.isCallForSpeakersEnable,
-                        linkToCallForSpeakers = it.linkToCallForSpeakers,
-                        isSignedIn = false,
-                        speakers = it.speakers.toSpeakersPresentation(),
-                        isSpeakersSectionVisible = it.isSpeakersSessionEnable,
-                        isSessionsSectionVisible = it.isSessionsSectionEnable,
-                        sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() }.toImmutableList(),
-                        organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
-                        sessions = it.sessions.map { session -> session.toPresentationModel(clock.now()) }.toImmutableList(),
-                    )
-                }
+        val viewState: StateFlow<HomeState> =
+            combine(
+                homeRepo.fetchHomeDetails(),
+                isSyncing,
+            ) { home, syncing ->
+                home.toHomeState(isSyncing = syncing, isFirstSync = false) // TODO: Handle isFirstSync logic
+            }
                 .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
-                    initialValue = HomeViewState(),
+                    initialValue = HomeState(),
                 )
 
         fun startRefresh() {
