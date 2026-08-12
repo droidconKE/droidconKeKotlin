@@ -26,10 +26,14 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants.syncDataWorkerName
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -37,6 +41,7 @@ class SyncDataWorkManagerImpl
     @Inject
     constructor(
         private val workManager: WorkManager,
+        private val sessionsRepo: SessionsRepo,
     ) : SyncDataWorkManager {
         override val isSyncing: Flow<Boolean> =
             workManager
@@ -55,6 +60,14 @@ class SyncDataWorkManagerImpl
                             .build(),
                     ).build()
             workManager.enqueueUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
+        }
+
+        override suspend fun startSyncIfEmpty() {
+            val sessions = withContext(Dispatchers.IO) { sessionsRepo.fetchSessions().first() }
+
+            if (sessions.isEmpty()) {
+                startSync()
+            }
         }
 
         override fun setupPeriodicSync() {
