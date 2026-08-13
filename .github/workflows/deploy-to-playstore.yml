@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Bump version
-        uses: chkfung/android-version-actions@v1.1
+        uses: chkfung/android-version-actions@v1.2
         with:
           gradlePath: app/build.gradle.kts
           versionCode: ${{github.run_number}}
@@ -36,7 +36,7 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Deploy to Production
-        uses: r0adkll/upload-google-play@v1.1.1
+        uses: r0adkll/upload-google-play@v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
           packageName: ke.droidcon.kotlin

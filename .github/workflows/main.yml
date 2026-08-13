@@ -18,16 +18,16 @@ jobs:
         run: echo $AUTH | base64 --decode > /tmp/keystore
 
       - name: Checkout the Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '17'
 
       - name: Cache gradle
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Bundler cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: $CACHE_BUNDLER
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -50,7 +50,7 @@ jobs:
         run: gem install bundler && bundle install
 
       - name: Run Release Build
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v3.2.0
         with:
           lane: main
           options: '{ "conf": "release" }'
