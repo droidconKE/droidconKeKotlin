@@ -55,8 +55,9 @@ class SpeakersScreenTest {
                     ),
                 ),
             )
+        val viewModel = SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager)
         composeTestRule.setContent {
-            SpeakersRoute(SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager))
+            SpeakersRoute(viewModel)
         }
 
         with(composeTestRule) {

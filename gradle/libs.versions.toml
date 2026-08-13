@@ -1,64 +1,68 @@
 [versions]
-android-compile-sdk = "36"
+android-compile-sdk = "37"
 android-min-sdk = "24"
 # Shared by the application and library convention plugins so they cannot diverge.
-android-target-sdk = "36"
-androidx-activity = "1.10.1"
+android-target-sdk = "37"
+androidx-activity = "1.13.0"
 androidx-lifecycle = "2.9.0"
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 coroutines_datetime = "0.6.2"
 desugar_jdk_libs = "2.1.5"
-espresso = "3.6.1"
-gradleplugin = "8.10.1"
-gmsPlugin = "4.4.2"
-hilt = "2.56.2"
-kotlin = "2.1.21"
-ksp = "2.1.21-2.0.2"
-lifecycle = "2.9.1"
-room = "2.7.1"
-ktor = "3.1.3"
-splash = "1.0.1"
-firebaseCrashlyticsPlugin = "2.9.9"
-firebasePerfPlugin = "1.4.2"
+espresso = "3.7.0"
+gradleplugin = "9.3.1"
+gmsPlugin = "4.5.0"
+# Requires AGP 9, which is why it moves in the same commit.
+hilt = "2.60.1"
+kotlin = "2.4.10"
+ksp = "2.3.11"
+lifecycle = "2.11.0"
+room = "2.8.4"
+ktor = "3.5.2"
+splash = "1.2.0"
+firebaseCrashlyticsPlugin = "3.0.7"
+firebasePerfPlugin = "2.0.2"
 junit4 = "4.13.2"
-agp = "8.10.1"
+agp = "9.3.1"
+# 4.3.x is compiled for Java 21 (class file 65); this project targets 17.
 chucker = "4.1.0"
-androidxComposeBom = "2025.06.00"
+androidxComposeBom = "2026.08.00"
 remote_config = "22.1.2"
 detekt = "1.23.8"
 klint = "12.3.0"
+# Held at 7.x deliberately: spotless 8 is a major with licence-header API changes, and a
+# formatter change is not something to land untested alongside everything else here.
 spotless = "7.0.4"
-app_compat = "1.7.1"
-coreKtx = "1.16.0"
-hiltsecond = "1.2.0"
-runtime = "2.10.1"
-material = "1.12.0"
-junit = "1.2.1"
+app_compat = "1.8.0"
+coreKtx = "1.19.0"
+hiltsecond = "1.4.0"
+runtime = "2.11.2"
+material = "1.14.0"
+junit = "1.3.0"
 coil = "2.7.0"
-activity = "1.10.1"
+activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
-constraintlayout = "1.1.1"
-auth = "21.3.0"
-lottie = "6.6.6"
-datastore = "1.1.7"
+constraintlayout = "1.1.2"
+auth = "21.6.0"
+lottie = "6.7.1"
+datastore = "1.2.1"
 timber = "5.0.1"
 test_corektx = "1.6.1"
-test_robolectric = "4.14.1"
+test_robolectric = "4.16.1"
 test_navigation = "2.9.0"
-test_mockk = "1.14.2"
-firebase_bom = "33.15.0"
+test_mockk = "1.14.11"
+firebase_bom = "34.17.0"
 firebase_common = "21.0.0"
 turbine = "1.2.1"
 toml_checker = "0.52.0"
 toml_updater = "1.0.0"
-kotlinStdlib = "2.1.21"
-kotlinTest = "2.1.21"
-runner = "1.6.2"
+kotlinStdlib = "2.4.10"
+kotlinTest = "2.4.10"
+runner = "1.7.0"
 core = "1.6.1"
-nav3Core = "1.0.0"
-lifecycleViewmodelNav3 = "2.10.0-rc01"
-kotlinxSerializationCore = "1.8.1"
+nav3Core = "1.1.6"
+lifecycleViewmodelNav3 = "2.11.0"
+kotlinxSerializationCore = "1.11.0"
 
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
@@ -136,13 +140,15 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom"}
-firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-performance = { module = "com.google.firebase:firebase-perf-ktx" }
-firebase-config = { module = "com.google.firebase:firebase-config-ktx" }
-firebase-remote-config = { module = "com.google.firebase:firebase-config-ktx", version.ref = "remote_config" }
-firebase-common = { module = "com.google.firebase:firebase-common-ktx", version.ref = "firebase_common"}
+# The -ktx artifacts were removed in Firebase BOM 34; the Kotlin extensions now ship in
+# the main modules. Versions come from the BOM, so none of these carry their own.
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-performance = { module = "com.google.firebase:firebase-perf" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+firebase-remote-config = { module = "com.google.firebase:firebase-config" }
+firebase-common = { module = "com.google.firebase:firebase-common" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
