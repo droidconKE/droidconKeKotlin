@@ -18,6 +18,8 @@ package com.android254.presentation.sessions.view
 import com.android254.domain.models.Session
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import io.mockk.mockk
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -25,17 +27,16 @@ import org.junit.Test
 /**
  * Covers the filter options offered to the user.
  *
- * [everyOfferedOptionMatchesAtLeastOneSession] is the important one. It is a property
- * rather than an example, and it makes the entire class of bug here impossible to
- * reintroduce: an option that matches nothing is a dead filter, which is exactly what
- * shipped when the options were hand-typed constants ("Room A" at a venue with no room
- * by that name, lower-case "keynote" against the API's "Keynote").
+ * The first test is a property, not an example: an option matching nothing is a dead
+ * filter, and asserting that none exist prevents the whole class of bug.
  */
 class SessionsFilterOptionsTest {
     private val viewModel =
         SessionsViewModel(
             sessionsRepo = mockk(relaxed = true),
             syncDataWorkManager = mockk(relaxed = true),
+            clock = Clock.System,
+            conferenceTimeZone = TimeZone.of("Africa/Nairobi"),
         )
 
     private val sessions =
@@ -70,7 +71,6 @@ class SessionsFilterOptionsTest {
                 .filter { it.type == SessionsFilterCategory.Room }
                 .map { it.value }
 
-        // "Sapphire,Opal" contributes two options, not one joined one.
         assertEquals(listOf("Amber", "Opal", "Sapphire"), rooms)
     }
 

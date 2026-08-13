@@ -57,10 +57,6 @@ fun SessionsFilterPanel(
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     clearSelectedFilterList: () -> Unit,
 ) {
-    // Options are derived from the loaded sessions by SessionsViewModel and passed in.
-    // They used to be hardcoded here, which is how the room filter came to offer
-    // "Room A" at a venue whose rooms are named "Opal" and "Sapphire" — selecting one
-    // matched nothing and emptied the list.
     val groupedFilters =
         remember(selectableFilters) {
             selectableFilters.groupBy { it.type }
@@ -123,7 +119,6 @@ fun SessionsFilterPanel(
                         .fillMaxWidth(),
                 ) {
                     ChaiSubTitle(
-                        // Localised heading, rather than the enum constant's name.
                         titleText = stringResource(id = filter.key.resId),
                         titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )

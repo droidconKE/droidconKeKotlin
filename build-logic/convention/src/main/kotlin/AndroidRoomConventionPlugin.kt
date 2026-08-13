@@ -26,9 +26,7 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
         with(target) {
             pluginManager.apply("com.google.devtools.ksp")
 
-            // Export the schema so migrations become reviewable in the diff and
-            // testable with MigrationTestHelper. Without this, `exportSchema = true`
-            // on the @Database is a build warning and no schema is written.
+            // Schemas must be exported for `exportSchema = true` to write anything.
             extensions.configure<KspExtension> {
                 arg("room.schemaLocation", "${projectDir}/schemas")
                 arg("room.generateKotlin", "true")

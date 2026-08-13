@@ -43,12 +43,6 @@ import com.droidconke.chai.chaiColorsPalette
  * our text. this is a shorter approach for making a Design system type. For a longer version see this repo:
  * [KahawaLove](https://github.com/tamzi/KahawaLove)
  *
- * CParagraph, CPageTitle, CSubtitle and CActionText used to live here and were removed.
- * Each hardcoded a colour from the raw palette (ChaiBlack, ChaiBlue, ChaiRed) inside the
- * composable, so they rendered identically in light and dark mode — black text on a dark
- * background. All four had zero call sites; the Chai* family below supersedes them and
- * takes its colour from the caller.
- *
  * */
 
 @Composable

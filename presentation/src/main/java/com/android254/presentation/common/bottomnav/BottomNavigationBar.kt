@@ -16,7 +16,6 @@
 package com.android254.presentation.common.bottomnav
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,12 +37,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.NavigationState
 import com.android254.presentation.common.navigation.Screens
+import com.android254.presentation.common.navigation.TopLevelDestination
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.models.SessionPresentationModel
@@ -95,15 +98,11 @@ fun BottomNavigationBar(
         ) {
             val topLevelRoute = navigationState.topLevelRoute
 
-            bottomNavigationSet.forEach { destination ->
-                val selected = destination == topLevelRoute
-
+            TopLevelDestination.entries.forEach { destination ->
                 BottomNavItem(
-                    isSelected = selected,
+                    isSelected = destination.route == topLevelRoute,
                     destination = destination,
-                    onClick = {
-                        navController.navigate(destination)
-                    },
+                    onClick = { navController.navigate(destination.route) },
                 )
             }
         }
@@ -113,9 +112,11 @@ fun BottomNavigationBar(
 @Composable
 fun RowScope.BottomNavItem(
     isSelected: Boolean,
-    destination: Screens,
+    destination: TopLevelDestination,
     onClick: () -> Unit,
 ) {
+    val label = stringResource(destination.label)
+
     val iconColor =
         if (isSelected) {
             MaterialTheme.chaiColorsPalette.activeBottomNavIconColor
@@ -135,7 +136,9 @@ fun RowScope.BottomNavItem(
             Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .clickable(
+                .selectable(
+                    selected = isSelected,
+                    role = Role.Tab,
                     onClick = onClick,
                 ),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -143,14 +146,15 @@ fun RowScope.BottomNavItem(
     ) {
         Icon(
             painter = painterResource(id = destination.icon),
-            contentDescription = destination.title,
+            // Decorative: the label below carries the name for screen readers.
+            contentDescription = null,
             tint = iconColor,
         )
         Spacer(modifier = Modifier.height(6.dp))
 
         ChaiTextLabelSmall(
             modifier = Modifier,
-            bodyText = destination.title,
+            bodyText = label,
             textColor = textColor,
         )
     }

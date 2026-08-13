@@ -49,11 +49,11 @@ internal fun Project.configureKotlinAndroid(
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
-            // Required: production code uses java.time (API 26+) while minSdk is 24.
-            // Without this, SessionMapper.fromString() throws NoClassDefFoundError on
-            // API 24-25 during the first session sync, which runs at launch.
+            // Production code uses java.time (API 26+) while minSdk is 24.
             isCoreLibraryDesugaringEnabled = true
         }
+
+        configureManagedDevices(this)
 
         kotlinOptions {
             // Treat all Kotlin warnings as errors (disabled by default)

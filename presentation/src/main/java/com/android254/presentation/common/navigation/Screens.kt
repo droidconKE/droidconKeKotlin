@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,42 @@
  */
 package com.android254.presentation.common.navigation
 
-import androidx.annotation.DrawableRes
 import androidx.navigation3.runtime.NavKey
-import ke.droidcon.kotlin.presentation.R
 import kotlinx.serialization.Serializable
 
+/**
+ * Destinations in the app.
+ *
+ * Keys are immutable data and nothing else — they are serialized to `SavedState`. Display
+ * metadata lives in [TopLevelDestination].
+ */
 @Serializable
-sealed class Screens(
-    @DrawableRes var icon: Int,
-    var title: String,
-) : NavKey {
+sealed interface Screens : NavKey {
     @Serializable
-    object Home : Screens(R.drawable.home_icon, "Home")
+    data object Home : Screens
 
     @Serializable
-    object Feed : Screens(R.drawable.feed_icon, "Feed")
+    data object Feed : Screens
 
     @Serializable
-    object Sessions : Screens(R.drawable.sessions_icon, "Sessions")
+    data object Sessions : Screens
 
     @Serializable
-    object About : Screens(R.drawable.about_icon, "About")
+    data object About : Screens
 
     @Serializable
-    object Speakers : Screens(R.drawable.droidcon_icon, "Speakers")
+    data object Speakers : Screens
 
     @Serializable
-    object FeedBack : Screens(R.drawable.droidcon_icon, "FeedBack")
+    data object FeedBack : Screens
 
     @Serializable
-    data class SessionDetails(val sessionId: String) :
-        Screens(R.drawable.droidcon_icon, "Session Details")
+    data class SessionDetails(val sessionId: String) : Screens
 
     @Serializable
-    data class SpeakerDetails(val speakerName: String) :
-        Screens(R.drawable.droidcon_icon, "Speaker Details")
+    data class SpeakerDetails(val speakerName: String) : Screens
 }
 
-val bottomNavigationRoutes =
-    listOf(
-        Screens.Home,
-        Screens.Feed,
-        Screens.Sessions,
-        Screens.About,
-    )
+val bottomNavigationRoutes: List<Screens> = TopLevelDestination.routes
 
-val bottomNavigationSet = bottomNavigationRoutes.toSet()
+val bottomNavigationSet: Set<Screens> = TopLevelDestination.routeSet

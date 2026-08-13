@@ -23,17 +23,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Covers session filtering.
- *
- * Several of these fail against the previous implementation:
- *
- *  - the room tests, because filter values were hardcoded to "Room A"/"Room B"/"Room C"
- *    while sessions carry real venue room titles, and because the comparison was made
- *    against the comma-joined string rather than the individual rooms;
- *  - the case test, because the hardcoded value was "keynote" and the API returns
- *    "Keynote", compared with a case-sensitive `contains`.
- */
+/** Covers session filtering: room matching, multi-room sessions, and casing. */
 class SessionsFilterStateTest {
     @Test
     fun `empty filter state matches every session`() {
@@ -52,8 +42,6 @@ class SessionsFilterStateTest {
     fun `room filter matches a session spanning several rooms`() {
         val state = SessionsFilterState(rooms = listOf("Opal"))
 
-        // The API joins multiple rooms with a comma. Comparing against the whole joined
-        // string matched neither room.
         assertTrue(state.matches(session(rooms = "Opal,Sapphire")))
         assertTrue(state.matches(session(rooms = "Sapphire, Opal")))
     }

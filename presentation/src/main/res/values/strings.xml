@@ -89,4 +89,8 @@
     <string name="up_next">Up Next</string>
 
 
+    <string name="nav_home">Home</string>
+    <string name="nav_feed">Feed</string>
+    <string name="nav_sessions">Sessions</string>
+    <string name="nav_about">About</string>
 </resources>

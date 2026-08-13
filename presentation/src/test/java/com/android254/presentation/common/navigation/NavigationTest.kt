@@ -76,7 +76,7 @@ class NavigationTest {
         val stacksInUse = navigationState.value?.stacksInUse
 
         composeTestRule.onNodeWithTag("navigation_display").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
         assert(stacksInUse?.size == 1)
     }
 
@@ -109,7 +109,7 @@ class NavigationTest {
                         Button(onClick = {
                             navController.navigate(destinationScreen)
                         }) {
-                            Text(text = "Navigate to ${destinationScreen.title}")
+                            Text(text = "Navigate to ${destinationScreen.testLabel}")
                         }
                     }
                 }
@@ -117,13 +117,13 @@ class NavigationTest {
         }
 
         composeTestRule.onNodeWithTag("navigation_display").assertExists()
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.testLabel}").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.title}").performClick()
+        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.testLabel}").performClick()
 
-        composeTestRule.onNodeWithText("Screen: ${destinationScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${destinationScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -156,7 +156,7 @@ class NavigationTest {
                         Button(onClick = {
                             navController.navigate(destinationScreen)
                         }) {
-                            Text(text = "Navigate to ${destinationScreen.title}")
+                            Text(text = "Navigate to ${destinationScreen.testLabel}")
                         }
                     }
                 }
@@ -164,12 +164,12 @@ class NavigationTest {
         }
 
         composeTestRule.onNodeWithTag("navigation_display").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
 
-        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.title}").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.title}").performClick()
+        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.testLabel}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Navigate to ${destinationScreen.testLabel}").performClick()
 
-        composeTestRule.onNodeWithText("Screen: ${destinationScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${destinationScreen.testLabel}").assertIsDisplayed()
         composeTestRule.onNodeWithText("Argument (Session ID): ${destinationScreen.sessionId}").assertIsDisplayed()
     }
 
@@ -205,13 +205,13 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(destinationScreen)
         }
-        composeTestRule.onNodeWithText("Screen: ${destinationScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${destinationScreen.testLabel}").assertIsDisplayed()
 
         // Go back
         composeTestRule.runOnUiThread {
             navController.goBack()
         }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -246,13 +246,13 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(otherTopLevel)
         }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.testLabel}").assertIsDisplayed()
 
         // Go back
         composeTestRule.runOnUiThread {
             navController.goBack()
         }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -288,7 +288,7 @@ class NavigationTest {
         }
 
         // Should still be on Home
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -325,7 +325,7 @@ class NavigationTest {
         }
 
         assert(navigationState.value?.topLevelRoute == initialState)
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -363,20 +363,20 @@ class NavigationTest {
             navController.navigate(nested2)
         }
 
-        composeTestRule.onNodeWithText("Screen: ${nested2.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${nested2.testLabel}").assertIsDisplayed()
         composeTestRule.onNodeWithText("Argument (Speaker Name): ${nested2.speakerName}").assertIsDisplayed()
 
         // Go back once
         composeTestRule.runOnUiThread {
             navController.goBack()
         }
-        composeTestRule.onNodeWithText("Screen: ${nested1.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${nested1.testLabel}").assertIsDisplayed()
 
         // Go back twice
         composeTestRule.runOnUiThread {
             navController.goBack()
         }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 
     @Test
@@ -411,13 +411,13 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(otherTopLevel)
         }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.testLabel}").assertIsDisplayed()
 
         // navigateUp from root of About should NOT go back to Home (unlike goBack)
         composeTestRule.runOnUiThread {
             navController.navigateUp()
         }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.testLabel}").assertIsDisplayed()
         assert(navigationState.value?.topLevelRoute == otherTopLevel)
     }
 
@@ -454,7 +454,7 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(otherTopLevel)
         }
-        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${otherTopLevel.testLabel}").assertIsDisplayed()
 
         assertEquals(
             NavDirection.LEFT,
@@ -464,7 +464,7 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(startScreen)
         }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
 
         assertEquals(
             NavDirection.RIGHT,
@@ -474,7 +474,7 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.navigate(nested)
         }
-        composeTestRule.onNodeWithText("Screen: ${nested.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${nested.testLabel}").assertIsDisplayed()
 
         assertEquals(
             NavDirection.INNER,
@@ -484,7 +484,7 @@ class NavigationTest {
         composeTestRule.runOnUiThread {
             navController.goBack()
         }
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
 
         assertEquals(
             NavDirection.INNER,
@@ -532,6 +532,6 @@ class NavigationTest {
         }
 
         assertEquals(NavDirection.RIGHT, navigationState.value?.lastDirection)
-        composeTestRule.onNodeWithText("Screen: ${startScreen.title}").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Screen: ${startScreen.testLabel}").assertIsDisplayed()
     }
 }

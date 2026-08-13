@@ -24,19 +24,12 @@ import java.io.IOException
 import java.net.SocketException
 import java.nio.channels.UnresolvedAddressException
 
-/**
- * These cover the classification of failures into "network" vs "server" vs "client".
- *
- * The offline cases below fail against the previous implementation, which recognised
- * only [ConnectTimeoutException] as a network failure and reported a device with no
- * connectivity as a generic client error.
- */
+/** Failure classification: connectivity vs server vs client. */
 class SafeApiCallTest {
     @Test
     fun `unresolved address is a network failure`() =
         runTest {
-            // What Ktor actually throws when DNS cannot resolve: airplane mode,
-            // no signal, or a captive portal that never completes.
+            // What Ktor throws when DNS cannot resolve: airplane mode, no signal.
             val result = dataResultSafeApiCall { throw UnresolvedAddressException() }
 
             assertTrue(result is DataResult.Error)

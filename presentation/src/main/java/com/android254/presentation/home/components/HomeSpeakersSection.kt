@@ -38,8 +38,7 @@ fun HomeSpeakersSection(
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
-    // `speakers.take(8)` inline in the items() call allocated a new list on every
-    // recomposition, giving the lambda a new identity each time and defeating skipping.
+    // Remembered so the slice is not reallocated on every recomposition.
     val featuredSpeakers = remember(speakers) { speakers.take(MAX_FEATURED_SPEAKERS) }
 
     Column {

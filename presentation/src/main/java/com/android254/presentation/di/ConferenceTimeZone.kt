@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.sessions.utils
+package com.android254.presentation.di
 
-import ke.droidcon.kotlin.presentation.R
+import javax.inject.Qualifier
 
 /**
- * Facets a session list can be filtered by.
- *
- * `Topic` was removed: the API returns no topic field, so it was unreachable. Reintroduce
- * only alongside one.
+ * The venue's timezone, as distinct from the device's. Schedule times are fixed to the
+ * venue; relative times ("in 20 minutes") come from the device clock.
  */
-enum class SessionsFilterCategory(val resId: Int) {
-    Level(R.string.title_filter_level),
-    Room(R.string.title_filter_room),
-    SessionType(R.string.title_filter_session_type),
-}
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ConferenceTimeZone

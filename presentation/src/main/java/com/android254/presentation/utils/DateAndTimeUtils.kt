@@ -28,19 +28,10 @@ private val FEED_TIMESTAMP_FORMAT: DateTimeFormatter =
 /**
  * Renders an ISO-like timestamp as a relative span, e.g. "2 days ago".
  *
- * Two problems with the previous implementation:
+ * Unparseable input falls back to the original string. Only [DateTimeParseException] is
+ * caught, so genuine faults are not hidden.
  *
- *  - `SimpleDateFormat.parse` returns a nullable `Date`, and the result was dereferenced
- *    without a null check. The NPE was then swallowed by a broad `catch (e: Exception)`,
- *    so a malformed timestamp silently rendered as the raw ISO string in the feed.
- *  - `SimpleDateFormat` is not thread-safe and was constructed per call.
- *
- * Now uses `java.time` (available on minSdk 24 via core library desugaring) with an
- * immutable, shared formatter, and catches only parse failures. Unparseable input still
- * falls back to the original string, but that is now a deliberate branch rather than the
- * side effect of hiding a crash.
- *
- * @param nowMillis current time, injectable so the relative output is testable.
+ * @param nowMillis current time, injectable so the output is testable.
  */
 fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String =
     try {

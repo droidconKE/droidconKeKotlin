@@ -25,16 +25,11 @@ import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 
 /**
- * Wraps a network call, classifying failures into server, connectivity, or client faults.
+ * Runs a network call, mapping failures to [ServerError] or [NetworkError].
  *
- * Both wrappers here previously treated only [ConnectTimeoutException] as a connectivity
- * failure. That misses every common offline case: with no network, DNS resolution fails
- * first and Ktor surfaces [UnresolvedAddressException], not a connect timeout. Losing wifi
- * therefore produced a generic "Client error" and the UI could not tell the user they were
- * offline — the single most likely failure at a conference venue.
- *
- * The connectivity types are listed in the same order in both functions. [IOException]
- * comes last because several of the Ktor exceptions also extend it.
+ * An offline device surfaces [UnresolvedAddressException] rather than a connect timeout,
+ * so every connectivity type is listed. [IOException] comes last because several Ktor
+ * exceptions also extend it.
  */
 @Deprecated("Use dataResultSafeApiCall")
 suspend fun <T> safeApiCall(block: suspend () -> T): T =
@@ -65,11 +60,7 @@ suspend fun <T> safeApiCall(block: suspend () -> T): T =
 
 class ServerError(cause: Throwable) : Exception(cause)
 
-/**
- * A connectivity failure. Carries [cause] so logs and crash reports keep the original
- * exception — the previous no-arg version discarded it, which made every offline failure
- * look identical in Crashlytics.
- */
+/** A connectivity failure. [cause] is retained so crash reports stay distinguishable. */
 class NetworkError(cause: Throwable? = null) : Exception(cause)
 
 suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResult<T> =

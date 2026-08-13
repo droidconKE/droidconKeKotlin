@@ -20,13 +20,8 @@ import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 
 /**
- * The active session filters.
- *
- * Comparisons are case-insensitive throughout. The filter values previously came from
- * hardcoded strings in the UI ("keynote" lower case, room names that the venue has never
- * used), while the values they were compared against come from the API ("Keynote",
- * "Opal"). The options are now derived from the session data instead, but the
- * case-insensitivity stays as a second line of defence.
+ * The active session filters. Comparisons are case-insensitive, since option values and
+ * session values both originate from the API and its casing is not guaranteed.
  */
 data class SessionsFilterState(
     val levels: List<String> = emptyList(),
@@ -41,7 +36,6 @@ data class SessionsFilterState(
     fun matches(session: Session): Boolean =
         levels.matchesOrEmpty(session.sessionLevel) &&
             sessionTypes.matchesOrEmpty(session.sessionFormat) &&
-            // A multi-room session matches a filter for any one of its rooms.
             rooms.matchesAnyOrEmpty(session.roomList) &&
             (!isBookmarked || session.isBookmarked)
 

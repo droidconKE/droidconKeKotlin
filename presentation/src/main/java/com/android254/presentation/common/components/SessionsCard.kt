@@ -76,7 +76,6 @@ fun SessionsCard(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
 ) {
-    // Read from the theme here rather than baked into the model, so it tracks dark mode.
     val venueAccent = venueAccentColor(session.venue)
 
     val alpha =

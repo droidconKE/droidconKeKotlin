@@ -59,15 +59,13 @@ fun FakePlaceholderScreen(screen: Screens) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // 1. Display the base title (from the Screens class property)
         Text(
-            text = "Screen: ${screen.title}",
+            text = "Screen: ${screen.testLabel}",
             style = MaterialTheme.typography.headlineMedium,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // 2. Dynamically extract arguments based on the specific subclass
         val argumentText =
             when (screen) {
                 is Screens.SessionDetails -> "Argument (Session ID): ${screen.sessionId}"
@@ -82,3 +80,7 @@ fun FakePlaceholderScreen(screen: Screens) {
         )
     }
 }
+
+/** Stable identifier for assertions; keys carry no display metadata. */
+val Screens.testLabel: String
+    get() = this::class.simpleName.orEmpty()

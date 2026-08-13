@@ -21,6 +21,7 @@ import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.common.resultstatus.ResultStatus
+import com.android254.presentation.di.ConferenceTimeZone
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
@@ -39,9 +40,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,6 +51,8 @@ class SessionsViewModel
     constructor(
         private val sessionsRepo: SessionsRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val clock: Clock,
+        @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
     ) : ViewModel() {
         private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
             MutableStateFlow(emptyList())
@@ -58,7 +61,7 @@ class SessionsViewModel
         private val _filterState = MutableStateFlow(SessionsFilterState())
         val filterState = _filterState.asStateFlow()
 
-        private val _selectedEventDay = MutableStateFlow(EventDate("-1", 1))
+        private val _selectedEventDay = MutableStateFlow(EventDate(UNSET_EVENT_DAY, 1))
         val selectedEventDay = _selectedEventDay.asStateFlow()
 
         val sessionsUiState =
@@ -71,11 +74,8 @@ class SessionsViewModel
                 ) { selectedEventDay, filterState ->
                     val sessionDays = mapEventDays(sessionsInformation.eventDays)
 
-                    // Update selected day if not set
-                    if (selectedEventDay.value == "-1" && sessionDays.isNotEmpty()) {
-                        val currentDay = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
-                        val defaultSelectedDay = sessionDays.find { it.value == currentDay } ?: sessionDays.first()
-                        _selectedEventDay.value = defaultSelectedDay
+                    if (selectedEventDay.value == UNSET_EVENT_DAY && sessionDays.isNotEmpty()) {
+                        _selectedEventDay.value = defaultEventDay(sessionDays)
                     }
 
                     val filteredSessions =
@@ -100,6 +100,12 @@ class SessionsViewModel
                 initialValue = SessionsUiState(),
             )
 
+        /** Today if the conference is running, otherwise the first day. */
+        private fun defaultEventDay(eventDays: List<EventDate>): EventDate {
+            val today = clock.now().toLocalDateTime(conferenceTimeZone).dayOfMonth
+            return eventDays.find { it.value.toIntOrNull() == today } ?: eventDays.first()
+        }
+
         private fun mapEventDays(eventDays: List<String>): List<EventDate> =
             eventDays.mapIndexed { index, day ->
                 EventDate(value = day, day = index + 1)
@@ -109,26 +115,23 @@ class SessionsViewModel
             sessions: List<Session>,
             filterState: SessionsFilterState,
             selectedEventDay: EventDate,
-        ): List<SessionPresentationModel> =
-            sessions.asSequence()
+        ): List<SessionPresentationModel> {
+            val now = clock.now()
+            return sessions.asSequence()
                 .filter(filterState::matches)
                 .distinctBy { it.remoteId }
-                .map { it.toPresentationModel() }
+                .map { it.toPresentationModel(now) }
                 .filter { it.eventDay == selectedEventDay.value }
                 .toList()
+        }
 
         /**
-         * Builds the selectable filter options from the sessions themselves.
+         * Builds the selectable filter options from the sessions themselves, so an option
+         * can never name a value no session has.
          *
-         * Values must come from the same source as the values they are compared against.
-         * The previous hardcoded list offered "Room A"/"Room B"/"Room C" while the API
-         * returns real venue room titles, so selecting any room emptied the list; and it
-         * offered lower-case "keynote" against the API's "Keynote".
-         *
-         * Labels are the API values rather than string resources: room and format names
-         * are data, not UI copy, and a translated label that no longer matches the value
-         * it filters on is exactly the bug being fixed here. The category headings stay
-         * localised via [SessionsFilterCategory.resId].
+         * Labels are the API values rather than string resources: room and format names are
+         * data, not UI copy. Category headings stay localised via
+         * [SessionsFilterCategory.resId].
          */
         internal fun buildFilterOptions(sessions: List<Session>): List<SessionsFilterOption> {
             fun options(
@@ -186,9 +189,6 @@ class SessionsViewModel
             _selectedFilterOptions.update { selected ->
                 if (option in selected) selected - option else selected + option
             }
-            // Per-category add/remove now lives on the state class, which replaces four
-            // near-identical 20-line branches (one of which toggled `topics`, a facet
-            // nothing could ever read).
             _filterState.update { it.toggle(option) }
         }
 
@@ -229,3 +229,6 @@ class SessionsViewModel
             }
         }
     }
+
+/** Sentinel for "no day chosen yet", replaced on first load by [EventDate]. */
+private const val UNSET_EVENT_DAY = "-1"

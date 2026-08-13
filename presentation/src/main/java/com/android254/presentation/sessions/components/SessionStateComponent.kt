@@ -133,8 +133,7 @@ fun SessionListComponent(
 ) {
     val listState = rememberLazyListState()
 
-    // Built here rather than inside the LazyListScope below: the accent colour comes from
-    // a composable, and LazyListScope is not a composable context.
+    // Built here because LazyListScope is not a composable context.
     val verticalStepItems =
         sessions.map { session -> session.verticalStep(venueAccentColor(session.venue)) }
 

@@ -1,10 +1,7 @@
 [versions]
 android-compile-sdk = "36"
 android-min-sdk = "24"
-# Single source of truth for both the application and library convention plugins.
-# These were previously hardcoded separately (36 in the app, 34 in libraries), which
-# meant library instrumentation tests ran under different platform behaviour than the
-# shipping app. Raising this to 37 is a separate change with its own testing pass.
+# Shared by the application and library convention plugins so they cannot diverge.
 android-target-sdk = "36"
 androidx-activity = "1.10.1"
 androidx-lifecycle = "2.9.0"

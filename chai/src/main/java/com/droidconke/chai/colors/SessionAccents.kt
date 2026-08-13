@@ -22,20 +22,10 @@ import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.chaiColorsPalette
 
 /**
- * The accent colour used to distinguish sessions by the room they run in.
+ * The accent colour distinguishing sessions by room.
  *
- * This lives in chai, as a composable, for two reasons:
- *
- *  - It used to be a `val color` on `SessionPresentationModel`, a plain data class that
- *    imported the raw palette directly. Because a data class cannot read `MaterialTheme`,
- *    those colours were structurally unable to respond to dark mode or to any future
- *    theme change — they were fixed at construction.
- *  - The mapping keyed off the whole venue string with an exact `when`, so a session
- *    listed in two rooms ("Sapphire, Opal") matched neither and silently fell through to
- *    the default. [venueAccentColor] matches on the first room instead.
- *
- * Room names come from the conference API and change every year, so an unrecognised room
- * gets the neutral primary accent rather than being a bug.
+ * A composable so it tracks the theme; room names come from the API and change yearly, so
+ * an unrecognised room falls back to the neutral accent rather than failing.
  */
 @Composable
 @ReadOnlyComposable
