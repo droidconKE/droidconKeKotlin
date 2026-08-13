@@ -31,20 +31,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension,
 ) {
-    // AGP 9's CommonExtension exposes these as properties but no longer as configuration
-    // blocks — `defaultConfig { }` and friends live only on the concrete Application and
-    // Library extensions. Property access is what works against the shared supertype.
     commonExtension.apply {
         compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
 
         defaultConfig.minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
-        // Without this AGP falls back to the JUnit3 runner, which silently discovers
-        // no @RunWith(AndroidJUnit4::class) tests — a green run that tested nothing.
+        // Omitting this silently discovers no tests rather than failing.
         defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         compileOptions.sourceCompatibility = JavaVersion.VERSION_17
         compileOptions.targetCompatibility = JavaVersion.VERSION_17
-        // java.time is native at minSdk 26, so this now only backports the newer additions.
         compileOptions.isCoreLibraryDesugaringEnabled = true
 
         configureManagedDevices(this)
@@ -69,7 +64,6 @@ internal fun Project.configureKotlinAndroid(
     }
 
     dependencies {
-        // Backports the newer java.time additions; the core API is native at minSdk 26.
         add("coreLibraryDesugaring", libs.findLibrary("desugar-jdk-libs").get())
 
         add("implementation", libs.findLibrary("android.coreKtx").get())

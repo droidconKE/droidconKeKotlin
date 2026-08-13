@@ -26,7 +26,6 @@ import com.android.build.api.dsl.CommonExtension
  * ```
  */
 internal fun configureManagedDevices(commonExtension: CommonExtension) {
-    // AGP 9 drops the configuration-block form on CommonExtension; these are properties now.
     val managedDevices = commonExtension.testOptions.managedDevices
     val localDevices = managedDevices.localDevices
 
@@ -48,9 +47,6 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
     }
 }
 
-/**
- * AGP 9 warns that an unset `testedAbi` changes default in AGP 10. Keyed to the host rather
- * than pinned to x86_64 so CI runners and Apple Silicon each resolve a native image.
- */
+/** Host-keyed, not pinned to x86_64, so CI and Apple Silicon each resolve a native image. */
 private val HOST_ABI: String =
     if (System.getProperty("os.arch") in setOf("aarch64", "arm64")) "arm64-v8a" else "x86_64"

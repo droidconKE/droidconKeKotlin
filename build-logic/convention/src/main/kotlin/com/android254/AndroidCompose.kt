@@ -30,8 +30,6 @@ import org.gradle.kotlin.dsl.withType
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension,
 ) {
-    // Property access rather than a `buildFeatures { }` block: AGP 9 keeps the getter on
-    // CommonExtension but drops the block form.
     commonExtension.buildFeatures.compose = true
 
     dependencies {
