@@ -33,8 +33,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
 
                 testOptions {
-                    // A library has no targetSdk of its own — the consuming application's
-                    // wins at merge time. Only its own test APK needs one.
+                    // A library has no targetSdk of its own, only its test APK.
                     targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
 
                     unitTests {

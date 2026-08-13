@@ -149,8 +149,7 @@ firebase-common = { module = "com.google.firebase:firebase-common" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
-# Android Lint rule packs. Consumed with `lintChecks(...)`, never `implementation`, so they
-# ship no code into the APK.
+# Lint-only: consumed with `lintChecks(...)`, never `implementation`.
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "composeLintChecks" }
 
 app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  The messaging service is declared here rather than in the app manifest because this is the
-  module that owns the class and depends on firebase-messaging. Declaring it in :app left
-  lint unable to resolve FirebaseMessagingService through an `implementation` dependency, so
-  it reported the service as not extending android.app.Service. Manifest merging folds this
-  into the application manifest unchanged.
+  Declared here, not in :app, because this module owns the class and the firebase-messaging
+  dependency. From :app, lint cannot resolve the supertype and flags Instantiatable.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 

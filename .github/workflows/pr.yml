@@ -42,7 +42,6 @@ jobs:
       - name: spotless, ktlint, detekt
         run: ./gradlew spotlessCheck ktlintCheck detekt --continue
 
-      # Includes the Slack Compose rules; severities are set in config/lint/lint.xml.
       - name: Android Lint
         run: ./gradlew lint
 
@@ -71,9 +70,7 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      # Fails when a composable that used to be skippable stops being skippable. If the
-      # change is deliberate, run `./gradlew debugStabilityDump` and commit the diff — that
-      # turns a silent recomposition regression into a reviewed line.
+      # If the change is deliberate, run `./gradlew debugStabilityDump` and commit the diff.
       - name: Check composable stability against the committed baselines
         run: ./gradlew :chai:debugStabilityCheck :presentation:debugStabilityCheck
 

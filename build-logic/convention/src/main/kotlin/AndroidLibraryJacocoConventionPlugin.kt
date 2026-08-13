@@ -11,8 +11,7 @@ class AndroidLibraryJacocoConventionPlugin : Plugin<Project> {
             pluginManager.apply("jacoco")
             val androidExtension = extensions.getByType<LibraryExtension>()
 
-            // Debug only, to match the application plugin — the coverage tasks and the
-            // managed-device instrumentation runs are all debug variants.
+            // Debug only, to match the application plugin.
             androidExtension.buildTypes.getByName("debug") {
                 enableAndroidTestCoverage = true
                 enableUnitTestCoverage = true

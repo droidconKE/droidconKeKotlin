@@ -33,9 +33,6 @@ android {
     }
 
     lint {
-        // The app module is the only one that sees the whole graph, so it is where a
-        // library module's lint failure has to surface. Shared settings live in
-        // build-logic/.../Lint.kt.
         checkDependencies = true
     }
 
@@ -59,8 +56,6 @@ android {
         }
         release {
             isMinifyEnabled = true
-            // Pointless without minification, and minification was effectively off until
-            // coverage instrumentation stopped forcing this build type debuggable.
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

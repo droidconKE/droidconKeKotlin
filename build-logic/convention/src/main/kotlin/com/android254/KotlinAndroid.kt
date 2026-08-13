@@ -46,16 +46,13 @@ internal fun Project.configureKotlinAndroid(
         configureLint(this)
     }
 
-    // Read once, at configuration time, rather than per compile task: `providers` keeps the
-    // value in the configuration cache, which the `by project` delegate did not.
+    // Opt in with -PwarningsAsErrors=true.
     val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
         .map(String::toBoolean)
         .orElse(false)
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            // Off by default so a contributor's first build is not a wall of red.
-            // CI turns it on with -PwarningsAsErrors=true.
             allWarningsAsErrors.set(warningsAsErrors)
 
             freeCompilerArgs.addAll(
@@ -74,13 +71,8 @@ internal fun Project.configureKotlinAndroid(
 
         add("implementation", libs.findLibrary("android.coreKtx").get())
 
-        // Slack's Compose lint rules. `lintChecks` is a lint-only classpath, so nothing
-        // here reaches the APK.
-        //
-        // Applied to every Android module rather than only the Compose ones: config/lint/
-        // lint.xml names these issue ids, and lint fails a module with UnknownIssueId for
-        // every id it has not been given the checks for. The rules simply find nothing in a
-        // module with no Compose code.
+        // Every module, not just the Compose ones: lint.xml names these issue ids, and a
+        // module without the checks fails with UnknownIssueId for each one.
         add("lintChecks", libs.findLibrary("compose-lint-checks").get())
 
         add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())
