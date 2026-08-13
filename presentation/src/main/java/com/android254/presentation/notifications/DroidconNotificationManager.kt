@@ -22,7 +22,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
-import android.os.Build
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -37,14 +36,12 @@ class DroidconNotificationManager(private val context: Context) {
     }
 
     fun createNotificationChannel(channelName: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel =
-                NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
-                    lightColor = Color.Blue.toArgb()
-                    enableLights(true)
-                }
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel =
+            NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT).apply {
+                lightColor = Color.Blue.toArgb()
+                enableLights(true)
+            }
+        notificationManager.createNotificationChannel(channel)
     }
 
     @SuppressLint("MissingPermission")
@@ -71,8 +68,6 @@ class DroidconNotificationManager(private val context: Context) {
     }
 
     fun deleteNotificationChannel(channelName: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.deleteNotificationChannel(channelName)
-        }
+        notificationManager.deleteNotificationChannel(channelName)
     }
 }

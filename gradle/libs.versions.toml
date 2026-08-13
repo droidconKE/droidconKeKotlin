@@ -1,6 +1,6 @@
 [versions]
 android-compile-sdk = "37"
-android-min-sdk = "24"
+android-min-sdk = "26"
 # Shared by the application and library convention plugins so they cannot diverge.
 android-target-sdk = "37"
 androidx-activity = "1.13.0"
