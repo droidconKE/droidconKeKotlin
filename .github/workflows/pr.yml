@@ -1,9 +1,13 @@
-name: PR
+name: CI
 
 # No `paths:` filter — a PR touching only Kotlin source must not skip CI.
+# The push-to-main trigger is what seeds the Gradle cache: gradle/actions/setup-gradle
+# only writes it on the default branch, so without this every PR job runs cold.
 on:
   pull_request:
   merge_group:
+  push:
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,12 +17,15 @@ permissions:
   contents: read
 
 env:
-  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false
+  # Quoted so the whole string reaches the daemon: gradle.properties sets file.encoding
+  # alongside the heap, and org.gradle.jvmargs replaces wholesale rather than appending.
+  GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8"
 
 jobs:
   static-analysis:
     name: Static analysis
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -49,6 +56,7 @@ jobs:
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -62,8 +70,8 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+      - name: Run unit tests and build the coverage report
+        run: ./gradlew testDebugUnitTest createDebugCombinedCoverageReport
 
       - name: Upload test results
         if: always()
@@ -73,18 +81,17 @@ jobs:
           path: '**/build/reports/tests/'
           if-no-files-found: ignore
 
-      - name: Generate combined coverage report
-        run: ./gradlew createDebugCombinedCoverageReport
-
+      # Skipped rather than silently failed on forks, which cannot read repository secrets.
       - name: Upload coverage to Codecov
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: codecov/codecov-action@v5
-        continue-on-error: true
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -98,12 +105,15 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      - name: Assemble debug
-        run: ./gradlew assembleDebug
+      # assembleRelease is the only task that exercises R8, so a keep-rule or shrinking
+      # regression surfaces here rather than in the release lane after merge.
+      - name: Assemble debug and release
+        run: ./gradlew assembleDebug assembleRelease
 
   instrumentation-tests:
     name: Instrumentation (${{ matrix.device }})
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:

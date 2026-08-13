@@ -44,6 +44,9 @@ internal fun Project.configureKotlinAndroid(
 
         defaultConfig {
             minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
+            // Without this AGP falls back to the JUnit3 runner, which silently discovers
+            // no @RunWith(AndroidJUnit4::class) tests — a green run that tested nothing.
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
 
         compileOptions {

@@ -34,8 +34,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
-// The check targets production composables; injecting a fake repo is the point here.
-@Suppress("ViewModelConstructorInComposable")
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class FeedScreenTest {
@@ -66,9 +64,10 @@ class FeedScreenTest {
                 ),
             )
 
+        val viewModel = FeedViewModel(repo)
         composeTestRule.setContent {
             ChaiDCKE22Theme {
-                FeedRoute(feedViewModel = FeedViewModel(repo))
+                FeedRoute(feedViewModel = viewModel)
             }
         }
 
@@ -95,9 +94,10 @@ class FeedScreenTest {
                 ),
             )
 
+        val viewModel = FeedViewModel(repo)
         composeTestRule.setContent {
             ChaiDCKE22Theme {
-                FeedRoute(feedViewModel = FeedViewModel(repo))
+                FeedRoute(feedViewModel = viewModel)
             }
         }
         composeTestRule.onNodeWithTag("share_button").assertExists()

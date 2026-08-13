@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -50,6 +49,7 @@ import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiPullToRefreshBox
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -102,7 +102,7 @@ private fun SpeakersScreen(
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
-        PullToRefreshBox(
+        ChaiPullToRefreshBox(
             isRefreshing = uiState is SpeakersScreenUiState.Loading,
             onRefresh = { /*TODO*/ },
             modifier =
