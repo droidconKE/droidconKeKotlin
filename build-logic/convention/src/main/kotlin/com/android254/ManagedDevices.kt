@@ -38,6 +38,7 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
         device = "Pixel 2"
         apiLevel = MIN_SDK
         systemImageSource = "aosp"
+        testedAbi = HOST_ABI
         // AGP otherwise picks the 32-bit x86 image, which emulators no longer run.
         require64Bit = true
     }
@@ -45,11 +46,13 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
         device = "Pixel 4"
         apiLevel = 30
         systemImageSource = "aosp-atd"
+        testedAbi = HOST_ABI
     }
     localDevices.create("api34") {
         device = "Pixel 6"
         apiLevel = 34
         systemImageSource = "aosp-atd"
+        testedAbi = HOST_ABI
     }
 
     managedDevices.groups.create("supportedApiLevels") {
@@ -58,3 +61,11 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
 }
 
 private const val MIN_SDK = 24
+
+/**
+ * AGP 9 warns that an unset `testedAbi` changes default in AGP 10, and the api24 setup task
+ * fails outright without it. Keyed to the host rather than pinned to x86_64 so CI runners and
+ * Apple Silicon each resolve an image they can run natively.
+ */
+private val HOST_ABI: String =
+    if (System.getProperty("os.arch") in setOf("aarch64", "arm64")) "arm64-v8a" else "x86_64"
