@@ -202,17 +202,17 @@ We would endlessly like to thank the following contributors
     </td></tr>
 <tr>
     <td align="center">
-        <a href="https://github.com/yveskalume">
-            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
-            <br />
-            <sub><b>Yves Kalume</b></sub>
-        </a>
-    </td>
-    <td align="center">
         <a href="https://github.com/wangerekaharun">
             <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
             <br />
             <sub><b>Harun Wangereka</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/yveskalume">
+            <img src="https://avatars.githubusercontent.com/u/55670723?v=4" width="100;" alt="yveskalume"/>
+            <br />
+            <sub><b>Yves Kalume</b></sub>
         </a>
     </td>
     <td align="center">
