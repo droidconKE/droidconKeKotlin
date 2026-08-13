@@ -143,10 +143,13 @@ jobs:
       - name: Accept Android SDK licences
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
 
+      # --stacktrace because managed-device setup failures report an unset property
+      # without naming it, which is undiagnosable from the message alone.
       - name: Run instrumentation tests
         run: >
           ./gradlew :data:${{ matrix.device }}DebugAndroidTest
           -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
+          --stacktrace
 
       - name: Upload instrumentation results
         if: always()
