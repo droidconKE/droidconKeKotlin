@@ -42,9 +42,6 @@ fun ChaiDCKE22Theme(
 
     if (!view.isInEditMode) {
         SideEffect {
-            // findActivity() returns null outside an Activity-hosted composition —
-            // Robolectric, screenshot tests, Glance hosts. It used to throw, which made
-            // the theme unusable in any of those.
             val window = view.context.findActivity()?.window ?: return@SideEffect
             @Suppress("DEPRECATION")
             window.statusBarColor = customColorsPalette.background.toArgb()
@@ -67,13 +64,9 @@ val MaterialTheme.chaiColorsPalette: ChaiColors
     get() = LocalChaiColorsPalette.current
 
 /**
- * Walks the context wrapper chain to find the closest [Activity], or null when the
- * composition is not hosted by one.
- *
- * Returns null rather than throwing. A theme composable should never be able to crash a
- * screenshot test, a Robolectric test, or a `ComposeView` hosted outside an Activity,
- * and the previous `IllegalStateException` did exactly that — the `isInEditMode` guard
- * only covers Studio previews.
+ * The closest [Activity], or null when the composition is not hosted by one — Robolectric,
+ * screenshot tests, a `ComposeView` outside an Activity. Never throws: a theme must not be
+ * able to crash those.
  */
 private tailrec fun Context.findActivity(): Activity? =
     when (this) {

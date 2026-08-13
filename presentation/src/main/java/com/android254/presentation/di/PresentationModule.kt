@@ -23,6 +23,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
 import javax.inject.Singleton
 
 @Module
@@ -36,4 +37,8 @@ object PresentationModule {
 
     @Provides
     fun providesClock(): Clock = Clock.System
+
+    @Provides
+    @ConferenceTimeZone
+    fun providesConferenceTimeZone(): TimeZone = TimeZone.of("Africa/Nairobi")
 }

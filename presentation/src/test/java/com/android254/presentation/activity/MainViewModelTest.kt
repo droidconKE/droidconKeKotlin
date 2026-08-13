@@ -53,9 +53,7 @@ class MainViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { clock.now() } returns Instant.fromEpochMilliseconds(0)
-        // The ViewModel now decides when to drop the splash screen by reading cached
-        // sessions, and kicks off config fetch plus sync, rather than MainActivity doing
-        // it inline. Both need stubbing for the init block to complete.
+        // The init block reads cached sessions and kicks off config fetch plus sync.
         coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
         coEvery { remoteFeatureToggle.syncNowIfEmpty() } returns false
     }

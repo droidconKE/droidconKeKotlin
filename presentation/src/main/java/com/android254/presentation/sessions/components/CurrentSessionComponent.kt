@@ -70,7 +70,6 @@ fun CurrentSessionComponent(
 ) {
     val isNow = session.sessionStatus == SessionStatus.Ongoing
 
-    // Read from the theme here rather than baked into the model, so it tracks dark mode.
     val venueAccent = venueAccentColor(session.venue)
 
     val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")

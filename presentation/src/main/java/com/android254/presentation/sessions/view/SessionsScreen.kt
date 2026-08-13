@@ -83,10 +83,8 @@ fun SessionsScreen(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
 ) {
-    // "My sessions" and "is a filter active" are derived from the ViewModel's filter
-    // state rather than mirrored here. The screen used to keep its own non-saveable
-    // copy of the toggle, so rotating the device reset the switch to off while the
-    // bookmark filter stayed applied — the UI and the data disagreed.
+    // Derived from the ViewModel rather than mirrored here, so rotation cannot leave the
+    // switch and the applied filter disagreeing.
     val showMySessions = sessionsUiState.showMySessionsOnly
 
     val bottomSheetState =
@@ -99,8 +97,6 @@ fun SessionsScreen(
             mutableStateOf(true)
         }
 
-    // Genuinely screen-local: whether the sheet is on screen. `isFilterDialogOpen` used
-    // to exist alongside this and was written in three places and never read.
     var showFilterSheet by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(showFilterSheet) {
@@ -148,8 +144,7 @@ fun SessionsScreen(
                 CustomSwitch(
                     checked = showMySessions,
                     onCheckedChange = { checked ->
-                        // Turning the toggle off clears every filter, matching the
-                        // previous behaviour; turning it on just adds the bookmark facet.
+                        // Off clears every filter; on adds only the bookmark facet.
                         if (checked) {
                             onEvent(SessionsIntentHandler.ToggleBookmarkFilter)
                         } else {
@@ -167,10 +162,8 @@ fun SessionsScreen(
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
             )
-            // Gated on our own boolean rather than on `bottomSheetState.isVisible`.
-            // Gating on isVisible meant the sheet was only composed once already
-            // visible, so its enter animation never ran and onDismissRequest fought
-            // the guard.
+            // Gated on our own flag, not `bottomSheetState.isVisible`, which would skip
+            // the enter animation.
             if (showFilterSheet) {
                 ModalBottomSheet(
                     sheetState = bottomSheetState,

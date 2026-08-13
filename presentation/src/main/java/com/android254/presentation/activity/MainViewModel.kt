@@ -53,13 +53,8 @@ class MainViewModel
         /**
          * True while the splash screen should stay up.
          *
-         * This used to be a plain local `var` in [MainActivity], flipped from a coroutine
-         * that first awaited a Firebase Remote Config fetch. That made the first frame
-         * wait on the network: on a bad connection the splash screen held for the full
-         * Remote Config timeout, and the read/write pair was unsynchronised.
-         *
-         * Now it waits only on locally cached data, with a hard ceiling. Config fetch and
-         * sync are fire-and-forget below.
+         * Waits on locally cached data with a hard ceiling, never on the network; config
+         * fetch and sync are fire-and-forget.
          */
         val isInitialising: StateFlow<Boolean> = _isInitialising.asStateFlow()
 
@@ -82,7 +77,7 @@ class MainViewModel
             flow {
                 while (true) {
                     emit(clock.now())
-                    delay(TICK_INTERVAL_MS) // Refresh relative session times every minute
+                    delay(TICK_INTERVAL_MS)
                 }
             }
 
@@ -111,10 +106,7 @@ class MainViewModel
             )
 
         private companion object {
-            /**
-             * Past this the UI is shown with loading skeletons instead. An inert splash
-             * screen is worse than a populating one.
-             */
+            /** Past this, show the UI with loading skeletons rather than an inert splash. */
             const val INITIALISATION_TIMEOUT_MS = 700L
             const val TICK_INTERVAL_MS = 60_000L
         }

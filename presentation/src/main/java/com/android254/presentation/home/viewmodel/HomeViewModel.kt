@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +38,7 @@ class HomeViewModel
     constructor(
         homeRepo: HomeRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val clock: Clock,
     ) : ViewModel() {
         val isSyncing =
             syncDataWorkManager.isSyncing
@@ -59,7 +61,7 @@ class HomeViewModel
                         isSessionsSectionVisible = it.isSessionsSectionEnable,
                         sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() },
                         organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
-                        sessions = it.sessions.map { session -> session.toPresentationModel() },
+                        sessions = it.sessions.map { session -> session.toPresentationModel(clock.now()) },
                     )
                 }
                 .stateIn(

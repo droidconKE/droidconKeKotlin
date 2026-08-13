@@ -36,9 +36,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 
 class SessionsManager
@@ -83,11 +83,13 @@ class SessionsManager
                 )
             }
 
-        private fun Long.toEventDay(): String {
-            val date = Date(this)
-            val sdf = SimpleDateFormat("dd", Locale.getDefault())
-            return sdf.format(date)
-        }
+        /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
+        private fun Long.toEventDay(): String =
+            Instant.fromEpochMilliseconds(this)
+                .toLocalDateTime(CONFERENCE_TIME_ZONE)
+                .dayOfMonth
+                .toString()
+                .padStart(2, '0')
 
         override fun fetchFilteredSessions(filter: SessionFilter): Flow<List<Session>> {
             var query = "SELECT * FROM sessions WHERE 1 "
@@ -187,3 +189,5 @@ class SessionsManager
                 }
             }.flowOn(ioDispatcher)
     }
+
+private val CONFERENCE_TIME_ZONE = TimeZone.of("Africa/Nairobi")

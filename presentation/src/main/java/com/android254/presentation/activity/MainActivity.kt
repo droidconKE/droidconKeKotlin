@@ -61,10 +61,6 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        // Reads a StateFlow owned by the ViewModel rather than a local `var` mutated from
-        // a coroutine, and that flow completes on locally cached data with a hard timeout
-        // instead of awaiting a Remote Config fetch. The splash screen no longer blocks
-        // the first frame on the network.
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
 
         setContent {
@@ -73,11 +69,8 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Still asked on launch, which is the wrong moment — a prompt with no context
-        // gets denied, and the "rationale" branch below only logs. Moving this to the
-        // first time a user stars a session needs the rationale UI, so it is tracked
-        // with the notifications work rather than changed here; removing the call
-        // outright would mean the app never requests the permission at all.
+        // Should move to the first bookmark: a launch-time prompt with no context gets
+        // denied, and the rationale branch below only logs.
         askNotificationPermission()
     }
 

@@ -34,6 +34,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -45,6 +48,12 @@ import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SessionsViewModelTest {
+    private val testClock =
+        object : Clock {
+            override fun now(): Instant = Instant.parse("2026-11-06T09:00:00Z")
+        }
+    private val conferenceTimeZone = TimeZone.of("Africa/Nairobi")
+
     private val sessionsRepo = mockk<SessionsRepo>(relaxed = true)
     private val syncDataWorkManager = FakeSyncWorkManager()
     private val testDispatcher = StandardTestDispatcher()
@@ -72,7 +81,7 @@ class SessionsViewModelTest {
                     ),
                 )
 
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
 
             val job = launch { viewModel.sessionsUiState.collect() }
             advanceUntilIdle()
@@ -93,7 +102,7 @@ class SessionsViewModelTest {
                     ),
                 )
 
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
 
             val job = launch { viewModel.sessionsUiState.collect() }
             advanceUntilIdle()
@@ -105,7 +114,7 @@ class SessionsViewModelTest {
     @Test
     fun `should update selected day when UpdateSelectedDay intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             val newDay = EventDate("17", 2)
 
             viewModel.handleEvent(SessionsIntentHandler.UpdateSelectedDay(newDay))
@@ -116,7 +125,7 @@ class SessionsViewModelTest {
     @Test
     fun `should call bookmarkSession in repo when BookmarkSession intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             val sessionId = "session_id"
 
             viewModel.bookmarkSession(sessionId)
@@ -128,7 +137,7 @@ class SessionsViewModelTest {
     @Test
     fun `should call unBookmarkSession in repo when unBookmarkSession is called`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             val sessionId = "session_id"
 
             viewModel.unBookmarkSession(sessionId)
@@ -140,7 +149,7 @@ class SessionsViewModelTest {
     @Test
     fun `should toggle bookmark filter when ToggleBookmarkFilter intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
 
             viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
@@ -153,7 +162,7 @@ class SessionsViewModelTest {
     @Test
     fun `should clear filters when ClearSelectedFilterList intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             val filterOption = SessionsFilterOption("Beginner", "beginner", SessionsFilterCategory.Level)
 
             viewModel.updateSelectedFilterOptionList(filterOption)
@@ -168,7 +177,7 @@ class SessionsViewModelTest {
     @Test
     fun `should update filter state when updateSelectedFilterOptionList is called`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone)
             val levelFilter = SessionsFilterOption("Beginner", "Beginner", SessionsFilterCategory.Level)
             val roomFilter = SessionsFilterOption("Room 1", "Room 1", SessionsFilterCategory.Room)
 

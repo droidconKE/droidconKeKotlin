@@ -22,21 +22,26 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import java.text.SimpleDateFormat
-import java.util.Date
+import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.Locale
 
-fun Session.toPresentationModel(now: Instant = Clock.System.now()): SessionPresentationModel {
+fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val endTime = getTimePeriod(this.endDateTime)
 
     val sessionStart = this.startDateTime.toInstant()
     val sessionEnd = this.endDateTime.toInstant()
 
+    // An unparseable time leaves the status unknown; treat it as upcoming rather than
+    // claiming a session in 1970 has already finished.
     val sessionStatus =
         when {
+            sessionStart == null || sessionEnd == null -> SessionStatus.Upcoming
             now < sessionStart -> SessionStatus.Upcoming
             now > sessionEnd -> SessionStatus.Past
             else -> SessionStatus.Ongoing
@@ -102,21 +107,41 @@ fun List<Speaker>.toSessionSpeaker() =
     }
 
 fun getTimePeriod(time: String): FormattedTime {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-    val date: Date = format.parse(time) ?: Date()
+    val parsed = time.toLocalDateTimeOrNull() ?: return FormattedTime(time = time, period = "")
     return FormattedTime(
-        time = SimpleDateFormat("hh:mm", Locale.US).format(date),
-        period = SimpleDateFormat("a", Locale.US).format(date),
+        time = parsed.format(CLOCK_TIME),
+        period = parsed.format(MERIDIEM),
     )
 }
 
-private fun String.toInstant(): Instant {
-    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-    val date = format.parse(this) ?: return Instant.fromEpochMilliseconds(0)
-    return Instant.fromEpochMilliseconds(date.time)
-}
+/**
+ * Parses an API session time, which arrives venue-local and without an offset.
+ *
+ * Returns null rather than epoch zero on failure: the previous fallback made an
+ * unparseable time render as a session in 1970.
+ */
+private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
+    try {
+        LocalDateTime.parse(this, API_DATE_TIME)
+    } catch (e: DateTimeParseException) {
+        Timber.w(e, "Unparseable session time: %s", this)
+        null
+    }
+
+private fun String.toInstant(): Instant? =
+    toLocalDateTimeOrNull()
+        ?.toInstant(CONFERENCE_OFFSET)
+        ?.toEpochMilli()
+        ?.let(Instant::fromEpochMilliseconds)
 
 data class FormattedTime(
     val time: String,
     val period: String,
 )
+
+private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+private val CLOCK_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
+private val MERIDIEM: DateTimeFormatter = DateTimeFormatter.ofPattern("a", Locale.US)
+
+/** Session times are venue-local; the API sends them without an offset. */
+private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)

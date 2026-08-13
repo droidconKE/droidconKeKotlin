@@ -22,12 +22,10 @@ import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 fun SessionEntity.toDomainModel() =
     Session(
@@ -77,13 +75,21 @@ fun SessionDTO.toEntity(): SessionEntity {
 }
 
 fun fromString(offsetDateTime: String): Long {
-    val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-    return LocalDateTime.parse(offsetDateTime, pattern).toInstant(ZoneOffset.ofHours(3))
+    return LocalDateTime.parse(offsetDateTime, API_DATE_TIME)
+        .toInstant(CONFERENCE_OFFSET)
         .toEpochMilli()
 }
 
-private fun Long.toEventDay(): String {
-    val date = Date(this)
-    val sdf = SimpleDateFormat("dd", Locale.getDefault())
-    return sdf.format(date)
-}
+/** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
+private fun Long.toEventDay(): String =
+    java.time.Instant.ofEpochMilli(this)
+        .atZone(CONFERENCE_ZONE)
+        .dayOfMonth
+        .toString()
+        .padStart(2, '0')
+
+private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+/** Session times are venue-local; the API sends them without an offset. */
+private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
+private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")

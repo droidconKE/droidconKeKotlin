@@ -35,13 +35,10 @@ object DatabaseModule {
     ): Database = buildDatabase(context, DATABASE_NAME)
 
     /**
-     * The production database configuration, shared with tests so they exercise the
-     * real thing rather than a lookalike.
+     * The production configuration, shared with tests.
      *
-     * Deliberately no `fallbackToDestructiveMigration()`. That call meant any schema
-     * change shipped without a matching migration silently deleted every row —
-     * including the user's bookmarked sessions, which are their personal conference
-     * agenda. A missing migration must now fail loudly in a test instead.
+     * Deliberately no `fallbackToDestructiveMigration()`: a missing migration must fail
+     * loudly rather than silently delete the user's bookmarked sessions.
      */
     internal fun buildDatabase(
         context: Context,
@@ -51,7 +48,6 @@ object DatabaseModule {
             .addMigrations(*Database.ALL_MIGRATIONS)
             .build()
 
-    // Unchanged from the original: renaming it would orphan every installed user's
-    // data, which is the outcome this change exists to prevent.
+    // Do not rename: it would orphan every installed user's data.
     internal const val DATABASE_NAME = "dcke22-database"
 }

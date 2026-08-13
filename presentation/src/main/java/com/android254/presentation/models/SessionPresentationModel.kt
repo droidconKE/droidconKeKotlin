@@ -44,11 +44,6 @@ data class SessionPresentationModel(
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
 ) {
-    // The venue accent colour used to live here as `val color`, mapped from the raw chai
-    // palette. A data class cannot read MaterialTheme, so those colours could never
-    // respond to dark mode. The mapping now lives in `chai.colors.venueAccentColor`,
-    // which is a composable and also handles sessions listed in more than one room.
-
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
     val isWorkshop = format.contains("Workshop", ignoreCase = true)
@@ -64,12 +59,7 @@ data class SessionPresentationModel(
             else -> Icons.Default.CoPresent
         }
 
-    /**
-     * Builds the stepper representation of this session.
-     *
-     * Takes [accent] rather than deriving it, so the colour comes from a composable that
-     * can read the theme. This was a `val` computing its own colour from the raw palette.
-     */
+    /** Takes [accent] rather than deriving it, so the colour can come from the theme. */
     fun verticalStep(accent: Color): VerticalStep<SessionPresentationModel> =
         VerticalStep(
             id = this.id,
