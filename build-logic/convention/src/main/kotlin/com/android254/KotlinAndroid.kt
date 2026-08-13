@@ -17,63 +17,54 @@
 package com.android254
 
 import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.BuildFeatures
-import com.android.build.api.dsl.BuildType
-import com.android.build.api.dsl.DefaultConfig
-import com.android.build.api.dsl.ProductFlavor
-import com.android.build.api.dsl.AndroidResources
-import com.android.build.api.dsl.Installation
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.File
 
 /**
  * Configure base Kotlin with Android options
  */
 internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<out BuildFeatures, out BuildType, out DefaultConfig, out ProductFlavor, out AndroidResources, out Installation>,
+    commonExtension: CommonExtension,
 ) {
+    // AGP 9's CommonExtension exposes these as properties but no longer as configuration
+    // blocks — `defaultConfig { }` and friends live only on the concrete Application and
+    // Library extensions. Property access is what works against the shared supertype.
     commonExtension.apply {
         compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
 
-        defaultConfig {
-            minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
-            // Without this AGP falls back to the JUnit3 runner, which silently discovers
-            // no @RunWith(AndroidJUnit4::class) tests — a green run that tested nothing.
-            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
+        defaultConfig.minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
+        // Without this AGP falls back to the JUnit3 runner, which silently discovers
+        // no @RunWith(AndroidJUnit4::class) tests — a green run that tested nothing.
+        defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-            // Production code uses java.time (API 26+) while minSdk is 24.
-            isCoreLibraryDesugaringEnabled = true
-        }
+        compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+        compileOptions.targetCompatibility = JavaVersion.VERSION_17
+        // Production code uses java.time (API 26+) while minSdk is 24.
+        compileOptions.isCoreLibraryDesugaringEnabled = true
 
         configureManagedDevices(this)
+    }
 
-        kotlinOptions {
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions {
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
-            allWarningsAsErrors = warningsAsErrors.toBoolean()
+            allWarningsAsErrors.set(warningsAsErrors.toBoolean())
 
-            freeCompilerArgs = freeCompilerArgs + listOf(
+            freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",
                 // Enable experimental coroutines APIs, including Flow
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
-                "-opt-in=kotlin.Experimental",
             )
 
-            // Set JVM target to 17
-            jvmTarget = JavaVersion.VERSION_17.toString()
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -90,8 +81,4 @@ internal fun Project.configureKotlinAndroid(
         add("testImplementation", libs.findBundle("test").get())
         add("testImplementation", libs.findLibrary("android.test.espresso").get())
     }
-}
-
-fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
-    (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }

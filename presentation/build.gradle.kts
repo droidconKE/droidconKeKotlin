@@ -61,6 +61,9 @@ dependencies {
     implementation(libs.compose.constraintlayout)
     implementation(libs.compose.lifecycle.runtime)
 
+    // This module declares a Firebase dependency but applies no Firebase convention plugin,
+    // so it needs the BOM itself — the versions come from there, not the catalog.
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
     testImplementation(libs.test.robolectric)

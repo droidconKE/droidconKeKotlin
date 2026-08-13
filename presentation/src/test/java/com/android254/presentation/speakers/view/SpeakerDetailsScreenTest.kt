@@ -48,12 +48,11 @@ class SpeakerDetailsScreenTest {
 
         coEvery { speakersRepo.getSpeakerByName("Harun Wangereka") }.returns(flowOf(Speaker(name = "John Doe", tagline = "some tag line")))
 
+        val viewModel = SpeakerDetailsScreenViewModel(speakersRepo = speakersRepo)
         composeTestRule.setContent {
             SpeakerDetailsRoute(
                 name = "Harun Wangereka",
-                SpeakerDetailsScreenViewModel(
-                    speakersRepo = speakersRepo,
-                ),
+                viewModel,
             )
         }
 

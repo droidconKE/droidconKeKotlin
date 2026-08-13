@@ -66,8 +66,14 @@ plugins {
 
 ## Stack
 
-Kotlin 2.1, AGP 8.10, Compose (BOM 2025.06.00, Material 3), **Navigation 3**, Hilt + KSP,
-Ktor 3, Room 2.7, WorkManager, Firebase (Crashlytics, Remote Config, Messaging, Perf).
+Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.08.00, Material 3), **Navigation 3**,
+Hilt + KSP, Ktor 3, Room 2.8, WorkManager, Firebase (Crashlytics, Remote Config, Messaging,
+Perf). `compileSdk`/`targetSdk` 37, `minSdk` 24.
+
+**AGP 9 runs with two opt-out flags** in `gradle.properties`: `android.newDsl=false` and
+`android.builtInKotlin=false`. detekt below 2.0 requires both and the ktlint plugin requires
+the second, and both are applied to every subproject. Remove them when detekt 2.0 ships —
+until then AGP 9's two headline features are switched off.
 
 Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
 implementing `NavKey`; there is no `NavHost` or route strings. See

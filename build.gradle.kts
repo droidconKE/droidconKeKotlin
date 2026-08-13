@@ -33,8 +33,8 @@ allprojects {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "17"
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
 }
@@ -42,7 +42,7 @@ allprojects {
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
     detekt {
-        config = files("${project.rootDir}/detekt.yml")
+        config.setFrom(files("${project.rootDir}/detekt.yml"))
         parallel = true
         buildUponDefaultConfig = true
     }

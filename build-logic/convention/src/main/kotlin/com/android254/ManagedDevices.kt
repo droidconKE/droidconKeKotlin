@@ -29,33 +29,30 @@ import org.gradle.kotlin.dsl.invoke
  * ./gradlew :app:api24DebugAndroidTest
  * ```
  */
-internal fun configureManagedDevices(commonExtension: CommonExtension<*, *, *, *, *, *>) {
-    commonExtension.testOptions {
-        managedDevices {
-            localDevices {
-                // ATD images are unavailable below API 30, so the floor uses AOSP.
-                create("api24") {
-                    device = "Pixel 2"
-                    apiLevel = MIN_SDK
-                    systemImageSource = "aosp"
-                }
-                create("api30") {
-                    device = "Pixel 4"
-                    apiLevel = 30
-                    systemImageSource = "aosp-atd"
-                }
-                create("api34") {
-                    device = "Pixel 6"
-                    apiLevel = 34
-                    systemImageSource = "aosp-atd"
-                }
-            }
-            groups {
-                create("supportedApiLevels") {
-                    targetDevices.addAll(localDevices)
-                }
-            }
-        }
+internal fun configureManagedDevices(commonExtension: CommonExtension) {
+    // AGP 9 drops the configuration-block form on CommonExtension; these are properties now.
+    val managedDevices = commonExtension.testOptions.managedDevices
+    val localDevices = managedDevices.localDevices
+
+    // ATD images are unavailable below API 30, so the floor uses AOSP.
+    localDevices.create("api24") {
+        device = "Pixel 2"
+        apiLevel = MIN_SDK
+        systemImageSource = "aosp"
+    }
+    localDevices.create("api30") {
+        device = "Pixel 4"
+        apiLevel = 30
+        systemImageSource = "aosp-atd"
+    }
+    localDevices.create("api34") {
+        device = "Pixel 6"
+        apiLevel = 34
+        systemImageSource = "aosp-atd"
+    }
+
+    managedDevices.groups.create("supportedApiLevels") {
+        targetDevices.addAll(localDevices)
     }
 }
 

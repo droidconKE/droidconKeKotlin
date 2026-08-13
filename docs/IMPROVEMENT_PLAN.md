@@ -2176,6 +2176,45 @@ Two things follow from committing to both:
 
 **If no AGP 9.x supports API 37 when you get there**, the fallback is targetSdk 37 on the latest AGP 8.x, then AGP 9 later — but treat that as a contingency, not the plan. Record which AGP version you landed on here when it happens.
 
+#### 0a. Done — what the migration actually involved (2026-08-13)
+
+**AGP 9.3.1 on Gradle 9.7.0, Kotlin 2.4.10, KSP 2.3.11, Hilt 2.60.1, `compileSdk`/`targetSdk` 37.** A first attempt stopped at the convention plugins; a second completed it. Recorded here because most of the surprises are not in the sections below.
+
+**The dependency upgrade and the AGP bump cannot be separated.** This was going to be "upgrade everything, then AGP 9 afterwards". That is not possible: current AndroidX — `core-ktx` 1.19.0, `appcompat` 1.8.0, `activity` 1.13.0, `lifecycle` 2.11.0, `material` 1.14.0, Compose BOM 2026.08.00 — requires `compileSdk 37`, and AGP 8.10 caps at 36. So the whole upgrade is gated behind AGP 9. §0 predicted this for `targetSdk`; it applies to routine library bumps too.
+
+**AGP 9.3.1 is available**, so the §0 question of "which 9.x supports API 37" resolves to a released version rather than a wait.
+
+**The convention plugins were the real work, and the fix is smaller than it first looks.** AGP 9 removes the type parameters from `CommonExtension`, so the six-parameter form becomes plain `CommonExtension`. The first attempt read the resulting "unresolved reference: defaultConfig" errors as the DSL being gone. It is not: `CommonExtension` **keeps the getters and loses only the configuration-block forms**, which now live solely on the concrete `ApplicationExtension` and `LibraryExtension`. So against the shared supertype, property access is the migration:
+
+```kotlin
+// before                                    // after
+defaultConfig { minSdk = 24 }                defaultConfig.minSdk = 24
+compileOptions { sourceCompatibility = … }   compileOptions.sourceCompatibility = …
+buildFeatures { compose = true }             buildFeatures.compose = true
+testOptions { managedDevices { … } }         testOptions.managedDevices.localDevices.create(…)
+```
+
+Confirm against the jar rather than guessing — `javap -cp gradle-api-9.3.1.jar com.android.build.api.dsl.CommonExtension` settles in seconds what the error messages imply misleadingly. Note `minSdk` and `testInstrumentationRunner` are on `BaseFlavor`, which `DefaultConfig` extends.
+
+**Hilt 2.60.x refuses to apply on AGP 8**, failing with a direct version check. It must move in the same commit as AGP, not before.
+
+**Firebase BOM 34 removed every `-ktx` artifact.** `firebase-analytics-ktx` and siblings no longer resolve; the Kotlin extensions ship in the main modules. Source imports move too: `com.google.firebase.ktx.Firebase` → `com.google.firebase.Firebase`, and `com.google.firebase.remoteconfig.ktx.*` → `com.google.firebase.remoteconfig.*`. This part is done and correct in the WIP branch and can be lifted from it.
+
+**detekt is still 1.23.8** — 2.0 has not shipped. So §6's conclusion stands unchanged: both `android.newDsl=false` and `android.builtInKotlin=false` are required and are now set, and AGP 9 buys the version bump and little else until they can come off.
+
+**Two problems surfaced that had nothing to do with AGP 9**, both worth knowing because they will look like migration failures:
+
+- `presentation` declares `firebase-messaging` but applies no Firebase convention plugin, so it never had the BOM and the dependency has no version. It resolved before by luck of the old artifact graph; under BOM 34 it fails outright. Fixed by adding `platform(libs.firebase.bom)` to that module.
+- Chucker 4.3.1 is compiled for Java 21 (class file 65.0) while this project targets 17, which fails in `compileDebugJavaWithJavac` on a Hilt-generated file — a confusing place to land. Held at 4.1.0. Revisit alongside any JDK 21 move.
+
+Also done, and mechanical: `kotlinOptions` → `compilerOptions` in the two convention plugins, the root build file and `build-logic`'s own build file; `project.buildDir` → `layout.buildDirectory`; `detekt { config = files(…) }` → `config.setFrom(…)`; and removing `android.nonFinalResIds=false`, which AGP 9 rejects.
+
+**The upgrade found real bugs, which is an argument for doing these regularly.** The newer AndroidX lint flagged `ViewModelConstructorInComposable` in two more test files — `SpeakerDetailsScreenTest` and `SpeakersScreenTest` — both constructing a ViewModel inside `setContent`, the same defect already fixed in `FeedScreenTest`. Older lint did not catch them. Fixed the same way, by hoisting the construction out of composition.
+
+§5's `nonFinalResIds` audit was run and both patterns return nothing — no `when` over `R.id`, no resource IDs as annotation arguments — so removing the flag was safe rather than merely green.
+
+**Still open:** instrumentation on API 24 and 37 (§7 step 7). CI is the first place that runs, and the api24 leg is the one that matters, since desugaring is what it guards.
+
 #### 1. Version requirements
 
 From the skill's `VERSION-MATRIX.md`, against this repo's current state:

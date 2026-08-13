@@ -16,12 +16,6 @@
 package com.android254
 
 import com.android.build.api.dsl.CommonExtension
-import com.android.build.api.dsl.BuildFeatures
-import com.android.build.api.dsl.BuildType
-import com.android.build.api.dsl.DefaultConfig
-import com.android.build.api.dsl.ProductFlavor
-import com.android.build.api.dsl.AndroidResources
-import com.android.build.api.dsl.Installation
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
@@ -34,28 +28,25 @@ import org.gradle.kotlin.dsl.withType
  * Configure Compose-specific options
  */
 internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<out BuildFeatures, out BuildType, out DefaultConfig, out ProductFlavor, out AndroidResources, out Installation>,
+    commonExtension: CommonExtension,
 ) {
-    commonExtension.apply {
-        buildFeatures {
-            compose = true
-        }
+    // Property access rather than a `buildFeatures { }` block: AGP 9 keeps the getter on
+    // CommonExtension but drops the block form.
+    commonExtension.buildFeatures.compose = true
 
-        dependencies {
-            val bom = libs.findLibrary("androidx-compose-bom").get()
-            add("implementation", platform(bom))
-            add("androidTestImplementation", platform(bom))
+    dependencies {
+        val bom = libs.findLibrary("androidx-compose-bom").get()
+        add("implementation", platform(bom))
+        add("androidTestImplementation", platform(bom))
 
-            add("implementation", libs.findBundle("compose").get())
-            add("debugImplementation", libs.findLibrary("compose.ui.test.manifest").get())
-            add("testImplementation", libs.findLibrary("compose.ui.test.junit").get())
-
-        }
+        add("implementation", libs.findBundle("compose").get())
+        add("debugImplementation", libs.findLibrary("compose.ui.test.manifest").get())
+        add("testImplementation", libs.findLibrary("compose.ui.test.junit").get())
     }
 
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            freeCompilerArgs = freeCompilerArgs + buildComposeMetricsParameters()
+        compilerOptions {
+            freeCompilerArgs.addAll(buildComposeMetricsParameters())
         }
     }
 
@@ -66,7 +57,7 @@ private fun Project.buildComposeMetricsParameters(): List<String> {
     val enableMetricsProvider = project.providers.gradleProperty("enableComposeCompilerMetrics")
     val enableMetrics = (enableMetricsProvider.orNull == "true")
     if (enableMetrics) {
-        val metricsFolder = File(project.buildDir, "compose-metrics")
+        val metricsFolder = project.layout.buildDirectory.dir("compose-metrics").get().asFile
         metricParameters.add("-P")
         metricParameters.add(
             "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + metricsFolder.absolutePath
@@ -76,7 +67,7 @@ private fun Project.buildComposeMetricsParameters(): List<String> {
     val enableReportsProvider = project.providers.gradleProperty("enableComposeCompilerReports")
     val enableReports = (enableReportsProvider.orNull == "true")
     if (enableReports) {
-        val reportsFolder = File(project.buildDir, "compose-reports")
+        val reportsFolder = project.layout.buildDirectory.dir("compose-reports").get().asFile
         metricParameters.add("-P")
         metricParameters.add(
             "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + reportsFolder.absolutePath
