@@ -74,6 +74,15 @@ internal fun Project.configureKotlinAndroid(
 
         add("implementation", libs.findLibrary("android.coreKtx").get())
 
+        // Slack's Compose lint rules. `lintChecks` is a lint-only classpath, so nothing
+        // here reaches the APK.
+        //
+        // Applied to every Android module rather than only the Compose ones: config/lint/
+        // lint.xml names these issue ids, and lint fails a module with UnknownIssueId for
+        // every id it has not been given the checks for. The rules simply find nothing in a
+        // module with no Compose code.
+        add("lintChecks", libs.findLibrary("compose-lint-checks").get())
+
         add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())
         add("androidTestImplementation", libs.findLibrary("junit.androidx").get())
         add("androidTestImplementation", libs.findLibrary("junit.androidx.ktx").get())

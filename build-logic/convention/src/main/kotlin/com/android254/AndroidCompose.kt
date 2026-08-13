@@ -37,10 +37,6 @@ internal fun Project.configureAndroidCompose(
         add("implementation", libs.findBundle("compose").get())
         add("debugImplementation", libs.findLibrary("compose.ui.test.manifest").get())
         add("testImplementation", libs.findLibrary("compose.ui.test.junit").get())
-
-        // Slack's Compose lint rules. `lintChecks` is a lint-only classpath, so these
-        // travel with the analysis and never reach the APK.
-        add("lintChecks", libs.findLibrary("compose-lint-checks").get())
     }
 
     tasks.withType<KotlinCompile>().configureEach {

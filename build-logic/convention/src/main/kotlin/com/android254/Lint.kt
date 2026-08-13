@@ -31,8 +31,10 @@ internal fun Project.configureLint(commonExtension: CommonExtension) {
     // `lint` is a property on CommonExtension, not an Action-taking function — the block
     // form only exists in the Kotlin DSL accessors, which precompiled plugins do not see.
     commonExtension.lint.apply {
-        // A warning nobody has to act on is a warning everybody scrolls past.
-        warningsAsErrors = true
+        // Deliberately not `warningsAsErrors = true`. Severity is decided per rule in
+        // config/lint/lint.xml: the rules this project enforces are promoted to `error`
+        // there, and the ones still being burned down stay at `warning` so they show up in
+        // reports and in the IDE without holding the build hostage.
         abortOnError = true
 
         // Tests are shipped code too — a leaked context in a test still leaks.

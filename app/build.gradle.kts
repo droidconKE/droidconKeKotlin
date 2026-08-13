@@ -59,6 +59,9 @@ android {
         }
         release {
             isMinifyEnabled = true
+            // Pointless without minification, and minification was effectively off until
+            // coverage instrumentation stopped forcing this build type debuggable.
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

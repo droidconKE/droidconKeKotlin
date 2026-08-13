@@ -14,6 +14,11 @@ plugins {
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
+    alias(libs.plugins.compose.stability) apply false
+    // `./gradlew dependencyUpdates` — both were declared in the catalog but never applied,
+    // so neither task existed.
+    alias(libs.plugins.toml.checker)
+    alias(libs.plugins.toml.updater)
 }
 
 allprojects {

@@ -35,13 +35,7 @@
             android:exported="false"
             tools:node="remove" />
 
-        <service
-            android:name="com.android254.presentation.notifications.MessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+        <!-- The MESSAGING_EVENT service is declared in :presentation, next to its class. -->
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
