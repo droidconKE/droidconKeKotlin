@@ -285,7 +285,7 @@ Findings are numbered in discovery order. This is the order to fix them in:
 
 | Item | Location | Replacement |
 | --- | --- | --- |
-| `accompanist-swiperefresh` | `HomeScreen`, `SpeakersScreen`, `SessionStateComponent` | M3 `PullToRefreshBox` |
+| ~~`accompanist-swiperefresh`~~ | `HomeScreen`, `SpeakersScreen`, `SessionStateComponent` | **Done.** M3 `PullToRefreshBox` |
 | `GoogleSignIn` / GMS Auth API | `GoogleSignInHandler`, `AuthViewModel`, `AuthDialog`, `GoogleSignInButton` | Credential Manager + Google ID |
 | `window.statusBarColor` | `chai/Theme.kt` | `enableEdgeToEdge()` (no-op on API 35+) |
 | `packagingOptions {}` | `app`, `presentation`, `chai` | `packaging {}` |
@@ -293,11 +293,11 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | `project.buildDir` | `AndroidCompose.kt` | `layout.buildDirectory` |
 | `detekt { config = files(…) }` | root `build.gradle.kts` | `config.setFrom(…)` |
 | `fallbackToDestructiveMigration()` | `DatabaseModule` | `fallbackToDestructiveMigration(dropAllTables = true)` — or better, real migrations |
-| `composecompiler = "1.5.15"` + `compose-compiler` in the `compose` bundle | `libs.versions.toml` | **Delete.** Kotlin 2.x uses the `org.jetbrains.kotlin.plugin.compose` plugin. Shipping `androidx.compose.compiler:compiler` as an `implementation` dependency is wrong. |
-| `gson` | catalog | **0 usages.** Delete. `kotlinx-serialization` is the JSON library. |
-| `result-jvm` (kittinunf) | catalog | **0 usages.** Delete. |
-| `paging-common`, `paging-compose`, `room-paging` | catalog + `compose` bundle | **0 usages.** Delete. |
-| `compose-runtimeLivedata` | `compose` bundle | 1 usage. Remove usage, then the dep. |
+| ~~`composecompiler = "1.5.15"` + `compose-compiler` in the `compose` bundle~~ | `libs.versions.toml` | **Done.** Kotlin 2.x uses the `org.jetbrains.kotlin.plugin.compose` plugin. Shipping `androidx.compose.compiler:compiler` as an `implementation` dependency is wrong. |
+| ~~`gson`~~ | catalog | **Done.** 0 usages. `kotlinx-serialization` is the JSON library. |
+| ~~`result-jvm` (kittinunf)~~ | catalog | **Done.** 0 usages. |
+| ~~`paging-common`, `paging-compose`, `room-paging`~~ | catalog + `compose` bundle | **Done.** 0 usages. |
+| ~~`compose-runtimeLivedata`~~ | `compose` bundle | **Done.** The one usage had already gone; deleted outright. |
 | `ExampleUnitTest.kt`, `ExampleInstrumentedTest.kt` | `app` | Delete. |
 | `safeApiCall` + `ServerError` + `NetworkError` | `datasource/remote/.../utils/SafeApiCall.kt` | `@Deprecated` with **zero callers**. Deleting it makes B13's unreachable branch obvious rather than subtle. |
 | `DateStringConverter` | `datasource/local/.../util/DateStringConverter.kt` | Declared, never referenced, not registered in `@TypeConverters` (only `InstantConverter` is). Dead. |
@@ -306,7 +306,7 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | `HomeBannerSection` | commented out in `HomeScreen` | Decide: ship or delete. |
 | `chai` drawables duplicated in `presentation` | 12 identical files | Single source in `chai`. |
 
-The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — currently pulls in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern.
+The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — ~~currently pulls in~~ pulled in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern. **Done:** the bundle is now the floor for a design-system module; `coil` and `navigation3` are separate bundles, and they plus `activity-compose`, `constraintlayout-compose` and `lifecycle-runtime-compose` are declared in `presentation`.
 
 ### 1.5 Findings — architecture
 
@@ -5724,11 +5724,37 @@ bundletool build-apks --bundle=app/build/outputs/bundle/release/app-release.aab 
 bundletool get-size total --apks=app.apks --dimensions=SDK,ABI,SCREEN_DENSITY
 ```
 
+"Pixel-class" here means a fixed device spec, so the numbers are comparable run to run:
+
+```json
+{ "supportedAbis": ["arm64-v8a"], "supportedLocales": ["en"],
+  "screenDensity": 420, "sdkVersion": 34 }
+```
+
+```bash
+bundletool get-size total --apks=app.apks --device-spec=pixel.json   # download
+bundletool extract-apks --apks=app.apks --device-spec=pixel.json \
+  --output-dir=out && du -cb out/*.apk                               # install
+```
+
 Write the number here as a **tracked baseline**:
 
 | Date | Version | Download size (Pixel-class) | Install size | Notes |
 | --- | --- | --- | --- | --- |
-| _TBD_ | 1.0.x | _measure_ | _measure_ | Pre-Phase-0 baseline |
+| 2026-08-13 | 1.0.0 (vc 1) | 6,420,105 B — 6.12 MiB | 10,596,026 B — 10.11 MiB | Pre-Phase-0 baseline |
+| 2026-08-13 | 1.0.0 (vc 1) | 6,416,765 B — 6.12 MiB | 10,587,545 B — 10.10 MiB | After removing `accompanist-swiperefresh`, `gson`, `result-jvm`, `paging-*`, `runtime-livedata`, `compose-compiler`, and splitting the `compose` bundle |
+
+**−3,340 B download, −8,481 B install: 0.05%.** Worth stating plainly, because it sets
+expectations for the rest of this section: **deleting unused dependencies does not shrink
+the APK.** R8 was already stripping every one of them — that is what R8 is for. What those
+removals actually bought was a smaller dependency graph to resolve, fewer classes for R8 to
+chew through, and one fewer frozen artifact (`androidx.compose.compiler:compiler` at
+1.5.15) pinned into the build.
+
+The size wins in this section are the ones that remove bytes R8 *cannot* prove are unused:
+`material-icons-extended` (reachable via reflection-ish generated accessors), the five
+static Montserrat files, Lottie, and `play-services-auth`. Measure each of those
+individually against the baseline above rather than assuming.
 
 Wins, ordered by return on effort:
 
@@ -5781,7 +5807,7 @@ private val Montserrat = FontFamily(
 
 > **Trade-off, stated plainly:** downloadable fonts add a first-launch fetch and a fallback-font flash on devices without Play services. For a conference app whose users are on Play-enabled Android phones, the size win is worth it — but if the brand cares about a pixel-perfect first frame, bundle **one variable font file** instead. Either beats five static files.
 
-**3. Remove unused dependencies.** `gson`, `result-jvm`, `paging-*`, `accompanist-swiperefresh`, `lottie-compose`, `runtime-livedata`, `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). Measure each removal; Lottie and play-services-auth are the biggest.
+**3. Remove unused dependencies.** ~~`gson`, `result-jvm`, `paging-*`, `accompanist-swiperefresh`, `runtime-livedata`~~ — done, and worth 0.05% (see the baseline table above). Still open: `lottie-compose`, `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These three are actually *used*, so unlike the ones above they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
 
 **4. Per-app language + locale filtering.** Once §14's translations land:
 
@@ -7321,6 +7347,15 @@ class ColorContrastTest {
 **No dependencies. Highest leverage per hour spent in this entire document — do §15.1 first, before anything else in the plan.**
 
 ### 15.1 The single most important fix
+
+**Done** — `.github/workflows/pr.yml`. What shipped differs from the sketch below in three
+ways: instrumentation runs on the Gradle Managed Devices already declared in
+`build-logic/.../ManagedDevices.kt` (api24, api30, api34) instead of
+`android-emulator-runner`, so the API levels live in one place; the screenshot-test and
+APK-size-diff jobs are omitted because Roborazzi and `.github/actions/apk-size-diff` do not
+exist yet; and Android Lint needed a fix before it could gate anything — it was failing on
+`main` on two `FeedScreenTest` cases. `branch.yml` was left in place and is now redundant
+with `pr.yml`; deleting it is a follow-up.
 
 `branch.yml` triggers only on:
 
