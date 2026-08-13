@@ -89,7 +89,11 @@ Even with the names corrected, the comparison is still wrong: a session in `"Opa
 
 **User-visible effect:** the room filter appears to work, highlights correctly, and returns nothing. On a conference day, a user trying to find what's on in the room they're sitting in gets an empty screen.
 
-#### B11 — `java.time` on minSdk 24 with core library desugaring never enabled
+#### B11 — `java.time` on minSdk 24 with core library desugaring never enabled — **resolved**
+
+> Fixed twice over: desugaring was enabled, and `minSdk` later moved to 26 where `java.time` is
+> native. The crash is now unreachable rather than guarded. Kept for the reasoning below, which is
+> why `minSdk` must not drop below 26 without restoring the guard.
 
 > Numbered B11 because it was found last, during the review pass in §1.3a. It is placed here because it is the **most severe finding in the document** and priority is not the same thing as discovery order. See §1.3a for the full priority ordering.
 
@@ -285,7 +289,6 @@ Findings are numbered in discovery order. This is the order to fix them in:
 
 | Item | Location | Replacement |
 | --- | --- | --- |
-| ~~`accompanist-swiperefresh`~~ | `HomeScreen`, `SpeakersScreen`, `SessionStateComponent` | **Done.** M3 `PullToRefreshBox` |
 | `GoogleSignIn` / GMS Auth API | `GoogleSignInHandler`, `AuthViewModel`, `AuthDialog`, `GoogleSignInButton` | Credential Manager + Google ID |
 | `window.statusBarColor` | `chai/Theme.kt` | `enableEdgeToEdge()` (no-op on API 35+) |
 | `packagingOptions {}` | `app`, `presentation`, `chai` | `packaging {}` |
@@ -293,15 +296,9 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | `project.buildDir` | `AndroidCompose.kt` | `layout.buildDirectory` |
 | `detekt { config = files(…) }` | root `build.gradle.kts` | `config.setFrom(…)` |
 | `fallbackToDestructiveMigration()` | `DatabaseModule` | `fallbackToDestructiveMigration(dropAllTables = true)` — or better, real migrations |
-| ~~`composecompiler = "1.5.15"` + `compose-compiler` in the `compose` bundle~~ | `libs.versions.toml` | **Done.** Kotlin 2.x uses the `org.jetbrains.kotlin.plugin.compose` plugin. Shipping `androidx.compose.compiler:compiler` as an `implementation` dependency is wrong. |
-| ~~`gson`~~ | catalog | **Done.** 0 usages. `kotlinx-serialization` is the JSON library. |
-| ~~`result-jvm` (kittinunf)~~ | catalog | **Done.** 0 usages. |
-| ~~`paging-common`, `paging-compose`, `room-paging`~~ | catalog + `compose` bundle | **Done.** 0 usages. |
-| ~~`compose-runtimeLivedata`~~ | `compose` bundle | **Done.** The one usage had already gone; deleted outright. |
 | `ExampleUnitTest.kt`, `ExampleInstrumentedTest.kt` | `app` | Delete. |
 | `safeApiCall` + `ServerError` + `NetworkError` | `datasource/remote/.../utils/SafeApiCall.kt` | `@Deprecated` with **zero callers**. Deleting it makes B13's unreachable branch obvious rather than subtle. |
 | `DateStringConverter` | `datasource/local/.../util/DateStringConverter.kt` | Declared, never referenced, not registered in `@TypeConverters` (only `InstantConverter` is). Dead. |
-| `desugar_jdk_libs` catalog entry | `libs.versions.toml:9,111` | Version and library alias both declared, **wired to no module**. See B11 — this is the unfinished fix for a live crash. |
 | **The whole topics filter path** | `SessionsFilterCategory.Topic`, `SessionsFilterState.topics`, `SessionsViewModel.updateFilterState`'s `Topic` branch | **Unreachable dead code, not a bug.** `loadFilters()` emits zero `Topic` options and `SessionDTO` has no topic field, so nothing can ever set it. Either delete all three, or spec `topics` with the backend and build it end to end (§3.3). Do not leave it half-wired — that's how it got mistaken for a live bug in the first draft of this plan. |
 | `HomeBannerSection` | commented out in `HomeScreen` | Decide: ship or delete. |
 | `chai` drawables duplicated in `presentation` | 12 identical files | Single source in `chai`. |
@@ -2188,7 +2185,7 @@ Two things follow from committing to both:
 
 ```kotlin
 // before                                    // after
-defaultConfig { minSdk = 24 }                defaultConfig.minSdk = 24
+defaultConfig { minSdk = 26 }                defaultConfig.minSdk = 26
 compileOptions { sourceCompatibility = … }   compileOptions.sourceCompatibility = …
 buildFeatures { compose = true }             buildFeatures.compose = true
 testOptions { managedDevices { … } }         testOptions.managedDevices.localDevices.create(…)
@@ -2217,7 +2214,7 @@ Also done, and mechanical: `kotlinOptions` → `compilerOptions` in the two conv
 
 §5's `nonFinalResIds` audit was run and both patterns return nothing — no `when` over `R.id`, no resource IDs as annotation arguments — so removing the flag was safe rather than merely green.
 
-**Still open:** instrumentation on API 24 and 37 (§7 step 7). CI is the first place that runs, and the api24 leg is the one that matters, since desugaring is what it guards.
+Instrumentation runs green on api30 and api34 in CI. The api24 leg was removed with the `minSdk` 26 bump, so §7 step 7's "verify on both ends of the range" now means api30 and the newest device in the matrix.
 
 #### 1. Version requirements
 
@@ -2362,7 +2359,7 @@ AGP 9 is a **separate track after Phase 0**, never bundled with it:
 4. **Kotlin 2.1.21 → 2.3.x.** Its own PR — this is a compiler upgrade, not a version bump.
 5. **`nonFinalResIds` → true**, then remove the flag. Green.
 6. **AGP → the earliest 9.x supporting API 37, Gradle → 9.1+, `compileSdk`/`targetSdk` → 37, all in one PR** (§0 explains why these can't be separated), with `newDsl=false` and `builtInKotlin=false`. Should be nearly mechanical, because steps 1–5 removed everything that would have broken. §3.4's insets work must already be in — edge-to-edge is enforced at this target.
-7. **Verify on API 24 and on API 37.** Both ends of the supported range, because B11 is exactly what a missing low-end check costs.
+7. **Verify on the lowest and highest devices in the matrix.** Both ends of the supported range, because B11 is exactly what a missing low-end check costs. With `minSdk` 26 that is api30 upward; there is no longer a managed device at the floor itself.
 8. **Remove the opt-out flags** when detekt 2.0 and a newer ktlint plugin land. This is when the migration is actually finished.
 
 If step 7 is a large diff, one of steps 1–5 was skipped.
@@ -2383,7 +2380,7 @@ Validation commands from the skill, worth putting in the PR description:
 - [ ] `./gradlew build --warning-mode all` produces no Gradle deprecation warnings, or each remaining one has a tracking issue linked in a comment
 - [ ] `./gradlew lint` passes; `lint-baseline.xml` regenerated and **shrunk** (triage what's in it)
 - [ ] B1–B16 each closed by a **test**, not just a code change (§16.0 lists the test per fix)
-- [ ] An API 24 instrumentation run passes — the level B11 crashed on
+- [x] An instrumentation run passes on every device in the matrix (api30, api34). B11's crash level is below `minSdk` now, so it is unreachable rather than untested
 - [ ] `grep -rn "com.android254.droidcon\|DCKE22\|DroidconKE2023"` returns nothing
 - [ ] CI runs on Kotlin-only PRs (§15)
 - [ ] Unused deps removed; APK size recorded as a **baseline number** in this document (§9.4)
@@ -5844,7 +5841,7 @@ private val Montserrat = FontFamily(
 
 > **Trade-off, stated plainly:** downloadable fonts add a first-launch fetch and a fallback-font flash on devices without Play services. For a conference app whose users are on Play-enabled Android phones, the size win is worth it — but if the brand cares about a pixel-perfect first frame, bundle **one variable font file** instead. Either beats five static files.
 
-**3. Remove unused dependencies.** ~~`gson`, `result-jvm`, `paging-*`, `accompanist-swiperefresh`, `runtime-livedata`~~ — done, and worth 0.05% (see the baseline table above). Still open: `lottie-compose`, `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These three are actually *used*, so unlike the ones above they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
+**3. Remove unused dependencies.** Still open: `lottie-compose`, `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These are actually *used*, so unlike the dead catalog entries already deleted they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
 
 **4. Per-app language + locale filtering.** Once §14's translations land:
 
@@ -7383,158 +7380,27 @@ class ColorContrastTest {
 
 **No dependencies. Highest leverage per hour spent in this entire document — do §15.1 first, before anything else in the plan.**
 
-### 15.1 The single most important fix
+### 15.1 CI on every pull request
 
-**Done** — `.github/workflows/pr.yml`. It differs from the sketch below: instrumentation
-uses the Gradle Managed Devices from `build-logic/.../ManagedDevices.kt` rather than
-`android-emulator-runner`, and the screenshot-test and APK-size-diff jobs are omitted
-because Roborazzi and `.github/actions/apk-size-diff` do not exist yet. `branch.yml` is now
-redundant with `pr.yml`; deleting it is a follow-up.
+**Done** — `.github/workflows/pr.yml`.
 
-`branch.yml` triggers only on:
+The problem it fixed: `branch.yml` triggered only on `build-logic/**`, `build.gradle.kts` and
+`settings.gradle.kts`, so a pull request changing only Kotlin source ran no lint, no detekt, no
+tests and no build. For a project taking community contributions that was the highest-severity
+issue in the repository, because it was the reason other bugs got in. `branch.yml` is deleted.
 
-```yaml
-paths:
-  - 'build-logic/**'
-  - 'build.gradle.kts'
-  - 'settings.gradle.kts'
-```
+The workflow runs static analysis, unit tests with coverage, a debug and release build, and
+instrumentation on the Gradle Managed Devices declared in `build-logic/.../ManagedDevices.kt`,
+on `pull_request`, `merge_group` and push to `main`. The push-to-main trigger is not incidental:
+`gradle/actions/setup-gradle` only writes its cache on the default branch, so without it every
+PR job runs cold.
 
-**A pull request that changes only Kotlin source code runs no CI.** No lint, no detekt, no tests, no build. For an open-source project taking community contributions, this is the highest-severity issue in the repository — higher than any bug in §1.3, because it's the reason bugs get in.
+Two jobs from the original sketch are still missing, both blocked on things that do not exist:
+a screenshot-diff job (needs §10.2 Roborazzi) and an APK-size gate (needs a
+`.github/actions/apk-size-diff` action). Add each with the thing it depends on.
 
-```yaml
-# .github/workflows/pr.yml
-name: PR
-
-on:
-  pull_request:
-  merge_group:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  static-analysis:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: 'zulu', java-version: '17' }
-      - uses: gradle/actions/setup-gradle@v4
-        with: { cache-read-only: ${{ github.ref != 'refs/heads/main' }} }
-
-      - run: ./gradlew spotlessCheck ktlintCheck detekt --continue
-      - run: ./gradlew lint
-      - uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with: { sarif_file: app/build/reports/lint-results-debug.sarif }
-
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: 'zulu', java-version: '17' }
-      - uses: gradle/actions/setup-gradle@v4
-
-      - run: ./gradlew testDebugUnitTest
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: '**/build/reports/tests/'
-
-      - run: ./gradlew createDebugCombinedCoverageReport
-      - uses: codecov/codecov-action@v5
-        with: { token: '${{ secrets.CODECOV_TOKEN }}' }
-
-  screenshot-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: 'zulu', java-version: '17' }
-      - uses: gradle/actions/setup-gradle@v4
-
-      - run: ./gradlew verifyRoborazziDebug
-      - name: Upload screenshot diffs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshot-diffs
-          path: '**/build/outputs/roborazzi/**/*_compare.png'
-      - name: Comment diffs on PR
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '📸 Screenshot tests failed. Diff images are in the workflow artifacts. If the change is intentional, run `./gradlew recordRoborazziDebug` and commit the updated goldens.'
-            })
-
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: 'zulu', java-version: '17' }
-      - uses: gradle/actions/setup-gradle@v4
-
-      - run: ./gradlew assembleDebug
-
-      # Fail the PR if the app grows more than 2% without an explicit override.
-      - name: APK size check
-        uses: ./.github/actions/apk-size-diff
-        with:
-          base-ref: ${{ github.base_ref }}
-          threshold-percent: 2
-
-  instrumentation-tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # 24 is not optional: it is the declared minSdk, and starting this matrix at
-        # 26 is precisely why B11 (java.time without desugaring) shipped undetected.
-        # If a device level is supported, CI runs on it.
-        api-level: [24, 26, 30, 35]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with: { distribution: 'zulu', java-version: '17' }
-      - uses: gradle/actions/setup-gradle@v4
-
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
-            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
-
-      - uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          arch: x86_64
-          disable-animations: true
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: ./gradlew connectedDebugAndroidTest
-
-  dependency-review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/dependency-review-action@v4
-        with: { fail-on-severity: moderate }
-```
-
-Also: bump `actions/checkout@v3` → `v4` and `setup-java@v3` → `v4` in the existing workflows, and replace the deprecated `gradle/gradle-build-action@v2` with `gradle/actions/setup-gradle@v4`.
+Read the workflow rather than a copy of it here — a YAML sketch in a document goes stale the
+first time the real file changes.
 
 ### 15.2 Dependabot
 
@@ -7623,64 +7489,60 @@ And upload mapping files (§13.2), without which every release crash report is u
 
 ## 16. Roadmap and sequencing
 
-### 16.0 P0 — ships alongside this plan document
+### 16.0 What has landed
 
-These are the small, self-contained fixes that should land **with** the PR that adds this plan, not after it. Every one is a real defect with a bounded diff, needs no product decision, and no design review. Ordered by severity.
+Struck from the backlog. Kept here only so nobody re-plans it.
 
-| # | Fix | Finding | Files | Test that proves it |
-| --- | --- | --- | --- | --- |
-| 1 | Enable core library desugaring | **B11** | `build-logic/.../KotlinAndroid.kt` (+`isCoreLibraryDesugaringEnabled`, +`coreLibraryDesugaring` dep) | Instrumentation test on an **API 24** emulator that triggers a session sync |
-| 2 | Remove `fallbackToDestructiveMigration` | **B2** | `datasource/local/.../di/DatabaseModule.kt`, `Database.kt` (`exportSchema = true`) | `MigrationTest.migrate5To6_preservesBookmarks` (note: column is `sessionId`) |
-| 3 | Derive filter options from data; fix the room + case comparison | **B1, B12** | `SessionsFilterPanel.kt`, `SessionsFilterState.kt`, `SessionsViewModel.kt`, `domain/models/Session.kt` (+`roomList`) | `SessionsFilterStateTest` — 5 tests in §3.3, incl. the "no dead option" property |
-| 4 | Delete the topics filter path | §1.4 | `SessionsFilterCategory.kt`, `SessionsFilterState.kt`, `SessionsViewModel.updateFilterState` | Compiles; no behaviour to test — it was unreachable |
-| 5 | Unify `targetSdk` behind one catalog entry | **B4** | `libs.versions.toml`, both convention plugins | `./gradlew :presentation:dependencies` — or just read the merged manifest |
-| 6 | Add `key` to 8 lazy lists | **B14** | 8 files listed in §1.3 | Existing screenshot/UI tests; scroll-position assertion on `SpeakersScreen` |
-| 7 | Delete `safeApiCall`, `ServerError`, `NetworkError`, `DateStringConverter` | §1.4 | `SafeApiCall.kt`, `DateStringConverter.kt` | Deleting `AuthManagerTest`'s `NetworkError` case is part of the fix (**B13**) |
-| 8 | Fix `AuthManager`'s error branch | **B13** | `AuthManager.kt` | Test that a real Ktor `IOException` yields `networkError = true` |
-| 9 | Hoist `speakers.take(8)` out of composition | **B14** | `HomeSpeakersSection.kt`, `HomeViewModel.kt` | Compose compiler report shows the composable skippable |
-| 10 | Delete `-Xjvm-default=all` no-op; `packagingOptions` → `packaging` | **B3**, §1.4 | `presentation/build.gradle.kts`, `app`, `chai` | `./gradlew build --warning-mode all` |
-| 11 | Fix `getTimeDifference` nullable deref | **B16** | `DateAndTimeUtils.kt` | Test with a malformed timestamp asserting a sensible fallback, not the raw input |
-| 12 | Delete `ExampleUnitTest` / `ExampleInstrumentedTest`; untrack `api_key.txt`, `fastlane/report.xml`, `build-logic/gradle/` | §1.4, S2 | as listed | `git ls-files` is clean |
+| Area | State |
+| --- | --- |
+| P0 defect list — desugaring, `fallbackToDestructiveMigration`, filter options derived from data, topics path deleted, single `targetSdk`, lazy-list keys, `AuthManager` error branch, `speakers.take` hoisted, `packagingOptions` → `packaging`, `getTimeDifference`, example tests and untracked files | Done |
+| CI on every PR (§15.1) | Done — `.github/workflows/pr.yml` |
+| Weekly grouped Dependabot (§15.2) | Done — `.github/dependabot.yml` |
+| Year-agnostic rename (§3.6) | Done |
+| Dead catalog entries and the `compose` bundle split (§1.4) | Done |
+| accompanist → M3 `PullToRefreshBox` (§1.4) | Done |
+| AGP 9 + Gradle 9.7 + Kotlin 2.4 + `targetSdk` 37 (§3.8) | Done, **but carrying two opt-out flags** — see Stage 4 |
+| App-size baseline recorded (§9.4) | Done |
+| `minSdk` 24 → 26 | Done. Removed the desugaring crash class; dropped Android 7.x |
 
-**Sequencing within P0:** #1 first and on its own, because it's a crash fix and it should be reviewable in isolation. #2 next. #3 and #4 belong in one PR — deleting topics while fixing rooms keeps the filter code coherent. #5–#12 can go in any order, and several are one-liners that can be batched.
+**One P0 item is still open:** delete `safeApiCall`, `ServerError` and `NetworkError` (§1.4). `SafeApiCall.kt` still exists with no production callers, and `AuthApiTest` still asserts on `ServerError`. Small, and it makes B13's unreachable branch obvious rather than subtle.
 
-**Deliberately not P0**, despite being cheap: B5 (`findActivity`), B6 (state divergence), B7 (splash race), B8 (theme-blind text), B9/B16's `kotlinx-datetime` migration, B10 (nav keys), B15 (card colours). Each is either a prerequisite for a later phase and better done with it, or needs a decision. B9's date migration in particular **must not** be attempted before #1 lands.
+### 16.1 Priority order — what to do next
 
-### 16.1 If you only do five things
+Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
 
-In priority order. Each is independently valuable and none depends on the others landing first (beyond Phase 0):
+| # | Do this | Section | Why here |
+| --- | --- | --- | --- |
+| **1** | Edge-to-edge + window insets | §3.4 | Correctness, not polish. `targetSdk` 37 already shipped, so the app is already subject to enforced edge-to-edge — this is now remedial rather than preparatory. |
+| **2** | Test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes | §10.4 | Everything below is easier to review with it, and the `Clock` injection unblocks testing anything time-dependent. |
+| **3** | Roborazzi screenshot suite | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
+| **4** | Baseline + startup profile | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
+| **5** | Delete the remaining `safeApiCall` surface | §1.4 | The last open P0 item. Half an hour. |
+| **6** | Design-system token restructure, then M3 Expressive | §3.5 → §5 | Needs #3 to review and a Compose BOM with material3 1.4.x. The single biggest visible change available. |
+| **7** | Adaptive & large-screen support | §4 | The README already claims it. Needs #6's theme work first. |
+| **8** | Swahili + accessibility audit | §14 | Independent of the above; can run in parallel by a separate owner. |
+| **9** | Real size wins: `material-icons-extended`, fonts, Lottie, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
+| **10** | Credential Manager, replacing the deprecated GMS Auth path | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
 
-| # | Thing | Why it's top-five |
-| --- | --- | --- |
-| **1** | **CI on Kotlin PRs** (§15.1) | Every future bug becomes cheaper to catch. Smallest change in the document, permanent compounding value. |
-| **2** | **The P0 list** (§16.0) | Twelve real defects, including a crash on the declared minSdk and one that deletes user agendas. |
-| **3** | **Edge-to-edge + insets** (§3.4) | Correctness, not polish — and a hard prerequisite for the targetSdk 37 bump. |
-| **4** | **Baseline profile** (§9.2) | Best startup improvement available per unit of work, and it needs no product decisions. |
-| **5** | **Calendar export + venue map** (§11.4a, §11.6) | The two highest value-to-effort features in the document. Neither needs a backend. |
+Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
-Notice what's *not* in the top five: the AI work. It's the most exciting section and it should not be first. Build it on a codebase that has CI, tests, and no data-loss bugs — otherwise the AI features become the thing that gets blamed when something unrelated breaks.
+The AI section is still deliberately last. It is the most interesting part of this document and it should be built on a codebase that has screenshot tests and a measured startup time, otherwise it becomes the thing blamed when something unrelated regresses.
 
 ### 16.2 Stages, in dependency order
 
 Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippable when it completes. Move to the next when the previous one's milestone is met — not on a date.
 
-**Stage 1 — Make the codebase safe to change**
-- §15.1 CI on all PRs — do this first, before touching any source
-- §3 Phase 0 in full, including the shared `targetSdk` ref
-- §3.6 year-agnostic rename (one mechanical PR, announced in advance)
-- §10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes
-- §9.1–9.2 benchmark module + baseline profile
-- **§16.0's P0 list in full** — this is the stage's actual headline
-- §3.8 §6 AGP-9-readiness plugin bumps (KSP, Hilt, Firebase Perf) — independent of AGP 9, do them now
-- §3.8 steps 1–5: Gradle 9.1, Kotlin 2.3.x, `nonFinalResIds`
-- **Milestone:** green CI on every PR **including API 24** · no crash on any supported API level · zero known data-loss bugs · startup measured with a number written down
+**Stage 1 — Make the codebase safe to change** — *substantially complete*
+- ~~§15.1 CI on all PRs~~ · ~~§3.6 rename~~ · ~~P0 list~~ · ~~§3.8 AGP 9, Gradle 9.7, Kotlin 2.4~~ — all landed
+- §10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes — **still open**
+- §9.1–9.2 benchmark module + baseline profile — **still open**
+- §3.4 edge-to-edge and insets — **still open, and now overdue**: `targetSdk` 37 shipped with the AGP 9 work, so enforced edge-to-edge is already live
+- **Milestone:** green CI on every PR ✅ · startup measured with a number written down ❌
 
 **Stage 2 — Make it a 2026 app**
+- §10.2 Roborazzi screenshot suite — **first in this stage**, because it is how everything else here gets reviewed
 - §3.5 → §5 design system: token restructure, then M3 Expressive
-- §10.2 Roborazzi screenshot suite — build this *alongside* §5, because it's how §5 gets reviewed
 - §4 adaptive & large screen
-- Compose BOM / material3 1.4.x bump — **hard prerequisite for any Expressive work** (§3.5)
-- §3.4 insets, then **AGP 9.x + targetSdk 37 together** (§3.8 §0 explains why one PR)
 - §2 extract `:core:designsystem` plus one feature module, to prove the pattern
 - §14 Swahili + accessibility audit
 - **Milestone:** correct on every form factor · visual regressions caught in CI · contrast test green
@@ -7701,11 +7563,12 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 - Gate rehearsal with the actual registration staff, on their actual devices, with time left to fix what it finds
 - **Milestone:** shipped, staged, monitored
 
-**Stage 4.5 — AGP 9, when the ecosystem is ready**
-- Gate: detekt 2.0 released, and a ktlint-gradle release that doesn't need `android.builtInKotlin=false`
-- Gate: an AGP release whose API cap covers the targetSdk the app ships (§3.8 §0)
-- Then §3.8 §7 steps 6–8, in order
-- **Milestone:** AGP 9 with **no** opt-out flags in `gradle.properties`. Landing it with the flags on is a half-migration, not a milestone.
+**Stage 4.5 — Finish the AGP 9 migration**
+- AGP 9 has landed, but with `android.newDsl=false` and `android.builtInKotlin=false`. Both of its headline features are off, so this is a half-migration by that section's own definition.
+- Gate, entirely upstream: detekt 2.0 released, and a ktlint-gradle release that does not need `builtInKotlin=false`. detekt is still 1.23.8.
+- Dependabot will surface detekt 2.0 the week it ships, which is the trigger to pick this up. Nothing to do until then.
+- Then remove both flags and fix whatever the new DSL surfaces.
+- **Milestone:** no opt-out flags in `gradle.properties`.
 
 **Stage 5 — After the conference**
 - §6.11 recap notification, a couple of days out
@@ -7728,9 +7591,9 @@ The natural split for a small contributor pool, chosen so people don't collide:
 
 Cross-track dependencies to watch:
 - Design system must land §3.5 before Adaptive can use `MaterialExpressiveTheme`.
-- Foundations must land §3.3 B5 before Design System can write screenshot tests.
-- Adaptive must land §3.3 B10 before Conference Ops can add a Ticket tab.
+- Design system needs §10.2 Roborazzi in place first, or its work is unreviewable.
 - AI needs `:core:testing` from Foundations to test its router.
+- Nothing may remove the two AGP 9 opt-out flags until detekt 2.0 ships (Stage 4.5).
 
 ### 16.4 Definition of done, per PR
 
@@ -7921,3 +7784,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 
 
 
+| 2026-08-13 | Pruned the plan to what is left. §16 restructured: **§16.0** now records what has landed rather than listing it as work — the P0 defects, CI on every PR, Dependabot, the year-agnostic rename, dead catalog entries, accompanist, AGP 9 with Gradle 9.7 and Kotlin 2.4, the size baseline. One P0 item remains open (`safeApiCall`). **§16.1** replaced "if you only do five things" with a ranked ten-item priority order, since the original top two are done. Stage 1 marked substantially complete; Stage 2 reordered to put Roborazzi first, because it is what makes design-system work reviewable. **Stage 4.5 rewritten**: AGP 9 has landed, so the remaining work is removing `newDsl=false` and `builtInKotlin=false`, gated entirely on detekt 2.0 upstream. §15.1's YAML sketch deleted in favour of pointing at the real workflow. **minSdk raised 24 → 26**, which resolves B11 by making it unreachable and removed the api24 managed device; API-24 references corrected throughout. §3.8 gained the finding that managed devices below API 27 do not work under AGP 9 with `newDsl=false`. |
