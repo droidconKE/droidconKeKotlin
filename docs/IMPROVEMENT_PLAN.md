@@ -2202,6 +2202,10 @@ Confirm against the jar rather than guessing — `javap -cp gradle-api-9.3.1.jar
 
 **detekt is still 1.23.8** — 2.0 has not shipped. So §6's conclusion stands unchanged: both `android.newDsl=false` and `android.builtInKotlin=false` are required and are now set, and AGP 9 buys the version bump and little else until they can come off.
 
+**Managed devices below API 27 do not work under AGP 9 with `newDsl=false`.** The `api24` device failed `api24Setup` on three consecutive CI runs. Two causes were found and fixed — AGP resolved the 32-bit `x86` image (fixed with `require64Bit`), then reported `testedAbi` as unspecified. The third survived setting `testedAbi`: AGP kept warning the device did not specify one, which suggests the newer `ManagedVirtualDevice` properties do not reach AGP's legacy path while `newDsl=false`. That is unconfirmed — the stacktrace run was cancelled before capturing the causal frame — and `newDsl=true` cannot be used to test it, because enabling it fails plugin application outright.
+
+Moot as of `minSdk` 26, which removed the device. **But if `minSdk` is ever lowered below 26 again, expect this to resurface**, and budget for it being unfixable until detekt 2.0 lets `newDsl=false` come off.
+
 **Two problems surfaced that had nothing to do with AGP 9**, both worth knowing because they will look like migration failures:
 
 - `presentation` declares `firebase-messaging` but applies no Firebase convention plugin, so it never had the BOM and the dependency has no version. It resolved before by luck of the old artifact graph; under BOM 34 it fails outright. Fixed by adding `platform(libs.firebase.bom)` to that module.
