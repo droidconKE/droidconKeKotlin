@@ -53,6 +53,8 @@ internal fun Project.configureJacoco(
         val allDirectories: ListProperty<Directory> = myObjFactory.listProperty(Directory::class.java)
         val reportTask =
             tasks.register("create${variant.name.capitalize()}CombinedCoverageReport", JacocoReport::class) {
+                // executionData reads this task's output.
+                dependsOn("test${variant.name.capitalize()}UnitTest")
 
                 classDirectories.setFrom(
                     allJars,

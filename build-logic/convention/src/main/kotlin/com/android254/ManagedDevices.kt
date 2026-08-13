@@ -17,7 +17,6 @@
 package com.android254
 
 import com.android.build.api.dsl.CommonExtension
-import org.gradle.kotlin.dsl.invoke
 
 /**
  * Emulators for instrumentation tests, provisioned by Gradle rather than by CI.
@@ -39,6 +38,8 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
         device = "Pixel 2"
         apiLevel = MIN_SDK
         systemImageSource = "aosp"
+        // AGP otherwise picks the 32-bit x86 image, which emulators no longer run.
+        require64Bit = true
     }
     localDevices.create("api30") {
         device = "Pixel 4"
