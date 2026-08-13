@@ -22,7 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,6 +42,7 @@ import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.components.ChaiPullToRefreshBox
 
 @Composable
 fun HomeRoute(
@@ -91,7 +91,7 @@ private fun HomeScreen(
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
-        PullToRefreshBox(
+        ChaiPullToRefreshBox(
             isRefreshing = isSyncing,
             onRefresh = onRefresh,
             modifier =
