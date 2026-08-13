@@ -41,11 +41,13 @@ class LocalFeedDataSourceImpl
         }
 
         override fun fetchFeed() =
-            feedDao.fetchFeed()
+            feedDao
+                .fetchFeed()
                 .flowOn(ioDispatcher)
 
         override fun getFeedById(feedId: Int) =
-            feedDao.fetchFeedById(feedId)
+            feedDao
+                .fetchFeedById(feedId)
                 .flowOn(ioDispatcher)
 
         override suspend fun getTitles(): List<String> =

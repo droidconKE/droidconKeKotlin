@@ -171,7 +171,11 @@ class SessionsViewModelTest {
             viewModel.handleEvent(SessionsIntentHandler.ClearSelectedFilterList)
 
             assertThat(viewModel.selectedFilterOptions.value.isEmpty(), `is`(true))
-            assertThat(viewModel.filterState.value.levels.isEmpty(), `is`(true))
+            assertThat(
+                viewModel.filterState.value.levels
+                    .isEmpty(),
+                `is`(true),
+            )
         }
 
     @Test
@@ -184,8 +188,16 @@ class SessionsViewModelTest {
             viewModel.updateSelectedFilterOptionList(levelFilter)
             viewModel.updateSelectedFilterOptionList(roomFilter)
 
-            assertThat(viewModel.filterState.value.levels.contains("Beginner"), `is`(true))
-            assertThat(viewModel.filterState.value.rooms.contains("Room 1"), `is`(true))
+            assertThat(
+                viewModel.filterState.value.levels
+                    .contains("Beginner"),
+                `is`(true),
+            )
+            assertThat(
+                viewModel.filterState.value.rooms
+                    .contains("Room 1"),
+                `is`(true),
+            )
             assertThat(viewModel.selectedFilterOptions.value.size, `is`(2))
         }
 }

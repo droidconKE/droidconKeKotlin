@@ -78,7 +78,8 @@ fun AuthDialog(
         text = {
             Column(
                 modifier =
-                    Modifier.fillMaxWidth()
+                    Modifier
+                        .fillMaxWidth()
                         .background(color = MaterialTheme.chaiColorsPalette.surfaces),
             ) {
                 Spacer(

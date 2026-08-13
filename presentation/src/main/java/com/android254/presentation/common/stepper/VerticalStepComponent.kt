@@ -287,8 +287,7 @@ private fun IconBox(
                             scaleX = scale
                             scaleY = scale
                             this.alpha = alpha
-                        }
-                        .clip(CircleShape)
+                        }.clip(CircleShape)
                         .background(accentColor),
             )
         }

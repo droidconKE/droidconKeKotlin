@@ -67,7 +67,8 @@ class SessionsFilterOptionsTest {
     @Test
     fun `rooms are derived individually from multi-room sessions`() {
         val rooms =
-            viewModel.buildFilterOptions(sessions)
+            viewModel
+                .buildFilterOptions(sessions)
                 .filter { it.type == SessionsFilterCategory.Room }
                 .map { it.value }
 

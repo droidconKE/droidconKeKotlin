@@ -90,7 +90,8 @@ fun HomeSessionContent(
     ) {
         AsyncImage(
             model =
-                ImageRequest.Builder(LocalContext.current)
+                ImageRequest
+                    .Builder(LocalContext.current)
                     .data(if (session.isService) R.drawable.all else session.sessionImage)
                     .build(),
             placeholder = painterResource(R.drawable.all),

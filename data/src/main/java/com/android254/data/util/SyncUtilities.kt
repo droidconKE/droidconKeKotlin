@@ -33,7 +33,10 @@ suspend fun <T> suspendRunCatching(block: suspend () -> T): Result<T> =
         Result.failure(exception)
     }
 
-class SyncException(message: String, cause: Throwable? = null) : Exception(message, cause)
+class SyncException(
+    message: String,
+    cause: Throwable? = null,
+) : Exception(message, cause)
 
 /**
  * Utility function for syncing a repository with the network using reconciliation.

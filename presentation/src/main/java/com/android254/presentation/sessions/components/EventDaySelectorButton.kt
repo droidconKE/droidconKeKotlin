@@ -51,8 +51,7 @@ fun EventDaySelectorButton(
                 .background(
                     color = if (selected) MaterialTheme.chaiColorsPalette.eventDaySelectorActiveSurfaceColor else (MaterialTheme.chaiColorsPalette.eventDaySelectorInactiveSurfaceColor).copy(alpha = 0.11f),
                     shape = RoundedCornerShape(5.dp),
-                )
-                .padding(start = 5.dp),
+                ).padding(start = 5.dp),
     ) {
         ChaiSubTitle(
             titleText = title,

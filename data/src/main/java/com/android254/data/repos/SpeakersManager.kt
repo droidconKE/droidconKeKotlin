@@ -35,31 +35,31 @@ class SpeakersManager
         private val localSpeakersDataSource: LocalSpeakersDataSource,
         private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
     ) : SpeakersRepo {
-        override fun fetchSpeakers(): Flow<List<Speaker>> =
-            localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
+        override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
 
         override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
 
         override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer.sync(
-                remoteItemFetcher = {
-                    when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
-                        is DataResult.Success -> response.data
-                        is DataResult.Error -> throw SyncException(response.message, response.exc)
-                        else -> throw SyncException("Sync speakers failed")
-                    }
-                },
-                localIdFetcher = { localSpeakersDataSource.getNames() },
-                localItemUpserter = { remoteItems ->
-                    localSpeakersDataSource.saveCachedSpeakers(
-                        speakers = remoteItems.map { it.toEntity() },
-                    )
-                },
-                localItemDeleter = { names ->
-                    localSpeakersDataSource.deleteByNames(names)
-                },
-                remoteToLocalIdSelector = { it.name },
-            ).isSuccess
+            synchronizer
+                .sync(
+                    remoteItemFetcher = {
+                        when (val response = remoteSpeakersDataSource.getAllSpeakersRemote()) {
+                            is DataResult.Success -> response.data
+                            is DataResult.Error -> throw SyncException(response.message, response.exc)
+                            else -> throw SyncException("Sync speakers failed")
+                        }
+                    },
+                    localIdFetcher = { localSpeakersDataSource.getNames() },
+                    localItemUpserter = { remoteItems ->
+                        localSpeakersDataSource.saveCachedSpeakers(
+                            speakers = remoteItems.map { it.toEntity() },
+                        )
+                    },
+                    localItemDeleter = { names ->
+                        localSpeakersDataSource.deleteByNames(names)
+                    },
+                    remoteToLocalIdSelector = { it.name },
+                ).isSuccess
     }

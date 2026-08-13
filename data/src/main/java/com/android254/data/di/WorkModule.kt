@@ -43,7 +43,8 @@ abstract class WorkModule {
             workerFactory: HiltWorkerFactory,
         ): WorkManager {
             val configuration =
-                Configuration.Builder()
+                Configuration
+                    .Builder()
                     .setMinimumLoggingLevel(android.util.Log.DEBUG)
                     .setWorkerFactory(workerFactory)
                     .build()

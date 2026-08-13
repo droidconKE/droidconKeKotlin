@@ -79,9 +79,17 @@ class MainViewModelTest {
             runCurrent()
 
             assertThat(viewModel.sessionState.value.current.size, `is`(1))
-            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title"))
+            assertThat(
+                viewModel.sessionState.value.current[0]
+                    .title,
+                `is`("Title"),
+            )
             assertThat(viewModel.sessionState.value.upNext.size, `is`(1))
-            assertThat(viewModel.sessionState.value.upNext[0].title, `is`("Title"))
+            assertThat(
+                viewModel.sessionState.value.upNext[0]
+                    .title,
+                `is`("Title"),
+            )
             job.cancel()
         }
 
@@ -103,38 +111,45 @@ class MainViewModelTest {
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
 
-            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 1"))
+            assertThat(
+                viewModel.sessionState.value.current[0]
+                    .title,
+                `is`("Title 1"),
+            )
 
             // Advance time by 1 minute to trigger ticker
             advanceTimeBy(60001)
             runCurrent()
 
-            assertThat(viewModel.sessionState.value.current[0].title, `is`("Title 2"))
+            assertThat(
+                viewModel.sessionState.value.current[0]
+                    .title,
+                `is`("Title 2"),
+            )
             job.cancel()
         }
 
     private fun createSession(
         id: String,
         title: String,
-    ) =
-        Session(
-            id = id,
-            description = "Description",
-            sessionFormat = "Format",
-            sessionLevel = "Level",
-            slug = "slug-$id",
-            title = title,
-            endDateTime = "2023-11-17 10:00:00",
-            endTime = "10:00 AM",
-            isBookmarked = false,
-            isKeynote = false,
-            isServiceSession = false,
-            sessionImage = "",
-            startDateTime = "2023-11-17 09:00:00",
-            startTime = "09:00 AM",
-            rooms = "Room 1",
-            speakers = listOf(),
-            remoteId = id,
-            eventDay = "1",
-        )
+    ) = Session(
+        id = id,
+        description = "Description",
+        sessionFormat = "Format",
+        sessionLevel = "Level",
+        slug = "slug-$id",
+        title = title,
+        endDateTime = "2023-11-17 10:00:00",
+        endTime = "10:00 AM",
+        isBookmarked = false,
+        isKeynote = false,
+        isServiceSession = false,
+        sessionImage = "",
+        startDateTime = "2023-11-17 09:00:00",
+        startTime = "09:00 AM",
+        rooms = "Room 1",
+        speakers = listOf(),
+        remoteId = id,
+        eventDay = "1",
+    )
 }

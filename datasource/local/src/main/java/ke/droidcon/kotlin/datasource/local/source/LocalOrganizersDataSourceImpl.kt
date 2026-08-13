@@ -30,10 +30,10 @@ class LocalOrganizersDataSourceImpl
         private val organizersDao: OrganizersDao,
         @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
     ) : LocalOrganizersDataSource {
-        override fun getOrganizers(): Flow<List<OrganizerEntity>> {
-            return organizersDao.fetchOrganizers()
+        override fun getOrganizers(): Flow<List<OrganizerEntity>> =
+            organizersDao
+                .fetchOrganizers()
                 .flowOn(localSourceIoDispatcher)
-        }
 
         override suspend fun deleteAllOrganizers() {
             withContext(localSourceIoDispatcher) {

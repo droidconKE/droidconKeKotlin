@@ -53,19 +53,17 @@ fun LoadingBox(
 fun Modifier.customBackground(
     brush: Brush?,
     color: Color,
-) =
-    if (brush != null) {
-        background(brush)
-    } else {
-        background(color)
-    }
+) = if (brush != null) {
+    background(brush)
+} else {
+    background(color)
+}
 
 fun Modifier.customWidth(
     ratio: Float?,
     width: Dp,
-) =
-    if (ratio != null) {
-        fillMaxWidth(ratio)
-    } else {
-        width(width)
-    }
+) = if (ratio != null) {
+    fillMaxWidth(ratio)
+} else {
+    width(width)
+}

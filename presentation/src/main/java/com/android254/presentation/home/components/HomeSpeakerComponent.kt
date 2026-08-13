@@ -58,7 +58,8 @@ fun HomeSpeakerComponent(
         val (headShot, speakerName) = createRefs()
         AsyncImage(
             model =
-                ImageRequest.Builder(LocalContext.current)
+                ImageRequest
+                    .Builder(LocalContext.current)
                     .data(speaker.imageUrl)
                     .build(),
             placeholder = painterResource(R.drawable.smiling),
@@ -68,16 +69,14 @@ fun HomeSpeakerComponent(
                 Modifier
                     .clip(
                         shape = RoundedCornerShape(12.dp),
-                    )
-                    .border(
+                    ).border(
                         border =
                             BorderStroke(
                                 2.dp,
                                 color = colorResource(id = R.color.cyan),
                             ),
                         shape = RoundedCornerShape(12.dp),
-                    )
-                    .size(85.dp)
+                    ).size(85.dp)
                     .constrainAs(headShot) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)

@@ -52,8 +52,7 @@ fun GoogleSignInButton(
                 .clickable(
                     enabled = !isLoading,
                     onClick = onClick,
-                )
-                .shadow(elevation = 2.dp),
+                ).shadow(elevation = 2.dp),
         border = BorderStroke(width = 1.dp, color = borderColor),
         color = backgroundColor,
         shape = RoundedCornerShape(4.dp),

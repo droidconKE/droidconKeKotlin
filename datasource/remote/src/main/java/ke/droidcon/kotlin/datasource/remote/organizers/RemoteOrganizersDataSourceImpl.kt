@@ -24,9 +24,7 @@ class RemoteOrganizersDataSourceImpl
     constructor(
         private val api: OrganizersApi,
     ) : RemoteOrganizersDataSource {
-        override suspend fun getIndividualOrganizers(): DataResult<OrganizersPagedResponse> =
-            api.fetchOrganizers(type = "individual")
+        override suspend fun getIndividualOrganizers(): DataResult<OrganizersPagedResponse> = api.fetchOrganizers(type = "individual")
 
-        override suspend fun getCompanyOrganizers(): DataResult<OrganizersPagedResponse> =
-            api.fetchOrganizers(type = "company")
+        override suspend fun getCompanyOrganizers(): DataResult<OrganizersPagedResponse> = api.fetchOrganizers(type = "company")
     }

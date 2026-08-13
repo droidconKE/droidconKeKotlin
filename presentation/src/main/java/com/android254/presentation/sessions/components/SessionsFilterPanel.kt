@@ -78,8 +78,7 @@ fun SessionsFilterPanel(
                     .background(
                         color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
                         shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp),
-                    )
-                    .padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp),
+                    ).padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

@@ -31,10 +31,10 @@ class LocalSessionsDataSourceImpl
         private val sessionDao: SessionDao,
         @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
     ) : LocalSessionsDataSource {
-        override fun getCachedSessions(): Flow<List<SessionEntity>> {
-            return sessionDao.fetchSessions()
+        override fun getCachedSessions(): Flow<List<SessionEntity>> =
+            sessionDao
+                .fetchSessions()
                 .flowOn(localSourceIoDispatcher)
-        }
 
         override suspend fun saveCachedSessions(sessions: List<SessionEntity>) {
             withContext(localSourceIoDispatcher) {
@@ -48,11 +48,11 @@ class LocalSessionsDataSourceImpl
             }
         }
 
-        override fun getCachedSessionById(id: String): Flow<SessionEntity?> =
-            sessionDao.getSessionById(id = id).flowOn(localSourceIoDispatcher)
+        override fun getCachedSessionById(id: String): Flow<SessionEntity?> = sessionDao.getSessionById(id = id).flowOn(localSourceIoDispatcher)
 
         override fun fetchSessionWithFilters(query: String): Flow<List<SessionEntity>> =
-            sessionDao.fetchSessionsWithFilters(SimpleSQLiteQuery(query))
+            sessionDao
+                .fetchSessionsWithFilters(SimpleSQLiteQuery(query))
                 .flowOn(localSourceIoDispatcher)
 
         override suspend fun updateBookmarkedStatus(
@@ -64,17 +64,14 @@ class LocalSessionsDataSourceImpl
             }
         }
 
-        override suspend fun getBookmarkStatus(id: String): Boolean {
-            return withContext(localSourceIoDispatcher) {
+        override suspend fun getBookmarkStatus(id: String): Boolean =
+            withContext(localSourceIoDispatcher) {
                 sessionDao.getBookmarkStatus(id = id)
             }
-        }
 
-        override fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>> =
-            sessionDao.fetchCurrentSessions(currentTime)
+        override fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchCurrentSessions(currentTime)
 
-        override fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>> =
-            sessionDao.fetchUpNextSessions(currentTime)
+        override fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchUpNextSessions(currentTime)
 
         override suspend fun getRemoteIds(): List<String> =
             withContext(localSourceIoDispatcher) {

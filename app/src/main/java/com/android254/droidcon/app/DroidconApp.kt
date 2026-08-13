@@ -48,9 +48,7 @@ class DroidconApp : Application() {
                     object : Timber.DebugTree() {
                         override fun createStackElementTag(
                             @NotNull element: StackTraceElement,
-                        ): String {
-                            return super.createStackElementTag(element) + ":" + element.lineNumber
-                        }
+                        ): String = super.createStackElementTag(element) + ":" + element.lineNumber
                     },
                 )
             }

@@ -35,7 +35,9 @@ sealed interface AboutScreenUiState {
         val stakeHoldersLogos: List<String>,
     ) : AboutScreenUiState
 
-    data class Error(val message: String) : AboutScreenUiState
+    data class Error(
+        val message: String,
+    ) : AboutScreenUiState
 }
 
 @HiltViewModel
@@ -45,7 +47,8 @@ class AboutViewModel
         private val organizersRepo: OrganizersRepo,
     ) : ViewModel() {
         val uiState =
-            organizersRepo.getOrganizers()
+            organizersRepo
+                .getOrganizers()
                 .map { organizers ->
                     val team =
                         organizers.filter { it.type == "individual" }.map {
@@ -57,8 +60,7 @@ class AboutViewModel
                         }
                     val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
                     AboutScreenUiState.Success(teamMembers = team, stakeHoldersLogos = stakeholders)
-                }
-                .onStart { AboutScreenUiState.Loading }
+                }.onStart { AboutScreenUiState.Loading }
                 .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
                 .stateIn(
                     scope = viewModelScope,

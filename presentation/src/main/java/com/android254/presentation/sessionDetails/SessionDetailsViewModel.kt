@@ -35,9 +35,13 @@ import kotlinx.coroutines.launch
 sealed interface SessionDetailsUiState {
     object Loading : SessionDetailsUiState
 
-    data class Success(val data: SessionDetailsPresentationModel) : SessionDetailsUiState
+    data class Success(
+        val data: SessionDetailsPresentationModel,
+    ) : SessionDetailsUiState
 
-    data class Error(val message: String) : SessionDetailsUiState
+    data class Error(
+        val message: String,
+    ) : SessionDetailsUiState
 }
 
 @HiltViewModel(assistedFactory = SessionDetailsViewModel.Factory::class)
@@ -55,15 +59,15 @@ class SessionDetailsViewModel
         private val sessionId = navKey.sessionId
 
         val uiState =
-            sessionsRepo.fetchSessionById(id = sessionId)
+            sessionsRepo
+                .fetchSessionById(id = sessionId)
                 .map {
                     if (it == null) {
                         SessionDetailsUiState.Error(message = "Session Info not found")
                     } else {
                         SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
                     }
-                }
-                .onStart { SessionDetailsUiState.Loading }
+                }.onStart { SessionDetailsUiState.Loading }
                 .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
                 .stateIn(
                     scope = viewModelScope,

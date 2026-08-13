@@ -57,7 +57,8 @@ class SessionsManager
                     .map { session ->
                         session.toDomainModel().copy(
                             isBookmarked =
-                                bookmarks.map { it.sessionId }
+                                bookmarks
+                                    .map { it.sessionId }
                                     .contains(session.id.toString()),
                         )
                     }
@@ -75,7 +76,8 @@ class SessionsManager
                         sessions.map { session ->
                             session.toDomainModel().copy(
                                 isBookmarked =
-                                    bookmarks.map { it.sessionId }
+                                    bookmarks
+                                        .map { it.sessionId }
                                         .contains(session.remote_id),
                             )
                         },
@@ -85,7 +87,8 @@ class SessionsManager
 
         /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
         private fun Long.toEventDay(): String =
-            Instant.fromEpochMilliseconds(this)
+            Instant
+                .fromEpochMilliseconds(this)
                 .toLocalDateTime(CONFERENCE_TIME_ZONE)
                 .dayOfMonth
                 .toString()
@@ -106,11 +109,12 @@ class SessionsManager
             val bookmarksFlow = bookmarkDao.getBookmarkIds()
             return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
                 if (filter.bookmarked) {
-                    sessions.map { session ->
-                        session.toDomainModel().copy(
-                            isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
-                        )
-                    }.filter { it.isBookmarked }
+                    sessions
+                        .map { session ->
+                            session.toDomainModel().copy(
+                                isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
+                            )
+                        }.filter { it.isBookmarked }
                 } else {
                     sessions.map { session ->
                         session.toDomainModel().copy(
@@ -145,25 +149,26 @@ class SessionsManager
         }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer.sync(
-                remoteItemFetcher = {
-                    when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
-                        is DataResult.Success -> response.data
-                        is DataResult.Error -> throw SyncException(response.message, response.exc)
-                        else -> throw SyncException("Sync sessions failed")
-                    }
-                },
-                localIdFetcher = { localSessionsDataSource.getRemoteIds() },
-                localItemUpserter = { remoteItems ->
-                    localSessionsDataSource.saveCachedSessions(
-                        sessions = remoteItems.map { it.toEntity() },
-                    )
-                },
-                localItemDeleter = { ids ->
-                    localSessionsDataSource.deleteByRemoteIds(ids)
-                },
-                remoteToLocalIdSelector = { it.id },
-            ).isSuccess
+            synchronizer
+                .sync(
+                    remoteItemFetcher = {
+                        when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
+                            is DataResult.Success -> response.data
+                            is DataResult.Error -> throw SyncException(response.message, response.exc)
+                            else -> throw SyncException("Sync sessions failed")
+                        }
+                    },
+                    localIdFetcher = { localSessionsDataSource.getRemoteIds() },
+                    localItemUpserter = { remoteItems ->
+                        localSessionsDataSource.saveCachedSessions(
+                            sessions = remoteItems.map { it.toEntity() },
+                        )
+                    },
+                    localItemDeleter = { ids ->
+                        localSessionsDataSource.deleteByRemoteIds(ids)
+                    },
+                    remoteToLocalIdSelector = { it.id },
+                ).isSuccess
 
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>> =
             combine(

@@ -32,8 +32,9 @@ private object PreferencesKeys {
 
 class DefaultTokenProvider
     @Inject
-    constructor(private val dataStore: DataStore<Preferences>) :
-    TokenProvider {
+    constructor(
+        private val dataStore: DataStore<Preferences>,
+    ) : TokenProvider {
         override suspend fun fetch(): Flow<String?> =
             dataStore.data
                 .catch {

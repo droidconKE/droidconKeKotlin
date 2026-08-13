@@ -29,8 +29,8 @@ class TimePeriodTest(
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun data(): Collection<Array<Any>> {
-            return listOf(
+        fun data(): Collection<Array<Any>> =
+            listOf(
                 arrayOf("2000-01-23 23:56:44", "11:56", "pm"),
                 arrayOf("2023-12-10 10:02:02", "10:02", "am"),
                 arrayOf("2005-02-14 00:00:00", "12:00", "am"),
@@ -42,7 +42,6 @@ class TimePeriodTest(
                 arrayOf("2003-01-23 10:56:44", "10:56", "am"),
                 arrayOf("1990-01-23 16:12:52", "04:12", "pm"),
             )
-        }
     }
 
     @Test

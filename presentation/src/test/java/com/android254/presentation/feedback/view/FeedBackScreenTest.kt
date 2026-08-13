@@ -73,7 +73,9 @@ class FeedBackScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithTag("submit_feedback_button").performScrollTo()
+        composeTestRule
+            .onNodeWithTag("submit_feedback_button")
+            .performScrollTo()
             .assertIsDisplayed()
     }
 }

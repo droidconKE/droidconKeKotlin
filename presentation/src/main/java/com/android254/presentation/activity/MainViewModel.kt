@@ -82,28 +82,29 @@ class MainViewModel
             }
 
         val sessionState: StateFlow<SessionUIState> =
-            ticker.flatMapLatest { now ->
-                val currentTime = now.toEpochMilliseconds()
-                combine(
-                    sessionsRepo.fetchCurrentSessions(currentTime),
-                    sessionsRepo.fetchUpNextSessions(currentTime),
-                ) { current, upNext ->
-                    SessionUIState(
-                        current =
-                            current.map {
-                                it.toPresentationModel(now)
-                            },
-                        upNext =
-                            upNext.map {
-                                it.toPresentationModel(now)
-                            },
-                    )
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = SessionUIState(),
-            )
+            ticker
+                .flatMapLatest { now ->
+                    val currentTime = now.toEpochMilliseconds()
+                    combine(
+                        sessionsRepo.fetchCurrentSessions(currentTime),
+                        sessionsRepo.fetchUpNextSessions(currentTime),
+                    ) { current, upNext ->
+                        SessionUIState(
+                            current =
+                                current.map {
+                                    it.toPresentationModel(now)
+                                },
+                            upNext =
+                                upNext.map {
+                                    it.toPresentationModel(now)
+                                },
+                        )
+                    }
+                }.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = SessionUIState(),
+                )
 
         private companion object {
             /** Past this, show the UI with loading skeletons rather than an inert splash. */

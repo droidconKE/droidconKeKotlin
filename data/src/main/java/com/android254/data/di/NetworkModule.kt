@@ -69,12 +69,12 @@ object NetworkModule {
     @Singleton
     fun provideChuckerInterceptor(
         @ApplicationContext context: Context,
-    ): ChuckerInterceptor {
-        return ChuckerInterceptor.Builder(context)
+    ): ChuckerInterceptor =
+        ChuckerInterceptor
+            .Builder(context)
             .collector(ChuckerCollector(context))
             .maxContentLength(250000L)
             .redactHeaders(emptySet())
             .alwaysReadResponseBody(false)
             .build()
-    }
 }

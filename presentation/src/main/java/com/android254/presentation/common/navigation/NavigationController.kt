@@ -23,7 +23,9 @@ package com.android254.presentation.common.navigation
  *
  * @property state The current navigation state being managed by this controller.
  */
-class NavigationController(val state: NavigationState) {
+class NavigationController(
+    val state: NavigationState,
+) {
     fun navigate(route: Screens) {
         val toIndex = bottomNavigationRoutes.indexOf(route)
         val isNested = toIndex == -1

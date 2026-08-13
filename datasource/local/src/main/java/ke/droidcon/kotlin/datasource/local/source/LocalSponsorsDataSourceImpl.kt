@@ -30,10 +30,10 @@ class LocalSponsorsDataSourceImpl
         private val sponsorsDao: SponsorsDao,
         @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
     ) : LocalSponsorsDataSource {
-        override fun fetchCachedSponsors(): Flow<List<SponsorEntity>> {
-            return sponsorsDao.fetchCachedSponsors()
+        override fun fetchCachedSponsors(): Flow<List<SponsorEntity>> =
+            sponsorsDao
+                .fetchCachedSponsors()
                 .flowOn(localSourceIoDispatcher)
-        }
 
         override suspend fun deleteCachedSponsors() {
             withContext(localSourceIoDispatcher) {

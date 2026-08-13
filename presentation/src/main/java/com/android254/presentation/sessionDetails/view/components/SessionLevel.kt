@@ -35,8 +35,7 @@ fun SessionLevel(sessionLevel: String) {
                 .background(
                     color = MaterialTheme.chaiColorsPalette.badgeBackgroundColor,
                     shape = RoundedCornerShape(5.dp),
-                )
-                .padding(vertical = 3.dp, horizontal = 9.dp)
+                ).padding(vertical = 3.dp, horizontal = 9.dp)
                 .testTag(TestTag.LEVEL),
         bodyText = "#$sessionLevel".uppercase(),
         textColor = ChaiWhite,

@@ -25,7 +25,8 @@ class RemoteFeatureToggle(
     private var intialized = false
 
     fun sync() {
-        remoteConfig.fetchAndActivate()
+        remoteConfig
+            .fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Timber.w("Successfully fetched remote config from Firebase")

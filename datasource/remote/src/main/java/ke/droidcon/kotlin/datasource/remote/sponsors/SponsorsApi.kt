@@ -32,8 +32,9 @@ class SponsorsApi
     ) {
         suspend fun fetchSponsors(): DataResult<SponsorsPagedResponse> =
             dataResultSafeApiCall {
-                client.get("${provideEventBaseUrl()}/sponsors") {
-                    parameter("per_page", 10)
-                }.body()
+                client
+                    .get("${provideEventBaseUrl()}/sponsors") {
+                        parameter("per_page", 10)
+                    }.body()
             }
     }

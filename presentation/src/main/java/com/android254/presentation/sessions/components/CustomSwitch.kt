@@ -92,8 +92,7 @@ fun CustomSwitch(
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffBackgroundColor,
-                        )
-                        .height(17.dp)
+                        ).height(17.dp)
                         .width(54.dp),
             )
             // thumb with icon
@@ -104,8 +103,7 @@ fun CustomSwitch(
                         .background(
                             color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffIconBackgroundColor,
                             shape = CircleShape,
-                        )
-                        .padding(all = iconInnerPadding)
+                        ).padding(all = iconInnerPadding)
                         .align(alignment),
                 imageVector = Icons.Filled.Star,
                 contentDescription = if (checked) "Enabled" else "Disabled",

@@ -24,7 +24,10 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable
-data class Feedback(val rating: FeedbackRating, val message: String)
+data class Feedback(
+    val rating: FeedbackRating,
+    val message: String,
+)
 
 @Serializable(with = FeedbackRatingSerializer::class)
 enum class FeedbackRating { BAD, OKAY, GOOD }

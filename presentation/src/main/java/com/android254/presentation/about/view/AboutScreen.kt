@@ -154,7 +154,8 @@ fun AboutDroidconSection(
     ) {
         AsyncImage(
             model =
-                ImageRequest.Builder(LocalContext.current)
+                ImageRequest
+                    .Builder(LocalContext.current)
                     .data(R.drawable.team)
                     .build(),
             placeholder = painterResource(R.drawable.team),

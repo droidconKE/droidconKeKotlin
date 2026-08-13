@@ -83,7 +83,8 @@ fun FullscreenDialog(
         onDismissRequest = { coroutineScope.launch { startDismissWithExitAnimation(animateContentBackTrigger, onDismissRequest) } },
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = dismissOnBackPress, dismissOnClickOutside = false),
     ) {
-        Box(Modifier.fillMaxSize()) { // Required in order to occupy the whole screen before the animation is triggered
+        Box(Modifier.fillMaxSize()) {
+            // Required in order to occupy the whole screen before the animation is triggered
             AnimatedModalBottomSheetTransition(visible = animateContentBackTrigger.value) {
                 content(ModalTransitionDialogHelper(coroutineScope, onCloseSharedFlow))
             }

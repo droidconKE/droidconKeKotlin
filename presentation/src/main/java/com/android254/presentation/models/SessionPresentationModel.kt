@@ -82,10 +82,9 @@ enum class SessionStatus {
     Upcoming,
 }
 
-fun SessionStatus.toIntensity(): Intensity {
-    return when (this) {
+fun SessionStatus.toIntensity(): Intensity =
+    when (this) {
         SessionStatus.Upcoming -> Intensity.Medium
         SessionStatus.Ongoing -> Intensity.High
         SessionStatus.Past -> Intensity.Low
     }
-}

@@ -58,10 +58,14 @@ suspend fun <T> safeApiCall(block: suspend () -> T): T =
         throw NetworkError(e)
     }
 
-class ServerError(cause: Throwable) : Exception(cause)
+class ServerError(
+    cause: Throwable,
+) : Exception(cause)
 
 /** A connectivity failure. [cause] is retained so crash reports stay distinguishable. */
-class NetworkError(cause: Throwable? = null) : Exception(cause)
+class NetworkError(
+    cause: Throwable? = null,
+) : Exception(cause)
 
 suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResult<T> =
     try {

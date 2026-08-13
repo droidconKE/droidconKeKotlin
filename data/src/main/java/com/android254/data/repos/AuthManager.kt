@@ -37,8 +37,8 @@ class AuthManager
         private val tokenProvider: TokenProvider,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : AuthRepo {
-        override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> {
-            return withContext(ioDispatcher) {
+        override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> =
+            withContext(ioDispatcher) {
                 try {
                     val result = api.googleLogin(GoogleToken(idToken))
                     tokenProvider.update(result.token)
@@ -54,5 +54,4 @@ class AuthManager
                     }
                 }
             }
-        }
     }

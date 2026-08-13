@@ -27,11 +27,17 @@ import javax.inject.Inject
 sealed interface SpeakerDetailsScreenUiState {
     object Loading : SpeakerDetailsScreenUiState
 
-    data class Success(val speaker: SpeakerUI) : SpeakerDetailsScreenUiState
+    data class Success(
+        val speaker: SpeakerUI,
+    ) : SpeakerDetailsScreenUiState
 
-    data class Error(val message: String) : SpeakerDetailsScreenUiState
+    data class Error(
+        val message: String,
+    ) : SpeakerDetailsScreenUiState
 
-    data class SpeakerNotFound(val message: String) : SpeakerDetailsScreenUiState
+    data class SpeakerNotFound(
+        val message: String,
+    ) : SpeakerDetailsScreenUiState
 }
 
 @HiltViewModel

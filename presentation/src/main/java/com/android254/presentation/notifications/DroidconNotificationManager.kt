@@ -30,7 +30,9 @@ import ke.droidcon.kotlin.presentation.R
 
 private const val CHANNEL_ID = "DROIDCON_CHANNEL_ID"
 
-class DroidconNotificationManager(private val context: Context) {
+class DroidconNotificationManager(
+    private val context: Context,
+) {
     private val notificationManager by lazy {
         context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     }
@@ -56,7 +58,8 @@ class DroidconNotificationManager(private val context: Context) {
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder =
-            NotificationCompat.Builder(context, CHANNEL_ID)
+            NotificationCompat
+                .Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.droidcon_icon)
                 .setContentTitle(title)
                 .setContentText(message)

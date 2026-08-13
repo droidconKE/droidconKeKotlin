@@ -25,7 +25,6 @@ import ke.droidcon.kotlin.datasource.remote.Constants.PROD_BASE_URL
 
 fun provideBaseUrl(): String = if (BuildConfig.DEBUG) DEV_BASE_URL else PROD_BASE_URL
 
-fun provideEventBaseUrl(): String =
-    if (BuildConfig.DEBUG) EVENT_DEV_BASE_URL else EVENT_PROD_BASE_URL
+fun provideEventBaseUrl(): String = if (BuildConfig.DEBUG) EVENT_DEV_BASE_URL else EVENT_PROD_BASE_URL
 
 fun provideOrgBaseUrl(): String = if (BuildConfig.DEBUG) ORG_DEV_BASE_URL else ORG_PROD_BASE_URL

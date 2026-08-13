@@ -77,7 +77,8 @@ fun SessionsCardWithBannerImage(
     ) {
         AsyncImage(
             model =
-                ImageRequest.Builder(LocalContext.current)
+                ImageRequest
+                    .Builder(LocalContext.current)
                     .data(if (session.isService) R.drawable.all else session.sessionImage)
                     .build(),
             placeholder = painterResource(R.drawable.all),
@@ -145,8 +146,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
                                 width = 1.dp,
                                 color = ChaiTeal,
                                 shape = CircleShape,
-                            )
-                            .clip(CircleShape),
+                            ).clip(CircleShape),
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))

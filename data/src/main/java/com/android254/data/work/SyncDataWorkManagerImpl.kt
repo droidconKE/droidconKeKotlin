@@ -49,11 +49,11 @@ class SyncDataWorkManagerImpl
             val syncDataRequest =
                 OneTimeWorkRequestBuilder<SyncDataWorker>()
                     .setConstraints(
-                        Constraints.Builder()
+                        Constraints
+                            .Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build(),
-                    )
-                    .build()
+                    ).build()
             workManager.enqueueUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
         }
 
@@ -61,11 +61,11 @@ class SyncDataWorkManagerImpl
             val syncDataRequest =
                 PeriodicWorkRequestBuilder<SyncDataWorker>(24, TimeUnit.HOURS)
                     .setConstraints(
-                        Constraints.Builder()
+                        Constraints
+                            .Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build(),
-                    )
-                    .build()
+                    ).build()
             workManager.enqueueUniquePeriodicWork(
                 syncDataWorkerName + "_periodic",
                 ExistingPeriodicWorkPolicy.KEEP,

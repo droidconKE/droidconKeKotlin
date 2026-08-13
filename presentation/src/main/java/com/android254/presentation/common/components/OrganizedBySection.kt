@@ -47,8 +47,7 @@ fun OrganizedBySection(
                 .background(
                     color = MaterialTheme.chaiColorsPalette.surfaces,
                     shape = RoundedCornerShape(10.dp),
-                )
-                .padding(vertical = 20.dp)
+                ).padding(vertical = 20.dp)
                 .testTag("organized_by_section"),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -79,12 +78,14 @@ fun OrganizedBySection(
                             .padding(6.dp),
                     model =
                         if (logo.endsWith("svg")) {
-                            ImageRequest.Builder(LocalContext.current)
+                            ImageRequest
+                                .Builder(LocalContext.current)
                                 .data(logo)
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build()
                         } else {
-                            ImageRequest.Builder(LocalContext.current)
+                            ImageRequest
+                                .Builder(LocalContext.current)
                                 .data(logo)
                                 .build()
                         },

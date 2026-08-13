@@ -35,27 +35,27 @@ class SponsorsManager
         private val localSponsorsDataSource: LocalSponsorsDataSource,
         private val remoteSponsorsDataSource: RemoteSponsorsDataSource,
     ) : SponsorsRepo {
-        override fun getAllSponsors(): Flow<List<Sponsors>> =
-            localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }
+        override fun getAllSponsors(): Flow<List<Sponsors>> = localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer.sync(
-                remoteItemFetcher = {
-                    when (val response = remoteSponsorsDataSource.getAllSponsorsRemote()) {
-                        is DataResult.Success -> response.data
-                        is DataResult.Error -> throw SyncException(response.message, response.exc)
-                        else -> throw SyncException("Sync sponsors failed")
-                    }
-                },
-                localIdFetcher = { localSponsorsDataSource.getNames() },
-                localItemUpserter = { remoteItems ->
-                    localSponsorsDataSource.saveCachedSponsors(
-                        sponsors = remoteItems.map { it.toEntity() },
-                    )
-                },
-                localItemDeleter = { names ->
-                    localSponsorsDataSource.deleteByNames(names)
-                },
-                remoteToLocalIdSelector = { it.name },
-            ).isSuccess
+            synchronizer
+                .sync(
+                    remoteItemFetcher = {
+                        when (val response = remoteSponsorsDataSource.getAllSponsorsRemote()) {
+                            is DataResult.Success -> response.data
+                            is DataResult.Error -> throw SyncException(response.message, response.exc)
+                            else -> throw SyncException("Sync sponsors failed")
+                        }
+                    },
+                    localIdFetcher = { localSponsorsDataSource.getNames() },
+                    localItemUpserter = { remoteItems ->
+                        localSponsorsDataSource.saveCachedSponsors(
+                            sponsors = remoteItems.map { it.toEntity() },
+                        )
+                    },
+                    localItemDeleter = { names ->
+                        localSponsorsDataSource.deleteByNames(names)
+                    },
+                    remoteToLocalIdSelector = { it.name },
+                ).isSuccess
     }
