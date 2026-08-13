@@ -306,7 +306,7 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | `HomeBannerSection` | commented out in `HomeScreen` | Decide: ship or delete. |
 | `chai` drawables duplicated in `presentation` | 12 identical files | Single source in `chai`. |
 
-The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — ~~currently pulls in~~ pulled in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern. **Done:** the bundle is now the floor for a design-system module; `coil` and `navigation3` are separate bundles, and they plus `activity-compose`, `constraintlayout-compose` and `lifecycle-runtime-compose` are declared in `presentation`.
+The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — pulled in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern. **Done:** `coil` and `navigation3` are separate bundles now, and they plus `activity-compose`, `constraintlayout-compose` and `lifecycle-runtime-compose` are declared in `presentation`.
 
 ### 1.5 Findings — architecture
 
@@ -5724,7 +5724,7 @@ bundletool build-apks --bundle=app/build/outputs/bundle/release/app-release.aab 
 bundletool get-size total --apks=app.apks --dimensions=SDK,ABI,SCREEN_DENSITY
 ```
 
-"Pixel-class" here means a fixed device spec, so the numbers are comparable run to run:
+"Pixel-class" means this fixed device spec, so numbers stay comparable run to run:
 
 ```json
 { "supportedAbis": ["arm64-v8a"], "supportedLocales": ["en"],
@@ -5744,17 +5744,11 @@ Write the number here as a **tracked baseline**:
 | 2026-08-13 | 1.0.0 (vc 1) | 6,420,105 B — 6.12 MiB | 10,596,026 B — 10.11 MiB | Pre-Phase-0 baseline |
 | 2026-08-13 | 1.0.0 (vc 1) | 6,416,765 B — 6.12 MiB | 10,587,545 B — 10.10 MiB | After removing `accompanist-swiperefresh`, `gson`, `result-jvm`, `paging-*`, `runtime-livedata`, `compose-compiler`, and splitting the `compose` bundle |
 
-**−3,340 B download, −8,481 B install: 0.05%.** Worth stating plainly, because it sets
-expectations for the rest of this section: **deleting unused dependencies does not shrink
-the APK.** R8 was already stripping every one of them — that is what R8 is for. What those
-removals actually bought was a smaller dependency graph to resolve, fewer classes for R8 to
-chew through, and one fewer frozen artifact (`androidx.compose.compiler:compiler` at
-1.5.15) pinned into the build.
-
-The size wins in this section are the ones that remove bytes R8 *cannot* prove are unused:
-`material-icons-extended` (reachable via reflection-ish generated accessors), the five
-static Montserrat files, Lottie, and `play-services-auth`. Measure each of those
-individually against the baseline above rather than assuming.
+**−3,340 B download: 0.05%.** Deleting unused dependencies does not shrink the APK — R8 was
+already stripping them. The win was a smaller dependency graph and one fewer frozen
+artifact pinned into the build, not bytes. The real size wins below are the ones R8 cannot
+prove are unused: `material-icons-extended`, the Montserrat files, Lottie, and
+`play-services-auth`. Measure each against the baseline rather than assuming.
 
 Wins, ordered by return on effort:
 
@@ -7348,14 +7342,11 @@ class ColorContrastTest {
 
 ### 15.1 The single most important fix
 
-**Done** — `.github/workflows/pr.yml`. What shipped differs from the sketch below in three
-ways: instrumentation runs on the Gradle Managed Devices already declared in
-`build-logic/.../ManagedDevices.kt` (api24, api30, api34) instead of
-`android-emulator-runner`, so the API levels live in one place; the screenshot-test and
-APK-size-diff jobs are omitted because Roborazzi and `.github/actions/apk-size-diff` do not
-exist yet; and Android Lint needed a fix before it could gate anything — it was failing on
-`main` on two `FeedScreenTest` cases. `branch.yml` was left in place and is now redundant
-with `pr.yml`; deleting it is a follow-up.
+**Done** — `.github/workflows/pr.yml`. It differs from the sketch below: instrumentation
+uses the Gradle Managed Devices from `build-logic/.../ManagedDevices.kt` rather than
+`android-emulator-runner`, and the screenshot-test and APK-size-diff jobs are omitted
+because Roborazzi and `.github/actions/apk-size-diff` do not exist yet. `branch.yml` is now
+redundant with `pr.yml`; deleting it is a follow-up.
 
 `branch.yml` triggers only on:
 

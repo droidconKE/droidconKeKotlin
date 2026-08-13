@@ -1,7 +1,6 @@
 name: PR
 
-# Runs on every pull request, with no `paths:` filter. A PR that touches only
-# Kotlin source must not be able to skip CI — see docs/IMPROVEMENT_PLAN.md §15.1.
+# No `paths:` filter — a PR touching only Kotlin source must not skip CI.
 on:
   pull_request:
   merge_group:
@@ -33,8 +32,6 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      # --continue so a contributor sees every formatting failure in one run
-      # rather than one per push.
       - name: spotless, ktlint, detekt
         run: ./gradlew spotlessCheck ktlintCheck detekt --continue
 
@@ -79,7 +76,6 @@ jobs:
       - name: Generate combined coverage report
         run: ./gradlew createDebugCombinedCoverageReport
 
-      # Non-blocking: forked PRs have no access to CODECOV_TOKEN.
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         continue-on-error: true
@@ -111,10 +107,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # These are the Gradle Managed Devices declared in
-        # build-logic/.../ManagedDevices.kt. api24 is the declared minSdk and is
-        # not optional: core library desugaring only breaks below API 26, so a
-        # matrix that starts higher cannot see that class of crash.
+        # Managed devices from build-logic/.../ManagedDevices.kt. Keep api24:
+        # desugaring only breaks below API 26, so a higher floor cannot see it.
         device: [ api24, api30, api34 ]
     steps:
       - uses: actions/checkout@v4
@@ -139,8 +133,6 @@ jobs:
       - name: Accept Android SDK licences
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null
 
-      # Gradle provisions the emulator itself, so there is no emulator action here
-      # and no second place where the API levels are declared.
       - name: Run instrumentation tests
         run: >
           ./gradlew :data:${{ matrix.device }}DebugAndroidTest
