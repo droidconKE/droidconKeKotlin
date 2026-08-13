@@ -180,6 +180,13 @@ We would endlessly like to thank the following contributors
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/wangerekaharun">
+            <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
+            <br />
+            <sub><b>Harun Wangereka</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/kibettheophilus">
             <img src="https://avatars.githubusercontent.com/u/61080898?v=4" width="100;" alt="kibettheophilus"/>
             <br />
@@ -192,20 +199,13 @@ We would endlessly like to thank the following contributors
             <br />
             <sub><b>Rachel Murabula</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/janewaitara">
             <img src="https://avatars.githubusercontent.com/u/32500878?v=4" width="100;" alt="janewaitara"/>
             <br />
             <sub><b>Jane Waitara</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/wangerekaharun">
-            <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
-            <br />
-            <sub><b>Harun Wangereka</b></sub>
         </a>
     </td>
     <td align="center">
