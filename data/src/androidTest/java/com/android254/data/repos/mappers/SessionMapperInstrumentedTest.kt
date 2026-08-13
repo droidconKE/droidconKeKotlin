@@ -24,18 +24,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Proves `java.time` is usable at every supported API level.
+ * Exercises [SessionDTO.toEntity] on a device rather than the JVM.
  *
- * It is API 26+ while `minSdk` is 24, so without core library desugaring
- * [SessionDTO.toEntity] throws `NoClassDefFoundError` on the first sync. A JVM test cannot
- * catch this — the desktop JDK always has `java.time`:
+ * The parsing here runs on Android's `java.time`, not the desktop JDK's, so a JVM test would
+ * not catch a divergence between them:
  *
  * ```
- * ./gradlew :data:api24DebugAndroidTest
+ * ./gradlew :data:supportedApiLevelsGroupDebugAndroidTest
  * ```
  */
 @RunWith(AndroidJUnit4::class)
-class SessionMapperDesugaringTest {
+class SessionMapperInstrumentedTest {
     @Test
     fun mapsSessionTimestampsOnEverySupportedApiLevel() {
         val entity = sessionDto().toEntity()

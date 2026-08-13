@@ -21,8 +21,7 @@ Run these before opening a PR. CI runs the same set.
 Instrumentation tests run on Gradle Managed Devices, so no emulator setup is needed:
 
 ```bash
-./gradlew :data:api24DebugAndroidTest                     # the minSdk floor
-./gradlew :app:supportedApiLevelsGroupDebugAndroidTest     # api24 + api30 + api34
+./gradlew :data:supportedApiLevelsGroupDebugAndroidTest    # api30 + api34
 ```
 
 Single test class:
@@ -68,7 +67,7 @@ plugins {
 
 Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.08.00, Material 3), **Navigation 3**,
 Hilt + KSP, Ktor 3, Room 2.8, WorkManager, Firebase (Crashlytics, Remote Config, Messaging,
-Perf). `compileSdk`/`targetSdk` 37, `minSdk` 24.
+Perf). `compileSdk`/`targetSdk` 37, `minSdk` 26.
 
 **AGP 9 runs with two opt-out flags** in `gradle.properties`: `android.newDsl=false` and
 `android.builtInKotlin=false`. detekt below 2.0 requires both and the ktlint plugin requires
@@ -105,11 +104,13 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 
 Each of these has already cost a bug. They are easy to reintroduce.
 
-**Core library desugaring is load-bearing.** `minSdk` is 24 and production code uses
-`java.time`, which is API 26+. `isCoreLibraryDesugaringEnabled` in
-`build-logic/.../KotlinAndroid.kt` is what makes that work. Remove it and the app throws
-`NoClassDefFoundError` on Android 7.x during the first sync — which runs at launch. This
-is why the `api24` managed device exists; keep it in CI.
+**`minSdk` is 26, and that is what makes `java.time` safe.** It was 24, where `java.time`
+(API 26+) is absent and the app threw `NoClassDefFoundError` during the first sync unless
+core library desugaring backported it. Raising the floor removed that class of crash
+outright, so the `api24` managed device and its guard test are gone.
+`isCoreLibraryDesugaringEnabled` stays on for the newer `java.time` additions, but it is no
+longer the only thing standing between the app and a launch crash. **Do not lower `minSdk`
+back below 26 without restoring both.**
 
 **No `fallbackToDestructiveMigration()`.** A schema change without a matching migration
 must fail loudly, not silently delete the user's bookmarked sessions — their personal
@@ -146,7 +147,7 @@ explicitly.
 - Tests that fail without your change. A test that passes both ways tests nothing.
 - Checked in dark mode, at 200% font scale, and on a tablet or in split-screen.
 - No new dependency without a reason in the PR description.
-- Verified on API 24 if you touched date handling, Room, or anything on the sync path.
+- Verified on a device if you touched date handling, Room, or anything on the sync path.
 
 ---
 

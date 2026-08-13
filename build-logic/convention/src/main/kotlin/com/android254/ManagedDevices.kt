@@ -21,11 +21,8 @@ import com.android.build.api.dsl.CommonExtension
 /**
  * Emulators for instrumentation tests, provisioned by Gradle rather than by CI.
  *
- * `minSdk` is included deliberately — a crash there is only possible if nothing tests it.
- *
  * ```
  * ./gradlew :app:supportedApiLevelsGroupDebugAndroidTest
- * ./gradlew :app:api24DebugAndroidTest
  * ```
  */
 internal fun configureManagedDevices(commonExtension: CommonExtension) {
@@ -33,15 +30,6 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
     val managedDevices = commonExtension.testOptions.managedDevices
     val localDevices = managedDevices.localDevices
 
-    // ATD images are unavailable below API 30, so the floor uses AOSP.
-    localDevices.create("api24") {
-        device = "Pixel 2"
-        apiLevel = MIN_SDK
-        systemImageSource = "aosp"
-        testedAbi = HOST_ABI
-        // AGP otherwise picks the 32-bit x86 image, which emulators no longer run.
-        require64Bit = true
-    }
     localDevices.create("api30") {
         device = "Pixel 4"
         apiLevel = 30
@@ -60,12 +48,9 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
     }
 }
 
-private const val MIN_SDK = 24
-
 /**
- * AGP 9 warns that an unset `testedAbi` changes default in AGP 10, and the api24 setup task
- * fails outright without it. Keyed to the host rather than pinned to x86_64 so CI runners and
- * Apple Silicon each resolve an image they can run natively.
+ * AGP 9 warns that an unset `testedAbi` changes default in AGP 10. Keyed to the host rather
+ * than pinned to x86_64 so CI runners and Apple Silicon each resolve a native image.
  */
 private val HOST_ABI: String =
     if (System.getProperty("os.arch") in setOf("aarch64", "arm64")) "arm64-v8a" else "x86_64"

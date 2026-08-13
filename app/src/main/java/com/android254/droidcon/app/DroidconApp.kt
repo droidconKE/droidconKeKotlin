@@ -18,7 +18,6 @@ package com.android254.droidcon.app
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
 import com.android254.data.work.WorkConstants
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
@@ -62,15 +61,13 @@ class DroidconApp : Application() {
         }
 
     private fun setUpWorkerManagerNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel =
-                NotificationChannel(
-                    WorkConstants.NOTIFICATION_CHANNEL,
-                    WorkConstants.syncDataWorkerName,
-                    NotificationManager.IMPORTANCE_HIGH,
-                )
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel =
+            NotificationChannel(
+                WorkConstants.NOTIFICATION_CHANNEL,
+                WorkConstants.syncDataWorkerName,
+                NotificationManager.IMPORTANCE_HIGH,
+            )
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 }

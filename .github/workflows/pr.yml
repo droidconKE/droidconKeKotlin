@@ -117,9 +117,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Managed devices from build-logic/.../ManagedDevices.kt. Keep api24:
-        # desugaring only breaks below API 26, so a higher floor cannot see it.
-        device: [ api24, api30, api34 ]
+        # Managed devices from build-logic/.../ManagedDevices.kt.
+        device: [ api30, api34 ]
     steps:
       - uses: actions/checkout@v4
 

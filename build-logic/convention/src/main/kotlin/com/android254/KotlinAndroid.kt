@@ -44,7 +44,7 @@ internal fun Project.configureKotlinAndroid(
 
         compileOptions.sourceCompatibility = JavaVersion.VERSION_17
         compileOptions.targetCompatibility = JavaVersion.VERSION_17
-        // Production code uses java.time (API 26+) while minSdk is 24.
+        // java.time is native at minSdk 26, so this now only backports the newer additions.
         compileOptions.isCoreLibraryDesugaringEnabled = true
 
         configureManagedDevices(this)
@@ -69,7 +69,7 @@ internal fun Project.configureKotlinAndroid(
     }
 
     dependencies {
-        // Backports java.time (and other API 26+ library classes) to minSdk 24.
+        // Backports the newer java.time additions; the core API is native at minSdk 26.
         add("coreLibraryDesugaring", libs.findLibrary("desugar-jdk-libs").get())
 
         add("implementation", libs.findLibrary("android.coreKtx").get())
