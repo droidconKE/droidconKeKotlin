@@ -7493,46 +7493,20 @@ jobs:
 
 Also: bump `actions/checkout@v3` → `v4` and `setup-java@v3` → `v4` in the existing workflows, and replace the deprecated `gradle/gradle-build-action@v2` with `gradle/actions/setup-gradle@v4`.
 
-### 15.2 Renovate or Dependabot
+### 15.2 Dependabot
 
-`toml-checker` and `toml-updater` are declared in the catalog but never applied, so nothing tracks dependency drift. Add Renovate with grouping so it doesn't produce 40 PRs a week:
+**Done** — `.github/dependabot.yml`, weekly on Monday, grouped.
 
-```json
-// renovate.json
-{
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":dependencyDashboard"],
-  "enabledManagers": ["gradle", "github-actions"],
-  "schedule": ["before 6am on monday"],
-  "prConcurrentLimit": 3,
-  "packageRules": [
-    {
-      "groupName": "AndroidX Compose",
-      "matchPackagePatterns": ["^androidx.compose"]
-    },
-    {
-      "groupName": "AndroidX (non-Compose)",
-      "matchPackagePatterns": ["^androidx\\."],
-      "excludePackagePatterns": ["^androidx.compose"]
-    },
-    { "groupName": "Kotlin + KSP", "matchPackagePatterns": ["^org.jetbrains.kotlin", "devtools.ksp"] },
-    { "groupName": "Firebase", "matchPackagePatterns": ["^com.google.firebase"] },
-    { "groupName": "Ktor", "matchPackagePatterns": ["^io.ktor"] },
-    {
-      "description": "AGP and Kotlin need coordinated review — never auto-merge",
-      "matchPackageNames": ["com.android.tools.build:gradle", "org.jetbrains.kotlin:kotlin-gradle-plugin"],
-      "automerge": false,
-      "addLabels": ["needs-careful-review"]
-    },
-    {
-      "description": "Patch bumps for test-only deps can auto-merge once CI is green",
-      "matchDepTypes": ["testImplementation", "androidTestImplementation"],
-      "matchUpdateTypes": ["patch"],
-      "automerge": true
-    }
-  ]
-}
-```
+`toml-checker` and `toml-updater` were declared in the catalog but never applied, so nothing tracked dependency drift.
+
+**Dependabot rather than Renovate**, reversing this section's earlier recommendation. The reason Renovate was preferred here was grouping — without it a repo this size gets forty PRs a week. Dependabot has supported `groups:` since 2023, so that advantage is gone, and what remains is a deployment difference: Renovate's hosted app must be installed at the `droidconKE` organisation level, which needs org-admin rights and a separate approval loop, while Dependabot is a file in the repo and nothing else. For a community project where the maintainer may not be an org admin, that matters more than any remaining feature gap. Renovate stays a reasonable swap later if the dependency dashboard becomes worth the install.
+
+The config groups AndroidX, Compose, Kotlin + KSP, Firebase, Ktor, Room, Hilt, test libraries and static-analysis plugins, and covers both the `gradle` ecosystem — which reads `gradle/libs.versions.toml` directly, so catalog entries are bumped in place — and `github-actions`.
+
+Two deliberate choices:
+
+- **Nothing is auto-merged.** Dependabot does not auto-merge without an explicit workflow, so the earlier "AGP and Kotlin must never auto-merge" rule needs no special case. The earlier draft also auto-merged patch bumps of test dependencies; that is dropped, because a test-library patch that silently changes assertion behaviour is exactly the kind of thing this project has no screenshot coverage to catch (§10.2).
+- **AGP is left ungrouped on purpose.** `com.android.tools.build:gradle` matches no group pattern, so it arrives as its own PR. Given §3.8, an AGP bump is a migration rather than a version change and deserves to be reviewed alone.
 
 ### 15.3 Contributor experience
 

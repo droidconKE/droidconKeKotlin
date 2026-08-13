@@ -1,0 +1,48 @@
+version: 2
+
+updates:
+  # Reads gradle/libs.versions.toml as well as the build files, so catalog entries
+  # are bumped in place rather than drifting from what the modules resolve.
+  - package-ecosystem: gradle
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Africa/Nairobi
+    open-pull-requests-limit: 5
+    labels: [ dependencies ]
+    # Grouped so a quiet week is one PR, not forty.
+    groups:
+      androidx-compose:
+        patterns: [ "androidx.compose*" ]
+      androidx:
+        patterns: [ "androidx.*" ]
+        exclude-patterns: [ "androidx.compose*" ]
+      kotlin:
+        patterns: [ "org.jetbrains.kotlin*", "com.google.devtools.ksp*" ]
+      firebase:
+        patterns: [ "com.google.firebase*", "com.google.gms*" ]
+      ktor:
+        patterns: [ "io.ktor*" ]
+      room:
+        patterns: [ "androidx.room*" ]
+      hilt:
+        patterns: [ "com.google.dagger*", "androidx.hilt*" ]
+      test:
+        patterns: [ "junit*", "io.mockk*", "org.robolectric*", "app.cash.turbine*" ]
+      static-analysis:
+        patterns: [ "io.gitlab.arturbosch.detekt*", "org.jlleitschuh*", "com.diffplug*" ]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Africa/Nairobi
+    open-pull-requests-limit: 3
+    labels: [ dependencies, ci ]
+    groups:
+      actions:
+        patterns: [ "*" ]
