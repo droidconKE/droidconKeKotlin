@@ -69,7 +69,7 @@ fun BottomNavigationBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            items(currentSessions) { session ->
+            items(currentSessions, key = { "current-${it.id}" }) { session ->
                 CurrentSessionComponent(
                     modifier = Modifier.fillParentMaxWidth(0.85f),
                     session = session,
@@ -77,7 +77,7 @@ fun BottomNavigationBar(
                     navController.navigate(Screens.SessionDetails(id))
                 }
             }
-            items(upNextSessions) { session ->
+            items(upNextSessions, key = { "next-${it.id}" }) { session ->
                 CurrentSessionComponent(
                     modifier = Modifier.fillParentMaxWidth(0.85f),
                     session = session,

@@ -31,11 +31,11 @@ android {
         }
     }
 
-    kotlinOptions {
-        freeCompilerArgs + "-Xjvm-default=all"
-    }
+    // The previous `kotlinOptions { freeCompilerArgs + "-Xjvm-default=all" }` block was
+    // a no-op: `+` on a List returns a new list and the result was discarded, so the
+    // flag was never applied. Nothing depends on it, so it is removed rather than fixed.
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             pickFirsts.add("META-INF/io.netty.versions.properties")

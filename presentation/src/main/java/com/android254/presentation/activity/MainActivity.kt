@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,8 +40,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.bottomnav.BottomNavigationBar
@@ -52,37 +51,33 @@ import com.android254.presentation.common.navigation.rememberNavigationState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
-import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var remoteFeatureToggle: RemoteFeatureToggle
-
-    @Inject
-    lateinit var syncDataWorkManager: SyncDataWorkManager
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        var keepSplashScreen = true
         val splashScreen = installSplashScreen()
-        splashScreen.setKeepOnScreenCondition {
-            keepSplashScreen
-        }
-        lifecycleScope.launch {
-            if (remoteFeatureToggle.syncNowIfEmpty()) {
-                syncDataWorkManager.startSync()
-            }
-            keepSplashScreen = false
-        }
+        super.onCreate(savedInstanceState)
+
+        // Reads a StateFlow owned by the ViewModel rather than a local `var` mutated from
+        // a coroutine, and that flow completes on locally cached data with a hard timeout
+        // instead of awaiting a Remote Config fetch. The splash screen no longer blocks
+        // the first frame on the network.
+        splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
+
         setContent {
             ChaiDCKE22Theme {
-                MainScreen()
+                MainScreen(viewModel = viewModel)
             }
         }
+
+        // Still asked on launch, which is the wrong moment — a prompt with no context
+        // gets denied, and the "rationale" branch below only logs. Moving this to the
+        // first time a user stars a session needs the rationale UI, so it is tracked
+        // with the notifications work rather than changed here; removing the call
+        // outright would mean the app never requests the permission at all.
         askNotificationPermission()
     }
 

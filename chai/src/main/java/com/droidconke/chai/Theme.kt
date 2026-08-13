@@ -42,10 +42,13 @@ fun ChaiDCKE22Theme(
 
     if (!view.isInEditMode) {
         SideEffect {
-            val activity = view.context.findActivity()
-            activity.window.statusBarColor = customColorsPalette.background.toArgb()
-            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars =
-                !darkTheme
+            // findActivity() returns null outside an Activity-hosted composition —
+            // Robolectric, screenshot tests, Glance hosts. It used to throw, which made
+            // the theme unusable in any of those.
+            val window = view.context.findActivity()?.window ?: return@SideEffect
+            @Suppress("DEPRECATION")
+            window.statusBarColor = customColorsPalette.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
@@ -64,17 +67,17 @@ val MaterialTheme.chaiColorsPalette: ChaiColors
     get() = LocalChaiColorsPalette.current
 
 /**
- * Iterate through the context wrapper to find the closest activity associated with this context
- * This method is preferred to LocalContext.current as Activity
- * see [Theme.md](https://gist.github.com/GibsonRuitiari/7cb947228661993ee36d5c05b9e8f23f)
- * Throws [IllegalStateException] if no activity was found
- * @return an activity instance
+ * Walks the context wrapper chain to find the closest [Activity], or null when the
+ * composition is not hosted by one.
+ *
+ * Returns null rather than throwing. A theme composable should never be able to crash a
+ * screenshot test, a Robolectric test, or a `ComposeView` hosted outside an Activity,
+ * and the previous `IllegalStateException` did exactly that — the `isInEditMode` guard
+ * only covers Studio previews.
  */
-private fun Context.findActivity(): Activity {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
     }
-    throw IllegalStateException("Activity absent")
-}

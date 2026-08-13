@@ -61,6 +61,7 @@ import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -75,6 +76,9 @@ fun SessionsCard(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
 ) {
+    // Read from the theme here rather than baked into the model, so it tracks dark mode.
+    val venueAccent = venueAccentColor(session.venue)
+
     val alpha =
         when (session.sessionStatus) {
             SessionStatus.Past -> 0.5f
@@ -102,7 +106,7 @@ fun SessionsCard(
         if (session.sessionStatus == SessionStatus.Ongoing) {
             BorderStroke(
                 width = 1.5.dp,
-                color = session.color.copy(alpha = animatedBorderAlpha),
+                color = venueAccent.copy(alpha = animatedBorderAlpha),
             )
         } else {
             null
@@ -131,7 +135,7 @@ fun SessionsCard(
             verticalAlignment = Alignment.Top,
         ) {
             if (session.sessionStatus == SessionStatus.Ongoing) {
-                NowIndicator(session.color)
+                NowIndicator(venueAccent)
             } else {
                 SessionTimeComponent(
                     session.startTime,

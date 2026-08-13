@@ -20,11 +20,9 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.MicExternalOn
+import androidx.compose.ui.graphics.Color
 import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiTeal
 
 data class SessionPresentationModel(
     val id: String,
@@ -46,12 +44,10 @@ data class SessionPresentationModel(
     val eventDay: String,
     val speakers: List<SessionSpeakersPresentationModel>,
 ) {
-    val color =
-        when (venue) {
-            "Opal" -> ChaiRed
-            "Sapphire" -> ChaiTeal
-            else -> ChaiBlue
-        }
+    // The venue accent colour used to live here as `val color`, mapped from the raw chai
+    // palette. A data class cannot read MaterialTheme, so those colours could never
+    // respond to dark mode. The mapping now lives in `chai.colors.venueAccentColor`,
+    // which is a composable and also handles sessions listed in more than one room.
 
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
@@ -68,10 +64,16 @@ data class SessionPresentationModel(
             else -> Icons.Default.CoPresent
         }
 
-    val verticalStep: VerticalStep<SessionPresentationModel> =
+    /**
+     * Builds the stepper representation of this session.
+     *
+     * Takes [accent] rather than deriving it, so the colour comes from a composable that
+     * can read the theme. This was a `val` computing its own colour from the raw palette.
+     */
+    fun verticalStep(accent: Color): VerticalStep<SessionPresentationModel> =
         VerticalStep(
             id = this.id,
-            color = color,
+            color = accent,
             intensity = sessionStatus.toIntensity(),
             icon = icon,
             data = this,

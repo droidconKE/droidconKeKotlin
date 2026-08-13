@@ -64,7 +64,7 @@ fun HomeSessionSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.testTag("sessions"),
         ) {
-            items(sessions) { session ->
+            items(sessions, key = { it.id }) { session ->
                 HomeSessionContent(
                     session = session,
                     onSessionClick = { onSessionClick(session.id) },

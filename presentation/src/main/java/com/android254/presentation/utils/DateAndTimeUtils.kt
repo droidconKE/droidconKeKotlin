@@ -17,20 +17,45 @@ package com.android254.presentation.utils
 
 import android.text.format.DateUtils
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
-fun String.getTimeDifference(): String {
-    return try {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val timePosted = dateFormat.parse(this)
+private val FEED_TIMESTAMP_FORMAT: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
-        val currentTime = Date()
+/**
+ * Renders an ISO-like timestamp as a relative span, e.g. "2 days ago".
+ *
+ * Two problems with the previous implementation:
+ *
+ *  - `SimpleDateFormat.parse` returns a nullable `Date`, and the result was dereferenced
+ *    without a null check. The NPE was then swallowed by a broad `catch (e: Exception)`,
+ *    so a malformed timestamp silently rendered as the raw ISO string in the feed.
+ *  - `SimpleDateFormat` is not thread-safe and was constructed per call.
+ *
+ * Now uses `java.time` (available on minSdk 24 via core library desugaring) with an
+ * immutable, shared formatter, and catches only parse failures. Unparseable input still
+ * falls back to the original string, but that is now a deliberate branch rather than the
+ * side effect of hiding a crash.
+ *
+ * @param nowMillis current time, injectable so the relative output is testable.
+ */
+fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String =
+    try {
+        val postedAt =
+            LocalDateTime.parse(this, FEED_TIMESTAMP_FORMAT)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
 
-        return DateUtils.getRelativeTimeSpanString(timePosted.time, currentTime.time, DateUtils.DAY_IN_MILLIS).toString()
-    } catch (e: Exception) {
-        Timber.e(e)
+        DateUtils.getRelativeTimeSpanString(
+            postedAt,
+            nowMillis,
+            DateUtils.DAY_IN_MILLIS,
+        ).toString()
+    } catch (e: DateTimeParseException) {
+        Timber.w(e, "Unparseable feed timestamp: %s", this)
         this
     }
-}

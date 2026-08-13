@@ -17,9 +17,16 @@ package com.android254.presentation.sessions.utils
 
 import ke.droidcon.kotlin.presentation.R
 
+/**
+ * Facets a session list can be filtered by.
+ *
+ * `Topic` used to be a member here. Nothing could ever populate it: the filter panel
+ * emitted no topic options and the API returns no topic field, so it was unreachable in
+ * both directions. Removed rather than left half-wired. Reintroduce it only alongside a
+ * backend field and a UI that offers it.
+ */
 enum class SessionsFilterCategory(val resId: Int) {
     Level(R.string.title_filter_level),
-    Topic(R.string.title_filter_topic),
     Room(R.string.title_filter_room),
     SessionType(R.string.title_filter_session_type),
 }

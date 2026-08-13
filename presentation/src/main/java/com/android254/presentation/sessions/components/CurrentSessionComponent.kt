@@ -56,6 +56,7 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
@@ -68,6 +69,9 @@ fun CurrentSessionComponent(
     onClicked: (String) -> Unit = {},
 ) {
     val isNow = session.sessionStatus == SessionStatus.Ongoing
+
+    // Read from the theme here rather than baked into the model, so it tracks dark mode.
+    val venueAccent = venueAccentColor(session.venue)
 
     val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")
     val pulse by infiniteTransition.animateFloat(
@@ -121,7 +125,7 @@ fun CurrentSessionComponent(
                                 .size(14.dp)
                                 .align(Alignment.BottomStart)
                                 .offset(x = 2.dp, y = (-2).dp)
-                                .background(session.color.copy(alpha), CircleShape)
+                                .background(venueAccent.copy(alpha), CircleShape)
                                 .border(2.dp, MaterialTheme.chaiColorsPalette.cardsBackground, CircleShape),
                     )
                 }
@@ -152,7 +156,7 @@ fun CurrentSessionComponent(
                             Modifier
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(
-                                    session.color.copy(alpha = if (isNow) 0.15f * alpha else 0.15f),
+                                    venueAccent.copy(alpha = if (isNow) 0.15f * alpha else 0.15f),
                                 )
                                 .padding(horizontal = 10.dp, vertical = 4.dp),
                     ) {
@@ -163,7 +167,7 @@ fun CurrentSessionComponent(
                                 } else {
                                     stringResource(R.string.up_next).uppercase()
                                 },
-                            textColor = session.color,
+                            textColor = venueAccent,
                         )
                     }
                 }
