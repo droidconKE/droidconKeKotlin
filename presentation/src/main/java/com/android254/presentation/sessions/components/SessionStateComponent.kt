@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -54,9 +55,6 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiSubTitle
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshState
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -68,8 +66,6 @@ fun SessionsStateComponent(
     isSessionLayoutList: Boolean,
     onEvent: (SessionsIntentHandler) -> Unit,
 ) {
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing = isRefreshing)
-
     AnimatedContent(sessionsUiState.sessionStatus) { status ->
         when (status) {
             is ResultStatus.Empty -> {
@@ -110,7 +106,7 @@ fun SessionsStateComponent(
 
             ResultStatus.Success -> {
                 SessionListComponent(
-                    swipeRefreshState = swipeRefreshState,
+                    isRefreshing = isRefreshing,
                     sessions = sessionsUiState.sessions,
                     navigateToSessionDetails = navigateToSessionDetails,
                     sessionScreenState = sessionScreenState,
@@ -124,7 +120,7 @@ fun SessionsStateComponent(
 
 @Composable
 fun SessionListComponent(
-    swipeRefreshState: SwipeRefreshState,
+    isRefreshing: Boolean,
     sessions: List<SessionPresentationModel>,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
@@ -144,7 +140,10 @@ fun SessionListComponent(
         }
     }
 
-    SwipeRefresh(state = swipeRefreshState, onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) }) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) },
+    ) {
         LazyColumn(
             state = listState,
             contentPadding = PaddingValues(bottom = 32.dp),
@@ -200,7 +199,7 @@ fun SessionListPreview() {
             color = MaterialTheme.chaiColorsPalette.background,
         ) {
             SessionListComponent(
-                swipeRefreshState = rememberSwipeRefreshState(isRefreshing = false),
+                isRefreshing = false,
                 sessions = fakeSessions,
                 navigateToSessionDetails = {},
                 sessionScreenState = SessionScreenState.ALL,
