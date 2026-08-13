@@ -27,7 +27,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -54,7 +54,7 @@ class NavigationTest {
         val startScreen = Screens.Home
         val navigationState = mutableStateOf<NavigationState?>(null)
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -87,7 +87,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -134,7 +134,7 @@ class NavigationTest {
         val destinationScreen = Screens.SessionDetails(sessionId)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -180,7 +180,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -221,7 +221,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -261,7 +261,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -297,7 +297,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -336,7 +336,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -386,7 +386,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -430,7 +430,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,
@@ -499,7 +499,7 @@ class NavigationTest {
         val navigationState = mutableStateOf<NavigationState?>(null)
 
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 navigationState.value =
                     rememberNavigationState(
                         startRoute = startScreen,

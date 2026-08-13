@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.speakersDummyData
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
@@ -66,7 +66,7 @@ fun HomeSpeakersSection(
 @Preview
 @Composable
 fun HomeSpeakersSectionPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         HomeSpeakersSection(speakers = speakersDummyData)
     }
 }

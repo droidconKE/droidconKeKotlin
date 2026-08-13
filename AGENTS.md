@@ -134,7 +134,7 @@ must be immutable and must not hold resource IDs. Icons and labels live in
 `TopLevelDestination`.
 
 **`chai` is the design system, and it currently runs alongside Material 3 rather than
-underneath it.** `ChaiDCKE22Theme` does not pass a `colorScheme`, so stock Material
+underneath it.** `ChaiTheme` does not pass a `colorScheme`, so stock Material
 components render in Material's default purple. If you add a component and its colours look
 wrong, that is why. The fix is planned — see below — but until it lands, pass colours
 explicitly.

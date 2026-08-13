@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ExpressionBodySyntax:DroidconKE2023App.kt$DroidconKE2023App.&lt;no name provided&gt;$return super.createStackElementTag(element) + ":" + element.lineNumber</ID>
+    <ID>ExpressionBodySyntax:DroidconApp.kt$DroidconApp.&lt;no name provided&gt;$return super.createStackElementTag(element) + ":" + element.lineNumber</ID>
   </CurrentIssues>
 </SmellBaseline>

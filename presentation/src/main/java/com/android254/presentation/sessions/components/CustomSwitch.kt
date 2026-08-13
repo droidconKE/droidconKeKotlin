@@ -45,7 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 
@@ -134,7 +134,7 @@ private fun animateAlignmentAsState(
 @ChaiLightAndDarkComposePreview
 @Composable
 private fun CustomSwitchPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Column(
             modifier = Modifier.background(color = MaterialTheme.chaiColorsPalette.background),
             verticalArrangement = Arrangement.spacedBy(12.dp),

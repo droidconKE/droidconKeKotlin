@@ -34,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.home.viewstate.HomeViewState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiWhite
@@ -124,7 +124,7 @@ fun HomeCallForSpeakersLink() {
 @Preview
 @Composable
 fun HomeBannerSectionPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         HomeBannerSection(HomeViewState())
     }
 }
@@ -132,7 +132,7 @@ fun HomeBannerSectionPreview() {
 @Preview
 @Composable
 fun HomeEventBannerPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         HomeEventPoster()
     }
 }
@@ -140,7 +140,7 @@ fun HomeEventBannerPreview() {
 @Preview
 @Composable
 fun HomeCallForSpeakersLinkPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         HomeCallForSpeakersLink()
     }
 }

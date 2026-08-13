@@ -18,7 +18,7 @@
         errorLine1="                            @NotNull element: StackTraceElement,"
         errorLine2="                            ~~~~~~~~">
         <location
-            file="src/main/java/com/android254/droidconKE2023/app/DroidconKE2023App.kt"
+            file="src/main/java/com/android254/droidcon/app/DroidconApp.kt"
             line="58"
             column="29"/>
     </issue>
@@ -29,7 +29,7 @@
         errorLine1="                            @NotNull element: StackTraceElement,"
         errorLine2="                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/android254/droidconKE2023/app/DroidconKE2023App.kt"
+            file="src/main/java/com/android254/droidcon/app/DroidconApp.kt"
             line="58"
             column="29"/>
     </issue>

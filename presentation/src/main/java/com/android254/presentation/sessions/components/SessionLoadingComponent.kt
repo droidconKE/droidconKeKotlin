@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
 import com.android254.presentation.common.stepper.verticalSteps
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
 
@@ -55,7 +55,7 @@ fun SessionLoadingComponent() {
 @PreviewLightDark
 @Composable
 fun SessionLoadingPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {

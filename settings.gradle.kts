@@ -9,7 +9,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "DroidconKE2023"
+rootProject.name = "dcke"
 
 include(":app")
 include(":chai")

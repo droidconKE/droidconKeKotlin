@@ -58,7 +58,7 @@ import com.android254.presentation.sessionDetails.view.components.SessionTitleAn
 import com.android254.presentation.sessionDetails.view.components.SpeakerTwitterHandle
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.chaiColorsPalette
@@ -221,7 +221,7 @@ fun Body(
 )
 @Composable
 fun SessionDetailsScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         SessionDetailsScreen(
             onNavigationIconClick = {},
             uiState =

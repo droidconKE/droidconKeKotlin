@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.droidconKE2023.crashlytics
+package com.android254.droidcon.crashlytics
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics

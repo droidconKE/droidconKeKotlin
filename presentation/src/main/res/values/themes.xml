@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.DroidconKE2023" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Droidcon" parent="android:Theme.Material.Light.NoActionBar" />
     <style name="Theme.MySplash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_screen_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/droidcon_icon</item>
-        <item name="postSplashScreenTheme">@style/Theme.DroidconKE2023</item>
+        <item name="postSplashScreenTheme">@style/Theme.Droidcon</item>
     </style>
 </resources>

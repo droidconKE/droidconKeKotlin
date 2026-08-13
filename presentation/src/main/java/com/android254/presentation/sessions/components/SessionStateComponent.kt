@@ -50,7 +50,7 @@ import com.android254.presentation.models.SessionStatus
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
@@ -202,7 +202,7 @@ fun SessionListComponent(
 @PreviewLightDark
 @Composable
 fun SessionListPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {

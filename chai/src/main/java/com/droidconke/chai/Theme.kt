@@ -33,7 +33,7 @@ import com.droidconke.chai.colors.ChaiLightColorPalette
 import com.droidconke.chai.colors.LocalChaiColorsPalette
 
 @Composable
-fun ChaiDCKE22Theme(
+fun ChaiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {

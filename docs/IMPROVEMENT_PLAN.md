@@ -314,7 +314,7 @@ The `compose` bundle is applied to **every** Compose module by `AndroidLibraryCo
 
 **A2 — No edge-to-edge, no insets handling.** Zero references to `WindowInsets`, `enableEdgeToEdge`, `safeDrawing`, or `systemBarsPadding` in 297 files. Edge-to-edge is enforced for apps targeting SDK 35+; the app targets 36 today and 37 after §3.1. Right now the framework's compatibility path is doing the work, and the manual `statusBarColor` write is a no-op. On API 35+ devices the layout is being saved by luck. **This must be fixed before the targetSdk 37 bump**, not after — bumping the target while insets are unhandled turns a latent problem into a visible one. (§3.4)
 
-**A3 — `chai` bypasses Material 3 entirely.** `ChaiDCKE22Theme` calls `MaterialTheme(content = content)` — default `colorScheme`, default `typography`, default `shapes` — then layers a parallel `ChaiColors` on a `CompositionLocal`. Consequences:
+**A3 — `chai` bypasses Material 3 entirely.** `ChaiTheme` calls `MaterialTheme(content = content)` — default `colorScheme`, default `typography`, default `shapes` — then layers a parallel `ChaiColors` on a `CompositionLocal`. Consequences:
 
 - Every stock M3 component (`ModalBottomSheet`, `Snackbar`, `Slider`, `DatePicker`, `TextField`, `NavigationBar`) renders in **Material's default purple**, not brand colours. You can see this in `SessionsScreen`, which has to manually pass `containerColor = ChaiGrey90.copy(alpha = 0.52f)` to `ModalBottomSheet` to compensate.
 - No dynamic colour, no M3 Expressive, no `MotionScheme`.
@@ -339,7 +339,7 @@ The `compose` bundle is applied to **every** Compose module by `AndroidLibraryCo
 
 **D3 — Type-safe project accessors enabled but unused.** `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` is on; every module still writes `project(":domain")` instead of `projects.domain`.
 
-**D4 — Stale 2023 naming.** `rootProject.name = "DroidconKE2023"`, `app` namespace `ke.droidcon.kotlin` (correct) but application class `com.android254.droidconKE2023.app.DroidconKE2023App`, theme `Theme.DroidconKE2023`, DB named `dcke22-database`, design-system theme `ChaiDCKE22Theme`, README says 2024, API event slug says `droidconke-2025-898`. Four different years in one codebase. This is a real contributor-onboarding tax — new contributors cannot tell which parts are current.
+**D4 — Stale 2023 naming.** `rootProject.name = "DroidconKE2023"`, `app` namespace `ke.droidcon.kotlin` (correct) but application class `com.android254.droidcon.app.DroidconApp`, theme `Theme.DroidconKE2023`, DB named `dcke22-database`, design-system theme `ChaiTheme`, README says 2024, API event slug says `droidconke-2025-898`. Four different years in one codebase. This is a real contributor-onboarding tax — new contributors cannot tell which parts are current.
 
 **D5 — CI gaps.**
 - `branch.yml` only triggers on changes to `build-logic/**`, `build.gradle.kts`, `settings.gradle.kts`. **A PR that changes only Kotlin source runs no CI at all.** This is the single highest-value CI fix in the repo.
@@ -1557,7 +1557,7 @@ colors = ButtonDefaults.buttonColors(
 ),
 ```
 
-`containerColor` isn't specified, so it falls back to `ButtonDefaults`' default — which is also `colorScheme.primary`. Since `ChaiDCKE22Theme` never passes a `colorScheme`, that's Material's stock purple. The label is drawn by `CPrimaryButtonText`, whose `TextStyle` colour comes from `chaiColorsPalette.textButtonColor` — so in light mode the app's primary button is **`ChaiBlue` (#000CEB) text on Material default purple**. Two dark, saturated colours with almost no contrast between them. `COutlinedPrimaryButton` has the same problem for its content and border.
+`containerColor` isn't specified, so it falls back to `ButtonDefaults`' default — which is also `colorScheme.primary`. Since `ChaiTheme` never passes a `colorScheme`, that's Material's stock purple. The label is drawn by `CPrimaryButtonText`, whose `TextStyle` colour comes from `chaiColorsPalette.textButtonColor` — so in light mode the app's primary button is **`ChaiBlue` (#000CEB) text on Material default purple**. Two dark, saturated colours with almost no contrast between them. `COutlinedPrimaryButton` has the same problem for its content and border.
 
 **2. Eight call sites already read `MaterialTheme.colorScheme`, which chai has never defined.**
 
@@ -2037,9 +2037,9 @@ Four different years appear in the codebase. Pick a **year-agnostic** identity s
 | From | To |
 | --- | --- |
 | `rootProject.name = "DroidconKE2023"` | `"droidconKE"` |
-| `com.android254.droidconKE2023.app.DroidconKE2023App` | `ke.droidcon.kotlin.DroidconApplication` |
-| `com.android254.droidconKE2023.crashlytics.CrashlyticsTree` | `ke.droidcon.kotlin.core.analytics.CrashlyticsTree` |
-| `ChaiDCKE22Theme` | `ChaiTheme` |
+| `com.android254.droidcon.app.DroidconApp` | `ke.droidcon.kotlin.DroidconApplication` |
+| `com.android254.droidcon.crashlytics.CrashlyticsTree` | `ke.droidcon.kotlin.core.analytics.CrashlyticsTree` |
+| `ChaiTheme` | `ChaiTheme` |
 | `Theme.DroidconKE2023` / `Theme.MySplash` | `Theme.Droidcon` / `Theme.Droidcon.Splash` |
 | `com.android254.*` packages | `ke.droidcon.kotlin.*` |
 | `dcke22-database` | **unchanged** (see B2 — renaming costs user data) |
@@ -2380,7 +2380,7 @@ Validation commands from the skill, worth putting in the PR description:
 - [ ] `./gradlew lint` passes; `lint-baseline.xml` regenerated and **shrunk** (triage what's in it)
 - [ ] B1–B16 each closed by a **test**, not just a code change (§16.0 lists the test per fix)
 - [ ] An API 24 instrumentation run passes — the level B11 crashed on
-- [ ] `grep -rn "com.android254.droidconKE2023\|DCKE22\|DroidconKE2023"` returns nothing
+- [ ] `grep -rn "com.android254.droidcon\|DCKE22\|DroidconKE2023"` returns nothing
 - [ ] CI runs on Kotlin-only PRs (§15)
 - [ ] Unused deps removed; APK size recorded as a **baseline number** in this document (§9.4)
 - [ ] `targetSdk` comes from one version-catalog entry, referenced by both convention plugins (B4)

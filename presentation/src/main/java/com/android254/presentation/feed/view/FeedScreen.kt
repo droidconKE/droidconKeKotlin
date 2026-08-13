@@ -54,7 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.presentation.R
@@ -201,7 +201,7 @@ private fun FeedScreen(
 )
 @Composable
 fun FeedScreenPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             FeedScreen(
                 feedUIState =

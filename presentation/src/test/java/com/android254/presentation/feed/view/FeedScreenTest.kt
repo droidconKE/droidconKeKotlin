@@ -22,7 +22,7 @@ import androidx.compose.ui.test.performClick
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.FeedViewModel
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -66,7 +66,7 @@ class FeedScreenTest {
 
         val viewModel = FeedViewModel(repo)
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)
             }
         }
@@ -96,7 +96,7 @@ class FeedScreenTest {
 
         val viewModel = FeedViewModel(repo)
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)
             }
         }

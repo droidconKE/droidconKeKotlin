@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.droidconKE2023.app
+package com.android254.droidcon.app
 
 import android.app.Application
 import android.app.NotificationChannel
@@ -21,7 +21,7 @@ import android.app.NotificationManager
 import android.os.Build
 import com.android254.data.work.WorkConstants
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.droidconKE2023.crashlytics.CrashlyticsTree
+import com.android254.droidcon.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
 import org.jetbrains.annotations.NotNull
@@ -29,7 +29,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
-class DroidconKE2023App : Application() {
+class DroidconApp : Application() {
     @Inject
     lateinit var syncDataWorkManager: SyncDataWorkManager
 

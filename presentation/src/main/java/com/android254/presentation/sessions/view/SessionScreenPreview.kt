@@ -25,7 +25,7 @@ import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 
 @PreviewLightDark
@@ -33,7 +33,7 @@ import com.droidconke.chai.chaiColorsPalette
 fun SessionScreenPreview(
     @PreviewParameter(SessionStateProvider::class) state: SessionsUiState,
 ) {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {

@@ -29,7 +29,7 @@ import com.droidconke.chai.chaiColorsPalette
 /**
  * Pull to refresh, with the indicator coloured from the theme.
  *
- * `ChaiDCKE22Theme` passes no `colorScheme`, so the stock Material indicator would render in
+ * `ChaiTheme` passes no `colorScheme`, so the stock Material indicator would render in
  * Material's default purple. Colours are passed explicitly here so call sites cannot forget.
  *
  * Hoist [state] when the box sits inside content that recomposes away — an `AnimatedContent`

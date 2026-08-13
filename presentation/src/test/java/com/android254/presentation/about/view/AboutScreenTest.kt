@@ -18,7 +18,7 @@ package com.android254.presentation.about.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -44,7 +44,7 @@ class AboutScreenTest {
     @Ignore("Fix later")
     fun `should show About Screen and organizing team section`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 AboutRoute()
             }
         }
@@ -58,7 +58,7 @@ class AboutScreenTest {
     @Ignore("Fix later")
     fun `should show About Screen and the droidcon topBar`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 AboutRoute()
             }
         }
@@ -71,7 +71,7 @@ class AboutScreenTest {
     @Ignore("Fix later")
     fun `should show About Screen and show the organized by section`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 AboutRoute()
             }
         }

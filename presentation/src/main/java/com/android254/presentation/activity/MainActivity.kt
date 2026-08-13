@@ -48,7 +48,7 @@ import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.rememberNavigationState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
 
         setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 MainScreen(viewModel = viewModel)
             }
         }

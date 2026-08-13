@@ -21,7 +21,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -47,7 +47,7 @@ class SessionScreenTest {
     fun hasExpectedButtons() =
         runTest {
             composeTestRule.setContent {
-                ChaiDCKE22Theme {
+                ChaiTheme {
                     SessionsScreen(
                         sessionsUiState = SessionsUiState(eventDays = listOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
                         isRefreshing = true,
@@ -70,7 +70,7 @@ class SessionScreenTest {
     fun `should show topBar`() =
         runTest {
             composeTestRule.setContent {
-                ChaiDCKE22Theme {
+                ChaiTheme {
                     SessionsScreen(
                         sessionsUiState = SessionsUiState(),
                         isRefreshing = true,
