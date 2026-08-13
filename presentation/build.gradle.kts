@@ -51,10 +51,17 @@ dependencies {
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.gms.play.services.auth)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.lottie.compose)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)
+
+    // Compose dependencies specific to this module. The shared `compose` bundle applied by
+    // the convention plugin deliberately stops at what a design-system module needs.
+    implementation(libs.bundles.navigation3)
+    implementation(libs.bundles.coil)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.constraintlayout)
+    implementation(libs.compose.lifecycle.runtime)
 
     implementation(libs.firebase.messaging)
 
