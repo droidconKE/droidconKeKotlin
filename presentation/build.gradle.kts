@@ -53,7 +53,6 @@ dependencies {
     implementation(libs.gms.play.services.auth)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.lottie.compose)
-    implementation(libs.accompanist.swiperefresh)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)
 

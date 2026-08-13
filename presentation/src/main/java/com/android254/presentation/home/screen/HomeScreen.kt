@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.SponsorsCard
@@ -42,8 +43,6 @@ import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.chaiColorsPalette
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun HomeRoute(
@@ -92,8 +91,8 @@ private fun HomeScreen(
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isSyncing),
+        PullToRefreshBox(
+            isRefreshing = isSyncing,
             onRefresh = onRefresh,
             modifier =
                 Modifier
