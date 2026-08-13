@@ -30,7 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.presentation.R
@@ -75,7 +75,7 @@ fun TopAppBar(
 @Composable
 @Preview
 fun TopAppBarPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         TopAppBar()
     }
 }

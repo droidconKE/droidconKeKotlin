@@ -26,7 +26,7 @@ import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessions.mappers.toSessionDetailsPresentationModal
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -64,7 +64,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show top bar and floating action button`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 SessionDetailsRoute(
                     viewModel = viewModel,
                     sessionId = sessionId,
@@ -82,7 +82,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `should show favourite icon and session banner image`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 Body(
                     paddingValues = PaddingValues(1.dp),
                     sessionDetails = sessionPresentationModel,
@@ -102,7 +102,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if speaker-name, session title & description, time, room, level and twitter handle are correctly shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,
@@ -134,7 +134,7 @@ class SessionDetailsScreenTest {
     @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.setContent {
-            ChaiDCKE22Theme {
+            ChaiTheme {
                 Body(
                     paddingValues = PaddingValues(10.dp),
                     sessionDetails = sessionPresentationModel,

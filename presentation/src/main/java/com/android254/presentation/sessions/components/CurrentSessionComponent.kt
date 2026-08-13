@@ -54,7 +54,7 @@ import coil.compose.AsyncImage
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyLargeBold
@@ -187,7 +187,7 @@ fun CurrentSessionUpNextPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Upcoming } ?: defaultSession
 
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {
@@ -205,7 +205,7 @@ fun CurrentSessionCurrentPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Ongoing } ?: defaultSession
 
-    ChaiDCKE22Theme {
+    ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,
         ) {

@@ -51,7 +51,7 @@ import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.android254.presentation.sessions.components.CurrentSessionComponent
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 
@@ -163,7 +163,7 @@ fun RowScope.BottomNavItem(
 @PreviewLightDark
 @Composable
 fun BottomNavigationBarPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         val navigationState =
             rememberNavigationState(
                 startRoute = Screens.Home,

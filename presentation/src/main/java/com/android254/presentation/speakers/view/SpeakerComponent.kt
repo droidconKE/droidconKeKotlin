@@ -43,7 +43,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.chaiColorsPalette
@@ -174,7 +174,7 @@ fun SpeakerComponent(
 @ChaiLightAndDarkComposePreview
 @Composable
 fun SpeakerComponentPreview() {
-    ChaiDCKE22Theme {
+    ChaiTheme {
         SpeakerComponent(
             speaker =
                 SpeakerUI(
