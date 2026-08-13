@@ -1,0 +1,155 @@
+# AGENTS.md
+
+Working notes for AI agents and new contributors on the droidcon Kenya Android app.
+
+`CONTRIBUTING.md` covers the human process — issues, forks, PR expectations. This file
+covers what you need to know to change code here without breaking it.
+
+---
+
+## Commands
+
+Run these before opening a PR. CI runs the same set.
+
+```bash
+./gradlew spotlessApply ktlintFormat          # format first — the checks below are strict
+./gradlew spotlessCheck ktlintCheck detekt    # static analysis
+./gradlew assembleDebug                       # build
+./gradlew testDebugUnitTest                   # JVM + Robolectric tests
+```
+
+Instrumentation tests run on Gradle Managed Devices, so no emulator setup is needed:
+
+```bash
+./gradlew :data:api24DebugAndroidTest                     # the minSdk floor
+./gradlew :app:supportedApiLevelsGroupDebugAndroidTest     # api24 + api30 + api34
+```
+
+Single test class:
+
+```bash
+./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
+```
+
+Requires JDK 17. `./gradlew --version` should report it.
+
+---
+
+## Module layout
+
+```
+app                  Application, MainActivity host, manifest, DI graph root
+presentation         All Compose UI, ViewModels, navigation
+chai                 Design system: colours, typography, shared components
+domain               Pure Kotlin — models and repository interfaces. No Android dependency.
+data                 Repository implementations, sync, mappers
+datasource:local     Room database, DAOs, entities
+datasource:remote    Ktor client, DTOs, Remote Config
+build-logic          Convention plugins
+```
+
+**Dependency rule:** `domain` depends on nothing. `data` depends on `domain`, never the
+reverse. `presentation` does not reach into `datasource:local`. Keep `domain` free of
+Android imports — it is the module that would move first if this ever becomes
+multiplatform.
+
+Add a module by applying the convention plugins, not by copying a `build.gradle.kts`:
+
+```kotlin
+plugins {
+    alias(libs.plugins.droidconke.android.library)
+    alias(libs.plugins.droidconke.android.hilt)
+}
+```
+
+---
+
+## Stack
+
+Kotlin 2.1, AGP 8.10, Compose (BOM 2025.06.00, Material 3), **Navigation 3**, Hilt + KSP,
+Ktor 3, Room 2.7, WorkManager, Firebase (Crashlytics, Remote Config, Messaging, Perf).
+
+Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
+implementing `NavKey`; there is no `NavHost` or route strings. See
+`presentation/.../common/navigation/`.
+
+---
+
+## Conventions
+
+- **Formatting is enforced.** ktlint, spotless, and detekt all fail the build. Run
+  `spotlessApply ktlintFormat` before committing.
+- **Apache licence header** on every file. Spotless adds it.
+- **detekt forbids `TODO` in comments.** Write the note as a plain sentence, or file an
+  issue.
+- **Strings live in `strings.xml`.** No user-visible text in Kotlin.
+- **Colours come from the theme**, never from the raw palette. Read
+  `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
+  roles). Do not import `ChaiBlue` and friends outside `chai/colors`.
+- **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
+  reorders the list.
+- **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a
+  `remember` — that is how the UI and the data end up disagreeing after rotation.
+- Test naming: backtick-quoted sentences, e.g.
+  ``fun `room filter matches a real venue room name`()``.
+
+---
+
+## Gotchas
+
+Each of these has already cost a bug. They are easy to reintroduce.
+
+**Core library desugaring is load-bearing.** `minSdk` is 24 and production code uses
+`java.time`, which is API 26+. `isCoreLibraryDesugaringEnabled` in
+`build-logic/.../KotlinAndroid.kt` is what makes that work. Remove it and the app throws
+`NoClassDefFoundError` on Android 7.x during the first sync — which runs at launch. This
+is why the `api24` managed device exists; keep it in CI.
+
+**No `fallbackToDestructiveMigration()`.** A schema change without a matching migration
+must fail loudly, not silently delete the user's bookmarked sessions — their personal
+conference agenda. Register new migrations in `Database.ALL_MIGRATIONS`.
+`DatabaseMigrationTest` fails if the fallback returns.
+
+**Filter options are derived from session data, not typed by hand.** Hardcoded values
+drift from what the API returns, and the mismatch is invisible: the chip highlights and the
+list goes empty. `SessionsFilterOptionsTest` asserts that no offered option matches zero
+sessions. Keep that test.
+
+**Session times are venue-local.** The API sends them without an offset and they mean
+`Africa/Nairobi`. Use `@ConferenceTimeZone` for absolute times; use the device clock only
+for relative ones ("in 20 minutes"). No `SimpleDateFormat` — it is not thread-safe and
+there are none left in production code.
+
+**`Session.rooms` is comma-joined.** A session can run in two rooms. Compare against
+`Session.roomList`, not the joined string.
+
+**Navigation keys carry no display metadata.** They are serialized to `SavedState`, so they
+must be immutable and must not hold resource IDs. Icons and labels live in
+`TopLevelDestination`.
+
+**`chai` is the design system, and it currently runs alongside Material 3 rather than
+underneath it.** `ChaiDCKE22Theme` does not pass a `colorScheme`, so stock Material
+components render in Material's default purple. If you add a component and its colours look
+wrong, that is why. The fix is planned — see below — but until it lands, pass colours
+explicitly.
+
+---
+
+## Before you finish
+
+- Tests that fail without your change. A test that passes both ways tests nothing.
+- Checked in dark mode, at 200% font scale, and on a tablet or in split-screen.
+- No new dependency without a reason in the PR description.
+- Verified on API 24 if you touched date handling, Room, or anything on the sync path.
+
+---
+
+## Where this is going
+
+`docs/IMPROVEMENT_PLAN.md` is the roadmap: an audit of the current state, then phased work
+covering adaptive/large-screen support, a design-system rebuild onto Material 3 Expressive,
+on-device and cloud AI features, ticketing, performance, and testing.
+
+Read §1.3 (known defects) and §16.0 (the P0 list) before starting anything substantial —
+some of what looks like a bug is already documented, and some of what looks intentional is
+a defect with a fix already specified.
