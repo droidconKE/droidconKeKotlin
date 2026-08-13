@@ -34,9 +34,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
 
-// ViewModelConstructorInComposable guards production composables, where a hand-built
-// ViewModel escapes lifecycle scoping. Injecting one with a fake repo is the point of
-// these tests, so the check is suppressed here rather than baselined away module-wide.
+// The check targets production composables; injecting a fake repo is the point here.
 @Suppress("ViewModelConstructorInComposable")
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])

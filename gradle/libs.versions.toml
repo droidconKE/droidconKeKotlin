@@ -166,9 +166,7 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 
 [bundles]
-# AndroidLibraryComposeConventionPlugin adds this to every Compose module, chai included.
-# It is therefore the floor for a pure design-system module, not a place for feature
-# dependencies — those go in the module that uses them.
+# Applied to every Compose module, chai included — keep feature deps per-module.
 compose = ["compose-material3", "compose-materialIcons", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-preview-customview", "compose-preview-customview-poolingcontainer"]
 coil = ["coil-compose", "coil-svg"]
 navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]

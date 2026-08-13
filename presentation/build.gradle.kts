@@ -55,8 +55,6 @@ dependencies {
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)
 
-    // Compose dependencies specific to this module. The shared `compose` bundle applied by
-    // the convention plugin deliberately stops at what a design-system module needs.
     implementation(libs.bundles.navigation3)
     implementation(libs.bundles.coil)
     implementation(libs.compose.activity)
