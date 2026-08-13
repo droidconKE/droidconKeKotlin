@@ -11,7 +11,6 @@ desugar_jdk_libs = "2.1.5"
 espresso = "3.7.0"
 gradleplugin = "9.3.1"
 gmsPlugin = "4.5.0"
-# Requires AGP 9, which is why it moves in the same commit.
 hilt = "2.60.1"
 kotlin = "2.4.10"
 ksp = "2.3.11"
@@ -23,14 +22,11 @@ firebaseCrashlyticsPlugin = "3.0.7"
 firebasePerfPlugin = "2.0.2"
 junit4 = "4.13.2"
 agp = "9.3.1"
-# 4.3.x is compiled for Java 21 (class file 65); this project targets 17.
 chucker = "4.1.0"
 androidxComposeBom = "2026.08.00"
 remote_config = "22.1.2"
 detekt = "1.23.8"
 klint = "12.3.0"
-# Held at 7.x deliberately: spotless 8 is a major with licence-header API changes, and a
-# formatter change is not something to land untested alongside everything else here.
 spotless = "7.0.4"
 app_compat = "1.8.0"
 coreKtx = "1.19.0"
@@ -140,8 +136,6 @@ kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase_bom"}
-# The -ktx artifacts were removed in Firebase BOM 34; the Kotlin extensions now ship in
-# the main modules. Versions come from the BOM, so none of these carry their own.
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
