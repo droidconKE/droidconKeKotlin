@@ -31,9 +31,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -52,7 +51,6 @@ import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.chaiColorsPalette
-import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsRoute(
@@ -85,12 +83,12 @@ fun SessionsScreen(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
 ) {
-    val showMySessions =
-        remember {
-            mutableStateOf(false)
-        }
+    // "My sessions" and "is a filter active" are derived from the ViewModel's filter
+    // state rather than mirrored here. The screen used to keep its own non-saveable
+    // copy of the toggle, so rotating the device reset the switch to off while the
+    // bookmark filter stayed applied — the UI and the data disagreed.
+    val showMySessions = sessionsUiState.showMySessionsOnly
 
-    val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(
             skipPartiallyExpanded = true,
@@ -101,23 +99,12 @@ fun SessionsScreen(
             mutableStateOf(true)
         }
 
-    val isFilterActive =
-        rememberSaveable {
-            mutableStateOf(true)
-        }
+    // Genuinely screen-local: whether the sheet is on screen. `isFilterDialogOpen` used
+    // to exist alongside this and was written in three places and never read.
+    var showFilterSheet by rememberSaveable { mutableStateOf(false) }
 
-    val isFilterDialogOpen =
-        rememberSaveable {
-            mutableStateOf(false)
-        }
-
-    val sessionScreenSessionsState =
-        rememberSaveable {
-            mutableStateOf(SessionScreenState.ALL)
-        }
-
-    BackHandler(bottomSheetState.isVisible) {
-        scope.launch { bottomSheetState.hide() }
+    BackHandler(showFilterSheet) {
+        showFilterSheet = false
     }
 
     Scaffold(
@@ -130,13 +117,8 @@ fun SessionsScreen(
                 onAgendaIconClick = {
                     isSessionLayoutList.value = false
                 },
-                isFilterActive = isFilterActive.value,
-                onFilterButtonClick = {
-                    isFilterDialogOpen.value = true
-                    scope.launch {
-                        bottomSheetState.show()
-                    }
-                },
+                isFilterActive = sessionsUiState.isFilterActive,
+                onFilterButtonClick = { showFilterSheet = true },
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
@@ -163,44 +145,43 @@ fun SessionsScreen(
                     },
                     eventDates = sessionsUiState.eventDays,
                 )
-                CustomSwitch(checked = showMySessions.value, onCheckedChange = {
-                    showMySessions.value = it
-                    isFilterActive.value = !it
-                    if (showMySessions.value) {
-                        sessionScreenSessionsState.value = SessionScreenState.MYSESSIONS
-                        onEvent(SessionsIntentHandler.ToggleBookmarkFilter)
-                    } else {
-                        sessionScreenSessionsState.value = SessionScreenState.ALL
-                        onEvent(SessionsIntentHandler.ClearSelectedFilterList)
-                    }
-                })
+                CustomSwitch(
+                    checked = showMySessions,
+                    onCheckedChange = { checked ->
+                        // Turning the toggle off clears every filter, matching the
+                        // previous behaviour; turning it on just adds the bookmark facet.
+                        if (checked) {
+                            onEvent(SessionsIntentHandler.ToggleBookmarkFilter)
+                        } else {
+                            onEvent(SessionsIntentHandler.ClearSelectedFilterList)
+                        }
+                    },
+                )
             }
             SessionsStateComponent(
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
                 isRefreshing = isRefreshing,
-                sessionScreenState = sessionScreenSessionsState.value,
+                sessionScreenState =
+                    if (showMySessions) SessionScreenState.MYSESSIONS else SessionScreenState.ALL,
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
             )
-            if (bottomSheetState.isVisible) {
+            // Gated on our own boolean rather than on `bottomSheetState.isVisible`.
+            // Gating on isVisible meant the sheet was only composed once already
+            // visible, so its enter animation never ran and onDismissRequest fought
+            // the guard.
+            if (showFilterSheet) {
                 ModalBottomSheet(
                     sheetState = bottomSheetState,
-                    onDismissRequest = {
-                        scope.launch {
-                            bottomSheetState.hide()
-                        }
-                    },
+                    onDismissRequest = { showFilterSheet = false },
                     shape = RoundedCornerShape(0.dp),
                     containerColor = ChaiGrey90.copy(alpha = 0.52f),
                     dragHandle = {},
                 ) {
                     SessionsFilterPanel(
-                        onDismiss = {
-                            scope.launch {
-                                bottomSheetState.hide()
-                            }
-                        },
+                        onDismiss = { showFilterSheet = false },
+                        selectableFilters = sessionsUiState.availableFilters,
                         currentSelections = currentSelections,
                         updateSelectedFilterOptionList = {
                             onEvent(SessionsIntentHandler.UpdateSelectedFilterOptionList(it))

@@ -15,7 +15,6 @@
  */
 package com.droidconke.chai.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +25,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.droidconke.chai.atoms.*
+import com.droidconke.chai.atoms.MontserratBold
+import com.droidconke.chai.atoms.MontserratLight
+import com.droidconke.chai.atoms.MontserratMedium
 import com.droidconke.chai.atoms.MontserratRegular
-import com.droidconke.chai.atoms.MontserratThin
+import com.droidconke.chai.atoms.MontserratSemiBold
 import com.droidconke.chai.chaiColorsPalette
 
 /**
@@ -42,70 +43,13 @@ import com.droidconke.chai.chaiColorsPalette
  * our text. this is a shorter approach for making a Design system type. For a longer version see this repo:
  * [KahawaLove](https://github.com/tamzi/KahawaLove)
  *
+ * CParagraph, CPageTitle, CSubtitle and CActionText used to live here and were removed.
+ * Each hardcoded a colour from the raw palette (ChaiBlack, ChaiBlue, ChaiRed) inside the
+ * composable, so they rendered identically in light and dark mode — black text on a dark
+ * background. All four had zero call sites; the Chai* family below supersedes them and
+ * takes its colour from the caller.
+ *
  * */
-
-/**
- * Title based fonts
- * */
-@Composable
-fun CParagraph(dParagraph: String) {
-    Text(
-        text = dParagraph,
-        style =
-            TextStyle(
-                color = ChaiBlack,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W500,
-                fontFamily = MontserratRegular,
-            ),
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-fun CPageTitle(pageTitle: String) {
-    Text(
-        text = pageTitle,
-        style =
-            TextStyle(
-                color = ChaiBlue,
-                fontSize = 33.sp,
-                fontWeight = FontWeight.W300,
-                fontFamily = MontserratThin,
-            ),
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-fun CSubtitle(dSubtitle: String) {
-    Text(
-        text = dSubtitle,
-        style =
-            TextStyle(
-                color = ChaiRed,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = MontserratRegular,
-            ),
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
-
-@Composable
-fun CActionText(cAction: String) {
-    Text(
-        text = cAction,
-        style =
-            TextStyle(
-                color = ChaiRed,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = MontserratRegular,
-            ),
-        modifier = Modifier.fillMaxWidth(),
-    )
-}
 
 @Composable
 fun ChaiTitle(

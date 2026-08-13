@@ -44,7 +44,9 @@ import ke.droidcon.kotlin.datasource.local.util.InstantConverter
         FeedEntity::class,
     ],
     version = 5,
-    exportSchema = false,
+    // Exported so every future schema change shows up in the diff and can be
+    // covered by a migration test. See DatabaseMigrationTest.
+    exportSchema = true,
 )
 @TypeConverters(
     InstantConverter::class,
@@ -69,5 +71,15 @@ abstract class Database : RoomDatabase() {
                     db.execSQL("ALTER TABLE sessions ADD COLUMN endTimeStamp INTEGER NOT NULL DEFAULT 0")
                 }
             }
+
+        /**
+         * Every migration this database knows how to perform.
+         *
+         * Add new migrations here as well as declaring them above — a migration that
+         * exists but is not registered is the same as no migration at all, and the
+         * database is no longer configured to fall back to destroying user data when
+         * one is missing.
+         */
+        val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_4_5)
     }
 }

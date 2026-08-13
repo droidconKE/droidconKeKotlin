@@ -34,4 +34,14 @@ data class Session(
     val slug: String,
     val title: String,
     val eventDay: String,
-)
+) {
+    /**
+     * The individual rooms this session runs in.
+     *
+     * [rooms] arrives from the API comma-joined, so a session spanning two rooms is
+     * "Opal,Sapphire". Filtering against that joined string can never match a filter
+     * for a single room, which is why the room filter returned nothing.
+     */
+    val roomList: List<String>
+        get() = rooms.split(',').map(String::trim).filter(String::isNotEmpty)
+}

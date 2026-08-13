@@ -100,7 +100,7 @@ fun FeedShareSection(
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             content = {
-                items(platforms) { platform ->
+                items(platforms, key = { it.first }) { platform ->
                     PlatformButton(platform = platform.first, icon = platform.second)
                 }
             },

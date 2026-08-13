@@ -89,6 +89,9 @@ class SessionsViewModel
                         sessions = filteredSessions,
                         eventDays = sessionDays,
                         sessionStatus = getResultStatus(filteredSessions),
+                        availableFilters = buildFilterOptions(sessionsInformation.sessions),
+                        showMySessionsOnly = filterState.isBookmarked,
+                        isFilterActive = filterState.isActive,
                     )
                 }
             }.stateIn(
@@ -107,33 +110,43 @@ class SessionsViewModel
             filterState: SessionsFilterState,
             selectedEventDay: EventDate,
         ): List<SessionPresentationModel> =
-            sessions.asSequence().filter {
-                if (filterState.levels.isNotEmpty()) {
-                    filterState.levels.contains(it.sessionLevel)
-                } else {
-                    true
-                }
-            }.filter {
-                if (filterState.rooms.isNotEmpty()) {
-                    filterState.rooms.contains(it.rooms)
-                } else {
-                    true
-                }
-            }.filter {
-                if (filterState.sessionTypes.isNotEmpty()) {
-                    filterState.sessionTypes.contains(it.sessionFormat)
-                } else {
-                    true
-                }
-            }.filter {
-                if (filterState.isBookmarked) {
-                    it.isBookmarked
-                } else {
-                    true
-                }
-            }.distinctBy { it.remoteId }
+            sessions.asSequence()
+                .filter(filterState::matches)
+                .distinctBy { it.remoteId }
                 .map { it.toPresentationModel() }
-                .filter { it.eventDay == selectedEventDay.value }.toList()
+                .filter { it.eventDay == selectedEventDay.value }
+                .toList()
+
+        /**
+         * Builds the selectable filter options from the sessions themselves.
+         *
+         * Values must come from the same source as the values they are compared against.
+         * The previous hardcoded list offered "Room A"/"Room B"/"Room C" while the API
+         * returns real venue room titles, so selecting any room emptied the list; and it
+         * offered lower-case "keynote" against the API's "Keynote".
+         *
+         * Labels are the API values rather than string resources: room and format names
+         * are data, not UI copy, and a translated label that no longer matches the value
+         * it filters on is exactly the bug being fixed here. The category headings stay
+         * localised via [SessionsFilterCategory.resId].
+         */
+        internal fun buildFilterOptions(sessions: List<Session>): List<SessionsFilterOption> {
+            fun options(
+                category: SessionsFilterCategory,
+                values: Sequence<String>,
+            ): List<SessionsFilterOption> =
+                values
+                    .map(String::trim)
+                    .filter(String::isNotEmpty)
+                    .distinctBy(String::lowercase)
+                    .sorted()
+                    .map { SessionsFilterOption(type = category, label = it, value = it) }
+                    .toList()
+
+            return options(SessionsFilterCategory.Room, sessions.asSequence().flatMap { it.roomList }) +
+                options(SessionsFilterCategory.SessionType, sessions.asSequence().map { it.sessionFormat }) +
+                options(SessionsFilterCategory.Level, sessions.asSequence().map { it.sessionLevel })
+        }
 
         private fun getResultStatus(sessions: List<SessionPresentationModel>): ResultStatus =
             if (sessions.isEmpty()) {
@@ -170,92 +183,13 @@ class SessionsViewModel
         }
 
         fun updateSelectedFilterOptionList(option: SessionsFilterOption) {
-            if (_selectedFilterOptions.value.contains(option)) {
-                val index = _selectedFilterOptions.value.indexOf(option)
-                _selectedFilterOptions.value =
-                    _selectedFilterOptions.value.toMutableList().apply {
-                        removeAt(index)
-                    }
-            } else {
-                _selectedFilterOptions.value =
-                    _selectedFilterOptions.value.toMutableList().apply {
-                        add(option)
-                    }
+            _selectedFilterOptions.update { selected ->
+                if (option in selected) selected - option else selected + option
             }
-
-            updateFilterState(option)
-        }
-
-        private fun updateFilterState(option: SessionsFilterOption) {
-            when (option.type) {
-                SessionsFilterCategory.Level -> {
-                    val newValue =
-                        _filterState.value.levels.toMutableList().apply {
-                            val index = this.indexOf(option.value)
-                            if (index < 0) {
-                                add(option.value)
-                            } else {
-                                removeAt(index)
-                            }
-                        }.toList()
-                    _filterState.update {
-                        it.copy(
-                            levels = newValue,
-                        )
-                    }
-                }
-
-                SessionsFilterCategory.Topic -> {
-                    val newValue =
-                        _filterState.value.topics.toMutableList().apply {
-                            val index = this.indexOf(option.value)
-                            if (index < 0) {
-                                add(option.value)
-                            } else {
-                                removeAt(index)
-                            }
-                        }.toList()
-                    _filterState.update {
-                        it.copy(
-                            topics = newValue,
-                        )
-                    }
-                }
-
-                SessionsFilterCategory.Room -> {
-                    val newValue =
-                        _filterState.value.rooms.toMutableList().apply {
-                            val index = this.indexOf(option.value)
-                            if (index < 0) {
-                                add(option.value)
-                            } else {
-                                removeAt(index)
-                            }
-                        }.toList()
-                    _filterState.update {
-                        it.copy(
-                            rooms = newValue,
-                        )
-                    }
-                }
-
-                SessionsFilterCategory.SessionType -> {
-                    val newValue =
-                        _filterState.value.sessionTypes.toMutableList().apply {
-                            val index = this.indexOf(option.value)
-                            if (index < 0) {
-                                add(option.value)
-                            } else {
-                                removeAt(index)
-                            }
-                        }.toList()
-                    _filterState.update {
-                        it.copy(
-                            sessionTypes = newValue,
-                        )
-                    }
-                }
-            }
+            // Per-category add/remove now lives on the state class, which replaces four
+            // near-identical 20-line branches (one of which toggled `topics`, a facet
+            // nothing could ever read).
+            _filterState.update { it.toggle(option) }
         }
 
         fun clearSelectedFilterList() {

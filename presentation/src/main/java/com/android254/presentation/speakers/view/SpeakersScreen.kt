@@ -139,7 +139,7 @@ private fun SpeakersScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        items(items = uiState.speakers) { speaker ->
+                        items(items = uiState.speakers, key = { it.name }) { speaker ->
                             SpeakerComponent(
                                 speaker = speaker,
                                 onClick = {

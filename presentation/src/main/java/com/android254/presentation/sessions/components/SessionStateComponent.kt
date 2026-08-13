@@ -51,6 +51,7 @@ import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiDCKE22Theme
 import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiSubTitle
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -132,6 +133,11 @@ fun SessionListComponent(
 ) {
     val listState = rememberLazyListState()
 
+    // Built here rather than inside the LazyListScope below: the accent colour comes from
+    // a composable, and LazyListScope is not a composable context.
+    val verticalStepItems =
+        sessions.map { session -> session.verticalStep(venueAccentColor(session.venue)) }
+
     LaunchedEffect(sessions) {
         val index = sessions.indexOfFirst { it.sessionStatus == SessionStatus.Ongoing }
         if (index != -1) {
@@ -160,10 +166,7 @@ fun SessionListComponent(
             if (isSessionLayoutList) {
                 verticalSteps(
                     spacing = 16.dp,
-                    items =
-                        sessions.map { session ->
-                            session.verticalStep
-                        },
+                    items = verticalStepItems,
                 ) { session ->
                     SessionsCard(
                         session = session,

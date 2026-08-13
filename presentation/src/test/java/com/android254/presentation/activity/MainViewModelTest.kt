@@ -17,9 +17,11 @@ package com.android254.presentation.activity
 
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.work.SyncDataWorkManager
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -43,12 +45,19 @@ import org.junit.Test
 class MainViewModelTest {
     private val sessionsRepo = mockk<SessionsRepo>()
     private val clock = mockk<Clock>()
+    private val remoteFeatureToggle = mockk<RemoteFeatureToggle>(relaxed = true)
+    private val syncDataWorkManager = mockk<SyncDataWorkManager>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { clock.now() } returns Instant.fromEpochMilliseconds(0)
+        // The ViewModel now decides when to drop the splash screen by reading cached
+        // sessions, and kicks off config fetch plus sync, rather than MainActivity doing
+        // it inline. Both need stubbing for the init block to complete.
+        coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
+        coEvery { remoteFeatureToggle.syncNowIfEmpty() } returns false
     }
 
     @After
@@ -66,7 +75,7 @@ class MainViewModelTest {
             coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-            val viewModel = MainViewModel(sessionsRepo, clock)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -91,7 +100,7 @@ class MainViewModelTest {
                 )
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
 
-            val viewModel = MainViewModel(sessionsRepo, clock)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()

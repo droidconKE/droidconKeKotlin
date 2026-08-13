@@ -43,12 +43,16 @@ internal fun Project.configureKotlinAndroid(
         compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
 
         defaultConfig {
-            minSdk = 24
+            minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
         }
 
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
+            // Required: production code uses java.time (API 26+) while minSdk is 24.
+            // Without this, SessionMapper.fromString() throws NoClassDefFoundError on
+            // API 24-25 during the first session sync, which runs at launch.
+            isCoreLibraryDesugaringEnabled = true
         }
 
         kotlinOptions {
@@ -71,6 +75,9 @@ internal fun Project.configureKotlinAndroid(
     }
 
     dependencies {
+        // Backports java.time (and other API 26+ library classes) to minSdk 24.
+        add("coreLibraryDesugaring", libs.findLibrary("desugar-jdk-libs").get())
+
         add("implementation", libs.findLibrary("android.coreKtx").get())
 
         add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())

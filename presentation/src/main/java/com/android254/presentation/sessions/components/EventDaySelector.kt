@@ -39,7 +39,7 @@ fun EventDaySelector(
     eventDates: List<EventDate>,
 ) {
     LazyRow {
-        items(eventDates) { eventDay ->
+        items(eventDates, key = { it.value }) { eventDay ->
             EventDaySelectorButton(
                 title = ordinal(eventDay.value.toInt()),
                 subtitle = "Day ${eventDay.day}",

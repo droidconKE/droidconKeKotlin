@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.sessions.components
 
-import android.content.Context
-import android.content.res.Resources
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,15 +32,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
@@ -52,86 +49,21 @@ import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.presentation.R
 
-private fun loadFilters(context: Context): List<SessionsFilterOption> {
-    val resources: Resources = context.resources
-    return listOf(
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_keynote),
-            value = "keynote",
-        ),
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_codelab),
-            value = "codelab",
-        ),
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_session),
-            value = "Session",
-        ),
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_workshop),
-            value = "Workshop",
-        ),
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_lightning_talk),
-            value = "Lightning talk",
-        ),
-        SessionsFilterOption(
-            type = SessionsFilterCategory.SessionType,
-            label = resources.getString(R.string.session_filter_label_panel_discussion),
-            value = "Panel discussion",
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_room_a),
-            value = "Room A",
-            type = SessionsFilterCategory.Room,
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_room_b),
-            value = "Room B",
-            type = SessionsFilterCategory.Room,
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_room_c),
-            value = "Room C",
-            type = SessionsFilterCategory.Room,
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_beginner),
-            value = "Introductory and overview",
-            type = SessionsFilterCategory.Level,
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_intermediate),
-            value = "Intermediate",
-            type = SessionsFilterCategory.Level,
-        ),
-        SessionsFilterOption(
-            label = resources.getString(R.string.session_filter_label_advanced),
-            value = "Advanced",
-            type = SessionsFilterCategory.Level,
-        ),
-    )
-}
-
 @Composable
 fun SessionsFilterPanel(
     onDismiss: () -> Unit,
+    selectableFilters: List<SessionsFilterOption>,
     currentSelections: List<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     clearSelectedFilterList: () -> Unit,
 ) {
-    val context = LocalContext.current
-
-    val selectableFilters = loadFilters(context)
-
+    // Options are derived from the loaded sessions by SessionsViewModel and passed in.
+    // They used to be hardcoded here, which is how the room filter came to offer
+    // "Room A" at a venue whose rooms are named "Opal" and "Sapphire" — selecting one
+    // matched nothing and emptied the list.
     val groupedFilters =
-        selectableFilters.groupBy {
-            it.type
+        remember(selectableFilters) {
+            selectableFilters.groupBy { it.type }
         }
     Column(
         modifier =
@@ -191,7 +123,8 @@ fun SessionsFilterPanel(
                         .fillMaxWidth(),
                 ) {
                     ChaiSubTitle(
-                        titleText = filter.key.name,
+                        // Localised heading, rather than the enum constant's name.
+                        titleText = stringResource(id = filter.key.resId),
                         titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
                     )
                     Spacer(modifier = Modifier.height(12.dp))

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -37,6 +38,10 @@ fun HomeSpeakersSection(
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
+    // `speakers.take(8)` inline in the items() call allocated a new list on every
+    // recomposition, giving the lambda a new identity each time and defeating skipping.
+    val featuredSpeakers = remember(speakers) { speakers.take(MAX_FEATURED_SPEAKERS) }
+
     Column {
         HomeSectionHeaderComponent(
             sectionLabel = stringResource(id = R.string.speakers_label),
@@ -50,7 +55,7 @@ fun HomeSpeakersSection(
                     .padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(speakers.take(8)) { speaker ->
+            items(featuredSpeakers, key = { it.name }) { speaker ->
                 HomeSpeakerComponent(speaker = speaker, onClick = {
                     navigateToSpeaker(speaker.name)
                 })
@@ -66,3 +71,6 @@ fun HomeSpeakersSectionPreview() {
         HomeSpeakersSection(speakers = speakersDummyData)
     }
 }
+
+/** The home screen shows a preview row; the full list lives on the speakers screen. */
+private const val MAX_FEATURED_SPEAKERS = 8

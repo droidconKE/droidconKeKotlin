@@ -152,7 +152,8 @@ private fun FeedScreen(
                     LazyColumn(
                         modifier = Modifier.testTag("feeds_lazy_column"),
                     ) {
-                        items(feedUIState.feeds) { feedPresentationModel ->
+                        // FeedUI has no id; url is the stable per-post identifier.
+                        items(feedUIState.feeds, key = { it.url }) { feedPresentationModel ->
                             FeedComponent(
                                 modifier = Modifier.fillMaxWidth(),
                                 feedPresentationModel,

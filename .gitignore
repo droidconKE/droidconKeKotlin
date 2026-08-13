@@ -26,3 +26,13 @@ build-logic/convention/build
 /shared/datasource/build
 shared/domain/build
 .kotlin
+
+# Credentials must never be committed. `api_key.txt` was tracked at the repo root and
+# normalised the habit; the file itself held a stale non-secret string.
+*api_key*
+*.jks
+!keystore/dckedebug.keystore
+
+# Build output that was previously committed.
+fastlane/report.xml
+fastlane/Preview.html

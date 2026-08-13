@@ -16,6 +16,7 @@
 
 import com.android.build.gradle.LibraryExtension
 import com.android254.configureKotlinAndroid
+import com.android254.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -31,7 +32,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 34
+                // Was hardcoded to 34 while the app shipped 36, so library
+                // instrumentation tests ran under different platform behaviour than
+                // the app. Both plugins now read the same catalog entry.
+                defaultConfig.targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
 
                 testOptions {
                     unitTests {

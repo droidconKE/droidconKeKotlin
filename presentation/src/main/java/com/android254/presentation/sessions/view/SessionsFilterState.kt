@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,60 @@
  */
 package com.android254.presentation.sessions.view
 
+import com.android254.domain.models.Session
+import com.android254.presentation.models.SessionsFilterOption
+import com.android254.presentation.sessions.utils.SessionsFilterCategory
+
+/**
+ * The active session filters.
+ *
+ * Comparisons are case-insensitive throughout. The filter values previously came from
+ * hardcoded strings in the UI ("keynote" lower case, room names that the venue has never
+ * used), while the values they were compared against come from the API ("Keynote",
+ * "Opal"). The options are now derived from the session data instead, but the
+ * case-insensitivity stays as a second line of defence.
+ */
 data class SessionsFilterState(
-    val levels: List<String> = listOf(),
-    val topics: List<String> = listOf(),
-    val rooms: List<String> = listOf(),
-    val sessionTypes: List<String> = listOf(),
+    val levels: List<String> = emptyList(),
+    val rooms: List<String> = emptyList(),
+    val sessionTypes: List<String> = emptyList(),
     val isBookmarked: Boolean = false,
-)
+) {
+    val isActive: Boolean
+        get() = levels.isNotEmpty() || rooms.isNotEmpty() || sessionTypes.isNotEmpty() || isBookmarked
+
+    /** A session matches when it satisfies every non-empty facet. */
+    fun matches(session: Session): Boolean =
+        levels.matchesOrEmpty(session.sessionLevel) &&
+            sessionTypes.matchesOrEmpty(session.sessionFormat) &&
+            // A multi-room session matches a filter for any one of its rooms.
+            rooms.matchesAnyOrEmpty(session.roomList) &&
+            (!isBookmarked || session.isBookmarked)
+
+    /** Returns this state with [option] toggled on or off. */
+    fun toggle(option: SessionsFilterOption): SessionsFilterState =
+        when (option.type) {
+            SessionsFilterCategory.Level -> copy(levels = levels.toggle(option.value))
+            SessionsFilterCategory.Room -> copy(rooms = rooms.toggle(option.value))
+            SessionsFilterCategory.SessionType -> copy(sessionTypes = sessionTypes.toggle(option.value))
+        }
+
+    private fun List<String>.toggle(value: String): List<String> =
+        if (any { it.equals(value, ignoreCase = true) }) {
+            filterNot { it.equals(value, ignoreCase = true) }
+        } else {
+            this + value
+        }
+
+    private fun List<String>.matchesOrEmpty(value: String): Boolean =
+        isEmpty() || any { it.equals(value.trim(), ignoreCase = true) }
+
+    private fun List<String>.matchesAnyOrEmpty(values: List<String>): Boolean =
+        isEmpty() || values.any { value -> any { it.equals(value, ignoreCase = true) } }
+
+    companion object {
+        /** Convenience for tests: a state with only [option] applied. */
+        fun from(option: SessionsFilterOption): SessionsFilterState =
+            SessionsFilterState().toggle(option)
+    }
+}

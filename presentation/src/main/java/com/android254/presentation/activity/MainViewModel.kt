@@ -18,17 +18,25 @@ package com.android254.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.Clock
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,12 +45,44 @@ class MainViewModel
     constructor(
         private val sessionsRepo: SessionsRepo,
         private val clock: Clock,
+        private val remoteFeatureToggle: RemoteFeatureToggle,
+        private val syncDataWorkManager: SyncDataWorkManager,
     ) : ViewModel() {
+        private val _isInitialising = MutableStateFlow(true)
+
+        /**
+         * True while the splash screen should stay up.
+         *
+         * This used to be a plain local `var` in [MainActivity], flipped from a coroutine
+         * that first awaited a Firebase Remote Config fetch. That made the first frame
+         * wait on the network: on a bad connection the splash screen held for the full
+         * Remote Config timeout, and the read/write pair was unsynchronised.
+         *
+         * Now it waits only on locally cached data, with a hard ceiling. Config fetch and
+         * sync are fire-and-forget below.
+         */
+        val isInitialising: StateFlow<Boolean> = _isInitialising.asStateFlow()
+
+        init {
+            viewModelScope.launch {
+                withTimeoutOrNull(INITIALISATION_TIMEOUT_MS) {
+                    sessionsRepo.fetchSessions().first()
+                }
+                _isInitialising.value = false
+            }
+
+            viewModelScope.launch {
+                runCatching { remoteFeatureToggle.syncNowIfEmpty() }
+                    .onSuccess { shouldSync -> if (shouldSync) syncDataWorkManager.startSync() }
+                    .onFailure { Timber.w(it, "Feature toggle fetch failed; using cached config") }
+            }
+        }
+
         private val ticker =
             flow {
                 while (true) {
                     emit(clock.now())
-                    delay(60000) // Refresh every minute
+                    delay(TICK_INTERVAL_MS) // Refresh relative session times every minute
                 }
             }
 
@@ -69,4 +109,13 @@ class MainViewModel
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = SessionUIState(),
             )
+
+        private companion object {
+            /**
+             * Past this the UI is shown with loading skeletons instead. An inert splash
+             * screen is worse than a populating one.
+             */
+            const val INITIALISATION_TIMEOUT_MS = 700L
+            const val TICK_INTERVAL_MS = 60_000L
+        }
     }

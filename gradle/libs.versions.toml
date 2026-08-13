@@ -1,6 +1,11 @@
 [versions]
 android-compile-sdk = "36"
 android-min-sdk = "24"
+# Single source of truth for both the application and library convention plugins.
+# These were previously hardcoded separately (36 in the app, 34 in libraries), which
+# meant library instrumentation tests ran under different platform behaviour than the
+# shipping app. Raising this to 37 is a separate change with its own testing pass.
+android-target-sdk = "36"
 androidx-activity = "1.10.1"
 androidx-lifecycle = "2.9.0"
 composecompiler = "1.5.15"
@@ -127,6 +132,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore"}
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 test-androidx-core = { module = "androidx.test:core-ktx", version.ref = "test_corektx"}

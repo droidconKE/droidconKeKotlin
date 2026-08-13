@@ -32,13 +32,26 @@ object DatabaseModule {
     @Singleton
     fun providesDatabase(
         @ApplicationContext context: Context,
+    ): Database = buildDatabase(context, DATABASE_NAME)
+
+    /**
+     * The production database configuration, shared with tests so they exercise the
+     * real thing rather than a lookalike.
+     *
+     * Deliberately no `fallbackToDestructiveMigration()`. That call meant any schema
+     * change shipped without a matching migration silently deleted every row —
+     * including the user's bookmarked sessions, which are their personal conference
+     * agenda. A missing migration must now fail loudly in a test instead.
+     */
+    internal fun buildDatabase(
+        context: Context,
+        name: String,
     ): Database =
-        Room.databaseBuilder(
-            context,
-            Database::class.java,
-            "dcke22-database",
-        )
-            .addMigrations(Database.MIGRATION_4_5)
-            .fallbackToDestructiveMigration()
+        Room.databaseBuilder(context, Database::class.java, name)
+            .addMigrations(*Database.ALL_MIGRATIONS)
             .build()
+
+    // Unchanged from the original: renaming it would orphan every installed user's
+    // data, which is the outcome this change exists to prevent.
+    internal const val DATABASE_NAME = "dcke22-database"
 }
