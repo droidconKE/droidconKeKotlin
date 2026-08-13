@@ -4,5 +4,4 @@ max_line_length=off
 ktlint_function_naming_ignore_when_annotated_with=Composable,Test
 ktlint_no-wildcard-imports = disabled
 ktlint_standard_package-name = disabled
-ktlint_standard_package-name = disabled
 

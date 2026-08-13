@@ -26,8 +26,11 @@ chucker = "4.1.0"
 androidxComposeBom = "2026.08.00"
 remote_config = "22.1.2"
 detekt = "1.23.8"
-klint = "12.3.0"
-spotless = "7.0.4"
+ktlint = "14.2.0"
+spotless = "8.9.0"
+jacoco = "0.8.15"
+composeLintChecks = "1.5.4"
+composeStabilityAnalyzer = "0.12.0"
 app_compat = "1.8.0"
 coreKtx = "1.19.0"
 hiltsecond = "1.4.0"
@@ -50,8 +53,8 @@ test_mockk = "1.14.11"
 firebase_bom = "34.17.0"
 firebase_common = "21.0.0"
 turbine = "1.2.1"
-toml_checker = "0.52.0"
-toml_updater = "1.0.0"
+toml_checker = "0.61.0"
+toml_updater = "1.1.1"
 kotlinStdlib = "2.4.10"
 kotlinTest = "2.4.10"
 runner = "1.7.0"
@@ -146,6 +149,10 @@ firebase-common = { module = "com.google.firebase:firebase-common" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
+# Android Lint rule packs. Consumed with `lintChecks(...)`, never `implementation`, so they
+# ship no code into the APK.
+compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "composeLintChecks" }
+
 app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 junit-androidx = { module = "androidx.test.ext:junit", version.ref = "junit"}
 junit-androidx-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit"}
@@ -186,7 +193,8 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "klint" }
+jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+compose-stability = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -70,11 +70,10 @@ dependencies {
 }
 
 kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("androidx.compose.material3.ExperimentalMaterial3Api")
-            }
-        }
+    compilerOptions {
+        // Set on compilerOptions rather than on each source set's languageSettings: under
+        // AGP's built-in Kotlin the source sets belong to AGP, and a languageSettings opt-in
+        // no longer reaches the compile tasks.
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }

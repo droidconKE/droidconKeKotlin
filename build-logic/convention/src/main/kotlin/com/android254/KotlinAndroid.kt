@@ -43,14 +43,20 @@ internal fun Project.configureKotlinAndroid(
         compileOptions.isCoreLibraryDesugaringEnabled = true
 
         configureManagedDevices(this)
+        configureLint(this)
     }
+
+    // Read once, at configuration time, rather than per compile task: `providers` keeps the
+    // value in the configuration cache, which the `by project` delegate did not.
+    val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
+        .map(String::toBoolean)
+        .orElse(false)
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            // Treat all Kotlin warnings as errors (disabled by default)
-            // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
-            val warningsAsErrors: String? by project
-            allWarningsAsErrors.set(warningsAsErrors.toBoolean())
+            // Off by default so a contributor's first build is not a wall of red.
+            // CI turns it on with -PwarningsAsErrors=true.
+            allWarningsAsErrors.set(warningsAsErrors)
 
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",

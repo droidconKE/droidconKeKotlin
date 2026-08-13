@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2026 DroidconKE
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+
+<!--
+  Shared Android Lint configuration for every module.
+
+  Applied from build-logic/.../Lint.kt. The build runs with warningsAsErrors = true, so
+  anything left at `warning` or `error` here fails the build. There is deliberately no
+  baseline file: a suppression belongs in this file, next to the reason for it, where a
+  reviewer sees it in the diff.
+-->
+<lint>
+
+    <!-- ===================================================================================
+         Slack Compose lint rules (com.slack.lint.compose:compose-lint-checks)
+         Applied to :chai and :presentation through the Compose convention plugin.
+         =================================================================================== -->
+
+    <!-- Correctness. These catch state that silently disagrees with itself. -->
+    <issue id="ComposeRememberMissing" severity="error" />
+    <issue id="ComposeMutableParameters" severity="error" />
+    <issue id="ComposeModifierReused" severity="error" />
+    <issue id="ComposeContentEmitterReturningValues" severity="error" />
+    <issue id="ComposeMultipleContentEmitters" severity="error" />
+    <issue id="ComposeViewModelForwarding" severity="error" />
+    <issue id="ComposeViewModelInjection" severity="error" />
+    <issue id="ComposeItemKeyHashCode" severity="error" />
+
+    <!-- Stability. Each of these is a recomposition the app pays for on every frame. -->
+    <issue id="ComposeUnstableCollections" severity="error" />
+    <issue id="ComposeUnstableReceiver" severity="error" />
+
+    <!-- API shape. Enforces the conventions AGENTS.md already asks reviewers to enforce. -->
+    <issue id="ComposeModifierMissing" severity="error" />
+    <issue id="ComposeModifierWithoutDefault" severity="error" />
+    <issue id="ComposeParameterOrder" severity="error" />
+    <issue id="ComposeNamingUppercase" severity="error" />
+    <issue id="ComposeNamingLowercase" severity="error" />
+    <issue id="ComposeComposableModifier" severity="error" />
+    <issue id="ComposeModifierComposed" severity="error" />
+    <issue id="ComposeRedundantComposable" severity="error" />
+    <issue id="ComposePreviewPublic" severity="error" />
+    <issue id="ComposePreviewNaming" severity="error" />
+
+    <!--
+      chai is the design system and Material 3 is the target. This is the rule that keeps a
+      stray androidx.compose.material import from re-entering the tree.
+    -->
+    <issue id="ComposeM2Api" severity="error" />
+
+    <!--
+      CompositionLocal is a legitimate tool for a design system: chai publishes its palette
+      and typography that way, which is exactly the case the rule cannot distinguish from
+      abuse. Kept as a warning in feature code, switched off inside chai/theme.
+    -->
+    <issue id="ComposeCompositionLocalUsage" severity="warning">
+        <ignore path="chai/src/main/java/com/droidconke/chai/**" />
+    </issue>
+
+    <!-- ===================================================================================
+         Platform checks
+         =================================================================================== -->
+
+    <!--
+      Gradle dependency freshness is not lint's job here. `./gradlew dependencyUpdates`
+      reports it on demand and Dependabot opens the PRs; leaving these on means every
+      module's lint run fails the day a transitive dependency ships a patch release.
+    -->
+    <issue id="GradleDependency" severity="informational" />
+    <issue id="AndroidGradlePluginVersion" severity="informational" />
+    <issue id="NewerVersionAvailable" severity="informational" />
+
+    <!--
+      The app ships one flavour to one store listing, and the strings are translated by the
+      organisers rather than in this repo.
+    -->
+    <issue id="MissingTranslation" severity="informational" />
+    <issue id="ExtraTranslation" severity="informational" />
+
+</lint>
