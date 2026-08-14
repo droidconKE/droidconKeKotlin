@@ -36,16 +36,18 @@ private val FEED_TIMESTAMP_FORMAT: DateTimeFormatter =
 fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String =
     try {
         val postedAt =
-            LocalDateTime.parse(this, FEED_TIMESTAMP_FORMAT)
+            LocalDateTime
+                .parse(this, FEED_TIMESTAMP_FORMAT)
                 .atZone(ZoneId.systemDefault())
                 .toInstant()
                 .toEpochMilli()
 
-        DateUtils.getRelativeTimeSpanString(
-            postedAt,
-            nowMillis,
-            DateUtils.DAY_IN_MILLIS,
-        ).toString()
+        DateUtils
+            .getRelativeTimeSpanString(
+                postedAt,
+                nowMillis,
+                DateUtils.DAY_IN_MILLIS,
+            ).toString()
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable feed timestamp: %s", this)
         this

@@ -26,20 +26,22 @@ import javax.inject.Inject
 
 class FeedApi
     @Inject
-    constructor(private val client: HttpClient) {
+    constructor(
+        private val client: HttpClient,
+    ) {
         suspend fun fetchFeed(
             page: Int = 1,
             size: Int = 100,
-        ) =
-            dataResultSafeApiCall {
-                val response: PaginatedResponse<List<FeedDTO>> =
-                    client.get("${provideEventBaseUrl()}/feeds") {
+        ) = dataResultSafeApiCall {
+            val response: PaginatedResponse<List<FeedDTO>> =
+                client
+                    .get("${provideEventBaseUrl()}/feeds") {
                         url {
                             parameters.append("page", page.toString())
                             parameters.append("per_page", size.toString())
                         }
                     }.body()
 
-                return@dataResultSafeApiCall response.data
-            }
+            return@dataResultSafeApiCall response.data
+        }
     }

@@ -75,8 +75,7 @@ fun FeedbackButton(
                 .clip(RoundedCornerShape(10.dp))
                 .background(
                     color = ChaiTeal.copy(alpha = 0.21f),
-                )
-                .clickable(onClick = onButtonClick)
+                ).clickable(onClick = onButtonClick)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,

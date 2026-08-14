@@ -32,7 +32,12 @@ import com.droidconke.chai.chaiColorsPalette
 fun venueAccentColor(venue: String): Color {
     val palette = MaterialTheme.chaiColorsPalette
     // A session can span rooms; the API joins them with a comma.
-    val primaryRoom = venue.split(',').firstOrNull()?.trim().orEmpty()
+    val primaryRoom =
+        venue
+            .split(',')
+            .firstOrNull()
+            ?.trim()
+            .orEmpty()
 
     return when {
         primaryRoom.equals("Opal", ignoreCase = true) -> palette.eventDaySelectorActiveSurfaceColor

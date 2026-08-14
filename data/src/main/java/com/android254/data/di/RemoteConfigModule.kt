@@ -31,8 +31,7 @@ import javax.inject.Singleton
 object RemoteConfigModule {
     @Provides
     @Singleton
-    fun provideRemoteFeatureToggle(): RemoteFeatureToggle =
-        RemoteFeatureToggle(Firebase.remoteConfig)
+    fun provideRemoteFeatureToggle(): RemoteFeatureToggle = RemoteFeatureToggle(Firebase.remoteConfig)
 
     @Provides
     @Singleton

@@ -42,8 +42,8 @@ object DatastoreModule {
     @Provides
     fun providePreferencesDataStore(
         @ApplicationContext appContext: Context,
-    ): DataStore<Preferences> {
-        return PreferenceDataStoreFactory.create(
+    ): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
             corruptionHandler =
                 ReplaceFileCorruptionHandler(
                     produceNewData = { emptyPreferences() },
@@ -52,5 +52,4 @@ object DatastoreModule {
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
             produceFile = { appContext.preferencesDataStoreFile(DCKE22_PREFERENCES) },
         )
-    }
 }

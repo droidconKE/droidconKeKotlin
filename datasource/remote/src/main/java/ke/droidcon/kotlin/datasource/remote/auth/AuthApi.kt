@@ -33,9 +33,10 @@ class AuthApi
     ) {
         suspend fun googleLogin(token: GoogleToken): AccessTokenDTO =
             safeApiCall {
-                return@safeApiCall client.post("${provideBaseUrl()}/social_login/google") {
-                    setBody(token)
-                }.body()
+                return@safeApiCall client
+                    .post("${provideBaseUrl()}/social_login/google") {
+                        setBody(token)
+                    }.body()
             }
 
         suspend fun logout(): StatusDTO =

@@ -156,8 +156,7 @@ fun CurrentSessionComponent(
                                 .clip(RoundedCornerShape(6.dp))
                                 .background(
                                     venueAccent.copy(alpha = if (isNow) 0.15f * alpha else 0.15f),
-                                )
-                                .padding(horizontal = 10.dp, vertical = 4.dp),
+                                ).padding(horizontal = 10.dp, vertical = 4.dp),
                     ) {
                         ChaiBodySmallBold(
                             bodyText =

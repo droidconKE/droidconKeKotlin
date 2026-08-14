@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 plugins {
+    alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.library.compose)
     alias(libs.plugins.droidconke.android.library.jacoco)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.stability)
 }
 
 android {

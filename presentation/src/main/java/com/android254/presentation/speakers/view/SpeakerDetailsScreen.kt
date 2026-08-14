@@ -155,7 +155,8 @@ private fun SpeakerDetailsScreen(
 
                 AsyncImage(
                     model =
-                        ImageRequest.Builder(LocalContext.current)
+                        ImageRequest
+                            .Builder(LocalContext.current)
                             .data(speaker.imageUrl)
                             .build(),
                     placeholder = painterResource(R.drawable.smiling),
@@ -166,12 +167,10 @@ private fun SpeakerDetailsScreen(
                             .testTag("speaker_image")
                             .clip(
                                 shape = CircleShape,
-                            )
-                            .border(
+                            ).border(
                                 BorderStroke(2.dp, color = ChaiTeal),
                                 shape = CircleShape,
-                            )
-                            .size(105.dp)
+                            ).size(105.dp)
                             .constrainAs(speakerImage) {
                                 top.linkTo(topBar.bottom)
                                 bottom.linkTo(topBar.bottom)
@@ -248,8 +247,7 @@ private fun SpeakerDetailsScreen(
                             .height(1.dp)
                             .background(
                                 color = MaterialTheme.chaiColorsPalette.surfaces,
-                            )
-                            .constrainAs(divider) {
+                            ).constrainAs(divider) {
                                 top.linkTo(speakerDetails.bottom, 20.dp)
                             },
                 )
@@ -282,8 +280,7 @@ private fun SpeakerDetailsScreen(
                                             MaterialTheme.chaiColorsPalette.secondaryButtonColor,
                                         ),
                                     shape = RoundedCornerShape(10.dp),
-                                )
-                                .clip(RoundedCornerShape(10.dp)),
+                                ).clip(RoundedCornerShape(10.dp)),
                         onClick = {
                             if (speaker.twitterHandle != null) {
                                 uriHandler.openUri(speaker.twitterHandle.toString())
@@ -307,7 +304,8 @@ private fun SpeakerDetailsScreen(
                         ChaiBodyMedium(
                             bodyText =
                                 if (speaker.twitterHandle != null) {
-                                    speaker.twitterHandle.toString()
+                                    speaker.twitterHandle
+                                        .toString()
                                         .replace("https://twitter.com/", "")
                                 } else {
                                     ""

@@ -24,6 +24,5 @@ class RemoteFeedDataSourceImpl
     constructor(
         private val api: FeedApi,
     ) : RemoteFeedDataSource {
-        override suspend fun fetchFeed(): DataResult<List<FeedDTO>> =
-            api.fetchFeed()
+        override suspend fun fetchFeed(): DataResult<List<FeedDTO>> = api.fetchFeed()
     }

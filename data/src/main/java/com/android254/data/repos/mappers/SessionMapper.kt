@@ -49,8 +49,8 @@ fun SessionEntity.toDomainModel() =
         eventDay = this.startTimestamp.toEventDay(),
     )
 
-fun SessionDTO.toEntity(): SessionEntity {
-    return SessionEntity(
+fun SessionDTO.toEntity(): SessionEntity =
+    SessionEntity(
         id = 0,
         description = description.orEmpty(),
         title = title,
@@ -72,17 +72,17 @@ fun SessionDTO.toEntity(): SessionEntity {
         sessionImageUrl = sessionImage.toString(),
         endTimeStamp = fromString(endDateTime),
     )
-}
 
-fun fromString(offsetDateTime: String): Long {
-    return LocalDateTime.parse(offsetDateTime, API_DATE_TIME)
+fun fromString(offsetDateTime: String): Long =
+    LocalDateTime
+        .parse(offsetDateTime, API_DATE_TIME)
         .toInstant(CONFERENCE_OFFSET)
         .toEpochMilli()
-}
 
 /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
 private fun Long.toEventDay(): String =
-    java.time.Instant.ofEpochMilli(this)
+    java.time.Instant
+        .ofEpochMilli(this)
         .atZone(CONFERENCE_ZONE)
         .dayOfMonth
         .toString()

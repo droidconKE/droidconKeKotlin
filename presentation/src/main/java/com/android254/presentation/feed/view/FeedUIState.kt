@@ -22,7 +22,11 @@ sealed interface FeedUIState {
 
     object Empty : FeedUIState
 
-    data class Error(val message: String) : FeedUIState
+    data class Error(
+        val message: String,
+    ) : FeedUIState
 
-    data class Success(val feeds: List<FeedUI>) : FeedUIState
+    data class Success(
+        val feeds: List<FeedUI>,
+    ) : FeedUIState
 }

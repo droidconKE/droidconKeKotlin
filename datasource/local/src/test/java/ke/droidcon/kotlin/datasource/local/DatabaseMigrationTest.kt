@@ -138,7 +138,8 @@ class DatabaseMigrationTest {
     }
 
     private fun openRawDatabase() =
-        android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(databaseFile, null)
+        android.database.sqlite.SQLiteDatabase
+            .openOrCreateDatabase(databaseFile, null)
 
     private fun deleteDatabaseFiles() {
         listOf(databaseFile, File("${databaseFile.path}-wal"), File("${databaseFile.path}-shm"))

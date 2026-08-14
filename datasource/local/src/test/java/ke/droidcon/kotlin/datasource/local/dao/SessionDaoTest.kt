@@ -42,11 +42,11 @@ class SessionDaoTest {
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db =
-            Room.inMemoryDatabaseBuilder(
-                context,
-                Database::class.java,
-            )
-                .allowMainThreadQueries()
+            Room
+                .inMemoryDatabaseBuilder(
+                    context,
+                    Database::class.java,
+                ).allowMainThreadQueries()
                 .build()
         sessionDao = db.sessionDao()
     }
@@ -171,27 +171,26 @@ class SessionDaoTest {
         title: String,
         startTimestamp: Long,
         endTimestamp: Long,
-    ) =
-        SessionEntity(
-            id = id,
-            remote_id = id.toString(),
-            description = "Description",
-            sessionFormat = "Format",
-            sessionLevel = "Level",
-            slug = "slug-$id",
-            title = title,
-            endDateTime = "",
-            endTime = "",
-            isBookmarked = false,
-            isKeynote = false,
-            isServiceSession = false,
-            sessionImage = "",
-            startDateTime = "",
-            startTime = "",
-            rooms = "",
-            speakers = "",
-            startTimestamp = startTimestamp,
-            endTimeStamp = endTimestamp,
-            sessionImageUrl = "",
-        )
+    ) = SessionEntity(
+        id = id,
+        remote_id = id.toString(),
+        description = "Description",
+        sessionFormat = "Format",
+        sessionLevel = "Level",
+        slug = "slug-$id",
+        title = title,
+        endDateTime = "",
+        endTime = "",
+        isBookmarked = false,
+        isKeynote = false,
+        isServiceSession = false,
+        sessionImage = "",
+        startDateTime = "",
+        startTime = "",
+        rooms = "",
+        speakers = "",
+        startTimestamp = startTimestamp,
+        endTimeStamp = endTimestamp,
+        sessionImageUrl = "",
+    )
 }

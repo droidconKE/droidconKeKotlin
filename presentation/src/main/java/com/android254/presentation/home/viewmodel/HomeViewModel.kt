@@ -49,7 +49,8 @@ class HomeViewModel
                 )
 
         val viewState: StateFlow<HomeViewState> =
-            homeRepo.fetchHomeDetails()
+            homeRepo
+                .fetchHomeDetails()
                 .map {
                     HomeViewState(
                         isPosterVisible = it.isEventBannerEnable,
@@ -63,8 +64,7 @@ class HomeViewModel
                         organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
                         sessions = it.sessions.map { session -> session.toPresentationModel(clock.now()) },
                     )
-                }
-                .stateIn(
+                }.stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
                     initialValue = HomeViewState(),

@@ -27,8 +27,8 @@ import androidx.compose.animation.togetherWith
 
 const val DEFAULT_DURATION = 700
 
-fun zoomInTransition(): ContentTransform {
-    return ContentTransform(
+fun zoomInTransition(): ContentTransform =
+    ContentTransform(
         targetContentEnter =
             scaleIn(
                 initialScale = 0.8f,
@@ -40,10 +40,9 @@ fun zoomInTransition(): ContentTransform {
                 animationSpec = tween(durationMillis = DEFAULT_DURATION),
             ) + fadeOut(animationSpec = tween(DEFAULT_DURATION)),
     )
-}
 
-fun zoomOutTransition(): ContentTransform {
-    return ContentTransform(
+fun zoomOutTransition(): ContentTransform =
+    ContentTransform(
         targetContentEnter =
             scaleIn(
                 initialScale = 1.2f,
@@ -55,7 +54,6 @@ fun zoomOutTransition(): ContentTransform {
                 animationSpec = tween(durationMillis = DEFAULT_DURATION),
             ) + fadeOut(animationSpec = tween(DEFAULT_DURATION)),
     )
-}
 
 fun horizontalSlideIn(reverse: Boolean = false): ContentTransform =
     slideInHorizontally(

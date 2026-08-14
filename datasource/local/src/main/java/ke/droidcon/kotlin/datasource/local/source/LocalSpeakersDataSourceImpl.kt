@@ -31,16 +31,15 @@ class LocalSpeakersDataSourceImpl
         @LocalSourceIoDispatcher private val localSourceIoDispatcher: CoroutineDispatcher,
     ) : LocalSpeakersDataSource {
         override fun getCachedSpeakers(): Flow<List<SpeakerEntity>> =
-            speakerDao.fetchSpeakers()
+            speakerDao
+                .fetchSpeakers()
                 .flowOn(localSourceIoDispatcher)
 
-        override suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>) =
-            speakerDao.insert(items = speakers)
+        override suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>) = speakerDao.insert(items = speakers)
 
         override fun getCachedSpeakerByName(speakerName: String) = speakerDao.getSpeakerByName(speakerName).flowOn(localSourceIoDispatcher)
 
-        override fun fetchCachedSpeakerCount(): Flow<Int> =
-            speakerDao.fetchSpeakerCount().flowOn(localSourceIoDispatcher)
+        override fun fetchCachedSpeakerCount(): Flow<Int> = speakerDao.fetchSpeakerCount().flowOn(localSourceIoDispatcher)
 
         override suspend fun deleteAllCachedSpeakers() {
             withContext(localSourceIoDispatcher) {

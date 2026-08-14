@@ -35,41 +35,42 @@ class OrganizersManager
         private val localOrganizersDataSource: LocalOrganizersDataSource,
         private val remoteOrganizersDataSource: RemoteOrganizersDataSource,
     ) : OrganizersRepo {
-        override fun getOrganizers(): Flow<List<Organizer>> {
-            return localOrganizersDataSource.getOrganizers()
+        override fun getOrganizers(): Flow<List<Organizer>> =
+            localOrganizersDataSource
+                .getOrganizers()
                 .map { it.distinctBy { organizer -> organizer.name }.map { organizer -> organizer.toDomain() } }
-        }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer.sync(
-                remoteItemFetcher = {
-                    val individualOrganizersResponse = remoteOrganizersDataSource.getIndividualOrganizers()
-                    val companyOrganizersResponse = remoteOrganizersDataSource.getCompanyOrganizers()
+            synchronizer
+                .sync(
+                    remoteItemFetcher = {
+                        val individualOrganizersResponse = remoteOrganizersDataSource.getIndividualOrganizers()
+                        val companyOrganizersResponse = remoteOrganizersDataSource.getCompanyOrganizers()
 
-                    if (individualOrganizersResponse is DataResult.Success && companyOrganizersResponse is DataResult.Success) {
-                        individualOrganizersResponse.data.data + companyOrganizersResponse.data.data
-                    } else {
-                        val errorMessage =
-                            when {
-                                individualOrganizersResponse is DataResult.Error -> individualOrganizersResponse.message
-                                companyOrganizersResponse is DataResult.Error -> companyOrganizersResponse.message
-                                else -> "Sync Organizers failed"
-                            }
-                        val cause =
-                            (individualOrganizersResponse as? DataResult.Error)?.exc
-                                ?: (companyOrganizersResponse as? DataResult.Error)?.exc
-                        throw SyncException(errorMessage, cause)
-                    }
-                },
-                localIdFetcher = { localOrganizersDataSource.getNames() },
-                localItemUpserter = { remoteItems ->
-                    localOrganizersDataSource.insertOrganizers(
-                        organizers = remoteItems.map { it.toEntity() },
-                    )
-                },
-                localItemDeleter = { names ->
-                    localOrganizersDataSource.deleteByNames(names)
-                },
-                remoteToLocalIdSelector = { it.name ?: "" },
-            ).isSuccess
+                        if (individualOrganizersResponse is DataResult.Success && companyOrganizersResponse is DataResult.Success) {
+                            individualOrganizersResponse.data.data + companyOrganizersResponse.data.data
+                        } else {
+                            val errorMessage =
+                                when {
+                                    individualOrganizersResponse is DataResult.Error -> individualOrganizersResponse.message
+                                    companyOrganizersResponse is DataResult.Error -> companyOrganizersResponse.message
+                                    else -> "Sync Organizers failed"
+                                }
+                            val cause =
+                                (individualOrganizersResponse as? DataResult.Error)?.exc
+                                    ?: (companyOrganizersResponse as? DataResult.Error)?.exc
+                            throw SyncException(errorMessage, cause)
+                        }
+                    },
+                    localIdFetcher = { localOrganizersDataSource.getNames() },
+                    localItemUpserter = { remoteItems ->
+                        localOrganizersDataSource.insertOrganizers(
+                            organizers = remoteItems.map { it.toEntity() },
+                        )
+                    },
+                    localItemDeleter = { names ->
+                        localOrganizersDataSource.deleteByNames(names)
+                    },
+                    remoteToLocalIdSelector = { it.name ?: "" },
+                ).isSuccess
     }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 plugins {
+    alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(notation = libs.plugins.compose.compiler)
     alias(libs.plugins.droidconke.android.library.compose)
     alias(libs.plugins.droidconke.android.library.jacoco)
+    alias(libs.plugins.compose.stability)
 }
 
 android {
@@ -40,9 +42,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":chai"))
-    implementation(project(":datasource:remote"))
+    implementation(projects.domain)
+    implementation(projects.chai)
+    implementation(projects.datasource.remote)
 
     implementation(libs.android.appCompat)
     implementation(libs.android.material)
@@ -70,11 +72,7 @@ dependencies {
 }
 
 kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("androidx.compose.material3.ExperimentalMaterial3Api")
-            }
-        }
+    compilerOptions {
+        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }

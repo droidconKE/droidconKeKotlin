@@ -51,16 +51,17 @@ class SyncDataWorker
         private val organizersRepo: OrganizersRepo,
         private val feedRepo: FeedRepo,
         private val remoteFeatureToggle: RemoteFeatureToggle,
-    ) : CoroutineWorker(appContext, workerParameters), Synchronizer {
-        override suspend fun getForegroundInfo(): ForegroundInfo {
-            return ForegroundInfo(
+    ) : CoroutineWorker(appContext, workerParameters),
+        Synchronizer {
+        override suspend fun getForegroundInfo(): ForegroundInfo =
+            ForegroundInfo(
                 Random.nextInt(),
-                NotificationCompat.Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
+                NotificationCompat
+                    .Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
                     .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
                     .setContentTitle(appContext.getString(R.string.sync_notification_message))
                     .build(),
             )
-        }
 
         override suspend fun doWork(): Result =
             withContext(ioDispatcher) {

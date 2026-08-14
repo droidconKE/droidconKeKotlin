@@ -16,7 +16,6 @@
 package com.android254.presentation.sessionDetails.view.components
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,6 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.COutlinedButton
@@ -51,7 +51,7 @@ fun SpeakerTwitterHandle(
         remember {
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://www.twitter.com/${speaker.twitterHandle}"),
+                "https://www.twitter.com/${speaker.twitterHandle}".toUri(),
             )
         }
 

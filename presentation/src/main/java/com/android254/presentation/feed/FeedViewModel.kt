@@ -37,11 +37,11 @@ class FeedViewModel
         private val feedRepo: FeedRepo,
     ) : ViewModel() {
         val uiState =
-            feedRepo.fetchFeed()
+            feedRepo
+                .fetchFeed()
                 .map { feeds ->
                     FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
-                }
-                .onStart { FeedUIState.Loading }
+                }.onStart { FeedUIState.Loading }
                 .catch { FeedUIState.Error(message = "An unexpected error occurred") }
                 .stateIn(
                     scope = viewModelScope,

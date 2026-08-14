@@ -20,9 +20,13 @@ sealed interface ResultStatus {
 
     object Success : ResultStatus
 
-    data class Empty(val message: String) : ResultStatus
+    data class Empty(
+        val message: String,
+    ) : ResultStatus
 
-    data class Error(val message: String) : ResultStatus
+    data class Error(
+        val message: String,
+    ) : ResultStatus
 }
 
 val ResultStatus.isLoading: Boolean

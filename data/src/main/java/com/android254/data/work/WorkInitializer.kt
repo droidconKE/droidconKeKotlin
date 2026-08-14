@@ -30,13 +30,12 @@ object WorkInitializer {
             OneTimeWorkRequestBuilder<SyncDataWorker>()
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setConstraints(
-                    Constraints.Builder()
+                    Constraints
+                        .Builder()
                         .setRequiredNetworkType(
                             NetworkType.CONNECTED,
-                        )
-                        .build(),
-                )
-                .build()
+                        ).build(),
+                ).build()
         WorkManager.getInstance(context).apply {
             enqueueUniqueWork(
                 syncDataWorkerName,

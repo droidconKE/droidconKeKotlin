@@ -1,6 +1,6 @@
 ## Contributing
 
-- Find an issue in the [Issues Tab](https://github.com/droidconKE/droidconKE2023Android/issues) and
+- Find an issue in the [Issues Tab](https://github.com/droidconKE/droidconKeKotlin/issues) and
   assign it to yourself. Feel free to create one if it doesn't exist.
 - Fork the repository. This means that you will have a copy of the repository
   under `your-GitHub-username/repository-name`.

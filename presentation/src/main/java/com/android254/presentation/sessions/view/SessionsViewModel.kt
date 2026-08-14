@@ -117,7 +117,8 @@ class SessionsViewModel
             selectedEventDay: EventDate,
         ): List<SessionPresentationModel> {
             val now = clock.now()
-            return sessions.asSequence()
+            return sessions
+                .asSequence()
                 .filter(filterState::matches)
                 .distinctBy { it.remoteId }
                 .map { it.toPresentationModel(now) }

@@ -206,7 +206,7 @@ So the Keynote and Codelab filters return nothing. `"Session"`, `"Workshop"`, `"
 
 Same root cause as B1: **filter option values are hand-typed constants in a composable rather than derived from the data.** Fixing the strings fixes today's bug; deriving the options fixes the class of bug.
 
-#### B13 — `AuthManager`'s network-error branch is unreachable, and a test hides it
+#### B13 — withdrawn. The branch is reachable; the finding was wrong
 
 ```kotlin
 // data/.../repos/AuthManager.kt:46
@@ -219,9 +219,15 @@ Same root cause as B1: **filter option values are hand-typed constants in a comp
 }
 ```
 
-`ServerError` and `NetworkError` are thrown from exactly one place: `safeApiCall` in `datasource/remote/.../utils/SafeApiCall.kt`, which is `@Deprecated` and has **zero callers**. `AuthApi.googleLogin` doesn't go through it. So the `networkError = true` branch can never execute in production, and login failures never tell the UI that the problem was connectivity.
+This was filed on the premise that `safeApiCall` had no callers and `AuthApi.googleLogin` did not
+go through it. Both halves are false: `googleLogin` and `logout` are wrapped in `safeApiCall`, so
+`ServerError` and `NetworkError` do get thrown and the `networkError = true` branch is reachable.
+`AuthManagerTest` is testing real behaviour.
 
-The reason this survived: `AuthManagerTest.kt:71` constructs `NetworkError()` directly and stubs the API to throw it. The test passes against a path production cannot reach. **A green test asserting unreachable behaviour is worse than no test** — it actively prevents the bug being noticed.
+What is actually left here is smaller and is not a bug: `safeApiCall` is
+`@Deprecated("Use dataResultSafeApiCall")`, and its two callers have not moved. Migrate them, or
+drop the annotation — a deprecation nobody acts on is noise. Do **not** delete `safeApiCall`;
+earlier drafts of this plan and of §16.0 said to, and that would have broken login.
 
 #### B14 — Eight of ten lazy lists have no `key`
 
@@ -279,7 +285,7 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | **P0** | B2 destructive migration | Silently deletes the user's agenda. Latent, but unbounded damage when it fires. |
 | **P0** | B1 room filter | Fully exposed broken feature on a core screen. |
 | **P1** | B12 filter case · B6 state divergence · B7 splash race | User-visible, bounded, cheap. |
-| **P1** | B13 unreachable branch | Small fix; the test deletion is the real value. |
+| ~~P1~~ | ~~B13 unreachable branch~~ | Withdrawn — the branch is reachable. See §1.3. |
 | **P1** | B4 targetSdk drift | Blocks trustworthy instrumentation tests. |
 | **P2** | B14 lazy keys · B15 card colours · B5 `findActivity` | Quality and correctness-of-architecture; B5 blocks §10.2. |
 | **P2** | B3 no-op flag · B8 theme-blind text · B9/B16 date handling · B10 nav keys | Cleanup, or prerequisites for later phases. |
@@ -290,18 +296,8 @@ Findings are numbered in discovery order. This is the order to fix them in:
 | Item | Location | Replacement |
 | --- | --- | --- |
 | `GoogleSignIn` / GMS Auth API | `GoogleSignInHandler`, `AuthViewModel`, `AuthDialog`, `GoogleSignInButton` | Credential Manager + Google ID |
-| `window.statusBarColor` | `chai/Theme.kt` | `enableEdgeToEdge()` (no-op on API 35+) |
-| `packagingOptions {}` | `app`, `presentation`, `chai` | `packaging {}` |
-| `kotlinOptions {}` | root, convention plugins, 2 modules | `compilerOptions {}` (`KotlinJvmCompilerOptions`) |
-| `project.buildDir` | `AndroidCompose.kt` | `layout.buildDirectory` |
-| `detekt { config = files(…) }` | root `build.gradle.kts` | `config.setFrom(…)` |
-| `fallbackToDestructiveMigration()` | `DatabaseModule` | `fallbackToDestructiveMigration(dropAllTables = true)` — or better, real migrations |
-| `ExampleUnitTest.kt`, `ExampleInstrumentedTest.kt` | `app` | Delete. |
-| `safeApiCall` + `ServerError` + `NetworkError` | `datasource/remote/.../utils/SafeApiCall.kt` | `@Deprecated` with **zero callers**. Deleting it makes B13's unreachable branch obvious rather than subtle. |
-| `DateStringConverter` | `datasource/local/.../util/DateStringConverter.kt` | Declared, never referenced, not registered in `@TypeConverters` (only `InstantConverter` is). Dead. |
-| **The whole topics filter path** | `SessionsFilterCategory.Topic`, `SessionsFilterState.topics`, `SessionsViewModel.updateFilterState`'s `Topic` branch | **Unreachable dead code, not a bug.** `loadFilters()` emits zero `Topic` options and `SessionDTO` has no topic field, so nothing can ever set it. Either delete all three, or spec `topics` with the backend and build it end to end (§3.3). Do not leave it half-wired — that's how it got mistaken for a live bug in the first draft of this plan. |
 | `HomeBannerSection` | commented out in `HomeScreen` | Decide: ship or delete. |
-| `chai` drawables duplicated in `presentation` | 12 identical files | Single source in `chai`. |
+| `chai` drawables duplicated in `presentation` | 9 identical files remain | Single source in `chai`. |
 
 The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — pulled in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern. **Done:** `coil` and `navigation3` are separate bundles now, and they plus `activity-compose`, `constraintlayout-compose` and `lifecycle-runtime-compose` are declared in `presentation`.
 
@@ -330,31 +326,11 @@ The `compose` bundle is applied to **every** Compose module by `AndroidLibraryCo
 
 ### 1.6 Findings — build & developer experience
 
-**D1 — `repositories {}` in `allprojects`.** `settings.gradle.kts` has no `dependencyResolutionManagement`. The deprecated per-project pattern blocks Gradle **Isolated Projects** and complicates configuration cache. (§3.1)
-
-**D2 — No configuration cache, no build cache, no parallel.** `org.gradle.parallel` is commented out. `org.gradle.jvmargs=-Xmx2048m` is low for a 7-module Compose build with KSP. These are free wins measured in minutes per build. (§3.1)
-
-**D3 — Type-safe project accessors enabled but unused.** `enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")` is on; every module still writes `project(":domain")` instead of `projects.domain`.
-
-**D4 — Stale 2023 naming.** `rootProject.name = "DroidconKE2023"`, `app` namespace `ke.droidcon.kotlin` (correct) but application class `com.android254.droidcon.app.DroidconApp`, theme `Theme.DroidconKE2023`, DB named `dcke22-database`, design-system theme `ChaiTheme`, README says 2024, API event slug says `droidconke-2025-898`. Four different years in one codebase. This is a real contributor-onboarding tax — new contributors cannot tell which parts are current.
-
-**D5 — CI gaps.**
-- `branch.yml` only triggers on changes to `build-logic/**`, `build.gradle.kts`, `settings.gradle.kts`. **A PR that changes only Kotlin source runs no CI at all.** This is the single highest-value CI fix in the repo.
-- `actions/checkout@v3`, `setup-java@v3` — two majors behind.
-- No lint (`./gradlew lint`) in CI, despite a 28 KB `lint-baseline.xml`.
-- No dependency review, no APK-size diff, no screenshot diff.
-- `fastlane/report.xml` is committed build output.
-- Release workflow force-pushes straight to `track: production` with `status: completed` — no staged rollout, no internal track, no gate.
-
-**D6 — 28 KB lint baseline.** Never re-triaged. Whatever it hides is invisible.
-
-**D7 — Two Gradle wrappers, and real AGP 9 exposure.** `gradle/wrapper` pins 8.11.1; `build-logic/gradle/wrapper` pins 8.14.1. The second is stale and unused (included builds run under the root distribution) but it misleads contributors.
-
-Against the [JetBrains AGP 9 migration skill's](https://github.com/Kotlin/kotlin-agent-skills/tree/main/skills/kotlin-tooling-agp9-migration) compatibility tables, this repo is behind on five plugins (KSP, Hilt, Firebase Performance, Firebase Crashlytics, and Gradle itself), and **two of its static-analysis plugins — detekt 1.23.8 and ktlint-gradle 12.3.0 — require AGP 9 opt-out flags that disable AGP 9's two headline features.** There's also a direct conflict between the requested targetSdk 37 and AGP 9.0's API 36.1 cap.
-
-The good news: the two changes that usually make an AGP 9 migration painful are already absent. `Jacoco.kt` uses the new `androidComponents.onVariants` API rather than the removed `applicationVariants`/`libraryVariants`, and coverage uses `enableUnitTestCoverage` rather than the removed `testCoverageEnabled`. Nothing in the build is on the "broken, no workaround" list.
-
-Full assessment, the targetSdk decision, and sequencing in §3.8.
+**D5 — CI gaps.** CI on every PR, current action versions, and `./gradlew lint` all landed.
+What is still missing: a dependency-review job, an APK-size diff, and a screenshot diff — each
+blocked on something that does not exist yet (§10.2 for screenshots, a size-diff action for the
+other). The release workflow also force-pushes straight to `track: production` with
+`status: completed` — no internal track, no staged rollout, no gate. (§13.5)
 
 ### 1.7 Findings — security & hygiene
 
@@ -372,10 +348,6 @@ signingConfigs {
 ```
 
 A shared debug keystore committed to a public repo is a **deliberate and defensible choice** for an OSS project — it lets contributors install builds over each other and keeps Firebase debug SHA-1 registration stable. Keep it, but document *why* in the README so nobody "fixes" it, and make sure the *release* keystore is nowhere near the repo (it isn't — it comes from `secrets.PLAYSTORE_SIGNING_KEY`, which is correct).
-
-**S2 — `api_key.txt` is tracked, and is not an API key.** Root-level, in git, 15 bytes: the literal string `droidconKe-2020`. It is not a live credential — it reads like a stale keystore alias or password from the 2020 app, orphaned by commit `7975bfb` ("Refactor: Remove 2022 references"). No rotation needed.
-
-But it should not exist. A file named `api_key.txt` in a public repo trains every future contributor to think that's an acceptable place to put a key, and the next one might be real. **Delete the file, and add `*api_key*` and `*.keystore` (except the documented debug keystore) to `.gitignore`** so the pattern can't recur. No history purge required.
 
 **S3 — `app/google-services.json` is tracked.** Standard practice and not a secret (it contains public client identifiers), but it means **anyone can point their own build at the production Firebase project**. Once §6 lands, that Firebase project will be paying for Gemini API calls. Firebase **App Check** becomes mandatory before any AI feature ships. (§6.11)
 
@@ -442,282 +414,37 @@ Rule: **a feature module never depends on another feature module.** Cross-featur
 
 Nothing in Phases 1–10 is safe to build on top of the current build configuration and theme layer. This phase is unglamorous and entirely internal. It is also the phase that makes every subsequent phase cheaper.
 
-### 3.1 Gradle & build modernization
+### 3.1 Compose compiler configuration
 
-**`settings.gradle.kts`** — move repositories to `dependencyResolutionManagement`, unblocking Isolated Projects:
+Everything else in this section has landed: `dependencyResolutionManagement` with
+`FAIL_ON_PROJECT_REPOS`, the configuration cache, parallel execution, the 4 GB heap, type-safe
+project accessors, the shared `targetSdk`, desugaring, `compilerOptions`, and the split Compose
+bundle.
 
-```kotlin
-@file:Suppress("UnstableApiUsage")
-
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-
-pluginManagement {
-    includeBuild("build-logic")
-    repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "droidconKE"   // was DroidconKE2023 — see §3.6
-
-include(":app")
-include(":benchmark")
-include(":baselineprofile")
-include(":chai")
-include(":data")
-include(":domain")
-include(":presentation")
-include(":datasource:local")
-include(":datasource:remote")
-```
-
-`FAIL_ON_PROJECT_REPOS` will immediately break the `repositories {}` block in root `build.gradle.kts` — that's the point. Delete it.
-
-**`gradle.properties`** — the free performance wins:
-
-```properties
-# 2 GB is not enough for a 7-module Compose + KSP build.
-org.gradle.jvmargs=-Xmx6g -XX:+UseParallelGC -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8
-org.gradle.parallel=true
-org.gradle.caching=true
-org.gradle.configuration-cache=true
-org.gradle.configuration-cache.parallel=true
-
-# Kotlin
-kotlin.code.style=official
-kotlin.incremental=true
-kotlin.daemon.jvmargs=-Xmx4g
-
-# AndroidX / R8
-android.useAndroidX=true
-android.nonTransitiveRClass=true
-android.nonFinalResIds=false
-android.enableR8.fullMode=true
-
-# Only generate the BuildConfig fields we actually use
-android.defaults.buildfeatures.buildconfig=false
-android.defaults.buildfeatures.aidl=false
-android.defaults.buildfeatures.renderscript=false
-android.defaults.buildfeatures.shaders=false
-```
-
-> Enabling the configuration cache will surface every configuration-time file read and `project` reference inside task actions. Expect one focused PR of fallout — mostly in `Jacoco.kt` and `AndroidCompose.kt`, both of which read `project.buildDir` at configuration time.
-
-**Root `build.gradle.kts`** — remove `allprojects`, fix the deprecated `detekt` config, drop the per-project `kotlinOptions` block (it belongs in the convention plugin):
+What remains is the Compose compiler plugin's own extension. `AndroidCompose.kt` still drives
+metrics through `freeCompilerArgs` strings, which is the pre-plugin way of doing it and gives no
+stability configuration at all:
 
 ```kotlin
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.android.test) apply false
-    alias(libs.plugins.baselineprofile) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.kotlin.android) apply false
-    alias(libs.plugins.kotlin.serialization) apply false
-    alias(libs.plugins.ksp) apply false
-    alias(libs.plugins.hilt.plugin) apply false
-    alias(libs.plugins.gms) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.firebase.perf) apply false
-    alias(libs.plugins.roborazzi) apply false
+extensions.configure<ComposeCompilerGradlePluginExtension> {
+    // Compose compiler metrics on demand: -PenableComposeCompilerMetrics=true
+    fun Provider<String>.onlyIfTrue() = flatMap { provider { it.takeIf(String::toBoolean) } }
+    fun Provider<*>.relativeToRootProject(dir: String) = map {
+        isolated.rootProject.projectDirectory.dir("build").dir(projectDir.toRelativeString(rootDir))
+    }.map { it.dir(dir) }
 
-    alias(libs.plugins.jlleitschuh)
-    alias(libs.plugins.detekt)
-    alias(libs.plugins.spotless)
-    alias(libs.plugins.toml.checker)
-    alias(libs.plugins.toml.updater)
-}
+    project.providers.gradleProperty("enableComposeCompilerMetrics").onlyIfTrue()
+        .relativeToRootProject("compose-metrics")
+        .let(metricsDestination::set)
 
-subprojects {
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-    apply(plugin = "com.diffplug.spotless")
+    project.providers.gradleProperty("enableComposeCompilerReports").onlyIfTrue()
+        .relativeToRootProject("compose-reports")
+        .let(reportsDestination::set)
 
-    extensions.configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        android.set(true)
-        verbose.set(true)
-        filter { exclude { it.file.path.contains("generated/") } }
-    }
-
-    extensions.configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        config.setFrom(rootProject.file("detekt.yml"))   // was: config = files(...)
-        parallel = true
-        buildUponDefaultConfig = true
-    }
-
-    extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension> {
-        kotlin {
-            target("**/*.kt")
-            targetExclude("**/build/**/*.kt", "${rootProject.rootDir}/build-logic/**/*.kt")
-            licenseHeaderFile(rootProject.file("spotless/copyright.kt"), "^(package|object|import|interface)")
-        }
-        format("kts") {
-            target("**/*.kts")
-            targetExclude("**/build/**/*.kts")
-            licenseHeaderFile(rootProject.file("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
-        }
-    }
-}
-```
-
-**`build-logic/.../com/android254/KotlinAndroid.kt`** — migrate off deprecated `kotlinOptions`, unify `targetSdk`, add desugaring, and stop leaking blanket opt-ins:
-
-```kotlin
-package com.android254
-
-import com.android.build.api.dsl.CommonExtension
-import org.gradle.api.JavaVersion
-import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-internal fun Project.configureKotlinAndroid(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
-    commonExtension.apply {
-        compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
-
-        defaultConfig {
-            minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
-        }
-
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-            // java.time on API 24 — kills the SimpleDateFormat problem in B9
-            isCoreLibraryDesugaringEnabled = true
-        }
-    }
-
-    tasks.withType<KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-
-            val warningsAsErrors = providers.gradleProperty("warningsAsErrors").orNull.toBoolean()
-            allWarningsAsErrors.set(warningsAsErrors)
-
-            // Opt-ins are per-module now (see :presentation), not blanket-applied.
-            // `-opt-in=kotlin.Experimental` was removed in Kotlin 1.9; keeping it is a no-op at best.
-            freeCompilerArgs.addAll(
-                "-Xconsistent-data-class-copy-visibility",
-                "-Xannotation-default-target=param-property",
-            )
-        }
-    }
-
-    dependencies {
-        add("coreLibraryDesugaring", libs.findLibrary("desugar-jdk-libs").get())
-        add("implementation", libs.findLibrary("android.coreKtx").get())
-        add("testImplementation", libs.findBundle("test").get())
-    }
-}
-```
-
-Note what left: `androidTestImplementation` of espresso/junit is no longer force-added to every module. Modules that need instrumentation tests declare it. Espresso was being added to `:domain`, a pure Kotlin module.
-
-**`AndroidLibraryConventionPlugin`** — fix B4:
-
-```kotlin
-extensions.configure<LibraryExtension> {
-    configureKotlinAndroid(this)
-    // Was 34 while the app shipped 36 — instrumented tests ran under different platform behaviour.
-    defaultConfig.targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            isReturnDefaultValues = true
-        }
-    }
-
-    // Only :app and modules that genuinely read BuildConfig need it.
-    buildFeatures { buildConfig = false }
-
-    packaging {   // was packagingOptions
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            excludes += "/META-INF/LICENSE*"
-            excludes += "/META-INF/versions/9/previous-compilation-data.bin"
-        }
-    }
-}
-```
-
-Add `android-target-sdk = "37"` to `[versions]` and reference it from both application and library plugins so they can never drift again. `AndroidApplicationConventionPlugin` reads the same ref:
-
-```kotlin
-extensions.configure<ApplicationExtension> {
-    configureKotlinAndroid(this)
-    // Was a hardcoded 36 here and a hardcoded 34 in the library plugin (B4).
-    defaultConfig.targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
-    buildFeatures { buildConfig = true }
-}
-```
-
-As noted in B4: land the shared-ref refactor at the current value first, then bump the value to 37 in a separate PR so the platform-behaviour review isn't mixed in with a build refactor.
-
-**`build-logic/.../com/android254/AndroidCompose.kt`** — remove the phantom compose-compiler dependency, fix `buildDir`, split the bundle:
-
-```kotlin
-internal fun Project.configureAndroidCompose(
-    commonExtension: CommonExtension<*, *, *, *, *, *>,
-) {
-    commonExtension.apply {
-        buildFeatures { compose = true }
-
-        dependencies {
-            val bom = libs.findLibrary("androidx-compose-bom").get()
-            add("implementation", platform(bom))
-            add("androidTestImplementation", platform(bom))
-
-            // Minimal core set. Feature-specific extras (navigation3, coil, lottie,
-            // constraintlayout) are declared per-module — see §1.4.
-            add("implementation", libs.findBundle("compose-core").get())
-            add("debugImplementation", libs.findLibrary("compose-ui-tooling").get())
-            add("debugImplementation", libs.findLibrary("compose-ui-test-manifest").get())
-            add("implementation", libs.findLibrary("compose-ui-tooling-preview").get())
-            add("testImplementation", libs.findLibrary("compose-ui-test-junit").get())
-        }
-    }
-
-    extensions.configure<ComposeCompilerGradlePluginExtension> {
-        // Compose compiler metrics on demand: -PenableComposeCompilerMetrics=true
-        fun Provider<String>.onlyIfTrue() = flatMap { provider { it.takeIf(String::toBoolean) } }
-        fun Provider<*>.relativeToRootProject(dir: String) = map {
-            isolated.rootProject.projectDirectory.dir("build").dir(projectDir.toRelativeString(rootDir))
-        }.map { it.dir(dir) }
-
-        project.providers.gradleProperty("enableComposeCompilerMetrics").onlyIfTrue()
-            .relativeToRootProject("compose-metrics")
-            .let(metricsDestination::set)
-
-        project.providers.gradleProperty("enableComposeCompilerReports").onlyIfTrue()
-            .relativeToRootProject("compose-reports")
-            .let(reportsDestination::set)
-
-        // Treat presentation models as stable without annotating them everywhere.
-        stabilityConfigurationFiles.add(
-            isolated.rootProject.projectDirectory.file("compose_compiler_config.conf")
-        )
-    }
+    // Treat presentation models as stable without annotating them everywhere.
+    stabilityConfigurationFiles.add(
+        isolated.rootProject.projectDirectory.file("compose_compiler_config.conf")
+    )
 }
 ```
 
@@ -732,63 +459,24 @@ kotlinx.datetime.LocalDateTime
 com.android254.domain.models.*
 ```
 
-**Definition of done:** `./gradlew build --configuration-cache` passes twice with the second run reporting a configuration-cache hit; `./gradlew :presentation:dependencies --configuration compileClasspath` shows no `paging`, `gson`, `result-jvm`, or `compose-compiler`.
+This is the cheapest available fix for the 20 `ComposeUnstableCollections` findings and a chunk
+of the 47 non-skippable composables recorded in `docs/static-analysis.md` — the stability file
+moves the needle without touching a call site. The committed `.stability` baselines make the
+before/after measurable.
 
-### 3.2 Version catalog cleanup
+**Definition of done:** `stabilityDump` shows fewer non-skippable composables than the committed
+baseline, and the diff is reviewed rather than rubber-stamped.
 
-Wire the version-checker plugins that are already declared but never applied (done in §3.1's root build file), then:
+### 3.2 Version catalog additions for later phases
+
+The cleanup itself is done — the catalog is current, `toml-checker` and `toml-updater` are
+applied, and `./gradlew dependencyUpdates` works. Dead entries are gone and the bundles are split.
+
+What follows is the set of entries the later phases assume. Add each one with the phase that
+needs it, not up front. Versions are from authoring time; run `./gradlew versionCatalogUpdate`
+before landing any of them.
 
 ```toml
-[versions]
-android-compile-sdk = "37"       # was 36 — see §3.8 §0, this conflicts with AGP 9.0's API 36.1 cap
-android-min-sdk = "24"
-android-target-sdk = "37"        # NEW — single source of truth for app + libraries (fixes B4)
-
-# --- bumped now for AGP 9 readiness (§3.8), independent of the AGP bump itself ---
-hilt = "2.59"                    # was 2.56.2 — AGP 9 minimum
-firebasePerfPlugin = "2.0.2"     # was 1.4.2 — AGP 9 minimum, and a major version jump
-firebaseCrashlyticsPlugin = "3.0.6"  # was 2.9.9 — two majors behind; verify latest
-ksp = "2.3.6"                    # was 2.1.21-2.0.2 — AGP 9 needs >= 2.3.1
-kotlin = "2.3.20"                # was 2.1.21 — KGP 2.3.0+ recommended for AGP 9
-benchmark = "1.5.0-alpha01"      # baselineprofile < 1.5.0-alpha01 needs android.newDsl=false
-
-# --- deleted ---
-# composecompiler = "1.5.15"     # Kotlin 2.x uses the compose compiler *plugin*
-# gson = "2.13.1"                # 0 usages
-# result_jvm = "5.6.0"           # 0 usages
-# paging = "3.3.6"               # 0 usages
-# swiperefresh = "0.36.0"        # accompanist, deprecated → PullToRefreshBox
-# auth = "21.3.0"                # GMS sign-in, deprecated → Credential Manager
-
-# --- added ---
-androidx-adaptive = "1.2.0"
-androidx-window = "1.5.0"
-# Expressive lives in material3 1.4.x. BOM 2025.06.00 resolves material3 to 1.3.2,
-# which has none of it — see the prerequisite note in §3.5. Either bump the BOM or
-# pin material3 explicitly alongside the platform.
-compose-material3-override = "1.4.0"
-credentials = "1.6.0"
-googleid = "1.2.0"
-camerax = "1.5.0"
-mlkit-barcode = "17.3.0"
-mlkit-genai-summarization = "1.0.0-beta1"
-mlkit-genai-image-description = "1.0.0-beta1"
-mlkit-translate = "17.0.3"
-firebase-ai = "17.4.0"           # ships in firebase-bom, listed for clarity
-mediapipe-genai = "0.10.27"
-litert = "2.0.1"
-localagents-fc = "0.1.0"
-zxing-core = "3.5.3"
-glance = "1.2.0"
-filament = "1.60.0"
-immutable-collections = "0.4.0"
-benchmark = "1.4.1"
-uiautomator = "2.4.0"
-profileinstaller = "1.4.1"
-roborazzi = "1.53.0"
-kotlinx-datetime = "0.6.2"
-appcheck = "18.0.0"
-
 [libraries]
 # Adaptive / large screen (§4)
 androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
@@ -2132,264 +1820,52 @@ The nonce should ideally be issued by the backend and verified on token exchange
 
 `AuthViewModel` loses the `ActivityResultLauncher` plumbing entirely; `AuthDialog` calls a suspend function. Net deletion of ~60 lines.
 
-### 3.8 The road to AGP 9
-
-**Most of Phase 0 is an AGP 9 migration wearing a different hat.** That's worth stating plainly, because it changes how you justify this phase: it isn't cleanup for its own sake, it's the prerequisite work for a major-version upgrade that is not optional.
-
-> **Use the official skill.** JetBrains maintains a migration skill at
-> [`Kotlin/kotlin-agent-skills` → `skills/kotlin-tooling-agp9-migration`](https://github.com/Kotlin/kotlin-agent-skills/tree/main/skills/kotlin-tooling-agp9-migration).
-> Its `references/VERSION-MATRIX.md` and `references/PLUGIN-COMPATIBILITY.md` are the authoritative
-> version and plugin-compatibility tables, and the numbers in this section come from them.
->
-> **A scope caveat that matters for this repo:** the skill's *migration* procedure is written for
-> **Kotlin Multiplatform** modules moving from `com.android.library` to the new
-> `com.android.kotlin.multiplatform.library` plugin. droidconKE is not a KMP project, so that plugin
-> swap **does not apply** — the library modules keep `com.android.library`. What does apply, in full,
-> is the version matrix, the plugin-compatibility tables, and the removed-DSL list. Read the skill for
-> those; ignore the `com.android.kotlin.multiplatform.library` sections unless and until the KMP
-> question in §17.2 Q10 gets a yes — at which point the skill becomes the primary reference for that
-> work too.
-
-#### 0. Decision: both AGP 9 and targetSdk 37 — which pins the AGP version
-
-**The decision is made: the app targets SDK 37 and runs on AGP 9.** Both. This section records what that requires, because the two constraints interact.
-
-The JetBrains version matrix lists **Max API Level: 36.1** for **AGP 9.0** specifically. So `targetSdk = 37` rules out AGP 9.0 — it does not rule out AGP 9. What it means is:
-
-> **The target is the earliest AGP 9.x release whose maximum supported API level is ≥ 37.** Pin that exact version in `libs.versions.toml`; do not pin `9.0.1`.
-
-Verify before starting, because this is the number in this document most likely to have moved:
-
-```bash
-# What API levels does a given AGP support? Check the release notes, then confirm
-# locally by setting compileSdk = 37 and running:
-./gradlew :app:help          # fails fast with a clear message if the AGP is too old
-```
-
-Two things follow from committing to both:
-
-1. **Order is forced.** `compileSdk` must be ≥ `targetSdk`, and AGP must support `compileSdk`. So the AGP bump and the SDK bump land **together**, in one PR, once an AGP 9.x supports 37. They are not independent steps.
-2. **The prerequisite work is unchanged and can all start now.** Steps 1–5 in §7 below — Gradle 9.1, plugin bumps, Kotlin 2.3.x, `nonFinalResIds` — are required for AGP 9 regardless of which 9.x you land on, and none of them depend on the API cap. Do all of it while waiting.
-
-**If no AGP 9.x supports API 37 when you get there**, the fallback is targetSdk 37 on the latest AGP 8.x, then AGP 9 later — but treat that as a contingency, not the plan. Record which AGP version you landed on here when it happens.
-
-#### 0a. Done — what the migration actually involved (2026-08-13)
-
-**AGP 9.3.1 on Gradle 9.7.0, Kotlin 2.4.10, KSP 2.3.11, Hilt 2.60.1, `compileSdk`/`targetSdk` 37.** A first attempt stopped at the convention plugins; a second completed it. Recorded here because most of the surprises are not in the sections below.
-
-**The dependency upgrade and the AGP bump cannot be separated.** This was going to be "upgrade everything, then AGP 9 afterwards". That is not possible: current AndroidX — `core-ktx` 1.19.0, `appcompat` 1.8.0, `activity` 1.13.0, `lifecycle` 2.11.0, `material` 1.14.0, Compose BOM 2026.08.00 — requires `compileSdk 37`, and AGP 8.10 caps at 36. So the whole upgrade is gated behind AGP 9. §0 predicted this for `targetSdk`; it applies to routine library bumps too.
-
-**AGP 9.3.1 is available**, so the §0 question of "which 9.x supports API 37" resolves to a released version rather than a wait.
-
-**The convention plugins were the real work, and the fix is smaller than it first looks.** AGP 9 removes the type parameters from `CommonExtension`, so the six-parameter form becomes plain `CommonExtension`. The first attempt read the resulting "unresolved reference: defaultConfig" errors as the DSL being gone. It is not: `CommonExtension` **keeps the getters and loses only the configuration-block forms**, which now live solely on the concrete `ApplicationExtension` and `LibraryExtension`. So against the shared supertype, property access is the migration:
-
-```kotlin
-// before                                    // after
-defaultConfig { minSdk = 26 }                defaultConfig.minSdk = 26
-compileOptions { sourceCompatibility = … }   compileOptions.sourceCompatibility = …
-buildFeatures { compose = true }             buildFeatures.compose = true
-testOptions { managedDevices { … } }         testOptions.managedDevices.localDevices.create(…)
-```
-
-Confirm against the jar rather than guessing — `javap -cp gradle-api-9.3.1.jar com.android.build.api.dsl.CommonExtension` settles in seconds what the error messages imply misleadingly. Note `minSdk` and `testInstrumentationRunner` are on `BaseFlavor`, which `DefaultConfig` extends.
-
-**Hilt 2.60.x refuses to apply on AGP 8**, failing with a direct version check. It must move in the same commit as AGP, not before.
-
-**Firebase BOM 34 removed every `-ktx` artifact.** `firebase-analytics-ktx` and siblings no longer resolve; the Kotlin extensions ship in the main modules. Source imports move too: `com.google.firebase.ktx.Firebase` → `com.google.firebase.Firebase`, and `com.google.firebase.remoteconfig.ktx.*` → `com.google.firebase.remoteconfig.*`. This part is done and correct in the WIP branch and can be lifted from it.
-
-**detekt is still 1.23.8** — 2.0 has not shipped. So §6's conclusion stands unchanged: both `android.newDsl=false` and `android.builtInKotlin=false` are required and are now set, and AGP 9 buys the version bump and little else until they can come off.
-
-**Managed devices below API 27 do not work under AGP 9 with `newDsl=false`.** The `api24` device failed `api24Setup` on three consecutive CI runs. Two causes were found and fixed — AGP resolved the 32-bit `x86` image (fixed with `require64Bit`), then reported `testedAbi` as unspecified. The third survived setting `testedAbi`: AGP kept warning the device did not specify one, which suggests the newer `ManagedVirtualDevice` properties do not reach AGP's legacy path while `newDsl=false`. That is unconfirmed — the stacktrace run was cancelled before capturing the causal frame — and `newDsl=true` cannot be used to test it, because enabling it fails plugin application outright.
-
-Moot as of `minSdk` 26, which removed the device. **But if `minSdk` is ever lowered below 26 again, expect this to resurface**, and budget for it being unfixable until detekt 2.0 lets `newDsl=false` come off.
-
-**Two problems surfaced that had nothing to do with AGP 9**, both worth knowing because they will look like migration failures:
-
-- `presentation` declares `firebase-messaging` but applies no Firebase convention plugin, so it never had the BOM and the dependency has no version. It resolved before by luck of the old artifact graph; under BOM 34 it fails outright. Fixed by adding `platform(libs.firebase.bom)` to that module.
-- Chucker 4.3.1 is compiled for Java 21 (class file 65.0) while this project targets 17, which fails in `compileDebugJavaWithJavac` on a Hilt-generated file — a confusing place to land. Held at 4.1.0. Revisit alongside any JDK 21 move.
-
-Also done, and mechanical: `kotlinOptions` → `compilerOptions` in the two convention plugins, the root build file and `build-logic`'s own build file; `project.buildDir` → `layout.buildDirectory`; `detekt { config = files(…) }` → `config.setFrom(…)`; and removing `android.nonFinalResIds=false`, which AGP 9 rejects.
-
-**The upgrade found real bugs, which is an argument for doing these regularly.** The newer AndroidX lint flagged `ViewModelConstructorInComposable` in two more test files — `SpeakerDetailsScreenTest` and `SpeakersScreenTest` — both constructing a ViewModel inside `setContent`, the same defect already fixed in `FeedScreenTest`. Older lint did not catch them. Fixed the same way, by hoisting the construction out of composition.
-
-§5's `nonFinalResIds` audit was run and both patterns return nothing — no `when` over `R.id`, no resource IDs as annotation arguments — so removing the flag was safe rather than merely green.
-
-Instrumentation runs green on api30 and api34 in CI. The api24 leg was removed with the `minSdk` 26 bump, so §7 step 7's "verify on both ends of the range" now means api30 and the newest device in the matrix.
-
-#### 1. Version requirements
-
-From the skill's `VERSION-MATRIX.md`, against this repo's current state:
-
-| Component | AGP 9 minimum | Recommended | Repo today | Gap |
-| --- | --- | --- | --- | --- |
-| AGP | 9.0.0 | **9.0.1+** | 8.10.1 | Major |
-| Gradle | **9.1.0** | 9.1.0+ | **8.11.1** (root) | Major — earlier Gradle simply will not work |
-| JDK | 17 | 17+ | 17 | ✅ none |
-| Kotlin (KGP) | — | **2.3.0+** | 2.1.21 | Two minors |
-| KSP | **2.3.1** | **2.3.6** | 2.1.21-2.0.2 | Major. KSP is no longer version-locked to the Kotlin compiler as of 2.3.0 |
-| Max API level | — | **36.1** | compileSdk 36 | See §0 above |
-| Android Studio | **Otter 3 (2025.2.3)** | Latest stable | — | Contributor requirement |
-| IntelliJ IDEA | **Not supported** | — | — | Contributors on IDEA must switch to Studio |
-
-Two things worth pulling out of that table for a community project:
-
-- **Kotlin 2.1.21 → 2.3.x is its own migration**, not a footnote. Schedule it as a separate PR ahead of the AGP bump.
-- **IntelliJ IDEA does not support AGP 9.** Announce this to contributors before it lands, or people will file "project won't sync" issues. Mention it in `CONTRIBUTING.md` (§15.3).
-
-#### 2. Removed API — what §3.1 already handles
-
-AGP 9 removes a large surface of long-deprecated API. Every §3.1 change below is on that removal list:
-
-| Phase 0 change | Why AGP 9 needs it |
-| --- | --- |
-| `kotlinOptions {}` → `compilerOptions {}` (§3.1) | `kotlinOptions` is gone |
-| `packagingOptions {}` → `packaging {}` (§3.1) | `packagingOptions` is gone |
-| `project.buildDir` → `layout.buildDirectory` (§3.1) | `Project.buildDir` is removed in Gradle 9, which AGP 9 requires |
-| `allprojects { repositories }` → `dependencyResolutionManagement` (§3.1) | Required for Isolated Projects; the old pattern fights Gradle 9 |
-| Configuration cache enabled (§3.1) | Effectively mandatory; you want the fallout surfaced now, not during the upgrade |
-| `buildConfig` opt-in per module (§3.1) | AGP 9 flips several `buildFeatures` defaults to off |
-| `detekt { config = files() }` → `config.setFrom()` (§3.1) | Gradle 9 removes the mutable-property assignment form |
-
-**What this repo already has right.** Two things that are usually the hardest part of an AGP 9 migration are, pleasingly, already done:
-
-1. **`Jacoco.kt` uses the new Variant API** — `androidComponentsExtension.onVariants { }`, not `applicationVariants` / `libraryVariants`. The old Variant API is fully removed in AGP 9, and convention plugins that iterate variants are the classic thing that blocks the upgrade for months. Not an issue here.
-2. **Coverage uses `enableUnitTestCoverage` / `enableAndroidTestCoverage`**, not the removed `testCoverageEnabled`.
-3. `namespace` is set in every module; Kotlin DSL throughout; `nonTransitiveRClass` already true.
-
-**What remains, specific to this repo.** These are *not* covered by §3.1–3.7 and need their own work:
-
-#### 3. Gradle 9.1+
-
-Two wrappers, two versions:
-
-```
-gradle/wrapper/gradle-wrapper.properties              → gradle-8.11.1
-build-logic/gradle/wrapper/gradle-wrapper.properties  → gradle-8.14.1
-```
-
-`build-logic` is an included build, so it runs under the root's Gradle distribution — its own wrapper is only used if someone runs `./gradlew` from inside that directory, which nobody does. The file is stale and the mismatch is a trap for new contributors.
-
-**Action:** delete `build-logic/gradle/`, and upgrade the root wrapper toward 9.1 incrementally:
-
-```bash
-./gradlew wrapper --gradle-version 8.14.3 --distribution-type bin   # land latest 8.x first
-./gradlew build --warning-mode all                                  # burn down deprecations
-./gradlew wrapper --gradle-version 9.1 --distribution-type bin      # then the major (AGP 9 minimum)
-```
-
-Do **not** jump straight to 9.1. Getting to the latest 8.x with `--warning-mode all` clean is how you find the Gradle 9 removals while you still have a working build to compare against.
-
-#### 4. Delete the `kotlinOptions` extension hack
-
-`KotlinAndroid.kt` ends with:
-
-```kotlin
-fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
-    (this as ExtensionAware).extensions.configure("kotlinOptions", block)
-}
-```
-
-This reaches into the Android extension by **string name** to find an extension AGP no longer creates. §3.1 removes every call site; this function must be deleted too, or it becomes a runtime failure the first time someone reuses it. The same applies to the `kotlinOptions {}` blocks in `app/build.gradle.kts`, `presentation/build.gradle.kts`, and `chai/build.gradle.kts`.
-
-With AGP 9's built-in Kotlin support, the modern equivalent is either the `kotlin { compilerOptions { } }` project extension or per-task configuration as shown in §3.1. Prefer the project extension once you're on 9 — it configures test and android source sets consistently, which the per-task loop does not.
-
-#### 5. `android.nonFinalResIds=false` must go
-
-```properties
-android.nonFinalResIds=false   # gradle.properties, today
-```
-
-AGP 9 makes non-final resource IDs the only behaviour. Setting `false` today means the codebase may contain patterns that only compile with final IDs:
-
-```bash
-# Audit before flipping. These are the two patterns that break:
-grep -rn "when *( *[a-zA-Z]*\.id *)" --include="*.kt" .   # `when` over R.id — needs constants
-grep -rnE "@[A-Za-z]+\(R\.(id|drawable|string)\." --include="*.kt" .  # res IDs as annotation args
-```
-
-Flip the flag to `true` in its own PR, fix whatever breaks, then delete the flag entirely. §3.3 B10 (removing `@DrawableRes var icon: Int` from serializable nav keys) already resolves one instance of the underlying smell.
-
-#### 6. Third-party Gradle plugins — the actual blocker
-
-This is where AGP 9 migrations stall. Cross-referencing this repo's plugin list against the skill's `PLUGIN-COMPATIBILITY.md`:
-
-| Plugin | Repo today | AGP 9 requirement | Verdict |
-| --- | --- | --- | --- |
-| `com.google.devtools.ksp` | 2.1.21-2.0.2 | **2.3.1 min, 2.3.3+ recommended** | Upgrade. May also need `android.disallowKotlinSourceSets=false` |
-| `com.google.dagger.hilt.android` | 2.56.2 | **2.59** | Upgrade |
-| `com.google.firebase.firebase-perf` | **1.4.2** | **2.0.2** | Major upgrade — as suspected, this was the most-behind plugin in the build |
-| `io.gitlab.arturbosch.detekt` | 1.23.8 | < 2.0.0 needs **`android.newDsl=false` + `android.builtInKotlin=false`** | ⚠️ Flags required until detekt 2.0 |
-| `org.jlleitschuh.gradle.ktlint` | 12.3.0 | needs **`android.builtInKotlin=false`** | ⚠️ Flag required, no version listed that avoids it |
-| `androidx.baselineprofile` (§9.2) | planned 1.4.1 | < 1.5.0-alpha01 needs **`android.newDsl=false`** | Plan for ≥ 1.5.0-alpha01 |
-| `com.google.firebase.crashlytics` | 2.9.9 | not listed | Verify — bump regardless, it's two majors behind |
-| `com.google.gms.google-services` | 4.4.2 | not listed | Verify |
-| `com.diffplug.spotless` | 7.0.4 | not listed | Verify |
-| `com.github.ben-manes.versions` / `version-catalog-update` | 0.52.0 / 1.0.0 | not listed | Verify |
-
-**The important finding: this repo needs both opt-out flags.**
-
-detekt below 2.0 requires `android.newDsl=false` **and** `android.builtInKotlin=false`. The ktlint plugin requires `android.builtInKotlin=false`. Both are applied to **every subproject** in this build (§3.1). So:
-
-```properties
-# gradle.properties — temporary, remove when detekt 2.0 and a newer ktlint plugin land.
-# detekt < 2.0 requires both; jlleitschuh ktlint requires builtInKotlin=false.
-android.newDsl=false
-android.builtInKotlin=false
-```
-
-**Which means AGP 9, for this repo, buys the version bump and very little else** — the new DSL and built-in Kotlin support, the two headline features, both have to be switched off. That is a genuine argument for **not** rushing it, and it reinforecs Option A in §0: take targetSdk 37 on AGP 8.x now, and let AGP 9 wait until detekt 2.0 ships and the flags can come off.
-
-Do not silently carry those flags forever. Put a tracking issue on each with the version that removes it, and re-check at every dependency-update cycle (§15.2).
-
-Three more notes:
-
-- **Nothing in this repo is on the "broken, no workaround" list** (`com.newrelic.agent.android`, `com.huawei.agconnect.agcp`). No hard blocker.
-- **§10.2's choice of Roborazzi over Paparazzi pays off here.** `app.cash.paparazzi` requires `android.newDsl=false`; Roborazzi isn't on the workaround list. That recommendation was made for other reasons, but it happens to be the AGP-9-friendlier option too.
-- **Firebase Performance 1.4.2 → 2.0.2 is a major version jump.** If that migration is painful, remember §9.5 uses Firebase Performance only for custom traces. It is the most droppable dependency in the build, and dropping it is a legitimate answer.
-
-The Firebase and Hilt plugin bumps are worth doing **now**, independently of AGP 9, as part of §3.2's catalog cleanup. Two-majors-behind build plugins are a latent blocker regardless of when the upgrade happens.
-
-#### 7. Recommended sequencing
-
-AGP 9 is a **separate track after Phase 0**, never bundled with it:
-
-1. **Phase 0 §3.1–3.7** lands on current AGP. Build green, configuration cache on, warnings triaged.
-2. **Gradle → latest 8.x.** Green with `--warning-mode all`.
-3. **Plugin bumps:** KSP → 2.3.6, Hilt → 2.59, Firebase Perf → 2.0.2, Crashlytics → latest. Green.
-4. **Kotlin 2.1.21 → 2.3.x.** Its own PR — this is a compiler upgrade, not a version bump.
-5. **`nonFinalResIds` → true**, then remove the flag. Green.
-6. **AGP → the earliest 9.x supporting API 37, Gradle → 9.1+, `compileSdk`/`targetSdk` → 37, all in one PR** (§0 explains why these can't be separated), with `newDsl=false` and `builtInKotlin=false`. Should be nearly mechanical, because steps 1–5 removed everything that would have broken. §3.4's insets work must already be in — edge-to-edge is enforced at this target.
-7. **Verify on the lowest and highest devices in the matrix.** Both ends of the supported range, because B11 is exactly what a missing low-end check costs. With `minSdk` 26 that is api30 upward; there is no longer a managed device at the floor itself.
-8. **Remove the opt-out flags** when detekt 2.0 and a newer ktlint plugin land. This is when the migration is actually finished.
-
-If step 7 is a large diff, one of steps 1–5 was skipped.
-
-Validation commands from the skill, worth putting in the PR description:
-
-```bash
-./gradlew --version
-./gradlew buildEnvironment | grep -e "com.android.application" -e "com.android.library"
-./gradlew buildEnvironment | grep "org.jetbrains.kotlin:kotlin-gradle-plugin"
-```
-
-> **On version specifics:** the numbers above come from the JetBrains skill as of this writing. The API-level cap in §0 and the detekt/ktlint flag requirements are the two most likely to change, and both change the recommendation. Re-read `VERSION-MATRIX.md` and `PLUGIN-COMPATIBILITY.md` from the skill before starting, alongside the official [AGP release notes](https://developer.android.com/build/releases/gradle-plugin). Use **AGP Upgrade Assistant** in Android Studio for the mechanical DSL edits — it handles more than people expect.
+### 3.8 AGP 9 — done
+
+AGP 9.3.1 on Gradle 9.7 with Kotlin 2.4.10, `compileSdk`/`targetSdk` 37, and **no opt-out flags**.
+
+The migration is finished, including the part this section spent most of its length warning
+about. `android.newDsl=false` and `android.builtInKotlin=false` were carried for a while because
+detekt and ktlint-gradle needed them; ktlint-gradle 14.1.0 added built-in Kotlin support, which
+removed the last real dependency, and both flags are gone. `org.jetbrains.kotlin.android` is no
+longer applied by the convention plugins — under the new DSL, applying it alongside AGP's own
+Kotlin support is a hard error rather than a warning.
+
+Three things the migration changed that are easy to trip over later:
+
+- Library modules have no `defaultConfig.targetSdk`. Only the test APK does, via
+  `testOptions.targetSdk`.
+- `android { }` resolves to `com.android.build.api.dsl.*`, not the legacy
+  `com.android.build.gradle.*` types.
+- Source sets belong to AGP, so a `languageSettings` opt-in no longer reaches the compile tasks.
+  Use `kotlin { compilerOptions { optIn.add(...) } }`.
+
+Two `gradle.properties` settings this plan previously recommended are now wrong and were **not**
+applied: `android.nonFinalResIds=false` is deprecated and makes `minifyReleaseWithR8` fail once
+optimized resource shrinking is on, and `android.defaults.buildfeatures.buildconfig` is deprecated
+too.
+
+**Managed devices below API 27 do not work under AGP 9 with `newDsl=false`.** Moot at `minSdk` 26,
+but if the floor is ever lowered again, expect it back.
+
+**One deprecation warning remains and is not fixable here:** detekt 1.23.8's Gradle plugin calls
+`ReportingExtension.file(String)`, which Gradle 10 removes. Confirmed by bisecting the root
+`plugins` block. detekt 2.0 has the fix and has not shipped.
 
 ### 3.9 Phase 0 definition of done
 
-- [ ] `./gradlew build` passes with configuration cache enabled, twice, second run a cache hit
-- [ ] `./gradlew build --warning-mode all` produces no Gradle deprecation warnings, or each remaining one has a tracking issue linked in a comment
-- [ ] `./gradlew lint` passes; `lint-baseline.xml` regenerated and **shrunk** (triage what's in it)
-- [ ] B1–B16 each closed by a **test**, not just a code change (§16.0 lists the test per fix)
-- [x] An instrumentation run passes on every device in the matrix (api30, api34). B11's crash level is below `minSdk` now, so it is unreachable rather than untested
-- [ ] `grep -rn "com.android254.droidcon\|DCKE22\|DroidconKE2023"` returns nothing
-- [ ] CI runs on Kotlin-only PRs (§15)
-- [ ] Unused deps removed; APK size recorded as a **baseline number** in this document (§9.4)
-- [ ] `targetSdk` comes from one version-catalog entry, referenced by both convention plugins (B4)
-- [ ] Single Gradle wrapper; `build-logic/gradle/` deleted (§3.8)
-- [ ] The `CommonExtension.kotlinOptions()` helper is deleted, not just unused (§3.8)
-- [ ] AGP-9-readiness plugin bumps landed: KSP ≥ 2.3.1, Hilt ≥ 2.59, Firebase Perf ≥ 2.0.2 (§3.8 §6)
-- [ ] **The §3.8 §0 decision is made and written down**: targetSdk 37 on AGP 8.x, or AGP 9 at API 36
-- [ ] `CONTRIBUTING.md` notes the Android Studio requirement — IntelliJ IDEA does not support AGP 9 (§3.8 §1)
+- [x] `./gradlew build` passes with the configuration cache enabled
+- [x] `./gradlew build --warning-mode all` produces no Gradle deprecation warnings from this
+      repo's own code — one remains from inside detekt 1.23.8 (§3.8)
+- [x] `./gradlew lint` passes with no baseline
+- [x] An instrumentation run passes on every device in the matrix (api30, api34)
+- [x] CI runs on Kotlin-only PRs (§15)
+- [x] `targetSdk` comes from one version-catalog entry, referenced by both convention plugins
+- [x] Single Gradle wrapper; `build-logic/gradle/` deleted
+- [x] AGP-9-readiness plugin bumps landed
+- [ ] B1–B16 each closed by a **test**, not just a code change
+- [ ] APK size recorded as a **baseline number** in this document (§9.4)
+- [ ] `CONTRIBUTING.md` notes the Android Studio requirement — IntelliJ IDEA does not support AGP 9
 
 ---
 
@@ -7382,40 +6858,21 @@ class ColorContrastTest {
 
 ### 15.1 CI on every pull request
 
-**Done** — `.github/workflows/pr.yml`.
+**Done** — `.github/workflows/pr.yml`. Static analysis, Android Lint, Compose stability, unit
+tests with coverage, debug and release builds, and instrumentation on Gradle Managed Devices, on
+`pull_request`, `merge_group` and push to `main`. Read the workflow rather than a copy here.
 
-The problem it fixed: `branch.yml` triggered only on `build-logic/**`, `build.gradle.kts` and
-`settings.gradle.kts`, so a pull request changing only Kotlin source ran no lint, no detekt, no
-tests and no build. For a project taking community contributions that was the highest-severity
-issue in the repository, because it was the reason other bugs got in. `branch.yml` is deleted.
-
-The workflow runs static analysis, unit tests with coverage, a debug and release build, and
-instrumentation on the Gradle Managed Devices declared in `build-logic/.../ManagedDevices.kt`,
-on `pull_request`, `merge_group` and push to `main`. The push-to-main trigger is not incidental:
-`gradle/actions/setup-gradle` only writes its cache on the default branch, so without it every
-PR job runs cold.
-
-Two jobs from the original sketch are still missing, both blocked on things that do not exist:
-a screenshot-diff job (needs §10.2 Roborazzi) and an APK-size gate (needs a
-`.github/actions/apk-size-diff` action). Add each with the thing it depends on.
-
-Read the workflow rather than a copy of it here — a YAML sketch in a document goes stale the
-first time the real file changes.
+Still missing, each blocked on something that does not exist: a screenshot-diff job (needs §10.2
+Roborazzi) and an APK-size gate (needs a `.github/actions/apk-size-diff` action).
 
 ### 15.2 Dependabot
 
-**Done** — `.github/dependabot.yml`, weekly on Monday, grouped.
+**Done** — `.github/dependabot.yml`, weekly on Monday, grouped by AndroidX, Compose, Kotlin + KSP,
+Firebase, Ktor, Room, Hilt, test libraries and static analysis, across both `gradle` and
+`github-actions`.
 
-`toml-checker` and `toml-updater` were declared in the catalog but never applied, so nothing tracked dependency drift.
-
-**Dependabot rather than Renovate**, reversing this section's earlier recommendation. The reason Renovate was preferred here was grouping — without it a repo this size gets forty PRs a week. Dependabot has supported `groups:` since 2023, so that advantage is gone, and what remains is a deployment difference: Renovate's hosted app must be installed at the `droidconKE` organisation level, which needs org-admin rights and a separate approval loop, while Dependabot is a file in the repo and nothing else. For a community project where the maintainer may not be an org admin, that matters more than any remaining feature gap. Renovate stays a reasonable swap later if the dependency dashboard becomes worth the install.
-
-The config groups AndroidX, Compose, Kotlin + KSP, Firebase, Ktor, Room, Hilt, test libraries and static-analysis plugins, and covers both the `gradle` ecosystem — which reads `gradle/libs.versions.toml` directly, so catalog entries are bumped in place — and `github-actions`.
-
-Two deliberate choices:
-
-- **Nothing is auto-merged.** Dependabot does not auto-merge without an explicit workflow, so the earlier "AGP and Kotlin must never auto-merge" rule needs no special case. The earlier draft also auto-merged patch bumps of test dependencies; that is dropped, because a test-library patch that silently changes assertion behaviour is exactly the kind of thing this project has no screenshot coverage to catch (§10.2).
-- **AGP is left ungrouped on purpose.** `com.android.tools.build:gradle` matches no group pattern, so it arrives as its own PR. Given §3.8, an AGP bump is a migration rather than a version change and deserves to be reviewed alone.
+Two deliberate choices worth keeping: nothing is auto-merged, and AGP is left ungrouped so an AGP
+bump always arrives as its own reviewable PR.
 
 ### 15.3 Contributor experience
 
@@ -7496,16 +6953,20 @@ Struck from the backlog. Kept here only so nobody re-plans it.
 | Area | State |
 | --- | --- |
 | P0 defect list — desugaring, `fallbackToDestructiveMigration`, filter options derived from data, topics path deleted, single `targetSdk`, lazy-list keys, `AuthManager` error branch, `speakers.take` hoisted, `packagingOptions` → `packaging`, `getTimeDifference`, example tests and untracked files | Done |
-| CI on every PR (§15.1) | Done — `.github/workflows/pr.yml` |
-| Weekly grouped Dependabot (§15.2) | Done — `.github/dependabot.yml` |
+| CI on every PR (§15.1) · weekly grouped Dependabot (§15.2) | Done |
 | Year-agnostic rename (§3.6) | Done |
-| Dead catalog entries and the `compose` bundle split (§1.4) | Done |
-| accompanist → M3 `PullToRefreshBox` (§1.4) | Done |
-| AGP 9 + Gradle 9.7 + Kotlin 2.4 + `targetSdk` 37 (§3.8) | Done, **but carrying two opt-out flags** — see Stage 4 |
-| App-size baseline recorded (§9.4) | Done |
-| `minSdk` 24 → 26 | Done. Removed the desugaring crash class; dropped Android 7.x |
+| Dead catalog entries and the `compose` bundle split (§1.4) · accompanist → M3 `PullToRefreshBox` | Done |
+| `minSdk` 24 → 26 · app-size baseline recorded (§9.4) | Done |
+| **AGP 9 + Gradle 9.7 + Kotlin 2.4 + `targetSdk` 37, with both opt-out flags removed** (§3.8) | Done — the migration is finished, not half-done |
+| **Gradle config cleanup** — `dependencyResolutionManagement` + `FAIL_ON_PROJECT_REPOS`, configuration cache, parallel, 4 GB heap, type-safe project accessors (D1–D3) | Done |
+| **Static-analysis toolchain** — ktlint-gradle 14.2.0, spotless 8.9.0, jacoco 0.8.15 | Done |
+| **Android Lint baseline deleted** (D6) — severity now decided per rule in `config/lint/lint.xml` | Done |
+| **Slack compose-lints + skydoves compose-stability-analyzer**, both wired into CI with committed `.stability` baselines | Done — see `docs/static-analysis.md` |
+| **Release builds are actually minified** — coverage instrumentation was forcing every build type debuggable, silently disabling R8 | Done |
+| `LICENSE`, rewritten README, `docs/architecture.md`, `docs/static-analysis.md` | Done |
 
-**One P0 item is still open:** delete `safeApiCall`, `ServerError` and `NetworkError` (§1.4). `SafeApiCall.kt` still exists with no production callers, and `AuthApiTest` still asserts on `ServerError`. Small, and it makes B13's unreachable branch obvious rather than subtle.
+`safeApiCall` is **not** an open item, contrary to earlier drafts of this section: it has
+production callers in `AuthApi` and `SessionsApi`. Leave it.
 
 ### 16.1 Priority order — what to do next
 
@@ -7517,7 +6978,7 @@ Ranked. Higher items are either prerequisites for lower ones, or buy more per un
 | **2** | Test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes | §10.4 | Everything below is easier to review with it, and the `Clock` injection unblocks testing anything time-dependent. |
 | **3** | Roborazzi screenshot suite | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
 | **4** | Baseline + startup profile | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
-| **5** | Delete the remaining `safeApiCall` surface | §1.4 | The last open P0 item. Half an hour. |
+| **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
 | **6** | Design-system token restructure, then M3 Expressive | §3.5 → §5 | Needs #3 to review and a Compose BOM with material3 1.4.x. The single biggest visible change available. |
 | **7** | Adaptive & large-screen support | §4 | The README already claims it. Needs #6's theme work first. |
 | **8** | Swahili + accessibility audit | §14 | Independent of the above; can run in parallel by a separate owner. |
@@ -7533,7 +6994,7 @@ The AI section is still deliberately last. It is the most interesting part of th
 Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippable when it completes. Move to the next when the previous one's milestone is met — not on a date.
 
 **Stage 1 — Make the codebase safe to change** — *substantially complete*
-- ~~§15.1 CI on all PRs~~ · ~~§3.6 rename~~ · ~~P0 list~~ · ~~§3.8 AGP 9, Gradle 9.7, Kotlin 2.4~~ — all landed
+- ~~§15.1 CI on all PRs~~ · ~~§3.6 rename~~ · ~~P0 list~~ · ~~§3.8 AGP 9 (flags removed)~~ · ~~§3.1 Gradle config~~ · ~~static-analysis toolchain and lint baseline~~ — all landed
 - §10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes — **still open**
 - §9.1–9.2 benchmark module + baseline profile — **still open**
 - §3.4 edge-to-edge and insets — **still open, and now overdue**: `targetSdk` 37 shipped with the AGP 9 work, so enforced edge-to-edge is already live
@@ -7563,13 +7024,6 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 - Gate rehearsal with the actual registration staff, on their actual devices, with time left to fix what it finds
 - **Milestone:** shipped, staged, monitored
 
-**Stage 4.5 — Finish the AGP 9 migration**
-- AGP 9 has landed, but with `android.newDsl=false` and `android.builtInKotlin=false`. Both of its headline features are off, so this is a half-migration by that section's own definition.
-- Gate, entirely upstream: detekt 2.0 released, and a ktlint-gradle release that does not need `builtInKotlin=false`. detekt is still 1.23.8.
-- Dependabot will surface detekt 2.0 the week it ships, which is the trigger to pick this up. Nothing to do until then.
-- Then remove both flags and fix whatever the new DSL surfaces.
-- **Milestone:** no opt-out flags in `gradle.properties`.
-
 **Stage 5 — After the conference**
 - §6.11 recap notification, a couple of days out
 - Retrospective driven by analytics: which features got used? Instrument for this during Stage 3, not after.
@@ -7593,7 +7047,6 @@ Cross-track dependencies to watch:
 - Design system must land §3.5 before Adaptive can use `MaterialExpressiveTheme`.
 - Design system needs §10.2 Roborazzi in place first, or its work is unreviewable.
 - AI needs `:core:testing` from Foundations to test its router.
-- Nothing may remove the two AGP 9 opt-out flags until detekt 2.0 ships (Stage 4.5).
 
 ### 16.4 Definition of done, per PR
 
@@ -7622,7 +7075,6 @@ Non-negotiable for every PR in every phase:
 | **Package rename invalidates every open PR.** | High | Medium | Announce two weeks ahead, do it in one mechanical PR, merge everything outstanding first, do it during a quiet period. |
 | **Gemma model download over mobile data.** A user pays for 500 MB by accident. | Medium | High | Unmetered-only default, explicit size in the UI, opt-in with a confirmation, cancellable (§6.4). |
 | **Large-screen work regresses phone UX.** | Medium | Medium | Screenshot matrix includes phone variants (§10.2). Phone is the primary form factor and stays the default code path. |
-| **AGP 9 lands as a half-migration.** detekt < 2.0 and the ktlint plugin both require opt-out flags, so AGP 9 ships with `newDsl=false` + `builtInKotlin=false` and the flags never come off. | **High** | Medium | Treat flags-removed as the definition of done (§3.8 §7 step 8, Stage 4.5). Tracking issue per flag with the version that removes it. Don't schedule AGP 9 before detekt 2.0 — the version bump alone buys little (§3.8 §6). |
 | **No AGP 9.x supports API 37 when the migration is ready.** AGP 9.0 caps at 36.1, and both targetSdk 37 and AGP 9 are committed. | Medium | Medium | Prerequisite work (§3.8 steps 1–5) is version-independent, so it proceeds regardless. Contingency: targetSdk 37 on latest AGP 8.x first, AGP 9 after. Check the API cap before pinning any AGP version. |
 | **Expressive work starts before the material3 bump** and burns a sprint on code that cannot compile. | Medium | Low | The BOM/material3 1.4.x bump is a named prerequisite in §3.5 and a Stage 2 line item. §3.5's colour work can land on 1.3.2; only the Expressive pieces are blocked. |
 | **Kotlin 2.1 → 2.3 breaks something subtle.** Bundled into the AGP bump, it becomes impossible to bisect. | Medium | Medium | Its own PR, ahead of the AGP work (§3.8 §7 step 4). Screenshot tests and E2E journeys are the safety net. |
@@ -7676,31 +7128,15 @@ Quick reference for where each finding lives.
 
 | Change | File | Section |
 | --- | --- | --- |
-| `dependencyResolutionManagement` | `settings.gradle.kts` | §3.1 |
-| Config cache, parallel, R8 full mode | `gradle.properties` | §3.1 |
-| Remove `allprojects`, fix detekt | `build.gradle.kts` | §3.1 |
-| `compilerOptions`, desugaring | `build-logic/.../KotlinAndroid.kt` | §3.1 |
-| Remove compose-compiler dep, fix `buildDir` | `build-logic/.../AndroidCompose.kt` | §3.1 |
-| Shared `targetSdk`, `packaging {}` | `build-logic/.../AndroidLibraryConventionPlugin.kt` | §3.1 |
-| Catalog cleanup | `gradle/libs.versions.toml` | §3.2 |
 | `isShrinkResources`, benchmark buildType | `app/build.gradle.kts` | §9.3 |
 | Keep rules with reasons | `app/proguard-rules.pro` | §9.3 |
 | Stability config | `compose_compiler_config.conf` (new) | §3.1 |
-| Delete `kotlinOptions()` extension helper | `build-logic/.../KotlinAndroid.kt` | §3.8 |
-| Gradle 8.11.1 → 9.x; delete stale second wrapper | `gradle/wrapper/`, `build-logic/gradle/` | §3.8 |
-| `nonFinalResIds=false` → removed | `gradle.properties` | §3.8 |
-| Firebase Crashlytics 2.9.9 / Perf 1.4.2 plugin bumps | `gradle/libs.versions.toml` | §3.2, §3.8 |
 
 ### Deletions
 
 ```
-app/src/test/java/com/android254/droidconKE2023/ExampleUnitTest.kt
-app/src/androidTest/java/com/android254/droidconKE2023/ExampleInstrumentedTest.kt
-fastlane/report.xml
-build-logic/gradle/                                  # stale second Gradle wrapper (§3.8)
-api_key.txt                                          # stale 15-byte string, not a live key (§1.7 S2)
 chai/.../components/CText.kt: CParagraph, CPageTitle, CSubtitle, CActionText
-presentation/src/main/res/drawable/*                 # 12 duplicated from chai
+presentation/src/main/res/drawable/*                 # 9 duplicated from chai
 presentation/.../common/components/{Loader,LoadingBox,AnimatedShimmerEffect}.kt  # consolidate to 2
 presentation/src/main/res/raw/loading.json           # with the Lottie dependency
 ```
@@ -7776,6 +7212,7 @@ The apps and docs this plan draws on, and what specifically to take from each.
 
 | Date | Change |
 | --- | --- |
+| 2026-08-14 | Pruned again against the merged codebase. **§3.8 rewritten as done** — AGP 9 landed with both opt-out flags removed, so Stage 4.5, the half-migration risk row and the detekt-2.0 gate are all deleted; the two `gradle.properties` settings this plan recommended are recorded as wrong under AGP 9. **§3.1 collapsed** to the one thing left in it, the Compose compiler stability configuration, and promoted to #5 in §16.1. **§3.2 trimmed** to the forward-looking catalog entries. **§1.6 D1–D3, D6, D7 and §1.7 S2 deleted** — Gradle config cleanup, the lint baseline, the second wrapper and `api_key.txt` are all done. §1.4 pruned to what still exists, and the `safeApiCall` item withdrawn: it has production callers, so earlier drafts calling it dead were wrong. §15.1/§15.2 compressed to their outcomes. §16.0 records the static-analysis toolchain, the Compose lint and stability rule sets, and the release-minification fix. |
 | 2026-08-13 | Initial plan. Audit of `main` @ `7a8317c`. |
 | 2026-08-13 | targetSdk target raised to 37 (B4, §3.1). Time estimates removed throughout — the plan commits to ordering, not dates. §3.5 rewritten as an explicit chai/Material 3 recommendation with the evidence behind it. §3.8 added: AGP 9 migration, grounded in the JetBrains AGP 9 migration skill's version and plugin-compatibility tables. |
 | 2026-08-13 | Reviewed the plan against the codebase and re-audited the codebase for gaps. Corrections and additions: **B11** added — `java.time` at minSdk 24 with desugaring never enabled, a crash on a supported API level and now the highest-priority item. **B1 corrected** — the broken filter is rooms, not topics; topics is unreachable dead code (§1.4). **B12–B16** added. **B9 corrected** — `Clock` is already provided and injected; the proposed `TimeModule` was a duplicate. **§3.5** gained a hard material3 1.4.x prerequisite: BOM 2025.06.00 resolves material3 to 1.3.2, which contains no Expressive API. **§6.12** gained the `RemoteFeatureToggle` typed accessors the AI kill switches depend on and that did not exist. Fixed wrong column name in the migration test and two `sessionImageUrl` compile errors. CI matrix extended down to API 24. **§16.0** added: the P0 list. AGP 9 + targetSdk 37 both committed, which pins the AGP to the earliest 9.x supporting API 37. |

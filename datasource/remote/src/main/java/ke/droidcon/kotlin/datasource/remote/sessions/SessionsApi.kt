@@ -30,10 +30,11 @@ class SessionsApi
     ) {
         suspend fun fetchSessions(): EventScheduleGroupedResponse =
             safeApiCall {
-                return@safeApiCall client.get("${provideEventBaseUrl()}/schedule") {
-                    url {
-                        parameters.append("grouped", "true")
-                    }
-                }.body()
+                return@safeApiCall client
+                    .get("${provideEventBaseUrl()}/schedule") {
+                        url {
+                            parameters.append("grouped", "true")
+                        }
+                    }.body()
             }
     }

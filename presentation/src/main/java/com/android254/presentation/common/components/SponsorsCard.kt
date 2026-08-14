@@ -59,8 +59,7 @@ fun SponsorsCard(
                     .background(
                         color = MaterialTheme.chaiColorsPalette.surfaces,
                         shape = RoundedCornerShape(10.dp),
-                    )
-                    .padding(horizontal = 30.dp, vertical = 10.dp)
+                    ).padding(horizontal = 30.dp, vertical = 10.dp)
                     .testTag("sponsors_section"),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -94,7 +93,8 @@ fun SponsorsCard(
                     AsyncImage(
                         modifier = customModifier,
                         model =
-                            ImageRequest.Builder(LocalContext.current)
+                            ImageRequest
+                                .Builder(LocalContext.current)
                                 .data(logo)
                                 .crossfade(true)
                                 .build(),

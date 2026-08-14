@@ -31,9 +31,10 @@ class SpeakersApi
     ) {
         suspend fun fetchSpeakers(): DataResult<SpeakersPagedResponse> =
             dataResultSafeApiCall {
-                return@dataResultSafeApiCall client.get(
-                    "${provideEventBaseUrl()}/speakers?per_page=100",
-                ) {
-                }.body()
+                return@dataResultSafeApiCall client
+                    .get(
+                        "${provideEventBaseUrl()}/speakers?per_page=100",
+                    ) {
+                    }.body()
             }
     }

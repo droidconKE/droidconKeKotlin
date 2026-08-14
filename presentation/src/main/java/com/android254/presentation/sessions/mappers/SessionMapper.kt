@@ -93,7 +93,11 @@ fun List<Speaker>.toSessionDetailsSpeaker() =
         SessionDetailsSpeakerPresentationModel(
             speakerImage = speaker.avatar,
             name = speaker.name,
-            twitterHandle = speaker.twitter.split("/").lastOrNull().toString(),
+            twitterHandle =
+                speaker.twitter
+                    .split("/")
+                    .lastOrNull()
+                    .toString(),
         )
     }
 

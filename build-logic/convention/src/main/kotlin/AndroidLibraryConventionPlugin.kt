@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.android254.configureKotlinAndroid
 import com.android254.libs
 import org.gradle.api.Plugin
@@ -27,14 +27,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.library")
-                apply("org.jetbrains.kotlin.android")
             }
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
 
                 testOptions {
+                    targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
+
                     unitTests {
                         isIncludeAndroidResources = true
                     }

@@ -61,56 +61,49 @@ object DataSourceModule {
     fun provideRemoteSpeakersDataSource(
         api: SpeakersApi,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSpeakersDataSource =
-        RemoteSpeakersDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
+    ): RemoteSpeakersDataSource = RemoteSpeakersDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideRemoteSponsorsDataSource(
         api: SponsorsApi,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSponsorsDataSource =
-        RemoteSponsorsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
+    ): RemoteSponsorsDataSource = RemoteSponsorsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideRemoteSessionsDataSource(
         api: SessionsApi,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): RemoteSessionsDataSource =
-        RemoteSessionsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
+    ): RemoteSessionsDataSource = RemoteSessionsDataSourceImpl(api = api, ioDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSessionsDataSource(
         sessionDao: SessionDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSessionsDataSource =
-        LocalSessionsDataSourceImpl(sessionDao = sessionDao, localSourceIoDispatcher = ioDispatcher)
+    ): LocalSessionsDataSource = LocalSessionsDataSourceImpl(sessionDao = sessionDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSpeakersDataSource(
         speakersDao: SpeakerDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSpeakersDataSource =
-        LocalSpeakersDataSourceImpl(speakerDao = speakersDao, localSourceIoDispatcher = ioDispatcher)
+    ): LocalSpeakersDataSource = LocalSpeakersDataSourceImpl(speakerDao = speakersDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalSponsorsDataSource(
         sponsorsDao: SponsorsDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalSponsorsDataSource =
-        LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, localSourceIoDispatcher = ioDispatcher)
+    ): LocalSponsorsDataSource = LocalSponsorsDataSourceImpl(sponsorsDao = sponsorsDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton
     fun provideLocalOrganizersDataSource(
         organizersDao: OrganizersDao,
         @IoDispatcher ioDispatcher: CoroutineDispatcher,
-    ): LocalOrganizersDataSource =
-        LocalOrganizersDataSourceImpl(organizersDao = organizersDao, localSourceIoDispatcher = ioDispatcher)
+    ): LocalOrganizersDataSource = LocalOrganizersDataSourceImpl(organizersDao = organizersDao, localSourceIoDispatcher = ioDispatcher)
 
     @Provides
     @Singleton

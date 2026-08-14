@@ -1,25 +1,9 @@
 <resources>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="sign_in_label">Sign In</string>
-    <string name="sign_up_label">Sign Up</string>
     <string name="login_screen_bg_image_description">background_image</string>
     <string name="back_arrow_icon_description">Back arrow icon</string>
-    <string name="email_address_field_label">Email Address</string>
-    <string name="password_field_label">Password</string>
-    <string name="google_icon_description">google icon</string>
     <string name="sign_in_with_google_label">Sign in with Google</string>
-    <string name="forgot_password_label">Forgot Password?</string>
-    <string name="sign_up_prompt_label">Don\'t have an account?</string>
-    <string name="or_label">- OR -</string>
-    <string name="sign_up_with_google_label">Sign up with Google</string>
-    <string name="username_field_label">Username</string>
-    <string name="confirm_password_label">Confirm Password</string>
-    <string name="sign_me_up_label">Sign me up</string>
-    <string name="have_account_label">Already have an account?</string>
     <string name="share">Share</string>
-    <string name="placeholder_long_text">Lorem Ipsum is simply dummy text of the @printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to @make a type specimen book. It has survived not only five centuries, but also the @leap into electronic typesetting, @remaining essentially unchanged. It was popularised in the 1960s with @the release of @Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="default_web_client_id">275140757840-t551kcoa9hj4j1kq9cgmk3m067jl2imq.apps.googleusercontent.com</string>
-    <string name="feedback_submit_label">SUBMIT FEEDBACK</string>
     <string name="feedback_type_message_label">Type message here</string>
     <string name="feedback_event_label">How is/was the event</string>
     <string name="feedback_improve_label">Your feedback helps us improve</string>
@@ -30,7 +14,6 @@
     <string name="about_organizing_team">Organizing Team</string>
     <string name="organized_by">Organizers</string>
     <string name="logo">Logo</string>
-    <string name="user_profile">User profile</string>
     <string name="about_droidcon_image">droidcon Image</string>
     <string name="feedback">Feedback</string>
     <string name="cancel">Cancel</string>
@@ -48,7 +31,6 @@
     <string name="title_filter_level">Level</string>
     <string name="title_filter_session_type">Session Type</string>
     <string name="title_filter_room">Room</string>
-    <string name="title_filter_topic">Topic</string>
 
     <string name="session_details_label">Session Details</string>
     <string name="speaker_label">Speaker:</string>
@@ -59,26 +41,11 @@
     <string name="speaker_details_label">Speaker</string>
     <string name="bio_label">Bio</string>
     <string name="filter_button_label">Filter</string>
-    <string name="cancel_filter_button_label">Cancel</string>
-    <string name="close_icon_description">close icon</string>
     <string name="star_session_icon_description">star session</string>
     <string name="retry_label">Retry</string>
-    <string name="spacer_icon_descript">spacer icon</string>
     <string name="sessions_icon_description">sessions icon</string>
     <string name="feed_icon_description">feed icon</string>
 
-    <string name="session_filter_label_keynote">Keynote</string>
-    <string name="session_filter_label_codelab">Codelab</string>
-    <string name="session_filter_label_session">Session</string>
-    <string name="session_filter_label_workshop">Workshop</string>
-    <string name="session_filter_label_lightning_talk">Lightning Talk</string>
-    <string name="session_filter_label_panel_discussion">Panel Discussion</string>
-    <string name="session_filter_label_room_a">Room A</string>
-    <string name="session_filter_label_room_b">Room B</string>
-    <string name="session_filter_label_room_c">Room C</string>
-    <string name="session_filter_label_beginner">Beginner</string>
-    <string name="session_filter_label_intermediate">Intermediate</string>
-    <string name="session_filter_label_advanced">Advanced</string>
     <string name="Bad">Bad</string>
     <string name="Okay">Okay</string>
     <string name="Great">Great</string>
@@ -87,7 +54,6 @@
     <string name="my_sessions">My sessions</string>
     <string name="now">Now</string>
     <string name="up_next">Up Next</string>
-
 
     <string name="nav_home">Home</string>
     <string name="nav_feed">Feed</string>

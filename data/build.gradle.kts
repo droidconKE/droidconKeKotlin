@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 plugins {
+    alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.droidconke.android.library.firebase)
@@ -26,9 +27,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":datasource:local"))
-    implementation(project(":datasource:remote"))
+    implementation(projects.domain)
+    implementation(projects.datasource.local)
+    implementation(projects.datasource.remote)
 
     implementation(libs.android.appCompat)
     implementation(libs.android.material)

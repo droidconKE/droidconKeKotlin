@@ -42,7 +42,8 @@ class SpeakerDaoTest {
     fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db =
-            Room.inMemoryDatabaseBuilder(context, Database::class.java)
+            Room
+                .inMemoryDatabaseBuilder(context, Database::class.java)
                 .allowMainThreadQueries()
                 .build()
         speakerDao = db.speakerDao()
@@ -91,13 +92,12 @@ class SpeakerDaoTest {
     private fun createSpeaker(
         id: Int,
         name: String,
-    ) =
-        SpeakerEntity(
-            id = id,
-            name = name,
-            tagline = "Tagline",
-            bio = "Bio",
-            avatar = "Avatar",
-            twitter = "Twitter $id",
-        )
+    ) = SpeakerEntity(
+        id = id,
+        name = name,
+        tagline = "Tagline",
+        bio = "Bio",
+        avatar = "Avatar",
+        twitter = "Twitter $id",
+    )
 }

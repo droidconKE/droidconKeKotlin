@@ -52,20 +52,6 @@ fun DroidconAppBar(
             contentDescription = stringResource(id = R.string.logo),
         )
         Spacer(modifier = Modifier.weight(1f))
-
-//        Image(
-//            painter = painterResource(id = R.drawable.whilte_padlock),
-//            contentDescription = null,
-//            modifier = Modifier
-//                .background(
-//                    color = ChaiTeal,
-//                    shape = CircleShape
-//                )
-//                .width(30.dp)
-//                .height(30.dp)
-//                .padding(8.dp)
-//                .clickable { onActionClicked() }
-//        )
     }
 }
 

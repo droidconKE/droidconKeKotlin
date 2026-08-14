@@ -31,11 +31,10 @@ class FeedbackApi
         suspend fun postFeedback(
             feedback: Feedback,
             sessionId: String,
-        ) =
-            dataResultSafeApiCall {
-                client.post("${provideEventBaseUrl()}/feedback/sessions/$sessionId") {
-                    setBody(feedback)
-                }
-                return@dataResultSafeApiCall
+        ) = dataResultSafeApiCall {
+            client.post("${provideEventBaseUrl()}/feedback/sessions/$sessionId") {
+                setBody(feedback)
             }
+            return@dataResultSafeApiCall
+        }
     }

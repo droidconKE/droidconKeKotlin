@@ -1,155 +1,285 @@
-# droidcon KE 24 🔥🔨
+# droidcon Kenya — Android 🔥🔨
 
-Android app for the 5th Android Developer conference- Droidcon Kenya to be held in Nairobi on 6th - 8th
-November.
+[![CI](https://github.com/droidconKE/droidconKeKotlin/actions/workflows/pr.yml/badge.svg)](https://github.com/droidconKE/droidconKeKotlin/actions/workflows/pr.yml)
+[![codecov](https://codecov.io/gh/droidconKE/droidconKeKotlin/branch/main/graph/badge.svg)](https://codecov.io/gh/droidconKE/droidconKeKotlin)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-This project is the Android app for the conference. The app supports devices running Android 5.0+,
-and is optimized for phones and tablets of all shapes and sizes.
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.10-7F52FF?logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Compose BOM](https://img.shields.io/badge/Compose%20BOM-2026.08.00-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose/bom)
+[![AGP](https://img.shields.io/badge/AGP-9.3.1-3DDC84?logo=android&logoColor=white)](https://developer.android.com/build/releases/gradle-plugin)
+[![Gradle](https://img.shields.io/badge/Gradle-9.7-02303A?logo=gradle&logoColor=white)](https://gradle.org)
+[![minSdk](https://img.shields.io/badge/minSdk-26-brightgreen)](https://developer.android.com/tools/releases/platforms)
+[![Material 3](https://img.shields.io/badge/Material-3-757575?logo=materialdesign&logoColor=white)](https://m3.material.io)
 
-## Running the Project
+The official Android app for **droidcon Kenya**, the Android developer conference held in
+Nairobi. It carries the schedule, speakers, sponsors, organisers and event feed, works
+offline once it has synced, and lets attendees bookmark the sessions they plan to attend.
 
-To ensure the project runs on your local environment ensure you have Java 17 on your PC. If you don't have it, you can install it from [here](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
+The app is also the community's shared teaching codebase: a current, opinionated,
+multi-module Android project that people learn from and contribute to. Most of the
+decisions in here are written down rather than assumed — see [`docs/`](docs/) and
+[`AGENTS.md`](AGENTS.md).
 
-If you have multiple installations of Java make sure to set Java 17 as your preferred version to run
-the project.
+---
 
-With the new Android Gradle Plugin version 8.0.0, you need Java 17 to run the project and any
-terminal commands. A workaround for this is to add this in your **global** gradle.properties file:
+## Contents
 
-```properties
-org.gradle.java.home=/Applications/Android Studio.app/Contents/jbr/Contents/Home
+- [Running the project](#running-the-project)
+- [Module layout](#module-layout)
+- [Architecture](#architecture)
+- [Tech stack](#tech-stack)
+- [Quality gates](#quality-gates)
+- [Testing](#testing)
+- [Adding a dependency](#adding-a-dependency)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+- [Licence](#licence)
+
+---
+
+## Running the project
+
+Clone it and build. There is no setup step.
+
+```bash
+git clone https://github.com/droidconKE/droidconKeKotlin.git
+cd droidconKeKotlin
+./gradlew assembleDebug
 ```
 
-This simply sets the Gradle Java home to the one set in Android Studio. Android Studio
-Flamingo comes bundled with Java 17. You only need to ensure the project uses Java 17. To do so,
-go to **File -> Project Structure -> SDK Location -> Gradle Settings** and set the Java Version to
-17 from the list that appears.
+Or open the folder in Android Studio and press Run.
 
-![image](java_version.png)
+You do not need to install or configure a JDK. `gradle/gradle-daemon-jvm.properties` pins the
+daemon to Java 17 and the [foojay resolver](https://github.com/gradle/foojay-toolchains) in
+`settings.gradle.kts` downloads it if your machine hasn't got one. The Android SDK components,
+the Gradle distribution, and the emulators the instrumentation tests run on are all provisioned
+by the build too.
 
-## Dependencies
+The debug build is signed with the checked-in `keystore/dckedebug.keystore`, so a fresh clone
+installs over an existing build and keeps the Firebase debug SHA-1 stable. That is deliberate —
+it is a shared debug key, not a secret, and the release key is not in this repo.
 
-1. Jetpack Compose
-2. Coroutines - For Concurrency and Asynchronous tasks
-3. Ktor - For network requests
-4. Hilt - For Dependency Injection
-5. Crashlytics
-6. Coil - For Image Loading and Caching
-7. Lint Checks - [Ktlint](https://ktlint.github.io/)
+---
+
+## Module layout
+
+| Module               | What lives there                                                       |
+|----------------------|------------------------------------------------------------------------|
+| `app`                | `Application`, the activity host, the manifest, the DI graph root       |
+| `presentation`       | Every Compose screen, ViewModel and the navigation graph                |
+| `chai`               | The design system — colours, typography, shared components              |
+| `domain`             | Pure Kotlin models and repository interfaces. No Android dependency     |
+| `data`               | Repository implementations, the sync worker, mappers                    |
+| `datasource:local`   | Room database, DAOs, entities                                           |
+| `datasource:remote`  | Ktor client, DTOs, Remote Config                                        |
+| `build-logic`        | Convention plugins — every module's build config comes from here        |
+
+```mermaid
+graph TD
+    app[":app"]
+    presentation[":presentation"]
+    chai[":chai"]
+    data[":data"]
+    domain[":domain"]
+    local[":datasource:local"]
+    remote[":datasource:remote"]
+
+    app --> presentation
+    app --> chai
+    app --> data
+    app --> domain
+    app --> local
+    app --> remote
+
+    presentation --> chai
+    presentation --> domain
+    presentation --> remote
+
+    data --> domain
+    data --> local
+    data --> remote
+
+    classDef pure fill:#0b7285,stroke:#0b7285,color:#ffffff;
+    classDef ui fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff;
+    classDef io fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff;
+    class domain pure;
+    class app,presentation,chai ui;
+    class data,local,remote io;
+```
+
+**The dependency rule:** `domain` depends on nothing. `data` depends on `domain` and never
+the reverse. `presentation` does not reach into `datasource:local`. Keeping `domain` free of
+Android imports is what would make a move to Kotlin Multiplatform a port rather than a
+rewrite.
+
+Note that the two `datasource` modules do not depend on `domain` either. They own their own
+DTOs and Room entities and know nothing about the domain model; `data` is the only module
+that sees both sides, and the mappers there are the seam. That is why swapping the API
+representation of a session does not reach the UI.
+
+A new module applies the convention plugins rather than copying a `build.gradle.kts`:
+
+```kotlin
+plugins {
+    alias(libs.plugins.droidconke.android.library)
+    alias(libs.plugins.droidconke.android.hilt)
+}
+```
+
+---
 
 ## Architecture
 
-The proposed architecture is as follows;
+Offline-first. The UI never waits on the network: screens read from Room, and a WorkManager
+job refreshes Room from the API in the background. A cold start with no connection still
+shows the last synced schedule.
 
-### Data
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UI as Compose screen
+    participant VM as ViewModel
+    participant Repo as Repository<br/>(:data)
+    participant Room as Room<br/>(:datasource:local)
+    participant Ktor as Ktor<br/>(:datasource:remote)
+    participant Work as SyncDataWorker
 
-This layer will include;
+    UI->>VM: collect uiState
+    VM->>Repo: observe sessions
+    Repo->>Room: query, returns a Flow
+    Room-->>UI: cached data, immediately
 
-1. Network Calls
-2. Caching
-3. Storing and fetching Preferences.
-4. The repository implementation
-5. The relevant data models
-6. Relevant Mappers
+    Note over Work: periodic + on app start
+    Work->>Repo: sync() for sessions, speakers,<br/>sponsors, organisers, feed
+    Repo->>Ktor: fetch
+    Ktor-->>Repo: DTOs
+    Repo->>Room: replace
+    Room-->>UI: Flow re-emits, UI updates
+```
 
-### Domain
+The five repositories sync concurrently and the job only reports success when all of them
+succeed, so a partial refresh is retried rather than treated as done.
 
-This layer will contain;
+Fuller treatment, including the navigation model and the Room schema: **[docs/architecture.md](docs/architecture.md)**.
 
-1. The repository
-2. The relevant domain models.
+---
 
-### Presentation
+## Tech stack
 
-1. View
-2. ViewModels
-3. Relevant Mappers
-4. Relevant Models.
+| Concern            | Choice                                                        |
+|--------------------|---------------------------------------------------------------|
+| Language           | Kotlin 2.4, coroutines and Flow                               |
+| UI                 | Jetpack Compose, Material 3, `chai` design system             |
+| Navigation         | **Navigation 3** — `@Serializable` `NavKey`s, no route strings |
+| DI                 | Hilt with KSP                                                 |
+| Networking         | Ktor 3 with kotlinx.serialization                             |
+| Persistence        | Room 2.8, DataStore                                           |
+| Background work    | WorkManager                                                   |
+| Images             | Coil                                                          |
+| Firebase           | Crashlytics, Remote Config, Messaging, Performance            |
+| Logging            | Timber                                                        |
+| Tests              | JUnit4, Robolectric, MockK, Turbine, Compose UI test          |
 
-## Features
+Navigation 3 is not Navigation 2 renamed. Destinations are `@Serializable` keys implementing
+`NavKey`; there is no `NavHost` and there are no route strings. See
+`presentation/src/main/java/com/android254/presentation/common/navigation/`.
 
-The app will have the following features:
+---
 
-- Sessions
-- Feed
-- About
-- Home
-- Speakers
-- Sponsors
-- Authentication
-- Feedback
+## Quality gates
 
-## Designs
+Everything below runs on every pull request. Run it locally before pushing and CI holds no
+surprises.
 
-This is the link to the app designs:  
-- [Light Theme](https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)
-- [Dark Theme](https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
+```bash
+./gradlew spotlessApply ktlintFormat          # format first — the checks are strict
+./gradlew spotlessCheck ktlintCheck detekt    # style and static analysis
+./gradlew lint                                # Android Lint + Slack's Compose rules
+./gradlew stabilityCheck                      # Compose recomposition regressions
+./gradlew testDebugUnitTest                   # JVM + Robolectric
+```
 
-The app uses a design system: Chai
+| Tool                                                                  | Catches                                                       |
+|-----------------------------------------------------------------------|---------------------------------------------------------------|
+| [spotless](https://github.com/diffplug/spotless)                       | Formatting and the Apache licence header on every file        |
+| [ktlint](https://github.com/JLLeitschuh/ktlint-gradle)                 | Kotlin style, official code style                             |
+| [detekt](https://detekt.dev)                                           | Complexity, code smells, `TODO` left in comments              |
+| [Android Lint](https://developer.android.com/studio/write/lint)        | Platform, resource, manifest and API-level correctness        |
+| [compose-lints](https://slackhq.github.io/compose-lints/)              | Compose API shape, state and stability mistakes               |
+| [compose-stability-analyzer](https://github.com/skydoves/compose-stability-analyzer) | Composables that quietly stop being skippable  |
 
-## Dependencies
+There is **no lint baseline and no ktlint baseline**. Severity decisions live in
+[`config/lint/lint.xml`](config/lint/lint.xml), one rule per line with the reason next to it,
+so every suppression shows up in a diff. What each tool is set to, why, and the debt still
+being burned down: **[docs/static-analysis.md](docs/static-analysis.md)**.
 
-The project
-uses [Versions Catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog)
-to set up and share dependencies across the modules. The main reasons for choosing to adopt Versions
-Catalog are:
+---
 
-- Central place to define dependencies.
-- Easy syntax.
-- Does not compromise on build speeds as changes do not need the module to be compiled.
+## Testing
 
-To add a dependency, navigate to **gradle/libs.versions.toml*** file, which has all the dependencies
-for the whole project. This file has the following sections:
+```bash
+./gradlew testDebugUnitTest                                  # all unit tests
+./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
+```
 
-[versions] is used to declare the version numbers that will be referenced later by plugins and
-libraries.
-[libraries] Define the libraries that will be later accessed in our Gradle files.
-[bundles] Are used to define a set of dependencies. For this, we have `compose`, `room`, `lifecycle`
-and `ktor` as examples.
-[plugins] Used to define plugins.
+Instrumentation tests run on Gradle Managed Devices, so there is no emulator to create or
+start — Gradle provisions and tears them down:
 
-You need to add your dependency version in [versions]. After defining the version, add your library in
-the [libraries] section as:
+```bash
+./gradlew :data:supportedApiLevelsGroupDebugAndroidTest       # api30 + api34
+```
+
+Coverage is measured with JaCoCo on debug variants and reported to Codecov.
+
+---
+
+## Adding a dependency
+
+All dependencies are declared in
+[`gradle/libs.versions.toml`](gradle/libs.versions.toml), a Gradle
+[version catalog](https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog).
+One place to look, one place to bump, and changing a version does not invalidate the
+compilation of every module.
+
+Add the version under `[versions]`, then the library under `[libraries]`:
 
 ```toml
+[versions]
+splash = "1.2.0"
+
+[libraries]
 androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash" }
 ```
 
-**Note**:
+Then use it as `implementation(libs.androidx.splashscreen)` — Gradle normalises `-`, `_` and
+`.` into `.` for the accessor. Check whether it belongs in an existing `[bundles]` entry
+before adding it module by module.
 
-- You can use separators such as -, _v, . that will be normalized by Gradle to . in the Catalog and
-  allow you to create subsections.
-- Define variables using **CamelCase**.\
-- Check if the library can be added to any existing bundles.
+To see what is out of date:
 
-## Compose Preview and ViewModel
+```bash
+./gradlew dependencyUpdates
+```
 
-Previews are limited when using ViewModel within a composable.
+---
 
-If you want to preview a composable that uses a ViewModel, you should create another composable with
-the parameters from ViewModel passed as arguments of the composable. This way, you don't need to
-preview the composable that uses the ViewModel.
+## Compose previews and ViewModels
 
-More on Previews and ViewModels can be
-found [here](https://developer.android.com/jetpack/compose/tooling/previews#preview-viewmodel).
+A composable that calls `hiltViewModel()` cannot be previewed. Split it: keep a composable
+that takes the ViewModel and immediately delegates to a second one that takes plain state and
+callbacks, then preview the second. The
+[Compose tooling docs](https://developer.android.com/jetpack/compose/tooling/previews#preview-viewmodel)
+cover the pattern.
 
-## Compatibility
-
-This project uses `coreLibraryDesugaring` to support newer Java 8 APIs that are not available on API
-levels 25 and below. Specifically the Kotlin `kotlinx.datetime` API which depends on
-Java's `java.time`.
-This allows use of `kotlinx.datetime.LocalDate` without having to wrap it
-in `@RequiresAPI(Build.VERSION_CODES.O)` and also backports the fix to API level 21.
-More on Desugaring using Android Gradle Plugin can be
-found [here](https://developer.android.com/studio/write/java8-support).
-Instructions on how to set up and add `coreLibraryDesugaring` to your project can be
-found [here](https://developer.android.com/studio/write/java8-support#library-desugaring).
+---
 
 ## Contributing
 
-Contributions are always welcome!
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for ways to get started.
+Contributions are welcome, and this repository is deliberately a good place to make a first
+one. [`CONTRIBUTING.md`](CONTRIBUTING.md) covers the process — issues, forks, PR
+expectations. [`AGENTS.md`](AGENTS.md) covers the things that have already cost this codebase
+a bug and are easy to reintroduce; it is worth ten minutes before your first PR.
 
 ## Contributors
 
@@ -455,3 +585,22 @@ We would endlessly like to thank the following contributors
 	<tbody>
 </table>
 <!-- readme: contributors -end -->
+---
+
+## Licence
+
+```
+Copyright 2026 droidcon Kenya
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

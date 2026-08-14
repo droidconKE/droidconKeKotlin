@@ -45,10 +45,14 @@ sealed interface Screens : NavKey {
     data object FeedBack : Screens
 
     @Serializable
-    data class SessionDetails(val sessionId: String) : Screens
+    data class SessionDetails(
+        val sessionId: String,
+    ) : Screens
 
     @Serializable
-    data class SpeakerDetails(val speakerName: String) : Screens
+    data class SpeakerDetails(
+        val speakerName: String,
+    ) : Screens
 }
 
 val bottomNavigationRoutes: List<Screens> = TopLevelDestination.routes

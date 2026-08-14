@@ -32,9 +32,13 @@ import javax.inject.Inject
 sealed interface SpeakersScreenUiState {
     object Loading : SpeakersScreenUiState
 
-    data class Success(val speakers: List<SpeakerUI>) : SpeakersScreenUiState
+    data class Success(
+        val speakers: List<SpeakerUI>,
+    ) : SpeakersScreenUiState
 
-    data class Error(val message: String) : SpeakersScreenUiState
+    data class Error(
+        val message: String,
+    ) : SpeakersScreenUiState
 }
 
 @HiltViewModel
@@ -53,7 +57,8 @@ class SpeakersScreenViewModel
                 )
 
         val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
-            speakersRepo.fetchSpeakers()
+            speakersRepo
+                .fetchSpeakers()
                 .map {
                     it.map {
                         SpeakerUI(
@@ -65,15 +70,12 @@ class SpeakersScreenViewModel
                             twitterHandle = it.twitter,
                         )
                     }
-                }
-                .map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+                }.map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
                 .onStart {
                     emit(SpeakersScreenUiState.Loading)
-                }
-                .catch {
+                }.catch {
                     emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
-                }
-                .stateIn(
+                }.stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
                     initialValue = SpeakersScreenUiState.Loading,

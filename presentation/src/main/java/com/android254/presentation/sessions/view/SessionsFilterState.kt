@@ -54,15 +54,12 @@ data class SessionsFilterState(
             this + value
         }
 
-    private fun List<String>.matchesOrEmpty(value: String): Boolean =
-        isEmpty() || any { it.equals(value.trim(), ignoreCase = true) }
+    private fun List<String>.matchesOrEmpty(value: String): Boolean = isEmpty() || any { it.equals(value.trim(), ignoreCase = true) }
 
-    private fun List<String>.matchesAnyOrEmpty(values: List<String>): Boolean =
-        isEmpty() || values.any { value -> any { it.equals(value, ignoreCase = true) } }
+    private fun List<String>.matchesAnyOrEmpty(values: List<String>): Boolean = isEmpty() || values.any { value -> any { it.equals(value, ignoreCase = true) } }
 
     companion object {
         /** Convenience for tests: a state with only [option] applied. */
-        fun from(option: SessionsFilterOption): SessionsFilterState =
-            SessionsFilterState().toggle(option)
+        fun from(option: SessionsFilterOption): SessionsFilterState = SessionsFilterState().toggle(option)
     }
 }

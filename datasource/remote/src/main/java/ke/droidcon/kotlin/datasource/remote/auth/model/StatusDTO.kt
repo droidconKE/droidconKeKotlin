@@ -18,4 +18,6 @@ package ke.droidcon.kotlin.datasource.remote.auth.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StatusDTO(val message: String)
+data class StatusDTO(
+    val message: String,
+)

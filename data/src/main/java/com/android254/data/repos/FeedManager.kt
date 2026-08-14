@@ -35,30 +35,29 @@ class FeedManager
         private val localFeedDataSource: LocalFeedDataSource,
         private val remoteFeedDataSource: RemoteFeedDataSource,
     ) : FeedRepo {
-        override fun fetchFeed(): Flow<List<Feed>> =
-            localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }
+        override fun fetchFeed(): Flow<List<Feed>> = localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }
 
-        override fun fetchFeedById(id: Int): Flow<Feed?> =
-            localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }
+        override fun fetchFeedById(id: Int): Flow<Feed?> = localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer.sync(
-                remoteItemFetcher = {
-                    when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
-                        is DataResult.Success -> feedResponse.data
-                        is DataResult.Error -> throw SyncException(feedResponse.message, feedResponse.exc)
-                        else -> throw SyncException("Sync feed failed")
-                    }
-                },
-                localIdFetcher = { localFeedDataSource.getTitles() },
-                localItemUpserter = { remoteItems ->
-                    localFeedDataSource.insertFeed(
-                        feedItems = remoteItems.map { it.toEntity() },
-                    )
-                },
-                localItemDeleter = { titles ->
-                    localFeedDataSource.deleteByTitles(titles)
-                },
-                remoteToLocalIdSelector = { it.title },
-            ).isSuccess
+            synchronizer
+                .sync(
+                    remoteItemFetcher = {
+                        when (val feedResponse = remoteFeedDataSource.fetchFeed()) {
+                            is DataResult.Success -> feedResponse.data
+                            is DataResult.Error -> throw SyncException(feedResponse.message, feedResponse.exc)
+                            else -> throw SyncException("Sync feed failed")
+                        }
+                    },
+                    localIdFetcher = { localFeedDataSource.getTitles() },
+                    localItemUpserter = { remoteItems ->
+                        localFeedDataSource.insertFeed(
+                            feedItems = remoteItems.map { it.toEntity() },
+                        )
+                    },
+                    localItemDeleter = { titles ->
+                        localFeedDataSource.deleteByTitles(titles)
+                    },
+                    remoteToLocalIdSelector = { it.title },
+                ).isSuccess
     }

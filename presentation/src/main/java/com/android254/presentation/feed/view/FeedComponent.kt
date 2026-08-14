@@ -74,12 +74,14 @@ fun FeedComponent(
         feed.image?.let {
             AsyncImage(
                 modifier =
-                    Modifier.fillMaxWidth()
+                    Modifier
+                        .fillMaxWidth()
                         .height(209.dp)
                         .clip(shape = RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.FillHeight,
                 model =
-                    ImageRequest.Builder(LocalContext.current)
+                    ImageRequest
+                        .Builder(LocalContext.current)
                         .data(feed.image)
                         .build(),
                 contentDescription = stringResource(id = R.string.feed_image),
@@ -98,7 +100,8 @@ fun FeedComponent(
                     onClickItem(1)
                 },
                 modifier =
-                    Modifier.testTag("share_button")
+                    Modifier
+                        .testTag("share_button")
                         .offset(x = (-12).dp),
             ) {
                 ChaiBodySmallBold(

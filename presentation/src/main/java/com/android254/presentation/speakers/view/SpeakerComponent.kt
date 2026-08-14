@@ -64,8 +64,7 @@ fun SpeakerComponent(
                 .wrapContentHeight()
                 .clickable {
                     onClick.invoke()
-                }
-                .border(
+                }.border(
                     width = 1.dp,
                     color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
                     shape = RoundedCornerShape(8.dp),
@@ -86,7 +85,8 @@ fun SpeakerComponent(
             val (image, nameText, bioText, button) = createRefs()
             AsyncImage(
                 model =
-                    ImageRequest.Builder(LocalContext.current)
+                    ImageRequest
+                        .Builder(LocalContext.current)
                         .data(speaker.imageUrl)
                         .build(),
                 placeholder = painterResource(R.drawable.smiling),
@@ -96,16 +96,14 @@ fun SpeakerComponent(
                     Modifier
                         .clip(
                             shape = RoundedCornerShape(8.dp),
-                        )
-                        .border(
+                        ).border(
                             border =
                                 BorderStroke(
                                     2.5.dp,
                                     color = ChaiTeal,
                                 ),
                             shape = RoundedCornerShape(8.dp),
-                        )
-                        .height(120.dp)
+                        ).height(120.dp)
                         .width(120.dp)
                         .constrainAs(image) {
                             top.linkTo(parent.top)
@@ -121,8 +119,7 @@ fun SpeakerComponent(
                             top.linkTo(image.bottom, margin = 16.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                        }
-                        .wrapContentHeight(),
+                        }.wrapContentHeight(),
                 bodyText = speaker.name,
                 textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 textAlign = TextAlign.Center,
@@ -138,8 +135,7 @@ fun SpeakerComponent(
                             bottom.linkTo(button.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                        }
-                        .wrapContentHeight(),
+                        }.wrapContentHeight(),
                 bodyText = speaker.tagline ?: "",
                 textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
                 textAlign = TextAlign.Center,

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2026 DroidconKE
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     https://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+-->
+
+<!-- Rationale for every severity below: docs/static-analysis.md -->
+<lint>
+
+    <issue id="ComposeRememberMissing" severity="error" />
+    <issue id="ComposeMutableParameters" severity="error" />
+    <issue id="ComposeContentEmitterReturningValues" severity="error" />
+    <issue id="ComposeViewModelForwarding" severity="error" />
+    <issue id="ComposeItemKeyHashCode" severity="error" />
+    <issue id="ComposeUnstableReceiver" severity="error" />
+    <issue id="ComposeNamingUppercase" severity="error" />
+    <issue id="ComposeNamingLowercase" severity="error" />
+    <issue id="ComposeModifierComposed" severity="error" />
+    <issue id="ComposeM2Api" severity="error" />
+
+    <issue id="ComposeCompositionLocalUsage" severity="error">
+        <ignore regexp="chai/colors/ChaiColors\.kt" />
+        <ignore regexp="chai/atoms/.*\.kt" />
+    </issue>
+
+    <issue id="ComposeModifierMissing" severity="warning" />
+    <issue id="ComposeModifierWithoutDefault" severity="warning" />
+    <issue id="ComposeModifierReused" severity="warning" />
+    <issue id="ComposeParameterOrder" severity="warning" />
+    <issue id="ComposeUnstableCollections" severity="warning" />
+    <issue id="ComposeMultipleContentEmitters" severity="warning" />
+    <issue id="ComposeViewModelInjection" severity="warning" />
+    <issue id="ComposePreviewPublic" severity="warning" />
+    <issue id="ComposePreviewNaming" severity="warning" />
+    <issue id="ComposeRedundantComposable" severity="warning" />
+
+    <issue id="GradleDependency" severity="informational" />
+    <issue id="AndroidGradlePluginVersion" severity="informational" />
+    <issue id="NewerVersionAvailable" severity="informational" />
+    <issue id="SimilarGradleDependency" severity="informational" />
+    <issue id="MissingTranslation" severity="informational" />
+    <issue id="ExtraTranslation" severity="informational" />
+    <issue id="VectorRaster" severity="informational" />
+    <issue id="IconLocation" severity="informational" />
+
+</lint>

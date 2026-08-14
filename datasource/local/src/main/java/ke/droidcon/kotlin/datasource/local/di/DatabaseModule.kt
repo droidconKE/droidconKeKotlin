@@ -44,7 +44,8 @@ object DatabaseModule {
         context: Context,
         name: String,
     ): Database =
-        Room.databaseBuilder(context, Database::class.java, name)
+        Room
+            .databaseBuilder(context, Database::class.java, name)
             .addMigrations(*Database.ALL_MIGRATIONS)
             .build()
 

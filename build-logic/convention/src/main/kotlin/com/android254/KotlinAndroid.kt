@@ -43,14 +43,16 @@ internal fun Project.configureKotlinAndroid(
         compileOptions.isCoreLibraryDesugaringEnabled = true
 
         configureManagedDevices(this)
+        configureLint(this)
     }
+
+    val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
+        .map(String::toBoolean)
+        .orElse(false)
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            // Treat all Kotlin warnings as errors (disabled by default)
-            // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
-            val warningsAsErrors: String? by project
-            allWarningsAsErrors.set(warningsAsErrors.toBoolean())
+            allWarningsAsErrors.set(warningsAsErrors)
 
             freeCompilerArgs.addAll(
                 "-opt-in=kotlin.RequiresOptIn",
@@ -67,6 +69,8 @@ internal fun Project.configureKotlinAndroid(
         add("coreLibraryDesugaring", libs.findLibrary("desugar-jdk-libs").get())
 
         add("implementation", libs.findLibrary("android.coreKtx").get())
+
+        add("lintChecks", libs.findLibrary("compose-lint-checks").get())
 
         add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())
         add("androidTestImplementation", libs.findLibrary("junit.androidx").get())

@@ -14,6 +14,8 @@ Run these before opening a PR. CI runs the same set.
 ```bash
 ./gradlew spotlessApply ktlintFormat          # format first — the checks below are strict
 ./gradlew spotlessCheck ktlintCheck detekt    # static analysis
+./gradlew lint                                # Android Lint + Slack's Compose rules
+./gradlew stabilityCheck                      # Compose recomposition regressions
 ./gradlew assembleDebug                       # build
 ./gradlew testDebugUnitTest                   # JVM + Robolectric tests
 ```
@@ -30,7 +32,8 @@ Single test class:
 ./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
 ```
 
-Requires JDK 17. `./gradlew --version` should report it.
+No JDK setup needed — `gradle/gradle-daemon-jvm.properties` pins the daemon to Java 17 and the
+foojay resolver provisions it.
 
 ---
 
@@ -69,10 +72,19 @@ Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.08.00, Material 3), **Navig
 Hilt + KSP, Ktor 3, Room 2.8, WorkManager, Firebase (Crashlytics, Remote Config, Messaging,
 Perf). `compileSdk`/`targetSdk` 37, `minSdk` 26.
 
-**AGP 9 runs with two opt-out flags** in `gradle.properties`: `android.newDsl=false` and
-`android.builtInKotlin=false`. detekt below 2.0 requires both and the ktlint plugin requires
-the second, and both are applied to every subproject. Remove them when detekt 2.0 ships —
-until then AGP 9's two headline features are switched off.
+**The build uses AGP's built-in Kotlin.** `org.jetbrains.kotlin.android` is not applied
+anywhere, and both `android.newDsl` and `android.builtInKotlin` are left at their AGP 9
+defaults. Do not add the Kotlin Android plugin back: under the new DSL, applying it
+alongside AGP's own Kotlin support is a hard error, not a warning.
+
+Consequences worth knowing before you edit a build file:
+
+- Library modules have no `defaultConfig.targetSdk`. Only the test APK does, via
+  `testOptions.targetSdk`.
+- The `android { }` block resolves to `com.android.build.api.dsl.*`, not the legacy
+  `com.android.build.gradle.*` types.
+- Source sets belong to AGP, so a `languageSettings` opt-in no longer reaches the compile
+  tasks. Use `kotlin { compilerOptions { optIn.add(...) } }` — see `presentation`.
 
 Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
 implementing `NavKey`; there is no `NavHost` or route strings. See
@@ -87,6 +99,11 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 - **Apache licence header** on every file. Spotless adds it.
 - **detekt forbids `TODO` in comments.** Write the note as a plain sentence, or file an
   issue.
+- **No baselines.** There is no lint baseline and the ktlint one is empty. A suppression goes
+  in `config/lint/lint.xml` with the reason next to it, where a reviewer will see it. Rules at
+  `error` are clean and must stay clean; rules at `warning` are being burned down, and
+  promoting one to `error` is the last commit of the work that clears it. Counts are in
+  [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
 - **Colours come from the theme**, never from the raw palette. Read
   `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
@@ -152,6 +169,9 @@ explicitly.
 ---
 
 ## Where this is going
+
+[`docs/architecture.md`](docs/architecture.md) is the long-form version of this file, with
+diagrams. [`docs/static-analysis.md`](docs/static-analysis.md) covers the tooling.
 
 `docs/IMPROVEMENT_PLAN.md` is the roadmap: an audit of the current state, then phased work
 covering adaptive/large-screen support, a design-system rebuild onto Material 3 Expressive,

@@ -23,7 +23,6 @@ import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
-import org.jetbrains.annotations.NotNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -46,11 +45,7 @@ class DroidconApp : Application() {
             BuildConfig.DEBUG -> {
                 Timber.plant(
                     object : Timber.DebugTree() {
-                        override fun createStackElementTag(
-                            @NotNull element: StackTraceElement,
-                        ): String {
-                            return super.createStackElementTag(element) + ":" + element.lineNumber
-                        }
+                        override fun createStackElementTag(element: StackTraceElement): String = super.createStackElementTag(element) + ":" + element.lineNumber
                     },
                 )
             }
