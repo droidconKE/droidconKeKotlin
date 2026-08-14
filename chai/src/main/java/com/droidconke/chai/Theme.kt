@@ -15,18 +15,11 @@
  */
 package com.droidconke.chai
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 import com.droidconke.chai.colors.ChaiColors
 import com.droidconke.chai.colors.ChaiDarkColorPalette
 import com.droidconke.chai.colors.ChaiLightColorPalette
@@ -37,17 +30,7 @@ fun ChaiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val view = LocalView.current
     val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
-
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = view.context.findActivity()?.window ?: return@SideEffect
-            @Suppress("DEPRECATION")
-            window.statusBarColor = customColorsPalette.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-        }
-    }
 
     CompositionLocalProvider(
         LocalChaiColorsPalette provides customColorsPalette,
@@ -62,15 +45,3 @@ val MaterialTheme.chaiColorsPalette: ChaiColors
     @Composable
     @ReadOnlyComposable
     get() = LocalChaiColorsPalette.current
-
-/**
- * The closest [Activity], or null when the composition is not hosted by one — Robolectric,
- * screenshot tests, a `ComposeView` outside an Activity. Never throws: a theme must not be
- * able to crash those.
- */
-private tailrec fun Context.findActivity(): Activity? =
-    when (this) {
-        is Activity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
