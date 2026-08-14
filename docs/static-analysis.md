@@ -115,28 +115,26 @@ projects end up with baselines.
 From `:app`'s lint run, which has `checkDependencies = true` and therefore sees the whole
 module graph.
 
-**0 errors. 162 warnings. 28 informational.**
+**0 errors. 144 warnings. 18 informational.**
 
 | Rule | Count | What clearing it involves |
 |------|-------|---------------------------|
-| `ComposeModifierMissing` | 50 | Add `modifier: Modifier = Modifier` and apply it to the root layout |
+| `ComposeModifierMissing` | 48 | Add `modifier: Modifier = Modifier` and apply it to the root layout |
 | `ComposePreviewPublic` | 42 | Make `@Preview` composables private. Mechanical, no call sites |
 | `ComposeParameterOrder` | 34 | Reorder to required, then modifier, then defaulted. Touches call sites |
 | `ComposeUnstableCollections` | 20 | `List` → `ImmutableList`, or mark the holder `@Immutable` |
-| `ComposeModifierReused` | 4 | One `SpeakerComponent.kt`; the modifier is applied to four children |
-| `ComposeModifierWithoutDefault` | 3 | Add `= Modifier` |
-| `ComposeViewModelInjection` | 2 | Move `hiltViewModel()` into a default parameter |
-| `ComposeMultipleContentEmitters` | 2 | Wrap the two emitters in a single root layout |
-| `CheckResult` | 2 | Two tests discard the result of `onNodeWithTag` / `onNodeWithText` |
-| `ComposePreviewNaming` | 1 | `ChaiLightAndDarkComposePreview` → `…Previews` (2 preview annotations) |
-| `ComposeRedundantComposable` | 1 | `fakeEntryProvider` calls nothing composable |
-| `UnusedAttribute` | 1 | `enableOnBackInvokedCallback` is API 33+ |
 
 `ComposePreviewPublic` is the cheapest of these by a distance — previews have no call sites,
 so it is 42 edits and no cascade. `ComposeParameterOrder` is the most expensive, because
-every reorder touches everything that calls the composable positionally.
+every reorder touches everything that calls the composable positionally. Note that clearing
+`ComposeModifierMissing` adds to `ComposeParameterOrder` unless the new parameter is placed
+correctly on the way in.
 
-The 28 informational findings are `IconLocation` (photographic assets in `drawable/` rather
+Six rules have been cleared and promoted to `error`, so they stay at zero:
+`ComposeModifierWithoutDefault`, `ComposeModifierReused`, `ComposeMultipleContentEmitters`,
+`ComposeViewModelInjection`, `ComposePreviewNaming` and `ComposeRedundantComposable`.
+
+The 18 informational findings are `IconLocation` (photographic assets in `drawable/` rather
 than a density bucket), `VectorRaster` (full-bleed background vectors larger than the
 200×200 the rule wants from icons), and the Gradle dependency-freshness checks, which are
 Dependabot's job and `./gradlew dependencyUpdates`'s, not lint's.

@@ -114,13 +114,13 @@ fun droidconEntryProvider(
 }
 
 @Composable
-private fun sessionModel(key: Screens.SessionDetails): SessionDetailsViewModel {
-    val viewModel =
+private fun sessionModel(
+    key: Screens.SessionDetails,
+    viewModel: SessionDetailsViewModel =
         hiltViewModel<SessionDetailsViewModel, SessionDetailsViewModel.Factory>(
             key = key.sessionId,
             creationCallback = { factory ->
                 factory.create(key)
             },
-        )
-    return viewModel
-}
+        ),
+): SessionDetailsViewModel = viewModel

@@ -37,13 +37,13 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.OrganizingTeamMember
-import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiTextLabelLarge
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun OrganizingTeamComponent(
@@ -62,7 +62,7 @@ fun OrganizingTeamComponent(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
-            placeholder = painterResource(R.drawable.droidcon_icon),
+            placeholder = painterResource(ChaiR.drawable.droidcon_icon),
             contentDescription = "Member profile",
             contentScale = ContentScale.Crop,
             modifier =
@@ -92,7 +92,7 @@ fun OrganizingTeamComponent(
     }
 }
 
-@ChaiLightAndDarkComposePreview
+@ChaiLightAndDarkComposePreviews
 @Composable
 fun Preview() {
     ChaiTheme {

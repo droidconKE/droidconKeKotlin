@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import com.android254.presentation.activity.MainActivity
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 private const val CHANNEL_ID = "DROIDCON_CHANNEL_ID"
 
@@ -60,7 +60,7 @@ class DroidconNotificationManager(
         val builder =
             NotificationCompat
                 .Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.droidcon_icon)
+                .setSmallIcon(ChaiR.drawable.droidcon_icon)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)

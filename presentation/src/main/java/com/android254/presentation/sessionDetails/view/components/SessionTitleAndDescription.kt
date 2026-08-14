@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessionDetails.view.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -30,18 +31,21 @@ import com.droidconke.chai.components.ChaiBodyMedium
 @Composable
 fun SessionTitleAndDescription(
     sessionDetails: SessionDetailsPresentationModel,
+    modifier: Modifier = Modifier,
 ) {
-    ChaiBodyLargeBold(
-        modifier = Modifier.testTag(TestTag.SESSION_TITLE),
-        bodyText = sessionDetails.title,
-        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
-    )
+    Column(modifier = modifier) {
+        ChaiBodyLargeBold(
+            modifier = Modifier.testTag(TestTag.SESSION_TITLE),
+            bodyText = sessionDetails.title,
+            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+        )
 
-    Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(15.dp))
 
-    ChaiBodyMedium(
-        modifier = Modifier.testTag(TestTag.SESSION_DESCRIPTION),
-        bodyText = sessionDetails.description,
-        textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-    )
+        ChaiBodyMedium(
+            modifier = Modifier.testTag(TestTag.SESSION_DESCRIPTION),
+            bodyText = sessionDetails.description,
+            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+        )
+    }
 }

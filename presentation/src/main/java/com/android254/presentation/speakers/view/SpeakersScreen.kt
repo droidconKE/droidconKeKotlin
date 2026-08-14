@@ -51,6 +51,7 @@ import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun SpeakersRoute(
@@ -86,7 +87,7 @@ private fun SpeakersScreen(
                         onClick = navigateToHomeScreen,
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_back_arrow),
+                            painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                             contentDescription = stringResource(R.string.back_arrow_icon_description),
                             tint = MaterialTheme.chaiColorsPalette.textBoldColor,
                         )

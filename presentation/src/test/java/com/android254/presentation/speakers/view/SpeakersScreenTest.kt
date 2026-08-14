@@ -65,7 +65,7 @@ class SpeakersScreenTest {
             onNodeWithContentDescription("Back arrow icon").assertIsDisplayed()
             onNodeWithContentDescription("Speaker headshot").assertIsDisplayed()
             onNodeWithText("John Doe").assertIsDisplayed()
-            onNodeWithText("kenya partner lead", substring = true, ignoreCase = true)
+            onNodeWithText("kenya partner lead", substring = true, ignoreCase = true).assertIsDisplayed()
             onNodeWithText("SESSION").assertIsDisplayed()
         }
     }

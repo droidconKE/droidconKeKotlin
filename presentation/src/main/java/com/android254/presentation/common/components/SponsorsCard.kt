@@ -44,6 +44,7 @@ import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -99,7 +100,7 @@ fun SponsorsCard(
                                 .crossfade(true)
                                 .build(),
                         contentScale = ContentScale.Fit,
-                        placeholder = painterResource(R.drawable.ic_google_logo_icon),
+                        placeholder = painterResource(ChaiR.drawable.ic_google_logo_icon),
                         contentDescription = stringResource(id = R.string.logo),
                     )
                 }

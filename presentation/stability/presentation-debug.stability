@@ -47,11 +47,12 @@ public fun com.android254.presentation.about.view.OrganizingTeamSection(modifier
     - onClickMember: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.activity.MainScreen(viewModel: com.android254.presentation.activity.MainViewModel): kotlin.Unit
+public fun com.android254.presentation.activity.MainScreen(viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - viewModel: UNSTABLE (has mutable properties or unstable members)
+    - authViewModel: RUNTIME (requires runtime check)
 
 @Composable
 public fun com.android254.presentation.auth.view.AuthDialog(onDismiss: kotlin.Function0<kotlin.Unit>, viewModel: kotlin.Function0<com.android254.presentation.auth.AuthViewModel>?): kotlin.Unit
@@ -297,14 +298,14 @@ public fun com.android254.presentation.common.components.SponsorsCard(modifier: 
     - sponsors: RUNTIME (requires runtime check)
 
 @Composable
-private fun com.android254.presentation.common.components.TextContent(modifier: androidx.compose.ui.Modifier, buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+private fun com.android254.presentation.common.components.TextContent(buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: false
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - buttonTexts: RUNTIME (requires runtime check)
     - index: STABLE (primitive type)
     - contentColor: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.TimeAndVenueComponent(session: com.android254.presentation.models.SessionPresentationModel): kotlin.Unit
@@ -314,11 +315,10 @@ public fun com.android254.presentation.common.components.TimeAndVenueComponent(s
     - session: RUNTIME (requires runtime check)
 
 @Composable
-private fun com.android254.presentation.common.components.ToggleButton(modifier: androidx.compose.ui.Modifier, buttonShape: androidx.compose.foundation.shape.CornerBasedShape, border: androidx.compose.foundation.BorderStroke, backgroundColor: androidx.compose.ui.graphics.Color, elevation: androidx.compose.material3.ButtonElevation, enabled: kotlin.Boolean, buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.common.components.ToggleButton(buttonShape: androidx.compose.foundation.shape.CornerBasedShape, border: androidx.compose.foundation.BorderStroke, backgroundColor: androidx.compose.ui.graphics.Color, elevation: androidx.compose.material3.ButtonElevation, enabled: kotlin.Boolean, buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - buttonShape: STABLE (known stable type)
     - border: STABLE (marked @Stable or @Immutable)
     - backgroundColor: STABLE (marked @Stable or @Immutable)
@@ -327,6 +327,7 @@ private fun com.android254.presentation.common.components.ToggleButton(modifier:
     - buttonTexts: RUNTIME (requires runtime check)
     - index: STABLE (primitive type)
     - contentColor: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - onClick: STABLE (function type)
 
 @Composable
@@ -365,11 +366,12 @@ public fun com.android254.presentation.common.navigation.rememberNavigationState
     - topLevelRoutes: RUNTIME (requires runtime check)
 
 @Composable
-private fun com.android254.presentation.common.navigation.sessionModel(key: com.android254.presentation.common.navigation.Screens.SessionDetails): com.android254.presentation.sessionDetails.SessionDetailsViewModel
+private fun com.android254.presentation.common.navigation.sessionModel(key: com.android254.presentation.common.navigation.Screens.SessionDetails, viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel): com.android254.presentation.sessionDetails.SessionDetailsViewModel
   skippable: false
   restartable: false
   params:
     - key: STABLE (class with no mutable properties)
+    - viewModel: RUNTIME (requires runtime check)
 
 @Composable
 public fun com.android254.presentation.common.navigation.toEntries(entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
@@ -403,12 +405,12 @@ public fun com.android254.presentation.common.stepper.VerticalStepItem(step: com
     - content: STABLE (composable function type)
 
 @Composable
-public fun com.android254.presentation.feed.view.FeedComponent(modifier: androidx.compose.ui.Modifier, feed: com.android254.presentation.models.FeedUI, onClickItem: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.feed.view.FeedComponent(feed: com.android254.presentation.models.FeedUI, modifier: androidx.compose.ui.Modifier, onClickItem: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - feed: STABLE (class with no mutable properties)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - onClickItem: STABLE (function type)
 
 @Composable
@@ -653,13 +655,14 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionLev
     - sessionLevel: STABLE (String is immutable)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.components.SessionSpeakerNameAndFavouriteIcon(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.components.SessionSpeakerNameAndFavouriteIcon(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - sessionDetails: RUNTIME (requires runtime check)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.sessionDetails.view.components.SessionTimeAndRoom(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel): kotlin.Unit
@@ -669,11 +672,12 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionTim
     - sessionDetails: RUNTIME (requires runtime check)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.components.SessionTitleAndDescription(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.components.SessionTitleAndDescription(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - sessionDetails: RUNTIME (requires runtime check)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.sessionDetails.view.components.SpeakerTwitterHandle(speaker: com.android254.presentation.models.SessionDetailsSpeakerPresentationModel): kotlin.Unit

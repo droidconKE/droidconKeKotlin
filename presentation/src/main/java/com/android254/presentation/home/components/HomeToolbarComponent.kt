@@ -18,7 +18,7 @@ package com.android254.presentation.home.components
 import androidx.compose.runtime.Composable
 import com.android254.presentation.common.components.DroidconAppBar
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
-import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 
 @Composable
@@ -41,7 +41,7 @@ fun HomeToolbarComponent(
     }
 }
 
-@ChaiLightAndDarkComposePreview
+@ChaiLightAndDarkComposePreviews
 @Composable
 private fun HomeToolbarComponentPreview() {
     ChaiTheme {

@@ -42,7 +42,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SpeakerUI
-import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
@@ -77,7 +77,7 @@ fun SpeakerComponent(
     ) {
         ConstraintLayout(
             modifier =
-                modifier
+                Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
@@ -113,7 +113,7 @@ fun SpeakerComponent(
             )
             ChaiBodyMediumBold(
                 modifier =
-                    modifier
+                    Modifier
                         .testTag("name")
                         .constrainAs(nameText) {
                             top.linkTo(image.bottom, margin = 16.dp)
@@ -128,7 +128,7 @@ fun SpeakerComponent(
 
             ChaiBodySmall(
                 modifier =
-                    modifier
+                    Modifier
                         .testTag("bio")
                         .constrainAs(bioText) {
                             top.linkTo(nameText.bottom, margin = 6.dp)
@@ -151,7 +151,7 @@ fun SpeakerComponent(
                         color = ChaiTeal90,
                     ),
                 modifier =
-                    modifier
+                    Modifier
                         .constrainAs(button) {
                             top.linkTo(bioText.bottom, margin = 28.dp)
                             start.linkTo(parent.start)
@@ -167,7 +167,7 @@ fun SpeakerComponent(
     }
 }
 
-@ChaiLightAndDarkComposePreview
+@ChaiLightAndDarkComposePreviews
 @Composable
 fun SpeakerComponentPreview() {
     ChaiTheme {

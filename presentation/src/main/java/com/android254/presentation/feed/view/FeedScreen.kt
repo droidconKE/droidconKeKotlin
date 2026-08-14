@@ -59,6 +59,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.coroutines.launch
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun FeedRoute(
@@ -155,8 +156,8 @@ private fun FeedScreen(
                         // FeedUI has no id; url is the stable per-post identifier.
                         items(feedUIState.feeds, key = { it.url }) { feedPresentationModel ->
                             FeedComponent(
+                                feed = feedPresentationModel,
                                 modifier = Modifier.fillMaxWidth(),
-                                feedPresentationModel,
                             ) {
                                 scope.launch {
                                     bottomSheetState.show()
@@ -174,7 +175,7 @@ private fun FeedScreen(
                     ) {
                         Icon(
                             modifier = Modifier.size(70.dp),
-                            painter = painterResource(id = R.drawable.feed_icon),
+                            painter = painterResource(id = ChaiR.drawable.feed_icon),
                             contentDescription = stringResource(id = R.string.feed_icon_description),
                             tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
                         )

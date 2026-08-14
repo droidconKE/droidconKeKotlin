@@ -58,6 +58,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun SessionsStateComponent(
@@ -83,7 +84,7 @@ fun SessionsStateComponent(
                 ) {
                     Icon(
                         modifier = Modifier.size(70.dp),
-                        painter = painterResource(id = R.drawable.sessions_icon),
+                        painter = painterResource(id = ChaiR.drawable.sessions_icon),
                         contentDescription = stringResource(id = R.string.sessions_icon_description),
                         tint = ChaiBlue,
                     )

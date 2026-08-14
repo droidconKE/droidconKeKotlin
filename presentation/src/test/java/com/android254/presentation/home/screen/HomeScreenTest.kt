@@ -96,7 +96,7 @@ class HomeScreenTest {
         composeTestRule.setContent {
             SponsorsCard(sponsors = listOf(SponsorPresentationModel("", "", "", "")))
         }
-        composeTestRule.onNodeWithTag("sponsors_section")
+        composeTestRule.onNodeWithTag("sponsors_section").assertIsDisplayed()
     }
 
     @Test

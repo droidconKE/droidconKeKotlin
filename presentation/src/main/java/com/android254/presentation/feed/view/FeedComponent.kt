@@ -51,8 +51,8 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedComponent(
-    modifier: Modifier,
     feed: FeedUI,
+    modifier: Modifier = Modifier,
     onClickItem: (Int) -> Unit,
 ) {
     Column(

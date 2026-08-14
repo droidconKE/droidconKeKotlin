@@ -71,6 +71,7 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun FeedBackRoute(
@@ -108,7 +109,7 @@ private fun FeedBackScreen(
                                 onClick = { navigateBack() },
                             ) {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                                     contentDescription = stringResource(R.string.back_arrow_icon_description),
                                 )
                             }
@@ -127,9 +128,9 @@ private fun FeedBackScreen(
                                 .fillMaxWidth(),
                         painter =
                             if (darkTheme) {
-                                painterResource(R.drawable.toolbar_bg_sign_up_dark)
+                                painterResource(ChaiR.drawable.toolbar_bg_sign_up_dark)
                             } else {
-                                painterResource(R.drawable.topbar_bg_sign_up)
+                                painterResource(ChaiR.drawable.topbar_bg_sign_up)
                             },
                         contentDescription = stringResource(R.string.login_screen_bg_image_description),
                         contentScale = ContentScale.FillBounds,
@@ -142,7 +143,7 @@ private fun FeedBackScreen(
                             onClick = { navigateBack() },
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_back_arrow),
+                                painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                                 contentDescription = stringResource(R.string.back_arrow_icon_description),
                             )
                         }

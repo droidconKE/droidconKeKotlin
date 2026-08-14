@@ -103,6 +103,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val navigationState =
         rememberNavigationState(
@@ -110,7 +111,6 @@ fun MainScreen(
             topLevelRoutes = bottomNavigationSet,
         )
     val navController = remember { NavigationController(navigationState) }
-    val authViewModel = hiltViewModel<AuthViewModel>()
     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
