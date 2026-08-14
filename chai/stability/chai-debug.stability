@@ -142,13 +142,14 @@ public fun com.droidconke.chai.components.ChaiBodySmallBold(bodyText: kotlin.Str
     - maxLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyXSmall(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyXSmall(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - bodyText: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
+    - maxLines: STABLE (primitive type)
 
 @Composable
 public fun com.droidconke.chai.components.ChaiBodyXSmallBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
