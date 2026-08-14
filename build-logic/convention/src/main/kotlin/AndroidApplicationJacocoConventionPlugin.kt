@@ -11,8 +11,6 @@ class AndroidApplicationJacocoConventionPlugin : Plugin<Project> {
             pluginManager.apply("jacoco")
             val androidExtension = extensions.getByType<ApplicationExtension>()
 
-            // Debug only: coverage forces a build type debuggable, and debuggable disables
-            // every R8 optimisation and all obfuscation.
             androidExtension.buildTypes.getByName("debug") {
                 enableAndroidTestCoverage = true
                 enableUnitTestCoverage = true

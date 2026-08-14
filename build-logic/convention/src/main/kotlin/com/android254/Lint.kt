@@ -19,11 +19,6 @@ package com.android254
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 
-/**
- * Android Lint, configured the same way in every module.
- *
- * There is no baseline. Severity is decided per rule in `config/lint/lint.xml`.
- */
 internal fun Project.configureLint(commonExtension: CommonExtension) {
     commonExtension.lint.apply {
         abortOnError = true

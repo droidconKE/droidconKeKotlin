@@ -15,20 +15,8 @@
   ~ limitations under the License.
 -->
 
-<!--
-  Shared Android Lint configuration, applied to every module from build-logic/.../Lint.kt.
-  There is no baseline; severity is the mechanism instead.
-
-    error          enforced, fails the build, currently clean
-    warning        real and being burned down — reported, not blocking
-    informational  reported, deliberately not acted on
-
-  Promoting a rule to `error` is the last commit of the work that clears it.
-  Counts are in docs/static-analysis.md.
--->
+<!-- Rationale for every severity below: docs/static-analysis.md -->
 <lint>
-
-    <!-- Slack Compose rules (com.slack.lint.compose:compose-lint-checks) -->
 
     <issue id="ComposeRememberMissing" severity="error" />
     <issue id="ComposeMutableParameters" severity="error" />
@@ -39,11 +27,13 @@
     <issue id="ComposeNamingUppercase" severity="error" />
     <issue id="ComposeNamingLowercase" severity="error" />
     <issue id="ComposeModifierComposed" severity="error" />
-
-    <!-- chai is the design system and Material 3 is the target. -->
     <issue id="ComposeM2Api" severity="error" />
 
-    <!-- Being burned down. Clearing these changes composable signatures and call sites. -->
+    <issue id="ComposeCompositionLocalUsage" severity="error">
+        <ignore regexp="chai/colors/ChaiColors\.kt" />
+        <ignore regexp="chai/atoms/.*\.kt" />
+    </issue>
+
     <issue id="ComposeModifierMissing" severity="warning" />
     <issue id="ComposeModifierWithoutDefault" severity="warning" />
     <issue id="ComposeModifierReused" severity="warning" />
@@ -55,32 +45,13 @@
     <issue id="ComposePreviewNaming" severity="warning" />
     <issue id="ComposeRedundantComposable" severity="warning" />
 
-    <!--
-      Publishing a palette through a CompositionLocal is what a design system is for, and the
-      one case the rule cannot tell from abuse. Matched by regexp because :chai and :app's
-      checkDependencies run see different path prefixes for the same file.
-    -->
-    <issue id="ComposeCompositionLocalUsage" severity="error">
-        <ignore regexp="chai/colors/ChaiColors\.kt" />
-        <ignore regexp="chai/atoms/.*\.kt" />
-    </issue>
-
-    <!-- Platform checks -->
-
-    <!-- Dependabot's job, and `./gradlew dependencyUpdates`'. Not every module's lint run. -->
     <issue id="GradleDependency" severity="informational" />
     <issue id="AndroidGradlePluginVersion" severity="informational" />
     <issue id="NewerVersionAvailable" severity="informational" />
     <issue id="SimilarGradleDependency" severity="informational" />
-
-    <!-- One flavour, one store listing, and the organisers translate outside this repo. -->
     <issue id="MissingTranslation" severity="informational" />
     <issue id="ExtraTranslation" severity="informational" />
-
-    <!-- Full-bleed background illustrations, not icons; 200x200 does not apply. -->
     <issue id="VectorRaster" severity="informational" />
-
-    <!-- Photographic assets scaled to fit. Worth revisiting with the asset pipeline. -->
     <issue id="IconLocation" severity="informational" />
 
 </lint>

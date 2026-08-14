@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Platform surfaces that cannot read a Compose theme. Compose uses chaiColorsPalette. -->
 <resources>
     <color name="cyan">#00E2C3</color>
     <color name="white">#FFFFFF</color>

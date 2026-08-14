@@ -70,7 +70,6 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
-      # If the change is deliberate, run `./gradlew debugStabilityDump` and commit the diff.
       - name: Check composable stability against the committed baselines
         run: ./gradlew :chai:debugStabilityCheck :presentation:debugStabilityCheck
 

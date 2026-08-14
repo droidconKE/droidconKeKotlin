@@ -21,14 +21,6 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jlleitschuh.gradle.ktlint.KtlintExtension
 
-/**
- * ktlint, detekt and spotless, configured identically everywhere.
- *
- * Applied by each project's own `plugins { }` block, including the root. This replaces the
- * `allprojects { apply(plugin = "...") }` blocks the root build file used to carry: imperative
- * application gets no type-safe accessors, and cross-project configuration is what stands
- * between this build and Isolated Projects.
- */
 class QualityConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
@@ -41,7 +33,12 @@ class QualityConventionPlugin : Plugin<Project> {
             extensions.configure<KtlintExtension> {
                 android.set(true)
                 verbose.set(true)
-                filter { exclude { element -> element.file.path.contains("generated/") } }
+                filter {
+                    exclude { element ->
+                        element.file.path.contains("generated/") ||
+                            element.file.path.contains("build-logic/")
+                    }
+                }
             }
 
             extensions.configure<DetektExtension> {
@@ -53,7 +50,7 @@ class QualityConventionPlugin : Plugin<Project> {
             extensions.configure<SpotlessExtension> {
                 kotlin {
                     target("**/*.kt")
-                    targetExclude("**/build/**/*.kt")
+                    targetExclude("**/build/**/*.kt", "build-logic/**/*.kt", "spotless/**/*.kt")
                     licenseHeaderFile(
                         rootProject.file("spotless/copyright.kt"),
                         "^(package|object|import|interface)",
@@ -61,8 +58,7 @@ class QualityConventionPlugin : Plugin<Project> {
                 }
                 format("kts") {
                     target("**/*.kts")
-                    targetExclude("**/build/**/*.kts")
-                    // First line without a block comment is assumed to be where the licence ends.
+                    targetExclude("**/build/**/*.kts", "build-logic/**/*.kts", "spotless/**/*.kts")
                     licenseHeaderFile(
                         rootProject.file("spotless/copyright.kts"),
                         "(^(?![\\/ ]\\*).*$)",

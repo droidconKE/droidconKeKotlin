@@ -149,7 +149,6 @@ firebase-common = { module = "com.google.firebase:firebase-common" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 
-# Lint-only: consumed with `lintChecks(...)`, never `implementation`.
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "composeLintChecks" }
 
 app-cash-turbine-turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
@@ -205,14 +204,14 @@ toml-checker = { id = "com.github.ben-manes.versions", version.ref = "toml_check
 toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "toml_updater" }
 
 # Convention plugins defined in the project
-droidconke-quality = { id = "droidconke.quality", version = "unspecified" }
-droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
-droidconke-android-room = { id = "droidconke.android.room", version = "unspecified" }
-droidconke-android-hilt = { id = "droidconke.android.hilt", version = "unspecified" }
-droidconke-android-library-compose = { id = "droidconke.android.library.compose", version = "unspecified" }
-droidconke-android-application-firebase = { id = "droidconke.android.application.firebase", version = "unspecified" }
-droidconke-android-library-firebase = { id = "droidconke.android.library.firebase", version = "unspecified" }
-droidconke-android-application = { id = "droidconke.android.application", version = "unspecified" }
+droidconke-quality = { id = "droidconke.quality" }
+droidconke-android-library = { id = "droidconke.android.library" }
+droidconke-android-room = { id = "droidconke.android.room" }
+droidconke-android-hilt = { id = "droidconke.android.hilt" }
+droidconke-android-library-compose = { id = "droidconke.android.library.compose" }
+droidconke-android-application-firebase = { id = "droidconke.android.application.firebase" }
+droidconke-android-library-firebase = { id = "droidconke.android.library.firebase" }
+droidconke-android-application = { id = "droidconke.android.application" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-droidconke-android-application-jacoco = { id = "droidconke.android.application.jacoco", version = "unspecified" }
-droidconke-android-library-jacoco = { id = "droidconke.android.library.jacoco", version = "unspecified" }
+droidconke-android-application-jacoco = { id = "droidconke.android.application.jacoco" }
+droidconke-android-library-jacoco = { id = "droidconke.android.library.jacoco" }

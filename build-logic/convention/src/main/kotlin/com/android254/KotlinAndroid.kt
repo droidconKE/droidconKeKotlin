@@ -46,7 +46,6 @@ internal fun Project.configureKotlinAndroid(
         configureLint(this)
     }
 
-    // Opt in with -PwarningsAsErrors=true.
     val warningsAsErrors = providers.gradleProperty("warningsAsErrors")
         .map(String::toBoolean)
         .orElse(false)
@@ -71,8 +70,6 @@ internal fun Project.configureKotlinAndroid(
 
         add("implementation", libs.findLibrary("android.coreKtx").get())
 
-        // Every module, not just the Compose ones: lint.xml names these issue ids, and a
-        // module without the checks fails with UnknownIssueId for each one.
         add("lintChecks", libs.findLibrary("compose-lint-checks").get())
 
         add("androidTestImplementation", libs.findLibrary("android.test.espresso").get())

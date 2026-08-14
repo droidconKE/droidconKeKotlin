@@ -2,7 +2,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // ktlint-gradle publishes to the plugin portal only.
         gradlePluginPortal()
     }
     versionCatalogs {
