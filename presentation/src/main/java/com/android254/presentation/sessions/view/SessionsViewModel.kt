@@ -191,7 +191,7 @@ class SessionsViewModel
 
         fun updateSelectedFilterOptionList(option: SessionsFilterOption) {
             _selectedFilterOptions.update { selected ->
-                if (option in selected) selected.remove(option) else selected.add(option)
+                if (option in selected) selected.removing(option) else selected.adding(option)
             }
             _filterState.update { it.toggle(option) }
         }
