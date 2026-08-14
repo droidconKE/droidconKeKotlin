@@ -32,7 +32,8 @@ Single test class:
 ./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
 ```
 
-Requires JDK 17. `./gradlew --version` should report it.
+No JDK setup needed — `gradle/gradle-daemon-jvm.properties` pins the daemon to Java 17 and the
+foojay resolver provisions it.
 
 ---
 

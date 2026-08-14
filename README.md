@@ -40,8 +40,7 @@ decisions in here are written down rather than assumed — see [`docs/`](docs/) 
 
 ## Running the project
 
-You need **JDK 17**. Nothing else — the Android SDK components, the Gradle distribution and
-the emulators used by the instrumentation tests are all provisioned by the build.
+Clone it and build. There is no setup step.
 
 ```bash
 git clone https://github.com/droidconKE/droidconKeKotlin.git
@@ -49,25 +48,17 @@ cd droidconKeKotlin
 ./gradlew assembleDebug
 ```
 
-Confirm the toolchain first if the build cannot find Java 17:
+Or open the folder in Android Studio and press Run.
 
-```bash
-./gradlew --version
-```
+You do not need to install or configure a JDK. `gradle/gradle-daemon-jvm.properties` pins the
+daemon to Java 17 and the [foojay resolver](https://github.com/gradle/foojay-toolchains) in
+`settings.gradle.kts` downloads it if your machine hasn't got one. The Android SDK components,
+the Gradle distribution, and the emulators the instrumentation tests run on are all provisioned
+by the build too.
 
-Android Studio ships its own JDK, so the simplest fix is to point Gradle at it. In the IDE,
-**File → Project Structure → SDK Location → Gradle Settings**, set the Gradle JDK to 17:
-
-![Setting the Gradle JDK to 17 in Android Studio](java_version.png)
-
-Or set it for every project in your **global** `~/.gradle/gradle.properties`:
-
-```properties
-org.gradle.java.home=/Applications/Android Studio.app/Contents/Home/jbr/Contents/Home
-```
-
-The debug build is signed with the checked-in `keystore/dckedebug.keystore`, so a fresh
-clone installs and runs without any local signing setup.
+The debug build is signed with the checked-in `keystore/dckedebug.keystore`, so a fresh clone
+installs over an existing build and keeps the Firebase debug SHA-1 stable. That is deliberate —
+it is a shared debug key, not a secret, and the release key is not in this repo.
 
 ---
 
