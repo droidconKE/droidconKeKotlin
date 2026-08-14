@@ -39,7 +39,7 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeViewState
-import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiPullToRefreshBox
@@ -149,7 +149,7 @@ private fun HomeScreen(
     }
 }
 
-@ChaiLightAndDarkComposePreview
+@ChaiLightAndDarkComposePreviews
 @Composable
 fun HomeScreenPreview() {
     ChaiTheme {

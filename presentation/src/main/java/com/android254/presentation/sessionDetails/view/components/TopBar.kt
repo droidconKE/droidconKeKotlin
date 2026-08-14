@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun TopBar(onNavigationIconClick: () -> Unit) {
@@ -52,7 +53,7 @@ fun TopBar(onNavigationIconClick: () -> Unit) {
                 onClick = { onNavigationIconClick() },
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                     contentDescription = stringResource(R.string.back_arrow_icon_description),
                     tint = MaterialTheme.chaiColorsPalette.textBoldColor,
                 )

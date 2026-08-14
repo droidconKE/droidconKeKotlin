@@ -16,6 +16,7 @@
 package com.android254.presentation.sessionDetails.view.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,60 +48,63 @@ fun SessionSpeakerNameAndFavouriteIcon(
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Android,
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .height(14.dp)
-                    .width(15.dp),
-            tint = ChaiRed,
-        )
-
-        Spacer(modifier = Modifier.width(6.dp))
-
-        ChaiTextLabelLarge(
-            bodyText = stringResource(id = R.string.speaker_label),
-            textColor = ChaiRed,
-        )
-    }
-
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        ChaiTitle(
-            modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
-            titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
-            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
-        )
-
-        IconButton(
-            modifier = Modifier.size(32.dp),
-            onClick = {
-                if (sessionDetails.isStarred) {
-                    unBookmarkSession(sessionDetails.id)
-                } else {
-                    bookmarkSession(sessionDetails.id)
-                }
-            },
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
+                imageVector = Icons.Filled.Android,
+                contentDescription = null,
                 modifier =
                     Modifier
-                        .testTag(TestTag.FAVOURITE_ICON),
-                imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                        .height(14.dp)
+                        .width(15.dp),
+                tint = ChaiRed,
             )
+
+            Spacer(modifier = Modifier.width(6.dp))
+
+            ChaiTextLabelLarge(
+                bodyText = stringResource(id = R.string.speaker_label),
+                textColor = ChaiRed,
+            )
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            ChaiTitle(
+                modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
+                titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
+                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+            )
+
+            IconButton(
+                modifier = Modifier.size(32.dp),
+                onClick = {
+                    if (sessionDetails.isStarred) {
+                        unBookmarkSession(sessionDetails.id)
+                    } else {
+                        bookmarkSession(sessionDetails.id)
+                    }
+                },
+            ) {
+                Icon(
+                    modifier =
+                        Modifier
+                            .testTag(TestTag.FAVOURITE_ICON),
+                    imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                    contentDescription = stringResource(R.string.star_session_icon_description),
+                    tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                )
+            }
         }
     }
 }

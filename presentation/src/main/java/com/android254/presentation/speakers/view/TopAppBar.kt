@@ -34,6 +34,7 @@ import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun TopAppBar(
@@ -58,7 +59,7 @@ fun TopAppBar(
                 modifier = Modifier.padding(start = 10.dp),
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                     contentDescription = stringResource(R.string.back_arrow_icon_description),
                     tint = ChaiWhite,
                 )

@@ -117,7 +117,6 @@ fun MultiToggleButton(
 
 @Composable
 private fun ToggleButton(
-    modifier: Modifier,
     buttonShape: CornerBasedShape,
     border: BorderStroke,
     backgroundColor: Color,
@@ -126,6 +125,7 @@ private fun ToggleButton(
     buttonTexts: List<String>,
     index: Int,
     contentColor: Color,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     OutlinedButton(
@@ -165,10 +165,10 @@ private fun RowScope.ButtonContent(
 
 @Composable
 private fun TextContent(
-    modifier: Modifier,
     buttonTexts: List<String>,
     index: Int,
     contentColor: Color,
+    modifier: Modifier = Modifier,
 ) {
     ChaiBodySmall(
         modifier = modifier.padding(horizontal = 8.dp),

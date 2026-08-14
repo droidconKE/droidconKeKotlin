@@ -35,14 +35,12 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -71,8 +69,18 @@ class SessionsViewModelTest {
     @Test
     fun `should set initial selected date to current date if it exists in event days`() =
         runTest {
-            val currentDay = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
-            val eventDays = listOf(currentDay, "17", "18")
+            // Derived from the same fixed clock and timezone the ViewModel reads, so this
+            // exercises the "today is one of the event days" branch. Reading the real system
+            // clock here meant the day never matched and the assertion passed on the
+            // fallback-to-first branch instead — on every date except the 6th.
+            val currentDay =
+                testClock
+                    .now()
+                    .toLocalDateTime(conferenceTimeZone)
+                    .day
+                    .toString()
+                    .padStart(2, '0')
+            val eventDays = listOf("17", currentDay, "18")
             coEvery { sessionsRepo.fetchSessionsInformation() } returns
                 flowOf(
                     SessionsInformationDomainModel(

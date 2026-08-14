@@ -36,7 +36,6 @@ inline fun <reified T : NavKey> EntryProviderScope<NavKey>.fakeEntry() {
     }
 }
 
-@Composable
 fun fakeEntryProvider(): (NavKey) -> NavEntry<NavKey> {
     val provider =
         entryProvider<NavKey> {

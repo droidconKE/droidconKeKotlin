@@ -18,6 +18,7 @@ package com.android254.presentation.common.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 /**
  * The navigation bar tabs and the metadata needed to draw them. Separate from [Screens] so
@@ -28,10 +29,10 @@ enum class TopLevelDestination(
     @DrawableRes val icon: Int,
     @StringRes val label: Int,
 ) {
-    HOME(Screens.Home, R.drawable.home_icon, R.string.nav_home),
-    FEED(Screens.Feed, R.drawable.feed_icon, R.string.nav_feed),
-    SESSIONS(Screens.Sessions, R.drawable.sessions_icon, R.string.nav_sessions),
-    ABOUT(Screens.About, R.drawable.about_icon, R.string.nav_about),
+    HOME(Screens.Home, ChaiR.drawable.home_icon, R.string.nav_home),
+    FEED(Screens.Feed, ChaiR.drawable.feed_icon, R.string.nav_feed),
+    SESSIONS(Screens.Sessions, ChaiR.drawable.sessions_icon, R.string.nav_sessions),
+    ABOUT(Screens.About, ChaiR.drawable.about_icon, R.string.nav_about),
     ;
 
     companion object {

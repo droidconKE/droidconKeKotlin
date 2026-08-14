@@ -28,6 +28,12 @@
     <issue id="ComposeNamingLowercase" severity="error" />
     <issue id="ComposeModifierComposed" severity="error" />
     <issue id="ComposeM2Api" severity="error" />
+    <issue id="ComposeModifierWithoutDefault" severity="error" />
+    <issue id="ComposeModifierReused" severity="error" />
+    <issue id="ComposeMultipleContentEmitters" severity="error" />
+    <issue id="ComposeViewModelInjection" severity="error" />
+    <issue id="ComposePreviewNaming" severity="error" />
+    <issue id="ComposeRedundantComposable" severity="error" />
 
     <issue id="ComposeCompositionLocalUsage" severity="error">
         <ignore regexp="chai/colors/ChaiColors\.kt" />
@@ -35,15 +41,9 @@
     </issue>
 
     <issue id="ComposeModifierMissing" severity="warning" />
-    <issue id="ComposeModifierWithoutDefault" severity="warning" />
-    <issue id="ComposeModifierReused" severity="warning" />
     <issue id="ComposeParameterOrder" severity="warning" />
     <issue id="ComposeUnstableCollections" severity="warning" />
-    <issue id="ComposeMultipleContentEmitters" severity="warning" />
-    <issue id="ComposeViewModelInjection" severity="warning" />
     <issue id="ComposePreviewPublic" severity="warning" />
-    <issue id="ComposePreviewNaming" severity="warning" />
-    <issue id="ComposeRedundantComposable" severity="warning" />
 
     <issue id="GradleDependency" severity="informational" />
     <issue id="AndroidGradlePluginVersion" severity="informational" />
