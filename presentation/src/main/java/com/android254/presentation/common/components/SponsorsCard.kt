@@ -50,8 +50,8 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SponsorsCard(
-    modifier: Modifier = Modifier,
     sponsors: ImmutableList<SponsorPresentationModel>,
+    modifier: Modifier = Modifier,
 ) {
     Card {
         Column(

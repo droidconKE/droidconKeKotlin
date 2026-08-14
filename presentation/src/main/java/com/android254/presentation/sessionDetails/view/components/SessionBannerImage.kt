@@ -29,12 +29,15 @@ import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.droidconke.chai.atoms.ChaiTeal90
 
 @Composable
-fun SessionBannerImage(sessionDetails: SessionDetailsPresentationModel) {
+fun SessionBannerImage(
+    sessionDetails: SessionDetailsPresentationModel,
+    modifier: Modifier = Modifier,
+) {
     AsyncImage(
         model = sessionDetails.sessionImageUrl,
         contentDescription = null,
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .border(1.dp, ChaiTeal90, RoundedCornerShape(10.dp))

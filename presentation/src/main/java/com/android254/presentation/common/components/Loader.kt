@@ -28,9 +28,15 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun Loader(message: String = "Loading...") {
+fun Loader(
+    modifier: Modifier = Modifier,
+    message: String = "Loading...",
+) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         LottieAnimation(
             composition = composition,
         )

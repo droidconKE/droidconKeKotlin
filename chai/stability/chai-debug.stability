@@ -26,137 +26,137 @@ public fun com.droidconke.chai.colors.venueAccentColor(venue: kotlin.String): an
     - venue: STABLE (String is immutable)
 
 @Composable
-public fun com.droidconke.chai.components.CButton(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, isEnabled: kotlin.Boolean, colors: androidx.compose.material3.ButtonColors, shape: androidx.compose.ui.graphics.Shape, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>): kotlin.Unit
+public fun com.droidconke.chai.components.CButton(onClick: kotlin.Function0<kotlin.Unit>, isEnabled: kotlin.Boolean, colors: androidx.compose.material3.ButtonColors, shape: androidx.compose.ui.graphics.Shape, modifier: androidx.compose.ui.Modifier, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onClick: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
     - isEnabled: STABLE (primitive type)
     - colors: STABLE (marked @Stable or @Immutable)
     - shape: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - content: STABLE (composable function type)
 
 @Composable
-public fun com.droidconke.chai.components.COutlinedButton(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, colors: androidx.compose.material3.ButtonColors, shape: androidx.compose.ui.graphics.Shape, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>): kotlin.Unit
+public fun com.droidconke.chai.components.COutlinedButton(onClick: kotlin.Function0<kotlin.Unit>, colors: androidx.compose.material3.ButtonColors, shape: androidx.compose.ui.graphics.Shape, modifier: androidx.compose.ui.Modifier, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.RowScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onClick: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
     - colors: STABLE (marked @Stable or @Immutable)
     - shape: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - content: STABLE (composable function type)
 
 @Composable
-public fun com.droidconke.chai.components.COutlinedPrimaryButton(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, title: kotlin.String, icon: androidx.compose.ui.graphics.vector.ImageVector): kotlin.Unit
+public fun com.droidconke.chai.components.COutlinedPrimaryButton(onClick: kotlin.Function0<kotlin.Unit>, title: kotlin.String, icon: androidx.compose.ui.graphics.vector.ImageVector, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onClick: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
     - title: STABLE (String is immutable)
     - icon: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.CPrimaryButton(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, isEnabled: kotlin.Boolean, title: kotlin.String): kotlin.Unit
+public fun com.droidconke.chai.components.CPrimaryButton(onClick: kotlin.Function0<kotlin.Unit>, isEnabled: kotlin.Boolean, title: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onClick: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
     - isEnabled: STABLE (primitive type)
     - title: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.CPrimaryButtonText(modifier: androidx.compose.ui.Modifier, text: kotlin.String, textAllCaps: kotlin.Boolean, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.CPrimaryButtonText(text: kotlin.String, modifier: androidx.compose.ui.Modifier, textAllCaps: kotlin.Boolean, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - text: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textAllCaps: STABLE (primitive type)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyLarge(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyLarge(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyLargeBold(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int, overflow: androidx.compose.ui.text.style.TextOverflow): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyLargeBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int, overflow: androidx.compose.ui.text.style.TextOverflow): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - maxLines: STABLE (primitive type)
     - overflow: STABLE (known stable type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyMedium(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyMedium(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - maxLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyMediumBold(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign, maxLines: kotlin.Int): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyMediumBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
     - maxLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodySmall(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign, maxLines: kotlin.Int, minLines: kotlin.Int): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodySmall(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign, maxLines: kotlin.Int, minLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
     - maxLines: STABLE (primitive type)
     - minLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodySmallBold(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodySmallBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - maxLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyXSmall(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyXSmall(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyXSmallBold(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyXSmallBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
 
@@ -172,76 +172,79 @@ public fun com.droidconke.chai.components.ChaiPullToRefreshBox(isRefreshing: kot
     - content: STABLE (composable function type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiSubTitle(modifier: androidx.compose.ui.Modifier, titleText: kotlin.String, titleColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiSubTitle(titleText: kotlin.String, modifier: androidx.compose.ui.Modifier, titleColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - titleText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - titleColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiTextButtonLight(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiTextButtonLight(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiTextLabelLarge(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiTextLabelLarge(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiTextLabelMedium(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiTextLabelMedium(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiTextLabelSmall(modifier: androidx.compose.ui.Modifier, bodyText: kotlin.String, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiTextLabelSmall(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - bodyText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiTitle(modifier: androidx.compose.ui.Modifier, titleText: kotlin.String, titleColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiTitle(titleText: kotlin.String, modifier: androidx.compose.ui.Modifier, titleColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - modifier: STABLE (marked @Stable or @Immutable)
     - titleText: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
     - titleColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.utils.BreathingSpace13(): kotlin.Unit
+public fun com.droidconke.chai.utils.BreathingSpace13(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.utils.BreathingSpace26(): kotlin.Unit
+public fun com.droidconke.chai.utils.BreathingSpace26(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.droidconke.chai.utils.SeparatorSpace(): kotlin.Unit
+public fun com.droidconke.chai.utils.SeparatorSpace(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
+    - modifier: STABLE (marked @Stable or @Immutable)
 

@@ -40,12 +40,13 @@ fun EventDaySelectorButton(
     subtitle: String,
     selected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start,
         modifier =
-            Modifier
+            modifier
                 .size(51.dp)
                 .clickable { onClick() }
                 .background(

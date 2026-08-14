@@ -57,12 +57,12 @@ fun HomeBannerSection(homeViewState: HomeViewState) {
 }
 
 @Composable
-fun HomeEventPoster() {
+fun HomeEventPoster(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(id = R.drawable.droidcon_event_banner),
         contentDescription = stringResource(id = R.string.home_banner_event_poster_description),
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(20.dp))
                 .testTag("home_event_poster"),
@@ -71,11 +71,11 @@ fun HomeEventPoster() {
 }
 
 @Composable
-fun HomeCallForSpeakersLink() {
+fun HomeCallForSpeakersLink(modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(20.dp),
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .aspectRatio(4.2f)
                 .testTag("home_call_for_speakers_link"),

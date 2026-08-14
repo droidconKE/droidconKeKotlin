@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.CoPresent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.stepper.Intensity
@@ -31,7 +32,7 @@ import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.chaiColorsPalette
 
 @Composable
-fun SessionLoadingComponent() {
+fun SessionLoadingComponent(modifier: Modifier = Modifier) {
     val data =
         List(3) { index ->
             VerticalStep(
@@ -42,7 +43,7 @@ fun SessionLoadingComponent() {
                 data = Unit,
             )
         }
-    LazyColumn {
+    LazyColumn(modifier = modifier) {
         verticalSteps(
             items = data,
             spacing = 16.dp,

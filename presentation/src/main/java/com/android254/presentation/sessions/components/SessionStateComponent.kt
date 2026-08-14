@@ -69,6 +69,7 @@ fun SessionsStateComponent(
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -78,7 +79,7 @@ fun SessionsStateComponent(
             is ResultStatus.Empty -> {
                 Column(
                     modifier =
-                        Modifier
+                        modifier
                             .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -135,6 +136,7 @@ fun SessionListComponent(
     isSessionLayoutList: Boolean,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
 
@@ -159,7 +161,7 @@ fun SessionListComponent(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item {
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = modifier.height(20.dp))
 
                 ChaiSubTitle(
                     titleText =

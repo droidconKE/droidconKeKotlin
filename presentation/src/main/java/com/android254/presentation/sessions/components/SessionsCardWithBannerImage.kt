@@ -62,9 +62,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsCardWithBannerImage(
-    modifier: Modifier = Modifier,
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: SessionsViewModel = hiltViewModel(),
 ) {
     val scope = rememberCoroutineScope()
@@ -130,9 +130,10 @@ fun SpeakerDetailsAndLikeButtonComponent(
     onBookmarkClicked: () -> Unit,
     isSessionStarred: Boolean,
     speakers: ImmutableList<SessionSpeakersPresentationModel>,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         speakers.forEach { speaker ->

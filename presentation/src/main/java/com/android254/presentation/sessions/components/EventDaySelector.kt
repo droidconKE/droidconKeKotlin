@@ -38,6 +38,7 @@ fun EventDaySelector(
     selectedDate: EventDate,
     updateSelectedDay: (EventDate) -> Unit,
     eventDates: ImmutableList<EventDate>,
+    modifier: Modifier = Modifier,
 ) {
     LazyRow {
         items(eventDates, key = { it.value }) { eventDay ->
@@ -47,7 +48,9 @@ fun EventDaySelector(
                 onClick = { updateSelectedDay(eventDay) },
                 selected = selectedDate == eventDay,
             )
-            Spacer(Modifier.width(16.dp))
+            Spacer(
+                modifier.width(16.dp),
+            )
         }
     }
 }

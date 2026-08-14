@@ -51,12 +51,13 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 
 @Composable
 fun CustomSwitch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     width: Dp = 56.dp,
     height: Dp = 32.dp,
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
 ) {
     // this is to disable the ripple effect
     val interactionSource =
@@ -68,7 +69,7 @@ fun CustomSwitch(
     val alignment by animateAlignmentAsState(if (checked) 1f else -1f)
 
     Column(
-        modifier = Modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

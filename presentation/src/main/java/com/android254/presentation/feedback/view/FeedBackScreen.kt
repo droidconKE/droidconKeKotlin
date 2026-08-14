@@ -323,9 +323,9 @@ private fun FeedBackScreen(
 }
 
 @Composable
-fun FeedbackTitle() {
+fun FeedbackTitle(modifier: Modifier = Modifier) {
     ChaiBodyLarge(
-        modifier = Modifier.testTag("heading"),
+        modifier = modifier.testTag("heading"),
         bodyText = stringResource(R.string.feedback_label),
     )
 }

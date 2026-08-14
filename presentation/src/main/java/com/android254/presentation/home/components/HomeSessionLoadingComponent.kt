@@ -35,10 +35,10 @@ import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun HomeSessionLoadingComponent() {
+fun HomeSessionLoadingComponent(modifier: Modifier = Modifier) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(bottom = 20.dp),
     ) {

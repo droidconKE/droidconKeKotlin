@@ -28,10 +28,10 @@ import com.android254.presentation.common.components.LoadingBox
 import com.droidconke.chai.ChaiTheme
 
 @Composable
-fun HomeSessionLoadingItem() {
+fun HomeSessionLoadingItem(modifier: Modifier = Modifier) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .padding(horizontal = 8.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.Start,
     ) {

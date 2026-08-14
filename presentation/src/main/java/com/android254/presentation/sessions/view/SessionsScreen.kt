@@ -84,6 +84,7 @@ fun SessionsScreen(
     currentSelections: ImmutableList<SessionsFilterOption>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // Derived from the ViewModel rather than mirrored here, so rotation cannot leave the
     // switch and the applied filter disagreeing.
@@ -106,6 +107,7 @@ fun SessionsScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             DroidconAppBarWithFilter(
                 isListActive = isSessionLayoutList.value,

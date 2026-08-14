@@ -31,9 +31,12 @@ import ke.droidcon.kotlin.presentation.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
-fun TopBar(onNavigationIconClick: () -> Unit) {
+fun TopBar(
+    onNavigationIconClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     TopAppBar(
-        modifier = Modifier.testTag(TestTag.TOP_BAR),
+        modifier = modifier.testTag(TestTag.TOP_BAR),
         colors =
             TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.chaiColorsPalette.background,

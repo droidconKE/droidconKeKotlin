@@ -37,6 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun HomeSpeakersSection(
     speakers: ImmutableList<SpeakerUI>,
+    modifier: Modifier = Modifier,
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
@@ -51,7 +52,7 @@ fun HomeSpeakersSection(
         )
         LazyRow(
             modifier =
-                Modifier
+                modifier
                     .testTag("speakersRow")
                     .padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

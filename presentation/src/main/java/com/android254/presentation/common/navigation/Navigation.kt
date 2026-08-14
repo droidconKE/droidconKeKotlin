@@ -24,10 +24,10 @@ import androidx.navigation3.ui.NavDisplay
 
 @Composable
 fun Navigation(
-    modifier: Modifier = Modifier,
     navController: NavigationController,
     navigationState: NavigationState,
     updateBottomBarState: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     onActionClicked: () -> Unit = {},
     entryProvider: (NavKey) -> NavEntry<NavKey> =
         droidconEntryProvider(

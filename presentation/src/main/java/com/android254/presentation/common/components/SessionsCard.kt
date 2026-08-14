@@ -75,6 +75,7 @@ fun SessionsCard(
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val venueAccent = venueAccentColor(session.venue)
 
@@ -113,7 +114,7 @@ fun SessionsCard(
 
     Card(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .alpha(alpha),
@@ -156,10 +157,11 @@ fun SessionsCard(
 fun RowScope.SessionTimeComponent(
     sessionStartTime: String,
     sessionAmOrPm: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .weight(0.2f),
         horizontalAlignment = Alignment.End,
     ) {
@@ -227,6 +229,7 @@ private fun RowScope.NowIndicator(
 fun RowScope.SessionDetails(
     session: SessionPresentationModel,
     onBookMark: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
@@ -234,7 +237,7 @@ fun RowScope.SessionDetails(
                 .weight(0.8f),
     ) {
         SessionTitleComponent(session, onBookMark)
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = modifier.height(12.dp))
         SessionsDescriptionComponent(session.description)
         Spacer(modifier = Modifier.height(12.dp))
         TimeAndVenueComponent(session)
@@ -293,8 +296,11 @@ fun SessionsDescriptionComponent(sessionDescription: String) {
 }
 
 @Composable
-fun TimeAndVenueComponent(session: SessionPresentationModel) {
-    Row {
+fun TimeAndVenueComponent(
+    session: SessionPresentationModel,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
@@ -315,8 +321,10 @@ fun TimeAndVenueComponent(session: SessionPresentationModel) {
 @Composable
 fun SessionPresenterComponents(
     speaker: SessionSpeakersPresentationModel,
+    modifier: Modifier = Modifier,
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(

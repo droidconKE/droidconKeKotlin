@@ -49,11 +49,12 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun FeedShareSection(
+    modifier: Modifier = Modifier,
     onCancelClicked: () -> Unit = {},
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
                 .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
@@ -115,12 +116,13 @@ fun FeedShareSection(
 fun PlatformButton(
     platform: String,
     icon: Int,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedButton(
         onClick = { /*TODO*/ },
         shape = MaterialTheme.shapes.small,
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(6.dp),
         border = BorderStroke(1.dp, ChaiTeal90),

@@ -40,10 +40,10 @@ import com.droidconke.chai.utils.SeparatorSpace
 @Composable
 fun CButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     colors: ButtonColors,
     shape: Shape,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     Button(
@@ -59,9 +59,9 @@ fun CButton(
 @Composable
 fun COutlinedButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     colors: ButtonColors,
     shape: Shape,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
@@ -76,9 +76,9 @@ fun COutlinedButton(
 @Composable
 fun CPrimaryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     title: String,
+    modifier: Modifier = Modifier,
 ) {
     CButton(
         onClick = onClick,
@@ -99,9 +99,9 @@ fun CPrimaryButton(
 @Composable
 fun COutlinedPrimaryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     title: String,
     icon: ImageVector,
+    modifier: Modifier = Modifier,
 ) {
     COutlinedButton(
         onClick = onClick,

@@ -40,10 +40,10 @@ import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun SessionsLoadingCard() {
+fun SessionsLoadingCard(modifier: Modifier = Modifier) {
     Card(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
         shape = RoundedCornerShape(5),

@@ -150,10 +150,11 @@ fun Body(
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
                 .fillMaxHeight()

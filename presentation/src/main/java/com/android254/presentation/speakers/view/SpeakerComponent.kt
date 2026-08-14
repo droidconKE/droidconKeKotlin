@@ -54,8 +54,8 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun SpeakerComponent(
-    modifier: Modifier = Modifier,
     speaker: SpeakerUI,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
     Card(

@@ -47,9 +47,9 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun HomeSessionSection(
-    modifier: Modifier = Modifier,
     sessions: ImmutableList<SessionPresentationModel>,
     onSessionClick: (sessionId: String) -> Unit,
+    modifier: Modifier = Modifier,
     onViewAllSessionClicked: () -> Unit,
 ) {
     Column(

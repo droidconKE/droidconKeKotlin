@@ -35,10 +35,10 @@ import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun HomeSpeakersLoadingComponent() {
+fun HomeSpeakersLoadingComponent(modifier: Modifier = Modifier) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth(),
     ) {
         Row(

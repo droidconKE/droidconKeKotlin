@@ -149,8 +149,8 @@ private fun AboutScreen(
 
 @Composable
 fun AboutDroidconSection(
-    modifier: Modifier = Modifier,
     droidconDesc: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -196,8 +196,8 @@ fun AboutDroidconSection(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizingTeamSection(
-    modifier: Modifier = Modifier,
     organizingTeam: ImmutableList<OrganizingTeamMember>,
+    modifier: Modifier = Modifier,
     onClickMember: (Int) -> Unit,
 ) {
     Column(

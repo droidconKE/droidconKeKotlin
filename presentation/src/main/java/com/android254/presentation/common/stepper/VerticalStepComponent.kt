@@ -208,10 +208,10 @@ fun <T> VerticalStepItem(
 
 @Composable
 private fun IconBox(
-    modifier: Modifier = Modifier,
     icon: ImageVector,
     accentColor: Color,
     sizeInt: Int,
+    modifier: Modifier = Modifier,
     intensity: Intensity = Intensity.Medium,
 ) {
     val colorScheme = MaterialTheme.colorScheme

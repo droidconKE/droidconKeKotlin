@@ -28,9 +28,9 @@ import com.android254.presentation.common.components.LoadingBox
 import com.droidconke.chai.ChaiTheme
 
 @Composable
-fun HomeSpeakersLoadingItem() {
+fun HomeSpeakersLoadingItem(modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 10.dp),
+        modifier = modifier.padding(horizontal = 8.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         LoadingBox(height = 80.dp, width = 80.dp)

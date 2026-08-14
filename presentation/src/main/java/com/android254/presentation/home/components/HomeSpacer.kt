@@ -22,4 +22,4 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeSpacer() = Spacer(modifier = Modifier.padding(10.dp))
+fun HomeSpacer(modifier: Modifier = Modifier) = Spacer(modifier = modifier.padding(10.dp))

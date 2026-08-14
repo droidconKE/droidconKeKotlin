@@ -45,6 +45,7 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun SpeakerTwitterHandle(
     speaker: SessionDetailsSpeakerPresentationModel,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val intent =
@@ -56,7 +57,7 @@ fun SpeakerTwitterHandle(
         }
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

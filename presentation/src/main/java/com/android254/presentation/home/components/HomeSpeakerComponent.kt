@@ -47,11 +47,12 @@ import ke.droidcon.kotlin.presentation.R
 @Composable
 fun HomeSpeakerComponent(
     speaker: SpeakerUI,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
     ConstraintLayout(
         modifier =
-            Modifier
+            modifier
                 .width(90.dp)
                 .clickable { onClick.invoke() },
     ) {

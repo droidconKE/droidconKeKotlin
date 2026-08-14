@@ -62,11 +62,12 @@ import kotlinx.collections.immutable.toImmutableList
 fun BottomNavigationBar(
     navController: NavigationController,
     navigationState: NavigationState,
+    modifier: Modifier = Modifier,
     currentSessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
     upNextSessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Bottom),
     ) {
         LazyRow(
@@ -117,6 +118,7 @@ fun RowScope.BottomNavItem(
     isSelected: Boolean,
     destination: TopLevelDestination,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val label = stringResource(destination.label)
 
@@ -136,7 +138,7 @@ fun RowScope.BottomNavItem(
 
     Column(
         modifier =
-            Modifier
+            modifier
                 .weight(1f)
                 .fillMaxHeight()
                 .selectable(

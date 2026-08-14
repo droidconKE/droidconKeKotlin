@@ -39,8 +39,8 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizedBySection(
-    modifier: Modifier = Modifier,
     organizationLogos: ImmutableList<String>,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =

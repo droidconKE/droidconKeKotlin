@@ -34,6 +34,7 @@ import com.droidconke.chai.chaiColorsPalette
 @Composable
 fun LoadingBox(
     height: Dp,
+    modifier: Modifier = Modifier,
     width: Dp = 0.dp,
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
@@ -42,7 +43,7 @@ fun LoadingBox(
 ) {
     Box(
         modifier =
-            Modifier
+            modifier
                 .customWidth(widthRatio, width)
                 .height(height)
                 .clip(RoundedCornerShape(cornerRadius))

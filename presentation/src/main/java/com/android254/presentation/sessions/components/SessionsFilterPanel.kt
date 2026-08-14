@@ -58,6 +58,7 @@ fun SessionsFilterPanel(
     currentSelections: ImmutableList<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     clearSelectedFilterList: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val groupedFilters =
         remember(selectableFilters) {
@@ -65,7 +66,7 @@ fun SessionsFilterPanel(
         }
     Column(
         modifier =
-            Modifier
+            modifier
                 .fillMaxSize()
                 .background(
                     color = ChaiGrey90.copy(alpha = 0.52f),
