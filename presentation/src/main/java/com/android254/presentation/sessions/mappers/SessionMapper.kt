@@ -22,13 +22,13 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import kotlinx.datetime.Instant
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
+import kotlin.time.Instant
 
 fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
