@@ -35,9 +35,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.datetime.Clock
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 class MainViewModel

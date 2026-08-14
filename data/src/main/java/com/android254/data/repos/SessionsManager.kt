@@ -36,10 +36,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import kotlin.time.Instant
 
 class SessionsManager
     @Inject
@@ -90,7 +90,7 @@ class SessionsManager
             Instant
                 .fromEpochMilliseconds(this)
                 .toLocalDateTime(CONFERENCE_TIME_ZONE)
-                .dayOfMonth
+                .day
                 .toString()
                 .padStart(2, '0')
 

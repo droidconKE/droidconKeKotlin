@@ -18,11 +18,11 @@ package com.android254.presentation.sessions.view
 import com.android254.domain.models.Session
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import io.mockk.mockk
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.time.Clock
 
 /**
  * Covers the filter options offered to the user.

@@ -40,10 +40,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 class SessionsViewModel
@@ -102,7 +102,7 @@ class SessionsViewModel
 
         /** Today if the conference is running, otherwise the first day. */
         private fun defaultEventDay(eventDays: List<EventDate>): EventDate {
-            val today = clock.now().toLocalDateTime(conferenceTimeZone).dayOfMonth
+            val today = clock.now().toLocalDateTime(conferenceTimeZone).day
             return eventDays.find { it.value.toIntOrNull() == today } ?: eventDays.first()
         }
 
