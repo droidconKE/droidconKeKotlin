@@ -41,7 +41,7 @@ fun HomeSpeakersLoadingItem() {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeSpeakersLoadingItemPreview() {
+private fun HomeSpeakersLoadingItemPreview() {
     ChaiTheme {
         HomeSpeakersLoadingItem()
     }

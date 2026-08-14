@@ -54,7 +54,7 @@ fun SessionLoadingComponent() {
 
 @PreviewLightDark
 @Composable
-fun SessionLoadingPreview() {
+private fun SessionLoadingPreview() {
     ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,

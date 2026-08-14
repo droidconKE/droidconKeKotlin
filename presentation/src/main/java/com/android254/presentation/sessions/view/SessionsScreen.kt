@@ -191,7 +191,7 @@ fun SessionsScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsScreenPreview() {
+private fun SessionsScreenPreview() {
     ChaiTheme {
         SessionsScreen(
             sessionsUiState = SessionsUiState(),

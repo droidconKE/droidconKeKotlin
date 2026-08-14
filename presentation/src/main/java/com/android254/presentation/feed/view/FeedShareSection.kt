@@ -146,7 +146,7 @@ fun PlatformButton(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun PlatformButtonPreview() {
+private fun PlatformButtonPreview() {
     ChaiTheme {
         PlatformButton("Twitter", R.drawable.ic_whatsapp)
     }
@@ -154,7 +154,7 @@ fun PlatformButtonPreview() {
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun PFeedShareSectionPreview() {
+private fun PFeedShareSectionPreview() {
     ChaiTheme {
         FeedShareSection()
     }

@@ -123,7 +123,7 @@ fun HomeCallForSpeakersLink() {
 
 @Preview
 @Composable
-fun HomeBannerSectionPreview() {
+private fun HomeBannerSectionPreview() {
     ChaiTheme {
         HomeBannerSection(HomeViewState())
     }
@@ -131,7 +131,7 @@ fun HomeBannerSectionPreview() {
 
 @Preview
 @Composable
-fun HomeEventBannerPreview() {
+private fun HomeEventBannerPreview() {
     ChaiTheme {
         HomeEventPoster()
     }
@@ -139,7 +139,7 @@ fun HomeEventBannerPreview() {
 
 @Preview
 @Composable
-fun HomeCallForSpeakersLinkPreview() {
+private fun HomeCallForSpeakersLinkPreview() {
     ChaiTheme {
         HomeCallForSpeakersLink()
     }

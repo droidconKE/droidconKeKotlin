@@ -94,7 +94,7 @@ fun OrganizingTeamComponent(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun Preview() {
+private fun Preview() {
     ChaiTheme {
         OrganizingTeamComponent(
             modifier = Modifier,

@@ -101,7 +101,7 @@ fun FeedbackButton(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun Preview() {
+private fun Preview() {
     ChaiTheme {
         DroidconAppBarWithFeedbackButton(
             onButtonClick = {},

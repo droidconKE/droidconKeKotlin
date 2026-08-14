@@ -151,7 +151,7 @@ private fun HomeScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     ChaiTheme {
         HomeScreen(
             viewState =

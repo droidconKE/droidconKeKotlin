@@ -64,7 +64,7 @@ fun SessionsErrorComponent(
 
 @Preview
 @Composable
-fun SessionsErrorComponentPreview() {
+private fun SessionsErrorComponentPreview() {
     Surface(color = Color.White) {
         SessionsErrorComponent(errorMessage = "Something Went Wrong")
     }

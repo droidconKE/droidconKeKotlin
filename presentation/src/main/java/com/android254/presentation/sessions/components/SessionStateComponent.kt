@@ -202,7 +202,7 @@ fun SessionListComponent(
 
 @PreviewLightDark
 @Composable
-fun SessionListPreview() {
+private fun SessionListPreview() {
     ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,

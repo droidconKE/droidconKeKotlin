@@ -150,7 +150,7 @@ fun FilterButton(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun ToolbarPreview() {
+private fun ToolbarPreview() {
     ChaiTheme {
         Column {
             DroidconAppBarWithFilter(

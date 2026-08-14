@@ -61,7 +61,7 @@ fun FeedLoadingComponent() {
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun FeedLoadingComponentPreview() {
+private fun FeedLoadingComponentPreview() {
     ChaiTheme {
         FeedLoadingComponent()
     }

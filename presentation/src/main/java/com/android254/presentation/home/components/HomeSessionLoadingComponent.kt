@@ -66,7 +66,7 @@ fun HomeSessionLoadingComponent() {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeSessionLoadingComponentPreview() {
+private fun HomeSessionLoadingComponentPreview() {
     ChaiTheme {
         HomeSessionLoadingComponent()
     }

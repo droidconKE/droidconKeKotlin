@@ -163,7 +163,7 @@ private fun SpeakersScreen(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun SpeakersScreenPreview() {
+private fun SpeakersScreenPreview() {
     ChaiTheme {
         SpeakersScreen(
             uiState = SpeakersScreenUiState.Success(speakers = listOf()),

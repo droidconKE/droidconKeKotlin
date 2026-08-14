@@ -99,7 +99,7 @@ fun HomeSpeakerComponent(
 
 @Preview
 @Composable
-fun HomeSpeakerComponentPreview() {
+private fun HomeSpeakerComponentPreview() {
     ChaiTheme {
         Surface(color = Color.White) {
             HomeSpeakerComponent(

@@ -30,7 +30,7 @@ import com.droidconke.chai.chaiColorsPalette
 
 @PreviewLightDark
 @Composable
-fun SessionScreenPreview(
+private fun SessionScreenPreview(
     @PreviewParameter(SessionStateProvider::class) state: SessionsUiState,
 ) {
     ChaiTheme {

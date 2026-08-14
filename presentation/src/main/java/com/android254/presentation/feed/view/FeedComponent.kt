@@ -127,7 +127,7 @@ fun FeedComponent(
 
 @Preview
 @Composable
-fun Preview() {
+private fun Preview() {
     ChaiTheme {
         FeedComponent(
             modifier = Modifier,

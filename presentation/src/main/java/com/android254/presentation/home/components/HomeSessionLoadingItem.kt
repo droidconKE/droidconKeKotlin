@@ -45,7 +45,7 @@ fun HomeSessionLoadingItem() {
 
 @Preview(showBackground = true)
 @Composable
-fun HomeSessionLoadingItemPreview() {
+private fun HomeSessionLoadingItemPreview() {
     ChaiTheme {
         HomeSessionLoadingItem()
     }

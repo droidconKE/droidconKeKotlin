@@ -65,7 +65,7 @@ fun HomeSpeakersSection(
 
 @Preview
 @Composable
-fun HomeSpeakersSectionPreview() {
+private fun HomeSpeakersSectionPreview() {
     ChaiTheme {
         HomeSpeakersSection(speakers = speakersDummyData)
     }

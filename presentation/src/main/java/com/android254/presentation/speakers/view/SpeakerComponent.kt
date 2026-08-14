@@ -169,7 +169,7 @@ fun SpeakerComponent(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SpeakerComponentPreview() {
+private fun SpeakerComponentPreview() {
     ChaiTheme {
         SpeakerComponent(
             speaker =

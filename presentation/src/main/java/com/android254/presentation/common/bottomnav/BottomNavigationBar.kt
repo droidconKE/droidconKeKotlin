@@ -162,7 +162,7 @@ fun RowScope.BottomNavItem(
 
 @PreviewLightDark
 @Composable
-fun BottomNavigationBarPreview() {
+private fun BottomNavigationBarPreview() {
     ChaiTheme {
         val navigationState =
             rememberNavigationState(

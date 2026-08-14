@@ -339,7 +339,7 @@ fun FeedbackTitle() {
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun FeedBackScreenPreview() {
+private fun FeedBackScreenPreview() {
     ChaiTheme {
         FeedBackScreen(darkTheme = isSystemInDarkTheme())
     }

@@ -101,7 +101,7 @@ fun SessionsLoadingCard() {
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsLoadingComponentPreview() {
+private fun SessionsLoadingComponentPreview() {
     ChaiTheme {
         SessionsLoadingCard()
     }
