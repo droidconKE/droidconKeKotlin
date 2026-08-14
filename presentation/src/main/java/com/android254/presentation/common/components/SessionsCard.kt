@@ -154,15 +154,13 @@ fun SessionsCard(
 }
 
 @Composable
-fun RowScope.SessionTimeComponent(
+fun SessionTimeComponent(
     sessionStartTime: String,
     sessionAmOrPm: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            modifier
-                .weight(0.2f),
+        modifier = modifier,
         horizontalAlignment = Alignment.End,
     ) {
         ChaiBodyLargeBold(
@@ -232,12 +230,10 @@ fun RowScope.SessionDetails(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            Modifier
-                .weight(0.8f),
+        modifier = modifier.weight(1f),
     ) {
         SessionTitleComponent(session, onBookMark)
-        Spacer(modifier = modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         SessionsDescriptionComponent(session.description)
         Spacer(modifier = Modifier.height(12.dp))
         TimeAndVenueComponent(session)
@@ -300,20 +296,19 @@ fun TimeAndVenueComponent(
     session: SessionPresentationModel,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            maxLines = 1,
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        ChaiBodyXSmall(
-            bodyText = "|",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-        )
-        Spacer(modifier = Modifier.width(12.dp))
         ChaiBodyXSmall(
             bodyText = session.venue.uppercase(),
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            maxLines = 2,
         )
     }
 }

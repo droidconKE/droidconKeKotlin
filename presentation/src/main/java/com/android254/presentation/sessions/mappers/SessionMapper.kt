@@ -53,7 +53,7 @@ fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
         id = this.id,
         title = this.title,
         description = this.description,
-        venue = this.rooms,
+        venue = this.roomList.joinToString(", "),
         sessionStatus = sessionStatus,
         startTime = startTime.time,
         endTime = "${endTime.time} ${endTime.period}",
@@ -73,19 +73,20 @@ fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
 
 fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
+    val endTime = getTimePeriod(this.endDateTime)
     return SessionDetailsPresentationModel(
         id = this.id,
         title = this.title,
         description = this.description,
-        venue = this.rooms,
+        venue = this.roomList.joinToString(", "),
         startTime = startTime.time,
-        endTime = this.endTime,
+        endTime = "${endTime.time} ${endTime.period}",
         amOrPm = startTime.period,
         isStarred = this.isBookmarked,
         level = this.sessionLevel,
         format = this.sessionFormat,
         sessionImageUrl = this.sessionImage.toString(),
-        timeSlot = "${startTime.time} - ${this.endTime}",
+        timeSlot = "${startTime.time} - ${endTime.time} ${endTime.period}",
         speakers = speakers.toSessionDetailsSpeaker(),
     )
 }

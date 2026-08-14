@@ -114,6 +114,7 @@ fun ChaiBodyXSmall(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         modifier = modifier,
@@ -127,6 +128,8 @@ fun ChaiBodyXSmall(
                 lineHeight = 16.sp,
             ),
         textAlign = TextAlign.Start,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 

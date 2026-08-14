@@ -154,6 +154,7 @@ fun SessionListComponent(
     ChaiPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) },
+        modifier = modifier,
         state = pullToRefreshState,
     ) {
         LazyColumn(
@@ -161,7 +162,7 @@ fun SessionListComponent(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
             item {
-                Spacer(modifier = modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 ChaiSubTitle(
                     titleText =
