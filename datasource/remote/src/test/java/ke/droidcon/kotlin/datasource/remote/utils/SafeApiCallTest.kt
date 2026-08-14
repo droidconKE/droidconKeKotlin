@@ -78,17 +78,4 @@ class SafeApiCallTest {
 
             assertEquals(DataResult.Success("ok"), result)
         }
-
-    @Suppress("DEPRECATION")
-    @Test
-    fun `safeApiCall maps offline failures to NetworkError and keeps the cause`() =
-        runTest {
-            val cause = UnresolvedAddressException()
-
-            val thrown =
-                runCatching { safeApiCall<String> { throw cause } }.exceptionOrNull()
-
-            assertTrue(thrown is NetworkError)
-            assertEquals(cause, thrown!!.cause)
-        }
 }

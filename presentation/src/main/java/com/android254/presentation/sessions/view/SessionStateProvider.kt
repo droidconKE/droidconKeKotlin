@@ -50,7 +50,7 @@ private fun SessionScreenPreview(
     }
 }
 
-class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
+private class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
     override val values =
         sequenceOf(
             SessionsUiState(

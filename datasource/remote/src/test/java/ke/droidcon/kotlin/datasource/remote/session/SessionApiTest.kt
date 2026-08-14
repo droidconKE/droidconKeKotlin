@@ -22,6 +22,7 @@ import io.ktor.http.headersOf
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.sessions.SessionsApi
 import ke.droidcon.kotlin.datasource.remote.sessions.model.EventScheduleGroupedResponse
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
 import ke.droidcon.kotlin.datasource.remote.utils.MockTokenProvider
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
@@ -66,7 +67,7 @@ class SessionApiTest {
             // WHEN
             val response = SessionsApi(httpClient).fetchSessions()
             // THEN
-            assertThat(response, `is`(expectedResponse))
+            assertThat(response, `is`(DataResult.Success(expectedResponse) as DataResult<EventScheduleGroupedResponse>))
         }
     }
 }

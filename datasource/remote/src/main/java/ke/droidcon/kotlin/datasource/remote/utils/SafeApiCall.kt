@@ -24,49 +24,6 @@ import timber.log.Timber
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 
-/**
- * Runs a network call, mapping failures to [ServerError] or [NetworkError].
- *
- * An offline device surfaces [UnresolvedAddressException] rather than a connect timeout,
- * so every connectivity type is listed. [IOException] comes last because several Ktor
- * exceptions also extend it.
- */
-@Deprecated("Use dataResultSafeApiCall")
-suspend fun <T> safeApiCall(block: suspend () -> T): T =
-    try {
-        block()
-    } catch (e: ServerResponseException) {
-        Timber.e(e)
-        throw ServerError(e)
-    } catch (e: NoTransformationFoundException) {
-        Timber.e(e)
-        throw ServerError(e)
-    } catch (e: UnresolvedAddressException) {
-        Timber.e(e)
-        throw NetworkError(e)
-    } catch (e: ConnectTimeoutException) {
-        Timber.e(e)
-        throw NetworkError(e)
-    } catch (e: SocketTimeoutException) {
-        Timber.e(e)
-        throw NetworkError(e)
-    } catch (e: HttpRequestTimeoutException) {
-        Timber.e(e)
-        throw NetworkError(e)
-    } catch (e: IOException) {
-        Timber.e(e)
-        throw NetworkError(e)
-    }
-
-class ServerError(
-    cause: Throwable,
-) : Exception(cause)
-
-/** A connectivity failure. [cause] is retained so crash reports stay distinguishable. */
-class NetworkError(
-    cause: Throwable? = null,
-) : Exception(cause)
-
 suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResult<T> =
     try {
         DataResult.Success(apiCall.invoke())

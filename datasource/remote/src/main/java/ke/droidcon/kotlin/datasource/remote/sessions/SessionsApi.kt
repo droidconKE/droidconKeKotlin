@@ -19,8 +19,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import ke.droidcon.kotlin.datasource.remote.sessions.model.EventScheduleGroupedResponse
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideEventBaseUrl
-import ke.droidcon.kotlin.datasource.remote.utils.safeApiCall
 import javax.inject.Inject
 
 class SessionsApi
@@ -28,9 +29,9 @@ class SessionsApi
     constructor(
         private val client: HttpClient,
     ) {
-        suspend fun fetchSessions(): EventScheduleGroupedResponse =
-            safeApiCall {
-                return@safeApiCall client
+        suspend fun fetchSessions(): DataResult<EventScheduleGroupedResponse> =
+            dataResultSafeApiCall {
+                client
                     .get("${provideEventBaseUrl()}/schedule") {
                         url {
                             parameters.append("grouped", "true")

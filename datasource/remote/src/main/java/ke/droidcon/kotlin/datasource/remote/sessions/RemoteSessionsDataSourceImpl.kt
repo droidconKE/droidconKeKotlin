@@ -25,11 +25,15 @@ class RemoteSessionsDataSourceImpl(
     private val api: SessionsApi,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : RemoteSessionsDataSource {
-    override suspend fun getAllSessionsRemote(): DataResult<List<SessionDTO>> {
-        return withContext(ioDispatcher) {
-            val response = api.fetchSessions()
-            val sessions = response.data.flatMap { (_, value) -> value }
-            return@withContext DataResult.Success(data = sessions)
+    override suspend fun getAllSessionsRemote(): DataResult<List<SessionDTO>> =
+        withContext(ioDispatcher) {
+            when (val response = api.fetchSessions()) {
+                is DataResult.Success ->
+                    DataResult.Success(
+                        data = response.data.data.flatMap { (_, value) -> value },
+                    )
+                is DataResult.Error -> response
+                is DataResult.Loading, DataResult.Empty -> DataResult.Empty
+            }
         }
-    }
 }

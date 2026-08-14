@@ -22,12 +22,13 @@ import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.auth.model.StatusDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.UserDetailsDTO
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
 import ke.droidcon.kotlin.datasource.remote.utils.MockTokenProvider
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
-import ke.droidcon.kotlin.datasource.remote.utils.ServerError
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -46,8 +47,8 @@ class AuthApiTest {
         remoteFeatureToggleTest = RemoteFeatureToggle(mockk(relaxed = true))
     }
 
-    @Test(expected = ServerError::class)
-    fun `test ServerError is thrown when a server exception occurs`() {
+    @Test
+    fun `test a server exception surfaces as DataResult Error`() {
         val mockEngine =
             MockEngine {
                 delay(500)
@@ -56,7 +57,9 @@ class AuthApiTest {
         val httpClient = HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(mockEngine)
         val api = AuthApi(httpClient)
         runBlocking {
-            api.logout()
+            val response = api.logout()
+            assertThat(response, instanceOf(DataResult.Error::class.java))
+            assertThat((response as DataResult.Error).message, `is`("Server error"))
         }
     }
 
@@ -74,7 +77,7 @@ class AuthApiTest {
         val api = AuthApi(httpClient)
         runBlocking {
             val response = api.logout()
-            assertThat(response, `is`(StatusDTO("Success")))
+            assertThat(response, `is`(DataResult.Success(StatusDTO("Success")) as DataResult<StatusDTO>))
         }
     }
 
@@ -116,7 +119,7 @@ class AuthApiTest {
                         ),
                 )
             val response = api.googleLogin(GoogleToken("some token"))
-            assertThat(response, `is`(accessToken))
+            assertThat(response, `is`(DataResult.Success(accessToken) as DataResult<AccessTokenDTO>))
         }
     }
 }

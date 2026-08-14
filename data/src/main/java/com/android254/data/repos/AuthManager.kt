@@ -21,13 +21,12 @@ import com.android254.domain.repos.AuthRepo
 import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
-import ke.droidcon.kotlin.datasource.remote.utils.NetworkError
-import ke.droidcon.kotlin.datasource.remote.utils.ServerError
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult as RemoteDataResult
 
 @Singleton
 class AuthManager
@@ -39,19 +38,19 @@ class AuthManager
     ) : AuthRepo {
         override suspend fun getAndSaveApiToken(idToken: String): DataResult<Success> =
             withContext(ioDispatcher) {
-                try {
-                    val result = api.googleLogin(GoogleToken(idToken))
-                    tokenProvider.update(result.token)
-                    DataResult.Success(Success)
-                } catch (e: Exception) {
-                    when (e) {
-                        is ServerError, is NetworkError -> {
-                            DataResult.Error("Login failed", networkError = true, exc = e)
-                        }
-                        else -> {
-                            DataResult.Error("Login failed", exc = e)
-                        }
+                when (val result = api.googleLogin(GoogleToken(idToken))) {
+                    is RemoteDataResult.Success -> {
+                        tokenProvider.update(result.data.token)
+                        DataResult.Success(Success)
                     }
+                    is RemoteDataResult.Error ->
+                        DataResult.Error(
+                            message = "Login failed",
+                            networkError = result.networkError,
+                            exc = result.exc,
+                        )
+                    is RemoteDataResult.Loading, RemoteDataResult.Empty ->
+                        DataResult.Error("Login failed")
                 }
             }
     }
