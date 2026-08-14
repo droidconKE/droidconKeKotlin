@@ -21,6 +21,9 @@ dependencies {
     compileOnly(libs.firebase.crashlytics.gradlePlugin)
     compileOnly(libs.firebase.performance.gradlePlugin)
     compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.ktlint.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
+    compileOnly(libs.spotless.gradlePlugin)
 }
 
 gradlePlugin {
@@ -60,6 +63,10 @@ gradlePlugin {
         register("androidLibraryJacoco") {
             id = "droidconke.android.library.jacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
+        }
+        register("quality") {
+            id = "droidconke.quality"
+            implementationClass = "QualityConventionPlugin"
         }
     }
 }

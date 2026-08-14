@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 plugins {
+    alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.application)
     alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.compose.compiler)

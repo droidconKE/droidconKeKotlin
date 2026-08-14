@@ -7,9 +7,13 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    // On the classpath for the droidconke.quality convention plugin, which is what applies and
+    // configures all three in every module. ktlint is applied here too, for this file and
+    // settings.gradle.kts — the root cannot apply a convention plugin without putting the whole
+    // of build-logic on its classpath, which breaks every module's versioned plugin alias.
     alias(libs.plugins.jlleitschuh)
-    alias(libs.plugins.detekt)
-    alias(libs.plugins.spotless)
+    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.spotless) apply false
     alias(libs.plugins.hilt.plugin) apply false
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
@@ -20,47 +24,10 @@ plugins {
     alias(libs.plugins.toml.updater)
 }
 
-allprojects {
-
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    ktlint {
-        android.set(true)
-        verbose.set(true)
-        filter {
-            exclude { element -> element.file.path.contains("generated/") }
-        }
-    }
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
-}
-
-subprojects {
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-    detekt {
-        config.setFrom(files("${project.rootDir}/detekt.yml"))
-        parallel = true
-        buildUponDefaultConfig = true
-    }
-
-    apply(plugin = "com.diffplug.spotless")
-    spotless {
-        kotlin {
-            target("**/*.kt")
-            targetExclude("${project.rootDir}/build-logic/**/*.kt")
-            licenseHeaderFile(
-                rootProject.file("${project.rootDir}/spotless/copyright.kt"),
-                "^(package|object|import|interface)",
-            )
-        }
-        format("kts") {
-            target("**/*.kts")
-            targetExclude("**/build/**/*.kts")
-            // Look for the first line that doesn't have a block comment (assumed to be the license)
-            licenseHeaderFile(rootProject.file("spotless/copyright.kts"), "(^(?![\\/ ]\\*).*$)")
-        }
+ktlint {
+    android.set(true)
+    verbose.set(true)
+    filter {
+        exclude { element -> element.file.path.contains("generated/") }
     }
 }

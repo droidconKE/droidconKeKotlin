@@ -162,6 +162,9 @@ junit4 = { module = "junit:junit", version.ref = "junit4" }
 firebase-crashlytics-gradlePlugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-performance-gradlePlugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerfPlugin" }
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+ktlint-gradlePlugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
+detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -202,6 +205,7 @@ toml-checker = { id = "com.github.ben-manes.versions", version.ref = "toml_check
 toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "toml_updater" }
 
 # Convention plugins defined in the project
+droidconke-quality = { id = "droidconke.quality", version = "unspecified" }
 droidconke-android-library = { id = "droidconke.android.library", version = "unspecified" }
 droidconke-android-room = { id = "droidconke.android.room", version = "unspecified" }
 droidconke-android-hilt = { id = "droidconke.android.hilt", version = "unspecified" }
