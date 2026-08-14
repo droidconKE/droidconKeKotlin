@@ -57,7 +57,7 @@ fun DroidconAppBar(
 
 @Preview
 @Composable
-fun DroidconAppBarPreview() {
+private fun DroidconAppBarPreview() {
     ChaiTheme {
         DroidconAppBar()
     }

@@ -51,6 +51,8 @@ import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.chaiColorsPalette
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionsRoute(
@@ -79,9 +81,10 @@ fun SessionsScreen(
     sessionsUiState: SessionsUiState,
     selectedEventDate: EventDate,
     isRefreshing: Boolean,
-    currentSelections: List<SessionsFilterOption>,
+    currentSelections: ImmutableList<SessionsFilterOption>,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // Derived from the ViewModel rather than mirrored here, so rotation cannot leave the
     // switch and the applied filter disagreeing.
@@ -104,6 +107,7 @@ fun SessionsScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         topBar = {
             DroidconAppBarWithFilter(
                 isListActive = isSessionLayoutList.value,
@@ -191,13 +195,13 @@ fun SessionsScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsScreenPreview() {
+private fun SessionsScreenPreview() {
     ChaiTheme {
         SessionsScreen(
             sessionsUiState = SessionsUiState(),
             selectedEventDate = EventDate("1", day = 1),
             isRefreshing = false,
-            currentSelections = listOf(),
+            currentSelections = persistentListOf(),
             navigateToSessionDetails = {},
             onEvent = {},
         )

@@ -23,6 +23,7 @@ import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -91,13 +92,13 @@ class MainViewModel
                     ) { current, upNext ->
                         SessionUIState(
                             current =
-                                current.map {
-                                    it.toPresentationModel(now)
-                                },
+                                current
+                                    .map { it.toPresentationModel(now) }
+                                    .toImmutableList(),
                             upNext =
-                                upNext.map {
-                                    it.toPresentationModel(now)
-                                },
+                                upNext
+                                    .map { it.toPresentationModel(now) }
+                                    .toImmutableList(),
                         )
                     }
                 }.stateIn(

@@ -20,6 +20,8 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.presentation.models.OrganizingTeamMember
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -31,7 +33,7 @@ sealed interface AboutScreenUiState {
     object Loading : AboutScreenUiState
 
     data class Success(
-        val teamMembers: List<OrganizingTeamMember>,
+        val teamMembers: ImmutableList<OrganizingTeamMember>,
         val stakeHoldersLogos: List<String>,
     ) : AboutScreenUiState
 
@@ -59,7 +61,7 @@ class AboutViewModel
                             )
                         }
                     val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
-                    AboutScreenUiState.Success(teamMembers = team, stakeHoldersLogos = stakeholders)
+                    AboutScreenUiState.Success(teamMembers = team.toImmutableList(), stakeHoldersLogos = stakeholders)
                 }.onStart { AboutScreenUiState.Loading }
                 .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
                 .stateIn(

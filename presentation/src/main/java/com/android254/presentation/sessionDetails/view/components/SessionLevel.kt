@@ -28,10 +28,13 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
 
 @Composable
-fun SessionLevel(sessionLevel: String) {
+fun SessionLevel(
+    sessionLevel: String,
+    modifier: Modifier = Modifier,
+) {
     ChaiBodySmall(
         modifier =
-            Modifier
+            modifier
                 .background(
                     color = MaterialTheme.chaiColorsPalette.badgeBackgroundColor,
                     shape = RoundedCornerShape(5.dp),

@@ -62,6 +62,7 @@ core = "1.7.0"
 nav3Core = "1.1.6"
 lifecycleViewmodelNav3 = "2.11.0"
 kotlinxSerializationCore = "1.11.0"
+collectionsImmutable = "0.5.1"
 
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
@@ -135,6 +136,7 @@ ktor-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 

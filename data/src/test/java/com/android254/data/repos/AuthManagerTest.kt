@@ -25,7 +25,6 @@ import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
 import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.UserDetailsDTO
-import ke.droidcon.kotlin.datasource.remote.utils.NetworkError
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +32,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult as RemoteDataResult
 
 class AuthManagerTest {
     private val mockApi = mockk<AuthApi>()
@@ -52,9 +52,11 @@ class AuthManagerTest {
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             coEvery { mockApi.googleLogin(any()) } returns
-                AccessTokenDTO(
-                    "test",
-                    user = fakeUserDetails,
+                RemoteDataResult.Success(
+                    AccessTokenDTO(
+                        "test",
+                        user = fakeUserDetails,
+                    ),
                 )
             coEvery { mockTokenProvider.update(any()) } just Runs
 
@@ -68,9 +70,10 @@ class AuthManagerTest {
     fun `test getAndSaveApiToken failure - network error`() {
         runBlocking {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
-            val exc = NetworkError()
+            val exc = Exception("offline")
 
-            coEvery { mockApi.googleLogin(any()) } throws exc
+            coEvery { mockApi.googleLogin(any()) } returns
+                RemoteDataResult.Error("Network error", networkError = true, exc = exc)
             val result = repo.getAndSaveApiToken("test")
             assertThat(result, `is`(DataResult.Error("Login failed", true, exc)))
         }
@@ -82,7 +85,8 @@ class AuthManagerTest {
             val repo = AuthManager(mockApi, mockTokenProvider, ioDispatcher)
             val exc = Exception()
 
-            coEvery { mockApi.googleLogin(any()) } throws exc
+            coEvery { mockApi.googleLogin(any()) } returns
+                RemoteDataResult.Error("Client error", exc = exc)
             val result = repo.getAndSaveApiToken("test")
             assertThat(result, `is`(DataResult.Error("Login failed", exc = exc)))
         }

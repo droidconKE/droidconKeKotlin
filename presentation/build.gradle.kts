@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)
+    implementation(libs.kotlinx.collections.immutable)
 
     implementation(libs.bundles.navigation3)
     implementation(libs.bundles.coil)

@@ -28,7 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DroidConTextField(label: String) {
+fun DroidConTextField(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
     var value by remember {
         mutableStateOf("")
     }
@@ -37,7 +40,7 @@ fun DroidConTextField(label: String) {
         value = value,
         onValueChange = { value = it },
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(0.dp).height(48.dp),
+        modifier = modifier.fillMaxWidth().padding(0.dp).height(48.dp),
         colors =
             TextFieldDefaults.colors(
                 focusedIndicatorColor = Color.Transparent,

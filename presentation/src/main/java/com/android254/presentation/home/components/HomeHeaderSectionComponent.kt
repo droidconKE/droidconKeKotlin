@@ -27,9 +27,9 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.presentation.R
 
 @Composable
-fun HomeHeaderSectionComponent() {
+fun HomeHeaderSectionComponent(modifier: Modifier = Modifier) {
     ChaiBodyMediumBold(
-        modifier = Modifier.testTag("home_header"),
+        modifier = modifier.testTag("home_header"),
         bodyText = stringResource(id = R.string.home_header_welcome_label),
         textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
     )

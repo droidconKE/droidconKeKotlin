@@ -24,6 +24,7 @@ import com.android254.presentation.home.mappers.toSpeakersPresentation
 import com.android254.presentation.home.viewstate.HomeViewState
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -60,9 +61,9 @@ class HomeViewModel
                         speakers = it.speakers.toSpeakersPresentation(),
                         isSpeakersSectionVisible = it.isSpeakersSessionEnable,
                         isSessionsSectionVisible = it.isSessionsSectionEnable,
-                        sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() },
+                        sponsors = it.sponsors.map { sponsor -> sponsor.toPresentation() }.toImmutableList(),
                         organizedBy = it.organizers.map { organizer -> organizer.organizerLogoUrl },
-                        sessions = it.sessions.map { session -> session.toPresentationModel(clock.now()) },
+                        sessions = it.sessions.map { session -> session.toPresentationModel(clock.now()) }.toImmutableList(),
                     )
                 }.stateIn(
                     scope = viewModelScope,

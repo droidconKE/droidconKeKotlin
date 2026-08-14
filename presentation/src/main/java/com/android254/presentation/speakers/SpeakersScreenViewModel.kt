@@ -21,6 +21,8 @@ import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -33,7 +35,7 @@ sealed interface SpeakersScreenUiState {
     object Loading : SpeakersScreenUiState
 
     data class Success(
-        val speakers: List<SpeakerUI>,
+        val speakers: ImmutableList<SpeakerUI>,
     ) : SpeakersScreenUiState
 
     data class Error(
@@ -60,17 +62,18 @@ class SpeakersScreenViewModel
             speakersRepo
                 .fetchSpeakers()
                 .map {
-                    it.map {
-                        SpeakerUI(
-                            id = 1,
-                            imageUrl = it.avatar,
-                            name = it.name,
-                            tagline = it.tagline,
-                            bio = it.biography,
-                            twitterHandle = it.twitter,
-                        )
-                    }
-                }.map<List<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+                    it
+                        .map {
+                            SpeakerUI(
+                                id = 1,
+                                imageUrl = it.avatar,
+                                name = it.name,
+                                tagline = it.tagline,
+                                bio = it.biography,
+                                twitterHandle = it.twitter,
+                            )
+                        }.toImmutableList()
+                }.map<ImmutableList<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
                 .onStart {
                     emit(SpeakersScreenUiState.Loading)
                 }.catch {

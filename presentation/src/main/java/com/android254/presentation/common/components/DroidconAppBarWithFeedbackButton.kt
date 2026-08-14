@@ -40,9 +40,9 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun DroidconAppBarWithFeedbackButton(
-    modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
     userProfile: String,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
@@ -101,7 +101,7 @@ fun FeedbackButton(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun Preview() {
+private fun Preview() {
     ChaiTheme {
         DroidconAppBarWithFeedbackButton(
             onButtonClick = {},

@@ -331,7 +331,7 @@ private fun SpeakerDetailsScreen(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun SpeakerDetailsScreenPreview() {
+private fun SpeakerDetailsScreenPreview() {
     ChaiTheme {
         SpeakerDetailsScreen(
             uiState =

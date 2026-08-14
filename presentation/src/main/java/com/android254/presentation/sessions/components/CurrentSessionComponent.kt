@@ -182,7 +182,7 @@ fun CurrentSessionComponent(
 
 @PreviewLightDark
 @Composable
-fun CurrentSessionUpNextPreview() {
+private fun CurrentSessionUpNextPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Upcoming } ?: defaultSession
 
@@ -200,7 +200,7 @@ fun CurrentSessionUpNextPreview() {
 
 @PreviewLightDark
 @Composable
-fun CurrentSessionCurrentPreview() {
+private fun CurrentSessionCurrentPreview() {
     val defaultSession = fakeSessions.first()
     val session = fakeSessions.find { session -> session.sessionStatus == SessionStatus.Ongoing } ?: defaultSession
 

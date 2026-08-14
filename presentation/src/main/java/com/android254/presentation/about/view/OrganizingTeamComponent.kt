@@ -47,8 +47,8 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun OrganizingTeamComponent(
-    modifier: Modifier = Modifier,
     teamMember: OrganizingTeamMember,
+    modifier: Modifier = Modifier,
     onClickMember: (Int) -> Unit,
 ) {
     Column(
@@ -94,7 +94,7 @@ fun OrganizingTeamComponent(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun Preview() {
+private fun Preview() {
     ChaiTheme {
         OrganizingTeamComponent(
             modifier = Modifier,

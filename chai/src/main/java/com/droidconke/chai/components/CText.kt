@@ -47,8 +47,8 @@ import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun ChaiTitle(
-    modifier: Modifier = Modifier,
     titleText: String,
+    modifier: Modifier = Modifier,
     titleColor: Color = Color.Unspecified,
 ) {
     Text(
@@ -67,8 +67,8 @@ fun ChaiTitle(
 
 @Composable
 fun ChaiSubTitle(
-    modifier: Modifier = Modifier,
     titleText: String,
+    modifier: Modifier = Modifier,
     titleColor: Color = Color.Unspecified,
     textAlign: TextAlign? = TextAlign.Start,
 ) {
@@ -89,8 +89,8 @@ fun ChaiSubTitle(
 
 @Composable
 fun ChaiBodyXSmallBold(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign? = TextAlign.Start,
 ) {
@@ -111,9 +111,10 @@ fun ChaiBodyXSmallBold(
 
 @Composable
 fun ChaiBodyXSmall(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     Text(
         modifier = modifier,
@@ -127,13 +128,15 @@ fun ChaiBodyXSmall(
                 lineHeight = 16.sp,
             ),
         textAlign = TextAlign.Start,
+        maxLines = maxLines,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
 fun ChaiBodySmallBold(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
 ) {
@@ -155,8 +158,8 @@ fun ChaiBodySmallBold(
 
 @Composable
 fun ChaiBodySmall(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
@@ -182,8 +185,8 @@ fun ChaiBodySmall(
 
 @Composable
 fun ChaiBodyMediumBold(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
@@ -207,8 +210,8 @@ fun ChaiBodyMediumBold(
 
 @Composable
 fun ChaiBodyMedium(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
 ) {
@@ -231,8 +234,8 @@ fun ChaiBodyMedium(
 
 @Composable
 fun ChaiBodyLargeBold(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Ellipsis,
@@ -256,8 +259,8 @@ fun ChaiBodyLargeBold(
 
 @Composable
 fun ChaiBodyLarge(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
 ) {
     Text(
@@ -277,8 +280,8 @@ fun ChaiBodyLarge(
 
 @Composable
 fun ChaiTextButtonLight(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
 ) {
     Text(
@@ -298,8 +301,8 @@ fun ChaiTextButtonLight(
 
 @Composable
 fun CPrimaryButtonText(
-    modifier: Modifier = Modifier,
     text: String,
+    modifier: Modifier = Modifier,
     textAllCaps: Boolean = false,
     textColor: Color = MaterialTheme.chaiColorsPalette.textButtonColor,
 ) {
@@ -320,8 +323,8 @@ fun CPrimaryButtonText(
 
 @Composable
 fun ChaiTextLabelLarge(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
 ) {
@@ -342,8 +345,8 @@ fun ChaiTextLabelLarge(
 
 @Composable
 fun ChaiTextLabelMedium(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
 ) {
     Text(
@@ -363,8 +366,8 @@ fun ChaiTextLabelMedium(
 
 @Composable
 fun ChaiTextLabelSmall(
-    modifier: Modifier = Modifier,
     bodyText: String,
+    modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
 ) {
     Text(

@@ -51,6 +51,7 @@ import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -163,10 +164,10 @@ private fun SpeakersScreen(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun SpeakersScreenPreview() {
+private fun SpeakersScreenPreview() {
     ChaiTheme {
         SpeakersScreen(
-            uiState = SpeakersScreenUiState.Success(speakers = listOf()),
+            uiState = SpeakersScreenUiState.Success(speakers = persistentListOf()),
         )
     }
 }

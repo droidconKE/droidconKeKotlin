@@ -38,11 +38,11 @@ import ke.droidcon.kotlin.presentation.R
 
 @Composable
 fun DroidconAppBarWithFilter(
-    modifier: Modifier = Modifier,
     isListActive: Boolean,
     onListIconClick: () -> Unit,
     onAgendaIconClick: () -> Unit,
     isFilterActive: Boolean,
+    modifier: Modifier = Modifier,
     onFilterButtonClick: () -> Unit,
 ) {
     Row(
@@ -76,9 +76,9 @@ fun DroidconAppBarWithFilter(
 
 @Composable
 fun LayoutIconButtons(
-    modifier: Modifier = Modifier,
     isListActive: Boolean,
     onListIconClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onAgendaIconClick: () -> Unit,
 ) {
     val listIconColor = if (isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
@@ -117,8 +117,8 @@ fun LayoutIconButtons(
 
 @Composable
 fun FilterButton(
-    modifier: Modifier = Modifier,
     isActive: Boolean,
+    modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
 ) {
     val stateColors = if (isActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else ChaiGrey
@@ -150,7 +150,7 @@ fun FilterButton(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun ToolbarPreview() {
+private fun ToolbarPreview() {
     ChaiTheme {
         Column {
             DroidconAppBarWithFilter(

@@ -52,9 +52,12 @@ fun fakeEntryProvider(): (NavKey) -> NavEntry<NavKey> {
 }
 
 @Composable
-fun FakePlaceholderScreen(screen: Screens) {
+fun FakePlaceholderScreen(
+    screen: Screens,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier,
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

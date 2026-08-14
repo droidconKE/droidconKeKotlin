@@ -56,6 +56,9 @@ import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun AboutRoute(
@@ -134,7 +137,7 @@ private fun AboutScreen(
 
                     OrganizedBySection(
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                        organizationLogos = stakeHolderLogos,
+                        organizationLogos = stakeHolderLogos.toImmutableList(),
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
@@ -146,8 +149,8 @@ private fun AboutScreen(
 
 @Composable
 fun AboutDroidconSection(
-    modifier: Modifier = Modifier,
     droidconDesc: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
@@ -193,8 +196,8 @@ fun AboutDroidconSection(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizingTeamSection(
+    organizingTeam: ImmutableList<OrganizingTeamMember>,
     modifier: Modifier = Modifier,
-    organizingTeam: List<OrganizingTeamMember>,
     onClickMember: (Int) -> Unit,
 ) {
     Column(
@@ -237,13 +240,13 @@ fun OrganizingTeamSection(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun AboutScreenPreview() {
+private fun AboutScreenPreview() {
     ChaiTheme {
         AboutScreen(
             uiState =
                 AboutScreenUiState.Success(
                     teamMembers =
-                        listOf(
+                        persistentListOf(
                             OrganizingTeamMember(
                                 name = "Member 1",
                                 desc = "Description 1",
@@ -276,7 +279,7 @@ fun AboutScreenPreview() {
                             ),
                         ),
                     stakeHoldersLogos =
-                        listOf(
+                        persistentListOf(
                             "",
                             "",
                             "",

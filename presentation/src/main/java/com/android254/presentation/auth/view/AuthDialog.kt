@@ -128,7 +128,7 @@ fun AuthDialog(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun AuthDialogPreview() {
+private fun AuthDialogPreview() {
     ChaiTheme {
         AuthDialog()
     }

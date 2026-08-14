@@ -37,12 +37,13 @@ import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun SessionsLoadingCard() {
+fun SessionsLoadingCard(modifier: Modifier = Modifier) {
     Card(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
         shape = RoundedCornerShape(5),
@@ -51,7 +52,7 @@ fun SessionsLoadingCard() {
     ) {
         AnimatedShimmerEffect(
             gradientColors =
-                listOf(
+                persistentListOf(
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
@@ -101,7 +102,7 @@ fun SessionsLoadingCard() {
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsLoadingComponentPreview() {
+private fun SessionsLoadingComponentPreview() {
     ChaiTheme {
         SessionsLoadingCard()
     }

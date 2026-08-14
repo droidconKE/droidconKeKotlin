@@ -34,10 +34,10 @@ import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 
 @Composable
-fun FeedLoadingComponent() {
+fun FeedLoadingComponent(modifier: Modifier = Modifier) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .background(color = MaterialTheme.chaiColorsPalette.background)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp),
@@ -61,7 +61,7 @@ fun FeedLoadingComponent() {
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun FeedLoadingComponentPreview() {
+private fun FeedLoadingComponentPreview() {
     ChaiTheme {
         FeedLoadingComponent()
     }

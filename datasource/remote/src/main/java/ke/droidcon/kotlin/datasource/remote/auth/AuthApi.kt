@@ -22,8 +22,9 @@ import io.ktor.client.request.setBody
 import ke.droidcon.kotlin.datasource.remote.auth.model.AccessTokenDTO
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
 import ke.droidcon.kotlin.datasource.remote.auth.model.StatusDTO
+import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.provideBaseUrl
-import ke.droidcon.kotlin.datasource.remote.utils.safeApiCall
 import javax.inject.Inject
 
 class AuthApi
@@ -31,17 +32,17 @@ class AuthApi
     constructor(
         private val client: HttpClient,
     ) {
-        suspend fun googleLogin(token: GoogleToken): AccessTokenDTO =
-            safeApiCall {
-                return@safeApiCall client
+        suspend fun googleLogin(token: GoogleToken): DataResult<AccessTokenDTO> =
+            dataResultSafeApiCall {
+                client
                     .post("${provideBaseUrl()}/social_login/google") {
                         setBody(token)
                     }.body()
             }
 
-        suspend fun logout(): StatusDTO =
-            safeApiCall {
+        suspend fun logout(): DataResult<StatusDTO> =
+            dataResultSafeApiCall {
                 val url = "${provideBaseUrl()}/logout"
-                return@safeApiCall client.post(url).body()
+                client.post(url).body()
             }
     }

@@ -30,6 +30,9 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,8 +57,8 @@ class SessionsViewModel
         private val clock: Clock,
         @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
     ) : ViewModel() {
-        private val _selectedFilterOptions: MutableStateFlow<List<SessionsFilterOption>> =
-            MutableStateFlow(emptyList())
+        private val _selectedFilterOptions: MutableStateFlow<PersistentList<SessionsFilterOption>> =
+            MutableStateFlow(persistentListOf())
         val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
         private val _filterState = MutableStateFlow(SessionsFilterState())
@@ -86,10 +89,10 @@ class SessionsViewModel
                         )
 
                     SessionsUiState(
-                        sessions = filteredSessions,
-                        eventDays = sessionDays,
+                        sessions = filteredSessions.toImmutableList(),
+                        eventDays = sessionDays.toImmutableList(),
                         sessionStatus = getResultStatus(filteredSessions),
-                        availableFilters = buildFilterOptions(sessionsInformation.sessions),
+                        availableFilters = buildFilterOptions(sessionsInformation.sessions).toImmutableList(),
                         showMySessionsOnly = filterState.isBookmarked,
                         isFilterActive = filterState.isActive,
                     )
@@ -188,13 +191,13 @@ class SessionsViewModel
 
         fun updateSelectedFilterOptionList(option: SessionsFilterOption) {
             _selectedFilterOptions.update { selected ->
-                if (option in selected) selected - option else selected + option
+                if (option in selected) selected.removing(option) else selected.adding(option)
             }
             _filterState.update { it.toggle(option) }
         }
 
         fun clearSelectedFilterList() {
-            _selectedFilterOptions.value = listOf()
+            _selectedFilterOptions.value = persistentListOf()
             _filterState.value = SessionsFilterState()
         }
 
@@ -203,7 +206,7 @@ class SessionsViewModel
         }
 
         fun refreshSessionList() {
-            _selectedFilterOptions.value = listOf()
+            _selectedFilterOptions.value = persistentListOf()
             _filterState.update {
                 SessionsFilterState(isBookmarked = it.isBookmarked)
             }

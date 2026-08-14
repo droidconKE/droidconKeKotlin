@@ -21,16 +21,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BreathingSpace13() {
-    Spacer(modifier = Modifier.height(15.dp))
+fun BreathingSpace13(modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.height(15.dp))
 }
 
 @Composable
-fun BreathingSpace26() {
-    Spacer(modifier = Modifier.height(26.dp))
+fun BreathingSpace26(modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.height(26.dp))
 }
 
 @Composable
-fun SeparatorSpace() {
-    Spacer(modifier = Modifier.height(5.dp))
+fun SeparatorSpace(modifier: Modifier = Modifier) {
+    Spacer(modifier = modifier.height(5.dp))
 }

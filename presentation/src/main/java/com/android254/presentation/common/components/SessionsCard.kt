@@ -75,6 +75,7 @@ fun SessionsCard(
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val venueAccent = venueAccentColor(session.venue)
 
@@ -113,7 +114,7 @@ fun SessionsCard(
 
     Card(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .alpha(alpha),
@@ -153,14 +154,13 @@ fun SessionsCard(
 }
 
 @Composable
-fun RowScope.SessionTimeComponent(
+fun SessionTimeComponent(
     sessionStartTime: String,
     sessionAmOrPm: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            Modifier
-                .weight(0.2f),
+        modifier = modifier,
         horizontalAlignment = Alignment.End,
     ) {
         ChaiBodyLargeBold(
@@ -227,11 +227,10 @@ private fun RowScope.NowIndicator(
 fun RowScope.SessionDetails(
     session: SessionPresentationModel,
     onBookMark: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            Modifier
-                .weight(0.8f),
+        modifier = modifier.weight(1f),
     ) {
         SessionTitleComponent(session, onBookMark)
         Spacer(modifier = Modifier.height(12.dp))
@@ -293,21 +292,23 @@ fun SessionsDescriptionComponent(sessionDescription: String) {
 }
 
 @Composable
-fun TimeAndVenueComponent(session: SessionPresentationModel) {
-    Row {
+fun TimeAndVenueComponent(
+    session: SessionPresentationModel,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            maxLines = 1,
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        ChaiBodyXSmall(
-            bodyText = "|",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-        )
-        Spacer(modifier = Modifier.width(12.dp))
         ChaiBodyXSmall(
             bodyText = session.venue.uppercase(),
             textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            maxLines = 2,
         )
     }
 }
@@ -315,8 +316,10 @@ fun TimeAndVenueComponent(session: SessionPresentationModel) {
 @Composable
 fun SessionPresenterComponents(
     speaker: SessionSpeakersPresentationModel,
+    modifier: Modifier = Modifier,
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(

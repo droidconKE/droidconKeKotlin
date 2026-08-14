@@ -75,7 +75,7 @@ fun TopAppBar(
 
 @Composable
 @Preview
-fun TopAppBarPreview() {
+private fun TopAppBarPreview() {
     ChaiTheme {
         TopAppBar()
     }

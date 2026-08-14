@@ -33,13 +33,14 @@ import coil.request.ImageRequest
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizedBySection(
+    organizationLogos: ImmutableList<String>,
     modifier: Modifier = Modifier,
-    organizationLogos: List<String>,
 ) {
     Column(
         modifier =

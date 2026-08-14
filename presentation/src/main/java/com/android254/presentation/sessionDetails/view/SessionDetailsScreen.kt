@@ -150,10 +150,11 @@ fun Body(
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            Modifier
+            modifier
                 .padding(paddingValues)
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -220,7 +221,7 @@ fun Body(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun SessionDetailsScreenPreview() {
+private fun SessionDetailsScreenPreview() {
     ChaiTheme {
         SessionDetailsScreen(
             onNavigationIconClick = {},

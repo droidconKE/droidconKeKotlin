@@ -16,6 +16,7 @@
 package com.android254.presentation.common.navigation
 
 import androidx.navigation3.runtime.NavKey
+import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.serialization.Serializable
 
 /**
@@ -57,4 +58,4 @@ sealed interface Screens : NavKey {
 
 val bottomNavigationRoutes: List<Screens> = TopLevelDestination.routes
 
-val bottomNavigationSet: Set<Screens> = TopLevelDestination.routeSet
+val bottomNavigationSet: ImmutableSet<Screens> = TopLevelDestination.routeSet

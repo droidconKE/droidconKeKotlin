@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.MicExternalOn
 import androidx.compose.ui.graphics.Color
 import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
+import kotlinx.collections.immutable.ImmutableList
 
 data class SessionPresentationModel(
     val id: String,
@@ -42,7 +43,7 @@ data class SessionPresentationModel(
     val sessionStatus: SessionStatus = SessionStatus.Upcoming,
     val sessionImage: String = "",
     val eventDay: String,
-    val speakers: List<SessionSpeakersPresentationModel>,
+    val speakers: ImmutableList<SessionSpeakersPresentationModel>,
 ) {
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)

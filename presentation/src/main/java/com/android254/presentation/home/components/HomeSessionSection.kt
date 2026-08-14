@@ -43,12 +43,13 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun HomeSessionSection(
-    modifier: Modifier = Modifier,
-    sessions: List<SessionPresentationModel>,
+    sessions: ImmutableList<SessionPresentationModel>,
     onSessionClick: (sessionId: String) -> Unit,
+    modifier: Modifier = Modifier,
     onViewAllSessionClicked: () -> Unit,
 ) {
     Column(

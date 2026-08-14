@@ -31,9 +31,10 @@ import com.droidconke.chai.components.ChaiBodyXSmall
 @Composable
 fun SessionTimeAndRoom(
     sessionDetails: SessionDetailsPresentationModel,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.TIME_SLOT),

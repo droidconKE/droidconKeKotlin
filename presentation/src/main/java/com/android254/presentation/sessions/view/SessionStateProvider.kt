@@ -27,10 +27,11 @@ import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
+import kotlinx.collections.immutable.persistentListOf
 
 @PreviewLightDark
 @Composable
-fun SessionScreenPreview(
+private fun SessionScreenPreview(
     @PreviewParameter(SessionStateProvider::class) state: SessionsUiState,
 ) {
     ChaiTheme {
@@ -41,7 +42,7 @@ fun SessionScreenPreview(
                 sessionsUiState = state,
                 selectedEventDate = EventDate("2023-11-16", day = 1),
                 isRefreshing = false,
-                currentSelections = emptyList(),
+                currentSelections = persistentListOf(),
                 navigateToSessionDetails = {},
                 onEvent = {},
             )
@@ -49,7 +50,7 @@ fun SessionScreenPreview(
     }
 }
 
-class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
+private class SessionStateProvider : PreviewParameterProvider<SessionsUiState> {
     override val values =
         sequenceOf(
             SessionsUiState(

@@ -40,10 +40,10 @@ import com.droidconke.chai.utils.SeparatorSpace
 @Composable
 fun CButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     colors: ButtonColors,
     shape: Shape,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     Button(
@@ -59,9 +59,9 @@ fun CButton(
 @Composable
 fun COutlinedButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     colors: ButtonColors,
     shape: Shape,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
@@ -76,9 +76,9 @@ fun COutlinedButton(
 @Composable
 fun CPrimaryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     isEnabled: Boolean,
     title: String,
+    modifier: Modifier = Modifier,
 ) {
     CButton(
         onClick = onClick,
@@ -99,9 +99,9 @@ fun CPrimaryButton(
 @Composable
 fun COutlinedPrimaryButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
     title: String,
     icon: ImageVector,
+    modifier: Modifier = Modifier,
 ) {
     COutlinedButton(
         onClick = onClick,
@@ -120,7 +120,7 @@ private const val PREVIEW_OUTLINE_BUTTON_TITLE = "Twitter"
 
 @Preview
 @Composable
-fun CPrimaryButtonDarkPreview() {
+private fun CPrimaryButtonDarkPreview() {
     ChaiTheme(darkTheme = true) {
         CPrimaryButton(
             onClick = { },
@@ -133,7 +133,7 @@ fun CPrimaryButtonDarkPreview() {
 
 @Preview
 @Composable
-fun CPrimaryButtonDisableDarkPreview() {
+private fun CPrimaryButtonDisableDarkPreview() {
     ChaiTheme(darkTheme = true) {
         CPrimaryButton(
             onClick = { },
@@ -146,7 +146,7 @@ fun CPrimaryButtonDisableDarkPreview() {
 
 @Preview
 @Composable
-fun CPrimaryButtonDisableLightPreview() {
+private fun CPrimaryButtonDisableLightPreview() {
     ChaiTheme(darkTheme = false) {
         CPrimaryButton(
             onClick = { },
@@ -159,7 +159,7 @@ fun CPrimaryButtonDisableLightPreview() {
 
 @Preview
 @Composable
-fun CPrimaryButtonLightPreview() {
+private fun CPrimaryButtonLightPreview() {
     ChaiTheme {
         CPrimaryButton(
             onClick = { },
@@ -172,7 +172,7 @@ fun CPrimaryButtonLightPreview() {
 
 @Preview
 @Composable
-fun CPrimaryOutlinedButtonLightPreview() {
+private fun CPrimaryOutlinedButtonLightPreview() {
     ChaiTheme(darkTheme = false) {
         COutlinedPrimaryButton(
             onClick = { },
@@ -185,7 +185,7 @@ fun CPrimaryOutlinedButtonLightPreview() {
 
 @Preview
 @Composable
-fun CPrimaryOutlinedButtonDarktPreview() {
+private fun CPrimaryOutlinedButtonDarktPreview() {
     ChaiTheme(darkTheme = true) {
         COutlinedPrimaryButton(
             onClick = { },

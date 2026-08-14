@@ -201,7 +201,7 @@ private fun FeedScreen(
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-fun FeedScreenPreview() {
+private fun FeedScreenPreview() {
     ChaiTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             FeedScreen(

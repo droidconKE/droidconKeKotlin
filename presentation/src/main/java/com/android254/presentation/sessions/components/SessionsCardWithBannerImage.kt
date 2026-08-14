@@ -57,13 +57,14 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsCardWithBannerImage(
-    modifier: Modifier = Modifier,
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: SessionsViewModel = hiltViewModel(),
 ) {
     val scope = rememberCoroutineScope()
@@ -128,10 +129,11 @@ fun SessionsCardWithBannerImage(
 fun SpeakerDetailsAndLikeButtonComponent(
     onBookmarkClicked: () -> Unit,
     isSessionStarred: Boolean,
-    speakers: List<SessionSpeakersPresentationModel>,
+    speakers: ImmutableList<SessionSpeakersPresentationModel>,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         speakers.forEach { speaker ->

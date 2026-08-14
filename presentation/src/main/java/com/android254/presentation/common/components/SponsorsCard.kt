@@ -44,13 +44,14 @@ import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SponsorsCard(
+    sponsors: ImmutableList<SponsorPresentationModel>,
     modifier: Modifier = Modifier,
-    sponsors: List<SponsorPresentationModel>,
 ) {
     Card {
         Column(

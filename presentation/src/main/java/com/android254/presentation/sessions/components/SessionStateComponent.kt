@@ -58,6 +58,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -68,6 +69,7 @@ fun SessionsStateComponent(
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -77,7 +79,7 @@ fun SessionsStateComponent(
             is ResultStatus.Empty -> {
                 Column(
                     modifier =
-                        Modifier
+                        modifier
                             .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -129,11 +131,12 @@ fun SessionsStateComponent(
 fun SessionListComponent(
     isRefreshing: Boolean,
     pullToRefreshState: PullToRefreshState,
-    sessions: List<SessionPresentationModel>,
+    sessions: ImmutableList<SessionPresentationModel>,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
 
@@ -151,6 +154,7 @@ fun SessionListComponent(
     ChaiPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { onEvent(SessionsIntentHandler.RefreshSessions) },
+        modifier = modifier,
         state = pullToRefreshState,
     ) {
         LazyColumn(
@@ -202,7 +206,7 @@ fun SessionListComponent(
 
 @PreviewLightDark
 @Composable
-fun SessionListPreview() {
+private fun SessionListPreview() {
     ChaiTheme {
         Surface(
             color = MaterialTheme.chaiColorsPalette.background,

@@ -62,6 +62,7 @@ internal fun AnimatedModalBottomSheetTransition(
 @Composable
 fun FullscreenDialog(
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
     dismissOnBackPress: Boolean = true,
     content: @Composable (ModalTransitionDialogHelper) -> Unit,
 ) {
@@ -83,7 +84,9 @@ fun FullscreenDialog(
         onDismissRequest = { coroutineScope.launch { startDismissWithExitAnimation(animateContentBackTrigger, onDismissRequest) } },
         properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = dismissOnBackPress, dismissOnClickOutside = false),
     ) {
-        Box(Modifier.fillMaxSize()) {
+        Box(
+            modifier.fillMaxSize(),
+        ) {
             // Required in order to occupy the whole screen before the animation is triggered
             AnimatedModalBottomSheetTransition(visible = animateContentBackTrigger.value) {
                 content(ModalTransitionDialogHelper(coroutineScope, onCloseSharedFlow))

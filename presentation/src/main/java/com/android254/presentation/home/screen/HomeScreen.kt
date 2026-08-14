@@ -43,6 +43,7 @@ import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiPullToRefreshBox
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun HomeRoute(
@@ -151,7 +152,7 @@ private fun HomeScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun HomeScreenPreview() {
+private fun HomeScreenPreview() {
     ChaiTheme {
         HomeScreen(
             viewState =
@@ -160,12 +161,12 @@ fun HomeScreenPreview() {
                     isCallForSpeakersVisible = true,
                     linkToCallForSpeakers = "https://droidconke.com",
                     isSignedIn = false,
-                    speakers = listOf(),
+                    speakers = persistentListOf(),
                     isSpeakersSectionVisible = true,
                     isSessionsSectionVisible = true,
-                    sponsors = listOf(),
-                    organizedBy = listOf(),
-                    sessions = listOf(),
+                    sponsors = persistentListOf(),
+                    organizedBy = persistentListOf(),
+                    sessions = persistentListOf(),
                 ),
             isSyncing = false,
         )

@@ -18,6 +18,7 @@ package com.android254.presentation.common.fakedata
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
+import kotlinx.collections.immutable.persistentListOf
 
 private const val SAPPHIRE_OPAL = "Sapphire,Opal"
 private const val SAPPHIRE = "Sapphire"
@@ -28,7 +29,7 @@ private const val TIME_11_00 = "11:00"
 private const val LEVEL_INTERMEDIATE = "Intermediate"
 
 val fakeSessions =
-    listOf(
+    persistentListOf(
         SessionPresentationModel(
             id = "1",
             title = "Opening Keynote: Building for Africa",
@@ -46,7 +47,7 @@ val fakeSessions =
             remoteId = "remote_1",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Florence Mwangangi",
                         speakerImage = "",
@@ -71,7 +72,7 @@ val fakeSessions =
             remoteId = "remote_2",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Donald Okara",
                         speakerImage = "",
@@ -96,7 +97,7 @@ val fakeSessions =
             remoteId = "remote_3",
             isService = true,
             eventDay = "14",
-            speakers = emptyList(),
+            speakers = persistentListOf(),
         ),
         SessionPresentationModel(
             id = "4",
@@ -115,7 +116,7 @@ val fakeSessions =
             remoteId = "remote_4",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Brian Kimani",
                         speakerImage = "",
@@ -140,7 +141,7 @@ val fakeSessions =
             remoteId = "remote_5",
             isService = true,
             eventDay = "14",
-            speakers = emptyList(),
+            speakers = persistentListOf(),
         ),
         SessionPresentationModel(
             id = "6",
@@ -159,7 +160,7 @@ val fakeSessions =
             remoteId = "remote_6",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Amina Yusuf",
                         speakerImage = "",
@@ -183,7 +184,7 @@ val fakeSessions =
             remoteId = "remote_7",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Kevin Omondi",
                         speakerImage = "",
@@ -207,7 +208,7 @@ val fakeSessions =
             remoteId = "remote_8",
             eventDay = "14",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Sarah Njeri",
                         speakerImage = "",
@@ -231,7 +232,7 @@ val fakeSessions =
             remoteId = "remote_9",
             eventDay = "15",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Grace Wambui",
                         speakerImage = "",
@@ -255,7 +256,7 @@ val fakeSessions =
             remoteId = "remote_10",
             eventDay = "15",
             speakers =
-                listOf(
+                persistentListOf(
                     SessionSpeakersPresentationModel(
                         name = "Ian Otieno",
                         speakerImage = "",

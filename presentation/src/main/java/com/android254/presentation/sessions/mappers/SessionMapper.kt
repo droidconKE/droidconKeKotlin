@@ -22,6 +22,8 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -51,7 +53,7 @@ fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
         id = this.id,
         title = this.title,
         description = this.description,
-        venue = this.rooms,
+        venue = this.roomList.joinToString(", "),
         sessionStatus = sessionStatus,
         startTime = startTime.time,
         endTime = "${endTime.time} ${endTime.period}",
@@ -71,19 +73,20 @@ fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
 
 fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
+    val endTime = getTimePeriod(this.endDateTime)
     return SessionDetailsPresentationModel(
         id = this.id,
         title = this.title,
         description = this.description,
-        venue = this.rooms,
+        venue = this.roomList.joinToString(", "),
         startTime = startTime.time,
-        endTime = this.endTime,
+        endTime = "${endTime.time} ${endTime.period}",
         amOrPm = startTime.period,
         isStarred = this.isBookmarked,
         level = this.sessionLevel,
         format = this.sessionFormat,
         sessionImageUrl = this.sessionImage.toString(),
-        timeSlot = "${startTime.time} - ${this.endTime}",
+        timeSlot = "${startTime.time} - ${endTime.time} ${endTime.period}",
         speakers = speakers.toSessionDetailsSpeaker(),
     )
 }
@@ -101,14 +104,14 @@ fun List<Speaker>.toSessionDetailsSpeaker() =
         )
     }
 
-fun List<Speaker>.toSessionSpeaker() =
+fun List<Speaker>.toSessionSpeaker(): ImmutableList<SessionSpeakersPresentationModel> =
     map { speaker ->
         SessionSpeakersPresentationModel(
             speakerImage = speaker.avatar,
             name = speaker.name,
             twitterHandle = speaker.twitter,
         )
-    }
+    }.toImmutableList()
 
 fun getTimePeriod(time: String): FormattedTime {
     val parsed = time.toLocalDateTimeOrNull() ?: return FormattedTime(time = time, period = "")

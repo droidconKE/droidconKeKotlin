@@ -31,10 +31,13 @@ import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.speakersDummyData
 import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HomeSpeakersSection(
-    speakers: List<SpeakerUI>,
+    speakers: ImmutableList<SpeakerUI>,
+    modifier: Modifier = Modifier,
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
@@ -49,7 +52,7 @@ fun HomeSpeakersSection(
         )
         LazyRow(
             modifier =
-                Modifier
+                modifier
                     .testTag("speakersRow")
                     .padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -65,9 +68,9 @@ fun HomeSpeakersSection(
 
 @Preview
 @Composable
-fun HomeSpeakersSectionPreview() {
+private fun HomeSpeakersSectionPreview() {
     ChaiTheme {
-        HomeSpeakersSection(speakers = speakersDummyData)
+        HomeSpeakersSection(speakers = speakersDummyData.toImmutableList())
     }
 }
 

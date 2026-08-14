@@ -19,8 +19,10 @@ import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
-fun List<Speaker>.toSpeakersPresentation() =
+fun List<Speaker>.toSpeakersPresentation(): ImmutableList<SpeakerUI> =
     map {
         SpeakerUI(
             imageUrl = it.avatar,
@@ -29,7 +31,7 @@ fun List<Speaker>.toSpeakersPresentation() =
             bio = it.biography,
             twitterHandle = it.twitter,
         )
-    }
+    }.toImmutableList()
 
 fun Sponsors.toPresentation() =
     SponsorPresentationModel(
