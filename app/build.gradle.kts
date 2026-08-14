@@ -77,12 +77,12 @@ android {
 }
 
 dependencies {
-    implementation(project(":chai"))
-    implementation(project(":data"))
-    implementation(project(":datasource:local"))
-    implementation(project(":datasource:remote"))
-    implementation(project(":domain"))
-    implementation(project(":presentation"))
+    implementation(projects.chai)
+    implementation(projects.data)
+    implementation(projects.datasource.local)
+    implementation(projects.datasource.remote)
+    implementation(projects.domain)
+    implementation(projects.presentation)
 
     implementation(libs.android.coreKtx)
     implementation(libs.android.appCompat)

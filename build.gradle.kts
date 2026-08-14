@@ -22,11 +22,6 @@ plugins {
 
 allprojects {
 
-    repositories {
-        google()
-        mavenCentral()
-    }
-
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     ktlint {
         android.set(true)
