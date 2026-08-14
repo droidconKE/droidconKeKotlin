@@ -19,13 +19,15 @@ import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class SessionsUiState(
-    val sessions: List<SessionPresentationModel> = emptyList(),
-    val eventDays: List<EventDate> = emptyList(),
+    val sessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
+    val eventDays: ImmutableList<EventDate> = persistentListOf(),
     val sessionStatus: ResultStatus = ResultStatus.Loading,
     /** Derived from the loaded sessions, so no option can name a value no session has. */
-    val availableFilters: List<SessionsFilterOption> = emptyList(),
+    val availableFilters: ImmutableList<SessionsFilterOption> = persistentListOf(),
     val showMySessionsOnly: Boolean = false,
     val isFilterActive: Boolean = false,
 )

@@ -54,13 +54,16 @@ import com.android254.presentation.sessions.components.CurrentSessionComponent
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun BottomNavigationBar(
     navController: NavigationController,
     navigationState: NavigationState,
-    currentSessions: List<SessionPresentationModel> = emptyList(),
-    upNextSessions: List<SessionPresentationModel> = emptyList(),
+    currentSessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
+    upNextSessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -177,8 +180,8 @@ private fun BottomNavigationBarPreview() {
             BottomNavigationBar(
                 navController = navController,
                 navigationState = navigationState,
-                currentSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Ongoing }.take(2),
-                upNextSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Upcoming }.take(2),
+                currentSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Ongoing }.take(2).toImmutableList(),
+                upNextSessions = fakeSessions.filter { it.sessionStatus == SessionStatus.Upcoming }.take(2).toImmutableList(),
             )
         }
     }

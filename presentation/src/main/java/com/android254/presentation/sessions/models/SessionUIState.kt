@@ -16,8 +16,10 @@
 package com.android254.presentation.sessions.models
 
 import com.android254.presentation.models.SessionPresentationModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class SessionUIState(
-    val current: List<SessionPresentationModel> = emptyList(),
-    val upNext: List<SessionPresentationModel> = emptyList(),
+    val current: ImmutableList<SessionPresentationModel> = persistentListOf(),
+    val upNext: ImmutableList<SessionPresentationModel> = persistentListOf(),
 )

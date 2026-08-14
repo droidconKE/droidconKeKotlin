@@ -22,6 +22,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.droidconke.chai.ChaiTheme
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -49,10 +50,10 @@ class SessionScreenTest {
             composeTestRule.setContent {
                 ChaiTheme {
                     SessionsScreen(
-                        sessionsUiState = SessionsUiState(eventDays = listOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
+                        sessionsUiState = SessionsUiState(eventDays = persistentListOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
                         isRefreshing = true,
                         selectedEventDate = EventDate("16", 1),
-                        currentSelections = emptyList(),
+                        currentSelections = persistentListOf(),
                         navigateToSessionDetails = {},
                         onEvent = {},
                     )
@@ -75,7 +76,7 @@ class SessionScreenTest {
                         sessionsUiState = SessionsUiState(),
                         isRefreshing = true,
                         selectedEventDate = EventDate("16", 1),
-                        currentSelections = emptyList(),
+                        currentSelections = persistentListOf(),
                         navigateToSessionDetails = {},
                         onEvent = {},
                     )

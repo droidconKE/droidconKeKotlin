@@ -25,6 +25,7 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiTheme
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -59,7 +60,7 @@ class HomeScreenTest {
     @Test
     fun `Test speakers view is displayed`() {
         composeTestRule.setContent {
-            HomeSpeakersSection(speakers = emptyList())
+            HomeSpeakersSection(speakers = persistentListOf())
         }
 
         composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
@@ -94,7 +95,7 @@ class HomeScreenTest {
     @Test
     fun `Test sponsors card is displayed`() {
         composeTestRule.setContent {
-            SponsorsCard(sponsors = listOf(SponsorPresentationModel("", "", "", "")))
+            SponsorsCard(sponsors = persistentListOf(SponsorPresentationModel("", "", "", "")))
         }
         composeTestRule.onNodeWithTag("sponsors_section").assertIsDisplayed()
     }
@@ -103,7 +104,7 @@ class HomeScreenTest {
     fun `Test sessions is displayed`() {
         composeTestRule.setContent {
             HomeSessionSection(
-                sessions = emptyList(),
+                sessions = persistentListOf(),
                 onViewAllSessionClicked = {},
                 onSessionClick = {},
             )

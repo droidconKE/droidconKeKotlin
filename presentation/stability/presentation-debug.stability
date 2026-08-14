@@ -38,12 +38,12 @@ public fun com.android254.presentation.about.view.OrganizingTeamComponent(modifi
     - onClickMember: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.about.view.OrganizingTeamSection(modifier: androidx.compose.ui.Modifier, organizingTeam: kotlin.collections.List<com.android254.presentation.models.OrganizingTeamMember>, onClickMember: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.about.view.OrganizingTeamSection(modifier: androidx.compose.ui.Modifier, organizingTeam: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.OrganizingTeamMember>, onClickMember: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - organizingTeam: RUNTIME (requires runtime check)
+    - organizingTeam: STABLE (known stable type)
     - onClickMember: STABLE (function type)
 
 @Composable
@@ -87,14 +87,14 @@ public fun com.android254.presentation.common.bottomnav.BottomNavItem(isSelected
     - onClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.bottomnav.BottomNavigationBar(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, currentSessions: kotlin.collections.List<com.android254.presentation.models.SessionPresentationModel>, upNextSessions: kotlin.collections.List<com.android254.presentation.models.SessionPresentationModel>): kotlin.Unit
+public fun com.android254.presentation.common.bottomnav.BottomNavigationBar(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, currentSessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, upNextSessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - navController: UNSTABLE (has mutable properties or unstable members)
     - navigationState: UNSTABLE (has mutable properties or unstable members)
-    - currentSessions: RUNTIME (requires runtime check)
-    - upNextSessions: RUNTIME (requires runtime check)
+    - currentSessions: STABLE (known stable type)
+    - upNextSessions: STABLE (known stable type)
 
 @Composable
 internal fun com.android254.presentation.common.components.AnimatedModalBottomSheetTransition(visible: kotlin.Boolean, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.animation.AnimatedVisibilityScope, kotlin.Unit>): kotlin.Unit
@@ -105,19 +105,19 @@ internal fun com.android254.presentation.common.components.AnimatedModalBottomSh
     - content: STABLE (composable function type)
 
 @Composable
-public fun com.android254.presentation.common.components.AnimatedShimmerEffect(gradientColors: kotlin.collections.List<androidx.compose.ui.graphics.Color>, content: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.ui.graphics.Brush, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.common.components.AnimatedShimmerEffect(gradientColors: kotlinx.collections.immutable.ImmutableList<androidx.compose.ui.graphics.Color>, content: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.ui.graphics.Brush, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - gradientColors: RUNTIME (requires runtime check)
+    - gradientColors: STABLE (known stable type)
     - content: STABLE (composable function type)
 
 @Composable
-private fun com.android254.presentation.common.components.ButtonContent(buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color): kotlin.Unit
-  skippable: false
+private fun com.android254.presentation.common.components.ButtonContent(buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - buttonTexts: RUNTIME (requires runtime check)
+    - buttonTexts: STABLE (known stable type)
     - index: STABLE (primitive type)
     - contentColor: STABLE (marked @Stable or @Immutable)
 
@@ -213,12 +213,12 @@ public fun com.android254.presentation.common.components.LoadingBox(height: andr
     - color: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.MultiToggleButton(currentSelections: kotlin.collections.List<com.android254.presentation.models.SessionsFilterOption>, toggleStates: kotlin.collections.List<com.android254.presentation.models.SessionsFilterOption>, modifier: androidx.compose.ui.Modifier, borderSize: androidx.compose.ui.unit.Dp, buttonHeight: androidx.compose.ui.unit.Dp, selectedColor: androidx.compose.ui.graphics.Color, enabled: kotlin.Boolean, onClick: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.common.components.MultiToggleButton(currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, toggleStates: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, modifier: androidx.compose.ui.Modifier, borderSize: androidx.compose.ui.unit.Dp, buttonHeight: androidx.compose.ui.unit.Dp, selectedColor: androidx.compose.ui.graphics.Color, enabled: kotlin.Boolean, onClick: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - currentSelections: RUNTIME (requires runtime check)
-    - toggleStates: RUNTIME (requires runtime check)
+    - currentSelections: STABLE (known stable type)
+    - toggleStates: STABLE (known stable type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - borderSize: STABLE (marked @Stable or @Immutable)
     - buttonHeight: STABLE (marked @Stable or @Immutable)
@@ -234,19 +234,19 @@ private fun com.android254.presentation.common.components.NowIndicator(accentCol
     - accentColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.OrganizedBySection(modifier: androidx.compose.ui.Modifier, organizationLogos: kotlin.collections.List<kotlin.String>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.common.components.OrganizedBySection(modifier: androidx.compose.ui.Modifier, organizationLogos: kotlinx.collections.immutable.ImmutableList<kotlin.String>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - organizationLogos: RUNTIME (requires runtime check)
+    - organizationLogos: STABLE (known stable type)
 
 @Composable
 public fun com.android254.presentation.common.components.SessionDetails(session: com.android254.presentation.models.SessionPresentationModel, onBookMark: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - onBookMark: STABLE (function type)
 
 @Composable
@@ -266,19 +266,19 @@ public fun com.android254.presentation.common.components.SessionTimeComponent(se
 
 @Composable
 public fun com.android254.presentation.common.components.SessionTitleComponent(session: com.android254.presentation.models.SessionPresentationModel, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - onBookmark: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.SessionsCard(session: com.android254.presentation.models.SessionPresentationModel, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - navigateToSessionDetails: STABLE (function type)
     - onBookmark: STABLE (function type)
 
@@ -290,33 +290,33 @@ public fun com.android254.presentation.common.components.SessionsDescriptionComp
     - sessionDescription: STABLE (String is immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.SponsorsCard(modifier: androidx.compose.ui.Modifier, sponsors: kotlin.collections.List<com.android254.presentation.models.SponsorPresentationModel>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.common.components.SponsorsCard(modifier: androidx.compose.ui.Modifier, sponsors: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SponsorPresentationModel>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - sponsors: RUNTIME (requires runtime check)
+    - sponsors: STABLE (known stable type)
 
 @Composable
-private fun com.android254.presentation.common.components.TextContent(buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: false
+private fun com.android254.presentation.common.components.TextContent(buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - buttonTexts: RUNTIME (requires runtime check)
+    - buttonTexts: STABLE (known stable type)
     - index: STABLE (primitive type)
     - contentColor: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.TimeAndVenueComponent(session: com.android254.presentation.models.SessionPresentationModel): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
 
 @Composable
-private fun com.android254.presentation.common.components.ToggleButton(buttonShape: androidx.compose.foundation.shape.CornerBasedShape, border: androidx.compose.foundation.BorderStroke, backgroundColor: androidx.compose.ui.graphics.Color, elevation: androidx.compose.material3.ButtonElevation, enabled: kotlin.Boolean, buttonTexts: kotlin.collections.List<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: false
+private fun com.android254.presentation.common.components.ToggleButton(buttonShape: androidx.compose.foundation.shape.CornerBasedShape, border: androidx.compose.foundation.BorderStroke, backgroundColor: androidx.compose.ui.graphics.Color, elevation: androidx.compose.material3.ButtonElevation, enabled: kotlin.Boolean, buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - buttonShape: STABLE (known stable type)
@@ -324,7 +324,7 @@ private fun com.android254.presentation.common.components.ToggleButton(buttonSha
     - backgroundColor: STABLE (marked @Stable or @Immutable)
     - elevation: STABLE (marked @Stable or @Immutable)
     - enabled: STABLE (primitive type)
-    - buttonTexts: RUNTIME (requires runtime check)
+    - buttonTexts: STABLE (known stable type)
     - index: STABLE (primitive type)
     - contentColor: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -358,12 +358,12 @@ public fun com.android254.presentation.common.navigation.droidconEntryProvider(u
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.navigation.rememberNavigationState(startRoute: androidx.navigation3.runtime.NavKey, topLevelRoutes: kotlin.collections.Set<androidx.navigation3.runtime.NavKey>): com.android254.presentation.common.navigation.NavigationState
+public fun com.android254.presentation.common.navigation.rememberNavigationState(startRoute: androidx.navigation3.runtime.NavKey, topLevelRoutes: kotlinx.collections.immutable.ImmutableSet<androidx.navigation3.runtime.NavKey>): com.android254.presentation.common.navigation.NavigationState
   skippable: false
   restartable: false
   params:
     - startRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
-    - topLevelRoutes: RUNTIME (requires runtime check)
+    - topLevelRoutes: STABLE (known stable type)
 
 @Composable
 private fun com.android254.presentation.common.navigation.sessionModel(key: com.android254.presentation.common.navigation.Screens.SessionDetails, viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel): com.android254.presentation.sessionDetails.SessionDetailsViewModel
@@ -509,10 +509,10 @@ public fun com.android254.presentation.home.components.HomeSectionHeaderComponen
 
 @Composable
 public fun com.android254.presentation.home.components.HomeSessionContent(session: com.android254.presentation.models.SessionPresentationModel, onSessionClick: kotlin.Function1<@[ParameterName(name = \, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - onSessionClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
@@ -529,12 +529,12 @@ public fun com.android254.presentation.home.components.HomeSessionLoadingItem():
   params:
 
 @Composable
-public fun com.android254.presentation.home.components.HomeSessionSection(modifier: androidx.compose.ui.Modifier, sessions: kotlin.collections.List<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<@[ParameterName(name = \, onViewAllSessionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.home.components.HomeSessionSection(modifier: androidx.compose.ui.Modifier, sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<@[ParameterName(name = \, onViewAllSessionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - sessions: RUNTIME (requires runtime check)
+    - sessions: STABLE (known stable type)
     - onSessionClick: STABLE (function type)
     - onViewAllSessionClicked: STABLE (function type)
 
@@ -565,11 +565,11 @@ public fun com.android254.presentation.home.components.HomeSpeakersLoadingItem()
   params:
 
 @Composable
-public fun com.android254.presentation.home.components.HomeSpeakersSection(speakers: kotlin.collections.List<com.android254.presentation.models.SpeakerUI>, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.home.components.HomeSpeakersSection(speakers: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SpeakerUI>, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - speakers: RUNTIME (requires runtime check)
+    - speakers: STABLE (known stable type)
     - navigateToSpeakers: STABLE (function type)
     - navigateToSpeaker: STABLE (function type)
 
@@ -695,10 +695,10 @@ public fun com.android254.presentation.sessionDetails.view.components.TopBar(onN
 
 @Composable
 public fun com.android254.presentation.sessions.components.CurrentSessionComponent(session: com.android254.presentation.models.SessionPresentationModel, modifier: androidx.compose.ui.Modifier, onClicked: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
     - onClicked: STABLE (function type)
 
@@ -715,13 +715,13 @@ public fun com.android254.presentation.sessions.components.CustomSwitch(width: a
     - onCheckedChange: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.EventDaySelector(selectedDate: com.android254.presentation.models.EventDate, updateSelectedDay: kotlin.Function1<com.android254.presentation.models.EventDate, kotlin.Unit>, eventDates: kotlin.collections.List<com.android254.presentation.models.EventDate>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.sessions.components.EventDaySelector(selectedDate: com.android254.presentation.models.EventDate, updateSelectedDay: kotlin.Function1<com.android254.presentation.models.EventDate, kotlin.Unit>, eventDates: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.EventDate>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - selectedDate: STABLE (class with no mutable properties)
     - updateSelectedDay: STABLE (function type)
-    - eventDates: RUNTIME (requires runtime check)
+    - eventDates: STABLE (known stable type)
 
 @Composable
 public fun com.android254.presentation.sessions.components.EventDaySelectorButton(title: kotlin.String, subtitle: kotlin.String, selected: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
@@ -734,13 +734,13 @@ public fun com.android254.presentation.sessions.components.EventDaySelectorButto
     - onClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlin.collections.List<com.android254.presentation.models.SessionPresentationModel>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - isRefreshing: STABLE (primitive type)
     - pullToRefreshState: STABLE (marked @Stable or @Immutable)
-    - sessions: RUNTIME (requires runtime check)
+    - sessions: STABLE (known stable type)
     - sessionScreenState: STABLE (class with no mutable properties)
     - isSessionLayoutList: STABLE (primitive type)
     - navigateToSessionDetails: STABLE (function type)
@@ -758,7 +758,7 @@ public fun com.android254.presentation.sessions.components.SessionsCardWithBanne
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - session: RUNTIME (requires runtime check)
+    - session: STABLE (class with no mutable properties)
     - navigateToSessionDetails: STABLE (function type)
     - viewModel: RUNTIME (requires runtime check)
 
@@ -771,13 +771,13 @@ public fun com.android254.presentation.sessions.components.SessionsErrorComponen
     - retry: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionsFilterPanel(onDismiss: kotlin.Function0<kotlin.Unit>, selectableFilters: kotlin.collections.List<com.android254.presentation.models.SessionsFilterOption>, currentSelections: kotlin.collections.List<com.android254.presentation.models.SessionsFilterOption>, updateSelectedFilterOptionList: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>, clearSelectedFilterList: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.sessions.components.SessionsFilterPanel(onDismiss: kotlin.Function0<kotlin.Unit>, selectableFilters: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, updateSelectedFilterOptionList: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>, clearSelectedFilterList: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - onDismiss: STABLE (function type)
-    - selectableFilters: RUNTIME (requires runtime check)
-    - currentSelections: RUNTIME (requires runtime check)
+    - selectableFilters: STABLE (known stable type)
+    - currentSelections: STABLE (known stable type)
     - updateSelectedFilterOptionList: STABLE (function type)
     - clearSelectedFilterList: STABLE (function type)
 
@@ -789,10 +789,10 @@ public fun com.android254.presentation.sessions.components.SessionsLoadingCard()
 
 @Composable
 public fun com.android254.presentation.sessions.components.SessionsStateComponent(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, isRefreshing: kotlin.Boolean, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - sessionsUiState: RUNTIME (requires runtime check)
+    - sessionsUiState: STABLE (class with no mutable properties)
     - navigateToSessionDetails: STABLE (function type)
     - isRefreshing: STABLE (primitive type)
     - sessionScreenState: STABLE (class with no mutable properties)
@@ -800,13 +800,13 @@ public fun com.android254.presentation.sessions.components.SessionsStateComponen
     - onEvent: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SpeakerDetailsAndLikeButtonComponent(onBookmarkClicked: kotlin.Function0<kotlin.Unit>, isSessionStarred: kotlin.Boolean, speakers: kotlin.collections.List<com.android254.presentation.models.SessionSpeakersPresentationModel>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.sessions.components.SpeakerDetailsAndLikeButtonComponent(onBookmarkClicked: kotlin.Function0<kotlin.Unit>, isSessionStarred: kotlin.Boolean, speakers: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionSpeakersPresentationModel>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
     - onBookmarkClicked: STABLE (function type)
     - isSessionStarred: STABLE (primitive type)
-    - speakers: RUNTIME (requires runtime check)
+    - speakers: STABLE (known stable type)
 
 @Composable
 private fun com.android254.presentation.sessions.components.animateAlignmentAsState(targetBiasValue: kotlin.Float): androidx.compose.runtime.State<androidx.compose.ui.BiasAlignment>
@@ -824,14 +824,14 @@ public fun com.android254.presentation.sessions.view.SessionsRoute(sessionsViewM
     - navigateToSessionDetails: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.view.SessionsScreen(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, selectedEventDate: com.android254.presentation.models.EventDate, isRefreshing: kotlin.Boolean, currentSelections: kotlin.collections.List<com.android254.presentation.models.SessionsFilterOption>, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.sessions.view.SessionsScreen(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, selectedEventDate: com.android254.presentation.models.EventDate, isRefreshing: kotlin.Boolean, currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - sessionsUiState: RUNTIME (requires runtime check)
+    - sessionsUiState: STABLE (class with no mutable properties)
     - selectedEventDate: STABLE (class with no mutable properties)
     - isRefreshing: STABLE (primitive type)
-    - currentSelections: RUNTIME (requires runtime check)
+    - currentSelections: STABLE (known stable type)
     - navigateToSessionDetails: STABLE (function type)
     - onEvent: STABLE (function type)
 

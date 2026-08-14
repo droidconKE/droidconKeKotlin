@@ -56,6 +56,9 @@ import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun AboutRoute(
@@ -134,7 +137,7 @@ private fun AboutScreen(
 
                     OrganizedBySection(
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                        organizationLogos = stakeHolderLogos,
+                        organizationLogos = stakeHolderLogos.toImmutableList(),
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
@@ -194,7 +197,7 @@ fun AboutDroidconSection(
 @Composable
 fun OrganizingTeamSection(
     modifier: Modifier = Modifier,
-    organizingTeam: List<OrganizingTeamMember>,
+    organizingTeam: ImmutableList<OrganizingTeamMember>,
     onClickMember: (Int) -> Unit,
 ) {
     Column(
@@ -243,7 +246,7 @@ private fun AboutScreenPreview() {
             uiState =
                 AboutScreenUiState.Success(
                     teamMembers =
-                        listOf(
+                        persistentListOf(
                             OrganizingTeamMember(
                                 name = "Member 1",
                                 desc = "Description 1",
@@ -276,7 +279,7 @@ private fun AboutScreenPreview() {
                             ),
                         ),
                     stakeHoldersLogos =
-                        listOf(
+                        persistentListOf(
                             "",
                             "",
                             "",

@@ -32,6 +32,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavKeySerializer
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
+import kotlinx.collections.immutable.ImmutableSet
 
 /**
  * Remembers and creates a [NavigationState] to manage multi-stack navigation.
@@ -46,7 +47,7 @@ import androidx.savedstate.compose.serialization.serializers.MutableStateSeriali
 @Composable
 fun rememberNavigationState(
     startRoute: NavKey,
-    topLevelRoutes: Set<NavKey>,
+    topLevelRoutes: ImmutableSet<NavKey>,
 ): NavigationState {
     val topLevelRoute =
         rememberSerializable(

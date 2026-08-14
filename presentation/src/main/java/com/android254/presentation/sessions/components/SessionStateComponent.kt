@@ -58,6 +58,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -129,7 +130,7 @@ fun SessionsStateComponent(
 fun SessionListComponent(
     isRefreshing: Boolean,
     pullToRefreshState: PullToRefreshState,
-    sessions: List<SessionPresentationModel>,
+    sessions: ImmutableList<SessionPresentationModel>,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     navigateToSessionDetails: (sessionId: String) -> Unit,

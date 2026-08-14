@@ -39,11 +39,13 @@ import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun MultiToggleButton(
-    currentSelections: List<SessionsFilterOption>,
-    toggleStates: List<SessionsFilterOption>,
+    currentSelections: ImmutableList<SessionsFilterOption>,
+    toggleStates: ImmutableList<SessionsFilterOption>,
     modifier: Modifier = Modifier,
     borderSize: Dp = 1.dp,
     buttonHeight: Dp = 40.dp,
@@ -101,9 +103,9 @@ fun MultiToggleButton(
                     elevation = ButtonDefaults.buttonElevation(),
                     enabled = enabled,
                     buttonTexts =
-                        filterOptions.map {
-                            it.label
-                        },
+                        filterOptions
+                            .map { it.label }
+                            .toImmutableList(),
                     index = index,
                     contentColor = contentColor,
                     onClick = {
@@ -122,7 +124,7 @@ private fun ToggleButton(
     backgroundColor: Color,
     elevation: ButtonElevation,
     enabled: Boolean,
-    buttonTexts: List<String>,
+    buttonTexts: ImmutableList<String>,
     index: Int,
     contentColor: Color,
     modifier: Modifier = Modifier,
@@ -148,7 +150,7 @@ private fun ToggleButton(
 
 @Composable
 private fun RowScope.ButtonContent(
-    buttonTexts: List<String>,
+    buttonTexts: ImmutableList<String>,
     index: Int,
     contentColor: Color,
 ) {
@@ -165,7 +167,7 @@ private fun RowScope.ButtonContent(
 
 @Composable
 private fun TextContent(
-    buttonTexts: List<String>,
+    buttonTexts: ImmutableList<String>,
     index: Int,
     contentColor: Color,
     modifier: Modifier = Modifier,

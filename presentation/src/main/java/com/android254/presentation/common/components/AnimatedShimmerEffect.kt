@@ -24,10 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun AnimatedShimmerEffect(
-    gradientColors: List<Color>,
+    gradientColors: ImmutableList<Color>,
     content: @Composable ((Brush) -> Unit),
 ) {
     val transition = rememberInfiniteTransition()

@@ -57,6 +57,7 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -128,7 +129,7 @@ fun SessionsCardWithBannerImage(
 fun SpeakerDetailsAndLikeButtonComponent(
     onBookmarkClicked: () -> Unit,
     isSessionStarred: Boolean,
-    speakers: List<SessionSpeakersPresentationModel>,
+    speakers: ImmutableList<SessionSpeakersPresentationModel>,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

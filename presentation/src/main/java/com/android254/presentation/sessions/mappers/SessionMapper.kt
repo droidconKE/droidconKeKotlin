@@ -22,6 +22,8 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -101,14 +103,14 @@ fun List<Speaker>.toSessionDetailsSpeaker() =
         )
     }
 
-fun List<Speaker>.toSessionSpeaker() =
+fun List<Speaker>.toSessionSpeaker(): ImmutableList<SessionSpeakersPresentationModel> =
     map { speaker ->
         SessionSpeakersPresentationModel(
             speakerImage = speaker.avatar,
             name = speaker.name,
             twitterHandle = speaker.twitter,
         )
-    }
+    }.toImmutableList()
 
 fun getTimePeriod(time: String): FormattedTime {
     val parsed = time.toLocalDateTimeOrNull() ?: return FormattedTime(time = time, period = "")

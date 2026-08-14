@@ -48,12 +48,14 @@ import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun SessionsFilterPanel(
     onDismiss: () -> Unit,
-    selectableFilters: List<SessionsFilterOption>,
-    currentSelections: List<SessionsFilterOption>,
+    selectableFilters: ImmutableList<SessionsFilterOption>,
+    currentSelections: ImmutableList<SessionsFilterOption>,
     updateSelectedFilterOptionList: (SessionsFilterOption) -> Unit,
     clearSelectedFilterList: () -> Unit,
 ) {
@@ -123,7 +125,7 @@ fun SessionsFilterPanel(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     MultiToggleButton(
-                        toggleStates = filter.value,
+                        toggleStates = filter.value.toImmutableList(),
                         onClick = {
                             updateSelectedFilterOptionList(it)
                         },

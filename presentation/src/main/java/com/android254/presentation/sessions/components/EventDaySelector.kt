@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.EventDate
+import kotlinx.collections.immutable.ImmutableList
 
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
@@ -36,7 +37,7 @@ fun ordinal(i: Int): String {
 fun EventDaySelector(
     selectedDate: EventDate,
     updateSelectedDay: (EventDate) -> Unit,
-    eventDates: List<EventDate>,
+    eventDates: ImmutableList<EventDate>,
 ) {
     LazyRow {
         items(eventDates, key = { it.value }) { eventDay ->
