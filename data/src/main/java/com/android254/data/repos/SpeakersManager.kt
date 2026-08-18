@@ -39,8 +39,7 @@ class SpeakersManager
         private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : SpeakersRepo {
-        override fun fetchSpeakers(): Flow<List<Speaker>> =
-            localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }.flowOn(ioDispatcher)
+        override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }.flowOn(ioDispatcher)
 
         override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount().flowOn(ioDispatcher)
 

@@ -23,12 +23,9 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,8 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -64,8 +59,6 @@ import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
-import com.droidconke.chai.components.ChaiBodyLargeBold
-import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
@@ -136,7 +129,7 @@ fun SessionsCard(
                 .padding(16.dp),
         ) {
             SessionTitleComponent(session, onBookmark)
-            if(session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus == SessionStatus.Ongoing){
+            if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus == SessionStatus.Ongoing) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

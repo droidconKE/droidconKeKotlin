@@ -36,6 +36,7 @@ import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionLoadingComponent(
@@ -82,7 +83,7 @@ fun SessionLoadingComponent(
 fun LoadingTimeHeader() {
     AnimatedShimmerEffect(
         gradientColors =
-            listOf(
+            persistentListOf(
                 MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
                 MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
                 MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),

@@ -41,27 +41,29 @@ fun SessionTag(
     textColor: Color = MaterialTheme.chaiColorsPalette.textNormalColor,
     backgroundColor: Color = MaterialTheme.chaiColorsPalette.surfaces,
     isNowTag: Boolean = false,
-    dotColor: Color = Color.Unspecified
+    dotColor: Color = Color.Unspecified,
 ) {
     Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(backgroundColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(4.dp))
+                .background(backgroundColor)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (isNowTag) {
             Box(
-                modifier = Modifier
-                    .size(6.dp)
-                    .clip(CircleShape)
-                    .background(dotColor)
+                modifier =
+                    Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(dotColor),
             )
             Spacer(modifier = Modifier.width(6.dp))
         }
         ChaiBodyXSmallBold(
             bodyText = tagText.uppercase(),
-            textColor = textColor
+            textColor = textColor,
         )
     }
 }

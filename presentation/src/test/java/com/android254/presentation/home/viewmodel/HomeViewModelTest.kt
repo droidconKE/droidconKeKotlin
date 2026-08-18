@@ -35,6 +35,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Test
+import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -47,34 +48,38 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `should fetch home details when viewState is collected`() = runTest {
-        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+    fun `should fetch home details when viewState is collected`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+            val clock = mockk<Clock>(relaxed = true)
 
-        val home = Home()
-        coEvery { homeRepo.fetchHomeDetails() } returns flowOf(home)
+            val home = Home()
+            coEvery { homeRepo.fetchHomeDetails() } returns flowOf(home)
 
-        val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, testDispatcher)
 
-        val job = launch { viewModel.viewState.collect() }
-        advanceUntilIdle()
+            val job = launch { viewModel.viewState.collect() }
+            advanceUntilIdle()
 
-        assertThat(viewModel.viewState.value.isSyncing, `is`(true)) // FakeSyncWorkManager emits true
-        coVerify { homeRepo.fetchHomeDetails() }
-        job.cancel()
-    }
+            assertThat(viewModel.viewState.value.isSyncing, `is`(true)) // FakeSyncWorkManager emits true
+            coVerify { homeRepo.fetchHomeDetails() }
+            job.cancel()
+        }
 
     @Test
-    fun `should trigger sync when startRefresh is called`() = runTest {
-        val testDispatcher = UnconfinedTestDispatcher(testScheduler)
-        Dispatchers.setMain(testDispatcher)
+    fun `should trigger sync when startRefresh is called`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+            val clock = mockk<Clock>(relaxed = true)
 
-        val syncDataWorkManagerMock = mockk<FakeSyncWorkManager>(relaxed = true)
-        val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, testDispatcher)
+            val syncDataWorkManagerMock = mockk<FakeSyncWorkManager>(relaxed = true)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, testDispatcher)
 
-        viewModel.startRefresh()
-        advanceUntilIdle()
+            viewModel.startRefresh()
+            advanceUntilIdle()
 
-        coVerify { syncDataWorkManagerMock.startSync() }
-    }
+            coVerify { syncDataWorkManagerMock.startSync() }
+        }
 }

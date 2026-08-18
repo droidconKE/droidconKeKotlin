@@ -56,9 +56,8 @@ class HomeViewModel
                 homeRepo.fetchHomeDetails(),
                 isSyncing,
             ) { home, syncing ->
-                home.toHomeState(isSyncing = syncing)
-            }
-                .flowOn(ioDispatcher)
+                home.toHomeState(isSyncing = syncing, clock.now())
+            }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),

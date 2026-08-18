@@ -38,25 +38,27 @@ class HomeRepoImplTest {
     private val organizersRepo = mockk<OrganizersRepo>()
 
     @Test
-    fun `fetchHomeDetails should combine data from all repos`() = runTest {
-        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(emptyList())
-        coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
-        coEvery { sponsorsRepo.getAllSponsors() } returns flowOf(emptyList())
-        coEvery { organizersRepo.getOrganizers() } returns flowOf(emptyList())
+    fun `fetchHomeDetails should combine data from all repos`() =
+        runTest {
+            coEvery { speakersRepo.fetchSpeakers() } returns flowOf(emptyList())
+            coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
+            coEvery { sponsorsRepo.getAllSponsors() } returns flowOf(emptyList())
+            coEvery { organizersRepo.getOrganizers() } returns flowOf(emptyList())
 
-        val homeRepo = HomeRepoImpl(
-            speakersRepo,
-            sessionsRepo,
-            sponsorsRepo,
-            organizersRepo,
-            UnconfinedTestDispatcher(testScheduler)
-        )
+            val homeRepo =
+                HomeRepoImpl(
+                    speakersRepo,
+                    sessionsRepo,
+                    sponsorsRepo,
+                    organizersRepo,
+                    UnconfinedTestDispatcher(testScheduler),
+                )
 
-        val homeDetails = homeRepo.fetchHomeDetails().first()
+            val homeDetails = homeRepo.fetchHomeDetails().first()
 
-        assertThat(homeDetails.speakers.isEmpty(), `is`(true))
-        assertThat(homeDetails.sessions.isEmpty(), `is`(true))
-        assertThat(homeDetails.sponsors.isEmpty(), `is`(true))
-        assertThat(homeDetails.organizerLogos.isEmpty(), `is`(true))
-    }
+            assertThat(homeDetails.speakers.isEmpty(), `is`(true))
+            assertThat(homeDetails.sessions.isEmpty(), `is`(true))
+            assertThat(homeDetails.sponsors.isEmpty(), `is`(true))
+            assertThat(homeDetails.organizerLogos.isEmpty(), `is`(true))
+        }
 }

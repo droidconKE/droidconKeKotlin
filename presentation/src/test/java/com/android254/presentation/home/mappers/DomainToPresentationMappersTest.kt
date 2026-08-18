@@ -23,48 +23,52 @@ import com.android254.domain.models.Sponsors
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
+import kotlin.time.Clock
 
 class DomainToPresentationMappersTest {
-
     @Test
     fun `test Home to HomeState mapping`() {
-        val speakers = listOf(
-            Speaker(name = "Speaker 1", avatar = "avatar1", tagline = "tagline1", twitter = "twitter1")
-        )
-        val sponsors = listOf(
-            Sponsors(sponsorName = "Sponsor 1", sponsorLogoUrl = "logo1", link = "link1", sponsorType = "Gold", createdAt = "")
-        )
-        val sessions = listOf(
-            Session(
-                id = "1",
-                title = "Session 1",
-                description = "Desc 1",
-                rooms = "Room 1",
-                startDateTime = "2023-11-16 10:00:00",
-                endDateTime = "2023-11-16 11:00:00",
-                isBookmarked = false,
-                isKeynote = false,
-                isServiceSession = false,
-                sessionImage = null,
-                speakers = emptyList(),
-                remoteId = "remote1",
-                sessionFormat = "Format 1",
-                sessionLevel = "Beginner",
-                slug = "slug1",
-                startTime = "10:00",
-                endTime = "11:00",
-                eventDay = "1"
+        val speakers =
+            listOf(
+                Speaker(name = "Speaker 1", avatar = "avatar1", tagline = "tagline1", twitter = "twitter1"),
             )
-        )
-        val home = Home(
-            banner = HomeBanner.EventPoster(link = "poster_link"),
-            speakers = speakers,
-            sponsors = sponsors,
-            organizerLogos = listOf("logo1", "logo2"),
-            sessions = sessions
-        )
+        val sponsors =
+            listOf(
+                Sponsors(sponsorName = "Sponsor 1", sponsorLogoUrl = "logo1", link = "link1", sponsorType = "Gold", createdAt = ""),
+            )
+        val sessions =
+            listOf(
+                Session(
+                    id = "1",
+                    title = "Session 1",
+                    description = "Desc 1",
+                    rooms = "Room 1",
+                    startDateTime = "2023-11-16 10:00:00",
+                    endDateTime = "2023-11-16 11:00:00",
+                    isBookmarked = false,
+                    isKeynote = false,
+                    isServiceSession = false,
+                    sessionImage = null,
+                    speakers = emptyList(),
+                    remoteId = "remote1",
+                    sessionFormat = "Format 1",
+                    sessionLevel = "Beginner",
+                    slug = "slug1",
+                    startTime = "10:00",
+                    endTime = "11:00",
+                    eventDay = "1",
+                ),
+            )
+        val home =
+            Home(
+                banner = HomeBanner.EventPoster(link = "poster_link"),
+                speakers = speakers,
+                sponsors = sponsors,
+                organizerLogos = listOf("logo1", "logo2"),
+                sessions = sessions,
+            )
 
-        val homeState = home.toHomeState(isSyncing = false)
+        val homeState = home.toHomeState(isSyncing = false, now = Clock.System.now())
 
         assertThat(homeState.banner, `is`(home.banner))
         assertThat(homeState.speakers.size, `is`(1))
@@ -79,9 +83,10 @@ class DomainToPresentationMappersTest {
 
     @Test
     fun `test Speaker to SpeakerUI mapping`() {
-        val speakers = listOf(
-            Speaker(name = "Speaker 1", avatar = "avatar1", tagline = "tagline1", twitter = "twitter1", biography = "bio1")
-        )
+        val speakers =
+            listOf(
+                Speaker(name = "Speaker 1", avatar = "avatar1", tagline = "tagline1", twitter = "twitter1", biography = "bio1"),
+            )
         val speakersUI = speakers.toSpeakersPresentation()
 
         assertThat(speakersUI.size, `is`(1))

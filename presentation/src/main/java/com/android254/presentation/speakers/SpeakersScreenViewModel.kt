@@ -83,8 +83,7 @@ class SpeakersScreenViewModel
                     emit(SpeakersScreenUiState.Loading)
                 }.catch {
                     emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
-                }
-                .flowOn(ioDispatcher)
+                }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),

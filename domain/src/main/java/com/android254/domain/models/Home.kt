@@ -17,8 +17,14 @@ package com.android254.domain.models
 
 sealed interface HomeBanner {
     object None : HomeBanner
-    data class EventPoster(val link: String) : HomeBanner
-    data class CallForSpeakers(val link: String) : HomeBanner
+
+    data class EventPoster(
+        val link: String,
+    ) : HomeBanner
+
+    data class CallForSpeakers(
+        val link: String,
+    ) : HomeBanner
 }
 
 data class Home(

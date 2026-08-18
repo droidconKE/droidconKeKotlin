@@ -28,6 +28,7 @@ import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.models.EventDate
 import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
@@ -48,7 +49,7 @@ fun EventDaySelector(
     if (isLoading) {
         AnimatedShimmerEffect(
             gradientColors =
-                listOf(
+                persistentListOf(
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),

@@ -39,8 +39,7 @@ class SponsorsManager
         private val remoteSponsorsDataSource: RemoteSponsorsDataSource,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : SponsorsRepo {
-        override fun getAllSponsors(): Flow<List<Sponsors>> =
-            localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }.flowOn(ioDispatcher)
+        override fun getAllSponsors(): Flow<List<Sponsors>> = localSponsorsDataSource.fetchCachedSponsors().map { sponsors -> sponsors.map { it.toDomain() } }.flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer
