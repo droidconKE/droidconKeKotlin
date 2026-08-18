@@ -102,11 +102,11 @@ class SessionsViewModel
                     )
                 }
             }.flowOn(ioDispatcher)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = SessionsUiState(),
-            )
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = SessionsUiState(),
+                )
 
         /** Today if the conference is running, otherwise the first day. */
         private fun defaultEventDay(eventDays: List<EventDate>): EventDate {

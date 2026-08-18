@@ -16,7 +16,6 @@
 package com.android254.presentation.sessions.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -158,9 +157,10 @@ fun SessionListComponent(
         }
     }
 
-    val groupedSessions = remember(sessions) {
-        sessions.groupBy { "${it.startTime} ${it.amOrPm}" }
-    }
+    val groupedSessions =
+        remember(sessions) {
+            sessions.groupBy { "${it.startTime} ${it.amOrPm}" }
+        }
 
     ChaiPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -229,8 +229,7 @@ fun TimeHeader(time: String) {
             Modifier
                 .background(
                     color = MaterialTheme.chaiColorsPalette.background,
-                )
-                .fillMaxWidth()
+                ).fillMaxWidth()
                 .padding(vertical = 12.dp),
     ) {
         ChaiBodyLargeBold(

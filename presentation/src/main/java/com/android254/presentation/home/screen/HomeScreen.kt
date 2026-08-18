@@ -51,7 +51,6 @@ import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
-
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable

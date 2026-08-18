@@ -39,11 +39,9 @@ class FeedManager
         private val remoteFeedDataSource: RemoteFeedDataSource,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : FeedRepo {
-        override fun fetchFeed(): Flow<List<Feed>> =
-            localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }.flowOn(ioDispatcher)
+        override fun fetchFeed(): Flow<List<Feed>> = localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }.flowOn(ioDispatcher)
 
-        override fun fetchFeedById(id: Int): Flow<Feed?> =
-            localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }.flowOn(ioDispatcher)
+        override fun fetchFeedById(id: Int): Flow<Feed?> = localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }.flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer

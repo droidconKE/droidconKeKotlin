@@ -22,6 +22,7 @@ import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
+import kotlin.time.Instant
 
 fun List<Speaker>.toSpeakersPresentation(): List<SpeakerUI> =
     map {
@@ -42,12 +43,14 @@ fun Sponsors.toPresentation() =
         sponsorType = sponsorType,
     )
 
-fun Home.toHomeState(isSyncing: Boolean) =
-    HomeState(
-        banner = banner,
-        speakers = speakers.toSpeakersPresentation(),
-        sponsors = sponsors.map { it.toPresentation() },
-        organizerLogos = organizerLogos,
-        sessions = sessions.map { it.toPresentationModel() },
-        isSyncing = isSyncing,
-    )
+fun Home.toHomeState(
+    isSyncing: Boolean,
+    now: Instant,
+) = HomeState(
+    banner = banner,
+    speakers = speakers.toSpeakersPresentation(),
+    sponsors = sponsors.map { it.toPresentation() },
+    organizerLogos = organizerLogos,
+    sessions = sessions.map { return@map it.toPresentationModel(now) },
+    isSyncing = isSyncing,
+)

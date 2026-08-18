@@ -33,9 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
-import com.android254.presentation.utils.ChaiLightAndDarkComposePreview
-import com.droidconke.chai.ChaiDCKE22Theme
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionsLoadingCardWithBannerImage(modifier: Modifier = Modifier) {
@@ -48,7 +49,7 @@ fun SessionsLoadingCardWithBannerImage(modifier: Modifier = Modifier) {
     ) {
         AnimatedShimmerEffect(
             gradientColors =
-                listOf(
+                persistentListOf(
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
                     MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
@@ -88,10 +89,10 @@ fun SessionsLoadingCardWithBannerImage(modifier: Modifier = Modifier) {
     }
 }
 
-@ChaiLightAndDarkComposePreview
+@ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsLoadingCardWithBannerImagePreview() {
-    ChaiDCKE22Theme {
+private fun SessionsLoadingCardWithBannerImagePreview() {
+    ChaiTheme {
         SessionsLoadingCardWithBannerImage()
     }
 }

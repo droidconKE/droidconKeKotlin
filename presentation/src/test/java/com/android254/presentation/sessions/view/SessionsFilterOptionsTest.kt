@@ -18,6 +18,7 @@ package com.android254.presentation.sessions.view
 import com.android254.domain.models.Session
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import io.mockk.mockk
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -37,6 +38,7 @@ class SessionsFilterOptionsTest {
             syncDataWorkManager = mockk(relaxed = true),
             clock = Clock.System,
             conferenceTimeZone = TimeZone.of("Africa/Nairobi"),
+            ioDispatcher = UnconfinedTestDispatcher(),
         )
 
     private val sessions =

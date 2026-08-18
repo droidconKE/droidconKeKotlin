@@ -19,6 +19,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.droidconke.chai.ChaiTheme
@@ -50,7 +51,11 @@ class SessionScreenTest {
             composeTestRule.setContent {
                 ChaiTheme {
                     SessionsScreen(
-                        sessionsUiState = SessionsUiState(eventDays = persistentListOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3))),
+                        sessionsUiState =
+                            SessionsUiState(
+                                eventDays = persistentListOf(EventDate("16", 1), EventDate("17", 2), EventDate("18", 3)),
+                                sessionStatus = ResultStatus.Success,
+                            ),
                         isRefreshing = true,
                         selectedEventDate = EventDate("16", 1),
                         currentSelections = persistentListOf(),

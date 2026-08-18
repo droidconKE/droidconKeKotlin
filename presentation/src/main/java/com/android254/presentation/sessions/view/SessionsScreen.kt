@@ -199,7 +199,7 @@ fun SessionsScreen(
 
 @ChaiLightAndDarkComposePreviews
 @Composable
-fun SessionsScreenPreview(
+private fun SessionsScreenPreview(
     @PreviewParameter(SessionsUiStateProvider::class) sessionsUiState: SessionsUiState,
 ) {
     ChaiTheme {
@@ -229,7 +229,7 @@ class SessionsUiStateProvider : PreviewParameterProvider<SessionsUiState> {
             SessionsUiState(
                 sessions = fakeSessions,
                 sessionStatus = ResultStatus.Success,
-                eventDays = listOf(EventDate("1", day = 1), EventDate("2", day = 2)),
+                eventDays = persistentListOf(EventDate("1", day = 1), EventDate("2", day = 2)),
             ),
         )
 }
