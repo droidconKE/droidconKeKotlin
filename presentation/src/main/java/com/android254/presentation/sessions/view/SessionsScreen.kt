@@ -40,7 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
+import com.android254.presentation.common.fakedata.DAY_TODAY
+import com.android254.presentation.common.fakedata.DAY_TOMORROW
+import com.android254.presentation.common.fakedata.DAY_YESTERDAY
 import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.fakedata.today
+import com.android254.presentation.common.fakedata.tomorrow
+import com.android254.presentation.common.fakedata.yesterday
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
@@ -205,7 +211,7 @@ private fun SessionsScreenPreview(
     ChaiTheme {
         SessionsScreen(
             sessionsUiState = sessionsUiState,
-            selectedEventDate = EventDate("1", day = 1),
+            selectedEventDate = EventDate(DAY_TODAY, day = 2),
             isRefreshing = false,
             currentSelections = persistentListOf(),
             navigateToSessionDetails = {},
@@ -229,7 +235,12 @@ class SessionsUiStateProvider : PreviewParameterProvider<SessionsUiState> {
             SessionsUiState(
                 sessions = fakeSessions,
                 sessionStatus = ResultStatus.Success,
-                eventDays = persistentListOf(EventDate("1", day = 1), EventDate("2", day = 2)),
+                eventDays =
+                    persistentListOf(
+                        EventDate(DAY_YESTERDAY, day = 1),
+                        EventDate(DAY_TODAY, day = 2),
+                        EventDate(DAY_TOMORROW, day = 3),
+                    ),
             ),
         )
 }
