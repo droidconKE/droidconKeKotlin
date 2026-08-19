@@ -44,9 +44,6 @@ import com.android254.presentation.common.fakedata.DAY_TODAY
 import com.android254.presentation.common.fakedata.DAY_TOMORROW
 import com.android254.presentation.common.fakedata.DAY_YESTERDAY
 import com.android254.presentation.common.fakedata.fakeSessions
-import com.android254.presentation.common.fakedata.today
-import com.android254.presentation.common.fakedata.tomorrow
-import com.android254.presentation.common.fakedata.yesterday
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterOption
