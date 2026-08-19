@@ -27,6 +27,7 @@ build-logic/convention/build
 /shared/datasource/build
 shared/domain/build
 .kotlin
+.agent/
 
 # Credentials must never be committed. `api_key.txt` was tracked at the repo root and
 # normalised the habit; the file itself held a stale non-secret string.
