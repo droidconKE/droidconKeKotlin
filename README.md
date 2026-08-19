@@ -25,6 +25,7 @@ decisions in here are written down rather than assumed — see [`docs/`](docs/) 
 
 ## Contents
 
+- [Designs](#designs)
 - [Running the project](#running-the-project)
 - [Module layout](#module-layout)
 - [Architecture](#architecture)
@@ -35,6 +36,14 @@ decisions in here are written down rather than assumed — see [`docs/`](docs/) 
 - [Contributing](#contributing)
 - [Contributors](#contributors)
 - [Licence](#licence)
+
+---
+
+## Designs
+
+This is the link to the app designs:  
+- [Light Theme](https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)
+- [Dark Theme](https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
 
 ---
 
