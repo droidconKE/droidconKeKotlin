@@ -31,9 +31,11 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -85,15 +87,21 @@ class SessionsViewModel
                         _selectedEventDay.value = defaultEventDay(sessionDays)
                     }
 
-                    val filteredSessions =
+                    val filteredSessions: List<SessionPresentationModel> =
                         filterSessions(
                             sessionsInformation.sessions,
                             filterState,
                             _selectedEventDay.value,
                         )
 
+                    val groupedSessions =
+                        filteredSessions
+                            .groupBy { "${it.startTime} ${it.amOrPm}" }
+                            .mapValues { it.value.toImmutableList() }
+                            .toImmutableMap<String, ImmutableList<SessionPresentationModel>>()
+
                     SessionsUiState(
-                        sessions = filteredSessions.toImmutableList(),
+                        sessions = groupedSessions,
                         eventDays = sessionDays.toImmutableList(),
                         sessionStatus = getResultStatus(filteredSessions),
                         availableFilters = buildFilterOptions(sessionsInformation.sessions).toImmutableList(),
@@ -185,7 +193,10 @@ class SessionsViewModel
                 is SessionsIntentHandler.UpdateSelectedDay -> updateSelectedDay(intent.day)
                 is SessionsIntentHandler.BookmarkSession -> {
                     viewModelScope.launch {
-                        val session = sessionsUiState.value.sessions.find { it.id == intent.sessionId }
+                        val session =
+                            sessionsUiState.value.sessions.values
+                                .flatten()
+                                .find { it.id == intent.sessionId }
                         if (session != null) {
                             if (session.isStarred) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
                         }
