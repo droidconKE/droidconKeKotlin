@@ -37,6 +37,7 @@ class DroidconApp : Application() {
         setUpWorkerManagerNotificationChannel()
 
         syncDataWorkManager.setupPeriodicSync()
+
         syncDataWorkManager.startSync()
     }
 

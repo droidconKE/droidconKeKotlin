@@ -15,14 +15,16 @@
  */
 package com.android254.presentation.home.mappers
 
+import com.android254.domain.models.Home
 import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
+import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import com.android254.presentation.sessions.mappers.toPresentationModel
+import kotlin.time.Instant
 
-fun List<Speaker>.toSpeakersPresentation(): ImmutableList<SpeakerUI> =
+fun List<Speaker>.toSpeakersPresentation(): List<SpeakerUI> =
     map {
         SpeakerUI(
             imageUrl = it.avatar,
@@ -31,7 +33,7 @@ fun List<Speaker>.toSpeakersPresentation(): ImmutableList<SpeakerUI> =
             bio = it.biography,
             twitterHandle = it.twitter,
         )
-    }.toImmutableList()
+    }
 
 fun Sponsors.toPresentation() =
     SponsorPresentationModel(
@@ -40,3 +42,15 @@ fun Sponsors.toPresentation() =
         logo = sponsorLogoUrl,
         sponsorType = sponsorType,
     )
+
+fun Home.toHomeState(
+    isSyncing: Boolean,
+    now: Instant,
+) = HomeState(
+    banner = banner,
+    speakers = speakers.toSpeakersPresentation(),
+    sponsors = sponsors.map { it.toPresentation() },
+    organizerLogos = organizerLogos,
+    sessions = sessions.map { return@map it.toPresentationModel(now) },
+    isSyncing = isSyncing,
+)

@@ -20,8 +20,11 @@ import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 sealed interface SpeakerDetailsScreenUiState {
@@ -45,12 +48,13 @@ class SpeakerDetailsScreenViewModel
     @Inject
     constructor(
         private val speakersRepo: SpeakersRepo,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
         val uiState = _uiState.asStateFlow()
 
         suspend fun getSpeakerByName(name: String) {
-            speakersRepo.getSpeakerByName(name).collect { speaker ->
+            speakersRepo.getSpeakerByName(name).flowOn(ioDispatcher).collect { speaker ->
                 _uiState.value = SpeakerDetailsScreenUiState.Success(speaker.toPresentation())
             }
         }

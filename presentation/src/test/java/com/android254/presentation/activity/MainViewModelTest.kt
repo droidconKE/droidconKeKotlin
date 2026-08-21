@@ -27,7 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
@@ -47,7 +47,7 @@ class MainViewModelTest {
     private val clock = mockk<Clock>()
     private val remoteFeatureToggle = mockk<RemoteFeatureToggle>(relaxed = true)
     private val syncDataWorkManager = mockk<SyncDataWorkManager>(relaxed = true)
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setup() {
@@ -73,7 +73,7 @@ class MainViewModelTest {
             coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -106,7 +106,7 @@ class MainViewModelTest {
                 )
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()

@@ -24,6 +24,7 @@ import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,6 +35,7 @@ import org.robolectric.annotation.Config
 class SponsorsManagerTest {
     private val mockLocalSponsorsDataSource = mockk<LocalSponsorsDataSource>()
     private val mockRemoteSponsorsDataSource = mockk<RemoteSponsorsDataSource>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Test
     fun `test syncWith reconciles data`() =
@@ -45,7 +47,7 @@ class SponsorsManagerTest {
             coEvery { mockLocalSponsorsDataSource.saveCachedSponsors(any()) } returns Unit
             coEvery { mockLocalSponsorsDataSource.deleteByNames(any()) } returns Unit
 
-            val manager = SponsorsManager(mockLocalSponsorsDataSource, mockRemoteSponsorsDataSource)
+            val manager = SponsorsManager(mockLocalSponsorsDataSource, mockRemoteSponsorsDataSource, testDispatcher)
             val result = manager.syncWith(mockk())
 
             assert(result)

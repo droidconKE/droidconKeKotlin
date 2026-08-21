@@ -21,11 +21,14 @@ import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SpeakerUI
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
@@ -49,9 +52,11 @@ class SpeakersScreenViewModel
     constructor(
         private val speakersRepo: SpeakersRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         val isSyncing =
             syncDataWorkManager.isSyncing
+                .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
@@ -78,7 +83,8 @@ class SpeakersScreenViewModel
                     emit(SpeakersScreenUiState.Loading)
                 }.catch {
                     emit(SpeakersScreenUiState.Error(message = "An unexpected error occurred"))
-                }.stateIn(
+                }.flowOn(ioDispatcher)
+                .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
                     initialValue = SpeakersScreenUiState.Loading,

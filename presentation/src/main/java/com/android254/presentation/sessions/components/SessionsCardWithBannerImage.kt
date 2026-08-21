@@ -139,7 +139,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
         speakers.forEach { speaker ->
             speaker.speakerImage?.let {
                 AsyncImage(
-                    model = speaker.speakerImage,
+                    model = it,
                     contentDescription = "session speaker image",
                     modifier =
                         Modifier

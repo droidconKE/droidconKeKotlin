@@ -30,9 +30,13 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +44,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,6 +61,7 @@ class SessionsViewModel
         private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
         @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _selectedFilterOptions: MutableStateFlow<PersistentList<SessionsFilterOption>> =
             MutableStateFlow(persistentListOf())
@@ -81,15 +87,21 @@ class SessionsViewModel
                         _selectedEventDay.value = defaultEventDay(sessionDays)
                     }
 
-                    val filteredSessions =
+                    val filteredSessions: List<SessionPresentationModel> =
                         filterSessions(
                             sessionsInformation.sessions,
                             filterState,
                             _selectedEventDay.value,
                         )
 
+                    val groupedSessions =
+                        filteredSessions
+                            .groupBy { "${it.startTime} ${it.amOrPm}" }
+                            .mapValues { it.value.toImmutableList() }
+                            .toImmutableMap<String, ImmutableList<SessionPresentationModel>>()
+
                     SessionsUiState(
-                        sessions = filteredSessions.toImmutableList(),
+                        sessions = groupedSessions,
                         eventDays = sessionDays.toImmutableList(),
                         sessionStatus = getResultStatus(filteredSessions),
                         availableFilters = buildFilterOptions(sessionsInformation.sessions).toImmutableList(),
@@ -97,11 +109,12 @@ class SessionsViewModel
                         isFilterActive = filterState.isActive,
                     )
                 }
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = SessionsUiState(),
-            )
+            }.flowOn(ioDispatcher)
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000L),
+                    initialValue = SessionsUiState(),
+                )
 
         /** Today if the conference is running, otherwise the first day. */
         private fun defaultEventDay(eventDays: List<EventDate>): EventDate {
@@ -164,6 +177,7 @@ class SessionsViewModel
 
         val isRefreshing =
             syncDataWorkManager.isSyncing
+                .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000L),
@@ -179,12 +193,16 @@ class SessionsViewModel
                 is SessionsIntentHandler.UpdateSelectedDay -> updateSelectedDay(intent.day)
                 is SessionsIntentHandler.BookmarkSession -> {
                     viewModelScope.launch {
-                        val session = sessionsUiState.value.sessions.find { it.id == intent.sessionId }
+                        val session =
+                            sessionsUiState.value.sessions.values
+                                .flatten()
+                                .find { it.id == intent.sessionId }
                         if (session != null) {
                             if (session.isStarred) unBookmarkSession(session.remoteId) else bookmarkSession(session.remoteId)
                         }
                     }
                 }
+
                 is SessionsIntentHandler.UpdateSelectedFilterOptionList -> updateSelectedFilterOptionList(intent.option)
             }
         }

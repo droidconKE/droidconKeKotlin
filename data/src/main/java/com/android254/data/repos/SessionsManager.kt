@@ -83,7 +83,7 @@ class SessionsManager
                         },
                     eventDays = eventDays,
                 )
-            }
+            }.flowOn(ioDispatcher)
 
         /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
         private fun Long.toEventDay(): String =

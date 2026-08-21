@@ -23,9 +23,12 @@ import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -34,10 +37,11 @@ class FeedManager
     constructor(
         private val localFeedDataSource: LocalFeedDataSource,
         private val remoteFeedDataSource: RemoteFeedDataSource,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : FeedRepo {
-        override fun fetchFeed(): Flow<List<Feed>> = localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }
+        override fun fetchFeed(): Flow<List<Feed>> = localFeedDataSource.fetchFeed().map { feeds -> feeds.map { it.toDomain() } }.flowOn(ioDispatcher)
 
-        override fun fetchFeedById(id: Int): Flow<Feed?> = localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }
+        override fun fetchFeedById(id: Int): Flow<Feed?> = localFeedDataSource.getFeedById(id).map { feed -> feed?.toDomain() }.flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer

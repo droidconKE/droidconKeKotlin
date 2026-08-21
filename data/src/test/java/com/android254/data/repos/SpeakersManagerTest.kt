@@ -24,6 +24,7 @@ import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,6 +35,7 @@ import org.robolectric.annotation.Config
 class SpeakersManagerTest {
     private val mockLocalSpeakersDataSource = mockk<LocalSpeakersDataSource>()
     private val mockRemoteSpeakersDataSource = mockk<RemoteSpeakersDataSource>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Test
     fun `test syncWith reconciles data`() =
@@ -45,7 +47,7 @@ class SpeakersManagerTest {
             coEvery { mockLocalSpeakersDataSource.saveCachedSpeakers(any()) } returns Unit
             coEvery { mockLocalSpeakersDataSource.deleteByNames(any()) } returns Unit
 
-            val manager = SpeakersManager(mockLocalSpeakersDataSource, mockRemoteSpeakersDataSource)
+            val manager = SpeakersManager(mockLocalSpeakersDataSource, mockRemoteSpeakersDataSource, testDispatcher)
             val result = manager.syncWith(mockk())
 
             assert(result)

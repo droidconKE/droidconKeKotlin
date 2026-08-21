@@ -26,6 +26,7 @@ import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,6 +39,7 @@ import org.robolectric.shadows.ShadowLog
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class FeedScreenTest {
     private val repo = mockk<FeedRepo>()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -64,7 +66,7 @@ class FeedScreenTest {
                 ),
             )
 
-        val viewModel = FeedViewModel(repo)
+        val viewModel = FeedViewModel(repo, testDispatcher)
         composeTestRule.setContent {
             ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)
@@ -94,7 +96,7 @@ class FeedScreenTest {
                 ),
             )
 
-        val viewModel = FeedViewModel(repo)
+        val viewModel = FeedViewModel(repo, testDispatcher)
         composeTestRule.setContent {
             ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)

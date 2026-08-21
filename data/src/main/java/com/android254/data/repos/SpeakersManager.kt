@@ -23,9 +23,12 @@ import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -34,12 +37,13 @@ class SpeakersManager
     constructor(
         private val localSpeakersDataSource: LocalSpeakersDataSource,
         private val remoteSpeakersDataSource: RemoteSpeakersDataSource,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : SpeakersRepo {
-        override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }
+        override fun fetchSpeakers(): Flow<List<Speaker>> = localSpeakersDataSource.getCachedSpeakers().map { speakers -> speakers.map { speaker -> speaker.toDomainModel() } }.flowOn(ioDispatcher)
 
-        override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount()
+        override suspend fun fetchSpeakerCount(): Flow<Int> = localSpeakersDataSource.fetchCachedSpeakerCount().flowOn(ioDispatcher)
 
-        override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }
+        override suspend fun getSpeakerByName(name: String): Flow<Speaker> = localSpeakersDataSource.getCachedSpeakerByName(name).map { it.toDomainModel() }.flowOn(ioDispatcher)
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
             synchronizer

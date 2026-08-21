@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -22,12 +23,9 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,6 +40,7 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,8 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -62,9 +59,6 @@ import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
-import com.droidconke.chai.components.ChaiBodyLargeBold
-import com.droidconke.chai.components.ChaiBodyMedium
-import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
@@ -102,6 +96,8 @@ fun SessionsCard(
         label = "border_alpha",
     )
 
+    val nowTextColor = venueAccent.copy(animatedBorderAlpha)
+
     val border =
         if (session.sessionStatus == SessionStatus.Ongoing) {
             BorderStroke(
@@ -109,7 +105,7 @@ fun SessionsCard(
                 color = venueAccent.copy(alpha = animatedBorderAlpha),
             )
         } else {
-            null
+            BorderStroke(width = 1.dp, color = MaterialTheme.chaiColorsPalette.cardsBorderColor)
         }
 
     Card(
@@ -127,123 +123,68 @@ fun SessionsCard(
             ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
-        Row(
+        Column(
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
                 .padding(16.dp),
-            verticalAlignment = Alignment.Top,
         ) {
-            if (session.sessionStatus == SessionStatus.Ongoing) {
-                NowIndicator(venueAccent)
-            } else {
-                SessionTimeComponent(
-                    session.startTime,
-                    session.amOrPm,
-                )
+            SessionTitleComponent(session, onBookmark)
+            if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus == SessionStatus.Ongoing) {
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (session.format.isNotBlank()) {
+                    SessionTag(
+                        tagText = session.format,
+                        backgroundColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+                    )
+                }
+                if (session.level.isNotBlank()) {
+                    SessionTag(
+                        tagText = session.level,
+                        backgroundColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+                    )
+                }
+                if (session.sessionStatus == SessionStatus.Ongoing) {
+                    SessionTag(
+                        tagText = stringResource(R.string.now),
+                        isNowTag = true,
+                        dotColor = nowTextColor,
+                        textColor = nowTextColor,
+                        backgroundColor = nowTextColor.copy(alpha = 0.15f),
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(24.dp))
+            if (session.speakers.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
 
-            SessionDetails(
-                session = session,
-                onBookMark = onBookmark,
-            )
-        }
-    }
-}
-
-@Composable
-fun SessionTimeComponent(
-    sessionStartTime: String,
-    sessionAmOrPm: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.End,
-    ) {
-        ChaiBodyLargeBold(
-            bodyText = sessionStartTime,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-        )
-
-        ChaiBodyMediumBold(
-            bodyText = sessionAmOrPm,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-        )
-    }
-}
-
-@Composable
-private fun RowScope.NowIndicator(
-    accentColor: Color,
-) {
-    val transition = rememberInfiniteTransition(label = "pulse")
-
-    val alpha by transition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 0f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(900),
-                repeatMode = RepeatMode.Restart,
-            ),
-        label = "alpha",
-    )
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(16.dp)
-                    .clip(CircleShape)
-                    .background(accentColor)
-                    .then(
-                        Modifier,
-                    ),
-        ) {
-            Box(
-                modifier =
-                    Modifier
-                        .matchParentSize()
-                        .graphicsLayer { this.alpha = alpha }
-                        .clip(CircleShape)
-                        .background(accentColor),
-            )
-        }
-
-        ChaiBodyLargeBold(
-            bodyText = stringResource(R.string.now),
-            textColor = accentColor,
-        )
-    }
-}
-
-@Composable
-fun RowScope.SessionDetails(
-    session: SessionPresentationModel,
-    onBookMark: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.weight(1f),
-    ) {
-        SessionTitleComponent(session, onBookMark)
-        Spacer(modifier = Modifier.height(12.dp))
-        SessionsDescriptionComponent(session.description)
-        Spacer(modifier = Modifier.height(12.dp))
-        TimeAndVenueComponent(session)
-        Spacer(modifier = Modifier.height(12.dp))
-        if (session.speakers.isNotEmpty()) {
-            Column {
                 session.speakers.forEach { speaker ->
                     SessionPresenterComponents(speaker = speaker)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(
+                modifier = Modifier.fillMaxWidth(),
+                thickness = 1.dp,
+                color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                ChaiBodyXSmall(
+                    bodyText = session.venue.uppercase(),
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                )
+                ChaiBodyXSmall(
+                    bodyText = "${session.startTime} ${session.amOrPm} - ${session.endTime}",
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                )
             }
         }
     }
@@ -260,6 +201,7 @@ fun SessionTitleComponent(
             .fillMaxWidth()
             .wrapContentHeight(),
         horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         ChaiSubTitle(
             modifier = Modifier.weight(1f),
@@ -273,53 +215,22 @@ fun SessionTitleComponent(
                 onBookmark(session.id)
             },
         ) {
-            Icon(
-                imageVector = if (session.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (session.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-            )
+            Crossfade(targetState = session.isStarred, label = "star_crossfade") { isStarred ->
+                Icon(
+                    imageVector = if (isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                    contentDescription = stringResource(R.string.star_session_icon_description),
+                    tint = if (isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                )
+            }
         }
-    }
-}
-
-@Composable
-fun SessionsDescriptionComponent(sessionDescription: String) {
-    ChaiBodyMedium(
-        bodyText = sessionDescription,
-        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-        maxLines = 3,
-    )
-}
-
-@Composable
-fun TimeAndVenueComponent(
-    session: SessionPresentationModel,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        ChaiBodyXSmall(
-            bodyText = "${session.startTime} - ${session.endTime}",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-            maxLines = 1,
-        )
-        ChaiBodyXSmall(
-            bodyText = session.venue.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-            maxLines = 2,
-        )
     }
 }
 
 @Composable
 fun SessionPresenterComponents(
     speaker: SessionSpeakersPresentationModel,
-    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
@@ -327,14 +238,14 @@ fun SessionPresenterComponents(
             contentDescription = "session speaker image",
             modifier =
                 Modifier
-                    .size(24.dp)
+                    .size(30.dp)
                     .clip(CircleShape),
         )
         Spacer(modifier = Modifier.width(10.dp))
 
         ChaiBodySmall(
             bodyText = speaker.name,
-            textColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
+            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
         )
     }
 }

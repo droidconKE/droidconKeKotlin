@@ -23,6 +23,7 @@ import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
+import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -112,5 +113,21 @@ class HomeScreenTest {
         composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
         composeTestRule.onNodeWithTag("viewAll").assertIsDisplayed()
         composeTestRule.onNodeWithTag("sessions").assertExists()
+    }
+
+    @Test
+    fun `Test HomeScreen displays correctly with HomeState`() {
+        composeTestRule.setContent {
+            ChaiTheme {
+                HomeScreen(
+                    viewState = HomeState(),
+                    isSyncing = false,
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithTag("home_header").assertIsDisplayed()
+        // Sponsors card is hidden because sponsors list is empty (AnimatedVisibility)
+        composeTestRule.onNodeWithTag("sponsors_section").assertDoesNotExist()
     }
 }

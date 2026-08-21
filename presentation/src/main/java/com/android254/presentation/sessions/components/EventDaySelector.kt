@@ -19,11 +19,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.components.AnimatedShimmerEffect
+import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.models.EventDate
+import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 fun ordinal(i: Int): String {
     val suffixes = arrayOf("th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th")
@@ -39,18 +44,35 @@ fun EventDaySelector(
     updateSelectedDay: (EventDate) -> Unit,
     eventDates: ImmutableList<EventDate>,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
 ) {
-    LazyRow {
-        items(eventDates, key = { it.value }) { eventDay ->
-            EventDaySelectorButton(
-                title = ordinal(eventDay.value.toInt()),
-                subtitle = "Day ${eventDay.day}",
-                onClick = { updateSelectedDay(eventDay) },
-                selected = selectedDate == eventDay,
-            )
-            Spacer(
-                modifier.width(16.dp),
-            )
+    if (isLoading) {
+        AnimatedShimmerEffect(
+            gradientColors =
+                persistentListOf(
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
+                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                ),
+        ) { brush ->
+            LazyRow(modifier = modifier) {
+                items(3) {
+                    LoadingBox(height = 51.dp, width = 51.dp, brush = brush, cornerRadius = 5.dp)
+                    Spacer(Modifier.width(16.dp))
+                }
+            }
+        }
+    } else {
+        LazyRow(modifier = modifier) {
+            items(eventDates, key = { it.value }) { eventDay ->
+                EventDaySelectorButton(
+                    title = ordinal(eventDay.value.toInt()),
+                    subtitle = "Day ${eventDay.day}",
+                    onClick = { updateSelectedDay(eventDay) },
+                    selected = selectedDate == eventDay,
+                )
+                Spacer(Modifier.width(16.dp))
+            }
         }
     }
 }

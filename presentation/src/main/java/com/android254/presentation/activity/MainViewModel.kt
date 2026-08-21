@@ -22,8 +22,10 @@ import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -48,6 +51,7 @@ class MainViewModel
         private val clock: Clock,
         private val remoteFeatureToggle: RemoteFeatureToggle,
         private val syncDataWorkManager: SyncDataWorkManager,
+        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _isInitialising = MutableStateFlow(true)
 
@@ -101,7 +105,8 @@ class MainViewModel
                                     .toImmutableList(),
                         )
                     }
-                }.stateIn(
+                }.flowOn(ioDispatcher)
+                .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000),
                     initialValue = SessionUIState(),

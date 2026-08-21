@@ -15,9 +15,9 @@
  */
 package com.android254.domain.repos
 
-import com.android254.domain.models.HomeDetails
+import com.android254.domain.models.Home
 import kotlinx.coroutines.flow.Flow
 
 interface HomeRepo {
-    fun fetchHomeDetails(): Flow<HomeDetails>
+    fun fetchHomeDetails(): Flow<Home>
 }
