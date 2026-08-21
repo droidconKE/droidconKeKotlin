@@ -66,6 +66,9 @@ import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.presentation.R
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -141,7 +144,7 @@ fun SessionsStateComponent(
 fun SessionListComponent(
     isRefreshing: Boolean,
     pullToRefreshState: PullToRefreshState,
-    sessions: ImmutableList<SessionPresentationModel>,
+    sessions: ImmutableMap<String, ImmutableList<SessionPresentationModel>>,
     sessionScreenState: SessionScreenState,
     isSessionLayoutList: Boolean,
     navigateToSessionDetails: (sessionId: String) -> Unit,
@@ -150,17 +153,17 @@ fun SessionListComponent(
 ) {
     val listState = rememberLazyListState()
 
-    LaunchedEffect(sessions) {
-        val index = sessions.indexOfFirst { it.sessionStatus == SessionStatus.Ongoing }
+    val flatSessions: List<SessionPresentationModel> =
+        remember(sessions) {
+            sessions.values.flatten()
+        }
+
+    LaunchedEffect(flatSessions) {
+        val index = flatSessions.indexOfFirst { it.sessionStatus == SessionStatus.Ongoing }
         if (index != -1) {
             listState.animateScrollToItem(index + 1) // +1 for the header item
         }
     }
-
-    val groupedSessions =
-        remember(sessions) {
-            sessions.groupBy { "${it.startTime} ${it.amOrPm}" }
-        }
 
     ChaiPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -186,12 +189,14 @@ fun SessionListComponent(
                 Spacer(modifier = Modifier.height(20.dp))
             }
             if (isSessionLayoutList) {
-                groupedSessions.forEach { (time, sessions) ->
+                sessions.entries.forEach { entry ->
+                    val time = entry.key
+                    val timeSessions = entry.value
                     stickyHeader(key = "header_$time") {
                         TimeHeader(time = time)
                     }
                     items(
-                        items = sessions,
+                        items = timeSessions,
                         key = { it.id },
                     ) { session ->
                         SessionsCard(
@@ -206,7 +211,7 @@ fun SessionListComponent(
                 }
             } else {
                 itemsIndexed(
-                    items = sessions,
+                    items = flatSessions,
                     key = { _, session -> session.id },
                 ) { _, session ->
                     SessionsCardWithBannerImage(
@@ -255,7 +260,11 @@ private fun SessionListPreview() {
             SessionListComponent(
                 isRefreshing = false,
                 pullToRefreshState = rememberPullToRefreshState(),
-                sessions = fakeSessions,
+                sessions =
+                    fakeSessions
+                        .groupBy { session: SessionPresentationModel -> "${session.startTime} ${session.amOrPm}" }
+                        .mapValues { it.value.toImmutableList() }
+                        .toImmutableMap(),
                 navigateToSessionDetails = {},
                 sessionScreenState = SessionScreenState.ALL,
                 isSessionLayoutList = true,

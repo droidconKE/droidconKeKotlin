@@ -46,6 +46,7 @@ import com.android254.presentation.common.fakedata.DAY_YESTERDAY
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.components.CustomSwitch
 import com.android254.presentation.sessions.components.EventDaySelector
@@ -59,6 +60,8 @@ import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 
 @Composable
 fun SessionsRoute(
@@ -230,7 +233,11 @@ class SessionsUiStateProvider : PreviewParameterProvider<SessionsUiState> {
                 sessionStatus = ResultStatus.Error("Something went wrong"),
             ),
             SessionsUiState(
-                sessions = fakeSessions,
+                sessions =
+                    fakeSessions
+                        .groupBy { session: SessionPresentationModel -> "${session.startTime} ${session.amOrPm}" }
+                        .mapValues { it.value.toImmutableList() }
+                        .toImmutableMap(),
                 sessionStatus = ResultStatus.Success,
                 eventDays =
                     persistentListOf(
