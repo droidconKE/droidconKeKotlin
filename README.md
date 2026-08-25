@@ -299,17 +299,17 @@ We would endlessly like to thank the following contributors
 	<tbody>
 		<tr>
             <td align="center">
-                <a href="https://github.com/chepsi">
-                    <img src="https://avatars.githubusercontent.com/u/61404564?v=4" width="100;" alt="chepsi"/>
-                    <br />
-                    <sub><b>Evans Chepsiror</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/donald-okara">
                     <img src="https://avatars.githubusercontent.com/u/47844892?v=4" width="100;" alt="donald-okara"/>
                     <br />
                     <sub><b>Don Okara</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/chepsi">
+                    <img src="https://avatars.githubusercontent.com/u/61404564?v=4" width="100;" alt="chepsi"/>
+                    <br />
+                    <sub><b>Evans Chepsiror</b></sub>
                 </a>
             </td>
             <td align="center">
