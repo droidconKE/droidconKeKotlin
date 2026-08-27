@@ -230,6 +230,7 @@ private fun SpeakerDetailsContent(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
                         onBookmark = onBookmark,
+                        showBorder = false,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }

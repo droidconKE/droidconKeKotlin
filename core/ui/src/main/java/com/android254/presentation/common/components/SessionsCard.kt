@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -65,12 +66,29 @@ import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 
+/**
+ * An ongoing session gets the pulsing venue accent; everything else gets a hairline.
+ * A caller that renders the card on an already-grouped surface can opt out entirely.
+ */
+private fun cardBorder(
+    showBorder: Boolean,
+    isOngoing: Boolean,
+    ongoingColor: Color,
+    defaultColor: Color,
+): BorderStroke? =
+    when {
+        !showBorder -> null
+        isOngoing -> BorderStroke(width = 1.5.dp, color = ongoingColor)
+        else -> BorderStroke(width = 1.dp, color = defaultColor)
+    }
+
 @Composable
 fun SessionsCard(
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
     modifier: Modifier = Modifier,
+    showBorder: Boolean = true,
 ) {
     val venueAccent = venueAccentColor(session.venue)
 
@@ -100,14 +118,12 @@ fun SessionsCard(
     val nowTextColor = venueAccent.copy(animatedBorderAlpha)
 
     val border =
-        if (session.sessionStatus == SessionStatus.Ongoing) {
-            BorderStroke(
-                width = 1.5.dp,
-                color = venueAccent.copy(alpha = animatedBorderAlpha),
-            )
-        } else {
-            BorderStroke(width = 1.dp, color = MaterialTheme.chaiColorsPalette.cardsBorderColor)
-        }
+        cardBorder(
+            showBorder = showBorder,
+            isOngoing = session.sessionStatus == SessionStatus.Ongoing,
+            ongoingColor = venueAccent.copy(alpha = animatedBorderAlpha),
+            defaultColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+        )
 
     Card(
         modifier =
