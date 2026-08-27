@@ -25,9 +25,12 @@ import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -63,22 +66,31 @@ class SpeakersScreenViewModel
                     initialValue = false,
                 )
 
+        private val _searchQuery = MutableStateFlow("")
+        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+        fun onSearchQueryChanged(query: String) {
+            _searchQuery.value = query
+        }
+
         val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
-            speakersRepo
-                .fetchSpeakers()
-                .map {
-                    it
-                        .map {
-                            SpeakerUI(
-                                id = 1,
-                                imageUrl = it.avatar,
-                                name = it.name,
-                                tagline = it.tagline,
-                                bio = it.biography,
-                                twitterHandle = it.twitter,
-                            )
-                        }.toImmutableList()
-                }.map<ImmutableList<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
+            combine(
+                speakersRepo.fetchSpeakers(),
+                _searchQuery,
+            ) { speakers, query ->
+                speakers
+                    .map { speaker ->
+                        SpeakerUI(
+                            id = 1,
+                            imageUrl = speaker.avatar,
+                            name = speaker.name,
+                            tagline = speaker.tagline,
+                            bio = speaker.biography,
+                            twitterHandle = speaker.twitter,
+                        )
+                    }.filter { it.matches(query) }
+                    .toImmutableList()
+            }.map<ImmutableList<SpeakerUI>, SpeakersScreenUiState>(SpeakersScreenUiState::Success)
                 .onStart {
                     emit(SpeakersScreenUiState.Loading)
                 }.catch {
@@ -90,3 +102,14 @@ class SpeakersScreenViewModel
                     initialValue = SpeakersScreenUiState.Loading,
                 )
     }
+
+/**
+ * Free-text match across the fields a speaker is likely to be looked up by.
+ * A blank query matches everything, so an inactive search bar is a no-op.
+ */
+private fun SpeakerUI.matches(query: String): Boolean {
+    val trimmed = query.trim()
+    if (trimmed.isBlank()) return true
+    return listOfNotNull(name, tagline, bio, twitterHandle)
+        .any { it.contains(trimmed, ignoreCase = true) }
+}

@@ -18,26 +18,25 @@ package com.android254.presentation.speakers.view
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.navigation.speakerSharedImage
@@ -46,12 +45,14 @@ import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.chaiColorsPalette
-import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.components.ChaiBodySmall
-import com.droidconke.chai.components.ChaiBodySmallBold
+import com.droidconke.chai.components.ChaiBodyLargeBold
+import com.droidconke.chai.components.ChaiBodyMedium
+import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
+
+private val SpeakerAvatarSize = 100.dp
+private val SpeakerAvatarShape = RoundedCornerShape(16.dp)
 
 @Composable
 fun SpeakerComponent(
@@ -59,113 +60,76 @@ fun SpeakerComponent(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
-    Card(
+    Row(
         modifier =
             modifier
-                .wrapContentHeight()
-                .clickable {
-                    onClick.invoke()
-                }.border(
-                    width = 1.dp,
-                    color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
-                    shape = RoundedCornerShape(8.dp),
-                ),
-        shape = RoundedCornerShape(8.dp),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.chaiColorsPalette.surfaces,
-            ),
+                .fillMaxWidth()
+                .clickable { onClick.invoke() }
+                .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        ConstraintLayout(
+        AsyncImage(
+            model =
+                ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(speaker.imageUrl)
+                    .build(),
+            placeholder = painterResource(R.drawable.smiling),
+            contentDescription = stringResource(R.string.head_shot),
+            contentScale = ContentScale.Crop,
             modifier =
                 Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .size(SpeakerAvatarSize)
+                    .speakerSharedImage(speaker.name, SpeakerAvatarShape),
+        )
+
+        Column(
+            modifier =
+                Modifier
+                    .padding(start = 20.dp)
+                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            val (image, nameText, bioText, button) = createRefs()
-            AsyncImage(
-                model =
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(speaker.imageUrl)
-                        .build(),
-                placeholder = painterResource(R.drawable.smiling),
-                contentDescription = stringResource(R.string.head_shot),
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier
-                        .height(120.dp)
-                        .width(120.dp)
-                        .speakerSharedImage(speaker.name, RoundedCornerShape(8.dp))
-                        .border(
-                            border =
-                                BorderStroke(
-                                    2.5.dp,
-                                    color = ChaiTeal,
-                                ),
-                            shape = RoundedCornerShape(8.dp),
-                        ).constrainAs(image) {
-                            top.linkTo(parent.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
-            )
-            ChaiBodyMediumBold(
+            ChaiBodyLargeBold(
                 modifier =
                     Modifier
                         .testTag("name")
-                        .constrainAs(nameText) {
-                            top.linkTo(image.bottom, margin = 16.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }.wrapContentHeight()
                         .speakerSharedName(speaker.name),
                 bodyText = speaker.name,
                 textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
-                textAlign = TextAlign.Center,
                 maxLines = 1,
             )
 
-            ChaiBodySmall(
-                modifier =
-                    Modifier
-                        .testTag("bio")
-                        .constrainAs(bioText) {
-                            top.linkTo(nameText.bottom, margin = 6.dp)
-                            bottom.linkTo(button.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }.wrapContentHeight(),
-                bodyText = speaker.tagline ?: "",
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                minLines = 3,
-            )
-            OutlinedButton(
-                onClick = { },
-                shape = RoundedCornerShape(8.dp),
-                border =
-                    BorderStroke(
-                        width = 2.dp,
-                        color = ChaiTeal90,
-                    ),
-                modifier =
-                    Modifier
-                        .constrainAs(button) {
-                            top.linkTo(bioText.bottom, margin = 28.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
-            ) {
-                ChaiBodySmallBold(
-                    bodyText = stringResource(R.string.session_label).uppercase(),
-                    textColor = ChaiTeal90,
+            speaker.tagline?.takeIf(String::isNotBlank)?.let { tagline ->
+                ChaiBodyMedium(
+                    modifier = Modifier.testTag("bio"),
+                    bodyText = tagline,
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    maxLines = 1,
                 )
+            }
+
+            if (speaker.isSpeakingNow) {
+                Spacer(modifier = Modifier.height(2.dp))
+                SpeakingNowBadge()
             }
         }
     }
+}
+
+@Composable
+private fun SpeakingNowBadge(modifier: Modifier = Modifier) {
+    ChaiBodyXSmallBold(
+        modifier =
+            modifier
+                .testTag("speakingNowBadge")
+                .border(
+                    border = BorderStroke(1.dp, ChaiTeal),
+                    shape = RoundedCornerShape(6.dp),
+                ).padding(horizontal = 12.dp, vertical = 6.dp),
+        bodyText = stringResource(R.string.speaking_now_label).uppercase(),
+        textColor = ChaiTeal,
+    )
 }
 
 @ChaiLightAndDarkComposePreviews
@@ -176,9 +140,10 @@ private fun SpeakerComponentPreview() {
             speaker =
                 SpeakerUI(
                     imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",
-                    name = "Harun Wangereka",
+                    name = "Ian Nthuli",
                     bio = "Kenya Partner Lead at droidcon Berlin | Android | Kotlin | Flutter | C++",
-                    tagline = "An android engineer | Content creator | Mentor",
+                    tagline = "Android Engineer",
+                    isSpeakingNow = true,
                 ),
         )
     }
