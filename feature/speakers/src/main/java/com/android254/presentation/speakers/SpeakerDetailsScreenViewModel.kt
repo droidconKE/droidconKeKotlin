@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 DroidconKE
+ * Copyright 2022 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,35 @@
 package com.android254.presentation.speakers
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
+import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Clock
 
 sealed interface SpeakerDetailsScreenUiState {
     object Loading : SpeakerDetailsScreenUiState
 
     data class Success(
         val speaker: SpeakerUI,
+        val sessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
     ) : SpeakerDetailsScreenUiState
 
     data class Error(
@@ -48,15 +61,52 @@ class SpeakerDetailsScreenViewModel
     @Inject
     constructor(
         private val speakersRepo: SpeakersRepo,
+        private val sessionsRepo: SessionsRepo,
+        private val clock: Clock,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow<SpeakerDetailsScreenUiState>(SpeakerDetailsScreenUiState.Loading)
         val uiState = _uiState.asStateFlow()
 
         suspend fun getSpeakerByName(name: String) {
-            speakersRepo.getSpeakerByName(name).flowOn(ioDispatcher).collect { speaker ->
-                _uiState.value = SpeakerDetailsScreenUiState.Success(speaker.toPresentation())
+            combine(
+                speakersRepo.getSpeakerByName(name),
+                sessionsRepo.fetchSessions(),
+            ) { speaker, sessions ->
+                SpeakerDetailsScreenUiState.Success(
+                    speaker = speaker.toPresentation(),
+                    sessions = sessions.sessionsFor(speaker),
+                )
+            }.flowOn(ioDispatcher)
+                .catch {
+                    _uiState.value = SpeakerDetailsScreenUiState.Error(message = "An unexpected error occurred")
+                }.collect { _uiState.value = it }
+        }
+
+        fun onBookmark(sessionId: String) {
+            val current = _uiState.value
+            if (current !is SpeakerDetailsScreenUiState.Success) return
+            val session = current.sessions.find { it.id == sessionId } ?: return
+            viewModelScope.launch {
+                if (session.isStarred) {
+                    sessionsRepo.unBookmarkSession(session.remoteId)
+                } else {
+                    sessionsRepo.bookmarkSession(session.remoteId)
+                }
             }
+        }
+
+        /**
+         * There is no sessions-by-speaker query, and [Speaker] carries no id, so the only link
+         * available is the speaker list each [Session] already embeds — matched on name.
+         */
+        private fun List<Session>.sessionsFor(speaker: Speaker): ImmutableList<SessionPresentationModel> {
+            val now = clock.now()
+            return this
+                .filter { session -> session.speakers.any { it.name.equals(speaker.name, ignoreCase = true) } }
+                .distinctBy { it.remoteId }
+                .map { it.toPresentationModel(now) }
+                .toImmutableList()
         }
 
         private fun Speaker.toPresentation() =
