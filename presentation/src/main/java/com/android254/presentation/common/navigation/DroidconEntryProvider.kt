@@ -106,6 +106,9 @@ fun droidconEntryProvider(
                 SpeakerDetailsRoute(
                     name = speakerName,
                     navigateBack = { navController.navigateUp() },
+                    navigateToSessionDetails = { sessionId ->
+                        navController.navigate(Screens.SessionDetails(sessionId))
+                    },
                 )
             }
         }
