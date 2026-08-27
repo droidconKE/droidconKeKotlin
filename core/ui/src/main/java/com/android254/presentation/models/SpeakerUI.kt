@@ -22,6 +22,7 @@ data class SpeakerUI(
     val tagline: String? = "",
     val bio: String? = "bio",
     val twitterHandle: String? = "TwitterHandle",
+    val isSpeakingNow: Boolean = false,
 )
 
 val speakersDummyData =

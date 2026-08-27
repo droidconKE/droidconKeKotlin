@@ -18,7 +18,10 @@ package com.android254.presentation.speakers.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
@@ -73,7 +76,123 @@ class SpeakersScreenTest {
             onNodeWithContentDescription("Speaker headshot").assertIsDisplayed()
             onNodeWithText("John Doe").assertIsDisplayed()
             onNodeWithText("kenya partner lead", substring = true, ignoreCase = true).assertIsDisplayed()
-            onNodeWithText("SESSION").assertIsDisplayed()
+            onNodeWithContentDescription("Search speakers").assertIsDisplayed()
+            onNodeWithTag("speakingNowBadge").assertDoesNotExist()
+        }
+    }
+
+    private fun speakers() =
+        listOf(
+            Speaker(
+                name = "John Doe",
+                tagline = "kenya partner lead",
+                biography = "Android engineer who loves Compose",
+            ),
+            Speaker(
+                name = "Jane Smith",
+                tagline = "GDE Android",
+                biography = "Works on Kotlin Multiplatform",
+            ),
+        )
+
+    private fun viewModelWith(speakers: List<Speaker>): SpeakersScreenViewModel {
+        every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
+        coEvery { mockSyncDataWorkManager.startSync() } just runs
+        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(speakers)
+        return SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager, testDispatcher)
+    }
+
+    @Test
+    fun `should filter speakers by name`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithContentDescription("Search speakers").performClick()
+            onNodeWithTag("searchField").performTextInput("jane")
+
+            onNodeWithText("Jane Smith").assertIsDisplayed()
+            onNodeWithText("John Doe").assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun `should filter speakers by biography`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithContentDescription("Search speakers").performClick()
+            onNodeWithTag("searchField").performTextInput("multiplatform")
+
+            onNodeWithText("Jane Smith").assertIsDisplayed()
+            onNodeWithText("John Doe").assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun `should filter speakers by tagline`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithContentDescription("Search speakers").performClick()
+            onNodeWithTag("searchField").performTextInput("partner lead")
+
+            onNodeWithText("John Doe").assertIsDisplayed()
+            onNodeWithText("Jane Smith").assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun `should show empty state when nothing matches`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithContentDescription("Search speakers").performClick()
+            onNodeWithTag("searchField").performTextInput("nobody here")
+
+            onNodeWithTag("emptySearchResults").assertIsDisplayed()
+            onNodeWithText("John Doe").assertDoesNotExist()
+            onNodeWithText("Jane Smith").assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun `should restore full list when search is cleared`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithContentDescription("Search speakers").performClick()
+            onNodeWithTag("searchField").performTextInput("jane")
+            onNodeWithText("John Doe").assertDoesNotExist()
+
+            onNodeWithContentDescription("Clear search").performClick()
+
+            onNodeWithText("John Doe").assertIsDisplayed()
+            onNodeWithText("Jane Smith").assertIsDisplayed()
         }
     }
 }

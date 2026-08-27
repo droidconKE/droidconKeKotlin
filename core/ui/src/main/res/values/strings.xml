@@ -22,6 +22,12 @@
     <string name="head_shot">Speaker headshot</string>
     <string name="session_label">Session</string>
     <string name="speakers_label">Speakers</string>
+    <string name="speaking_now_label">Speaking now</string>
+    <string name="search_speakers_icon_description">Search speakers</string>
+    <string name="close_search_icon_description">Close search</string>
+    <string name="clear_search_icon_description">Clear search</string>
+    <string name="search_speakers_hint">Search by name, role or bio</string>
+    <string name="no_speakers_found_label">No speakers match your search</string>
     <string name="home_header_welcome_label">Welcome to the largest Android Focussed Developer community in Africa</string>
     <string name="home_banner_event_poster_description">Event poster</string>
     <string name="home_banner_call_for_speakers_image_description">Call for speakers</string>
