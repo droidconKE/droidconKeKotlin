@@ -19,12 +19,14 @@ import com.android254.domain.models.HomeBanner
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class HomeState(
     val banner: HomeBanner = HomeBanner.None,
-    val speakers: List<SpeakerUI> = emptyList(),
-    val sponsors: List<SponsorPresentationModel> = emptyList(),
-    val organizerLogos: List<String> = emptyList(),
-    val sessions: List<SessionPresentationModel> = emptyList(),
+    val speakers: ImmutableList<SpeakerUI> = persistentListOf(),
+    val sponsors: ImmutableList<SponsorPresentationModel> = persistentListOf(),
+    val organizerLogos: ImmutableList<String> = persistentListOf(),
+    val sessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
     val isSyncing: Boolean = true,
 )
