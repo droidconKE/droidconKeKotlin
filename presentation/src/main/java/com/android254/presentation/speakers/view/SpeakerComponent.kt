@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -41,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.navigation.speakerSharedImage
+import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
@@ -94,18 +95,17 @@ fun SpeakerComponent(
                 contentScale = ContentScale.Crop,
                 modifier =
                     Modifier
-                        .clip(
-                            shape = RoundedCornerShape(8.dp),
-                        ).border(
+                        .height(120.dp)
+                        .width(120.dp)
+                        .speakerSharedImage(speaker.name, RoundedCornerShape(8.dp))
+                        .border(
                             border =
                                 BorderStroke(
                                     2.5.dp,
                                     color = ChaiTeal,
                                 ),
                             shape = RoundedCornerShape(8.dp),
-                        ).height(120.dp)
-                        .width(120.dp)
-                        .constrainAs(image) {
+                        ).constrainAs(image) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
@@ -119,7 +119,8 @@ fun SpeakerComponent(
                             top.linkTo(image.bottom, margin = 16.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                        }.wrapContentHeight(),
+                        }.wrapContentHeight()
+                        .speakerSharedName(speaker.name),
                 bodyText = speaker.name,
                 textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 textAlign = TextAlign.Center,

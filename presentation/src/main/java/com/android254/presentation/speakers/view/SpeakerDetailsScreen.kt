@@ -56,6 +56,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.navigation.speakerSharedImage
+import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.speakersDummyData
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
@@ -165,13 +167,12 @@ private fun SpeakerDetailsScreen(
                     modifier =
                         Modifier
                             .testTag("speaker_image")
-                            .clip(
-                                shape = CircleShape,
-                            ).border(
+                            .size(105.dp)
+                            .speakerSharedImage(speaker.name, CircleShape)
+                            .border(
                                 BorderStroke(2.dp, color = ChaiTeal),
                                 shape = CircleShape,
-                            ).size(105.dp)
-                            .constrainAs(speakerImage) {
+                            ).constrainAs(speakerImage) {
                                 top.linkTo(topBar.bottom)
                                 bottom.linkTo(topBar.bottom)
                                 start.linkTo(parent.start)
@@ -202,7 +203,8 @@ private fun SpeakerDetailsScreen(
                         modifier =
                             Modifier
                                 .testTag("speaker_name")
-                                .align(Alignment.CenterHorizontally),
+                                .align(Alignment.CenterHorizontally)
+                                .speakerSharedName(speaker.name),
                         titleText = speaker.name,
                         titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                     )

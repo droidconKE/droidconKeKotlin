@@ -25,10 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.android254.presentation.common.navigation.speakerSharedImage
+import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
@@ -58,27 +57,22 @@ fun HomeSpeakerComponent(
     ) {
         val (headShot, speakerName) = createRefs()
         AsyncImage(
-            model =
-                ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(speaker.imageUrl)
-                    .build(),
+            model = speaker.imageUrl,
             placeholder = painterResource(R.drawable.smiling),
             contentDescription = stringResource(R.string.head_shot),
             contentScale = ContentScale.Crop,
             modifier =
                 Modifier
-                    .clip(
-                        shape = RoundedCornerShape(12.dp),
-                    ).border(
+                    .size(85.dp)
+                    .speakerSharedImage(speaker.name, RoundedCornerShape(12.dp))
+                    .border(
                         border =
                             BorderStroke(
                                 2.dp,
                                 color = colorResource(id = R.color.cyan),
                             ),
                         shape = RoundedCornerShape(12.dp),
-                    ).size(85.dp)
-                    .constrainAs(headShot) {
+                    ).constrainAs(headShot) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -86,11 +80,12 @@ fun HomeSpeakerComponent(
         )
         ChaiBodyXSmallBold(
             modifier =
-                Modifier.constrainAs(speakerName) {
-                    top.linkTo(headShot.bottom, 10.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
+                Modifier
+                    .constrainAs(speakerName) {
+                        top.linkTo(headShot.bottom, 10.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }.speakerSharedName(speaker.name),
             bodyText = speaker.name,
             textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
             textAlign = TextAlign.Center,
