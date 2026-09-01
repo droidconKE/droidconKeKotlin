@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
@@ -35,7 +36,10 @@ fun SessionTitleAndDescription(
 ) {
     Column(modifier = modifier) {
         ChaiBodyLargeBold(
-            modifier = Modifier.testTag(TestTag.SESSION_TITLE),
+            modifier =
+                Modifier
+                    .testTag(TestTag.SESSION_TITLE)
+                    .sessionSharedTitle(sessionDetails.id),
             bodyText = sessionDetails.title,
             textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
         )

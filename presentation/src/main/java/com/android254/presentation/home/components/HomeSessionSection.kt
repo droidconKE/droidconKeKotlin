@@ -17,27 +17,28 @@ package com.android254.presentation.home.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.android254.presentation.common.navigation.sessionSharedImage
+import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
@@ -85,22 +86,22 @@ fun HomeSessionContent(
         modifier =
             modifier
                 .width(140.dp)
-                .height(intrinsicSize = IntrinsicSize.Max),
+                .wrapContentHeight(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
         onClick = { onSessionClick(session.id) },
     ) {
         AsyncImage(
-            model =
-                ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(if (session.isService) R.drawable.all else session.sessionImage)
-                    .build(),
+            model = if (session.isService) R.drawable.all else session.sessionImage,
             placeholder = painterResource(R.drawable.all),
             contentDescription = stringResource(id = R.string.session_image),
             modifier =
                 Modifier
                     .height(140.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .sessionSharedImage(
+                        session.id,
+                        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                    ),
             contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(8.dp))
@@ -113,6 +114,7 @@ fun HomeSessionContent(
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             ChaiBodySmallBold(
+                modifier = Modifier.sessionSharedTitle(session.id),
                 bodyText = session.title,
                 textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                 maxLines = 2,
