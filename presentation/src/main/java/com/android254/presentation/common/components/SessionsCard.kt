@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
@@ -204,7 +205,10 @@ fun SessionTitleComponent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ChaiSubTitle(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .sessionSharedTitle(session.id),
             titleText = session.title,
             titleColor = MaterialTheme.chaiColorsPalette.textBoldColor,
         )

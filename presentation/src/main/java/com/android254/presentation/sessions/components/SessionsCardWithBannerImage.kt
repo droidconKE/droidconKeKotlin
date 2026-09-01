@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
@@ -49,6 +50,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.TimeAndVenueComponent
+import com.android254.presentation.common.navigation.sessionSharedImage
+import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
@@ -87,7 +90,11 @@ fun SessionsCardWithBannerImage(
             modifier =
                 Modifier
                     .height(140.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .sessionSharedImage(
+                        session.id,
+                        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                    ),
             contentScale = ContentScale.Crop,
         )
         Spacer(Modifier.height(8.dp))
@@ -104,6 +111,7 @@ fun SessionsCardWithBannerImage(
             Spacer(Modifier.height(12.dp))
 
             ChaiBodySmallBold(
+                modifier = Modifier.sessionSharedTitle(session.id),
                 bodyText = session.title,
                 textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
             )
