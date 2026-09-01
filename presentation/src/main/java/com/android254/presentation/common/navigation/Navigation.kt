@@ -15,7 +15,9 @@
  */
 package com.android254.presentation.common.navigation
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.navigation3.runtime.NavEntry
@@ -48,12 +50,19 @@ fun Navigation(
             else -> zoomOutTransition()
         }
 
-    NavDisplay(
-        modifier = modifier.testTag("navigation_display"),
-        entries = navigationState.toEntries(entryProvider),
-        transitionSpec = { transitionSpec },
-        popTransitionSpec = { backTransitionSpec },
-        predictivePopTransitionSpec = { backTransitionSpec },
-        onBack = navController::goBack,
-    )
+    SharedTransitionLayout(modifier = modifier) {
+        // Shared elements only animate when drilling to or from a detail (INNER); switching
+        // top-level tabs (LEFT/RIGHT) must not fly cards that appear on both tabs.
+        val sharedScope = if (navigationState.lastDirection == NavDirection.INNER) this else null
+        CompositionLocalProvider(LocalSharedTransitionScope provides sharedScope) {
+            NavDisplay(
+                modifier = Modifier.testTag("navigation_display"),
+                entries = navigationState.toEntries(entryProvider),
+                transitionSpec = { transitionSpec },
+                popTransitionSpec = { backTransitionSpec },
+                predictivePopTransitionSpec = { backTransitionSpec },
+                onBack = navController::goBack,
+            )
+        }
+    }
 }
