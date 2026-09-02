@@ -27,7 +27,10 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 
 // Null unless a composable is hosted by the SharedTransitionLayout that wraps NavDisplay
 // (so a preview, a test, or a ComposeView outside navigation makes the modifiers below no-op
-// instead of crashing on the LocalNavAnimatedContentScope read).
+// instead of crashing on the LocalNavAnimatedContentScope read). Passing the scope this way
+// mirrors how Nav3 delivers LocalNavAnimatedContentScope, rather than threading it through
+// every screen signature.
+@Suppress("ComposeCompositionLocalUsage")
 internal val LocalSharedTransitionScope: ProvidableCompositionLocal<SharedTransitionScope?> =
     compositionLocalOf { null }
 

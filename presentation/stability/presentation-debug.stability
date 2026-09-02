@@ -366,6 +366,59 @@ private fun com.android254.presentation.common.navigation.sessionModel(key: com.
     - viewModel: RUNTIME (requires runtime check)
 
 @Composable
+public fun com.android254.presentation.common.navigation.sessionSharedImage(sessionId: kotlin.String, shape: androidx.compose.ui.graphics.Shape): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - sessionId: STABLE (String is immutable)
+    - shape: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.navigation.sessionSharedTitle(sessionId: kotlin.String): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - sessionId: STABLE (String is immutable)
+
+@Composable
+private fun com.android254.presentation.common.navigation.sharedBoundsIfHosted(key: kotlin.String, shape: androidx.compose.ui.graphics.Shape): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - key: STABLE (String is immutable)
+    - shape: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.common.navigation.sharedImage(key: kotlin.String, shape: androidx.compose.ui.graphics.Shape): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - key: STABLE (String is immutable)
+    - shape: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.common.navigation.sharedText(key: kotlin.String): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - key: STABLE (String is immutable)
+
+@Composable
+public fun com.android254.presentation.common.navigation.speakerSharedImage(speakerName: kotlin.String, shape: androidx.compose.ui.graphics.Shape): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - speakerName: STABLE (String is immutable)
+    - shape: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.navigation.speakerSharedName(speakerName: kotlin.String): androidx.compose.ui.Modifier
+  skippable: false
+  restartable: false
+  params:
+    - speakerName: STABLE (String is immutable)
+
+@Composable
 public fun com.android254.presentation.common.navigation.toEntries(entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
   skippable: false
   restartable: false
@@ -756,7 +809,7 @@ public fun com.android254.presentation.sessions.components.LoadingTimeHeader(): 
   params:
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlinx.collections.immutable.ImmutableMap<kotlin.String, kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
