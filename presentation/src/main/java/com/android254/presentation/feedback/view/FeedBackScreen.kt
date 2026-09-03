@@ -150,7 +150,7 @@ internal fun FeedBackScreen(
                     },
                     scrollBehavior = scrollBehavior,
                     colors =
-                        TopAppBarDefaults.largeTopAppBarColors(
+                        TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
                             titleContentColor = ChaiWhite,
                             navigationIconContentColor = ChaiWhite,

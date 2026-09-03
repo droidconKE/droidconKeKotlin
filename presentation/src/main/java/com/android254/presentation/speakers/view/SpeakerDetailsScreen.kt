@@ -52,7 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -285,7 +285,7 @@ internal fun SpeakerDetailsScreen(
                                 ).clip(RoundedCornerShape(10.dp)),
                         onClick = {
                             if (speaker.twitterHandle != null) {
-                                uriHandler.openUri(speaker.twitterHandle.toString())
+                                uriHandler.openUri(speaker.twitterHandle)
                             }
                         },
                         colors =
@@ -307,7 +307,6 @@ internal fun SpeakerDetailsScreen(
                             bodyText =
                                 if (speaker.twitterHandle != null) {
                                     speaker.twitterHandle
-                                        .toString()
                                         .replace("https://twitter.com/", "")
                                 } else {
                                     ""

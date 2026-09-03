@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feed.view.toPresentation
@@ -43,10 +44,10 @@ class FeedViewModel
         val uiState =
             feedRepo
                 .fetchFeed()
-                .map { feeds ->
+                .map<List<Feed>, FeedUIState> { feeds ->
                     FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
-                }.onStart { FeedUIState.Loading }
-                .catch { FeedUIState.Error(message = "An unexpected error occurred") }
+                }.onStart { emit(FeedUIState.Loading) }
+                .catch { emit(FeedUIState.Error(message = "An unexpected error occurred")) }
                 .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,

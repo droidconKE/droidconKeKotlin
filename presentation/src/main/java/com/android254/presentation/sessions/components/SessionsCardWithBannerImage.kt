@@ -46,7 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.TimeAndVenueComponent
@@ -145,20 +145,18 @@ fun SpeakerDetailsAndLikeButtonComponent(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         speakers.forEach { speaker ->
-            speaker.speakerImage?.let {
-                AsyncImage(
-                    model = it,
-                    contentDescription = "session speaker image",
-                    modifier =
-                        Modifier
-                            .size(32.dp)
-                            .border(
-                                width = 1.dp,
-                                color = ChaiTeal,
-                                shape = CircleShape,
-                            ).clip(CircleShape),
-                )
-            }
+            AsyncImage(
+                model = speaker.speakerImage,
+                contentDescription = "session speaker image",
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .border(
+                            width = 1.dp,
+                            color = ChaiTeal,
+                            shape = CircleShape,
+                        ).clip(CircleShape),
+            )
             Spacer(modifier = Modifier.width(8.dp))
         }
 

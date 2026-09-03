@@ -71,8 +71,8 @@ class SessionDetailsViewModel
                     } else {
                         SessionDetailsUiState.Success(it.toSessionDetailsPresentationModal())
                     }
-                }.onStart { SessionDetailsUiState.Loading }
-                .catch { SessionDetailsUiState.Error(message = "An unexpected error occurred") }
+                }.onStart { emit(SessionDetailsUiState.Loading) }
+                .catch { emit(SessionDetailsUiState.Error(message = "An unexpected error occurred")) }
                 .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
