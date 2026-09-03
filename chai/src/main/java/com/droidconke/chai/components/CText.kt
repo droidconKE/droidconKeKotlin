@@ -20,50 +20,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
-import com.droidconke.chai.atoms.MontserratBold
-import com.droidconke.chai.atoms.MontserratLight
-import com.droidconke.chai.atoms.MontserratMedium
-import com.droidconke.chai.atoms.MontserratRegular
-import com.droidconke.chai.atoms.MontserratSemiBold
-import com.droidconke.chai.chaiColorsPalette
 
 /**
- * CText:
- * Typography( From  is the art of arranging letters and text in a way that makes the copy legible,
- * clear, and visually appealing to the reader.
- * It involves font style, appearance, and structure, which aims to elicit certain emotions and convey specific messages.
- * In short, typography is what brings the text to life.
+ * chai's text scale, as thin wrappers over the roles in `MaterialTheme.typography`.
  *
- * This is a shorter approach where our theme will not require a specific font BUT will use CText as a file to construct
- * our text. this is a shorter approach for making a Design system type. For a longer version see this repo:
- * [KahawaLove](https://github.com/tamzi/KahawaLove)
+ * Every style comes from the theme rather than being rebuilt per call site. That is what fixes
+ * the accessibility defect these carried: each one used to pair an `sp` font size with a
+ * hardcoded `sp` line height, so the ratio was fixed by hand instead of coming from Material's
+ * tested metrics, and any container with a `dp` height clipped the text as it grew.
  *
- * */
-
+ * A `Color.Unspecified` default means the text inherits its colour from whatever drew it — a
+ * Button's `contentColor`, a Surface's `contentColorFor`. Passing an explicit colour still wins.
+ */
 @Composable
 fun ChaiTitle(
     titleText: String,
     modifier: Modifier = Modifier,
     titleColor: Color = Color.Unspecified,
-) {
-    Text(
-        modifier = modifier,
-        text = titleText,
-        style =
-            TextStyle(
-                color = titleColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = MontserratBold,
-            ),
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = titleText,
+    modifier = modifier,
+    color = titleColor,
+    style = MaterialTheme.typography.titleLarge,
+    textAlign = TextAlign.Start,
+)
 
 @Composable
 fun ChaiSubTitle(
@@ -71,21 +54,13 @@ fun ChaiSubTitle(
     modifier: Modifier = Modifier,
     titleColor: Color = Color.Unspecified,
     textAlign: TextAlign? = TextAlign.Start,
-) {
-    Text(
-        modifier = modifier,
-        text = titleText,
-        style =
-            TextStyle(
-                color = titleColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = MontserratBold,
-                lineHeight = 22.sp,
-            ),
-        textAlign = textAlign,
-    )
-}
+) = Text(
+    text = titleText,
+    modifier = modifier,
+    color = titleColor,
+    style = MaterialTheme.typography.titleMedium,
+    textAlign = textAlign,
+)
 
 @Composable
 fun ChaiBodyXSmallBold(
@@ -93,21 +68,13 @@ fun ChaiBodyXSmallBold(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign? = TextAlign.Start,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W500,
-                fontFamily = MontserratMedium,
-                lineHeight = 16.sp,
-            ),
-        textAlign = textAlign,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+    textAlign = textAlign,
+)
 
 @Composable
 fun ChaiBodyXSmall(
@@ -115,23 +82,15 @@ fun ChaiBodyXSmall(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 16.sp,
-            ),
-        textAlign = TextAlign.Start,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelMedium,
+    textAlign = TextAlign.Start,
+    maxLines = maxLines,
+    overflow = TextOverflow.Ellipsis,
+)
 
 @Composable
 fun ChaiBodySmallBold(
@@ -139,22 +98,14 @@ fun ChaiBodySmallBold(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = MontserratBold,
-                lineHeight = 20.sp,
-            ),
-        textAlign = TextAlign.Start,
-        maxLines = maxLines,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+    textAlign = TextAlign.Start,
+    maxLines = maxLines,
+)
 
 @Composable
 fun ChaiBodySmall(
@@ -164,24 +115,16 @@ fun ChaiBodySmall(
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 20.sp,
-            ),
-        textAlign = textAlign,
-        maxLines = maxLines,
-        minLines = minLines,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodySmall,
+    textAlign = textAlign,
+    maxLines = maxLines,
+    minLines = minLines,
+    overflow = TextOverflow.Ellipsis,
+)
 
 @Composable
 fun ChaiBodyMediumBold(
@@ -190,23 +133,15 @@ fun ChaiBodyMediumBold(
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = MontserratSemiBold,
-                lineHeight = 20.sp,
-            ),
-        textAlign = textAlign,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+    textAlign = textAlign,
+    maxLines = maxLines,
+    overflow = TextOverflow.Ellipsis,
+)
 
 @Composable
 fun ChaiBodyMedium(
@@ -214,23 +149,15 @@ fun ChaiBodyMedium(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 20.sp,
-            ),
-        textAlign = TextAlign.Start,
-        maxLines = maxLines,
-        overflow = TextOverflow.Ellipsis,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodyMedium,
+    textAlign = TextAlign.Start,
+    maxLines = maxLines,
+    overflow = TextOverflow.Ellipsis,
+)
 
 @Composable
 fun ChaiBodyLargeBold(
@@ -239,87 +166,55 @@ fun ChaiBodyLargeBold(
     textColor: Color = Color.Unspecified,
     maxLines: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = MontserratSemiBold,
-                lineHeight = 22.sp,
-            ),
-        maxLines = maxLines,
-        overflow = overflow,
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+    textAlign = TextAlign.Start,
+    maxLines = maxLines,
+    overflow = overflow,
+)
 
 @Composable
 fun ChaiBodyLarge(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 22.sp,
-            ),
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.bodyLarge,
+    textAlign = TextAlign.Start,
+)
 
 @Composable
 fun ChaiTextButtonLight(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText.uppercase(),
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.W300,
-                fontFamily = MontserratLight,
-                lineHeight = 16.sp,
-            ),
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = bodyText.uppercase(),
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Light),
+    textAlign = TextAlign.Start,
+)
 
 @Composable
 fun CPrimaryButtonText(
     text: String,
     modifier: Modifier = Modifier,
     textAllCaps: Boolean = false,
-    textColor: Color = MaterialTheme.chaiColorsPalette.textButtonColor,
-) {
-    Text(
-        modifier = modifier,
-        text = if (textAllCaps) text.uppercase() else text,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = MontserratSemiBold,
-                lineHeight = 22.sp,
-            ),
-        textAlign = TextAlign.Center,
-    )
-}
+    textColor: Color = Color.Unspecified,
+) = Text(
+    text = if (textAllCaps) text.uppercase() else text,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelLarge,
+    textAlign = TextAlign.Center,
+)
 
 @Composable
 fun ChaiTextLabelLarge(
@@ -327,60 +222,36 @@ fun ChaiTextLabelLarge(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign = TextAlign.Start,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 16.sp,
-            ),
-        textAlign = textAlign,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelSmall,
+    textAlign = textAlign,
+)
 
 @Composable
 fun ChaiTextLabelMedium(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = MontserratRegular,
-                lineHeight = 14.sp,
-            ),
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelSmall,
+    textAlign = TextAlign.Start,
+)
 
 @Composable
 fun ChaiTextLabelSmall(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
-) {
-    Text(
-        modifier = modifier,
-        text = bodyText,
-        style =
-            TextStyle(
-                color = textColor,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.W300,
-                fontFamily = MontserratLight,
-                lineHeight = 14.sp,
-            ),
-        textAlign = TextAlign.Start,
-    )
-}
+) = Text(
+    text = bodyText,
+    modifier = modifier,
+    color = textColor,
+    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Light),
+    textAlign = TextAlign.Start,
+)

@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.utils.Alpha.AlphaDisabled
 import com.droidconke.chai.utils.CShapes
 import com.droidconke.chai.utils.SeparatorSpace
 
@@ -80,15 +79,19 @@ fun CPrimaryButton(
     title: String,
     modifier: Modifier = Modifier,
 ) {
+    // Disabled colours are left to ButtonDefaults: its onSurface-based pair keeps a readable
+    // contrast ratio, which tinting the accent colour does not.
+    val colors =
+        ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        )
+
     CButton(
         onClick = onClick,
         isEnabled = isEnabled,
         modifier = modifier,
-        colors =
-            ButtonDefaults.buttonColors(
-                contentColor = MaterialTheme.colorScheme.primary,
-                disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaDisabled),
-            ),
+        colors = colors,
         shape = CShapes.extraLarge,
         content = {
             CPrimaryButtonText(text = title, textAllCaps = true)
@@ -107,7 +110,11 @@ fun COutlinedPrimaryButton(
         onClick = onClick,
         modifier = modifier,
         shape = CShapes.extraLarge,
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
+            ),
     ) {
         Icon(imageVector = icon, contentDescription = "", modifier = Modifier.padding(5.dp))
         SeparatorSpace()

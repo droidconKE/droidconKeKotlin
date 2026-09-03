@@ -24,6 +24,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
+import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -52,10 +53,12 @@ class SpeakerDetailsScreenTest {
 
         val viewModel = SpeakerDetailsScreenViewModel(speakersRepo = speakersRepo, ioDispatcher = testDispatcher)
         composeTestRule.setContent {
-            SpeakerDetailsRoute(
-                name = "Harun Wangereka",
-                speakersDetailsScreenViewModel = viewModel,
-            )
+            ChaiTheme {
+                SpeakerDetailsRoute(
+                    name = "Harun Wangereka",
+                    speakersDetailsScreenViewModel = viewModel,
+                )
+            }
         }
 
         with(composeTestRule) {

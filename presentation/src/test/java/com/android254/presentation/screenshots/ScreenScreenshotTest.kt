@@ -18,6 +18,7 @@ package com.android254.presentation.screenshots
 import com.android254.presentation.about.view.AboutScreen
 import com.android254.presentation.about.view.AboutScreenUiState
 import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feedback.view.FeedBackScreen
@@ -71,6 +72,7 @@ class ScreenScreenshotTest : ChaiScreenshotTest() {
                 sessionsUiState =
                     SessionsUiState(
                         sessions = persistentMapOf("09:00 AM" to fakeSessions),
+                        sessionStatus = ResultStatus.Success,
                     ),
                 selectedEventDate = EventDate("1", day = 1),
                 isRefreshing = false,
