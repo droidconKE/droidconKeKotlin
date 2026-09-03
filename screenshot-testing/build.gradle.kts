@@ -31,6 +31,8 @@ dependencies {
     api(libs.compose.ui.test.junit)
     api(libs.test.androidx.core)
     api(libs.junit4)
+    api(libs.coil.test)
+    api(libs.coil.compose)
 
     implementation(projects.chai)
 }

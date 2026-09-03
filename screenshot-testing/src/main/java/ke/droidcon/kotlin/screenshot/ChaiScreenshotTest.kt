@@ -15,6 +15,7 @@
  */
 package ke.droidcon.kotlin.screenshot
 
+import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,10 +33,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
+import androidx.test.core.app.ApplicationProvider
+import coil.Coil
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
+import coil.test.FakeImageLoaderEngine
 import com.droidconke.chai.ChaiTheme
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
+import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -54,6 +61,28 @@ import org.robolectric.annotation.GraphicsMode
 abstract class ChaiScreenshotTest {
     @get:Rule
     val composeRule = createComposeRule()
+
+    /**
+     * Every remote image resolves to the same flat colour.
+     *
+     * Without this, Coil races the capture: a speaker avatar that had loaded on one run and
+     * not on the next made `speakers/light_font_200` alternate between two goldens.
+     */
+    @OptIn(ExperimentalCoilApi::class)
+    @Before
+    fun installDeterministicImageLoader() {
+        val engine =
+            FakeImageLoaderEngine
+                .Builder()
+                .default(ColorDrawable(PLACEHOLDER_IMAGE_COLOR))
+                .build()
+        Coil.setImageLoader(
+            ImageLoader
+                .Builder(ApplicationProvider.getApplicationContext<android.content.Context>())
+                .components { add(engine) }
+                .build(),
+        )
+    }
 
     /** Tight bounds around a single component. */
     protected fun captureComponent(
@@ -126,5 +155,6 @@ abstract class ChaiScreenshotTest {
     private companion object {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
         const val CHANGE_THRESHOLD = 0.001f
+        const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
     }
 }

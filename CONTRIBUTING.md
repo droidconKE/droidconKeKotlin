@@ -23,6 +23,15 @@
         * Work on the Design and ViewModel if its UI implementation ticket
     * If you are working on the data layer work on the data layer only.
 
+## Before you start — use Android Studio
+
+This project builds with **AGP 9**, which **IntelliJ IDEA does not support**. Open it in
+Android Studio; IDEA will fail to sync the Gradle project regardless of the bundled Android
+plugin version.
+
+The command line needs nothing extra: `gradle/gradle-daemon-jvm.properties` pins the daemon's
+JDK and the foojay resolver provisions it, so `./gradlew` works without a local JDK install.
+
 ## Naming conventions
 
 - All Compose navigation Destination components must be suffixed with `Screen` ie. `HomeScreen`
