@@ -1,8 +1,27 @@
 # droidconKE Android — Modernization & Product Plan
 
 > **Status:** Draft for review · **Author:** Staff engineering review · **Date:** 2026-08-13
-> **Repo:** `droidconKeKotlin` · **Branch:** `main` @ `7a8317c`
+> **Repo:** `droidconKeKotlin` · **Branch:** `main` @ `654c374`
 > **Scope:** Full-stack app review — tech debt, modern Android practices, intelligent (AI) experiences, adaptive UI, ticketing, performance, testing, notifications, UX, new product surfaces, and store presence.
+
+---
+
+## Next up — §4 Phase 1, adaptive & large-screen support
+
+**§4 is the next substantial piece of work.** Breakpoints, adaptive navigation, list-detail
+for sessions and speakers, foldable postures, and pointer/keyboard input. It is the largest
+remaining item and wants its own branch — it is navigation rework plus two feature-area
+rewrites, not a bundle-with-other-things change.
+
+It is queued behind the Phase 0 remainder, which is in flight: **§3.5** (chai and Material 3)
+and **§3.7** (Credential Manager), plus Roborazzi baselines from §10.2 landed ahead of §3.5 so
+its colour and elevation changes are reviewable rather than assumed.
+
+Also still open in **§3.9**: B1–B16 closed by tests rather than code changes alone, an APK size
+baseline recorded in §9.4, and the `CONTRIBUTING.md` note about Android Studio being required.
+
+Landed so far: §3.1, §3.2, §3.3, §3.4, §3.6, §3.8, the static-analysis sweep, and the Compose
+lint debt (PRs #375, #376).
 
 ---
 

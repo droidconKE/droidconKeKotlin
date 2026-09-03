@@ -106,4 +106,29 @@ class FeedScreenTest {
         composeTestRule.onNodeWithTag("share_button").performClick()
         composeTestRule.onNodeWithTag("share_bottom_sheet").assertIsDisplayed()
     }
+
+    /**
+     * Two feed items with the same url used to crash the LazyColumn with "Key was already
+     * used" — url is not the identity of a feed item, the title is, which is what sync
+     * dedupes on.
+     */
+    @Test
+    fun `renders feed items that share a url`() {
+        coEvery { repo.fetchFeed() } returns
+            flowOf(
+                listOf(
+                    Feed("Call for speakers", "", "", "", "", ""),
+                    Feed("Venue announced", "", "", "", "", ""),
+                ),
+            )
+
+        val viewModel = FeedViewModel(repo, testDispatcher)
+        composeTestRule.setContent {
+            ChaiTheme {
+                FeedRoute(feedViewModel = viewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("feeds_lazy_column").assertIsDisplayed()
+    }
 }

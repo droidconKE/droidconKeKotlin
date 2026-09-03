@@ -20,6 +20,7 @@ plugins {
     alias(libs.plugins.droidconke.android.library.jacoco)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.stability)
+    alias(libs.plugins.droidconke.android.library.roborazzi)
 }
 
 android {

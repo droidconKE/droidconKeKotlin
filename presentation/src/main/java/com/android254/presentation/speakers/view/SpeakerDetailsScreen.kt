@@ -92,7 +92,7 @@ fun SpeakerDetailsRoute(
 }
 
 @Composable
-private fun SpeakerDetailsScreen(
+internal fun SpeakerDetailsScreen(
     uiState: SpeakerDetailsScreenUiState,
     navigateBack: () -> Unit = {},
 ) {

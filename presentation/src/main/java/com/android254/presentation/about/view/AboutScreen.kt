@@ -74,7 +74,7 @@ fun AboutRoute(
 }
 
 @Composable
-private fun AboutScreen(
+internal fun AboutScreen(
     uiState: AboutScreenUiState,
     navigateToFeedbackScreen: () -> Unit = {},
 ) {

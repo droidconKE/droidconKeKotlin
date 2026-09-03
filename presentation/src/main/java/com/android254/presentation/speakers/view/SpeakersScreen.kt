@@ -69,7 +69,7 @@ fun SpeakersRoute(
 }
 
 @Composable
-private fun SpeakersScreen(
+internal fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},

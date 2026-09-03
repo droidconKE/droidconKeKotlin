@@ -85,7 +85,7 @@ fun FeedBackRoute(
 }
 
 @Composable
-private fun FeedBackScreen(
+internal fun FeedBackScreen(
     darkTheme: Boolean,
     navigateBack: () -> Unit = {},
 ) {

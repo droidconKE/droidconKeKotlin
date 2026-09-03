@@ -75,7 +75,7 @@ fun FeedRoute(
 }
 
 @Composable
-private fun FeedScreen(
+internal fun FeedScreen(
     feedUIState: FeedUIState,
     navigateToFeedbackScreen: () -> Unit = {},
 ) {
@@ -154,7 +154,7 @@ private fun FeedScreen(
                         modifier = Modifier.testTag("feeds_lazy_column"),
                     ) {
                         // FeedUI has no id; url is the stable per-post identifier.
-                        items(feedUIState.feeds, key = { it.url }) { feedPresentationModel ->
+                        items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
                             FeedComponent(
                                 feed = feedPresentationModel,
                                 modifier = Modifier.fillMaxWidth(),

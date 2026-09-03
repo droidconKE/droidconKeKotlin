@@ -82,7 +82,7 @@ fun SessionDetailsRoute(
 }
 
 @Composable
-private fun SessionDetailsScreen(
+internal fun SessionDetailsScreen(
     uiState: SessionDetailsUiState,
     sessionId: String,
     bookmarkSession: (String) -> Unit,
