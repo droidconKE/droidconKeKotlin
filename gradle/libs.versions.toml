@@ -42,7 +42,8 @@ activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
 constraintlayout = "1.1.2"
-auth = "21.6.0"
+credentials = "1.6.0"
+googleid = "1.2.0"
 lottie = "6.7.1"
 datastore = "1.2.1"
 timber = "5.0.1"
@@ -113,7 +114,9 @@ kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutines-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "coroutines_datetime"}
 kotlin-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
-gms-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "auth"}
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }

@@ -16,8 +16,7 @@
 package com.android254.presentation.auth.view
 
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -55,20 +54,10 @@ fun AuthDialog(
     viewModel: (() -> AuthViewModel)? = null,
 ) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
+    val signInFailedMessage = stringResource(id = R.string.google_sign_in_failed)
     var loading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val googleSignInLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
-            coroutineScope.launch {
-                if (viewModel?.invoke()?.submitGoogleToken(result.data) == true) {
-                    loading = false
-                    onDismiss()
-                } else {
-                    loading = false
-                    Toast.makeText(context, "Google sign in failed.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
 
     AlertDialog(
         modifier = Modifier,
@@ -99,9 +88,21 @@ fun AuthDialog(
                             .width(288.dp)
                             .testTag("google_button"),
                     onClick = {
-                        viewModel?.invoke()?.let {
+                        val authViewModel = viewModel?.invoke()
+                        // Credential Manager needs an Activity to host its sheet.
+                        if (authViewModel != null && activity != null) {
                             loading = true
-                            googleSignInLauncher.launch(it.getSignInIntent())
+                            coroutineScope.launch {
+                                val signedIn = authViewModel.signIn(activity)
+                                loading = false
+                                if (signedIn) {
+                                    onDismiss()
+                                } else {
+                                    Toast
+                                        .makeText(context, signInFailedMessage, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
                         }
                     },
                 )
