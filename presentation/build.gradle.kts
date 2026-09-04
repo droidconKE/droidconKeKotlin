@@ -44,7 +44,7 @@ android {
 
 dependencies {
     implementation(projects.domain)
-    implementation(projects.chai)
+    implementation(projects.core.designsystem)
     implementation(projects.datasource.remote)
 
     implementation(libs.android.appCompat)

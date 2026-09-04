@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-    namespace = "ke.droidcon.kotlin.screenshot"
+    namespace = "ke.droidcon.kotlin.core.screenshot"
 }
 
 dependencies {
@@ -33,5 +33,5 @@ dependencies {
     api(libs.coil.test)
     api(libs.coil.compose)
 
-    implementation(projects.chai)
+    implementation(projects.core.designsystem)
 }
