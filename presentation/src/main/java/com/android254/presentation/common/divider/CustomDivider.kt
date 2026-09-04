@@ -20,13 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun CustomDivider(modifier: Modifier = Modifier) {
     HorizontalDivider(
         modifier = modifier,
         thickness = 1.dp,
-        color = MaterialTheme.chaiColorsPalette.surfaces,
+        color = MaterialTheme.colorScheme.outlineVariant,
     )
 }

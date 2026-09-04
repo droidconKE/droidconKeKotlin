@@ -135,16 +135,10 @@ fun SessionsCard(
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (session.format.isNotBlank()) {
-                    SessionTag(
-                        tagText = session.format,
-                        backgroundColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
-                    )
+                    SessionTag(tagText = session.format)
                 }
                 if (session.level.isNotBlank()) {
-                    SessionTag(
-                        tagText = session.level,
-                        backgroundColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
-                    )
+                    SessionTag(tagText = session.level)
                 }
                 if (session.sessionStatus == SessionStatus.Ongoing) {
                     SessionTag(

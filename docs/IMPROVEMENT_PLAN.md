@@ -18,9 +18,9 @@ plus two feature-area rewrites, not a bundle-with-other-things change.
 
 Carried out of Phase 0, smallest first:
 
-- **Two design decisions in §3.5 are still open** — the dark-mode elevation direction and
-  whether headings are accented or neutral. Both are raised with before/after goldens; the code
-  currently preserves today's appearance for both.
+- **Both §3.5 design decisions are settled** (2026-09-04): dark-mode elevation reversed to the
+  M3 direction, and headings accented in both themes. Recorded in §3.5 with the knock-on token
+  moves each required.
 - **`AuthDialog` is unreachable from the UI** — `DroidconAppBar` drops the `onActionClicked` it
   is handed, so the signed-out state has no sign-in affordance. See the note in §3.7.
 - **The `ChaiColors` token migration.** Tier 2 exists and stock components are on-brand, but the
@@ -1513,7 +1513,12 @@ The migration mapping, for the 28 that go away:
 | `radioButtonColors` | `RadioButtonDefaults.colors()` |
 | `loadingStateOnCardsColor` | kept, renamed `loadingShimmerColor` |
 
-> `textTitlePrimaryColor` is the one genuinely awkward mapping: it's `ChaiBlue` in light (an accent) and `ChaiWhite` in dark (plain foreground). That asymmetry is a design question, not a mechanical one — decide whether headings are accented or neutral, then make both themes agree. Don't preserve the inconsistency just because it's what's there.
+> `textTitlePrimaryColor` is the one genuinely awkward mapping: it was `ChaiBlue` in light (an accent) and `ChaiWhite` in dark (plain foreground).
+>
+> **Decided 2026-09-04: headings are accented in both themes.** Dark moves from `ChaiWhite` to
+> `ChaiTeal90` — the accent the nav bar and `textLabelAndHeadings` already used there — so the
+> blue headings that read as droidcon in light have an equivalent in dark rather than flattening
+> to plain foreground.
 
 **Step 3 — one theme entry point that provides all three tiers.**
 
@@ -1748,8 +1753,16 @@ Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a
       role — **not started.** Deliberately deferred: the 38 tokens back ~170 call sites, and
       deprecating them in place would emit ~170 build warnings against this repo's zero-warning
       rule. Migrate feature by feature as §4 and §5 touch them, then delete.
-- [ ] Dark-mode elevation direction decided **with design**, and recorded here — raised with
-      before/after goldens; see the note under step 1
+- [x] Dark-mode elevation direction decided **with design**, and recorded here — **decided
+      2026-09-04: reversed to the M3 direction.** Raised surfaces are now lighter than the
+      background in dark (`surfaces`/`cardsBackground`/`bottomSheetBackgroundColor` →
+      `ChaiSubtleGrey` on a `ChaiGrey90` background), so chai and stock Material finally agree on
+      which way elevation reads. Two knock-ons that the goldens caught and that anyone repeating
+      this should expect: the session tag chips were filled with `cardsBorderColor`, which became
+      the card's own colour and made them vanish — they now take
+      `colorScheme.surfaceContainerHighest`; and `CustomDivider` was drawn in `surfaces`, which
+      became a thick visible bar — it now takes `colorScheme.outlineVariant`, which is the role a
+      divider should have had all along.
 - [x] `CShapes` reaches `MaterialTheme`; corner radii consistent between chai and stock components
 - [ ] §14's contrast test passes for both schemes — §14 not built yet
 - [x] `ChaiTheme` no longer touches `LocalView`, the Activity, or the window (B5)
