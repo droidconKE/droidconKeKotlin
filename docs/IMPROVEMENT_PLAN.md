@@ -12,6 +12,10 @@
 with the Roborazzi baselines from §10.2, which went in first so the colour work was reviewable
 as image diffs rather than argued about.
 
+**Modularisation started 2026-09-04** — `:core:model`, `:core:common`, `:core:designsystem`,
+`:core:ui`, `:core:screenshot` and `:feature:speakers` are out, and `droidconke.android.feature`
+plus the `AGENTS.md` write-up make the next extraction a self-contained task. See §2.
+
 **§4 is next, and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
 sessions and speakers, foldable postures, and pointer/keyboard input. It is navigation rework
 plus two feature-area rewrites, not a bundle-with-other-things change.
@@ -426,11 +430,25 @@ The current 7-module layout has served well, but `presentation` at 120 files is 
 
 **Do not big-bang this.** The migration order that minimises risk:
 
-1. Extract `:core:designsystem` (rename `chai`, keep the artifact) — it has the fewest inbound dependencies.
-2. Split `:core:model` out of `:domain` — pure data, zero risk.
-3. Extract **one** feature (`:feature:speakers`, the smallest at 6 files) end-to-end. Prove the pattern, write it down.
-4. Extract the rest one PR per feature, over months, as features get touched anyway.
+1. ~~Extract `:core:designsystem` (rename `chai`, keep the artifact)~~ — **done 2026-09-04.**
+   Gradle path only; the Kotlin package stays `com.droidconke.chai`. `:screenshot-testing`
+   became `:core:screenshot` at the same time.
+2. ~~Split `:core:model` out of `:domain`~~ — **done.** It is a JVM module, not an Android
+   library, so the no-Android rule is enforced by the build rather than by review.
+3. ~~Extract **one** feature end-to-end~~ — **done: `:feature:speakers`.** Two modules had to
+   come out first, which the original order did not anticipate:
+   - **`:core:ui`** — the models, shared components, navigation primitives and resources that
+     every feature reaches for. Nothing could be extracted before it existed.
+   - **`:core:common`** — the `@IoDispatcher` qualifier, which lived in `:datasource:remote`
+     and is used by five modules. A UI feature cannot depend on the network module to get it.
+4. Extract the rest one PR per feature, over months, as features get touched anyway. The
+   pattern is written up under "Extracting an existing feature" in `AGENTS.md`; `home`,
+   `sessions` and `sessionDetails` are the big three left in `:presentation`.
 5. Rename `:datasource:*` and `:data`/`:domain` to `:core:*` **last** — it's a pure rename and it touches every file, so do it when the tree is otherwise stable.
+
+What stayed in `:presentation` on purpose: `DroidconEntryProvider` and `Navigation`, whose
+`entryProvider` default calls it, plus `BottomNavigationBar`. All three know about every
+feature, so they are the composition root and move to `:app` when the last feature leaves.
 
 Rule: **a feature module never depends on another feature module.** Cross-feature navigation goes through `NavKey`s owned by `:core:ui` (or a thin `:core:navigation`), which is how the current `DroidconEntryProvider` already works — that pattern survives the split intact.
 

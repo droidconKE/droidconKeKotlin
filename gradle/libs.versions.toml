@@ -220,6 +220,7 @@ toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "t
 droidconke-quality = { id = "droidconke.quality" }
 droidconke-android-library = { id = "droidconke.android.library" }
 droidconke-jvm-library = { id = "droidconke.jvm.library" }
+droidconke-android-feature = { id = "droidconke.android.feature" }
 droidconke-android-room = { id = "droidconke.android.room" }
 droidconke-android-hilt = { id = "droidconke.android.hilt" }
 droidconke-android-library-compose = { id = "droidconke.android.library.compose" }

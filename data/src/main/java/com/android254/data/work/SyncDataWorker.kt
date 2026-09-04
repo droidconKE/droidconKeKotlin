@@ -29,8 +29,8 @@ import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.data.R
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async

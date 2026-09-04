@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
     implementation(libs.datastore)

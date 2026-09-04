@@ -22,8 +22,8 @@ import com.android254.data.util.sync
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.sync.Synchronizer
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.source.LocalFeedDataSource
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

@@ -51,28 +51,68 @@ foojay resolver provisions it.
 
 ```
 app                  Application, MainActivity host, manifest, DI graph root
-presentation         All Compose UI, ViewModels, navigation
-chai                 Design system: colours, typography, shared components
-domain               Pure Kotlin — models and repository interfaces. No Android dependency.
+
+core:model           Pure Kotlin data classes. A JVM module — no Android on its classpath.
+core:common          Dispatcher qualifiers and other cross-cutting plumbing
+core:designsystem    chai: colours, typography, shapes, shared components
+core:ui              Presentation models, shared composables, navigation primitives, resources
+core:screenshot      Roborazzi harness. Test-only — consumed via testImplementation
+
+feature:speakers     A feature: its screens, view models, tests and goldens
+
+domain               Repository interfaces and sync contracts
 data                 Repository implementations, sync, mappers
 datasource:local     Room database, DAOs, entities
 datasource:remote    Ktor client, DTOs, Remote Config
+presentation         The features not yet extracted, plus the composition root
 build-logic          Convention plugins
 ```
 
-**Dependency rule:** `domain` depends on nothing. `data` depends on `domain`, never the
-reverse. `presentation` does not reach into `datasource:local`. Keep `domain` free of
-Android imports — it is the module that would move first if this ever becomes
-multiplatform.
+**Dependency rules**, in the order they matter:
 
-Add a module by applying the convention plugins, not by copying a `build.gradle.kts`:
+- **A feature module never depends on another feature module.** Anything two features need
+  belongs in `core:ui`. Cross-feature navigation goes through the `NavKey`s in `core:ui`.
+- **Nothing depends on `presentation`** except `app`. It is a holding pen for the features not
+  yet extracted; it shrinks with every extraction and eventually becomes the composition root
+  in `app`.
+- `core:model` has no Android dependency and the build enforces it — it is a JVM module, so an
+  Android import will not compile.
+- `data` depends on `domain`, never the reverse. `presentation` does not reach into
+  `datasource:local`.
+
+### Adding a feature module
+
+Apply the convention plugin; do not copy another module's `build.gradle.kts`:
 
 ```kotlin
 plugins {
-    alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.hilt)
+    alias(libs.plugins.droidconke.android.feature)
+}
+
+android {
+    namespace = "ke.droidcon.kotlin.feature.<name>"
 }
 ```
+
+That gives you Compose, Hilt, jacoco, the quality checks, the Material 3 opt-in and
+`core:ui`. Declare only what is genuinely yours on top — `:feature:speakers` adds
+ConstraintLayout and nothing else. Add `droidconke.android.library.roborazzi` if the feature
+has screenshot tests, and register it in `settings.gradle.kts`.
+
+### Extracting an existing feature
+
+`:feature:speakers` is the worked example; follow its shape.
+
+1. `git mv` the feature's package out of `presentation`, main and test together.
+2. Move its screenshot goldens too. A feature's screens are `internal`, so its tests only
+   compile inside the feature module.
+3. Add the module to `settings.gradle.kts` and to `presentation`'s dependencies, so
+   `DroidconEntryProvider` can still reach the routes.
+4. Expect two classes of breakage: `internal` no longer crosses the boundary, and Kotlin will
+   not smart-cast a public property declared in another module.
+5. Prune the entries the moved files leave behind in `presentation`'s ktlint and detekt
+   baselines. Fix them in the new module rather than copying the suppression across.
+6. `./gradlew stabilityDump` — a new Compose module needs its own baseline.
 
 ---
 

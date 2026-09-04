@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    api(projects.core.common)
     api(projects.core.designsystem)
     api(projects.domain)
 

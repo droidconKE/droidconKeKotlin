@@ -12,13 +12,7 @@
     <file name="src/main/java/com/android254/presentation/home/components/HomeBannerSection.kt">
         <error line="20" column="1" source="standard:no-wildcard-imports" />
     </file>
-    <file name="src/main/java/com/android254/presentation/speakers/view/SpeakerDetailsScreen.kt">
-        <error line="41" column="1" source="standard:no-wildcard-imports" />
-    </file>
     <file name="src/test/java/com/android254/presentation/sessionDetails/view/SessionDetailsScreenTest.kt">
         <error line="19" column="1" source="standard:no-wildcard-imports" />
-    </file>
-    <file name="src/test/java/com/android254/presentation/speakers/view/SpeakersScreenTest.kt">
-        <error line="18" column="1" source="standard:no-wildcard-imports" />
     </file>
 </baseline>

@@ -34,10 +34,6 @@ import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionsScreen
-import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
-import com.android254.presentation.speakers.SpeakersScreenUiState
-import com.android254.presentation.speakers.view.SpeakerDetailsScreen
-import com.android254.presentation.speakers.view.SpeakersScreen
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
@@ -112,25 +108,6 @@ class ScreenScreenshotTest : ChaiScreenshotTest() {
                 bookmarkSession = {},
                 unBookmarkSession = {},
                 onNavigationIconClick = {},
-            )
-        }
-
-    @Test
-    fun speakers() =
-        captureScreen("screens/speakers") {
-            SpeakersScreen(
-                uiState =
-                    SpeakersScreenUiState.Success(
-                        speakers = speakersDummyData.toImmutableList(),
-                    ),
-            )
-        }
-
-    @Test
-    fun `speaker details`() =
-        captureScreen("screens/speaker_details") {
-            SpeakerDetailsScreen(
-                uiState = SpeakerDetailsScreenUiState.Success(speaker = speakersDummyData.first()),
             )
         }
 
