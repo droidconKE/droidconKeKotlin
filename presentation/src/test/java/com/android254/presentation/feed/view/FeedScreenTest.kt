@@ -16,7 +16,7 @@
 package com.android254.presentation.feed.view
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android254.domain.models.Feed
@@ -105,5 +105,25 @@ class FeedScreenTest {
         composeTestRule.onNodeWithTag("share_button").assertExists()
         composeTestRule.onNodeWithTag("share_button").performClick()
         composeTestRule.onNodeWithTag("share_bottom_sheet").assertIsDisplayed()
+    }
+
+    @Test
+    fun `renders feed items that share a url`() {
+        coEvery { repo.fetchFeed() } returns
+            flowOf(
+                listOf(
+                    Feed("Call for speakers", "", "", "", "", ""),
+                    Feed("Venue announced", "", "", "", "", ""),
+                ),
+            )
+
+        val viewModel = FeedViewModel(repo, testDispatcher)
+        composeTestRule.setContent {
+            ChaiTheme {
+                FeedRoute(feedViewModel = viewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("feeds_lazy_column").assertIsDisplayed()
     }
 }

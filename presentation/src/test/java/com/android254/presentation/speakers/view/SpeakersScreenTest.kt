@@ -16,11 +16,12 @@
 package com.android254.presentation.speakers.view
 
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.speakers.SpeakersScreenViewModel
+import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
@@ -59,7 +60,9 @@ class SpeakersScreenTest {
             )
         val viewModel = SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager, testDispatcher)
         composeTestRule.setContent {
-            SpeakersRoute(speakersScreenViewModel = viewModel)
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
         }
 
         with(composeTestRule) {

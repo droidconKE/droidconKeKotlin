@@ -30,7 +30,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Reply
+import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -82,7 +82,7 @@ fun SessionDetailsRoute(
 }
 
 @Composable
-private fun SessionDetailsScreen(
+internal fun SessionDetailsScreen(
     uiState: SessionDetailsUiState,
     sessionId: String,
     bookmarkSession: (String) -> Unit,
@@ -103,7 +103,7 @@ private fun SessionDetailsScreen(
             ) {
                 Icon(
                     modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                    imageVector = Icons.Filled.Reply,
+                    imageVector = Icons.AutoMirrored.Filled.Reply,
                     contentDescription = null,
                     tint = ChaiWhite,
                 )

@@ -49,7 +49,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.feed.FeedViewModel
@@ -75,7 +75,7 @@ fun FeedRoute(
 }
 
 @Composable
-private fun FeedScreen(
+internal fun FeedScreen(
     feedUIState: FeedUIState,
     navigateToFeedbackScreen: () -> Unit = {},
 ) {
@@ -153,8 +153,7 @@ private fun FeedScreen(
                     LazyColumn(
                         modifier = Modifier.testTag("feeds_lazy_column"),
                     ) {
-                        // FeedUI has no id; url is the stable per-post identifier.
-                        items(feedUIState.feeds, key = { it.url }) { feedPresentationModel ->
+                        items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
                             FeedComponent(
                                 feed = feedPresentationModel,
                                 modifier = Modifier.fillMaxWidth(),

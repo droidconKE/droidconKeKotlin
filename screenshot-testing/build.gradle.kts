@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.droidconke.chai.utils
+plugins {
+    alias(libs.plugins.droidconke.quality)
+    alias(libs.plugins.droidconke.android.library)
+    alias(libs.plugins.droidconke.android.library.compose)
+    alias(libs.plugins.compose.compiler)
+}
 
-object Alpha {
-    const val AlphaDisabled = 0.3f
+android {
+    namespace = "ke.droidcon.kotlin.screenshot"
+}
+
+dependencies {
+    api(libs.bundles.roborazzi)
+    api(libs.test.robolectric)
+    api(libs.compose.ui.test.junit)
+    api(libs.test.androidx.core)
+    api(libs.junit4)
+    api(libs.coil.test)
+    api(libs.coil.compose)
+
+    implementation(projects.chai)
 }

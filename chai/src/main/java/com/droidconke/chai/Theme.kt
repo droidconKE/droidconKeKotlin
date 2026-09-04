@@ -20,22 +20,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import com.droidconke.chai.atoms.ChaiTypography
 import com.droidconke.chai.colors.ChaiColors
 import com.droidconke.chai.colors.ChaiDarkColorPalette
+import com.droidconke.chai.colors.ChaiDarkColorScheme
 import com.droidconke.chai.colors.ChaiLightColorPalette
+import com.droidconke.chai.colors.ChaiLightColorScheme
 import com.droidconke.chai.colors.LocalChaiColorsPalette
+import com.droidconke.chai.utils.CShapes
 
 @Composable
 fun ChaiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val customColorsPalette = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
+    val colorScheme = if (darkTheme) ChaiDarkColorScheme else ChaiLightColorScheme
+    val chaiColors = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
 
-    CompositionLocalProvider(
-        LocalChaiColorsPalette provides customColorsPalette,
-    ) {
+    CompositionLocalProvider(LocalChaiColorsPalette provides chaiColors) {
         MaterialTheme(
+            colorScheme = colorScheme,
+            typography = ChaiTypography,
+            shapes = CShapes,
             content = content,
         )
     }

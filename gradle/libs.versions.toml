@@ -42,12 +42,14 @@ activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
 constraintlayout = "1.1.2"
-auth = "21.6.0"
+credentials = "1.6.0"
+googleid = "1.2.0"
 lottie = "6.7.1"
 datastore = "1.2.1"
 timber = "5.0.1"
 test_corektx = "1.7.0"
 test_robolectric = "4.16.1"
+roborazzi = "1.72.0"
 test_navigation = "2.10.0"
 test_mockk = "1.14.11"
 firebase_bom = "34.18.0"
@@ -93,6 +95,7 @@ androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle
 
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
+coil-test = { module = "io.coil-kt:coil-test", version.ref = "coil" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
 compose-material3 = { module = "androidx.compose.material3:material3" }
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
@@ -112,7 +115,9 @@ kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlin-coroutines-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "coroutines_datetime"}
 kotlin-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
-gms-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "auth"}
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
@@ -125,6 +130,9 @@ datastore = { module = "androidx.datastore:datastore-preferences", version.ref =
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 test-androidx-core = { module = "androidx.test:core-ktx", version.ref = "test_corektx"}
 test-robolectric = { module = "org.robolectric:robolectric", version.ref = "test_robolectric"}
+roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
+roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
+roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
 test-navigation = { module = "androidx.navigation:navigation-testing", version.ref = "test_navigation"}
 test-mockk = { module = "io.mockk:mockk", version.ref = "test_mockk"}
 ktor-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -182,6 +190,7 @@ coil = ["coil-compose", "coil-svg"]
 navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]
 serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx"]
+roborazzi = ["roborazzi", "roborazzi-compose", "roborazzi-junit-rule"]
 room = ["room-ktx", "room-runtime"]
 ktor = ["ktor-core", "ktor-android", "ktor-json", "ktor-content-negotiation", "ktor-auth", "ktor-logging", "ktor-okhttp"]
 firebase = ["firebase-messaging", "firebase-crashlytics", "firebase-analytics", "firebase-performance", "firebase-remote-config", "firebase-common"]
@@ -201,6 +210,7 @@ compose-stability = { id = "com.github.skydoves.compose.stability.analyzer", ver
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 toml-checker = { id = "com.github.ben-manes.versions", version.ref = "toml_checker" }
 toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "toml_updater" }
@@ -217,3 +227,4 @@ droidconke-android-application = { id = "droidconke.android.application" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 droidconke-android-application-jacoco = { id = "droidconke.android.application.jacoco" }
 droidconke-android-library-jacoco = { id = "droidconke.android.library.jacoco" }
+droidconke-android-library-roborazzi = { id = "droidconke.android.library.roborazzi" }

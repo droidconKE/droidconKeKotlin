@@ -1,8 +1,36 @@
 # droidconKE Android — Modernization & Product Plan
 
 > **Status:** Draft for review · **Author:** Staff engineering review · **Date:** 2026-08-13
-> **Repo:** `droidconKeKotlin` · **Branch:** `main` @ `7a8317c`
+> **Repo:** `droidconKeKotlin` · **Branch:** `main` @ `654c374`
 > **Scope:** Full-stack app review — tech debt, modern Android practices, intelligent (AI) experiences, adaptive UI, ticketing, performance, testing, notifications, UX, new product surfaces, and store presence.
+
+---
+
+## Next up — §4 Phase 1, adaptive & large-screen support
+
+**Phase 0 is done.** §3.5 (chai and Material 3) and §3.7 (Credential Manager) landed together
+with the Roborazzi baselines from §10.2, which went in first so the colour work was reviewable
+as image diffs rather than argued about.
+
+**§4 is next, and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
+sessions and speakers, foldable postures, and pointer/keyboard input. It is navigation rework
+plus two feature-area rewrites, not a bundle-with-other-things change.
+
+Carried out of Phase 0, smallest first:
+
+- **Both §3.5 design decisions are settled** (2026-09-04): dark-mode elevation reversed to the
+  M3 direction, and headings accented in both themes. Recorded in §3.5 with the knock-on token
+  moves each required.
+- **`AuthDialog` is unreachable from the UI** — `DroidconAppBar` drops the `onActionClicked` it
+  is handed, so the signed-out state has no sign-in affordance. See the note in §3.7.
+- **The `ChaiColors` token migration.** Tier 2 exists and stock components are on-brand, but the
+  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature as §4 and §5 touch
+  them, then delete. Doing it in one PR would be a 120-file diff that gets rubber-stamped.
+- **Six of the B findings are closed in code but not by a test** (B3, B4, B5, B6, B7, B10 — see
+  §3.9). B6 and B10 protect user data and are the ones to do first.
+- **Expressive is unreachable on material3 1.4.0**, and not for the reason §3.5 originally gave.
+  `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized` typography roles are all
+  `internal`. §5.2 is blocked on the library, not on this repo. Re-check when material3 moves.
 
 ---
 
@@ -1204,21 +1232,34 @@ This section answers a direct question: should chai be made to match Material 3'
 
 This is not a compromise position. It's the architecture chai was clearly reaching for — `CFonts.kt`'s own doc comment describes a `CTypography` file that was never written, and `CShapes` exists but was never wired up. The design intent is already there; the middle tier just never got built.
 
-> **Hard prerequisite, found during review: the pinned dependency does not contain Expressive.**
+> **Corrected 2026-09-03: the BOM is fine; Expressive is not public API.**
 >
-> Compose BOM `2025.06.00` resolves `androidx.compose.material3:material3` to **1.3.2**. Verify with:
+> The earlier note here said BOM `2025.06.00` pinned material3 to 1.3.2 and that a BOM bump
+> would unblock Expressive. The first half is stale — BOM `2026.08.00` resolves material3 to
+> **1.4.0**:
 > ```bash
 > ./gradlew :chai:dependencies --configuration debugCompileClasspath | grep material3
+> # androidx.compose.material3:material3 -> 1.4.0
 > ```
-> `MaterialExpressiveTheme`, `MotionScheme`, `MaterialShapes`, `ButtonGroup`, `FloatingToolbar`, `LoadingIndicator`, `rememberAnimatedShape` and the `*Emphasized` typography roles all arrived in **1.4.x**. None of the Expressive code in this section or §5.2 compiles against 1.3.2.
+> The conclusion still holds, for a different reason. In 1.4.0 the whole Expressive surface is
+> `internal`, so no dependency change reaches it:
 >
-> So §3.5 needs one of:
-> - **Override material3 outside the BOM** — `implementation("androidx.compose.material3:material3:1.4.x")` alongside the BOM platform. Explicit, surgical, and it means accepting whatever stability channel 1.4.x is on.
-> - **Move to a newer BOM** that ships material3 1.4.x. Cleaner, but it moves every Compose artifact at once, so it wants its own PR and its own screenshot-diff review.
+> | API | State in 1.4.0 |
+> | --- | --- |
+> | `MaterialExpressiveTheme` | `internal` |
+> | `MotionScheme.standard()` / `.expressive()`, `MaterialTheme.motionScheme` | `internal` |
+> | `Typography`'s `*Emphasized` roles and the constructor that sets them | `internal` |
+> | `ButtonGroup`, `FloatingToolbar`, `LoadingIndicator` | absent |
 >
-> **Recommendation: the BOM bump, as a standalone PR immediately before §3.5**, with §10.2's screenshot suite already in place so the visual delta across every component is reviewable rather than assumed. Record the resolved material3 version in this document when it lands.
+> So §5.2 is blocked on material3 making these public, not on this repo's dependency choices.
+> Two knock-on corrections to the Expressive-readiness gate below:
+> - `ChaiTypography` **cannot** fill the `*Emphasized` roles. It fills the 15 base roles.
+> - `ChaiMotionScheme` **cannot** exist. chai has no motion tier and cannot gain one that
+>   Material components will honour until `MotionScheme` is public. Named chai-local specs
+>   (`ChaiMotion`) are still possible, but they would be dead code today, so they are not built.
 >
-> Until that PR merges, §3.5 can still land its *colour* work — `ColorScheme`, `Typography` (base roles), `Shapes` all exist in 1.3.2. Only the Expressive-specific pieces are blocked. Splitting it that way is a reasonable way to get the purple fix out early.
+> Re-check this table when material3 next moves; the moment those go public, §5.2 becomes the
+> one-line change it was designed to be.
 
 **And the target is Material 3 Expressive, not plain M3.** That's a requirement, and it changes the token design in three specific ways that are cheaper to build in now than to retrofit:
 
@@ -1472,7 +1513,12 @@ The migration mapping, for the 28 that go away:
 | `radioButtonColors` | `RadioButtonDefaults.colors()` |
 | `loadingStateOnCardsColor` | kept, renamed `loadingShimmerColor` |
 
-> `textTitlePrimaryColor` is the one genuinely awkward mapping: it's `ChaiBlue` in light (an accent) and `ChaiWhite` in dark (plain foreground). That asymmetry is a design question, not a mechanical one — decide whether headings are accented or neutral, then make both themes agree. Don't preserve the inconsistency just because it's what's there.
+> `textTitlePrimaryColor` is the one genuinely awkward mapping: it was `ChaiBlue` in light (an accent) and `ChaiWhite` in dark (plain foreground).
+>
+> **Decided 2026-09-04: headings are accented in both themes.** Dark moves from `ChaiWhite` to
+> `ChaiTeal90` — the accent the nav bar and `textLabelAndHeadings` already used there — so the
+> blue headings that read as droidcon in light have an equivalent in dark rather than flattening
+> to plain foreground.
 
 **Step 3 — one theme entry point that provides all three tiers.**
 
@@ -1699,21 +1745,38 @@ The whole thing is incremental, and every step leaves the app shippable:
 Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a diff that size gets rubber-stamped, which defeats the point.
 
 **Definition of done for §3.5:**
-- [ ] `MaterialTheme` receives a real `colorScheme`, `typography`, and `shapes`
-- [ ] `grep -rn "MaterialTheme.colorScheme"` returns only on-brand values — verified visually, not just by grep
-- [ ] `LocalChaiColorsPalette` errors on missing provider instead of rendering `Color.Unspecified`
-- [ ] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3 role
-- [ ] Dark-mode elevation direction decided **with design**, and recorded here
-- [ ] `CShapes` reaches `MaterialTheme`; corner radii consistent between chai and stock components
-- [ ] §14's contrast test passes for both schemes
-- [ ] `ChaiTheme` no longer touches `LocalView`, the Activity, or the window (B5)
-- [ ] A rule prevents tier-1 palette references outside `chai/colors`
+- [x] `MaterialTheme` receives a real `colorScheme`, `typography`, and `shapes`
+- [x] `grep -rn "MaterialTheme.colorScheme"` returns only on-brand values — verified against the
+      §10.2 goldens, not just by grep
+- [x] `LocalChaiColorsPalette` errors on missing provider instead of rendering `Color.Unspecified`
+- [ ] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3
+      role — **not started.** Deliberately deferred: the 38 tokens back ~170 call sites, and
+      deprecating them in place would emit ~170 build warnings against this repo's zero-warning
+      rule. Migrate feature by feature as §4 and §5 touch them, then delete.
+- [x] Dark-mode elevation direction decided **with design**, and recorded here — **decided
+      2026-09-04: reversed to the M3 direction.** Raised surfaces are now lighter than the
+      background in dark (`surfaces`/`cardsBackground`/`bottomSheetBackgroundColor` →
+      `ChaiSubtleGrey` on a `ChaiGrey90` background), so chai and stock Material finally agree on
+      which way elevation reads. Two knock-ons that the goldens caught and that anyone repeating
+      this should expect: the session tag chips were filled with `cardsBorderColor`, which became
+      the card's own colour and made them vanish — they now take
+      `colorScheme.surfaceContainerHighest`; and `CustomDivider` was drawn in `surfaces`, which
+      became a thick visible bar — it now takes `colorScheme.outlineVariant`, which is the role a
+      divider should have had all along.
+- [x] `CShapes` reaches `MaterialTheme`; corner radii consistent between chai and stock components
+- [ ] §14's contrast test passes for both schemes — §14 not built yet
+- [x] `ChaiTheme` no longer touches `LocalView`, the Activity, or the window (B5)
+- [ ] A rule prevents tier-1 palette references outside `chai/colors` — not started
 
-**Expressive-readiness gate** — these are what make §5.2 a one-line change rather than a second token migration:
-- [ ] `ChaiTypography` fills the `*Emphasized` roles, not just the base scale
-- [ ] `ChaiMotionScheme` and `ChaiMotion` exist and are provided by `ChaiTheme`
-- [ ] Swapping `MaterialTheme` → `MaterialExpressiveTheme` + `motionScheme` compiles and renders, verified on a spike branch **before** §3.5 merges — if it doesn't, the tiering is wrong and it's much cheaper to find out now
-- [ ] Corner-radius scale question logged for §5.2 (keep 3/7/9/10, or move toward Expressive's larger ramp)
+**Expressive-readiness gate.** Three of the four items are **not achievable on material3 1.4.0**
+— see the corrected note above. Revisit when the Expressive APIs go public:
+- [ ] ~~`ChaiTypography` fills the `*Emphasized` roles~~ — blocked: the roles are `internal`
+- [ ] ~~`ChaiMotionScheme` and `ChaiMotion` provided by `ChaiTheme`~~ — blocked: `MotionScheme`
+      is `internal`
+- [ ] ~~Spike `MaterialExpressiveTheme` before §3.5 merges~~ — blocked: it is `internal`
+- [x] Corner-radius scale question logged for §5.2 (keep 3/7/9/10, or move toward Expressive's
+      larger ramp) — `CShapes` is wired as-is, preserving today's radii; the scale itself is
+      still an open §5.2 question
 
 ### 3.6 One year, one name
 
@@ -1820,6 +1883,19 @@ The nonce should ideally be issued by the backend and verified on token exchange
 
 `AuthViewModel` loses the `ActivityResultLauncher` plumbing entirely; `AuthDialog` calls a suspend function. Net deletion of ~60 lines.
 
+> **Found while verifying §3.7 on a device: the sign-in dialog has no entry point.**
+>
+> `MainActivity` wires `onActionClicked = { showAuthDialog = !showAuthDialog }` and threads it
+> through `HomeScreen` → `HomeToolbarComponent` → `DroidconAppBar`. `DroidconAppBar` then accepts
+> the parameter and never uses it — its body is a logo and a `Spacer`. Since that app bar is the
+> *signed-out* branch of `HomeToolbarComponent`, there is no way to reach `AuthDialog` from the
+> UI at all.
+>
+> So the Credential Manager rewrite is covered by `AuthViewModelTest` and builds and installs,
+> but the sheet itself could not be exercised on a device. Adding the missing action is a design
+> question (what icon, where), not a mechanical fix, so it is left open here rather than
+> invented. Whoever adds it should verify the picker end to end at the same time.
+
 ### 3.8 AGP 9 — done
 
 AGP 9.3.1 on Gradle 9.7 with Kotlin 2.4.10, `compileSdk`/`targetSdk` 37, and **no opt-out flags**.
@@ -1863,9 +1939,31 @@ but if the floor is ever lowered again, expect it back.
 - [x] `targetSdk` comes from one version-catalog entry, referenced by both convention plugins
 - [x] Single Gradle wrapper; `build-logic/gradle/` deleted
 - [x] AGP-9-readiness plugin bumps landed
-- [ ] B1–B16 each closed by a **test**, not just a code change
-- [ ] APK size recorded as a **baseline number** in this document (§9.4)
-- [ ] `CONTRIBUTING.md` notes the Android Studio requirement — IntelliJ IDEA does not support AGP 9
+- [ ] B1–B16 each closed by a **test**, not just a code change — **partially, audited below**
+
+**B1–B16 test coverage, audited 2026-09-03.** Eight of the fifteen live findings (B13 was
+withdrawn) are held by a test that fails without the fix. The rest are closed in code only:
+
+| Closed by a test | How |
+| --- | --- |
+| B1, B12 | `SessionsFilterStateTest` — room, multi-room and case-insensitive matching; `SessionsFilterOptionsTest` asserts no offered option matches zero sessions |
+| B2 | `DatabaseMigrationTest` fails if `fallbackToDestructiveMigration` returns |
+| B8, B15 | The §10.2 dark-mode goldens. Theme-blind text and card colours cannot regress without moving an image |
+| B9, B16 | `DateFormattingInvariantsTest` fails if `SimpleDateFormat` reappears in any `src/main` |
+| B14 | Every real lazy list now passes a `key`; `FeedScreenTest` covers the duplicate-key crash that a non-unique key produces |
+
+| Code-only, no test | Why not, and what it would take |
+| --- | --- |
+| B3, B4 | Build configuration (`compilerOptions`, one `targetSdk` catalog entry). A test would assert the build script, not behaviour |
+| B5 | `ChaiTheme` no longer touches `LocalView`. Rendering it off an Activity would be the test |
+| B6 | Rotation survival. Needs a `SavedStateHandle` / process-death test, which the suite has no harness for yet |
+| B7 | Splash-screen race. Needs a startup test |
+| B10 | Nav keys must stay immutable and hold no resource IDs. A reflection test over the `NavKey` implementations would close it |
+
+Closing the remaining six is worth its own pass; B6 and B10 are the two that protect real user
+data and are the ones to do first.
+- [x] APK size recorded as a **baseline number** in this document (§9.4)
+- [x] `CONTRIBUTING.md` notes the Android Studio requirement — IntelliJ IDEA does not support AGP 9
 
 ---
 
@@ -5259,6 +5357,7 @@ Write the number here as a **tracked baseline**:
 | --- | --- | --- | --- | --- |
 | 2026-08-13 | 1.0.0 (vc 1) | 6,420,105 B — 6.12 MiB | 10,596,026 B — 10.11 MiB | Pre-Phase-0 baseline |
 | 2026-08-13 | 1.0.0 (vc 1) | 6,416,765 B — 6.12 MiB | 10,587,545 B — 10.10 MiB | After removing `accompanist-swiperefresh`, `gson`, `result-jvm`, `paging-*`, `runtime-livedata`, `compose-compiler`, and splitting the `compose` bundle |
+| 2026-09-03 | 1.0.0 (vc 1) | 5,205,416 B — 4.96 MiB | 8,553,954 B — 8.16 MiB | End of Phase 0. Includes §3.7 swapping `play-services-auth` for `androidx.credentials` + `googleid` |
 
 **−3,340 B download: 0.05%.** Deleting unused dependencies does not shrink the APK — R8 was
 already stripping them. The win was a smaller dependency graph and one fewer frozen

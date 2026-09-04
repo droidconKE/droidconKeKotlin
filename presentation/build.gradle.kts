@@ -22,6 +22,7 @@ plugins {
     alias(libs.plugins.droidconke.android.library.compose)
     alias(libs.plugins.droidconke.android.library.jacoco)
     alias(libs.plugins.compose.stability)
+    alias(libs.plugins.droidconke.android.library.roborazzi)
 }
 
 android {
@@ -52,7 +53,9 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.splashscreen)
     implementation(libs.kotlin.coroutines.play.services)
-    implementation(libs.gms.play.services.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.google.identity.googleid)
     implementation(libs.lottie.compose)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)

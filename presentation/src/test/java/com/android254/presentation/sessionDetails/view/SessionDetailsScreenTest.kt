@@ -17,7 +17,7 @@ package com.android254.presentation.sessionDetails.view
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.unit.dp
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker

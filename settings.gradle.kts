@@ -40,4 +40,5 @@ rootProject.name = "dcke"
 
 include(":app")
 include(":chai")
+include(":screenshot-testing")
 include(":datasource:remote", ":datasource:local", ":data", ":domain", ":presentation")

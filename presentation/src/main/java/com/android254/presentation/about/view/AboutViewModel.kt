@@ -17,6 +17,7 @@ package com.android254.presentation.about.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.presentation.models.OrganizingTeamMember
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +56,7 @@ class AboutViewModel
         val uiState =
             organizersRepo
                 .getOrganizers()
-                .map { organizers ->
+                .map<List<Organizer>, AboutScreenUiState> { organizers ->
                     val team =
                         organizers.filter { it.type == "individual" }.map {
                             OrganizingTeamMember(
@@ -66,8 +67,8 @@ class AboutViewModel
                         }
                     val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
                     AboutScreenUiState.Success(teamMembers = team.toImmutableList(), stakeHoldersLogos = stakeholders)
-                }.onStart { AboutScreenUiState.Loading }
-                .catch { AboutScreenUiState.Error(message = "An unexpected error occurred") }
+                }.onStart { emit(AboutScreenUiState.Loading) }
+                .catch { emit(AboutScreenUiState.Error(message = "An unexpected error occurred")) }
                 .flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,

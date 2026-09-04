@@ -85,7 +85,7 @@ fun FeedBackRoute(
 }
 
 @Composable
-private fun FeedBackScreen(
+internal fun FeedBackScreen(
     darkTheme: Boolean,
     navigateBack: () -> Unit = {},
 ) {
@@ -150,7 +150,7 @@ private fun FeedBackScreen(
                     },
                     scrollBehavior = scrollBehavior,
                     colors =
-                        TopAppBarDefaults.largeTopAppBarColors(
+                        TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
                             titleContentColor = ChaiWhite,
                             navigationIconContentColor = ChaiWhite,

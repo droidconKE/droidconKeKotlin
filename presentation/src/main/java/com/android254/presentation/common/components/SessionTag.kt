@@ -39,7 +39,7 @@ fun SessionTag(
     tagText: String,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.chaiColorsPalette.textNormalColor,
-    backgroundColor: Color = MaterialTheme.chaiColorsPalette.surfaces,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
     isNowTag: Boolean = false,
     dotColor: Color = Color.Unspecified,
 ) {

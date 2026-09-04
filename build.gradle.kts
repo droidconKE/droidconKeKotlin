@@ -28,6 +28,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.compose.stability) apply false
+    alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.toml.checker)
     alias(libs.plugins.toml.updater)
     alias(libs.plugins.droidconke.quality)

@@ -15,7 +15,7 @@
  */
 package com.android254.presentation.auth
 
-import android.content.Intent
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.android254.domain.models.DataResult
 import com.android254.domain.repos.AuthRepo
@@ -30,24 +30,10 @@ class AuthViewModel
         private val googleSignInHandler: GoogleSignInHandler,
         private val authRepo: AuthRepo,
     ) : ViewModel() {
-        fun getSignInIntent() = googleSignInHandler.getSignInIntent()
-
-        suspend fun submitGoogleToken(intent: Intent?): Boolean {
-            val idToken = googleSignInHandler.getIdToken(intent)
-            Timber.i("Id token is $idToken")
-            // Submit ID Token to API
-            // to get access token
-            if (idToken == null) {
-                return false
-            }
-            Timber.i("Fetching API token")
-            return when (authRepo.getAndSaveApiToken(idToken)) {
-                is DataResult.Success -> {
-                    true
-                }
-                else -> {
-                    false
-                }
-            }
+        /** [activityContext] must be an Activity: Credential Manager renders its sheet over it. */
+        suspend fun signIn(activityContext: Context): Boolean {
+            val idToken = googleSignInHandler.signIn(activityContext).getOrNull() ?: return false
+            Timber.i("Exchanging the Google ID token for an API token")
+            return authRepo.getAndSaveApiToken(idToken) is DataResult.Success
         }
     }

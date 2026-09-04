@@ -34,8 +34,4 @@ class MessagingService : FirebaseMessagingService() {
             notificationManager.showNotification(message = notificationMessage, title = message.data["title"].toString())
         }
     }
-
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-    }
 }

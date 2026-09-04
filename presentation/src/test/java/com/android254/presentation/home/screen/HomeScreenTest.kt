@@ -16,7 +16,7 @@
 package com.android254.presentation.home.screen
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
@@ -61,7 +61,9 @@ class HomeScreenTest {
     @Test
     fun `Test speakers view is displayed`() {
         composeTestRule.setContent {
-            HomeSpeakersSection(speakers = persistentListOf())
+            ChaiTheme {
+                HomeSpeakersSection(speakers = persistentListOf())
+            }
         }
 
         composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
@@ -96,7 +98,9 @@ class HomeScreenTest {
     @Test
     fun `Test sponsors card is displayed`() {
         composeTestRule.setContent {
-            SponsorsCard(sponsors = persistentListOf(SponsorPresentationModel("", "", "", "")))
+            ChaiTheme {
+                SponsorsCard(sponsors = persistentListOf(SponsorPresentationModel("", "", "", "")))
+            }
         }
         composeTestRule.onNodeWithTag("sponsors_section").assertIsDisplayed()
     }
@@ -104,11 +108,13 @@ class HomeScreenTest {
     @Test
     fun `Test sessions is displayed`() {
         composeTestRule.setContent {
-            HomeSessionSection(
-                sessions = persistentListOf(),
-                onViewAllSessionClicked = {},
-                onSessionClick = {},
-            )
+            ChaiTheme {
+                HomeSessionSection(
+                    sessions = persistentListOf(),
+                    onViewAllSessionClicked = {},
+                    onSessionClick = {},
+                )
+            }
         }
         composeTestRule.onNodeWithTag("sectionHeader").assertIsDisplayed()
         composeTestRule.onNodeWithTag("viewAll").assertIsDisplayed()

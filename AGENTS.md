@@ -18,6 +18,16 @@ Run these before opening a PR. CI runs the same set.
 ./gradlew stabilityCheck                      # Compose recomposition regressions
 ./gradlew assembleDebug                       # build
 ./gradlew testDebugUnitTest                   # JVM + Robolectric tests
+./gradlew verifyRoborazziDebug                # screenshot goldens
+```
+
+Screenshot goldens live in `src/test/screenshots/`, outside Gradle's tracked outputs. After
+changing anything visual, record with `--rerun-tasks` — an up-to-date test task will otherwise
+leave stale images on disk:
+
+```bash
+./gradlew recordRoborazziDebug --rerun-tasks   # regenerate
+./gradlew compareRoborazziDebug                # diff images for review
 ```
 
 Instrumentation tests run on Gradle Managed Devices, so no emulator setup is needed:
@@ -151,11 +161,18 @@ there are none left in production code.
 must be immutable and must not hold resource IDs. Icons and labels live in
 `TopLevelDestination`.
 
-**`chai` is the design system, and it currently runs alongside Material 3 rather than
-underneath it.** `ChaiTheme` does not pass a `colorScheme`, so stock Material
-components render in Material's default purple. If you add a component and its colours look
-wrong, that is why. The fix is planned — see below — but until it lands, pass colours
-explicitly.
+**`chai` now sits on top of Material 3, not beside it.** `ChaiTheme` provides a real
+`colorScheme`, `typography` and `shapes`, so stock Material components are on-brand and you do
+**not** need to pass colours explicitly any more. Two things follow:
+
+- Read text styles from `MaterialTheme.typography`. Do not rebuild a `TextStyle` with a
+  hardcoded `sp` line height — that is the defect the chai text composables used to have, and
+  it is what breaks at 200% font scale.
+- `LocalChaiColorsPalette` throws if no `ChaiTheme` wraps the content. A composable under test
+  needs `ChaiTheme { }` around it; it will no longer silently render `Color.Unspecified`.
+
+The tier-3 `ChaiColors` tokens are mid-migration: ~38 of them still back call sites that should
+read `MaterialTheme.colorScheme`. Prefer the M3 role in new code; see §3.5 for the mapping.
 
 ---
 

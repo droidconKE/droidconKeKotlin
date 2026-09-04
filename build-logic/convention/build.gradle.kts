@@ -68,5 +68,9 @@ gradlePlugin {
             id = "droidconke.quality"
             implementationClass = "QualityConventionPlugin"
         }
+        register("androidLibraryRoborazzi") {
+            id = "droidconke.android.library.roborazzi"
+            implementationClass = "AndroidLibraryRoborazziConventionPlugin"
+        }
     }
 }

@@ -75,7 +75,10 @@ data class ChaiColors(
     val inactiveMultiSelectButtonBorderColor: Color = Color.Unspecified,
 )
 
-val LocalChaiColorsPalette = staticCompositionLocalOf { ChaiColors() }
+val LocalChaiColorsPalette =
+    staticCompositionLocalOf<ChaiColors> {
+        error("No ChaiColors provided. Wrap the content in ChaiTheme { }.")
+    }
 
 val ChaiLightColorPalette =
     ChaiColors(
@@ -123,15 +126,15 @@ val ChaiDarkColorPalette =
     ChaiColors(
         primary = ChaiBlack,
         background = ChaiGrey90,
-        surfaces = ChaiBlack,
-        cardsBackground = ChaiBlack,
+        surfaces = ChaiSubtleGrey,
+        cardsBackground = ChaiSubtleGrey,
         cardsBorderColor = ChaiSubtleGrey,
         bottomNavBorderColor = ChaiGrey90,
         activeBottomNavIconColor = ChaiTeal,
         inactiveBottomNavIconColor = ChaiWhite,
         bottomNavBackgroundColor = ChaiBlack,
         activeBottomNavTextColor = ChaiRed,
-        textTitlePrimaryColor = ChaiWhite,
+        textTitlePrimaryColor = ChaiTeal90,
         textBoldColor = ChaiLightGrey,
         textNormalColor = ChaiWhite,
         textWeakColor = ChaiGrey,
@@ -154,9 +157,9 @@ val ChaiDarkColorPalette =
         eventDaySelectorInactiveSurfaceColor = ChaiTeal90,
         eventDaySelectorActiveTextColor = ChaiWhite,
         eventDaySelectorInactiveTextColor = ChaiWhite,
-        badgeBackgroundColor = ChaiBlack,
+        badgeBackgroundColor = ChaiDarkGrey,
         textFieldBackgroundColor = ChaiGrey90,
         textFieldBorderColor = ChaiSmokeyGrey,
-        bottomSheetBackgroundColor = ChaiBlack,
+        bottomSheetBackgroundColor = ChaiSubtleGrey,
         inactiveMultiSelectButtonBorderColor = ChaiGrey,
     )

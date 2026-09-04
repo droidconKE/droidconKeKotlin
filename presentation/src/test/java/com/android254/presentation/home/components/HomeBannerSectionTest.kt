@@ -16,7 +16,7 @@
 package com.android254.presentation.home.components
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android254.domain.models.HomeBanner
 import com.android254.presentation.home.viewstate.HomeState
