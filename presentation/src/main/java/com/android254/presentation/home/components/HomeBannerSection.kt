@@ -41,7 +41,7 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelMedium
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun HomeBannerSection(homeState: HomeState) {

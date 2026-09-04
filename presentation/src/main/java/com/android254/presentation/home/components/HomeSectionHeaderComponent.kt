@@ -39,7 +39,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelMedium
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun HomeSectionHeaderComponent(

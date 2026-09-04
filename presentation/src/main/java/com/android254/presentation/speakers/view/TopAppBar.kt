@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiBodyLarge
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable

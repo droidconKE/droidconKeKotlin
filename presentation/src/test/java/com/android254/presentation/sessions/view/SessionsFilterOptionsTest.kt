@@ -16,7 +16,7 @@
 package com.android254.presentation.sessions.view
 
 import com.android254.domain.models.Session
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
+import com.android254.presentation.models.SessionsFilterCategory
 import io.mockk.mockk
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.datetime.TimeZone

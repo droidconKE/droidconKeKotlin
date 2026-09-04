@@ -31,7 +31,7 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 // mirrors how Nav3 delivers LocalNavAnimatedContentScope, rather than threading it through
 // every screen signature.
 @Suppress("ComposeCompositionLocalUsage")
-internal val LocalSharedTransitionScope: ProvidableCompositionLocal<SharedTransitionScope?> =
+val LocalSharedTransitionScope: ProvidableCompositionLocal<SharedTransitionScope?> =
     compositionLocalOf { null }
 
 @Composable

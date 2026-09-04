@@ -51,7 +51,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodySmallBold
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SpeakerComponent(

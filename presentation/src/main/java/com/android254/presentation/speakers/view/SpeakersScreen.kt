@@ -50,7 +50,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
 

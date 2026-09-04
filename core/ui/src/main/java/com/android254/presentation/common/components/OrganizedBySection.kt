@@ -16,7 +16,14 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -32,7 +39,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 

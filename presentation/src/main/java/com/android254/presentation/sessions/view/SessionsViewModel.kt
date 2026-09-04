@@ -24,11 +24,11 @@ import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.di.ConferenceTimeZone
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import kotlinx.collections.immutable.ImmutableList

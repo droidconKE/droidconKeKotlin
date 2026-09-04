@@ -32,7 +32,7 @@ import com.android254.presentation.common.components.LoadingBox
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun HomeSessionLoadingComponent(modifier: Modifier = Modifier) {

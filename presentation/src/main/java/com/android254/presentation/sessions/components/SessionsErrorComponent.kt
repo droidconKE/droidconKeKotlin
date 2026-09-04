@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SessionsErrorComponent(

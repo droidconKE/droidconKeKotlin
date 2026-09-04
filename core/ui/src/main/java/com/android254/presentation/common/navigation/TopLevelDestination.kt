@@ -17,7 +17,7 @@ package com.android254.presentation.common.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.collections.immutable.toImmutableSet
 import ke.droidcon.kotlin.chai.R as ChaiR

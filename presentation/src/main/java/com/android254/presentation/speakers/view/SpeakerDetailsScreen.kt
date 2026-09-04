@@ -72,7 +72,7 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SpeakerDetailsRoute(
@@ -284,9 +284,7 @@ internal fun SpeakerDetailsScreen(
                                     shape = RoundedCornerShape(10.dp),
                                 ).clip(RoundedCornerShape(10.dp)),
                         onClick = {
-                            if (speaker.twitterHandle != null) {
-                                uriHandler.openUri(speaker.twitterHandle)
-                            }
+                            speaker.twitterHandle?.let(uriHandler::openUri)
                         },
                         colors =
                             ButtonDefaults.buttonColors(
@@ -305,12 +303,9 @@ internal fun SpeakerDetailsScreen(
                         )
                         ChaiBodyMedium(
                             bodyText =
-                                if (speaker.twitterHandle != null) {
-                                    speaker.twitterHandle
-                                        .replace("https://twitter.com/", "")
-                                } else {
-                                    ""
-                                },
+                                speaker.twitterHandle
+                                    ?.replace("https://twitter.com/", "")
+                                    .orEmpty(),
                             textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
                             modifier = Modifier.padding(start = 6.dp),
                         )

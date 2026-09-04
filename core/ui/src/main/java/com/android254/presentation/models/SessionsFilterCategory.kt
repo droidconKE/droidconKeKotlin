@@ -15,8 +15,18 @@
  */
 package com.android254.presentation.models
 
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
+import ke.droidcon.kotlin.core.ui.R
 
-data class SessionsFilterAdapter(
-    val categories: MutableMap<SessionsFilterCategory, List<SessionsFilterOption>>,
-)
+/**
+ * Facets a session list can be filtered by.
+ *
+ * `Topic` was removed: the API returns no topic field, so it was unreachable. Reintroduce
+ * only alongside one.
+ */
+enum class SessionsFilterCategory(
+    val resId: Int,
+) {
+    Level(R.string.title_filter_level),
+    Room(R.string.title_filter_room),
+    SessionType(R.string.title_filter_session_type),
+}

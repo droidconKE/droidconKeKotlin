@@ -40,7 +40,7 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.COutlinedButton
 import com.droidconke.chai.components.ChaiBodyMedium
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SpeakerTwitterHandle(

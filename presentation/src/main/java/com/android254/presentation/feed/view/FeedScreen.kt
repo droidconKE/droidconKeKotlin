@@ -57,7 +57,7 @@ import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
 import ke.droidcon.kotlin.chai.R as ChaiR
 

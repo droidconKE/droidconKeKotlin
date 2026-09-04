@@ -43,7 +43,7 @@ import coil.request.ImageRequest
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 

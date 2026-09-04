@@ -63,7 +63,7 @@ import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SessionsCard(
