@@ -64,6 +64,10 @@ gradlePlugin {
             id = "droidconke.android.library.jacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = "droidconke.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
         register("quality") {
             id = "droidconke.quality"
             implementationClass = "QualityConventionPlugin"

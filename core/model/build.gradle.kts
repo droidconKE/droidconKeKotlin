@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,5 @@
  */
 plugins {
     alias(libs.plugins.droidconke.quality)
-    alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.library.jacoco)
-}
-
-android {
-    namespace = "ke.droidcon.kotlin.domain"
-}
-
-dependencies {
-    // api, not implementation: the repository interfaces here expose these models, and every
-    // existing consumer of :domain expects to see them without depending on :core:model too.
-    api(projects.core.model)
-
-    implementation(libs.kotlinx.coroutines.core)
+    alias(libs.plugins.droidconke.jvm.library)
 }
