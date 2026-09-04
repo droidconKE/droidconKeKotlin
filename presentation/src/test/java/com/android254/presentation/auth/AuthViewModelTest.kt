@@ -43,7 +43,6 @@ class AuthViewModelTest {
             assertTrue(viewModel.signIn(activity))
         }
 
-    /** A dismissed sheet must not reach the token endpoint. */
     @Test
     fun `does not call the api when the credential request fails`() =
         runTest {

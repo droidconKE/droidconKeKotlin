@@ -75,8 +75,6 @@ data class ChaiColors(
     val inactiveMultiSelectButtonBorderColor: Color = Color.Unspecified,
 )
 
-// Fails loudly rather than rendering invisible UI: the old default gave every token
-// Color.Unspecified, so a missing provider produced a blank screen instead of an error.
 val LocalChaiColorsPalette =
     staticCompositionLocalOf<ChaiColors> {
         error("No ChaiColors provided. Wrap the content in ChaiTheme { }.")

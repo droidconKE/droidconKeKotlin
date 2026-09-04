@@ -30,7 +30,7 @@ class AuthViewModel
         private val googleSignInHandler: GoogleSignInHandler,
         private val authRepo: AuthRepo,
     ) : ViewModel() {
-        /** [activityContext] must be an Activity; Credential Manager renders its sheet over it. */
+        /** [activityContext] must be an Activity: Credential Manager renders its sheet over it. */
         suspend fun signIn(activityContext: Context): Boolean {
             val idToken = googleSignInHandler.signIn(activityContext).getOrNull() ?: return false
             Timber.i("Exchanging the Google ID token for an API token")

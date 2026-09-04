@@ -19,12 +19,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 
-/**
- * B9 and B16 removed every `SimpleDateFormat` from production code. It is not thread-safe, and
- * both sites that had it were reachable from more than one thread.
- *
- * A code change alone does not keep it out — this does.
- */
 class DateFormattingInvariantsTest {
     @Test
     fun `no production source uses SimpleDateFormat`() {
@@ -51,7 +45,7 @@ class DateFormattingInvariantsTest {
             !path.contains("/build/")
 
     private companion object {
-        /** Gradle runs unit tests with the module directory as the working directory. */
+        // Gradle runs unit tests with the module directory as the working directory.
         val repoRoot: File = File("..").canonicalFile
     }
 }

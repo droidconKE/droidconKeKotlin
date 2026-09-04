@@ -44,12 +44,6 @@ import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Test
 
-/**
- * Whole-screen goldens for the screens a colour or elevation change is visible on.
- *
- * These are the reference point for the §3.5 design-system work: the diff between these
- * images before and after is the review.
- */
 class ScreenScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun home() =

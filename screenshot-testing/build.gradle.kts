@@ -24,7 +24,6 @@ android {
     namespace = "ke.droidcon.kotlin.screenshot"
 }
 
-// Consumed only through `testImplementation`, so none of this reaches the app.
 dependencies {
     api(libs.bundles.roborazzi)
     api(libs.test.robolectric)

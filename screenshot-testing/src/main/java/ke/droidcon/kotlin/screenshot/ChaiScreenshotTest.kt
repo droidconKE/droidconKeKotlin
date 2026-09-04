@@ -49,12 +49,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/**
- * Base for chai screenshot tests.
- *
- * Captures every subject in light, dark, and at 200% font scale. Font scale is the axis that
- * catches text clipped by hardcoded `sp` line heights, so it is not optional.
- */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.Pixel7)
@@ -62,12 +56,7 @@ abstract class ChaiScreenshotTest {
     @get:Rule
     val composeRule = createComposeRule()
 
-    /**
-     * Every remote image resolves to the same flat colour.
-     *
-     * Without this, Coil races the capture: a speaker avatar that had loaded on one run and
-     * not on the next made `speakers/light_font_200` alternate between two goldens.
-     */
+    // Without a fake loader, Coil races the capture and goldens alternate between runs.
     @OptIn(ExperimentalCoilApi::class)
     @Before
     fun installDeterministicImageLoader() {
@@ -84,13 +73,11 @@ abstract class ChaiScreenshotTest {
         )
     }
 
-    /** Tight bounds around a single component. */
     protected fun captureComponent(
         name: String,
         content: @Composable () -> Unit,
     ) = capture(name = name, fillWindow = false, content = content)
 
-    /** Full-window capture, for whole screens. */
     protected fun captureScreen(
         name: String,
         content: @Composable () -> Unit,
@@ -103,8 +90,7 @@ abstract class ChaiScreenshotTest {
     ) {
         var variant by mutableStateOf(ScreenshotVariant.entries.first())
 
-        // setContent may only be called once per test, so the matrix is driven by state and
-        // re-rendered between captures rather than by setting the content repeatedly.
+        // setContent may only be called once per test, so the matrix is driven by state.
         composeRule.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(
@@ -132,11 +118,7 @@ abstract class ChaiScreenshotTest {
                 roborazziOptions =
                     RoborazziOptions(
                         compareOptions =
-                            RoborazziOptions.CompareOptions(
-                                // Absorbs font-rendering noise across JDKs without hiding
-                                // real layout changes.
-                                changeThreshold = CHANGE_THRESHOLD,
-                            ),
+                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
                     ),
             )
         }

@@ -43,12 +43,6 @@ import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import org.junit.Test
 
-/**
- * Goldens for chai's component surface.
- *
- * The text scale is captured as one image on purpose: hardcoded `sp` line heights clip at
- * 200% font scale, and that only reads as a defect when the whole ramp is seen together.
- */
 class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun `primary button enabled`() =
@@ -110,7 +104,6 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
             }
         }
 
-    /** Multi-line copy is where a too-small line height actually collides. */
     @Test
     fun `body text wrapping`() =
         captureComponent("chai/body_text_wrapping") {

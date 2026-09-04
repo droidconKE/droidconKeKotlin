@@ -39,13 +39,7 @@ class GoogleSignInHandler
     ) {
         private val credentialManager = CredentialManager.create(context)
 
-        /**
-         * Returns a Google ID token, or a failure when the user dismisses the sheet or no
-         * credential is available.
-         *
-         * [activityContext] must be an Activity — Credential Manager renders the picker over
-         * it, and the application context cannot host a UI.
-         */
+        /** [activityContext] must be an Activity: Credential Manager renders the picker over it. */
         suspend fun signIn(activityContext: Context): Result<String> =
             runCatching {
                 val nonce = generateNonce()
@@ -70,8 +64,6 @@ class GoogleSignInHandler
                     )
                 }
 
-                // First pass offers only already-authorized accounts, so returning users get
-                // one tap. First-time users hit NoCredentialException and get the full picker.
                 val response =
                     try {
                         attempt(filterByAuthorizedAccounts = true)
@@ -100,10 +92,8 @@ class GoogleSignInHandler
             }.onFailure { Timber.e(it, "Clearing the credential state failed") }
         }
 
-        /**
-         * Binds the token to this sign-in attempt. The backend does not verify a nonce yet, so
-         * this only prevents replay across this app's own sessions.
-         */
+        // Client-generated: the backend does not verify a nonce yet, so this only prevents
+        // replay across this app's own sessions.
         private fun generateNonce(): String =
             ByteArray(NONCE_BYTES)
                 .also { SecureRandom().nextBytes(it) }

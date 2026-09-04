@@ -24,17 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 
-/**
- * chai's text scale, as thin wrappers over the roles in `MaterialTheme.typography`.
- *
- * Every style comes from the theme rather than being rebuilt per call site. That is what fixes
- * the accessibility defect these carried: each one used to pair an `sp` font size with a
- * hardcoded `sp` line height, so the ratio was fixed by hand instead of coming from Material's
- * tested metrics, and any container with a `dp` height clipped the text as it grew.
- *
- * A `Color.Unspecified` default means the text inherits its colour from whatever drew it — a
- * Button's `contentColor`, a Surface's `contentColorFor`. Passing an explicit colour still wins.
- */
+// A Color.Unspecified default lets the text inherit from whatever drew it, such as a Button's
+// contentColor. Passing an explicit colour still wins.
 @Composable
 fun ChaiTitle(
     titleText: String,

@@ -29,12 +29,6 @@ import com.droidconke.chai.colors.ChaiLightColorScheme
 import com.droidconke.chai.colors.LocalChaiColorsPalette
 import com.droidconke.chai.utils.CShapes
 
-/**
- * Provides all three tiers: Material's role vocabulary underneath, chai's component tokens on
- * top.
- *
- * Edge-to-edge belongs to the Activity, so this deliberately touches no window state.
- */
 @Composable
 fun ChaiTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

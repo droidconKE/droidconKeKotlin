@@ -20,23 +20,13 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 
-/**
- * Adds Roborazzi's record/verify/compare tasks to a Compose library, plus the shared
- * harness in `:screenshot-testing`.
- *
- * `isIncludeAndroidResources` is already on for every library via
- * [AndroidLibraryConventionPlugin]; Roborazzi needs it and would fail without it.
- */
 class AndroidLibraryRoborazziConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             pluginManager.apply("io.github.takahirom.roborazzi")
 
-            // Robolectric unpacks its native graphics runtime — the .so, ICU data and fonts —
-            // under java.io.tmpdir. Gradle runs module test tasks in parallel, and sharing one
-            // temp tree across those JVMs intermittently failed extraction with an IOException,
-            // after which every capture in that JVM died on UnsatisfiedLinkError. A directory
-            // per module keeps them out of each other's way.
+            // Robolectric unpacks its native runtime under java.io.tmpdir; parallel module
+            // test JVMs sharing one temp tree intermittently fail that extraction.
             tasks.withType<Test>().configureEach {
                 val tmp = layout.buildDirectory.dir("robolectric-tmp").get().asFile
                 doFirst { tmp.mkdirs() }

@@ -89,7 +89,6 @@ fun AuthDialog(
                             .testTag("google_button"),
                     onClick = {
                         val authViewModel = viewModel?.invoke()
-                        // Credential Manager needs an Activity to host its sheet.
                         if (authViewModel != null && activity != null) {
                             loading = true
                             coroutineScope.launch {

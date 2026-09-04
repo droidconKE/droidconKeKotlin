@@ -79,8 +79,6 @@ fun CPrimaryButton(
     title: String,
     modifier: Modifier = Modifier,
 ) {
-    // Disabled colours are left to ButtonDefaults: its onSurface-based pair keeps a readable
-    // contrast ratio, which tinting the accent colour does not.
     val colors =
         ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,

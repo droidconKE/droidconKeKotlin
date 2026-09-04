@@ -23,20 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import ke.droidcon.kotlin.chai.R
 
-/**
- * Tier 2 typography — the `CTypography` half that CFonts.kt's doc comment describes and that was
- * never written.
- *
- * One [FontFamily] carrying every weight, so `FontWeight.Bold` on any style resolves to
- * montserrat_bold, rather than five families that each hardcode a single weight.
- *
- * The roles carry chai's own sizes, not Material's, so wiring this up does not resize the app.
- * What changes is where the numbers live: each size and line height is defined once here instead
- * of being rebuilt at every call site in CText.kt, and line heights are a consistent ratio of
- * their font size rather than values maintained by hand.
- *
- * Roles chai has no equivalent for — the display and headline ramp — keep Material's metrics.
- */
 private val Montserrat =
     FontFamily(
         Font(R.font.montserrat_thin, FontWeight.Thin),
@@ -48,10 +34,8 @@ private val Montserrat =
         Font(R.font.montserrat_bold, FontWeight.Bold),
     )
 
-/**
- * The Expressive `*Emphasized` roles are absent because material3 1.4.0 keeps them, along with
- * `MaterialExpressiveTheme` and `MotionScheme`, internal. See §3.5 in the improvement plan.
- */
+// Sizes are chai's own, so the display and headline ramp keeps Material's.
+// The Expressive `*Emphasized` roles are internal in material3 1.4.0 and cannot be filled.
 val ChaiTypography: Typography =
     with(Typography()) {
         copy(
@@ -73,11 +57,8 @@ val ChaiTypography: Typography =
         )
     }
 
-/**
- * Passing a [size] marks a role that backs a chai text composable. Those also drop Material's
- * letter spacing, which chai's hand-built styles never had — keeping it would widen every label
- * and push the room/time row of a session card onto a second line at large font scales.
- */
+// A [size] marks a role backing a chai text composable; those drop Material's letter spacing,
+// which widens labels enough to wrap a session card's room/time row at large font scales.
 private fun TextStyle.chai(
     weight: FontWeight,
     size: Int? = null,
