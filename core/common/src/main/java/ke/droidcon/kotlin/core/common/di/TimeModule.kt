@@ -13,14 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.di
+package ke.droidcon.kotlin.core.common.di
 
-import javax.inject.Qualifier
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.datetime.TimeZone
+import kotlin.time.Clock
 
-/**
- * The venue's timezone, as distinct from the device's. Schedule times are fixed to the
- * venue; relative times ("in 20 minutes") come from the device clock.
- */
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class ConferenceTimeZone
+@Module
+@InstallIn(SingletonComponent::class)
+object TimeModule {
+    @Provides
+    fun providesClock(): Clock = Clock.System
+
+    @Provides
+    @ConferenceTimeZone
+    fun providesConferenceTimeZone(): TimeZone = TimeZone.of("Africa/Nairobi")
+}

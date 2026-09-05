@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-plugins {
-    alias(libs.plugins.droidconke.quality)
-    alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.hilt)
-}
+package ke.droidcon.kotlin.core.common.di
 
-android {
-    namespace = "ke.droidcon.kotlin.core.common"
-}
+import javax.inject.Qualifier
 
-dependencies {
-    api(libs.kotlinx.coroutines.core)
-    api(libs.kotlin.coroutines.datetime)
-}
-
-// Hilt gives this module a unit-test task, and Gradle 9 fails a test task that finds no tests.
-// There is nothing here to test: a qualifier and two dispatcher providers.
-tasks.withType<Test>().configureEach {
-    failOnNoDiscoveredTests = false
-}
+/**
+ * The venue's timezone, as distinct from the device's. Schedule times are fixed to the
+ * venue; relative times ("in 20 minutes") come from the device clock.
+ */
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ConferenceTimeZone
