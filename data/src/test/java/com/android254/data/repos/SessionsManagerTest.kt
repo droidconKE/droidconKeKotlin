@@ -20,8 +20,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import ke.droidcon.kotlin.datasource.local.Database
-import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
@@ -41,8 +39,6 @@ import org.robolectric.annotation.Config
 class SessionsManagerTest {
     private val mockLocalSessionsDataSource = mockk<LocalSessionsDataSource>()
     private val mockRemoteSessionsDataSource = mockk<RemoteSessionsDataSource>()
-    private lateinit var bookmarkDao: BookmarkDao
-    private lateinit var database: Database
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     @Test

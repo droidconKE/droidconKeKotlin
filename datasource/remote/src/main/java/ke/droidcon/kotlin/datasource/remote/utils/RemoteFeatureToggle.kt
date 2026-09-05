@@ -22,8 +22,6 @@ import timber.log.Timber
 class RemoteFeatureToggle(
     private val remoteConfig: FirebaseRemoteConfig,
 ) {
-    private var intialized = false
-
     fun sync() {
         remoteConfig
             .fetchAndActivate()

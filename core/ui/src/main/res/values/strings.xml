@@ -2,6 +2,7 @@
     <string name="login_screen_bg_image_description">background_image</string>
     <string name="back_arrow_icon_description">Back arrow icon</string>
     <string name="sign_in_with_google_label">Sign in with Google</string>
+    <string name="sign_in">Sign in</string>
     <string name="google_sign_in_failed">Google sign in failed.</string>
     <string name="share">Share</string>
     <string name="default_web_client_id">275140757840-t551kcoa9hj4j1kq9cgmk3m067jl2imq.apps.googleusercontent.com</string>

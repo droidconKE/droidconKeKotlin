@@ -110,9 +110,9 @@ has screenshot tests, and register it in `settings.gradle.kts`.
    `DroidconEntryProvider` can still reach the routes.
 4. Expect two classes of breakage: `internal` no longer crosses the boundary, and Kotlin will
    not smart-cast a public property declared in another module.
-5. Prune the entries the moved files leave behind in `presentation`'s ktlint and detekt
-   baselines. Fix them in the new module rather than copying the suppression across.
-6. `./gradlew stabilityDump` — a new Compose module needs its own baseline.
+5. `./gradlew stabilityDump` — a new Compose module needs its own stability baseline. That is
+   the one kind of baseline this repo keeps, because it records API shape rather than hiding a
+   violation. Commit both the debug and release files; both are tracked and both are checked.
 
 ---
 
@@ -149,10 +149,15 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 - **Apache licence header** on every file. Spotless adds it.
 - **detekt forbids `TODO` in comments.** Write the note as a plain sentence, or file an
   issue.
-- **No baselines.** There is no lint baseline and the ktlint one is empty. A suppression goes
-  in `config/lint/lint.xml` with the reason next to it, where a reviewer will see it. Rules at
-  `error` are clean and must stay clean; rules at `warning` are being burned down, and
-  promoting one to `error` is the last commit of the work that clears it. Counts are in
+- **No baselines — none, anywhere.** There is no Android Lint baseline, no ktlint baseline and
+  no detekt baseline in this repo, and adding one is not how a violation gets resolved here.
+  The options, in order of preference: fix the code; or, if the rule is genuinely wrong for a
+  library idiom, configure the rule in `detekt.yml` with a comment saying why; or, as a last
+  resort, `@Suppress` at the site with the reason next to it, where a reviewer sees it. A
+  baseline file hides all three from review, which is why there are none. Lint suppressions go
+  in `config/lint/lint.xml` with the reason. Rules at `error` are clean and must stay clean;
+  rules at `warning` are being burned down, and promoting one to `error` is the last commit of
+  the work that clears it. Counts are in
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
 - **Colours come from the theme**, never from the raw palette. Read

@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>UnusedParameter:SessionDetailsScreen.kt$sessionId: String</ID>
-    <ID>UseCheckOrError:Navigation.kt$throw IllegalStateException("Speaker data missing.")</ID>
-  </CurrentIssues>
-</SmellBaseline>

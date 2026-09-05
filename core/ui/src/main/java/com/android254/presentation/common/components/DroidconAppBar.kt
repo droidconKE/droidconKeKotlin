@@ -22,6 +22,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +57,17 @@ fun DroidconAppBar(
             contentDescription = stringResource(id = R.string.logo),
         )
         Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(
+            onClick = onActionClicked,
+            modifier = Modifier.testTag("sign_in_action"),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.AccountCircle,
+                contentDescription = stringResource(id = R.string.sign_in),
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+        }
     }
 }
 

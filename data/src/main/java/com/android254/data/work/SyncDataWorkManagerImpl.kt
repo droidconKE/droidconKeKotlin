@@ -25,7 +25,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.android254.data.work.WorkConstants.syncDataWorkerName
+import com.android254.data.work.WorkConstants.SYNC_DATA_WORKER_NAME
 import com.android254.domain.work.SyncDataWorkManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
@@ -40,7 +40,7 @@ class SyncDataWorkManagerImpl
     ) : SyncDataWorkManager {
         override val isSyncing: Flow<Boolean> =
             workManager
-                .getWorkInfosForUniqueWorkLiveData(syncDataWorkerName)
+                .getWorkInfosForUniqueWorkLiveData(SYNC_DATA_WORKER_NAME)
                 .map(List<WorkInfo>::anyRunning)
                 .asFlow()
                 .conflate()
@@ -54,7 +54,7 @@ class SyncDataWorkManagerImpl
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build(),
                     ).build()
-            workManager.enqueueUniqueWork(syncDataWorkerName, ExistingWorkPolicy.KEEP, syncDataRequest)
+            workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, syncDataRequest)
         }
 
         override fun setupPeriodicSync() {
@@ -67,7 +67,7 @@ class SyncDataWorkManagerImpl
                             .build(),
                     ).build()
             workManager.enqueueUniquePeriodicWork(
-                syncDataWorkerName + "_periodic",
+                SYNC_DATA_WORKER_NAME + "_periodic",
                 ExistingPeriodicWorkPolicy.KEEP,
                 syncDataRequest,
             )

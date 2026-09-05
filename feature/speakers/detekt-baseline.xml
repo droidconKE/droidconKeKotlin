@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<SmellBaseline>
-  <ManuallySuppressedIssues/>
-  <CurrentIssues>
-    <ID>DestructuringDeclarationWithTooManyEntries:SpeakerComponent.kt$val (image, nameText, bioText, button) = createRefs()</ID>
-    <ID>DestructuringDeclarationWithTooManyEntries:SpeakerDetailsScreen.kt$val (topBar, speakerDetails, speakerImage, divider, twitterContainer) = createRefs()</ID>
-  </CurrentIssues>
-</SmellBaseline>

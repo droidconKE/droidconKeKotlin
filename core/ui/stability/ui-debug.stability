@@ -46,12 +46,11 @@ public fun com.android254.presentation.common.components.DroidconAppBar(modifier
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, userProfile: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onButtonClick: STABLE (function type)
-    - userProfile: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable

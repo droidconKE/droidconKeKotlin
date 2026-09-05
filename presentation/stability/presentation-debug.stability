@@ -360,21 +360,19 @@ public fun com.android254.presentation.sessionDetails.view.Body(paddingValues: a
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel, sessionId: kotlin.String, onNavigationIconClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel, onNavigationIconClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - viewModel: RUNTIME (requires runtime check)
-    - sessionId: STABLE (String is immutable)
     - onNavigationIconClick: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, sessionId: kotlin.String, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: STABLE (class with no mutable properties)
-    - sessionId: STABLE (String is immutable)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
     - onNavigationIconClick: STABLE (function type)

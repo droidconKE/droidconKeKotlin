@@ -65,7 +65,6 @@ fun droidconEntryProvider(
                 updateBottomBarState(false)
                 val viewModel = sessionModel(key)
                 SessionDetailsRoute(
-                    sessionId = key.sessionId,
                     onNavigationIconClick = {
                         navController.goBack()
                     },

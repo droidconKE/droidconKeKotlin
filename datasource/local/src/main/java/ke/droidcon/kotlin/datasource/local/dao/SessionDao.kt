@@ -33,7 +33,7 @@ interface SessionDao : BaseDao<SessionEntity> {
     @Query("SELECT * FROM sessions WHERE id = :id")
     fun getSessionById(id: String): Flow<SessionEntity?>
 
-    @RawQuery(observedEntities = arrayOf(SessionEntity::class))
+    @RawQuery(observedEntities = [SessionEntity::class])
     fun fetchSessionsWithFilters(query: SupportSQLiteQuery): Flow<List<SessionEntity>>
 
     @Query("UPDATE sessions SET isBookmarked = :isBookmarked WHERE remote_id = :id")

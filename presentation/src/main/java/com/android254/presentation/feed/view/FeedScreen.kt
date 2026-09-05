@@ -103,7 +103,6 @@ internal fun FeedScreen(
                 onButtonClick = {
                     navigateToFeedbackScreen()
                 },
-                userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI",
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,

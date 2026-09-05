@@ -104,7 +104,6 @@ class ScreenScreenshotTest : ChaiScreenshotTest() {
                                     ),
                             ),
                     ),
-                sessionId = "1",
                 bookmarkSession = {},
                 unBookmarkSession = {},
                 onNavigationIconClick = {},

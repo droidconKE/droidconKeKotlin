@@ -46,7 +46,6 @@ import ke.droidcon.kotlin.core.ui.R
 @Composable
 fun DroidconAppBarWithFeedbackButton(
     onButtonClick: () -> Unit,
-    userProfile: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -108,9 +107,6 @@ fun FeedbackButton(
 @Composable
 private fun Preview() {
     ChaiTheme {
-        DroidconAppBarWithFeedbackButton(
-            onButtonClick = {},
-            userProfile = "https://media-exp1.licdn.com/dms/image/C4D03AQGn58utIO-x3w/profile-displayphoto-shrink_200_200/0/1637478114039?e=2147483647&v=beta&t=3kIon0YJQNHZojD3Dt5HVODJqHsKdf2YKP1SfWeROnI",
-        )
+        DroidconAppBarWithFeedbackButton(onButtonClick = {})
     }
 }

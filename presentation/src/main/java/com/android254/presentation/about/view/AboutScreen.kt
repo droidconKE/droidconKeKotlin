@@ -84,7 +84,6 @@ internal fun AboutScreen(
                 onButtonClick = {
                     navigateToFeedbackScreen()
                 },
-                userProfile = "",
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
