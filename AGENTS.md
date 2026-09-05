@@ -114,6 +114,18 @@ has screenshot tests, and register it in `settings.gradle.kts`.
    the one kind of baseline this repo keeps, because it records API shape rather than hiding a
    violation. Commit both the debug and release files; both are tracked and both are checked.
 
+Before starting, check what the area still needs from `:presentation`. Every remaining feature
+area currently comes back clean, but the check is cheap and it is what caught the two DI
+qualifiers that had to move to `:core:common` before a feature could compile on its own:
+
+```bash
+grep -rh "^import com.android254.presentation" \
+  presentation/src/main/java/com/android254/presentation/<area>
+```
+
+Anything that resolves to a package still inside `:presentation` has to move to a core module
+first.
+
 ---
 
 ## Stack

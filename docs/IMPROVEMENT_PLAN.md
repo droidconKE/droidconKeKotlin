@@ -442,8 +442,24 @@ The current 7-module layout has served well, but `presentation` at 120 files is 
    - **`:core:common`** — the `@IoDispatcher` qualifier, which lived in `:datasource:remote`
      and is used by five modules. A UI feature cannot depend on the network module to get it.
 4. Extract the rest one PR per feature, over months, as features get touched anyway. The
-   pattern is written up under "Extracting an existing feature" in `AGENTS.md`; `home`,
-   `sessions` and `sessionDetails` are the big three left in `:presentation`.
+   pattern is written up under "Extracting an existing feature" in `AGENTS.md`.
+
+   **Every remaining feature area is unblocked**, audited 2026-09-05: `home` (16 files),
+   `sessions` (19), `sessionDetails` (10), `feed` (7), `auth` (4), `about` (3) and `feedback`
+   (1) now import nothing from `:presentation`, and no feature imports another. Each is an
+   independent PR someone can pick up without touching the core tier first.
+
+   The audit is worth repeating before each extraction, because it is what caught the two
+   blockers this work had to clear — `@IoDispatcher` and, later, `@ConferenceTimeZone`/`Clock`,
+   both DI qualifiers a feature could not reach without depending on the wrong module:
+
+   ```bash
+   # what does a feature still need from :presentation itself?
+   grep -rh "^import com.android254.presentation" presentation/src/main/java/com/android254/presentation/<area>
+   ```
+
+   `notifications` is the one exception and is not a feature: it needs `MainActivity` to build
+   a PendingIntent, so it belongs with the composition root in `:app`.
 5. Rename `:datasource:*` and `:data`/`:domain` to `:core:*` **last** — it's a pure rename and it touches every file, so do it when the tree is otherwise stable.
 
 What stayed in `:presentation` on purpose: `DroidconEntryProvider` and `Navigation`, whose
