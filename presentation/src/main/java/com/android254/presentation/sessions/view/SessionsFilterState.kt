@@ -16,8 +16,8 @@
 package com.android254.presentation.sessions.view
 
 import com.android254.domain.models.Session
+import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
 
 /**
  * The active session filters. Comparisons are case-insensitive, since option values and

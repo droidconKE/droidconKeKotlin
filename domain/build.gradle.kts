@@ -24,5 +24,9 @@ android {
 }
 
 dependencies {
+    // api, not implementation: the repository interfaces here expose these models, and every
+    // existing consumer of :domain expects to see them without depending on :core:model too.
+    api(projects.core.model)
+
     implementation(libs.kotlinx.coroutines.core)
 }

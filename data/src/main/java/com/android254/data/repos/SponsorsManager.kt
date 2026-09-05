@@ -22,8 +22,8 @@ import com.android254.data.util.sync
 import com.android254.domain.models.Sponsors
 import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sponsors.RemoteSponsorsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

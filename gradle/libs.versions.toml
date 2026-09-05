@@ -208,6 +208,7 @@ hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 compose-stability = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
@@ -218,6 +219,8 @@ toml-updater = { id = "nl.littlerobots.version-catalog-update", version.ref = "t
 # Convention plugins defined in the project
 droidconke-quality = { id = "droidconke.quality" }
 droidconke-android-library = { id = "droidconke.android.library" }
+droidconke-jvm-library = { id = "droidconke.jvm.library" }
+droidconke-android-feature = { id = "droidconke.android.feature" }
 droidconke-android-room = { id = "droidconke.android.room" }
 droidconke-android-hilt = { id = "droidconke.android.hilt" }
 droidconke-android-library-compose = { id = "droidconke.android.library.compose" }

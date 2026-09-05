@@ -55,7 +55,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -84,7 +84,6 @@ internal fun AboutScreen(
                 onButtonClick = {
                     navigateToFeedbackScreen()
                 },
-                userProfile = "",
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,

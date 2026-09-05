@@ -19,6 +19,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.dao.FeedDao
 import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
@@ -34,7 +35,6 @@ import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
 import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSourceImpl
 import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSource
 import ke.droidcon.kotlin.datasource.local.source.LocalSponsorsDataSourceImpl
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.feed.FeedApi
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSource
 import ke.droidcon.kotlin.datasource.remote.feed.RemoteFeedDataSourceImpl

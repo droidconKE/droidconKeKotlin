@@ -41,7 +41,7 @@ import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SessionSpeakerNameAndFavouriteIcon(

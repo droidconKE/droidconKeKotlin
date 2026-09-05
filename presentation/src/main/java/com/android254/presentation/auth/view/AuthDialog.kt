@@ -45,7 +45,7 @@ import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextButtonLight
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
 
 @Composable

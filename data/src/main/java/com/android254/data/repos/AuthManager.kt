@@ -18,9 +18,9 @@ package com.android254.data.repos
 import com.android254.domain.models.DataResult
 import com.android254.domain.models.Success
 import com.android254.domain.repos.AuthRepo
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.auth.AuthApi
 import ke.droidcon.kotlin.datasource.remote.auth.model.GoogleToken
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.utils.TokenProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

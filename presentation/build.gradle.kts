@@ -43,8 +43,11 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.domain)
-    implementation(projects.chai)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.ui)
+    implementation(projects.feature.speakers)
     implementation(projects.datasource.remote)
 
     implementation(libs.android.appCompat)

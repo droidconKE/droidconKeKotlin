@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.speakersDummyData
 import com.droidconke.chai.ChaiTheme
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

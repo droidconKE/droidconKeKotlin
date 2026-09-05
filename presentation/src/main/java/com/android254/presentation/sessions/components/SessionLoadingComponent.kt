@@ -35,7 +35,7 @@ import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable

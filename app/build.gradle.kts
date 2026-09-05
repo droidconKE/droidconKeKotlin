@@ -78,7 +78,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.chai)
+    implementation(projects.core.designsystem)
     implementation(projects.data)
     implementation(projects.datasource.local)
     implementation(projects.datasource.remote)

@@ -34,7 +34,7 @@ class AndroidLibraryRoborazziConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                add("testImplementation", project(":screenshot-testing"))
+                add("testImplementation", project(":core:screenshot"))
             }
         }
     }
