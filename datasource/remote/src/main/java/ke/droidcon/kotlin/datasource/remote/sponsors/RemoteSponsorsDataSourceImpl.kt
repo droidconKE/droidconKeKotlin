@@ -15,7 +15,7 @@
  */
 package ke.droidcon.kotlin.datasource.remote.sponsors
 
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sponsors.model.SponsorDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

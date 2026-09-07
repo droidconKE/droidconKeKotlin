@@ -18,9 +18,9 @@ package com.android254.presentation.sessions.view
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
+import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.models.SessionsIntentHandler
-import com.android254.presentation.sessions.utils.SessionsFilterCategory
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

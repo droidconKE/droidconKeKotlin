@@ -43,7 +43,7 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiTextLabelLarge
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

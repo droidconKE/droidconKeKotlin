@@ -32,7 +32,7 @@ import coil.request.ImageRequest
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.droidconke.chai.atoms.ChaiTeal90
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SessionBannerImage(

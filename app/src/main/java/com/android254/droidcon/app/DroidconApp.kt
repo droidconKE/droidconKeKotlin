@@ -60,7 +60,7 @@ class DroidconApp : Application() {
         val channel =
             NotificationChannel(
                 WorkConstants.NOTIFICATION_CHANNEL,
-                WorkConstants.syncDataWorkerName,
+                WorkConstants.SYNC_DATA_WORKER_NAME,
                 NotificationManager.IMPORTANCE_HIGH,
             )
         val notificationManager = getSystemService(NotificationManager::class.java)

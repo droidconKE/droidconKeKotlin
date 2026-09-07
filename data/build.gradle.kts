@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.domain)
     implementation(projects.datasource.local)
     implementation(projects.datasource.remote)

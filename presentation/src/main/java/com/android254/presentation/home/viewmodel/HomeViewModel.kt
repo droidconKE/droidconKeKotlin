@@ -22,7 +22,7 @@ import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.home.mappers.toHomeState
 import com.android254.presentation.home.viewstate.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

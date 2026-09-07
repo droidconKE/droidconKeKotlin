@@ -67,14 +67,12 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 @Composable
 fun SessionDetailsRoute(
     viewModel: SessionDetailsViewModel,
-    sessionId: String,
     onNavigationIconClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SessionDetailsScreen(
         uiState = uiState,
-        sessionId = sessionId,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick,
@@ -84,7 +82,6 @@ fun SessionDetailsRoute(
 @Composable
 internal fun SessionDetailsScreen(
     uiState: SessionDetailsUiState,
-    sessionId: String,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit,
@@ -251,7 +248,6 @@ private fun SessionDetailsScreenPreview() {
                                 ),
                         ),
                 ),
-            sessionId = "1",
             bookmarkSession = {},
             unBookmarkSession = {},
         )

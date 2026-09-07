@@ -71,7 +71,37 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Check composable stability against the committed baselines
-        run: ./gradlew :chai:debugStabilityCheck :presentation:debugStabilityCheck
+        # Aggregate task, not a hardcoded module list: a new Compose module is covered the
+        # moment it is added, rather than being silently skipped until someone notices.
+        run: ./gradlew stabilityCheck
+
+  screenshot-tests:
+    name: Screenshot tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Verify screenshots against the committed goldens
+        run: ./gradlew verifyRoborazziDebug
+
+      - name: Upload diff images
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshot-diffs
+          path: '**/build/outputs/roborazzi/**'
+          if-no-files-found: ignore
 
   unit-tests:
     name: Unit tests

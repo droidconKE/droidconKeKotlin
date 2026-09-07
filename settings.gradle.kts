@@ -39,6 +39,10 @@ dependencyResolutionManagement {
 rootProject.name = "dcke"
 
 include(":app")
-include(":chai")
-include(":screenshot-testing")
+include(":core:common")
+include(":core:model")
+include(":core:designsystem")
+include(":core:screenshot")
+include(":core:ui")
+include(":feature:speakers")
 include(":datasource:remote", ":datasource:local", ":data", ":domain", ":presentation")

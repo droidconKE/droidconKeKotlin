@@ -59,7 +59,7 @@ import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 

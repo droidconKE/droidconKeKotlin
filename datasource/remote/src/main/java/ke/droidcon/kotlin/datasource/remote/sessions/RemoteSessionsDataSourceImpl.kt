@@ -15,7 +15,7 @@
  */
 package ke.droidcon.kotlin.datasource.remote.sessions
 
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

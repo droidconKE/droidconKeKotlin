@@ -60,7 +60,7 @@ import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun CurrentSessionComponent(

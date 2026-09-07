@@ -15,8 +15,11 @@
  */
 package ke.droidcon.kotlin.datasource.remote.organizers
 
-import io.ktor.client.engine.mock.*
-import io.ktor.http.*
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizersPagedResponse
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult

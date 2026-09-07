@@ -22,7 +22,7 @@ import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher

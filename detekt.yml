@@ -314,6 +314,11 @@ style:
     conversionFunctionPrefix: 'to'
   DataClassShouldBeImmutable:
     active: false
+  DestructuringDeclarationWithTooManyEntries:
+    active: true
+    # ConstraintLayout's createRefs() returns one ref per constrained child, so the default
+    # of 3 flags every non-trivial layout. 5 is the largest in use here.
+    maxDestructuringEntries: 5
   EqualsNullCall:
     active: true
   EqualsOnSignatureLine:

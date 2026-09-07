@@ -24,7 +24,7 @@ import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.feed.view.toPresentation
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch

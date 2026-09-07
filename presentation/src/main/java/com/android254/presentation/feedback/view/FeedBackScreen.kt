@@ -70,7 +70,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.presentation.R
+import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable

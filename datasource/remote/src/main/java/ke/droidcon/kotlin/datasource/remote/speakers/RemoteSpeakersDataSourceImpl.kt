@@ -15,7 +15,7 @@
  */
 package ke.droidcon.kotlin.datasource.remote.speakers
 
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

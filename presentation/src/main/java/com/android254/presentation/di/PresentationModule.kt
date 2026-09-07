@@ -22,9 +22,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.datetime.TimeZone
 import javax.inject.Singleton
-import kotlin.time.Clock
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,11 +32,4 @@ object PresentationModule {
     fun providesDroidconNotificationManager(
         @ApplicationContext context: Context,
     ) = DroidconNotificationManager(context)
-
-    @Provides
-    fun providesClock(): Clock = Clock.System
-
-    @Provides
-    @ConferenceTimeZone
-    fun providesConferenceTimeZone(): TimeZone = TimeZone.of("Africa/Nairobi")
 }

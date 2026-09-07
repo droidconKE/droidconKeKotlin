@@ -22,8 +22,8 @@ import com.android254.data.util.sync
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.sync.Synchronizer
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.source.LocalSpeakersDataSource
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.speakers.RemoteSpeakersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

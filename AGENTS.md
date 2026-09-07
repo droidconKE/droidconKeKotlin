@@ -51,28 +51,80 @@ foojay resolver provisions it.
 
 ```
 app                  Application, MainActivity host, manifest, DI graph root
-presentation         All Compose UI, ViewModels, navigation
-chai                 Design system: colours, typography, shared components
-domain               Pure Kotlin — models and repository interfaces. No Android dependency.
+
+core:model           Pure Kotlin data classes. A JVM module — no Android on its classpath.
+core:common          Dispatcher qualifiers and other cross-cutting plumbing
+core:designsystem    chai: colours, typography, shapes, shared components
+core:ui              Presentation models, shared composables, navigation primitives, resources
+core:screenshot      Roborazzi harness. Test-only — consumed via testImplementation
+
+feature:speakers     A feature: its screens, view models, tests and goldens
+
+domain               Repository interfaces and sync contracts
 data                 Repository implementations, sync, mappers
 datasource:local     Room database, DAOs, entities
 datasource:remote    Ktor client, DTOs, Remote Config
+presentation         The features not yet extracted, plus the composition root
 build-logic          Convention plugins
 ```
 
-**Dependency rule:** `domain` depends on nothing. `data` depends on `domain`, never the
-reverse. `presentation` does not reach into `datasource:local`. Keep `domain` free of
-Android imports — it is the module that would move first if this ever becomes
-multiplatform.
+**Dependency rules**, in the order they matter:
 
-Add a module by applying the convention plugins, not by copying a `build.gradle.kts`:
+- **A feature module never depends on another feature module.** Anything two features need
+  belongs in `core:ui`. Cross-feature navigation goes through the `NavKey`s in `core:ui`.
+- **Nothing depends on `presentation`** except `app`. It is a holding pen for the features not
+  yet extracted; it shrinks with every extraction and eventually becomes the composition root
+  in `app`.
+- `core:model` has no Android dependency and the build enforces it — it is a JVM module, so an
+  Android import will not compile.
+- `data` depends on `domain`, never the reverse. `presentation` does not reach into
+  `datasource:local`.
+
+### Adding a feature module
+
+Apply the convention plugin; do not copy another module's `build.gradle.kts`:
 
 ```kotlin
 plugins {
-    alias(libs.plugins.droidconke.android.library)
-    alias(libs.plugins.droidconke.android.hilt)
+    alias(libs.plugins.droidconke.android.feature)
+}
+
+android {
+    namespace = "ke.droidcon.kotlin.feature.<name>"
 }
 ```
+
+That gives you Compose, Hilt, jacoco, the quality checks, the Material 3 opt-in and
+`core:ui`. Declare only what is genuinely yours on top — `:feature:speakers` adds
+ConstraintLayout and nothing else. Add `droidconke.android.library.roborazzi` if the feature
+has screenshot tests, and register it in `settings.gradle.kts`.
+
+### Extracting an existing feature
+
+`:feature:speakers` is the worked example; follow its shape.
+
+1. `git mv` the feature's package out of `presentation`, main and test together.
+2. Move its screenshot goldens too. A feature's screens are `internal`, so its tests only
+   compile inside the feature module.
+3. Add the module to `settings.gradle.kts` and to `presentation`'s dependencies, so
+   `DroidconEntryProvider` can still reach the routes.
+4. Expect two classes of breakage: `internal` no longer crosses the boundary, and Kotlin will
+   not smart-cast a public property declared in another module.
+5. `./gradlew stabilityDump` — a new Compose module needs its own stability baseline. That is
+   the one kind of baseline this repo keeps, because it records API shape rather than hiding a
+   violation. Commit both the debug and release files; both are tracked and both are checked.
+
+Before starting, check what the area still needs from `:presentation`. Every remaining feature
+area currently comes back clean, but the check is cheap and it is what caught the two DI
+qualifiers that had to move to `:core:common` before a feature could compile on its own:
+
+```bash
+grep -rh "^import com.android254.presentation" \
+  presentation/src/main/java/com/android254/presentation/<area>
+```
+
+Anything that resolves to a package still inside `:presentation` has to move to a core module
+first.
 
 ---
 
@@ -109,10 +161,15 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 - **Apache licence header** on every file. Spotless adds it.
 - **detekt forbids `TODO` in comments.** Write the note as a plain sentence, or file an
   issue.
-- **No baselines.** There is no lint baseline and the ktlint one is empty. A suppression goes
-  in `config/lint/lint.xml` with the reason next to it, where a reviewer will see it. Rules at
-  `error` are clean and must stay clean; rules at `warning` are being burned down, and
-  promoting one to `error` is the last commit of the work that clears it. Counts are in
+- **No baselines — none, anywhere.** There is no Android Lint baseline, no ktlint baseline and
+  no detekt baseline in this repo, and adding one is not how a violation gets resolved here.
+  The options, in order of preference: fix the code; or, if the rule is genuinely wrong for a
+  library idiom, configure the rule in `detekt.yml` with a comment saying why; or, as a last
+  resort, `@Suppress` at the site with the reason next to it, where a reviewer sees it. A
+  baseline file hides all three from review, which is why there are none. Lint suppressions go
+  in `config/lint/lint.xml` with the reason. Rules at `error` are clean and must stay clean;
+  rules at `warning` are being burned down, and promoting one to `error` is the last commit of
+  the work that clears it. Counts are in
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
 - **Colours come from the theme**, never from the raw palette. Read

@@ -22,8 +22,8 @@ import com.android254.data.util.sync
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.sync.Synchronizer
+import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.source.LocalOrganizersDataSource
-import ke.droidcon.kotlin.datasource.remote.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.remote.organizers.RemoteOrganizersDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import kotlinx.coroutines.CoroutineDispatcher

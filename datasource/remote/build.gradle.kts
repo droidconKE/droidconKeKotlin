@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    api(projects.core.common)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
     implementation(libs.kotlin.coroutines.android)
