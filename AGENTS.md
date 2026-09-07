@@ -114,9 +114,10 @@ has screenshot tests, and register it in `settings.gradle.kts`.
    the one kind of baseline this repo keeps, because it records API shape rather than hiding a
    violation. Commit both the debug and release files; both are tracked and both are checked.
 
-Before starting, check what the area still needs from `:presentation`. Every remaining feature
-area currently comes back clean, but the check is cheap and it is what caught the two DI
-qualifiers that had to move to `:core:common` before a feature could compile on its own:
+Before starting, check what the area still needs from `:presentation`. The check is a useful
+first pass but **it is not a verification** — it missed a feature-to-feature mapper dependency
+and cannot see coupling between test source sets at all. The only reliable check is to move the
+module and compile:
 
 ```bash
 grep -rh "^import com.android254.presentation" \

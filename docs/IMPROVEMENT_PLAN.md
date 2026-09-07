@@ -6,35 +6,80 @@
 
 ---
 
-## Next up — §4 Phase 1, adaptive & large-screen support
+## Next up — finish the module split (§2)
 
-**Phase 0 is done.** §3.5 (chai and Material 3) and §3.7 (Credential Manager) landed together
-with the Roborazzi baselines from §10.2, which went in first so the colour work was reviewable
-as image diffs rather than argued about.
+**This is the top priority. Nothing else starts until the module layout is complete.**
 
-**Modularisation started 2026-09-04** — `:core:model`, `:core:common`, `:core:designsystem`,
-`:core:ui`, `:core:screenshot` and `:feature:speakers` are out, and `droidconke.android.feature`
-plus the `AGENTS.md` write-up make the next extraction a self-contained task. See §2.
+In progress on branch `feature-modules`, commit `dcc7856`, **which does not compile.** One
+error cluster remains; see "What is left" below. The work is committed rather than stashed so
+it can be picked up directly.
 
-**§4 is next, and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
-sessions and speakers, foldable postures, and pointer/keyboard input. It is navigation rework
-plus two feature-area rewrites, not a bundle-with-other-things change.
+### Where it got to
 
-Carried out of Phase 0, smallest first:
+`:presentation` is down to the composition root — `activity`, `notifications`,
+`common/navigation`, `common/bottomnav`, `di`. Six feature modules now exist:
 
-- **Both §3.5 design decisions are settled** (2026-09-04): dark-mode elevation reversed to the
-  M3 direction, and headings accented in both themes. Recorded in §3.5 with the knock-on token
-  moves each required.
-- **`AuthDialog` is unreachable from the UI** — `DroidconAppBar` drops the `onActionClicked` it
-  is handed, so the signed-out state has no sign-in affordance. See the note in §3.7.
-- **The `ChaiColors` token migration.** Tier 2 exists and stock components are on-brand, but the
-  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature as §4 and §5 touch
-  them, then delete. Doing it in one PR would be a 120-file diff that gets rubber-stamped.
-- **Six of the B findings are closed in code but not by a test** (B3, B4, B5, B6, B7, B10 — see
+| Module | Came from | Notes |
+| --- | --- | --- |
+| `:feature:speakers` | `speakers` | Merged already |
+| `:feature:home` | `home` | |
+| `:feature:sessions` | `sessions` + `sessionDetails` | The plan lists one `sessions` feature; the detail screen is the same domain |
+| `:feature:feed` | `feed` | |
+| `:feature:about` | `about` + `feedback` | The plan gives feedback no module of its own. Revisit if §11.5 grows it |
+| `:feature:auth` | `auth` | |
+
+`SessionMapper` moved to `:core:ui` as `com.android254.presentation.mappers`. It maps domain
+Sessions onto presentation models `:core:ui` already owns, and `home`, `sessions` and
+`MainViewModel` all use it, so it was never sessions-only.
+
+### What is left
+
+1. **`:core:testing` is now required.** `HomeViewModelTest` uses `FakeSyncWorkManager`, which
+   lives in the `sessions` test source set. A feature's tests cannot reach another feature's,
+   so the fake needs the shared test module §2 already specifies. `FakeEntryProvider` in
+   `:presentation`'s tests is the second candidate to move there.
+2. Re-record the screenshot goldens per feature and confirm they verify.
+3. Run the full gate and CI.
+
+### Correction: the "every feature area is clean" audit was wrong
+
+The audit reported on 2026-09-05 that every remaining area imported nothing from
+`:presentation`. Extracting them disproved it — `home` imports
+`sessions.mappers.toPresentationModel`, a **feature-to-feature** dependency, which the audit
+grep should have caught and did not. Two lessons:
+
+- **Do not trust the grep alone.** The only reliable check is to move the module and compile.
+  Every real coupling in this work surfaced that way, never from analysis: `@IoDispatcher`,
+  `@ConferenceTimeZone`/`Clock`, `SessionMapper`, `FakeSyncWorkManager`.
+- **Test source sets couple features too**, and no import-of-main-sources audit sees it.
+
+### Not created, and why
+
+Seven feature modules in §2's list have no code behind them yet — `ticket`, `notes`,
+`assistant`, `gamification`, `jobboard`, `challenge`, `networking` — as do `:core:ai`,
+`:core:analytics`, `:widget`, `:benchmark` and `:baselineprofile`. They arrive with the phases
+that need them (§6, §7, §9, §11). Creating empty shells now would be scaffolding for work
+nobody has started.
+
+The five `:core:*` names that shadow existing modules — `domain`, `data`, `database`,
+`network`, `datastore` — are renames, and §2 step 5 deliberately puts renames last because
+they touch every file.
+
+### After this
+
+**§4, adaptive & large-screen support**, on its own branch: breakpoints, adaptive navigation,
+list-detail for sessions and speakers, foldable postures, pointer and keyboard input. It is
+navigation rework plus two feature-area rewrites.
+
+Also still open from Phase 0:
+
+- Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see
   §3.9). B6 and B10 protect user data and are the ones to do first.
-- **Expressive is unreachable on material3 1.4.0**, and not for the reason §3.5 originally gave.
-  `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized` typography roles are all
-  `internal`. §5.2 is blocked on the library, not on this repo. Re-check when material3 moves.
+- The `ChaiColors` token migration: tier 2 exists and stock components are on-brand, but the
+  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature, then delete.
+- Expressive is unreachable on material3 1.4.0 — `MaterialExpressiveTheme`, `MotionScheme` and
+  the `*Emphasized` typography roles are all `internal`. §5.2 is blocked on the library, not on
+  this repo. Re-check when material3 moves.
 
 ---
 
@@ -444,10 +489,10 @@ The current 7-module layout has served well, but `presentation` at 120 files is 
 4. Extract the rest one PR per feature, over months, as features get touched anyway. The
    pattern is written up under "Extracting an existing feature" in `AGENTS.md`.
 
-   **Every remaining feature area is unblocked**, audited 2026-09-05: `home` (16 files),
-   `sessions` (19), `sessionDetails` (10), `feed` (7), `auth` (4), `about` (3) and `feedback`
-   (1) now import nothing from `:presentation`, and no feature imports another. Each is an
-   independent PR someone can pick up without touching the core tier first.
+   **That audit was wrong — see the correction in "Next up".** It claimed no feature imported
+   another; extracting them found `home` importing `sessions.mappers.toPresentationModel`, and
+   a shared test fake coupling `home`'s tests to `sessions`'. Import analysis is a useful
+   first pass, not a verification. Move the module and compile.
 
    The audit is worth repeating before each extraction, because it is what caught the two
    blockers this work had to clear — `@IoDispatcher` and, later, `@ConferenceTimeZone`/`Clock`,
