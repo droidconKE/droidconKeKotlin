@@ -47,6 +47,11 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.core.designsystem)
     implementation(projects.core.ui)
+    implementation(projects.feature.about)
+    implementation(projects.feature.auth)
+    implementation(projects.feature.feed)
+    implementation(projects.feature.home)
+    implementation(projects.feature.sessions)
     implementation(projects.feature.speakers)
     implementation(projects.datasource.remote)
 
