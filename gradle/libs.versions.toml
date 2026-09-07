@@ -64,7 +64,7 @@ core = "1.7.0"
 nav3Core = "1.1.6"
 lifecycleViewmodelNav3 = "2.11.0"
 kotlinxSerializationCore = "1.11.0"
-collectionsImmutable = "0.5.1"
+collectionsImmutable = "0.5.2"
 
 [libraries]
 android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
