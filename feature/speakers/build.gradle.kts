@@ -23,8 +23,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.compose.constraintlayout)
-
     testImplementation(libs.test.mockk)
     testImplementation(libs.kotlin.coroutines.test)
 }
