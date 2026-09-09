@@ -174,7 +174,7 @@ public fun com.android254.presentation.common.components.SessionTitleComponent(s
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.SessionsCard(session: com.android254.presentation.models.SessionPresentationModel, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.common.components.SessionsCard(session: com.android254.presentation.models.SessionPresentationModel, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, showBorder: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -182,6 +182,7 @@ public fun com.android254.presentation.common.components.SessionsCard(session: c
     - navigateToSessionDetails: STABLE (function type)
     - onBookmark: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - showBorder: STABLE (primitive type)
 
 @Composable
 public fun com.android254.presentation.common.components.SponsorsCard(sponsors: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SponsorPresentationModel>, modifier: androidx.compose.ui.Modifier): kotlin.Unit

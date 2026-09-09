@@ -5,6 +5,13 @@
 //   ./gradlew :speakers:stabilityDump
 
 @Composable
+private fun com.android254.presentation.speakers.view.CenteredMessage(message: kotlin.String): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - message: STABLE (String is immutable)
+
+@Composable
 public fun com.android254.presentation.speakers.view.SpeakerComponent(speaker: com.android254.presentation.models.SpeakerUI, modifier: androidx.compose.ui.Modifier, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -14,21 +21,34 @@ public fun com.android254.presentation.speakers.view.SpeakerComponent(speaker: c
     - onClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.speakers.view.SpeakerDetailsRoute(name: kotlin.String, speakersDetailsScreenViewModel: com.android254.presentation.speakers.SpeakerDetailsScreenViewModel, navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.speakers.view.SpeakerDetailsContent(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState.Success, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - uiState: STABLE (class with no mutable properties)
+    - navigateToSessionDetails: STABLE (function type)
+    - onBookmark: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.speakers.view.SpeakerDetailsRoute(name: kotlin.String, speakersDetailsScreenViewModel: com.android254.presentation.speakers.SpeakerDetailsScreenViewModel, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - name: STABLE (String is immutable)
     - speakersDetailsScreenViewModel: RUNTIME (requires runtime check)
     - navigateBack: STABLE (function type)
+    - navigateToSessionDetails: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.speakers.view.SpeakerDetailsScreen(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState, navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.speakers.view.SpeakerDetailsScreen(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: STABLE (class with no mutable properties)
     - navigateBack: STABLE (function type)
+    - navigateToSessionDetails: STABLE (function type)
+    - onBookmark: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.speakers.view.SpeakersRoute(speakersScreenViewModel: com.android254.presentation.speakers.SpeakersScreenViewModel, navigateToHomeScreen: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
@@ -40,19 +60,37 @@ public fun com.android254.presentation.speakers.view.SpeakersRoute(speakersScree
     - navigateToSpeaker: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.speakers.view.SpeakersScreen(uiState: com.android254.presentation.speakers.SpeakersScreenUiState, navigateToHomeScreen: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.speakers.view.SpeakersScreen(uiState: com.android254.presentation.speakers.SpeakersScreenUiState, searchQuery: kotlin.String, onSearchQueryChanged: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToHomeScreen: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: STABLE (class with no mutable properties)
+    - searchQuery: STABLE (String is immutable)
+    - onSearchQueryChanged: STABLE (function type)
     - navigateToHomeScreen: STABLE (function type)
     - navigateToSpeaker: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.speakers.view.TopAppBar(modifier: androidx.compose.ui.Modifier, onBackPressed: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.speakers.view.SpeakersSearchField(query: kotlin.String, onQueryChanged: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - query: STABLE (String is immutable)
+    - onQueryChanged: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.speakers.view.SpeakingNowBadge(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - onBackPressed: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.speakers.view.TwitterHandleRow(twitterHandle: kotlin.String?, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - twitterHandle: STABLE (class with no mutable properties)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
