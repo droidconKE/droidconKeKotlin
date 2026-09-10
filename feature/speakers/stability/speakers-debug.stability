@@ -87,10 +87,10 @@ private fun com.android254.presentation.speakers.view.SpeakingNowBadge(modifier:
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.speakers.view.TwitterHandleRow(twitterHandle: kotlin.String?, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.speakers.view.TwitterHandleRow(twitterHandle: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - twitterHandle: STABLE (class with no mutable properties)
+    - twitterHandle: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
 

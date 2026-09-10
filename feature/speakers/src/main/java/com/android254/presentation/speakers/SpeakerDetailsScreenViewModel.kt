@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2023 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -96,17 +97,19 @@ class SpeakerDetailsScreenViewModel
             }
         }
 
-        /**
-         * There is no sessions-by-speaker query, and [Speaker] carries no id, so the only link
-         * available is the speaker list each [Session] already embeds — matched on name.
-         */
         private fun List<Session>.sessionsFor(speaker: Speaker): ImmutableList<SessionPresentationModel> {
             val now = clock.now()
-            return this
-                .filter { session -> session.speakers.any { it.name.equals(speaker.name, ignoreCase = true) } }
-                .distinctBy { it.remoteId }
-                .map { it.toPresentationModel(now) }
-                .toImmutableList()
+            val sessions =
+                this
+                    .filter { session -> session.speakers.any { it.name.equals(speaker.name, ignoreCase = true) } }
+                    .distinctBy { it.remoteId }
+                    .map { it.toPresentationModel(now) }
+                    .toImmutableList()
+
+            if (sessions.isEmpty() && isNotEmpty()) {
+                Timber.d("No sessions matched speaker '%s' by name", speaker.name)
+            }
+            return sessions
         }
 
         private fun Speaker.toPresentation() =

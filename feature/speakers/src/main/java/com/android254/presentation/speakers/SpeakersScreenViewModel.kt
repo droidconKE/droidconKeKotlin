@@ -17,6 +17,7 @@ package com.android254.presentation.speakers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.models.SpeakerUI
@@ -25,17 +26,22 @@ import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Clock
 
 sealed interface SpeakersScreenUiState {
     object Loading : SpeakersScreenUiState
@@ -54,7 +60,9 @@ class SpeakersScreenViewModel
     @Inject
     constructor(
         private val speakersRepo: SpeakersRepo,
+        private val sessionsRepo: SessionsRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val clock: Clock,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         val isSyncing =
@@ -73,11 +81,26 @@ class SpeakersScreenViewModel
             _searchQuery.value = query
         }
 
+        private val speakingNowNames: Flow<Set<String>> =
+            flow {
+                while (true) {
+                    emit(clock.now().toEpochMilliseconds())
+                    delay(TICK_INTERVAL_MS)
+                }
+            }.flatMapLatest { now ->
+                sessionsRepo.fetchCurrentSessions(now).map { sessions ->
+                    sessions
+                        .flatMap { it.speakers }
+                        .mapTo(mutableSetOf()) { it.name.trim().lowercase() }
+                }
+            }
+
         val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
             combine(
                 speakersRepo.fetchSpeakers(),
                 _searchQuery,
-            ) { speakers, query ->
+                speakingNowNames,
+            ) { speakers, query, speakingNow ->
                 speakers
                     .map { speaker ->
                         SpeakerUI(
@@ -87,6 +110,7 @@ class SpeakersScreenViewModel
                             tagline = speaker.tagline,
                             bio = speaker.biography,
                             twitterHandle = speaker.twitter,
+                            isSpeakingNow = speaker.name.trim().lowercase() in speakingNow,
                         )
                     }.filter { it.matches(query) }
                     .toImmutableList()
@@ -101,12 +125,12 @@ class SpeakersScreenViewModel
                     started = SharingStarted.WhileSubscribed(5000L),
                     initialValue = SpeakersScreenUiState.Loading,
                 )
+
+        private companion object {
+            const val TICK_INTERVAL_MS = 60_000L
+        }
     }
 
-/**
- * Free-text match across the fields a speaker is likely to be looked up by.
- * A blank query matches everything, so an inactive search bar is a no-op.
- */
 private fun SpeakerUI.matches(query: String): Boolean {
     val trimmed = query.trim()
     if (trimmed.isBlank()) return true
