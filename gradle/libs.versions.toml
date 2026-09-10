@@ -21,6 +21,9 @@ splash = "1.2.0"
 firebaseCrashlyticsPlugin = "3.0.8"
 firebasePerfPlugin = "2.0.2"
 junit4 = "4.13.2"
+benchmark = "1.5.0"
+uiautomator = "2.4.0"
+profileinstaller = "1.4.1"
 agp = "9.3.1"
 chucker = "4.3.1"
 androidxComposeBom = "2026.08.00"
@@ -166,6 +169,9 @@ junit-androidx = { module = "androidx.test.ext:junit", version.ref = "junit"}
 junit-androidx-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit"}
 test-junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "junit"}
 junit4 = { module = "junit:junit", version.ref = "junit4" }
+androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 
 # Dependencies of the included build-logic
 firebase-crashlytics-gradlePlugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
@@ -199,6 +205,7 @@ test = ["junit4", "test-junit-ktx"]
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradleplugin" }
 android-library = { id = "com.android.library", version.ref = "gradleplugin" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin"}
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }

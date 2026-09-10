@@ -97,6 +97,31 @@ Four of the five `:core:*` names that shadowed existing modules — `domain`, `d
 `database`, `network` — landed as renames on 2026-09-10. `datastore` did not: there was no
 module to rename, only two files inside `:core:data`. See "The renames" above.
 
+### §9.1-9.2 landed (2026-09-10)
+
+`:benchmarks` exists, the baseline profile is generated and shipped, and startup is
+measured. See [`docs/performance.md`](performance.md). Three corrections to what §9.1 and
+§9.2 specify below:
+
+- **No hand-rolled `benchmark` build type.** The baseline profile plugin creates
+  `benchmarkRelease` and `nonMinifiedRelease` on `:app` itself. §9.1's `create("benchmark")`
+  block is the pre-plugin pattern and is not needed.
+- **`com.android.test` is applied by id, not catalog alias**, and the Kotlin plugin is not
+  applied at all. §9.1 shows `alias(libs.plugins.kotlin.android)`, which is a hard error
+  here — AGP 9's built-in Kotlin owns that. A versioned request for `com.android.test` also
+  fails, because build-logic already has AGP on the classpath.
+- **Benchmark 1.5.0 works with AGP 9.4 and `android.newDsl` on.** The 1.4.x line required
+  `newDsl=false`, which this repo cannot set. Worth knowing before anyone pins an older
+  version.
+
+**Measured: the profile takes first-launch cold start from 1335 ms to 1047 ms, −22%**, on a
+Ciontek CS50C (Android 14). The startup profile separately cut the primary dex 36%, from
+6.07 MB to 3.90 MB. Full results and method in [`docs/performance.md`](performance.md).
+
+The OPPO Reno4 cannot produce that comparison — ColorOS stubs `cmd package compile` and it is
+below the API 33 floor — so a second device was needed. It is still the right device for jank
+work, which needs no forced compile.
+
 ### Also still open from Phase 0
 
 - Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see

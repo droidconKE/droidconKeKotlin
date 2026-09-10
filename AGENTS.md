@@ -21,6 +21,13 @@ Run these before opening a PR. CI runs the same set.
 ./gradlew verifyRoborazziDebug                # screenshot goldens
 ```
 
+Startup is measured, not asserted. See [`docs/performance.md`](docs/performance.md) — it also
+records why neither device on hand can produce the baseline-profile comparison.
+
+```bash
+./gradlew :app:generateBaselineProfile        # regenerate the shipped ART profile
+```
+
 Screenshot goldens live in `src/test/screenshots/`, outside Gradle's tracked outputs. After
 changing anything visual, record with `--rerun-tasks` — an up-to-date test task will otherwise
 leave stale images on disk:
@@ -58,6 +65,8 @@ core:designsystem    chai: colours, typography, shapes, shared components
 core:ui              Presentation models, shared composables, navigation primitives, resources
 core:screenshot      Roborazzi harness. Test-only — consumed via testImplementation
 core:testing         Shared test doubles. Test-only — consumed via testImplementation
+
+benchmarks           Macrobenchmark + baseline profile generation. Not shipped
 
 feature:about        about + feedback
 feature:auth
@@ -199,6 +208,10 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   the work that clears it. Counts are in
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
+- **R8 keep rules live in `app/src/main/keepRules/*.keep`**, not `proguard-rules.pro`. The
+  release build uses AGP 9.3+'s `optimization { enable = true }` block, which turns on code
+  and resource optimization and supplies the default Android rules, so there is no
+  `proguardFiles` line to add one to.
 - **Colours come from the theme**, never from the raw palette. Read
   `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
   roles). Do not import `ChaiBlue` and friends outside `chai/colors`.
