@@ -33,13 +33,13 @@ leave stale images on disk:
 Instrumentation tests run on Gradle Managed Devices, so no emulator setup is needed:
 
 ```bash
-./gradlew :data:supportedApiLevelsGroupDebugAndroidTest    # api30 + api34
+./gradlew :core:data:supportedApiLevelsGroupDebugAndroidTest    # api30 + api34
 ```
 
 Single test class:
 
 ```bash
-./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
+./gradlew :feature:sessions:testDebugUnitTest --tests "*SessionsFilterStateTest*"
 ```
 
 No JDK setup needed — `gradle/gradle-daemon-jvm.properties` pins the daemon to Java 17 and the
@@ -57,28 +57,48 @@ core:common          Dispatcher qualifiers and other cross-cutting plumbing
 core:designsystem    chai: colours, typography, shapes, shared components
 core:ui              Presentation models, shared composables, navigation primitives, resources
 core:screenshot      Roborazzi harness. Test-only — consumed via testImplementation
+core:testing         Shared test doubles. Test-only — consumed via testImplementation
 
-feature:speakers     A feature: its screens, view models, tests and goldens
+feature:about        about + feedback
+feature:auth
+feature:feed
+feature:home
+feature:sessions     sessions + sessionDetails — one domain, one module
+feature:speakers
+                     A feature owns its screens, view models, tests and goldens.
 
-domain               Repository interfaces and sync contracts
-data                 Repository implementations, sync, mappers
-datasource:local     Room database, DAOs, entities
-datasource:remote    Ktor client, DTOs, Remote Config
-presentation         The features not yet extracted, plus the composition root
+core:domain          Repository interfaces and sync contracts
+core:data            Repository implementations, sync, mappers
+core:database        Room database, DAOs, entities
+core:network         Ktor client, DTOs, Remote Config
 build-logic          Convention plugins
 ```
+
+The split is complete. Every code-backed feature is its own module, and `:presentation` is
+gone — its composition root (`MainActivity`, `Navigation`, `DroidconEntryProvider`,
+`BottomNavigationBar`, notifications, DI) now lives in `app`, which is the only module that
+depends on every feature.
+
+The `:core:*` renames kept each module's Kotlin package and Android namespace untouched — only
+the Gradle path moved. So `:core:database` is still `ke.droidcon.kotlin.datasource.local` on
+disk, the same way `:core:designsystem` is still `com.droidconke.chai`. Renaming packages too
+would have turned a build-file change into a diff across every file.
 
 **Dependency rules**, in the order they matter:
 
 - **A feature module never depends on another feature module.** Anything two features need
   belongs in `core:ui`. Cross-feature navigation goes through the `NavKey`s in `core:ui`.
-- **Nothing depends on `presentation`** except `app`. It is a holding pen for the features not
-  yet extracted; it shrinks with every extraction and eventually becomes the composition root
-  in `app`.
+- **`app` is the only module that may depend on every feature.** It holds the composition
+  root, which knows about all of them by definition — `droidconEntryProvider` maps a `NavKey`
+  to each. Nothing else gets to reach across the feature tier.
+- **A feature's tests never reach another feature's test source set.** Shared doubles go in
+  `core:testing`. This is not theoretical: `HomeViewModelTest` reaching `sessions`' own
+  `FakeSyncWorkManager` is what forced that module into existence, and no audit of *main*
+  sources would have seen it.
 - `core:model` has no Android dependency and the build enforces it — it is a JVM module, so an
   Android import will not compile.
-- `data` depends on `domain`, never the reverse. `presentation` does not reach into
-  `datasource:local`.
+- `core:data` depends on `core:domain`, never the reverse. Nothing above the data tier
+  reaches into `core:database` directly.
 
 ### Adding a feature module
 
@@ -101,30 +121,37 @@ has screenshot tests, and register it in `settings.gradle.kts`.
 
 ### Extracting an existing feature
 
-`:feature:speakers` is the worked example; follow its shape.
+Every code-backed feature is already out, so this is here for the record and for whatever
+comes back out of `:app` later. `:feature:speakers` is the worked example; follow its shape.
 
-1. `git mv` the feature's package out of `presentation`, main and test together.
+1. `git mv` the feature's package out of the module it lives in, main and test together.
 2. Move its screenshot goldens too. A feature's screens are `internal`, so its tests only
    compile inside the feature module.
-3. Add the module to `settings.gradle.kts` and to `presentation`'s dependencies, so
-   `DroidconEntryProvider` can still reach the routes.
+3. Add the module to `settings.gradle.kts` and to `app`'s dependencies, so
+   `droidconEntryProvider` can still reach the routes.
 4. Expect two classes of breakage: `internal` no longer crosses the boundary, and Kotlin will
    not smart-cast a public property declared in another module.
 5. `./gradlew stabilityDump` — a new Compose module needs its own stability baseline. That is
    the one kind of baseline this repo keeps, because it records API shape rather than hiding a
    violation. Commit both the debug and release files; both are tracked and both are checked.
+6. Any test double two features now share moves to `core:testing`, whose `src/main` is the
+   fakes themselves — consumers take it as `testImplementation(projects.core.testing)`.
+7. Re-run screenshot verification with `--rerun-tasks`, and confirm it can still fail. An
+   up-to-date test task passes without comparing anything, so a green `verifyRoborazziDebug`
+   on its own proves nothing after goldens move.
 
-Before starting, check what the area still needs from `:presentation`. Every remaining feature
-area currently comes back clean, but the check is cheap and it is what caught the two DI
-qualifiers that had to move to `:core:common` before a feature could compile on its own:
+Before starting, check what the area still needs from the module it is leaving. That check is a
+useful first pass but **it is not a verification** — it missed a feature-to-feature mapper dependency
+and cannot see coupling between test source sets at all. The only reliable check is to move the
+module and compile:
 
 ```bash
-grep -rh "^import com.android254.presentation" \
-  presentation/src/main/java/com/android254/presentation/<area>
+grep -rh "^import com.android254" \
+  <module>/src/main/java/com/android254/<area>
 ```
 
-Anything that resolves to a package still inside `:presentation` has to move to a core module
-first.
+Anything that resolves to a package still inside the module being left has to move to a core
+module first.
 
 ---
 
@@ -146,7 +173,7 @@ Consequences worth knowing before you edit a build file:
 - The `android { }` block resolves to `com.android.build.api.dsl.*`, not the legacy
   `com.android.build.gradle.*` types.
 - Source sets belong to AGP, so a `languageSettings` opt-in no longer reaches the compile
-  tasks. Use `kotlin { compilerOptions { optIn.add(...) } }` — see `presentation`.
+  tasks. Use `kotlin { compilerOptions { optIn.add(...) } }` — see `core:ui`.
 
 Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
 implementing `NavKey`; there is no `NavHost` or route strings. See

@@ -32,6 +32,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = libs.findVersion("android-target-sdk").get().toString().toInt()
 
+                testOptions {
+                    unitTests {
+                        isIncludeAndroidResources = true
+                    }
+                }
+
                 buildFeatures {
                     buildConfig = true
                 }

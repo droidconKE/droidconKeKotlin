@@ -56,6 +56,10 @@ gradlePlugin {
             id = "droidconke.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidApplicationCompose") {
+            id = "droidconke.android.application.compose"
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
+        }
         register("androidApplicationJacoco") {
             id = "droidconke.android.application.jacoco"
             implementationClass = "AndroidApplicationJacocoConventionPlugin"

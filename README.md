@@ -73,59 +73,68 @@ it is a shared debug key, not a secret, and the release key is not in this repo.
 
 ## Module layout
 
-| Module               | What lives there                                                       |
-|----------------------|------------------------------------------------------------------------|
-| `app`                | `Application`, the activity host, the manifest, the DI graph root       |
-| `presentation`       | Every Compose screen, ViewModel and the navigation graph                |
-| `chai`               | The design system — colours, typography, shared components              |
-| `domain`             | Pure Kotlin models and repository interfaces. No Android dependency     |
-| `data`               | Repository implementations, the sync worker, mappers                    |
-| `datasource:local`   | Room database, DAOs, entities                                           |
-| `datasource:remote`  | Ktor client, DTOs, Remote Config                                        |
-| `build-logic`        | Convention plugins — every module's build config comes from here        |
+| Module                | What lives there                                                     |
+|-----------------------|----------------------------------------------------------------------|
+| `app`                 | `Application`, `MainActivity`, navigation, notifications, DI root     |
+| `core:model`          | Pure Kotlin data classes. A JVM module — no Android on its classpath  |
+| `core:common`         | Dispatcher qualifiers and other cross-cutting plumbing                |
+| `core:designsystem`   | chai — colours, typography, shapes, shared components                 |
+| `core:ui`             | Presentation models, shared composables, navigation keys, resources   |
+| `core:domain`         | Repository interfaces and sync contracts                              |
+| `core:data`           | Repository implementations, the sync worker, mappers                  |
+| `core:database`       | Room database, DAOs, entities                                         |
+| `core:network`        | Ktor client, DTOs, Remote Config                                      |
+| `core:screenshot`     | Roborazzi harness. Test-only                                          |
+| `core:testing`        | Shared test doubles. Test-only                                        |
+| `feature:*`           | `about` `auth` `feed` `home` `sessions` `speakers` — screens, view models, tests, goldens |
+| `build-logic`         | Convention plugins — every module's build config comes from here      |
 
 ```mermaid
 graph TD
     app[":app"]
-    presentation[":presentation"]
-    chai[":chai"]
-    data[":data"]
-    domain[":domain"]
-    local[":datasource:local"]
-    remote[":datasource:remote"]
+    feature["<b>:feature:*</b><br/>about · auth · feed<br/>home · sessions · speakers"]
+    ui[":core:ui"]
+    ds[":core:designsystem"]
+    domain[":core:domain"]
+    model[":core:model"]
+    data[":core:data"]
+    database[":core:database"]
+    network[":core:network"]
 
-    app --> presentation
-    app --> chai
+    app --> feature
     app --> data
-    app --> domain
-    app --> local
-    app --> remote
+    app --> database
+    app --> network
 
-    presentation --> chai
-    presentation --> domain
-    presentation --> remote
+    feature --> ui
+    ui --> ds
+    ui --> domain
+    domain --> model
 
     data --> domain
-    data --> local
-    data --> remote
+    data --> database
+    data --> network
 
     classDef pure fill:#0b7285,stroke:#0b7285,color:#ffffff;
-    classDef ui fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff;
+    classDef uic fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff;
     classDef io fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff;
-    class domain pure;
-    class app,presentation,chai ui;
-    class data,local,remote io;
+    class domain,model pure;
+    class app,feature,ui,ds uic;
+    class data,database,network io;
 ```
 
-**The dependency rule:** `domain` depends on nothing. `data` depends on `domain` and never
-the reverse. `presentation` does not reach into `datasource:local`. Keeping `domain` free of
-Android imports is what would make a move to Kotlin Multiplatform a port rather than a
-rewrite.
+**The dependency rules:** `core:model` depends on nothing and has no Android on its
+classpath, which the build enforces — that is what would make a move to Kotlin Multiplatform a
+port rather than a rewrite. `core:data` depends on `core:domain` and never the reverse. A
+feature module never depends on another feature module; anything two features need belongs in
+`core:ui`, and cross-feature navigation goes through the `NavKey`s it owns. `app` is the only
+module that may depend on every feature, because the composition root knows about all of them
+by definition.
 
-Note that the two `datasource` modules do not depend on `domain` either. They own their own
-DTOs and Room entities and know nothing about the domain model; `data` is the only module
-that sees both sides, and the mappers there are the seam. That is why swapping the API
-representation of a session does not reach the UI.
+Note that `core:database` and `core:network` do not depend on `core:domain` either. They own
+their own DTOs and Room entities and know nothing about the domain model; `core:data` is the
+only module that sees both sides, and the mappers there are the seam. That is why swapping the
+API representation of a session does not reach the UI.
 
 A new module applies the convention plugins rather than copying a `build.gradle.kts`:
 
@@ -149,9 +158,9 @@ sequenceDiagram
     autonumber
     participant UI as Compose screen
     participant VM as ViewModel
-    participant Repo as Repository<br/>(:data)
-    participant Room as Room<br/>(:datasource:local)
-    participant Ktor as Ktor<br/>(:datasource:remote)
+    participant Repo as Repository<br/>(:core:data)
+    participant Room as Room<br/>(:core:database)
+    participant Ktor as Ktor<br/>(:core:network)
     participant Work as SyncDataWorker
 
     UI->>VM: collect uiState
@@ -229,14 +238,14 @@ being burned down: **[docs/static-analysis.md](docs/static-analysis.md)**.
 
 ```bash
 ./gradlew testDebugUnitTest                                  # all unit tests
-./gradlew :presentation:testDebugUnitTest --tests "*SessionsFilterStateTest*"
+./gradlew :feature:sessions:testDebugUnitTest --tests "*SessionsFilterStateTest*"
 ```
 
 Instrumentation tests run on Gradle Managed Devices, so there is no emulator to create or
 start — Gradle provisions and tears them down:
 
 ```bash
-./gradlew :data:supportedApiLevelsGroupDebugAndroidTest       # api30 + api34
+./gradlew :core:data:supportedApiLevelsGroupDebugAndroidTest  # api30 + api34
 ```
 
 Coverage is measured with JaCoCo on debug variants and reported to Codecov.

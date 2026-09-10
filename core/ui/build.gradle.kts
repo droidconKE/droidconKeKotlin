@@ -30,7 +30,7 @@ android {
 dependencies {
     api(projects.core.common)
     api(projects.core.designsystem)
-    api(projects.domain)
+    api(projects.core.domain)
 
     api(libs.bundles.navigation3)
     api(libs.kotlinx.collections.immutable)
