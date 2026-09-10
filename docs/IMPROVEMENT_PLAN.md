@@ -6,35 +6,106 @@
 
 ---
 
-## Next up — §4 Phase 1, adaptive & large-screen support
+## Next up — §4, adaptive & large-screen support
 
-**Phase 0 is done.** §3.5 (chai and Material 3) and §3.7 (Credential Manager) landed together
-with the Roborazzi baselines from §10.2, which went in first so the colour work was reviewable
-as image diffs rather than argued about.
+**§2 is complete** (2026-09-10). Every step in the migration order is closed: the feature
+extraction, `:presentation` folding into `:app`, and the `:core:*` renames.
 
-**Modularisation started 2026-09-04** — `:core:model`, `:core:common`, `:core:designsystem`,
-`:core:ui`, `:core:screenshot` and `:feature:speakers` are out, and `droidconke.android.feature`
-plus the `AGENTS.md` write-up make the next extraction a self-contained task. See §2.
-
-**§4 is next, and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
+**§4 is next and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
 sessions and speakers, foldable postures, and pointer/keyboard input. It is navigation rework
 plus two feature-area rewrites, not a bundle-with-other-things change.
 
-Carried out of Phase 0, smallest first:
+### The module split, as landed
 
-- **Both §3.5 design decisions are settled** (2026-09-04): dark-mode elevation reversed to the
-  M3 direction, and headings accented in both themes. Recorded in §3.5 with the knock-on token
-  moves each required.
-- **`AuthDialog` is unreachable from the UI** — `DroidconAppBar` drops the `onActionClicked` it
-  is handed, so the signed-out state has no sign-in affordance. See the note in §3.7.
-- **The `ChaiColors` token migration.** Tier 2 exists and stock components are on-brand, but the
-  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature as §4 and §5 touch
-  them, then delete. Doing it in one PR would be a 120-file diff that gets rubber-stamped.
-- **Six of the B findings are closed in code but not by a test** (B3, B4, B5, B6, B7, B10 — see
+`:presentation` is gone. Its composition root — `activity`, `notifications`,
+`common/navigation`, `common/bottomnav`, `di` — moved into `:app`, which is now the only
+module that depends on every feature. Seven modules came out of it first:
+
+| Module | Came from | Notes |
+| --- | --- | --- |
+| `:feature:speakers` | `speakers` | Merged separately, ahead of the rest |
+| `:feature:home` | `home` | |
+| `:feature:sessions` | `sessions` + `sessionDetails` | The plan lists one `sessions` feature; the detail screen is the same domain |
+| `:feature:feed` | `feed` | |
+| `:feature:about` | `about` + `feedback` | The plan gives feedback no module of its own. Revisit if §11.5 grows it |
+| `:feature:auth` | `auth` | |
+| `:core:testing` | `sessions` test source set | Shared test doubles, consumed via `testImplementation` |
+
+`SessionMapper` moved to `:core:ui` as `com.android254.presentation.mappers` — `home`,
+`sessions` and `MainViewModel` all use it, so it was never sessions-only.
+
+`:core:testing` holds `FakeSyncWorkManager` and nothing else yet. `fakeEntryProvider` was the
+other candidate and stayed with the composition root: `NavigationTest` is its only consumer,
+and moving it would pull Compose and navigation3 onto a shared test module to serve one
+caller.
+
+Each feature owns its goldens. Verification was confirmed to still fail on a corrupted golden
+rather than passing as an up-to-date no-op. Stability baselines dumped per module, debug and
+release.
+
+#### What folding `:presentation` into `:app` turned up
+
+Neither was visible until the composition root became application-module code, and both are
+fixed in the convention plugins rather than patched in `:app`:
+
+- **`AndroidApplicationConventionPlugin` never set `unitTests.isIncludeAndroidResources`**,
+  which its library twin always has. Robolectric then cannot see the merged manifest, falls
+  back to the `org.robolectric.default` package, and cannot resolve the `ComponentActivity`
+  that `compose-ui-test-manifest` contributes — killing every `createComposeRule()` test.
+- **Robolectric then booted the real `DroidconApp`**, whose `onCreate()` starts WorkManager
+  sync. The second test class to boot it hit "WorkManager is already initialized", so which
+  tests failed depended on class ordering. `app/src/test/resources/robolectric.properties`
+  pins a plain `Application`.
+
+Also: `:presentation`'s `themes.xml` declared a `Theme.Droidcon` that had always been dead,
+since an application module's resources beat a library's. Only `Theme.MySplash` carried over.
+And `:app` needed Compose, hence a `droidconke.android.application.compose` convention plugin
+alongside the library one.
+
+#### The renames
+
+`:domain`, `:data`, `:datasource:local` and `:datasource:remote` became `:core:domain`,
+`:core:data`, `:core:database` and `:core:network`. Gradle paths only — Kotlin packages and
+namespaces stayed, as `:core:designsystem` kept `com.droidconke.chai` — so it touched nine
+`projects.*` accessors and `settings.gradle.kts` rather than every file.
+
+**`:core:datastore` was not created.** §2 groups it with the renames, but there is no module
+to rename: the preferences code is two files inside `:core:data`. Splitting those out is the
+symmetry-for-its-own-sake §16 warns against.
+
+### Correction: the "every feature area is clean" audit was wrong
+
+The audit reported on 2026-09-05 that every remaining area imported nothing from
+`:presentation`. Extracting them disproved it — `home` imports
+`sessions.mappers.toPresentationModel`, a **feature-to-feature** dependency, which the audit
+grep should have caught and did not. Two lessons:
+
+- **Do not trust the grep alone.** The only reliable check is to move the module and compile.
+  Every real coupling in this work surfaced that way, never from analysis: `@IoDispatcher`,
+  `@ConferenceTimeZone`/`Clock`, `SessionMapper`, `FakeSyncWorkManager`.
+- **Test source sets couple features too**, and no import-of-main-sources audit sees it.
+
+### Not created, and why
+
+Seven feature modules in §2's list have no code behind them yet — `ticket`, `notes`,
+`assistant`, `gamification`, `jobboard`, `challenge`, `networking` — as do `:core:ai`,
+`:core:analytics`, `:widget`, `:benchmark` and `:baselineprofile`. They arrive with the phases
+that need them (§6, §7, §9, §11). Creating empty shells now would be scaffolding for work
+nobody has started.
+
+Four of the five `:core:*` names that shadowed existing modules — `domain`, `data`,
+`database`, `network` — landed as renames on 2026-09-10. `datastore` did not: there was no
+module to rename, only two files inside `:core:data`. See "The renames" above.
+
+### Also still open from Phase 0
+
+- Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see
   §3.9). B6 and B10 protect user data and are the ones to do first.
-- **Expressive is unreachable on material3 1.4.0**, and not for the reason §3.5 originally gave.
-  `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized` typography roles are all
-  `internal`. §5.2 is blocked on the library, not on this repo. Re-check when material3 moves.
+- The `ChaiColors` token migration: tier 2 exists and stock components are on-brand, but the
+  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature, then delete.
+- Expressive is unreachable on material3 1.4.0 — `MaterialExpressiveTheme`, `MotionScheme` and
+  the `*Emphasized` typography roles are all `internal`. §5.2 is blocked on the library, not on
+  this repo. Re-check when material3 moves.
 
 ---
 
@@ -441,13 +512,16 @@ The current 7-module layout has served well, but `presentation` at 120 files is 
      every feature reaches for. Nothing could be extracted before it existed.
    - **`:core:common`** — the `@IoDispatcher` qualifier, which lived in `:datasource:remote`
      and is used by five modules. A UI feature cannot depend on the network module to get it.
-4. Extract the rest one PR per feature, over months, as features get touched anyway. The
-   pattern is written up under "Extracting an existing feature" in `AGENTS.md`.
+4. ~~Extract the rest one PR per feature~~ — **done 2026-09-10.** `home`, `sessions`
+   (with `sessionDetails`), `feed`, `about` (with `feedback`) and `auth` came out together
+   rather than one PR at a time, because the couplings between them only surfaced once they
+   were all moving. `:core:testing` came out with them. The pattern is written up under
+   "Extracting an existing feature" in `AGENTS.md`.
 
-   **Every remaining feature area is unblocked**, audited 2026-09-05: `home` (16 files),
-   `sessions` (19), `sessionDetails` (10), `feed` (7), `auth` (4), `about` (3) and `feedback`
-   (1) now import nothing from `:presentation`, and no feature imports another. Each is an
-   independent PR someone can pick up without touching the core tier first.
+   **That audit was wrong — see the correction in "Next up".** It claimed no feature imported
+   another; extracting them found `home` importing `sessions.mappers.toPresentationModel`, and
+   a shared test fake coupling `home`'s tests to `sessions`'. Import analysis is a useful
+   first pass, not a verification. Move the module and compile.
 
    The audit is worth repeating before each extraction, because it is what caught the two
    blockers this work had to clear — `@IoDispatcher` and, later, `@ConferenceTimeZone`/`Clock`,
@@ -460,11 +534,16 @@ The current 7-module layout has served well, but `presentation` at 120 files is 
 
    `notifications` is the one exception and is not a feature: it needs `MainActivity` to build
    a PendingIntent, so it belongs with the composition root in `:app`.
-5. Rename `:datasource:*` and `:data`/`:domain` to `:core:*` **last** — it's a pure rename and it touches every file, so do it when the tree is otherwise stable.
+5. ~~Rename `:datasource:*` and `:data`/`:domain` to `:core:*` **last**~~ — **done 2026-09-10.**
+   Gradle paths only; Kotlin packages and namespaces stayed, so it touched nine `projects.*`
+   accessors and `settings.gradle.kts` rather than every file. `:core:datastore` was skipped —
+   see "Next up". `:presentation` folded into `:app` at the same time, which §2 had gated on
+   the last feature leaving.
 
-What stayed in `:presentation` on purpose: `DroidconEntryProvider` and `Navigation`, whose
-`entryProvider` default calls it, plus `BottomNavigationBar`. All three know about every
-feature, so they are the composition root and move to `:app` when the last feature leaves.
+`DroidconEntryProvider`, `Navigation` and `BottomNavigationBar` all know about every feature,
+so they are the composition root. They stayed in `:presentation` until the last feature left,
+and then moved to `:app` with `MainActivity`, notifications and the DI module — at which point
+`:presentation` was deleted.
 
 Rule: **a feature module never depends on another feature module.** Cross-feature navigation goes through `NavKey`s owned by `:core:ui` (or a thin `:core:navigation`), which is how the current `DroidconEntryProvider` already works — that pattern survives the split intact.
 

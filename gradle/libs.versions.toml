@@ -227,6 +227,7 @@ droidconke-android-library-compose = { id = "droidconke.android.library.compose"
 droidconke-android-application-firebase = { id = "droidconke.android.application.firebase" }
 droidconke-android-library-firebase = { id = "droidconke.android.library.firebase" }
 droidconke-android-application = { id = "droidconke.android.application" }
+droidconke-android-application-compose = { id = "droidconke.android.application.compose" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 droidconke-android-application-jacoco = { id = "droidconke.android.application.jacoco" }
 droidconke-android-library-jacoco = { id = "droidconke.android.library.jacoco" }

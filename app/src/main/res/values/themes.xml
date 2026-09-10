@@ -11,4 +11,10 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.MySplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_screen_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/droidcon_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.Droidcon</item>
+    </style>
 </resources>

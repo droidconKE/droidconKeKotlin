@@ -24,25 +24,31 @@ Three layers, in the usual order, with a strict rule about which way the arrows 
 ```mermaid
 graph TD
     subgraph L1["UI layer"]
-        UIL["<b>:presentation</b><br/>Compose screens · ViewModels · navigation"]
-        CHAI["<b>:chai</b><br/>design system"]
+        APP["<b>:app</b><br/>composition root · navigation · notifications"]
+        FEAT["<b>:feature:*</b><br/>about · auth · feed · home · sessions · speakers"]
+        UIL["<b>:core:ui</b><br/>presentation models · shared composables · NavKeys"]
+        CHAI["<b>:core:designsystem</b><br/>design system"]
     end
 
     subgraph L2["Domain layer"]
-        DOML["<b>:domain</b><br/>models · repository interfaces<br/>pure Kotlin, no Android imports"]
+        DOML["<b>:core:domain</b> · <b>:core:model</b><br/>models · repository interfaces<br/>pure Kotlin, no Android imports"]
     end
 
     subgraph L3["Data layer"]
-        DATAL["<b>:data</b><br/>repository impls · mappers · sync"]
-        SRC["<b>:datasource:local</b> · <b>:datasource:remote</b><br/>Room · Ktor · DataStore"]
+        DATAL["<b>:core:data</b><br/>repository impls · mappers · sync"]
+        SRC["<b>:core:database</b> · <b>:core:network</b><br/>Room · Ktor · DataStore"]
     end
 
+    APP -->|"composes"| FEAT
+    FEAT -->|"share"| UIL
     UIL -->|"depends on"| DOML
     UIL -.->|"styles with"| CHAI
     DATAL -->|"implements"| DOML
     DATAL -->|"reads and writes"| SRC
 
     style DOML fill:#0b7285,stroke:#0b7285,color:#ffffff
+    style APP fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
+    style FEAT fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
     style UIL fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
     style CHAI fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
     style DATAL fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff
@@ -52,32 +58,44 @@ graph TD
     style L3 fill:#ffffff,stroke:#adb5bd,stroke-dasharray:4 4
 ```
 
-Both `presentation` and `data` point at `domain`. Nothing points out of it. `domain` is
-plain Kotlin with no Android imports at all, which is the property that would make a move to
-Kotlin Multiplatform a port rather than a rewrite — and the reason a change to the API
-response shape cannot reach a ViewModel without passing through a mapper someone had to
-write.
+Both the UI layer and `core:data` point at `core:domain`. Nothing points out of it, and
+`core:model` under it is a JVM module the build keeps free of Android imports — the property
+that would make a move to Kotlin Multiplatform a port rather than a rewrite, and the reason a
+change to the API response shape cannot reach a ViewModel without passing through a mapper
+someone had to write.
+
+Within the UI layer the rule is that a feature never depends on another feature. Anything two
+of them need lives in `core:ui`, and `app` is the only module allowed to see them all.
 
 ---
 
 ## Modules
 
-| Module              | Gradle plugins                            | Contains                                          |
-|---------------------|-------------------------------------------|---------------------------------------------------|
-| `app`               | application, hilt, firebase, jacoco        | `DroidconApp`, manifest, DI root                  |
-| `presentation`      | library, hilt, compose, stability, jacoco  | Screens, ViewModels, navigation, notifications    |
-| `chai`              | library, compose, stability, jacoco        | Colours, typography, shared components            |
-| `domain`            | library, jacoco                            | Models, repository interfaces, `Synchronizer`     |
-| `data`              | library, hilt, firebase, jacoco            | Repository impls, mappers, `SyncDataWorker`       |
-| `datasource:local`  | library, room, hilt, firebase, jacoco      | Room DB, DAOs, entities, DataStore                |
-| `datasource:remote` | library, hilt, firebase, jacoco            | Ktor client, DTOs, Remote Config                  |
-| `build-logic`       | —                                          | The convention plugins the above apply            |
+| Module               | Gradle plugins                                     | Contains                                        |
+|----------------------|----------------------------------------------------|-------------------------------------------------|
+| `app`                | application, compose, hilt, firebase, stability, roborazzi, jacoco | `DroidconApp`, `MainActivity`, navigation, notifications, DI root |
+| `feature:*`          | feature (+ roborazzi)                              | Screens, ViewModels, tests, goldens             |
+| `core:ui`            | library, compose, stability, jacoco                | Presentation models, shared composables, NavKeys |
+| `core:designsystem`  | library, compose, stability, jacoco                | Colours, typography, shared components          |
+| `core:common`        | library                                            | Dispatcher and time-zone qualifiers             |
+| `core:model`         | jvm library                                        | Pure Kotlin data classes                        |
+| `core:domain`        | library, jacoco                                    | Repository interfaces, `Synchronizer`           |
+| `core:data`          | library, hilt, firebase, jacoco                    | Repository impls, mappers, `SyncDataWorker`     |
+| `core:database`      | library, room, hilt, firebase, jacoco              | Room DB, DAOs, entities, DataStore              |
+| `core:network`       | library, hilt, firebase, jacoco                    | Ktor client, DTOs, Remote Config                |
+| `core:screenshot`    | library, compose                                   | Roborazzi harness. Test-only                    |
+| `core:testing`       | library                                            | Shared test doubles. Test-only                  |
+| `build-logic`        | —                                                  | The convention plugins the above apply          |
 
-The two `datasource` modules do not depend on `domain`. They own their own DTOs and Room
-entities. `data` is the only module that sees both representations, and the mappers there are
-the seam between them.
+The `:core:*` renames of the data tier changed Gradle paths only. `:core:database` is still
+`ke.droidcon.kotlin.datasource.local` in source, the way `:core:designsystem` is still
+`com.droidconke.chai`.
 
-Seven repository interfaces live in `domain/repos`: `AuthRepo`, `FeedRepo`, `HomeRepo`,
+`core:database` and `core:network` do not depend on `core:domain`. They own their own DTOs and
+Room entities. `core:data` is the only module that sees both representations, and the mappers
+there are the seam between them.
+
+Seven repository interfaces live in `core/domain`'s `repos` package: `AuthRepo`, `FeedRepo`, `HomeRepo`,
 `OrganizersRepo`, `SessionsRepo`, `SpeakersRepo`, `SponsorsRepo`. Their implementations in
 `data/repos` are named `*Manager` for historical reasons rather than `*RepoImpl`.
 
@@ -92,9 +110,9 @@ sync landing mid-scroll updates the list underneath the user without a spinner.
 ```mermaid
 flowchart LR
     API[("droidcon API")]
-    Ktor["Ktor client<br/>:datasource:remote"]
-    Repo["Repository<br/>:data"]
-    Room[("Room<br/>:datasource:local")]
+    Ktor["Ktor client<br/>:core:network"]
+    Repo["Repository<br/>:core:data"]
+    Room[("Room<br/>:core:database")]
     VM["ViewModel"]
     UI["Compose screen"]
 

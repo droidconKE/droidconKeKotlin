@@ -196,7 +196,7 @@ jobs:
       # without naming it, which is undiagnosable from the message alone.
       - name: Run instrumentation tests
         run: >
-          ./gradlew :data:${{ matrix.device }}DebugAndroidTest
+          ./gradlew :core:data:${{ matrix.device }}DebugAndroidTest
           -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect
           --stacktrace
 

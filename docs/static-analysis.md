@@ -45,7 +45,7 @@ flowchart TD
 | [detekt](https://detekt.dev) | 1.23.8 | every module | `detekt.yml` |
 | Android Lint | AGP 9.3.1 | every module | `config/lint/lint.xml`, `build-logic/.../Lint.kt` |
 | [compose-lints](https://slackhq.github.io/compose-lints/) | 1.5.4 | every module, via `lintChecks` | `config/lint/lint.xml` |
-| [compose-stability-analyzer](https://github.com/skydoves/compose-stability-analyzer) | 0.12.0 | `:chai`, `:presentation` | `*/stability/*.stability` |
+| [compose-stability-analyzer](https://github.com/skydoves/compose-stability-analyzer) | 0.12.0 | `:app`, `:core:designsystem`, `:core:ui`, `:feature:*` | `*/stability/*.stability` |
 
 Slack's Compose rules are on the `lintChecks` classpath of **every** Android module, not just
 the Compose ones. `config/lint/lint.xml` names those issue ids, and lint fails a module with
@@ -150,10 +150,10 @@ to be skippable stops being.
 | Module | Composables | Skippable | Not skippable | Unstable params |
 |--------|-------------|-----------|---------------|-----------------|
 | `chai` | 26 | 24 | 2 | 0 |
-| `presentation` | 101 | 54 | 47 | 6 |
+| `app` + `feature:*` | 101 | 54 | 47 | 6 |
 
 `chai` is in good shape, which is what you want from a design system — its components are on
-the hot path of every screen. `presentation` has room to move, and the 20
+the hot path of every screen. The feature modules have room to move, and the 20
 `ComposeUnstableCollections` findings above are a large part of the same story.
 
 When a change to stability is deliberate:
