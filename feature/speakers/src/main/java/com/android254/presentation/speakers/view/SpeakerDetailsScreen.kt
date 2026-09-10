@@ -21,13 +21,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -71,6 +72,7 @@ import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
@@ -78,6 +80,7 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 
 private const val SPEAKER_IMAGE_ASPECT_RATIO = 1.35f
 private val ScreenPadding = 24.dp
+private val SpeakerImageMaxWidth = 420.dp
 
 @Composable
 fun SpeakerDetailsRoute(
@@ -209,6 +212,7 @@ private fun SpeakerDetailsContent(
                     Modifier
                         .testTag("speaker_image")
                         .fillMaxWidth()
+                        .widthIn(max = SpeakerImageMaxWidth)
                         .aspectRatio(SPEAKER_IMAGE_ASPECT_RATIO)
                         .speakerSharedImage(speaker.name, RoundedCornerShape(16.dp)),
             )
@@ -222,8 +226,23 @@ private fun SpeakerDetailsContent(
                 )
             }
 
-            if (uiState.sessions.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+
+            ChaiSubTitle(
+                modifier = Modifier.testTag("sessions_heading"),
+                titleText = stringResource(R.string.speaker_sessions_label),
+                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (uiState.sessions.isEmpty()) {
+                ChaiBodyMedium(
+                    modifier = Modifier.testTag("no_sessions"),
+                    bodyText = stringResource(R.string.speaker_no_sessions_label),
+                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                )
+            } else {
                 uiState.sessions.forEach { session ->
                     SessionsCard(
                         modifier = Modifier.testTag("speaker_session_${session.id}"),
@@ -236,9 +255,10 @@ private fun SpeakerDetailsContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            TwitterHandleRow(twitterHandle = speaker.twitterHandle)
+            speaker.twitterHandle?.takeIf(String::isNotBlank)?.let { handle ->
+                Spacer(modifier = Modifier.height(24.dp))
+                TwitterHandleRow(twitterHandle = handle)
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -247,15 +267,16 @@ private fun SpeakerDetailsContent(
 
 @Composable
 private fun TwitterHandleRow(
-    twitterHandle: String?,
+    twitterHandle: String,
     modifier: Modifier = Modifier,
 ) {
     val uriHandler = LocalUriHandler.current
 
-    Row(
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         ChaiBodyMedium(
             bodyText = stringResource(R.string.twitter_handle_label),
@@ -274,11 +295,7 @@ private fun TwitterHandleRow(
                             ),
                         shape = RoundedCornerShape(10.dp),
                     ).clip(RoundedCornerShape(10.dp)),
-            onClick = {
-                if (!twitterHandle.isNullOrBlank()) {
-                    uriHandler.openUri(twitterHandle)
-                }
-            },
+            onClick = { uriHandler.openUri(twitterHandle) },
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
@@ -296,8 +313,9 @@ private fun TwitterHandleRow(
             )
             ChaiBodyMedium(
                 modifier = Modifier.padding(start = 6.dp),
-                bodyText = twitterHandle.orEmpty().substringAfterLast('/'),
+                bodyText = twitterHandle.substringAfterLast('/').substringBefore('?'),
                 textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                maxLines = 1,
             )
         }
     }

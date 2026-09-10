@@ -55,7 +55,13 @@ class SpeakerDetailsScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private val speaker = Speaker(name = "John Doe", tagline = "some tag line", biography = "a short bio")
+    private val speaker =
+        Speaker(
+            name = "John Doe",
+            tagline = "some tag line",
+            biography = "a short bio",
+            twitter = "https://twitter.com/johndoe",
+        )
 
     private fun session(
         title: String,

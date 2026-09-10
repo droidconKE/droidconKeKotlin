@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -65,6 +66,7 @@ fun SpeakerComponent(
             modifier
                 .fillMaxWidth()
                 .clickable { onClick.invoke() }
+                .semantics(mergeDescendants = true) {}
                 .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -75,7 +77,7 @@ fun SpeakerComponent(
                     .data(speaker.imageUrl)
                     .build(),
             placeholder = painterResource(R.drawable.smiling),
-            contentDescription = stringResource(R.string.head_shot),
+            contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier =
                 Modifier
@@ -105,7 +107,7 @@ fun SpeakerComponent(
                     modifier = Modifier.testTag("bio"),
                     bodyText = tagline,
                     textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
-                    maxLines = 1,
+                    maxLines = 2,
                 )
             }
 

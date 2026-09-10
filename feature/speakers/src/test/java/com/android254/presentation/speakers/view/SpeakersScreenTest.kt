@@ -15,14 +15,18 @@
  */
 package com.android254.presentation.speakers.view
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.speakers.SpeakersScreenViewModel
@@ -39,21 +43,62 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class SpeakersScreenTest {
     private val speakersRepo = mockk<SpeakersRepo>()
+    private val sessionsRepo = mockk<SessionsRepo>(relaxed = true)
     private val mockSyncDataWorkManager = mockk<SyncDataWorkManager>()
     private val testDispatcher = UnconfinedTestDispatcher()
+
+    private val fixedClock =
+        object : Clock {
+            override fun now(): Instant = Instant.parse("2026-08-27T06:45:00Z")
+        }
 
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    @Test
-    fun `should show heading and show speaker details card`() {
+    private fun viewModel(currentSessions: List<Session> = emptyList()): SpeakersScreenViewModel {
         every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
         coEvery { mockSyncDataWorkManager.startSync() } just runs
+        every { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
+        return SpeakersScreenViewModel(
+            speakersRepo = speakersRepo,
+            sessionsRepo = sessionsRepo,
+            syncDataWorkManager = mockSyncDataWorkManager,
+            clock = fixedClock,
+            ioDispatcher = testDispatcher,
+        )
+    }
+
+    private fun session(speakers: List<Speaker>) =
+        Session(
+            id = "1",
+            endDateTime = "2026-08-27 10:15:00",
+            endTime = "10:15",
+            isBookmarked = false,
+            isKeynote = false,
+            isServiceSession = false,
+            sessionImage = null,
+            startDateTime = "2026-08-27 09:30:00",
+            startTime = "09:30",
+            rooms = "Main Hall",
+            speakers = speakers,
+            remoteId = "remote-1",
+            description = "a session",
+            sessionFormat = "Session",
+            sessionLevel = "Beginner",
+            slug = "a-session",
+            title = "A session",
+            eventDay = "2026-08-27",
+        )
+
+    @Test
+    fun `should show heading and show speaker details card`() {
         coEvery { speakersRepo.fetchSpeakers() } returns
             flowOf(
                 listOf(
@@ -63,7 +108,7 @@ class SpeakersScreenTest {
                     ),
                 ),
             )
-        val viewModel = SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager, testDispatcher)
+        val viewModel = viewModel()
         composeTestRule.setContent {
             ChaiTheme {
                 SpeakersRoute(speakersScreenViewModel = viewModel)
@@ -73,11 +118,10 @@ class SpeakersScreenTest {
         with(composeTestRule) {
             onNodeWithText("Speakers").assertIsDisplayed()
             onNodeWithContentDescription("Back arrow icon").assertIsDisplayed()
-            onNodeWithContentDescription("Speaker headshot").assertIsDisplayed()
             onNodeWithText("John Doe").assertIsDisplayed()
             onNodeWithText("kenya partner lead", substring = true, ignoreCase = true).assertIsDisplayed()
             onNodeWithContentDescription("Search speakers").assertIsDisplayed()
-            onNodeWithTag("speakingNowBadge").assertDoesNotExist()
+            onNodeWithTag("speakingNowBadge", useUnmergedTree = true).assertDoesNotExist()
         }
     }
 
@@ -96,10 +140,8 @@ class SpeakersScreenTest {
         )
 
     private fun viewModelWith(speakers: List<Speaker>): SpeakersScreenViewModel {
-        every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
-        coEvery { mockSyncDataWorkManager.startSync() } just runs
         coEvery { speakersRepo.fetchSpeakers() } returns flowOf(speakers)
-        return SpeakersScreenViewModel(speakersRepo, mockSyncDataWorkManager, testDispatcher)
+        return viewModel()
     }
 
     @Test
@@ -173,6 +215,32 @@ class SpeakersScreenTest {
             onNodeWithText("John Doe").assertDoesNotExist()
             onNodeWithText("Jane Smith").assertDoesNotExist()
         }
+    }
+
+    @Test
+    fun `should show the speaking now badge for a speaker with an ongoing session`() {
+        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(speakers())
+        val viewModel = viewModel(currentSessions = listOf(session(listOf(Speaker(name = "Jane Smith")))))
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        composeTestRule.onAllNodesWithTag("speakingNowBadge", useUnmergedTree = true).assertCountEquals(1)
+    }
+
+    @Test
+    fun `should not show the speaking now badge when nothing is ongoing`() {
+        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(speakers())
+        val viewModel = viewModel(currentSessions = emptyList())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("speakingNowBadge", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test

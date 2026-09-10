@@ -16,14 +16,17 @@
 package com.android254.presentation.speakers.view
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -49,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,6 +73,8 @@ import com.droidconke.chai.components.ChaiPullToRefreshBox
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
+
+private val SpeakerColumnMinWidth = 320.dp
 
 @Composable
 fun SpeakersRoute(
@@ -102,6 +108,13 @@ internal fun SpeakersScreen(
         if (isSearchActive) focusRequester.requestFocus()
     }
 
+    fun closeSearch() {
+        isSearchActive = false
+        onSearchQueryChanged("")
+    }
+
+    BackHandler(enabled = isSearchActive) { closeSearch() }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -122,12 +135,7 @@ internal fun SpeakersScreen(
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            if (isSearchActive) {
-                                isSearchActive = false
-                                onSearchQueryChanged("")
-                            } else {
-                                navigateToHomeScreen()
-                            }
+                            if (isSearchActive) closeSearch() else navigateToHomeScreen()
                         },
                     ) {
                         Icon(
@@ -217,9 +225,11 @@ internal fun SpeakersScreen(
                             )
                         }
                     } else {
-                        LazyColumn(
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(minSize = SpeakerColumnMinWidth),
                             modifier = Modifier.fillMaxSize(),
                             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             items(items = uiState.speakers, key = { it.name }) { speaker ->
@@ -244,6 +254,8 @@ private fun SpeakersSearchField(
     onQueryChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     TextField(
         value = query,
         onValueChange = onQueryChanged,
@@ -256,6 +268,7 @@ private fun SpeakersSearchField(
             )
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
         colors =
             TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
