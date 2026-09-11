@@ -20,9 +20,7 @@ import androidx.benchmark.macro.FrameTimingMetric
 import androidx.benchmark.macro.StartupMode
 import androidx.benchmark.macro.junit4.MacrobenchmarkRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
-import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,14 +47,14 @@ class ScrollBenchmark {
                 openSessions()
             },
         ) {
-            val list = device.findObject(By.res("sessions_list")) ?: return@measureRepeated
-            list.setGestureMargin(device.displayWidth / 5)
+            val list = device.requireObject("sessions_list")
+            list.setGestureMargin(device.displayWidth / FLING_MARGIN_DIVISOR)
             repeat(SCROLL_COUNT) {
                 list.fling(Direction.DOWN)
                 device.waitForIdle()
             }
             list.fling(Direction.UP)
-            device.wait(Until.hasObject(By.res("sessions_list")), UI_TIMEOUT_MS)
+            device.waitForIdle()
         }
 
     private companion object {

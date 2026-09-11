@@ -15,18 +15,27 @@
  */
 package com.android254.presentation.home.screen
 
+import androidx.activity.FullyDrawnReporter
+import androidx.activity.FullyDrawnReporterOwner
+import androidx.activity.compose.LocalFullyDrawnReporterOwner
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android254.presentation.common.components.SponsorsCard
+import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +43,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
+import java.util.concurrent.Executor
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
@@ -136,4 +146,66 @@ class HomeScreenTest {
         // Sponsors card is hidden because sponsors list is empty (AnimatedVisibility)
         composeTestRule.onNodeWithTag("sponsors_section").assertDoesNotExist()
     }
+
+    @Test
+    fun `HomeScreen reports fully drawn once content is on screen`() {
+        val owner = RecordingFullyDrawnReporterOwner()
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalFullyDrawnReporterOwner provides owner) {
+                ChaiTheme {
+                    HomeScreen(
+                        viewState =
+                            HomeState(
+                                sessions = fakeSessions.take(1).toImmutableList(),
+                                speakers = persistentListOf(SpeakerUI(id = 1, name = "Speaker")),
+                            ),
+                        isSyncing = false,
+                    )
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        assertTrue(owner.fullyDrawnReporter.isFullyDrawnReported)
+    }
+
+    @Test
+    fun `HomeScreen does not report fully drawn while syncing`() {
+        val owner = RecordingFullyDrawnReporterOwner()
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalFullyDrawnReporterOwner provides owner) {
+                ChaiTheme {
+                    HomeScreen(
+                        viewState = HomeState(speakers = persistentListOf(SpeakerUI(id = 1, name = "Speaker"))),
+                        isSyncing = true,
+                    )
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        assertFalse(owner.fullyDrawnReporter.isFullyDrawnReported)
+    }
+
+    @Test
+    fun `HomeScreen does not report fully drawn while a section is still empty`() {
+        val owner = RecordingFullyDrawnReporterOwner()
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalFullyDrawnReporterOwner provides owner) {
+                ChaiTheme {
+                    HomeScreen(
+                        viewState = HomeState(speakers = persistentListOf(SpeakerUI(id = 1, name = "Speaker"))),
+                        isSyncing = false,
+                    )
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        assertFalse(owner.fullyDrawnReporter.isFullyDrawnReported)
+    }
+}
+
+private class RecordingFullyDrawnReporterOwner : FullyDrawnReporterOwner {
+    override val fullyDrawnReporter = FullyDrawnReporter(Executor { it.run() }) {}
 }

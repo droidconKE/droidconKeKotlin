@@ -11,13 +11,13 @@ each is further down.
 | --- | --- | --- | --- |
 | **Cold start, first launch** (CS50C, API 34, median of 15) | 1334.9 ms | 1046.7 ms | **−288 ms, −22%** |
 | **Primary dex** — what is loaded first at launch | 6,067,100 B | 3,898,064 B | **−2.17 MB, −36%** |
-| Shipped ART profile (`assets/dexopt/baseline.prof`) | 12,917 B | 19,830 B | +6,913 B |
+| Shipped ART profile (`assets/dexopt/baseline.prof`) | 12,917 B | 19,892 B | +6,975 B |
 | App methods with AOT coverage | 0 | 2,741 | — |
 | Total dex across all files | 6,067,100 B | 6,452,464 B | +385 KB |
 
 The two headline rows come from different mechanisms and are not the same win counted twice.
 The **baseline profile** gets the startup path AOT-compiled on first launch, which is the
-557 ms. The **startup profile** drives dex layout, so R8 puts startup classes in the primary
+288 ms. The **startup profile** drives dex layout, so R8 puts startup classes in the primary
 dex and pushes the rest into `classes2.dex` — that is the 36%, and it costs 385 KB of total
 dex, which is the price of splitting.
 
@@ -137,7 +137,7 @@ Two physical devices, and they are not interchangeable:
 | Jank / `FrameTimingMetric` | ✓ needs no forced compile | ✓ |
 
 Numbers are only comparable within one device. The Reno4's 772 ms unprofiled cold start is
-its own data point, not the "before" for the CS50C's 1017 ms.
+its own data point, not the "before" for the CS50C's 1047 ms.
 
 Two operational notes that cost a run each:
 
@@ -155,11 +155,11 @@ APK. Building `:app:assembleRelease` with and without the generated profile:
 
 | `assets/dexopt/` | Libraries only | Libraries + app profile |
 | --- | --- | --- |
-| `baseline.prof` | 12,917 bytes | 19,154 bytes |
-| `baseline.profm` | 1,555 bytes | 743 bytes |
+| `baseline.prof` | 12,917 bytes | 19,892 bytes |
+| `baseline.profm` | 1,555 bytes | 819 bytes |
 
 AndroidX ships profiles inside its own AARs, so the app was already shipping library rules.
-What is new is the app's own startup path: ~2,100 of the 40,044 rules are `ke.droidcon` or
+What is new is the app's own startup path: 2,741 of the 43,987 rules are `ke.droidcon` or
 `com.android254` classes and methods, which previously had no AOT coverage on first launch.
 
 The startup profile does something different and more visible — it drives dex layout, so R8
@@ -247,11 +247,16 @@ and only `androidx.work.WorkManagerInitializer` is removed, so `ProfileInstaller
 (and `EmojiCompatInitializer`, which Compose text wants anyway) run again.
 
 **No time to full display.** Nothing called `reportFullyDrawn`, so the benchmark could only
-report TTID and Play Vitals has no TTFD for this app. `HomeScreen` now calls
-`ReportDrawnWhen { !isSyncing && (sessions or speakers non-empty) }` — the moment the user sees
-real content rather than the sync skeletons. `StartupTimingMetric` reports it as
-`timeToFullDisplayMs` from the second iteration on (the first needs a network sync). Not yet
-measured; needs the CS50C.
+report TTID and Play Vitals has no TTFD for this app. `HomeScreen` now reports fully drawn from the
+same two conditions that decide whether the sessions and speakers skeletons show — no sync
+running and both lists non-empty — so it fires exactly when the last skeleton leaves the screen.
+`StartupBenchmark`'s measure block waits for both sections after the first frame so the trace
+covers the report, and `StartupTimingMetric` reports it as `timeToFullDisplayMs`. Read it
+knowing what it contains: `DroidconApp.onCreate` starts a sync on
+every cold start and the home screen hides content behind skeletons while one runs, so every
+cold iteration's TTFD includes the network round trip; offline, or between conferences when
+there is no data and the skeletons stay, the reporter never fires. It is the honest number for what a user waits for, not a rendering figure. Not yet measured; needs
+the CS50C.
 
 Worth knowing when reading TTFD: `HomeScreen` shows the loading skeletons whenever
 `isSyncing` is true, even when Room already holds yesterday's data, so on every cold start with
@@ -291,9 +296,10 @@ Release APK (universal, unsigned): 6,417,593 → **4,618,830 bytes, −28%**.
   `pyftsubset` (fontTools) cut them to Google Fonts' `latin` + `latin-ext` ranges — 552
   codepoints — with `--layout-features='*'` so kerning survives. Verified per weight by
   decomposing every kept glyph in both files: outlines, advance widths and vertical metrics are
-  identical, so text renders the same and the goldens hold. The 11 italic, black and extra-bold
-  files nothing referenced are deleted from the repo; resource shrinking was already keeping
-  them out of the APK.
+  identical, so text renders the same and the goldens hold. The seven weights now exist once, in
+  `core:designsystem` where `ChaiTypography` references them; `core:ui` carried a second copy of
+  all 18 Montserrat files, 11 of them referenced by nothing, which shadowed the real one in the
+  resource merge and is gone.
 - **Packaging.** `.proto` schema sources ride along inside protobuf-javalite and firebase-perf
   and are never read at runtime; `.kotlin_builtins` is only read by `kotlin-reflect`, which is
   not on the release classpath (`dependencyInsight` confirms). Both are excluded in

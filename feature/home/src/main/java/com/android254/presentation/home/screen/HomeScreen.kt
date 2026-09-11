@@ -91,7 +91,9 @@ internal fun HomeScreen(
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
 ) {
-    ReportDrawnWhen { !isSyncing && (viewState.sessions.isNotEmpty() || viewState.speakers.isNotEmpty()) }
+    val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
+    val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
+    ReportDrawnWhen { !showSessionsSkeleton && !showSpeakersSkeleton }
     Scaffold(
         topBar = {
             HomeToolbarComponent(
@@ -123,7 +125,7 @@ internal fun HomeScreen(
                 HomeSpacer()
 
                 AnimatedContent(
-                    targetState = isSyncing || viewState.sessions.isEmpty(),
+                    targetState = showSessionsSkeleton,
                     transitionSpec = {
                         fadeIn().togetherWith(fadeOut())
                     },
@@ -142,7 +144,7 @@ internal fun HomeScreen(
                 HomeSpacer()
 
                 AnimatedContent(
-                    targetState = isSyncing || viewState.speakers.isEmpty(),
+                    targetState = showSpeakersSkeleton,
                     transitionSpec = {
                         fadeIn().togetherWith(fadeOut())
                     },

@@ -76,8 +76,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-            excludes += "**/*.proto"
-            excludes += "**/*.kotlin_builtins"
             pickFirsts.add("META-INF/io.netty.versions.properties")
             pickFirsts.add("META-INF/INDEX.LIST")
         }
@@ -85,6 +83,15 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        if (variant.buildType != "debug") {
+            variant.packaging.resources.excludes
+                .addAll("**/*.proto", "**/*.kotlin_builtins")
+        }
     }
 }
 

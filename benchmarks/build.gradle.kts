@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.android254.HOST_ABI
+
 plugins {
     id("com.android.test")
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.droidconke.quality)
 }
 
 android {
     namespace = "ke.droidcon.kotlin.benchmarks"
-    compileSdk = 37
+    compileSdk =
+        libs.versions.android.compile.sdk
+            .get()
+            .toInt()
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 28 // ART profiles need API 28+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -36,7 +42,7 @@ android {
         device = "Pixel 6"
         apiLevel = 34
         systemImageSource = "aosp"
-        testedAbi = if (System.getProperty("os.arch") in setOf("aarch64", "arm64")) "arm64-v8a" else "x86_64"
+        testedAbi = HOST_ABI
     }
 }
 

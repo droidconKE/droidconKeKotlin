@@ -43,8 +43,7 @@ class StartupBenchmark {
         )
 
     @Test
-    fun startupBaselineProfile() =
-        startup(CompilationMode.Partial(baselineProfileMode = BaselineProfileMode.Require))
+    fun startupBaselineProfile() = startup(CompilationMode.Partial(baselineProfileMode = BaselineProfileMode.Require))
 
     @Test
     fun startupFullCompilation() = startup(CompilationMode.Full())
@@ -62,5 +61,6 @@ class StartupBenchmark {
             },
         ) {
             startActivityAndWait()
+            waitForHomeContent()
         }
 }
