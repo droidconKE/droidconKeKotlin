@@ -42,8 +42,6 @@ android {
 
 dependencies {
     implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
 

@@ -34,11 +34,9 @@ spotless = "8.10.1"
 jacoco = "0.8.15"
 composeLintChecks = "1.6.0"
 composeStabilityAnalyzer = "0.13.0"
-app_compat = "1.8.0"
 coreKtx = "1.19.0"
 hiltsecond = "1.4.0"
 runtime = "2.11.2"
-material = "1.14.0"
 junit = "1.3.0"
 coil = "2.7.0"
 activity = "1.13.0"
@@ -70,7 +68,6 @@ kotlinxSerializationCore = "1.11.0"
 collectionsImmutable = "0.5.2"
 
 [libraries]
-android-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "app_compat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidxComposeBom" }
 android-coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"}
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
@@ -81,7 +78,6 @@ android-hilt-testing = { module = "com.google.dagger:hilt-android-testing", vers
 work-runtime = { module = "androidx.work:work-runtime-ktx", version.ref = "runtime"}
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltsecond"}
 hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltsecond"}
-android-material = { module = "com.google.android.material:material", version.ref = "material"}
 android-test-compose = { module = "androidx.compose.ui:ui-test-junit4" }
 android-test-espresso = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 android-test-idling = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso" }

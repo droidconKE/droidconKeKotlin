@@ -122,6 +122,36 @@ The OPPO Reno4 cannot produce that comparison — ColorOS stubs `cmd package com
 below the API 33 floor — so a second device was needed. It is still the right device for jank
 work, which needs no forced compile.
 
+### §9.3-9.4 pass (2026-09-11)
+
+A gap review against the [android/skills `r8-analyzer`](https://github.com/android/skills/tree/main/performance/r8-analyzer)
+skill and the six sections of the Android performance overview. Details and numbers are in
+[`docs/performance.md`](performance.md); what landed:
+
+- **R8 is healthy, not just configured.** The configuration analyzer scores the release build
+  98% on optimization, obfuscation and shrinking, with zero global rules. Every expensive keep
+  rule is an AGP default or a library consumer rule. `app.keep` lost its three
+  kotlinx-serialization rules — the library ships identical consumer rules now — and its
+  redundant `-keepattributes`; it is a single `-dontwarn`. §9.3's "verify the defaults" item is
+  done; the `optimization {}` migration stays blocked on the baseline profile plugin.
+- **Release APK 6.42 MB → 4.62 MB (−28%)** without touching any of §9.4's numbered items: the
+  View-based Material Components and AppCompat libraries were direct dependencies of three
+  modules for one theme parent (now the platform theme, −425 KB of `resources.arsc` and ~370
+  resource files); `team.png` was an 896 KB PNG photograph (now a 141 KB WebP); the seven
+  Montserrat weights carried Cyrillic (subset to Latin, −626 KB, outlines verified identical);
+  and 64 `.proto` schemas plus `.kotlin_builtins` shipped in the APK for nothing (packaging
+  excludes, −385 KB). §9.4 items 1–6 remain as written.
+- **ProfileInstaller was disabled by the manifest.** Removing the whole
+  `androidx.startup.InitializationProvider` to stop WorkManager's auto-init also stopped
+  `ProfileInstallerInitializer`, so nothing installed the baseline profile on devices Play did
+  not deliver it to. Now only `WorkManagerInitializer` is removed. This corrects the
+  `tools:node="remove"` snippet in §9.2 below.
+- **TTFD.** `HomeScreen` reports fully drawn when real content is on screen, so
+  `StartupTimingMetric` and Play Vitals get a time-to-full-display. Not yet measured on device.
+- **Startup is not in `Application.onCreate`.** The traces put `makeApplication` at 9 ms and
+  Firebase's provider initialisation at ~82 ms of the 233 ms `bindApplication`; the WorkManager
+  enqueue deferral §9.5 suggests would buy single-digit milliseconds and was not done.
+
 ### Also still open from Phase 0
 
 - Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see

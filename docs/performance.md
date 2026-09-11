@@ -202,6 +202,116 @@ two-argument `By.res(pkg, tag)`. The two-argument form silently matches nothing,
 UiAutomator returns null rather than throwing, a journey built on it runs to completion having
 done nothing at all. `Benchmarks.kt` has a `requireObject` helper that fails loudly instead.
 
+## Startup, from the traces
+
+The benchmark already records a Perfetto trace per iteration. Reading the CS50C traces with
+the `perfetto` Python API (15 iterations per mode, process `ke.droidcon.kotlin`, main thread):
+
+| Slice | No compilation | Baseline profile |
+|---|---|---|
+| `bindApplication` | 199 ms | 233 ms |
+| `activityStart` | 52 ms | 50 ms |
+| `activityResume` | 53 ms | 51 ms |
+
+Medians. `bindApplication` is *longer* with the profile because ART loads the pre-compiled
+oat and app image there (`OpenDexFilesFromOat` 90 ms, `madvising` 44 ms, `AppImage:Loading`
+39 ms in the profiled run); it comes back many times over in the JIT-free activity start and
+first frame, which is the 22% in the table at the top.
+
+Inside `bindApplication`, one profiled iteration splits as:
+
+- ART opening the oat file and app image: ~93 ms — the price of having compiled code to load.
+- `makeApplication` — `DroidconApp`, the Hilt component, `WorkManager.initialize`, the two
+  `enqueue` calls, Timber, the notification channel: **9 ms**.
+- Firebase's content-provider initialisation: **82 ms** — `fire-cls` 38, `fire-sessions` 25,
+  `Firebase` 8, `fire-perf-early` 6, `fire-fcm` 3, `fire-rc` 2.
+
+So the "heavy `Application.onCreate`" item on the startup checklist does not apply here;
+deferring the WorkManager enqueue would buy single-digit milliseconds and was not done. The
+one app-controlled cost of note is Firebase, and that is a product decision rather than a
+code fix: Crashlytics and Sessions install early to catch startup crashes, and Performance
+Monitoring's early hook is what produces its app-start trace. Dropping Performance Monitoring
+would remove roughly 30 ms of main-thread time and two busy background threads
+(`Measurement Worker`, `ScionFrontendApi`: ~400 ms of CPU in the first 1.5 s on this device).
+Worth deciding deliberately if nobody reads its dashboard.
+
+Two things the traces surfaced were fixed:
+
+**ProfileInstaller was never running.** `AndroidManifest.xml` removed the whole
+`androidx.startup.InitializationProvider` — the blunt way to stop WorkManager's auto-init —
+which also removed `ProfileInstallerInitializer`. The merged release manifest carried only
+profileinstaller's broadcast receiver, which is enough for macrobenchmark to force-install the
+profile (so the numbers above are real) but installs nothing on a device that did not get the
+profile from Play: sideloads, internal APKs, older Play clients. The provider is now merged
+and only `androidx.work.WorkManagerInitializer` is removed, so `ProfileInstallerInitializer`
+(and `EmojiCompatInitializer`, which Compose text wants anyway) run again.
+
+**No time to full display.** Nothing called `reportFullyDrawn`, so the benchmark could only
+report TTID and Play Vitals has no TTFD for this app. `HomeScreen` now calls
+`ReportDrawnWhen { !isSyncing && (sessions or speakers non-empty) }` — the moment the user sees
+real content rather than the sync skeletons. `StartupTimingMetric` reports it as
+`timeToFullDisplayMs` from the second iteration on (the first needs a network sync). Not yet
+measured; needs the CS50C.
+
+Worth knowing when reading TTFD: `HomeScreen` shows the loading skeletons whenever
+`isSyncing` is true, even when Room already holds yesterday's data, so on every cold start with
+network the content is hidden for the whole sync while the pull-to-refresh indicator says the
+same thing. Showing cached content during sync is the biggest perceived-startup lever left,
+and it is a UX call, not a performance one.
+
+A footnote for anyone reading these traces: the ~45 ms of `ImageDecoder` work on an
+`AsyncTask #1` thread right after `makeApplication` is `com.mediatek.res.AsyncDrawableCache`,
+the CS50C's MediaTek framework pre-decoding the app's two largest bitmaps. Not app code.
+
+## App size
+
+Release APK (universal, unsigned): 6,417,593 → **4,618,830 bytes, −28%**.
+
+| Entry | Before | After | What changed |
+|---|---|---|---|
+| `resources.arsc` | 763,956 | 338,508 | Material Components + AppCompat gone |
+| `res/*` | 435 files, 2,860,260 | 66 files, 1,258,103 | same, plus the two rows below |
+| Fonts (7 × Montserrat) | 1,389,344 | 763,244 | subset to Latin + Latin Extended |
+| PNG / WebP | 180 files, 1,256,636 | 30 files, 458,287 | four large PNGs → WebP; ~150 AppCompat/Material PNGs gone |
+| `*.proto` | 64 files, 331,775 | 0 | packaging exclude |
+| `*.kotlin_builtins` | 8 files, 53,396 | 0 | packaging exclude |
+| `classes2.dex` | 2,585,364 | 2,493,036 | Material/AppCompat classes gone |
+
+- **`com.google.android.material:material` and `androidx.appcompat` were direct dependencies
+  of `:app`, `:core:data` and `:core:designsystem`** in an app with no Views. The only use was
+  the theme parent `Theme.MaterialComponents.DayNight.DarkActionBar`, whose colour attributes
+  nothing read. `Theme.Droidcon` now extends `android:Theme.Material.Light.NoActionBar`
+  (`android:Theme.Material.NoActionBar` at night), as NIA does; Compose paints everything after
+  the splash. `core-splashscreen` needs only `appcompat-resources`, which stays.
+- **Images.** `team.png` was an 896 KB PNG photograph — 14% of the APK by itself. It is now a
+  141 KB lossy WebP (quality 90, PSNR 35 dB). `all`, `droidcon_event_banner` and `smiling` are
+  lossless WebP, verified pixel-identical to the PNGs (`magick compare -metric AE` = 0), so the
+  screenshot goldens that include them do not move.
+- **Fonts.** Each Montserrat weight carried 969 codepoints including full Cyrillic.
+  `pyftsubset` (fontTools) cut them to Google Fonts' `latin` + `latin-ext` ranges — 552
+  codepoints — with `--layout-features='*'` so kerning survives. Verified per weight by
+  decomposing every kept glyph in both files: outlines, advance widths and vertical metrics are
+  identical, so text renders the same and the goldens hold. The 11 italic, black and extra-bold
+  files nothing referenced are deleted from the repo; resource shrinking was already keeping
+  them out of the APK.
+- **Packaging.** `.proto` schema sources ride along inside protobuf-javalite and firebase-perf
+  and are never read at runtime; `.kotlin_builtins` is only read by `kotlin-reflect`, which is
+  not on the release classpath (`dependencyInsight` confirms). Both are excluded in
+  `app/build.gradle.kts`.
+- **About screen** decoded the full-size team photo on the main thread as its own Coil
+  placeholder, then Coil decoded it again off the main thread. The placeholder is gone and the
+  slot reserves its aspect ratio instead, so nothing jumps.
+
+Left alone on purpose: `androidx.window` and `androidx.biometric` are transitive (Compose UI,
+Credential Manager) and R8 already strips what is unused; the x86 `.so` files (33 KB) only
+exist in the universal APK, bundles split them out; `localeFilters` would trim library strings
+further but would hand Swahili users English in Compose's own accessibility strings; the
+`META-INF/**/LICENSE.txt` copies are a legal question rather than a size one. The Compose
+stability analyzer's runtime (`com.github.skydoves:compose-stability-runtime`) is on the
+release classpath because its plugin adds it to every variant; its consumer rules keep six
+small classes, the instrumentation itself is debug-only by the plugin's default, and the few KB
+were accepted.
+
 ## Still open
 
 - ~~The generator journey is launch-only~~ — **fixed.** The cause was not the build variant
@@ -215,6 +325,15 @@ done nothing at all. `Benchmarks.kt` has a `requireObject` helper that fails lou
 - **Generating on a connected device is worse, not better.** Tried on the CS50C: it produced
   16,479 rules against the emulator's 40,380, so the emulator stays the generator. A low-end
   32-bit device simply executes less of the app.
+- **TTFD is wired but not measured.** `ReportDrawnWhen` landed after the last device run;
+  `StartupBenchmark` on the CS50C will add `timeToFullDisplayMs` to the four modes.
+- **ProfileInstaller needs a sideload check.** Install a release build over adb, launch, and
+  `adb logcat -s ProfileInstaller` should log the profile write — it could not before the
+  manifest fix. `benchmarkRelease` is the signed variant to use.
+- **Two decisions, not bugs:** whether the home screen should keep hiding cached content behind
+  skeletons while a sync runs, and whether Firebase Performance Monitoring earns its ~30 ms of
+  main thread and two background threads at startup. Both are described under
+  "Startup, from the traces".
 
 ## R8
 
@@ -248,11 +367,33 @@ What is already on for free, verified in the build:
 a `proguardFiles` block on a library that sets `isMinifyEnabled = false`. Both were dead and
 have been removed.
 
-Every release build writes `app/build/outputs/mapping/release/configanalyzer.html`, R8's
-configuration analyzer. It ranks keep rules by how much optimization they block, with lenses
-for identical, subsumed and unused rules. It is an interactive report meant to be opened in a
-browser — the data lives in the sibling `.pb`, so it does not grep usefully. Nobody has read
-it yet; `android skills add r8-analyzer` automates the pass.
+### Configuration analyzer
+
+`./gradlew :app:analyzeReleaseR8Config` writes `app/build/reports/r8/r8-config-analyzer-release.{html,pb}`
+(AGP 9.4). The `.html` is the interactive report; the `.pb` is what the
+[android/skills r8-analyzer](https://github.com/android/skills/tree/main/performance/r8-analyzer)
+scripts read — protobuf bindings plus `convert.py`, `analyze.py` and `report.py` from its
+reference doc, which need a Python venv with `protobuf`. Run over this branch's release build:
+
+| | Before | After |
+|---|---|---|
+| Optimization score | 98.09% | 98.17% |
+| Obfuscation score | 98.41% | 98.48% |
+| Shrinking score | 98.33% | 98.40% |
+| Keep rules with impact | 144 | 137 |
+| Global rules (`-dontobfuscate`, `-keep class ** { *; }` …) | 0 | 0 |
+| Live classes / methods | 17,593 / 92,923 | 17,344 / 91,284 |
+
+What it found: the five most expensive rules are all AGP defaults or library consumer rules —
+enum `values()`/`valueOf`, Play Services `zzadu` fields, `@Keep`, protobuf
+`GeneratedMessageLite` fields, `WindowInsetsCompat` member names — and each blocks at most
+0.33% of members. Nothing to act on there. `app.keep`'s three kotlinx-serialization rules
+were exact duplicates of what `kotlinx-serialization-core` now ships as consumer rules (the
+analyzer marks each pair as subsuming the other), and its `-keepattributes` line duplicated
+`proguard-android-optimize.txt`. `app.keep` is down to its single `-dontwarn`; the after-report
+confirms every `@Serializable` `Companion` and `INSTANCE` in the app is still kept, by the
+library's rules. The ten subsumed pairs that remain are library-versus-AGP-default duplicates
+and not ours to edit.
 
 ## CI
 

@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home.screen
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -90,6 +91,7 @@ internal fun HomeScreen(
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
 ) {
+    ReportDrawnWhen { !isSyncing && (viewState.sessions.isNotEmpty() || viewState.speakers.isNotEmpty()) }
     Scaffold(
         topBar = {
             HomeToolbarComponent(

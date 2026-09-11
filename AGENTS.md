@@ -209,9 +209,12 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
 - **R8 keep rules live in `app/src/main/keepRules/*.keep`**, not `proguard-rules.pro`. The
-  release build uses AGP 9.3+'s `optimization { enable = true }` block, which turns on code
-  and resource optimization and supplies the default Android rules, so there is no
-  `proguardFiles` line to add one to.
+  release build stays on the legacy `isMinifyEnabled` DSL on purpose — AGP 9.3's
+  `optimization {}` block breaks baseline profile generation, see
+  [`docs/performance.md`](docs/performance.md#r8) — but the `keepRules` source set works with
+  either. Before adding a rule, check the merged config in
+  `app/build/outputs/mapping/release/configuration.txt`: the libraries ship most of what people
+  reach for. `./gradlew :app:analyzeReleaseR8Config` scores what the rules cost.
 - **Colours come from the theme**, never from the raw palette. Read
   `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
   roles). Do not import `ChaiBlue` and friends outside `chai/colors`.

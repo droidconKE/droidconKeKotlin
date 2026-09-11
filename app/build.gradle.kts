@@ -76,6 +76,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "**/*.proto"
+            excludes += "**/*.kotlin_builtins"
             pickFirsts.add("META-INF/io.netty.versions.properties")
             pickFirsts.add("META-INF/INDEX.LIST")
         }
@@ -104,8 +106,6 @@ dependencies {
 
     implementation(libs.androidx.profileinstaller)
     implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
     implementation(libs.work.runtime)
