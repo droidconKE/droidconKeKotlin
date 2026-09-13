@@ -147,7 +147,9 @@ skill and the six sections of the Android performance overview. Details and numb
   not deliver it to. Now only `WorkManagerInitializer` is removed. This corrects the
   `tools:node="remove"` snippet in §9.2 below.
 - **TTFD.** `HomeScreen` reports fully drawn when real content is on screen, so
-  `StartupTimingMetric` and Play Vitals get a time-to-full-display. Not yet measured on device.
+  `StartupTimingMetric` and Play Vitals get a time-to-full-display. Measured on the CS50C: 3.2 s
+  without compilation, 2.7 s with the profile — network-bound by construction, since every cold
+  start syncs before the home sections show content.
 - **Startup is not in `Application.onCreate`.** The traces put `makeApplication` at 9 ms and
   Firebase's provider initialisation at ~82 ms of the 233 ms `bindApplication`; the WorkManager
   enqueue deferral §9.5 suggests would buy single-digit milliseconds and was not done.

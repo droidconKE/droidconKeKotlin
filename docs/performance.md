@@ -21,6 +21,32 @@ The **baseline profile** gets the startup path AOT-compiled on first launch, whi
 dex and pushes the rest into `classes2.dex` — that is the 36%, and it costs 385 KB of total
 dex, which is the price of splitting.
 
+### Re-measured on 2026-09-13, on the build this branch ships
+
+Same device and method, after the size and manifest work (medians of 15 cold starts,
+`POST_NOTIFICATIONS` granted):
+
+| Mode | TTID | TTFD |
+| --- | --- | --- |
+| No compilation | 1517 ms | 3248 ms |
+| Warmed, no profile (`Partial`, 3 warm-ups) | 1350 ms | 2583 ms |
+| **Baseline profile** (`Partial(Require)`) | **1249 ms** | 2667 ms |
+| Full AOT | 1388 ms | 2942 ms |
+
+The profile is worth −18% here against −22% in the first session, and the shape repeats: the
+profile beats full AOT, warming beats nothing. TTFD is new — the time until both home sections
+show real content, which on a cold start is after the sync — so it sits ~1.4 s above TTID, is
+network-bound by construction, and is noisy (1.6 s to 3.9 s across iterations).
+
+Absolute numbers do not compare across sessions. The same build and manifest measured 1517,
+1671 and 1734 ms for the no-compilation mode within one afternoon of back-to-back runs;
+`thermalservice` reported no throttling at 39.6 °C, but this is a passively cooled POS device
+and it slows under sustained benchmarking. `bindApplication` grew from 199 to 322 ms with
+Firebase's providers taking most of the growth — a slower device, not new work: an A/B with
+`EmojiCompatInitializer` removed from the restored startup provider, the one new thing on the
+path, measured 1734 ms against 1671 ms with it present. Compare modes within a session, never
+medians across sessions, and let the device cool before a headline run.
+
 Also established, as baselines rather than improvements:
 
 - **Scroll jank on the sessions list** (Reno4): `frameDurationCpuMs` P50 8.2 / P99 16.5 ms,
@@ -255,8 +281,8 @@ covers the report, and `StartupTimingMetric` reports it as `timeToFullDisplayMs`
 knowing what it contains: `DroidconApp.onCreate` starts a sync on
 every cold start and the home screen hides content behind skeletons while one runs, so every
 cold iteration's TTFD includes the network round trip; offline, or between conferences when
-there is no data and the skeletons stay, the reporter never fires. It is the honest number for what a user waits for, not a rendering figure. Not yet measured; needs
-the CS50C.
+there is no data and the skeletons stay, the reporter never fires. It is the honest number for what a user waits for, not a rendering figure. Measured on the CS50C: 3,248 ms without
+compilation, 2,667 ms with the profile — the second table under Results.
 
 Worth knowing when reading TTFD: `HomeScreen` shows the loading skeletons whenever
 `isSyncing` is true, even when Room already holds yesterday's data, so on every cold start with
@@ -331,11 +357,19 @@ were accepted.
 - **Generating on a connected device is worse, not better.** Tried on the CS50C: it produced
   16,479 rules against the emulator's 40,380, so the emulator stays the generator. A low-end
   32-bit device simply executes less of the app.
-- **TTFD is wired but not measured.** `ReportDrawnWhen` landed after the last device run;
-  `StartupBenchmark` on the CS50C will add `timeToFullDisplayMs` to the four modes.
-- **ProfileInstaller needs a sideload check.** Install a release build over adb, launch, and
-  `adb logcat -s ProfileInstaller` should log the profile write — it could not before the
-  manifest fix. `benchmarkRelease` is the signed variant to use.
+- ~~TTFD is wired but not measured~~ — **measured**, all four modes, second table under Results.
+- ~~ProfileInstaller needs a sideload check~~ — **done, on the CS50C.** The initializer path
+  logs nothing, so the check is behavioural: sideload `benchmarkRelease`, launch, force-stop
+  after N seconds, `cmd package compile -m speed-profile -f`, read `dumpsys package dexopt`.
+  Killed at 3 s or 4 s the compile falls back to `verify` (no profile to use); killed at 8 s,
+  9 s or 16 s it is `speed-profile`. The switch sits at first frame + 5 s, which is
+  `ProfileInstallerInitializer`'s deliberate delay — the trace shows it running 309 ms into
+  startup — and ART's own profile saver does not write that early. Before the manifest fix the
+  initializer did not exist in the merged manifest at all.
+- **`ScrollBenchmark` does not run on the CS50C.** The flings produce no RenderThread frames
+  ("Observed no renderthread slices in trace"), so `FrameTimingMetric` has nothing to measure.
+  The list is present and the setup passes; the gesture simply does not scroll it on this
+  device. Jank numbers stay Reno4-only, as the device table says.
 - **Two decisions, not bugs:** whether the home screen should keep hiding cached content behind
   skeletons while a sync runs, and whether Firebase Performance Monitoring earns its ~30 ms of
   main thread and two background threads at startup. Both are described under
