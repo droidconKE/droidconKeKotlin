@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.droidconke.android.application.jacoco)
     alias(libs.plugins.compose.stability)
     alias(libs.plugins.droidconke.android.library.roborazzi)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -58,18 +59,17 @@ android {
         debug {
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
         }
         release {
+            // Legacy DSL on purpose. AGP 9.3's optimization {} block is the documented
+            // replacement, but the baseline profile plugin turns minification off for its
+            // nonMinifiedRelease variant via isMinifyEnabled, and does not know about the new
+            // block — so that variant gets minified anyway and generation produces a profile
+            // full of repackaged names like La0;, which cannot match a shipped build.
+            // Revisit when androidx.baselineprofile understands the new DSL.
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
     }
 
@@ -83,6 +83,15 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        if (variant.buildType != "debug") {
+            variant.packaging.resources.excludes
+                .addAll("**/*.proto", "**/*.kotlin_builtins")
+        }
     }
 }
 
@@ -102,9 +111,8 @@ dependencies {
     implementation(projects.feature.sessions)
     implementation(projects.feature.speakers)
 
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.android.coreKtx)
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
     implementation(libs.lifecycle.runtimeKtx)
     implementation(libs.timber)
     implementation(libs.work.runtime)
@@ -133,6 +141,8 @@ dependencies {
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.navigation)
     testImplementation(libs.test.mockk)
+
+    baselineProfile(projects.benchmarks)
 }
 kotlin {
     compilerOptions {

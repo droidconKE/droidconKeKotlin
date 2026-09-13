@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home.screen
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -90,6 +91,9 @@ internal fun HomeScreen(
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
 ) {
+    val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
+    val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
+    ReportDrawnWhen { !showSessionsSkeleton && !showSpeakersSkeleton }
     Scaffold(
         topBar = {
             HomeToolbarComponent(
@@ -121,7 +125,7 @@ internal fun HomeScreen(
                 HomeSpacer()
 
                 AnimatedContent(
-                    targetState = isSyncing || viewState.sessions.isEmpty(),
+                    targetState = showSessionsSkeleton,
                     transitionSpec = {
                         fadeIn().togetherWith(fadeOut())
                     },
@@ -140,7 +144,7 @@ internal fun HomeScreen(
                 HomeSpacer()
 
                 AnimatedContent(
-                    targetState = isSyncing || viewState.speakers.isEmpty(),
+                    targetState = showSpeakersSkeleton,
                     transitionSpec = {
                         fadeIn().togetherWith(fadeOut())
                     },
