@@ -5,7 +5,9 @@ How startup is measured, and what the baseline profile is worth.
 ## Results
 
 What shipping the profiles changed, all measured rather than asserted. Detail and method for
-each is further down.
+each is further down. This first table is the 2026-09-10 session on the build that introduced
+the profile; the second, further down, is the 2026-09-13 session on the build this branch ships,
+with time to full display added.
 
 | | Before | After | Change |
 | --- | --- | --- | --- |
@@ -159,11 +161,15 @@ Two physical devices, and they are not interchangeable:
 | --- | --- | --- |
 | Force a compilation mode | ✗ ColorOS stubs `cmd package compile` entirely — even `--help` returns `Error: Failed to cpmpile !` | ✓ `speed`, `speed-profile`, `verify` all succeed |
 | Generate a baseline profile | ✗ below the API 33 floor, and `adb root` is refused on a `user` build | ✓ API 34 |
-| Startup comparison | ✗ | ✓ the table above |
-| Jank / `FrameTimingMetric` | ✓ needs no forced compile | ✓ |
+| Startup comparison | ✗ | ✓ the tables above |
+| Time to full display | ✓ in principle, none recorded yet (mirroring) | ✓ all four modes |
+| Jank / `FrameTimingMetric` | ✓ needs no forced compile | ✗ flings draw no RenderThread frames |
+| Profile install on a sideload | ✗ needs `cmd package compile` to read back | ✓ verified, see Still open |
 
-Numbers are only comparable within one device. The Reno4's 772 ms unprofiled cold start is
-its own data point, not the "before" for the CS50C's 1047 ms.
+Numbers are only comparable within one device and one session. The Reno4's 772 ms unprofiled
+cold start is its own data point, not the "before" for the CS50C's 1047 ms, and the CS50C's
+own no-compilation median moved from 1335 to 1734 ms across two days for reasons that are not
+the app (see the second results table).
 
 Two operational notes that cost a run each:
 
