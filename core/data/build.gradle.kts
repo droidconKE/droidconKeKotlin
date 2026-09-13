@@ -32,8 +32,6 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.network)
 
-    implementation(libs.android.appCompat)
-    implementation(libs.android.material)
     api(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
     implementation(libs.datastore)

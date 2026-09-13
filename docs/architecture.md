@@ -85,6 +85,7 @@ of them need lives in `core:ui`, and `app` is the only module allowed to see the
 | `core:network`       | library, hilt, firebase, jacoco                    | Ktor client, DTOs, Remote Config                |
 | `core:screenshot`    | library, compose                                   | Roborazzi harness. Test-only                    |
 | `core:testing`       | library                                            | Shared test doubles. Test-only                  |
+| `benchmarks`         | com.android.test                                   | Macrobenchmark + profile generation. Not shipped |
 | `build-logic`        | —                                                  | The convention plugins the above apply          |
 
 The `:core:*` renames of the data tier changed Gradle paths only. `:core:database` is still

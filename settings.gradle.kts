@@ -39,6 +39,7 @@ dependencyResolutionManagement {
 rootProject.name = "dcke"
 
 include(":app")
+include(":benchmarks")
 include(":core:common")
 include(":core:data")
 include(":core:database")

@@ -48,5 +48,5 @@ internal fun configureManagedDevices(commonExtension: CommonExtension) {
 }
 
 /** Host-keyed, not pinned to x86_64, so CI and Apple Silicon each resolve a native image. */
-private val HOST_ABI: String =
+val HOST_ABI: String =
     if (System.getProperty("os.arch") in setOf("aarch64", "arm64")) "arm64-v8a" else "x86_64"
