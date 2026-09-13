@@ -24,7 +24,14 @@ jobs:
           versionName: ${{ format('1.0.{0}', github.run_number ) }}
 
       - name: Assemble Release Bundle
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundleRelease -PuploadCrashlyticsMapping=true
+
+      - name: Keep the R8 mapping with the run
+        uses: actions/upload-artifact@v7
+        with:
+          name: mapping-${{ github.run_number }}
+          path: app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: error
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
@@ -41,6 +48,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_SERVICES_JSON }}
           packageName: ke.droidcon.kotlin
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: production
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
+          tracks: production
           whatsNewDirectory: whatsnew/
           status: completed

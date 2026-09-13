@@ -1,1 +1,6 @@
-- Bug fixes and stability improvements
+Faster and lighter:
+• Starts up to 20% faster on first launch, and the download is 28% smaller
+• Redesigned speakers and speaker detail screens, with shared-element transitions from home
+• Sessions grouped by time with sticky headers, day loading states and instant bookmarking
+• Sign in with Google via the Credential Manager
+• Edge-to-edge layout, Material 3 refresh, bug fixes and stability improvements

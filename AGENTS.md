@@ -208,6 +208,12 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   the work that clears it. Counts are in
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
+- **A push to `releases/<yyyy-mon-d>` is a production release.** The deploy workflow sets
+  `versionCode` to its own run number and `versionName` to `1.0.<run>`, builds and signs the
+  bundle, uploads it to the production track at 100%, and ships `whatsnew/whatsnew-en-US` as
+  the release notes — so update that file on the release branch and bring it back to `main`.
+  The R8 mapping goes to Play and Crashlytics from that workflow only (`-PuploadCrashlyticsMapping`)
+  and is kept as a run artifact; PR builds never upload one.
 - **R8 keep rules live in `app/src/main/keepRules/*.keep`**, not `proguard-rules.pro`. The
   release build stays on the legacy `isMinifyEnabled` DSL on purpose — AGP 9.3's
   `optimization {}` block breaks baseline profile generation, see
