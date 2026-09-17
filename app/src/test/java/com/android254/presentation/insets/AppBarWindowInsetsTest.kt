@@ -79,10 +79,7 @@ class AppBarWindowInsetsTest {
         }
     }
 
-    /**
-     * Measured on a wrapper rather than on the bar's own test tag, which sits inside the
-     * bar's padding and so cannot see the space the bar reserves above itself.
-     */
+    /** Measured on a wrapper: the bar's own test tag sits inside its padding. */
     private fun assertOccupies(
         height: Dp,
         bar: @Composable () -> Unit,

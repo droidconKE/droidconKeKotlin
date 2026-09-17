@@ -146,8 +146,6 @@ fun MainScreen(
             }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
-        // The root pays for the bottom bar and nothing else; each screen's Scaffold takes
-        // the rest via DroidconWindowInsets.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
         Navigation(

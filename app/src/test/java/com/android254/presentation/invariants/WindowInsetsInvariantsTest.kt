@@ -83,9 +83,8 @@ class WindowInsetsInvariantsTest {
     }
 
     /**
-     * The text between `Scaffold(` and its matching `)`, one entry per call. The trailing
-     * content lambda sits outside those parentheses, so nested `Scaffold`s in a screen's
-     * body cannot be mistaken for arguments of the outer one.
+     * The argument list of each `Scaffold(` call. The trailing content lambda falls outside the
+     * parentheses, so a nested `Scaffold` is never mistaken for an argument of the outer one.
      */
     private fun String.scaffoldArgumentLists(): List<String> =
         SCAFFOLD_CALL

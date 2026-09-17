@@ -22,27 +22,18 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 
 /**
- * Who pays for which system inset, now that the app is edge-to-edge.
- *
- * Splitting it this way is what lets a screen draw under the status bar at all: if the
- * composition root consumed the top inset, as it did before, every screen would start below
- * the status bar and the edge-to-edge opt-in would buy nothing.
+ * Who pays for which system inset. The split is what lets a screen draw under the status bar at
+ * all: a root that consumes the top, as this one did, leaves the edge-to-edge opt-in inert.
  */
 object DroidconWindowInsets {
-    /**
-     * The app bar's share: the top, so its background tints the status bar strip and its
-     * content sits clear of it, plus the horizontal cutout in landscape.
-     */
+    /** The app bar's share, so its background reaches the status bar instead of stopping below it. */
     val appBar: WindowInsets
         @Composable
         get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
 
     /**
-     * A screen's share, for its `Scaffold`'s `contentWindowInsets`.
-     *
-     * The top is absent on purpose — the screen's own app bar consumed it. The bottom
-     * resolves to zero while the bottom bar is visible, because the root consumes it there,
-     * and to the navigation bar or the keyboard, whichever is taller, when it is not.
+     * A screen's share, for `contentWindowInsets`. No top — its app bar took that. The bottom is
+     * zero while the root's bottom bar is up, and the navigation bar or keyboard when it is not.
      */
     val screenContent: WindowInsets
         @Composable

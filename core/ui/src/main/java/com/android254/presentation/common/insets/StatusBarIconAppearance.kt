@@ -24,13 +24,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 /**
- * Overrides the status bar icon appearance for as long as this stays in the composition.
- *
- * `enableEdgeToEdge()` derives the icons from the theme, which is the right answer for every
- * screen whose app bar is a theme surface. A screen that draws artwork up there — the feedback
- * hero is the only one — is a surface the theme knows nothing about, and gets dark icons on a
- * saturated background. Only such a screen should reach for this: the previous appearance is
- * restored on the way out, so a screen that opts in cannot leave the next one wrong.
+ * Overrides the status bar icon appearance while this is composed, restoring the previous value
+ * on the way out. Only for a screen painting its own artwork behind the status bar —
+ * `enableEdgeToEdge()` derives the right icons from the theme for every other one.
  */
 @Composable
 fun StatusBarIconAppearance(darkIcons: Boolean) {

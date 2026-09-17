@@ -24,11 +24,7 @@ import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import org.junit.Test
 
-/**
- * Robolectric reports no system bars, so the screen goldens are all captured on a device
- * with nothing to inset around. These pass a cutout-sized inset in explicitly, which is the
- * only way the app bars' edge-to-edge behaviour is reviewable without a handset.
- */
+/** Robolectric reports no system bars, so the inset has to be passed in to be seen at all. */
 class AppBarInsetsScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun `plain app bar under a display cutout`() {

@@ -100,7 +100,6 @@ internal fun FeedBackScreen(
 
     val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
 
-    // Expanded, the hero is behind the status bar and the theme's icons are the wrong ones.
     StatusBarIconAppearance(darkIcons = isCollapsed.value && !darkTheme)
 
     Scaffold(
