@@ -19,9 +19,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Icon
@@ -35,18 +37,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
+    windowInsets: WindowInsets = DroidconWindowInsets.appBar,
     onActionClicked: () -> Unit = {},
 ) {
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
+                .windowInsetsPadding(windowInsets)
                 .height(64.dp)
                 .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
                 .testTag("droidcon_topBar_notSignedIn"),

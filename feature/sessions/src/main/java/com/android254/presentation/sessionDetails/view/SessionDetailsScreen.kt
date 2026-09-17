@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.divider.CustomDivider
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
@@ -107,11 +108,12 @@ internal fun SessionDetailsScreen(
             }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         when (uiState) {
             is SessionDetailsUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                 ) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -119,7 +121,7 @@ internal fun SessionDetailsScreen(
 
             is SessionDetailsUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                 ) {
                     ChaiBodyMediumBold(
                         modifier = Modifier.align(Alignment.Center),

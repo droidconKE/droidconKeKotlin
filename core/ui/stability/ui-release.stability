@@ -38,23 +38,25 @@ public fun com.android254.presentation.common.components.DroidConTextField(label
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBar(modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBar(modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+    - windowInsets: STABLE (marked @Stable or @Immutable)
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onButtonClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - windowInsets: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFilter(isListActive: kotlin.Boolean, onListIconClick: kotlin.Function0<kotlin.Unit>, onAgendaIconClick: kotlin.Function0<kotlin.Unit>, isFilterActive: kotlin.Boolean, modifier: androidx.compose.ui.Modifier, onFilterButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFilter(isListActive: kotlin.Boolean, onListIconClick: kotlin.Function0<kotlin.Unit>, onAgendaIconClick: kotlin.Function0<kotlin.Unit>, isFilterActive: kotlin.Boolean, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, onFilterButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -63,6 +65,7 @@ public fun com.android254.presentation.common.components.DroidconAppBarWithFilte
     - onAgendaIconClick: STABLE (function type)
     - isFilterActive: STABLE (primitive type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - windowInsets: STABLE (marked @Stable or @Immutable)
     - onFilterButtonClick: STABLE (function type)
 
 @Composable
@@ -232,6 +235,25 @@ public fun com.android254.presentation.common.divider.CustomDivider(modifier: an
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.insets.DroidconWindowInsets.appBar(): androidx.compose.foundation.layout.WindowInsets
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.insets.DroidconWindowInsets.screenContent(): androidx.compose.foundation.layout.WindowInsets
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.insets.StatusBarIconAppearance(darkIcons: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - darkIcons: STABLE (primitive type)
 
 @Composable
 public fun com.android254.presentation.common.navigation.rememberNavigationState(startRoute: androidx.navigation3.runtime.NavKey, topLevelRoutes: kotlinx.collections.immutable.ImmutableSet<androidx.navigation3.runtime.NavKey>): com.android254.presentation.common.navigation.NavigationState

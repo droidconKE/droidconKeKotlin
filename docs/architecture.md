@@ -240,6 +240,15 @@ The rules that matter:
 
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a
   `remember` — that is how the UI and the data end up disagreeing after a rotation.
+- **Insets are owned, not inherited.** Screens nest `Scaffold`s — the composition root has one
+  for the bottom bar, each screen has one for its top bar — and a nested `Scaffold` left on its
+  defaults will either double-pad an inset or drop it. So the ownership is explicit: the app
+  bar pays for the top (`DroidconWindowInsets.appBar`), the root pays for the bottom bar and
+  *consumes* it, and each screen declares the remainder
+  (`DroidconWindowInsets.screenContent`). Because the root consumes what it pays for, that one
+  declaration is right whether or not the screen keeps the bottom bar. A root that consumed
+  everything, which is what this was until §3.4, leaves the edge-to-edge opt-in doing nothing:
+  no screen can reach the status bar.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps the moment a sync
   reorders the list.
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.

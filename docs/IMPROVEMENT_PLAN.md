@@ -154,6 +154,79 @@ skill and the six sections of the Android performance overview. Details and numb
   Firebase's provider initialisation at ~82 ms of the 233 ms `bindApplication`; the WorkManager
   enqueue deferral §9.5 suggests would buy single-digit milliseconds and was not done.
 
+### §3.4 landed (2026-09-17)
+
+Edge-to-edge is no longer only opted into — it now does something. Step 1 and step 2 had
+already shipped: `MainActivity` calls `enableEdgeToEdge()` and nothing writes `statusBarColor`
+any more. Step 3, the part that matters, had not.
+
+The correction to what §3.4 sketches below: it puts the whole contract in `MainScreen` and
+threads `contentPadding` down through `Navigation` into every screen. That is not needed here,
+because **every screen already has its own `Scaffold` with its own top bar**. The insets split
+along that seam instead, and no screen signature changed:
+
+- **App bars own the top.** `DroidconAppBar`, `DroidconAppBarWithFeedbackButton` and
+  `DroidconAppBarWithFilter` are plain `Row`s, not M3 `TopAppBar`s, so none of them knew about
+  insets. Each now takes a `windowInsets` parameter defaulting to
+  `DroidconWindowInsets.appBar`, applied after its background so the background reaches the top
+  of the window and the content sits below the status bar.
+- **The root owns the bottom.** `MainScreen`'s `Scaffold` is `contentWindowInsets =
+  WindowInsets(0, 0, 0, 0)` and consumes only the bottom bar. It no longer eats the top inset,
+  which is what had made the opt-in inert: with the root consuming everything, no screen could
+  draw under the status bar even if it wanted to.
+- **Each screen declares the rest** with `contentWindowInsets =
+  DroidconWindowInsets.screenContent`. Because the root *consumes* what it pays for, the same
+  declaration is correct on the five screens that keep the bottom bar and the three that hide
+  it — it resolves to zero in the first case and to the navigation bar in the second, with no
+  per-screen special casing.
+- **The IME comes free.** `WindowInsets.safeDrawing` already includes the keyboard, so the
+  same declaration moves the feedback form's `OutlinedTextField` clear of it. The activity
+  gained `android:windowSoftInputMode="adjustResize"`, which it never had.
+- **Two latent bugs fell out.** `AboutScreen` and `SessionDetailsScreen` never applied
+  `paddingValues` in their loading and error branches, so both drew under their own top bar.
+
+On the definition of done below: the first two items are closed and asserted by
+`WindowInsetsInvariantsTest`, which fails on any `Scaffold` in `src/main` that declares no
+`contentWindowInsets` and on any return of `statusBarColor`. The third is **partly** closed.
+Robolectric reports no system bars at all, so the screen goldens cannot show a cutout or a
+3-button nav bar; what is captured instead is the three app bars with a cutout-sized inset
+passed in explicitly (`AppBarInsetsScreenshotTest`).
+
+The fourth, the two-device manual check, is **done**. Checked on the `RM_Pixel` API 36
+emulator in both gesture and 3-button navigation, and on the OPPO Reno4 — ColorOS, 3-button
+navigation, and **API 31 rather than the API 30 this section assumed**; what matters is that it
+is below API 35, where the platform does not enforce edge-to-edge and `enableEdgeToEdge()` has
+to do the work itself. Both devices behave identically on all five:
+
+- All three custom app bars tint under the status bar with their content clear of it.
+- `SessionDetailsScreen`, which hides the bottom bar, still clears the navigation bar — the
+  path that exists only because the root *consumes* what it pays for.
+- `FeedBackScreen`'s hero draws under the status bar. This is the one thing that was
+  impossible before: with the root eating the top inset, no screen could reach up there.
+- The keyboard moves the feedback field clear of itself, and the bottom bar sits above the
+  3-button nav bar rather than under it.
+
+**One thing the manual check found, now fixed.** On `FeedBackScreen` the status bar icons came
+out dark on both devices, because `enableEdgeToEdge()` derives their appearance from the theme
+and the theme is light. That was the right answer while the hero could not reach the status
+bar. Once it could, the clock and status icons sat on saturated blue and teal.
+
+`StatusBarIconAppearance` in `:core:ui` fixes it: a `DisposableEffect` that overrides the icon
+appearance while a screen is in the composition and **restores the previous value on the way
+out**, so a screen that opts in cannot strand the one after it. `FeedBackScreen` drives it off
+the `isCollapsed` state it already derives — light icons over the expanded hero, back to the
+theme's answer once the bar collapses to the light `TopAppBar`.
+
+This is the one place the plan's "no window reads from a composable" instinct does not hold,
+and the distinction is worth stating: step 2 deleted a `SideEffect` in `ChaiTheme` that ran for
+*every* screen and set a property that is a no-op from API 35. This runs for one screen, sets
+a property that is still live, and undoes itself. What made the original wrong was that it was
+global and permanent, not that it touched the window.
+
+Rule of thumb for the next screen that wants it: reach for this only when the screen draws its
+own artwork behind the status bar. A screen whose app bar is a theme surface already gets the
+right icons for free.
+
 ### Also still open from Phase 0
 
 - Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see
@@ -1275,7 +1348,12 @@ enum class TopLevelDestination(
 
 This also gives the nav bar filled/outlined icon states (a Material 3 expectation the current single-icon model can't express).
 
-### 3.4 Edge-to-edge and window insets
+### 3.4 Edge-to-edge and window insets — done
+
+> **Landed 2026-09-17.** See "§3.4 landed" at the top of this document for what shipped and
+> where it diverges from the sketch below, which is kept for the reasoning. The short version:
+> the contract splits at the app bar rather than threading `contentPadding` through
+> `Navigation`, because every screen already owns a `Scaffold`.
 
 This is a **correctness** issue, not polish. The app targets SDK 36 today and 37 after §3.1 — edge-to-edge is mandatory at both. Today the app has zero insets handling and one deprecated `statusBarColor` write. **Land this before the targetSdk bump.**
 
@@ -7233,6 +7311,7 @@ Struck from the backlog. Kept here only so nobody re-plans it.
 | **Slack compose-lints + skydoves compose-stability-analyzer**, both wired into CI with committed `.stability` baselines | Done — see `docs/static-analysis.md` |
 | **Release builds are actually minified** — coverage instrumentation was forcing every build type debuggable, silently disabling R8 | Done |
 | `LICENSE`, rewritten README, `docs/architecture.md`, `docs/static-analysis.md` | Done |
+| **Edge-to-edge and window insets** (§3.4) — app bars own the top, the root owns the bottom bar, every `Scaffold` declares the rest, IME handled | Done — asserted by `WindowInsetsInvariantsTest` |
 
 `safeApiCall` is **not** an open item, contrary to earlier drafts of this section: it has
 production callers in `AuthApi` and `SessionsApi`. Leave it.
@@ -7241,18 +7320,21 @@ production callers in `AuthApi` and `SessionsApi`. Leave it.
 
 Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
 
+Items 1–5 and 10 have since landed; they are struck rather than deleted so the ordering still
+reads as it was decided. **The list now starts at #6.**
+
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
-| **1** | Edge-to-edge + window insets | §3.4 | Correctness, not polish. `targetSdk` 37 already shipped, so the app is already subject to enforced edge-to-edge — this is now remedial rather than preparatory. |
-| **2** | Test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes | §10.4 | Everything below is easier to review with it, and the `Clock` injection unblocks testing anything time-dependent. |
-| **3** | Roborazzi screenshot suite | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
-| **4** | Baseline + startup profile | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
-| **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
+| ~~**1**~~ | ~~Edge-to-edge + window insets~~ — **done 2026-09-17** | §3.4 | Correctness, not polish. `targetSdk` 37 already shipped, so the app is already subject to enforced edge-to-edge — this is now remedial rather than preparatory. |
+| ~~**2**~~ | ~~Test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes~~ — **done** | §10.4 | Everything below is easier to review with it, and the `Clock` injection unblocks testing anything time-dependent. |
+| ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
+| ~~**4**~~ | ~~Baseline + startup profile~~ — **done 2026-09-10** | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
+| ~~**5**~~ | ~~Compose compiler stability config~~ — **done** | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
 | **6** | Design-system token restructure, then M3 Expressive | §3.5 → §5 | Needs #3 to review and a Compose BOM with material3 1.4.x. The single biggest visible change available. |
 | **7** | Adaptive & large-screen support | §4 | The README already claims it. Needs #6's theme work first. |
 | **8** | Swahili + accessibility audit | §14 | Independent of the above; can run in parallel by a separate owner. |
 | **9** | Real size wins: `material-icons-extended`, fonts, Lottie, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
-| **10** | Credential Manager, replacing the deprecated GMS Auth path | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
+| ~~**10**~~ | ~~Credential Manager, replacing the deprecated GMS Auth path~~ — **done**, landed with Phase 0 | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
 
 Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
@@ -7264,10 +7346,12 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 
 **Stage 1 — Make the codebase safe to change** — *substantially complete*
 - ~~§15.1 CI on all PRs~~ · ~~§3.6 rename~~ · ~~P0 list~~ · ~~§3.8 AGP 9 (flags removed)~~ · ~~§3.1 Gradle config~~ · ~~static-analysis toolchain and lint baseline~~ — all landed
-- §10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes — **still open**
-- §9.1–9.2 benchmark module + baseline profile — **still open**
-- §3.4 edge-to-edge and insets — **still open, and now overdue**: `targetSdk` 37 shipped with the AGP 9 work, so enforced edge-to-edge is already live
-- **Milestone:** green CI on every PR ✅ · startup measured with a number written down ❌
+- ~~§10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes~~ — landed with the module split
+- ~~§9.1–9.2 benchmark module + baseline profile~~ — landed 2026-09-10
+- ~~§3.4 edge-to-edge and insets~~ — **landed 2026-09-17**; `targetSdk` 37 had shipped with the AGP 9 work, so this was remedial by the time it was done
+- **Milestone:** green CI on every PR ✅ · startup measured with a number written down ✅ (§9.1–9.2, [`docs/performance.md`](performance.md))
+
+**Stage 1 is complete.**
 
 **Stage 2 — Make it a 2026 app**
 - §10.2 Roborazzi screenshot suite — **first in this stage**, because it is how everything else here gets reviewed
@@ -7481,6 +7565,7 @@ The apps and docs this plan draws on, and what specifically to take from each.
 
 | Date | Change |
 | --- | --- |
+| 2026-09-17 | **§3.4 rewritten as done.** Edge-to-edge insets landed; the section keeps its reasoning but records where the implementation diverges — the contract splits at the app bar rather than threading `contentPadding` through `Navigation`, because every screen already owns a `Scaffold`. §16.0 gains the row, §16.1 strikes items 1–5 and 10 (all landed; #10 Credential Manager shipped with Phase 0 and the list had gone stale), and **Stage 1 is marked complete** — its two remaining items, §10.4 and §9.1–9.2, had both landed without the section being updated. The screenshot bullet in §3.4's definition of done is recorded as only partly closeable: Robolectric reports no system bars, so a cutout is reachable for the app bars and not for the screens. |
 | 2026-08-14 | Pruned again against the merged codebase. **§3.8 rewritten as done** — AGP 9 landed with both opt-out flags removed, so Stage 4.5, the half-migration risk row and the detekt-2.0 gate are all deleted; the two `gradle.properties` settings this plan recommended are recorded as wrong under AGP 9. **§3.1 collapsed** to the one thing left in it, the Compose compiler stability configuration, and promoted to #5 in §16.1. **§3.2 trimmed** to the forward-looking catalog entries. **§1.6 D1–D3, D6, D7 and §1.7 S2 deleted** — Gradle config cleanup, the lint baseline, the second wrapper and `api_key.txt` are all done. §1.4 pruned to what still exists, and the `safeApiCall` item withdrawn: it has production callers, so earlier drafts calling it dead were wrong. §15.1/§15.2 compressed to their outcomes. §16.0 records the static-analysis toolchain, the Compose lint and stability rule sets, and the release-minification fix. |
 | 2026-08-13 | Initial plan. Audit of `main` @ `7a8317c`. |
 | 2026-08-13 | targetSdk target raised to 37 (B4, §3.1). Time estimates removed throughout — the plan commits to ordering, not dates. §3.5 rewritten as an explicit chai/Material 3 recommendation with the evidence behind it. §3.8 added: AGP 9 migration, grounded in the JetBrains AGP 9 migration skill's version and plugin-compatibility tables. |

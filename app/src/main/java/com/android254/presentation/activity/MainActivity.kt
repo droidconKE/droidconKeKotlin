@@ -24,7 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -123,6 +123,13 @@ fun MainScreen(
         mutableStateOf(false)
     }
 
+    if (showAuthDialog) {
+        AuthDialog(
+            onDismiss = { showAuthDialog = false },
+            viewModel = { authViewModel },
+        )
+    }
+
     Scaffold(
         modifier =
             modifier
@@ -139,29 +146,19 @@ fun MainScreen(
             }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { padding ->
-
-        Column(
+        Navigation(
             modifier =
                 Modifier
                     .padding(padding)
                     .consumeWindowInsets(padding),
-        ) {
-            if (showAuthDialog) {
-                AuthDialog(
-                    onDismiss = { showAuthDialog = false },
-                    viewModel = { authViewModel },
-                )
-            }
-
-            Navigation(
-                navController = navController,
-                navigationState = navigationState,
-                updateBottomBarState = { bottomBarState.value = it },
-                onActionClicked = {
-                    showAuthDialog = !showAuthDialog
-                },
-            )
-        }
+            navController = navController,
+            navigationState = navigationState,
+            updateBottomBarState = { bottomBarState.value = it },
+            onActionClicked = {
+                showAuthDialog = !showAuthDialog
+            },
+        )
     }
 }

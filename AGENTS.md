@@ -224,6 +224,18 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 - **Colours come from the theme**, never from the raw palette. Read
   `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
   roles). Do not import `ChaiBlue` and friends outside `chai/colors`.
+- **Insets are owned, not inherited.** The app is edge-to-edge, so exactly one thing pays for
+  each system bar. An app bar takes the top via `DroidconWindowInsets.appBar`, applied after
+  its background so the background reaches under the status bar. `MainScreen` takes the bottom
+  bar and consumes it. Every other `Scaffold` declares what is left with `contentWindowInsets =
+  DroidconWindowInsets.screenContent`, which covers the keyboard too — `safeDrawing` includes
+  it. `WindowInsetsInvariantsTest` fails on a `Scaffold` that declares nothing, because the
+  default is almost never right for a nested one. Status bar *icons* come from the theme via
+  `enableEdgeToEdge()` and need no help — unless the screen draws its own artwork up there, as
+  the feedback hero does, in which case `StatusBarIconAppearance` overrides them and restores
+  the previous value on the way out. Never set it from a theme or a shared component — what
+  made the old `ChaiTheme` `SideEffect` wrong was being global and permanent, not touching the
+  window — and `WindowInsetsInvariantsTest` fails on any call to it from `:core:`.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
   reorders the list.
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a

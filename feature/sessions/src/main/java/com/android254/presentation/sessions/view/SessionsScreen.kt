@@ -44,6 +44,7 @@ import com.android254.presentation.common.fakedata.DAY_TODAY
 import com.android254.presentation.common.fakedata.DAY_TOMORROW
 import com.android254.presentation.common.fakedata.DAY_YESTERDAY
 import com.android254.presentation.common.fakedata.fakeSessions
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
@@ -131,6 +132,7 @@ fun SessionsScreen(
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
 
         Column(
