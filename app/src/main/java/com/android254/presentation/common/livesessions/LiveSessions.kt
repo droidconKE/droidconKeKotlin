@@ -17,7 +17,6 @@ package com.android254.presentation.common.livesessions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
@@ -117,11 +116,16 @@ fun LiveSessionsRail(
             modifier
                 .testTag(LIVE_SESSIONS_RAIL_TEST_TAG)
                 .fillMaxWidth()
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing
-                        .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
-                ).padding(bottom = 8.dp),
-        contentPadding = PaddingValues(horizontal = 20.dp),
+                // The bottom is real padding: it is not a scroll axis, so it lifts the whole
+                // row off the navigation bar. The horizontal sides go into contentPadding
+                // below, so cards scroll under a cutout instead of stopping short of it.
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+                .padding(bottom = 8.dp),
+        contentPadding =
+            WindowInsets.safeDrawing
+                .only(WindowInsetsSides.Horizontal)
+                .asPaddingValues()
+                .plus(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

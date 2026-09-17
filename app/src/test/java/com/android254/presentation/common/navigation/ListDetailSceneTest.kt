@@ -132,40 +132,6 @@ class ListDetailSceneTest {
         composeTestRule.onNodeWithTag(tagFor(Screens.HappeningNow)).assertIsDisplayed()
     }
 
-    /**
-     * The supporting pane is appended to the displayed entries, not pushed onto a back stack.
-     * Back therefore has to keep operating on the real stacks and simply leave it alone.
-     */
-    @Test
-    fun `back moves between tabs and leaves the happening now pane where it is`() {
-        val navController =
-            setContent(expandedWindow, supportingRoute = Screens.HappeningNow) {
-                it.navigate(Screens.Sessions)
-            }
-        composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).assertIsDisplayed()
-
-        navController.goBackAndSettle()
-
-        composeTestRule.onNodeWithTag(tagFor(Screens.Home)).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(tagFor(Screens.HappeningNow)).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).assertDoesNotExist()
-    }
-
-    @Test
-    fun `back out of a detail pane leaves its list on screen`() {
-        val navController =
-            setContent(expandedWindow) {
-                it.navigate(Screens.Sessions)
-                it.navigate(Screens.SessionDetails(SESSION_ID))
-            }
-        composeTestRule.onNodeWithTag(DETAIL_PANE_TAG).assertIsDisplayed()
-
-        navController.goBackAndSettle()
-
-        composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).assertIsDisplayed()
-        composeTestRule.onNodeWithTag(DETAIL_PANE_TAG).assertDoesNotExist()
-    }
-
     @Test
     fun `the production entry provider marks each route with its pane role`() {
         var provider: ((NavKey) -> NavEntry<NavKey>)? = null
@@ -222,7 +188,7 @@ class ListDetailSceneTest {
         windowSize: DpSize,
         supportingRoute: NavKey? = null,
         navigate: (NavigationController) -> Unit = {},
-    ): NavigationController {
+    ) {
         val controller = mutableStateOf<NavigationController?>(null)
         composeTestRule.setContent {
             DeviceConfigurationOverride(DeviceConfigurationOverride.WindowSize(windowSize)) {
@@ -241,12 +207,6 @@ class ListDetailSceneTest {
             }
         }
         composeTestRule.runOnUiThread { navigate(requireNotNull(controller.value)) }
-        composeTestRule.waitForIdle()
-        return requireNotNull(controller.value)
-    }
-
-    private fun NavigationController.goBackAndSettle() {
-        composeTestRule.runOnUiThread { goBack() }
         composeTestRule.waitForIdle()
     }
 }

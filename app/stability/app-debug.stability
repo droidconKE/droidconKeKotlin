@@ -54,7 +54,7 @@ public fun com.android254.presentation.common.navigation.DroidconDrawerHeader(mo
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.navigation.DroidconNavigationItems(currentTopLevelRoute: kotlin.Any, navigationSuiteType: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType, onNavigate: kotlin.Function1<com.android254.presentation.common.navigation.Screens, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.navigation.DroidconNavigationItems(currentTopLevelRoute: androidx.navigation3.runtime.NavKey, navigationSuiteType: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType, onNavigate: kotlin.Function1<com.android254.presentation.common.navigation.Screens, kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -63,7 +63,7 @@ public fun com.android254.presentation.common.navigation.DroidconNavigationItems
     - onNavigate: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.navigation.Navigation(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>, supportingRoute: androidx.navigation3.runtime.NavKey?, sceneStrategies: kotlinx.collections.immutable.ImmutableList<androidx.navigation3.scene.SceneStrategy<androidx.navigation3.runtime.NavKey>>, entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): kotlin.Unit
+public fun com.android254.presentation.common.navigation.Navigation(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>, supportingRoute: androidx.navigation3.runtime.NavKey?, onBack: kotlin.Function0<kotlin.Unit>, sceneStrategies: kotlinx.collections.immutable.ImmutableList<androidx.navigation3.scene.SceneStrategy<androidx.navigation3.runtime.NavKey>>, entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -72,6 +72,7 @@ public fun com.android254.presentation.common.navigation.Navigation(navControlle
     - modifier: STABLE (marked @Stable or @Immutable)
     - onActionClicked: STABLE (function type)
     - supportingRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - onBack: STABLE (function type)
     - sceneStrategies: STABLE (known stable type)
     - entryProvider: STABLE (function type)
 

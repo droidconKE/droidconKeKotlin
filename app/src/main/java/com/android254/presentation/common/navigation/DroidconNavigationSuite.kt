@@ -32,39 +32,45 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import com.android254.presentation.common.adaptive.DroidconWindowSize
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import ke.droidcon.kotlin.core.ui.R
 
 /**
- * The navigation component for a window size.
+ * The navigation component for the current window.
  *
- * A drawer only earns its width once the window has 840 dp to give it, and only when the window
- * is also tall enough to be a tablet rather than a phone on its side — a drawer in phone
- * landscape eats a third of the screen to show four labels.
+ * [showsDrawer] comes from `rememberShowsNavigationDrawer()`, which is the same value the app
+ * bars use to decide whether to drop their logo — so the drawer cannot take the branding
+ * without the bars giving it up, and vice versa.
  */
 fun navigationSuiteTypeFor(
     windowSize: DroidconWindowSize,
-    isTallEnoughForDrawer: Boolean,
+    showsDrawer: Boolean,
 ): NavigationSuiteType =
     when {
         windowSize == DroidconWindowSize.Compact -> NavigationSuiteType.NavigationBar
-        windowSize == DroidconWindowSize.Expanded && isTallEnoughForDrawer ->
-            NavigationSuiteType.NavigationDrawer
-
+        showsDrawer -> NavigationSuiteType.NavigationDrawer
         else -> NavigationSuiteType.NavigationRail
     }
 
-/** The chai palette, applied to whichever navigation component the window ends up with. */
+/**
+ * The chai palette, applied to whichever navigation component the window ends up with.
+ *
+ * Not wrapped in `remember`: `NavigationSuiteDefaults.colors` is itself composable, because the
+ * defaults it fills in are read from the theme.
+ */
 @Composable
-fun droidconNavigationSuiteColors(): NavigationSuiteColors =
-    NavigationSuiteDefaults.colors(
-        navigationBarContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-        shortNavigationBarContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-        navigationRailContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-        navigationDrawerContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
+fun droidconNavigationSuiteColors(): NavigationSuiteColors {
+    val container = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor
+    return NavigationSuiteDefaults.colors(
+        navigationBarContainerColor = container,
+        shortNavigationBarContainerColor = container,
+        navigationRailContainerColor = container,
+        navigationDrawerContainerColor = container,
     )
+}
 
 /**
  * The four destinations, in the shape the current navigation component wants them.
@@ -74,7 +80,7 @@ fun droidconNavigationSuiteColors(): NavigationSuiteColors =
  */
 @Composable
 fun DroidconNavigationItems(
-    currentTopLevelRoute: Any,
+    currentTopLevelRoute: NavKey,
     navigationSuiteType: NavigationSuiteType,
     onNavigate: (Screens) -> Unit,
 ) {

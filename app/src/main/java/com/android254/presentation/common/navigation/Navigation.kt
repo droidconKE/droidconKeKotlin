@@ -33,6 +33,7 @@ fun Navigation(
     modifier: Modifier = Modifier,
     onActionClicked: () -> Unit = {},
     supportingRoute: NavKey? = null,
+    onBack: () -> Unit = { navController.goBack() },
     sceneStrategies: ImmutableList<SceneStrategy<NavKey>> = rememberDroidconSceneStrategies(),
     entryProvider: (NavKey) -> NavEntry<NavKey> =
         droidconEntryProvider(
@@ -64,7 +65,7 @@ fun Navigation(
                 transitionSpec = { transitionSpec },
                 popTransitionSpec = { backTransitionSpec },
                 predictivePopTransitionSpec = { backTransitionSpec },
-                onBack = navController::goBack,
+                onBack = onBack,
             )
         }
     }

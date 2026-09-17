@@ -116,7 +116,7 @@ fun SessionsStateComponent(
 
             is ResultStatus.Error -> {
                 SessionsErrorComponent(
-                    modifier = Modifier.padding(contentPadding),
+                    modifier = modifier.padding(contentPadding),
                     errorMessage = sessionsUiState.sessionStatus.errorMessage,
                     retry = {
                         onEvent(SessionsIntentHandler.Retry)
@@ -126,6 +126,7 @@ fun SessionsStateComponent(
 
             ResultStatus.Loading -> {
                 SessionLoadingComponent(
+                    modifier = modifier,
                     sessionScreenState = sessionScreenState,
                     isSessionLayoutList = isSessionLayoutList,
                     contentPadding = contentPadding,
@@ -134,6 +135,7 @@ fun SessionsStateComponent(
 
             ResultStatus.Success -> {
                 SessionListComponent(
+                    modifier = modifier,
                     contentPadding = contentPadding,
                     isRefreshing = isRefreshing,
                     pullToRefreshState = pullToRefreshState,
@@ -237,8 +239,13 @@ fun SessionListComponent(
     }
 }
 
-/** A session card narrower than this stops being legible before it stops fitting. */
-private val SessionColumnMinWidth = 360.dp
+/**
+ * A session card narrower than this stops being legible before it stops fitting.
+ *
+ * Shared with the loading skeleton so the two cannot choose different column counts and reflow
+ * the screen the moment the real sessions arrive.
+ */
+internal val SessionColumnMinWidth = 360.dp
 
 @Composable
 fun TimeHeader(time: String) {

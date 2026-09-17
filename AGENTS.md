@@ -87,9 +87,9 @@ build-logic          Convention plugins
 ```
 
 The split is complete. Every code-backed feature is its own module, and `:presentation` is
-gone — its composition root (`MainActivity`, `Navigation`, `DroidconEntryProvider`,
-`BottomNavigationBar`, notifications, DI) now lives in `app`, which is the only module that
-depends on every feature.
+gone — its composition root (`MainActivity`, `Navigation`, `DroidconEntryProvider`, the navigation
+suite and scene strategies, notifications, DI) now lives in `app`, which is the only module
+that depends on every feature.
 
 The `:core:*` renames kept each module's Kotlin package and Android namespace untouched — only
 the Gradle path moved. So `:core:database` is still `ke.droidcon.kotlin.datasource.local` on
@@ -261,6 +261,13 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   `NavigationController.goBack()`. The navigation area is `NavigationSuiteScaffold`'s, and its
   visibility is derived by `shouldShowNavigation(route, isMultiPaneWindow)` — never pushed at
   it as a side effect of composing.
+- **`NavDisplay` counts the entries it is given.** It decides whether to intercept back from
+  that list — `isBackEnabled` from `scene.previousEntries`, then one `onBack()` per entry the
+  scene drops. So an entry appended for layout rather than pushed by navigation, as the
+  "happening now" pane is, makes back look available where the back stack has nothing to pop.
+  `goBack()` returns whether it moved and the composition root falls through to the system when
+  it did not; `BackHandlingTest` drives the real dispatcher rather than calling `goBack()`, which
+  is the only way to see this.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
   reorders the list.
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a

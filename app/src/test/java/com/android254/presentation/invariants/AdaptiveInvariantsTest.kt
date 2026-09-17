@@ -112,11 +112,13 @@ class AdaptiveInvariantsTest {
 
         // The navigation components themselves, prefixed or not — `ShortNavigationBar` and
         // `WideNavigationRail` are the Expressive spellings of the two this rule exists to ban,
-        // and a leading word boundary would let both straight through. The `Item` and `State`
-        // suffixes are not matched, because those are legitimate inside a NavigationSuiteItem.
+        // and a leading word boundary alone would let both straight through. The prefix has to
+        // start with a capital so the match is a composable rather than any identifier ending
+        // in one of these names, such as `rememberShowsNavigationDrawer`. `Item` and `State`
+        // suffixes do not match either, because those are legitimate inside the suite.
         val OWN_NAVIGATION_BAR =
             Regex(
-                """(?<![A-Za-z0-9_])[A-Za-z]*""" +
+                """(?<![A-Za-z0-9_])([A-Z][A-Za-z]*)?""" +
                     """(BottomAppBar|BottomNavigation|NavigationBar|NavigationRail|NavigationDrawer|DrawerSheet)\(""",
             )
 

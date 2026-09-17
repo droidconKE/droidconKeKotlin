@@ -84,14 +84,32 @@ fun rememberIsMultiPaneWindow(): Boolean {
 }
 
 /**
- * Whether an app bar should draw the droidcon logo.
+ * Whether the navigation area is a drawer.
  *
- * At drawer sizes the drawer header carries the branding, and a logo in the bar as well is the
- * same mark twice on one screen. Lives here rather than in each bar so the three of them cannot
- * disagree, and is read as a default argument so no screen has to pass it.
+ * A drawer needs the width to hold it *and* the height to be a tablet rather than a phone on its
+ * side — a drawer in phone landscape eats a third of the screen to show four labels.
  */
 @Composable
-fun rememberShowsAppBarLogo(): Boolean = rememberDroidconWindowSize() != DroidconWindowSize.Expanded
+fun rememberShowsNavigationDrawer(): Boolean {
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
+    return remember(adaptiveInfo) {
+        with(adaptiveInfo.windowSizeClass) {
+            isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) &&
+                isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+        }
+    }
+}
+
+/**
+ * Whether an app bar should draw the droidcon logo.
+ *
+ * Only the drawer carries the branding in its header, so a bar drops its logo exactly when the
+ * drawer is there to take it. Deriving both from [rememberShowsNavigationDrawer] is what stops
+ * them disagreeing: keyed on window *size* instead, a phone in landscape is wide enough to be
+ * Expanded but too short for a drawer, and the logo would vanish with nothing showing it.
+ */
+@Composable
+fun rememberShowsAppBarLogo(): Boolean = !rememberShowsNavigationDrawer()
 
 /** Past this, a line of body text stops being readable and the 20 dp gutters stop being a layout. */
 val ReadablePaneMaxWidth: Dp = 840.dp

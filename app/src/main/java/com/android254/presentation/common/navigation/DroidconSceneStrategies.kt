@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.common.navigation
 
+import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
@@ -44,7 +45,14 @@ enum class DroidconPaneScene {
  */
 @Composable
 fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
-    val listDetail = rememberListDetailSceneStrategy<NavKey>()
+    // One entry per back press. The Material default pops until the *scaffold value* changes,
+    // and list-beside-detail has the same scaffold value as list-beside-placeholder — so back
+    // out of a session would carry on past the sessions list and leave the tab entirely. Here
+    // the list is a tab root rather than a sibling entry, which is what makes that wrong.
+    val listDetail =
+        rememberListDetailSceneStrategy<NavKey>(
+            backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
+        )
     val supporting = rememberSupportingPaneSceneStrategy<NavKey>()
     return remember(listDetail, supporting) {
         persistentListOf(ListPaneRequiredSceneStrategy(listDetail), supporting)

@@ -20,6 +20,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,7 +33,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
@@ -50,11 +50,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.window.core.layout.WindowSizeClass
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
 import com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow
+import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
 import com.android254.presentation.common.livesessions.LiveSessionsRail
 import com.android254.presentation.common.livesessions.rememberLiveSessions
 import com.android254.presentation.common.navigation.DroidconDrawerHeader
@@ -153,13 +153,10 @@ fun MainScreen(
         )
     }
 
+    val activity = LocalActivity.current
     val windowSize = rememberDroidconWindowSize()
     val isMultiPaneWindow = rememberIsMultiPaneWindow()
-    val isTallEnoughForDrawer =
-        currentWindowAdaptiveInfoV2()
-            .windowSizeClass
-            .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
-    val navigationSuiteType = navigationSuiteTypeFor(windowSize, isTallEnoughForDrawer)
+    val navigationSuiteType = navigationSuiteTypeFor(windowSize, rememberShowsNavigationDrawer())
 
     val currentRoute = navigationState.currentRoute
     val showNavigation = shouldShowNavigation(currentRoute, isMultiPaneWindow)
@@ -175,7 +172,12 @@ fun MainScreen(
 
     // Two presentations of the same sessions: a supporting pane where there is a column to
     // spare, the horizontal rail everywhere else.
-    val showSupportingPane = shouldShowSupportingPane(currentRoute, isMultiPaneWindow)
+    val showSupportingPane =
+        shouldShowSupportingPane(
+            route = currentRoute,
+            isMultiPaneWindow = isMultiPaneWindow,
+            hasLiveSessions = liveSessions.isNotEmpty(),
+        )
     val showLiveSessionsRail =
         showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty()
 
@@ -203,6 +205,11 @@ fun MainScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Navigation(
+                // `NavDisplay` decides whether to intercept back from the entries it is given,
+                // and at expanded widths those include the standing supporting pane — so it
+                // intercepts on the start destination too, where there is nothing to pop.
+                // Without this, back on a tablet's landing screen would do nothing at all.
+                onBack = { if (!navController.goBack()) activity?.finish() },
                 modifier =
                     Modifier
                         .weight(1f)

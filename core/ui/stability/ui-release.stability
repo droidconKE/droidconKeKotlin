@@ -23,6 +23,12 @@ public fun com.android254.presentation.common.adaptive.rememberShowsAppBarLogo()
   params:
 
 @Composable
+public fun com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer(): kotlin.Boolean
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 internal fun com.android254.presentation.common.components.AnimatedModalBottomSheetTransition(visible: kotlin.Boolean, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.animation.AnimatedVisibilityScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true

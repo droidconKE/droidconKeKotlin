@@ -61,19 +61,31 @@ class NavigationVisibilityTest {
 
     @Test
     fun `the supporting pane stands beside content, never beside a detail or a focused task`() {
-        assertTrue(shouldShowSupportingPane(Screens.Home, isMultiPaneWindow = true))
-        assertTrue(shouldShowSupportingPane(Screens.Sessions, isMultiPaneWindow = true))
-        assertTrue(shouldShowSupportingPane(Screens.Speakers, isMultiPaneWindow = true))
-        assertFalse(shouldShowSupportingPane(Screens.SessionDetails("1"), isMultiPaneWindow = true))
-        assertFalse(shouldShowSupportingPane(Screens.SpeakerDetails("Ada"), isMultiPaneWindow = true))
-        assertFalse(shouldShowSupportingPane(Screens.FeedBack, isMultiPaneWindow = true))
+        assertTrue(supportingPaneFor(Screens.Home))
+        assertTrue(supportingPaneFor(Screens.Sessions))
+        assertTrue(supportingPaneFor(Screens.Speakers))
+        assertFalse(supportingPaneFor(Screens.SessionDetails("1")))
+        assertFalse(supportingPaneFor(Screens.SpeakerDetails("Ada")))
+        assertFalse(supportingPaneFor(Screens.FeedBack))
     }
 
     @Test
     fun `a window with one column has no room for a supporting pane`() {
-        assertFalse(shouldShowSupportingPane(Screens.Home, isMultiPaneWindow = false))
-        assertFalse(shouldShowSupportingPane(Screens.Sessions, isMultiPaneWindow = false))
+        assertFalse(supportingPaneFor(Screens.Home, isMultiPaneWindow = false))
+        assertFalse(supportingPaneFor(Screens.Sessions, isMultiPaneWindow = false))
     }
+
+    @Test
+    fun `the pane does not hold a column open for an empty state`() {
+        assertFalse(supportingPaneFor(Screens.Home, hasLiveSessions = false))
+        assertFalse(supportingPaneFor(Screens.Sessions, hasLiveSessions = false))
+    }
+
+    private fun supportingPaneFor(
+        route: Screens,
+        isMultiPaneWindow: Boolean = true,
+        hasLiveSessions: Boolean = true,
+    ) = shouldShowSupportingPane(route, isMultiPaneWindow, hasLiveSessions)
 
     @Test
     fun `every detail route names the list it belongs beside`() {

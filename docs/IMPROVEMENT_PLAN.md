@@ -332,6 +332,13 @@ The one genuinely new owner is the **live-sessions rail**: at rail and drawer si
 bottom-most element, so it pads for the bottom inset and `MainScreen` consumes that same inset
 on the content above it. `DroidconWindowInsets`' KDoc now says all of this.
 
+A review claimed this rationale was wrong — that `Scaffold` reads `contentWindowInsets`
+directly and never sees `consumeWindowInsets`, so every screen double-pays. That is true of
+material3 **1.5.0-alpha17**, which it read; this repo is on **1.4.0**, whose `Scaffold` does
+`safeInsets.insets = contentWindowInsets.exclude(consumedWindowInsets)` through
+`onConsumedWindowInsetsChanged`. The contract holds. It is worth knowing that it stops holding
+on some later material3, because that is the day every screen grows a second navigation-bar gap.
+
 #### What else landed
 
 - **Navigation area visibility is derived, not pushed.** Every entry in `DroidconEntryProvider`
@@ -398,6 +405,42 @@ not a trade this repo makes.
 
 `AuthDialog` needs nothing: it is not `usePlatformDefaultWidth = false` + `fillMaxSize()`, so
 the skill's full-screen dialog rule does not apply. FABs are inside a `Scaffold` and pass.
+
+#### Three things a review caught, and what they cost
+
+Worth recording, because none of them is visible from the diff and two would have shipped.
+
+**Back was swallowed on a tablet's landing screen.** `NavDisplay` decides whether to intercept
+back from the entry list it is handed — `isBackEnabled = scene.previousEntries.isNotEmpty()`,
+and then `repeat(entries.size - scene.previousEntries.size) { onBack() }`. The appended
+"happening now" entry is in that list, so at expanded widths back was intercepted on the start
+destination too, where `goBack()` has nothing to pop and silently did nothing. A tablet user on
+Home could not leave the app.
+
+The fix is the smallest honest one: `goBack()` now returns whether it moved, and `MainScreen`
+passes `onBack = { if (!navController.goBack()) activity?.finish() }`. The general lesson for
+anything appended to the displayed entries: **`NavDisplay` counts what it is given**, so a
+synthetic entry has to come with a story about back.
+
+**Back out of a detail left the tab entirely.** The Material default,
+`BackNavigationBehavior.PopUntilScaffoldValueChange`, pops until the scaffold *value* changes —
+and list-beside-placeholder has the same value as list-beside-detail, so it kept going and
+popped the sessions list too. That default assumes the list is a sibling entry; here it is a
+tab root. `PopUntilCurrentDestinationChange` pops one destination at a time, which is what a
+back press out of a session should do.
+
+**The logo vanished in phone landscape.** `rememberShowsAppBarLogo()` keyed on `Expanded`,
+while the drawer that was supposed to carry the logo also required the window to be tall
+enough. A phone in landscape is 891 × 411 dp — Expanded by width, under the 480 dp height bound
+— so it got a rail with no header and app bars with no logo. Both now derive from
+`rememberShowsNavigationDrawer()`, so the bar cannot give up the logo unless the drawer is
+there to take it.
+
+The same review found that four of the new invariants could not fail on the mistake they name.
+The worst was `(ListDetail|SupportingPane)PaneScaffold`, which expands to
+`SupportingPanePaneScaffold` — a type that does not exist — so the half of the rule covering
+the supporting pane this section introduces was unreachable. A regex invariant needs its own
+mutation check, not just a green run.
 
 #### Tests
 

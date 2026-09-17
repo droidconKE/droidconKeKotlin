@@ -54,14 +54,18 @@ fun shouldShowNavigation(
 /**
  * Whether the standing "happening now" pane should be beside the content on [route].
  *
- * Only where there is a second column to spare and nothing better to put in it. A detail keeps
- * that column for itself, and the routes that hide the navigation are focused tasks that should
- * not gain a sidebar.
+ * Only where there is a second column to spare and something to put in it. A detail keeps that
+ * column for itself; the routes that hide the navigation are focused tasks that should not gain
+ * a sidebar; and [hasLiveSessions] is what stops a 320 dp column being held open for an
+ * empty-state sentence every day of the year that is not the conference — which is most of
+ * them, and is already why the rail hides itself.
  */
 fun shouldShowSupportingPane(
     route: NavKey,
     isMultiPaneWindow: Boolean,
+    hasLiveSessions: Boolean,
 ): Boolean =
     isMultiPaneWindow &&
+        hasLiveSessions &&
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
