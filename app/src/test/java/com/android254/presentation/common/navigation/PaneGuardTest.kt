@@ -24,9 +24,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Both Material strategies will happily build a two-pane scene out of one entry, filling the
- * other pane with nothing and starving the pane that has content. The guards are what stop it,
- * and this is the rule they encode — the rendered width of the result is the library's business.
+ * Both Material strategies will build a two-pane scene out of one entry, starving the pane that
+ * has content. This asserts the rule the guards encode, not the width the library then measures.
  */
 class PaneGuardTest {
     @Test

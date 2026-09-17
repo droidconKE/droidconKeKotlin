@@ -66,10 +66,8 @@ private val SlotHeight = 132.dp
 private val RoomHeaderHeight = 48.dp
 
 /**
- * The day as a room-by-time grid — the way a schedule is read, and impossible on a phone.
- *
- * The room row and time gutter stay put while the cells scroll, so a cell can be read without
- * its headers leaving the screen.
+ * The day as a room-by-time grid — the way a schedule is read, and impossible on a phone. The
+ * room row and time gutter stay put while the cells scroll.
  */
 @Composable
 fun AgendaGrid(

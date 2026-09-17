@@ -73,10 +73,8 @@ fun rememberLiveSessions(state: SessionUIState): ImmutableList<SessionPresentati
     }
 
 /**
- * The supporting pane, on the same activity-scoped view model the rail reads.
- *
- * An entry's content is built once per back stack change, so handing it a list would freeze that
- * list at whatever was on when the entry was created.
+ * The supporting pane, on the same activity-scoped view model the rail reads. An entry's content
+ * is built once per back stack change, so a list handed in would freeze at what was on then.
  */
 @Composable
 fun HappeningNowRoute(
@@ -91,10 +89,8 @@ fun HappeningNowRoute(
 }
 
 /**
- * The live and up-next sessions as a horizontal rail under the content.
- *
- * At rail sizes it is the bottom-most element, so it pays the bottom inset and the caller
- * consumes that same inset above it.
+ * The live and up-next sessions as a horizontal rail under the content. It is the bottom-most
+ * element here, so it pays the bottom inset and the caller consumes that same inset above it.
  */
 @Composable
 fun LiveSessionsRail(
@@ -107,8 +103,8 @@ fun LiveSessionsRail(
             modifier
                 .testTag(LIVE_SESSIONS_RAIL_TEST_TAG)
                 .fillMaxWidth()
-                // The bottom is not a scroll axis, so it lifts the row; the sides go into
-                // contentPadding so cards scroll under a cutout.
+                // Sides go into contentPadding so cards scroll under a cutout; the bottom is
+                // not a scroll axis, so it lifts the row instead.
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
                 .padding(bottom = 8.dp),
         contentPadding =

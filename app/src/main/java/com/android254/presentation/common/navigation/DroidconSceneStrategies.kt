@@ -38,12 +38,7 @@ enum class DroidconPaneScene {
     Speakers,
 }
 
-/**
- * List-detail first: with a session open, the right-hand column belongs to it.
- *
- * [directive] is the caller's, measured from the space the display has rather than taken from the
- * window, because the navigation component has already spent part of the window.
- */
+/** List-detail first: with a session open, the right-hand column belongs to it. */
 @Composable
 fun rememberDroidconSceneStrategies(directive: PaneScaffoldDirective): ImmutableList<SceneStrategy<NavKey>> {
     // One entry per back press: the Material default would pop past the list and out of the tab,
@@ -63,11 +58,8 @@ fun rememberDroidconSceneStrategies(directive: PaneScaffoldDirective): Immutable
 }
 
 /**
- * Declines the list-detail scene when the list it would draw is not on the back stack.
- *
- * The Material strategy expands a second pane whenever there is room and fills it with whatever
- * list entry it can find — nothing, for a session opened from Home. Declining hands the entries
- * on, so the detail takes the window with its back arrow intact.
+ * Declines the list-detail scene when the list it would draw is not on the back stack — the
+ * Material strategy would otherwise pair a session opened from Home with an empty column.
  */
 internal class ListPaneRequiredSceneStrategy<T : Any>(
     private val delegate: SceneStrategy<T>,
@@ -88,7 +80,6 @@ internal const val LIST_SCENE_KEY = "ke.droidcon.kotlin.listPaneScene"
 internal const val DETAIL_SCENE_KEY = "ke.droidcon.kotlin.detailPaneScene"
 internal const val SUPPORTING_SCENE_KEY = "ke.droidcon.kotlin.supportingPaneScene"
 
-/** Metadata marking an entry as the list half of [scene]. */
 fun listPaneMetadata(
     scene: DroidconPaneScene,
     detailPlaceholder: @Composable () -> Unit,
@@ -98,24 +89,19 @@ fun listPaneMetadata(
         detailPlaceholder = { detailPlaceholder() },
     ) + SupportingPaneSceneStrategy.mainPane() + mapOf(LIST_SCENE_KEY to scene)
 
-/** Metadata marking an entry as the detail half of [scene]. */
 fun detailPaneMetadata(scene: DroidconPaneScene): Map<String, Any> = ListDetailSceneStrategy.detailPane(sceneKey = scene) + mapOf(DETAIL_SCENE_KEY to scene)
 
 /** A destination that is never a detail still needs a role, or the supporting pane finds nothing. */
 fun mainPaneMetadata(): Map<String, Any> = SupportingPaneSceneStrategy.mainPane()
 
-/** Metadata for the standing "happening now" pane. */
 fun supportingPaneMetadata(): Map<String, Any> =
     SupportingPaneSceneStrategy.supportingPane() +
         SupportingPaneSceneStrategy.preferredPaneSize(width = HappeningNowPaneWidth) +
         mapOf(SUPPORTING_SCENE_KEY to true)
 
 /**
- * Declines the supporting-pane scene when there is no supporting entry to put in it.
- *
- * Same trap as the list-detail one: every top-level destination carries a main-pane role, so
- * from 840 dp the Material strategy forms a two-pane scene out of the main entry alone and
- * squeezes the screen into a fraction of the window beside an empty column.
+ * Declines the supporting-pane scene when there is no supporting entry to put in it. Every
+ * top-level destination carries a main-pane role, so the strategy would pair one with itself.
  */
 internal class SupportingPaneRequiredSceneStrategy<T : Any>(
     private val delegate: SceneStrategy<T>,

@@ -28,14 +28,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Who pays for which system inset.
- *
- * The root `NavigationSuiteScaffold` pays for whichever side its navigation component covers and
- * consumes exactly that, so the two declarations below hold at every window size. The one side
- * it does not own is the bottom when the live-sessions rail is there, which pays it instead.
+ * Who pays for which system inset. The root `NavigationSuiteScaffold` pays for whichever side its
+ * navigation component covers and consumes exactly that, so both declarations below hold at every
+ * window size. The exception is the bottom under the live-sessions rail, which pays it instead.
  */
 object DroidconWindowInsets {
-    /** The app bar's share, so its background reaches the status bar rather than stopping below it. */
+    /** The app bar's share, so its background reaches the status bar rather than stopping short. */
     val appBar: WindowInsets
         @Composable
         get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)

@@ -27,11 +27,8 @@ val Screens.listPaneRoute: Screens?
         }
 
 /**
- * Whether the navigation area should be visible on [route].
- *
- * A detail hides it only while it is full-screen: the Material guidance is explicit that
- * full-screen mode must be switched off once the detail is a pane. Feedback is not a detail of
- * anything, so it owns the window at every size.
+ * Whether the navigation area should be visible on [route]. A detail hides it only while
+ * full-screen — the Material guidance is explicit that it must return once the detail is a pane.
  */
 fun shouldShowNavigation(
     route: NavKey,
@@ -44,10 +41,8 @@ fun shouldShowNavigation(
     }
 
 /**
- * Whether the standing "happening now" pane belongs beside [route].
- *
- * Only where there is a second column to spare and something to put in it. A detail keeps that
- * column for itself, and [hasLiveSessions] stops one being held open for an empty state.
+ * Whether the standing "happening now" pane belongs beside [route]. A detail keeps that column
+ * for itself, and [hasLiveSessions] stops one being held open for an empty state.
  */
 fun shouldShowSupportingPane(
     route: NavKey,

@@ -42,10 +42,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /**
- * What the system back button does, at the sizes where the answer changes.
- *
- * `NavDisplay` intercepts back from the entries it is handed, which at expanded widths include
- * the supporting pane — so it intercepts on the start destination, where nothing can be popped.
+ * What the system back button does, at the sizes where the answer changes. `NavDisplay` derives
+ * interception from the entries it is handed, which at expanded widths include the supporting
+ * pane — so it intercepts on the start destination, where nothing can be popped.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])

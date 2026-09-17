@@ -61,11 +61,8 @@ fun rememberDroidconWindowSize(): DroidconWindowSize {
 }
 
 /**
- * Whether the window is wide enough that panes are on the table at all.
- *
- * A decision about furniture — whether a detail keeps the navigation area, whether a supporting
- * entry is worth appending. Whether a pane is actually laid out is [rememberContentPaneDirective],
- * which measures the space left over; this one must stay window-level or the two feed each other.
+ * Whether panes are on the table at all — furniture, not layout. What actually gets laid out is
+ * [rememberContentPaneDirective]. This one stays window-level, or the two feed each other.
  */
 @Composable
 fun rememberIsMultiPaneWindow(): Boolean {
@@ -99,11 +96,8 @@ fun rememberIsTabletopPosture(): Boolean {
 }
 
 /**
- * The pane directive for [contentSize] rather than for the whole window.
- *
- * The navigation component lives inside the window, so a drawer takes 360 dp of it before content
- * is measured. Sizing panes from the window then lays two of them out in what is left: on an
- * 841 dp foldable that squeezed the sessions list to 20 dp beside its own placeholder.
+ * The pane directive for [contentSize] rather than the window. The navigation component sits
+ * inside the window and has already spent part of it, which the library's default ignores.
  */
 @Composable
 fun rememberContentPaneDirective(contentSize: DpSize): PaneScaffoldDirective {
@@ -126,12 +120,9 @@ fun rememberContentPaneDirective(contentSize: DpSize): PaneScaffoldDirective {
 val ReadablePaneMaxWidth: Dp = 840.dp
 
 /**
- * Caps content at [ReadablePaneMaxWidth] and centres it.
- *
- * A layout modifier rather than `widthIn` plus an aligning parent, so it composes onto a lazy
- * list. The cap is read from the constant rather than taken as a parameter to keep the lambda
- * non-capturing: a capturing one is a fresh element per call, which invalidates measurement of
- * the scrolling subtree on every recomposition.
+ * Caps content at [ReadablePaneMaxWidth] and centres it. A layout modifier so it composes onto a
+ * lazy list, and the cap is a constant rather than a parameter to keep the lambda non-capturing —
+ * a capturing one is a fresh element per call, invalidating measurement on every recomposition.
  */
 fun Modifier.readablePaneWidth(): Modifier =
     layout { measurable, constraints ->

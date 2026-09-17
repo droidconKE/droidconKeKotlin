@@ -52,8 +52,8 @@ private const val DETAIL_FULL_TAG = "detail_full_screen"
 private val compactWindow = DpSize(411.dp, 891.dp)
 private val expandedWindow = DpSize(1280.dp, 900.dp)
 
-// An unfolded Pixel Fold, where the drawer appears and leaves this much beside it. The width is
-// required rather than preferred because the window override hands its subtree exact constraints.
+// An unfolded Pixel Fold, where the drawer leaves this much beside it. Required rather than
+// preferred, because the window override hands its subtree exact constraints.
 private val foldWindow = DpSize(841.dp, 700.dp)
 private val foldContentWidth = 480.dp
 
@@ -120,9 +120,8 @@ class ListDetailSceneTest {
     }
 
     /**
-     * Regression: every top-level destination carries a main-pane role, so from 840 dp the
-     * supporting strategy would form a two-pane scene out of the main entry alone and squeeze
-     * the screen into a fraction of the window beside an empty column.
+     * Regression: every top-level destination carries a main-pane role, so the supporting
+     * strategy used to pair the main entry with itself and starve it beside an empty column.
      */
     @Test
     fun `the happening now pane stands beside a top level destination`() {
@@ -186,10 +185,8 @@ class ListDetailSceneTest {
     }
 
     /**
-     * Regression: the strategies used to size panes from the window, but the navigation component
-     * is inside the window and the drawer had already taken 360 dp of it. Two panes were laid out
-     * in the 481 dp left over and the sessions list came out 20 dp wide beside its own
-     * placeholder — an expanded window by every window-level measure, with no room to split.
+     * Regression: panes were sized from the window, but the drawer had already taken 360 dp of
+     * it. Two panes went into the 481 dp left and the list came out 20 dp wide.
      */
     @Test
     fun `a list does not split the space a drawer has already taken`() {

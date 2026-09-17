@@ -30,10 +30,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Half-open with the hinge horizontal. No device on hand folds, so the posture is passed in
- * rather than produced, which is the only way this layout gets tested at all.
- */
+/** Half-open with the hinge horizontal. The posture is passed in rather than produced. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class TabletopPostureTest {

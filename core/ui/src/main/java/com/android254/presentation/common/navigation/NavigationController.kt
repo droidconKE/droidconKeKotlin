@@ -65,8 +65,7 @@ class NavigationController(
      * Handles a back event.
      *
      * @return whether anything moved. False leaves the press to the system: `NavDisplay`
-     * intercepts back on the start destination too once the supporting pane is in its entry
-     * list, so without the fall-through back would do nothing on a tablet's landing screen.
+     * intercepts on the start destination too once the supporting pane is in its entry list.
      */
     fun goBack(): Boolean {
         val currentStack = state.backStacks[state.topLevelRoute] ?: error("Stack for ${state.topLevelRoute} not found")
