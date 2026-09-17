@@ -22,9 +22,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
@@ -47,12 +50,14 @@ import ke.droidcon.kotlin.core.ui.R
 fun DroidconAppBarWithFeedbackButton(
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    windowInsets: WindowInsets = DroidconWindowInsets.appBar,
 ) {
     Row(
         modifier =
             modifier
                 .background(color = MaterialTheme.chaiColorsPalette.background)
                 .fillMaxWidth()
+                .windowInsetsPadding(windowInsets)
                 .height(64.dp)
                 .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
                 .testTag("droidcon_topBar_with_Feedback"),

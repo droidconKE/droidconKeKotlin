@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.SponsorsCard
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
@@ -103,6 +104,7 @@ internal fun HomeScreen(
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = isSyncing,

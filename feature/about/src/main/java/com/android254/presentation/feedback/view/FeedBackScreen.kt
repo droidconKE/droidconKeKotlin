@@ -59,6 +59,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
@@ -159,6 +160,7 @@ internal fun FeedBackScreen(
             }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Column(

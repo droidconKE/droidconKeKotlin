@@ -61,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.SessionsCard
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -136,6 +137,7 @@ internal fun SpeakerDetailsScreen(
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             when (uiState) {

@@ -49,6 +49,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
@@ -87,11 +88,12 @@ internal fun AboutScreen(
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         when (uiState) {
             is AboutScreenUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                 ) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
@@ -99,7 +101,7 @@ internal fun AboutScreen(
 
             is AboutScreenUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(paddingValues),
                 ) {
                     ChaiBodyMediumBold(
                         modifier = Modifier.align(Alignment.Center),

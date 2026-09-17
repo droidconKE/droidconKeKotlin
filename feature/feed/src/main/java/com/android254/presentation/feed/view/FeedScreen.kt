@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
@@ -106,6 +107,7 @@ internal fun FeedScreen(
             )
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         Box(
             modifier =
