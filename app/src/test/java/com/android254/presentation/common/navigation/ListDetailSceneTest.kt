@@ -112,6 +112,11 @@ class ListDetailSceneTest {
         )
     }
 
+    /**
+     * Regression: every top-level destination carries a main-pane role, so from 840 dp the
+     * supporting strategy would form a two-pane scene out of the main entry alone and squeeze
+     * the screen into a fraction of the window beside an empty column.
+     */
     @Test
     fun `the happening now pane stands beside a top level destination`() {
         setContent(expandedWindow, supportingRoute = Screens.HappeningNow) { navController ->

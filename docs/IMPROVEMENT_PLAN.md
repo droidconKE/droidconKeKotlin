@@ -440,6 +440,30 @@ The worst was `(ListDetail|SupportingPane)PaneScaffold`, which expands to
 the supporting pane this section introduces was unreachable. A regex invariant needs its own
 mutation check, not just a green run.
 
+#### A foldable emulator, and what it caught
+
+The brief for this work said an emulator cannot show a real foldable posture. That is not true
+of a **foldable AVD**: `avdmanager create avd -d pixel_fold` produces a device with a virtual
+hinge (`hw.sensor.hinge=yes`, postures 0-30 / 30-150 / 150-180) whose states are settable with
+`adb shell cmd device_state state 1` — CLOSED, HALF_OPENED, OPENED, REAR_DISPLAY_MODE. It is
+free, local, and `androidx.window` reads it exactly as it reads real hardware.
+
+It paid for itself on the first run. An unfolded Pixel Fold is **841 × 701 dp** — one dp over
+the two-pane threshold — and at that size the whole screen collapsed to 20 dp wide beside the
+drawer. The cause: every top-level destination carries a main-pane role, so
+`SupportingPaneSceneStrategy` formed a two-pane scene out of the main entry alone and starved
+it beside an empty column. The same trap as the list-detail one, which had a guard; the
+supporting one did not, and gating the pane on having live sessions is what exposed it.
+
+The lesson worth keeping is about where the test belongs. The first attempt asserted the
+rendered width of the main pane, and passed with the guard removed — because that assertion was
+really about the Material scaffold's measurement, not about our rule. `PaneGuardTest` asserts
+the rule instead: given these entries, does the guard delegate or decline. That fails the moment
+either guard is removed.
+
+Worth testing at a window a *single dp* over a breakpoint. Every other size checked here —
+411, 720, 960, 1706 — sits comfortably inside a class and misses it.
+
 #### Tests
 
 `WindowInsetsInvariantsTest` gained four rules and lost none. `AdaptiveInvariantsTest` is new.

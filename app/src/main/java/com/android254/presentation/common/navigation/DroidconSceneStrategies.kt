@@ -48,7 +48,10 @@ fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
         )
     val supporting = rememberSupportingPaneSceneStrategy<NavKey>()
     return remember(listDetail, supporting) {
-        persistentListOf(ListPaneRequiredSceneStrategy(listDetail), supporting)
+        persistentListOf(
+            ListPaneRequiredSceneStrategy(listDetail),
+            SupportingPaneRequiredSceneStrategy(supporting),
+        )
     }
 }
 
@@ -76,6 +79,7 @@ internal class ListPaneRequiredSceneStrategy<T : Any>(
 // The library's pane metadata is internal and NavEntry does not expose its key.
 internal const val LIST_SCENE_KEY = "ke.droidcon.kotlin.listPaneScene"
 internal const val DETAIL_SCENE_KEY = "ke.droidcon.kotlin.detailPaneScene"
+internal const val SUPPORTING_SCENE_KEY = "ke.droidcon.kotlin.supportingPaneScene"
 
 /** Metadata marking an entry as the list half of [scene]. */
 fun listPaneMetadata(
@@ -96,4 +100,21 @@ fun mainPaneMetadata(): Map<String, Any> = SupportingPaneSceneStrategy.mainPane(
 /** Metadata for the standing "happening now" pane. */
 fun supportingPaneMetadata(): Map<String, Any> =
     SupportingPaneSceneStrategy.supportingPane() +
-        SupportingPaneSceneStrategy.preferredPaneSize(width = HappeningNowPaneWidth)
+        SupportingPaneSceneStrategy.preferredPaneSize(width = HappeningNowPaneWidth) +
+        mapOf(SUPPORTING_SCENE_KEY to true)
+
+/**
+ * Declines the supporting-pane scene when there is no supporting entry to put in it.
+ *
+ * Same trap as the list-detail one: every top-level destination carries a main-pane role, so
+ * from 840 dp the Material strategy forms a two-pane scene out of the main entry alone and
+ * squeezes the screen into a fraction of the window beside an empty column.
+ */
+internal class SupportingPaneRequiredSceneStrategy<T : Any>(
+    private val delegate: SceneStrategy<T>,
+) : SceneStrategy<T> {
+    override fun SceneStrategyScope<T>.calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
+        if (entries.none { it.metadata.containsKey(SUPPORTING_SCENE_KEY) }) return null
+        return with(delegate) { calculateScene(entries) }
+    }
+}
