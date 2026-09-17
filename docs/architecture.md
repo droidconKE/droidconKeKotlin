@@ -235,9 +235,18 @@ Icons and labels belong in `TopLevelDestination`.
 
 **Multi-pane layouts are scenes, not scaffolds.** A `NavEntry` carries metadata saying whether
 it is a list, a detail, a main pane or a supporting pane, and `ListDetailSceneStrategy` /
-`SupportingPaneSceneStrategy` read that metadata plus the window and decide whether two entries
-can be on screen at once. So nothing in a screen branches on window size: the same entry is a
-full screen on a phone and a pane on a tablet.
+`SupportingPaneSceneStrategy` read that metadata plus a `PaneScaffoldDirective` and decide whether
+two entries can be on screen at once. So nothing in a screen branches on window size: the same
+entry is a full screen on a phone and a pane on a tablet.
+
+**The directive is measured, not read off the window.** Both strategies default it to
+`calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())`, and that default is wrong here:
+the navigation component sits inside the window, so on an 841 dp foldable a 360 dp drawer leaves
+481 dp that a window-sized directive still splits in two. `Navigation` wraps its display in a
+`BoxWithConstraints` and builds the directive from that box (`rememberContentPaneDirective`).
+`rememberIsMultiPaneWindow` stays window-level on purpose — it decides the furniture, and
+`shouldShowNavigation` decides the navigation component, which decides the content width. Deriving
+that one from the content width too would make the pair oscillate.
 
 `ListDetailPaneScaffold` and `NavigableListDetailPaneScaffold` are **forbidden**, and
 `AdaptiveInvariantsTest` fails the build on them. Each owns a `ThreePaneScaffoldNavigator` —
@@ -250,7 +259,10 @@ Home, a session detail has no list behind it, so `ListPaneRequiredSceneStrategy`
 scene and the detail takes the whole window with its app bar intact.
 
 `Screens.HappeningNow` is the exception to "the back stack is the truth": it is appended to the
-displayed entries by `NavigationState.toEntries` when the window is wide enough, never pushed.
+displayed entries by `NavigationState.toEntries` when there is a column to spare, never pushed.
+`Navigation` drops it again if the measured directive cannot lay out two panes — `NavDisplay`
+falls back to drawing the last entry it was given, so a pane that will not fit beside the screen
+becomes the screen.
 It appears and disappears with the window rather than with a navigation event, and `goBack()`
 never sees it.
 

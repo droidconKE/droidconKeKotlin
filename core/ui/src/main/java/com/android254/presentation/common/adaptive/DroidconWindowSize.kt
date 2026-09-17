@@ -15,15 +15,19 @@
  */
 package com.android254.presentation.common.adaptive
 
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.computeWindowSizeClass
 
 /** App-level layout intent, so breakpoints live in one place rather than in each screen. */
 enum class DroidconWindowSize {
@@ -57,10 +61,11 @@ fun rememberDroidconWindowSize(): DroidconWindowSize {
 }
 
 /**
- * Whether the window can hold two panes.
+ * Whether the window is wide enough that panes are on the table at all.
  *
- * Same directive the Material scene strategies use, so a screen cannot disagree with the
- * scaffold about whether its list is beside it. Not the same as [DroidconWindowSize.Medium].
+ * A decision about furniture — whether a detail keeps the navigation area, whether a supporting
+ * entry is worth appending. Whether a pane is actually laid out is [rememberContentPaneDirective],
+ * which measures the space left over; this one must stay window-level or the two feed each other.
  */
 @Composable
 fun rememberIsMultiPaneWindow(): Boolean {
@@ -91,6 +96,30 @@ fun rememberShowsAppBarLogo(): Boolean = !rememberShowsNavigationDrawer()
 fun rememberIsTabletopPosture(): Boolean {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
     return remember(adaptiveInfo) { adaptiveInfo.windowPosture.isTabletop }
+}
+
+/**
+ * The pane directive for [contentSize] rather than for the whole window.
+ *
+ * The navigation component lives inside the window, so a drawer takes 360 dp of it before content
+ * is measured. Sizing panes from the window then lays two of them out in what is left: on an
+ * 841 dp foldable that squeezed the sessions list to 20 dp beside its own placeholder.
+ */
+@Composable
+fun rememberContentPaneDirective(contentSize: DpSize): PaneScaffoldDirective {
+    val posture = currentWindowAdaptiveInfoV2().windowPosture
+    return remember(contentSize, posture) {
+        calculatePaneScaffoldDirective(
+            WindowAdaptiveInfo(
+                windowSizeClass =
+                    WindowSizeClass.BREAKPOINTS_V2.computeWindowSizeClass(
+                        widthDp = contentSize.width.value,
+                        heightDp = contentSize.height.value,
+                    ),
+                windowPosture = posture,
+            ),
+        )
+    }
 }
 
 /** Past this a line of body text stops being readable. */

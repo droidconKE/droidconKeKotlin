@@ -461,8 +461,29 @@ really about the Material scaffold's measurement, not about our rule. `PaneGuard
 the rule instead: given these entries, does the guard delegate or decline. That fails the moment
 either guard is removed.
 
+A second run on the same device caught the deeper version of it. With the supporting pane
+guarded, opening **Sessions** squeezed the list to 20 dp beside its own "pick a session"
+placeholder. The guards were never the whole story: both strategies default their
+`PaneScaffoldDirective` to `calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())`, which
+measures the **window**. The navigation component lives inside that window, so a 360 dp drawer had
+already been spent before content was measured — the strategies split 481 dp as though they had
+841 dp.
+
+The fix is to measure. `Navigation` wraps its display in a `BoxWithConstraints` and builds the
+directive from what the box actually has (`rememberContentPaneDirective`), and both strategies take
+it. A supporting entry that will not fit is dropped there too, because `NavDisplay` falls back to
+drawing the last entry it was given — appending a pane that cannot be laid out replaces the screen
+with it rather than putting it alongside.
+
+Deciding pane counts from the content area rather than the window has one rule attached:
+`shouldShowNavigation` must stay window-level. It controls the navigation component, which
+controls the content width — deriving it from the content width instead makes the two feed each
+other, and in exactly this band (window expanded, content not) it oscillates.
+
 Worth testing at a window a *single dp* over a breakpoint. Every other size checked here —
-411, 720, 960, 1706 — sits comfortably inside a class and misses it.
+411, 720, 960, 1706 — sits comfortably inside a class and misses it. Worth testing the **content**
+area too, and not only the window: the two differ by whatever the navigation component costs, and
+every breakpoint decision that matters is on the wrong side of that difference.
 
 #### Tests
 

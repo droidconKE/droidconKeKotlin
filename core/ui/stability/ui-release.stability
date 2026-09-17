@@ -5,6 +5,13 @@
 //   ./gradlew :ui:stabilityDump
 
 @Composable
+public fun com.android254.presentation.common.adaptive.rememberContentPaneDirective(contentSize: androidx.compose.ui.unit.DpSize): androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
+  skippable: false
+  restartable: false
+  params:
+    - contentSize: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.common.adaptive.rememberDroidconWindowSize(): com.android254.presentation.common.adaptive.DroidconWindowSize
   skippable: false
   restartable: false

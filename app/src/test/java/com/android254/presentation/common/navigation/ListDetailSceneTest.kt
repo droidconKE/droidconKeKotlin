@@ -16,6 +16,7 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
@@ -49,6 +51,11 @@ private const val DETAIL_FULL_TAG = "detail_full_screen"
 
 private val compactWindow = DpSize(411.dp, 891.dp)
 private val expandedWindow = DpSize(1280.dp, 900.dp)
+
+// An unfolded Pixel Fold, where the drawer appears and leaves this much beside it. The width is
+// required rather than preferred because the window override hands its subtree exact constraints.
+private val foldWindow = DpSize(841.dp, 700.dp)
+private val foldContentWidth = 480.dp
 
 private fun tagFor(screen: Screens): String = "pane_${screen::class.simpleName}"
 
@@ -178,8 +185,60 @@ class ListDetailSceneTest {
         }
     }
 
+    /**
+     * Regression: the strategies used to size panes from the window, but the navigation component
+     * is inside the window and the drawer had already taken 360 dp of it. Two panes were laid out
+     * in the 481 dp left over and the sessions list came out 20 dp wide beside its own
+     * placeholder — an expanded window by every window-level measure, with no room to split.
+     */
+    @Test
+    fun `a list does not split the space a drawer has already taken`() {
+        setContent(foldWindow, contentWidth = foldContentWidth) { navController ->
+            navController.navigate(Screens.Sessions)
+        }
+
+        val bounds =
+            composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).getUnclippedBoundsInRoot()
+        assertEquals(
+            "The list should have the content area to itself, not a sliver of it",
+            foldContentWidth.value,
+            (bounds.right - bounds.left).value,
+            1f,
+        )
+    }
+
+    /** The same window with the whole of it to spend does split, so the width is what decides. */
+    @Test
+    fun `the same window splits once nothing else is taking part of it`() {
+        setContent(foldWindow) { navController ->
+            navController.navigate(Screens.Sessions)
+            navController.navigate(Screens.SessionDetails(SESSION_ID))
+        }
+
+        composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).assertIsDisplayed()
+        composeTestRule.onNodeWithTag(DETAIL_PANE_TAG).assertIsDisplayed()
+    }
+
+    /** And the supporting pane obeys the same measure, rather than squeezing the screen. */
+    @Test
+    fun `the happening now pane stays away when the drawer has taken the room`() {
+        setContent(foldWindow, contentWidth = foldContentWidth, supportingRoute = Screens.HappeningNow) { navController ->
+            navController.navigate(Screens.Sessions)
+        }
+
+        val bounds =
+            composeTestRule.onNodeWithTag(tagFor(Screens.Sessions)).getUnclippedBoundsInRoot()
+        assertEquals(
+            "A standing pane must not cost the screen its width",
+            foldContentWidth.value,
+            (bounds.right - bounds.left).value,
+            1f,
+        )
+    }
+
     private fun setContent(
         windowSize: DpSize,
+        contentWidth: Dp? = null,
         supportingRoute: NavKey? = null,
         navigate: (NavigationController) -> Unit = {},
     ) {
@@ -194,6 +253,12 @@ class ListDetailSceneTest {
                     Navigation(
                         navController = navController,
                         navigationState = navigationState,
+                        modifier =
+                            if (contentWidth == null) {
+                                Modifier
+                            } else {
+                                Modifier.requiredWidth(contentWidth)
+                            },
                         supportingRoute = supportingRoute,
                         entryProvider = paneAwareEntryProvider(),
                     )

@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.common.navigation
 
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.SupportingPaneSceneStrategy
@@ -37,16 +38,22 @@ enum class DroidconPaneScene {
     Speakers,
 }
 
-/** List-detail first: with a session open, the right-hand column belongs to it. */
+/**
+ * List-detail first: with a session open, the right-hand column belongs to it.
+ *
+ * [directive] is the caller's, measured from the space the display has rather than taken from the
+ * window, because the navigation component has already spent part of the window.
+ */
 @Composable
-fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
+fun rememberDroidconSceneStrategies(directive: PaneScaffoldDirective): ImmutableList<SceneStrategy<NavKey>> {
     // One entry per back press: the Material default would pop past the list and out of the tab,
     // because it assumes the list is a sibling entry rather than a tab root.
     val listDetail =
         rememberListDetailSceneStrategy<NavKey>(
             backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
+            directive = directive,
         )
-    val supporting = rememberSupportingPaneSceneStrategy<NavKey>()
+    val supporting = rememberSupportingPaneSceneStrategy<NavKey>(directive = directive)
     return remember(listDetail, supporting) {
         persistentListOf(
             ListPaneRequiredSceneStrategy(listDetail),
