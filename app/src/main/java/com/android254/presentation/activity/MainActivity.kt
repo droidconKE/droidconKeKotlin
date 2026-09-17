@@ -20,21 +20,27 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
@@ -46,12 +52,23 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
-import com.android254.presentation.common.bottomnav.BottomNavigationBar
+import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
+import com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow
+import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
+import com.android254.presentation.common.livesessions.LiveSessionsRail
+import com.android254.presentation.common.livesessions.rememberLiveSessions
+import com.android254.presentation.common.navigation.DroidconDrawerHeader
+import com.android254.presentation.common.navigation.DroidconNavigationItems
 import com.android254.presentation.common.navigation.Navigation
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
+import com.android254.presentation.common.navigation.droidconEntryProvider
+import com.android254.presentation.common.navigation.droidconNavigationSuiteColors
+import com.android254.presentation.common.navigation.navigationSuiteTypeFor
 import com.android254.presentation.common.navigation.rememberNavigationState
+import com.android254.presentation.common.navigation.shouldShowNavigation
+import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,6 +81,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
+        // enableEdgeToEdge() turns contrast enforcement on, which paints a second, differently
+        // coloured bar on top of the one we already drew under three-button navigation.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
         super.onCreate(savedInstanceState)
 
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
@@ -117,7 +139,6 @@ fun MainScreen(
             topLevelRoutes = bottomNavigationSet,
         )
     val navController = remember { NavigationController(navigationState) }
-    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
         mutableStateOf(false)
@@ -130,35 +151,87 @@ fun MainScreen(
         )
     }
 
-    Scaffold(
+    val activity = LocalActivity.current
+    val windowSize = rememberDroidconWindowSize()
+    val isMultiPaneWindow = rememberIsMultiPaneWindow()
+    val navigationSuiteType = navigationSuiteTypeFor(windowSize, rememberShowsNavigationDrawer())
+
+    val currentRoute = navigationState.currentRoute
+    val showNavigation = shouldShowNavigation(currentRoute, isMultiPaneWindow)
+
+    // Animated rather than added and removed, so content does not jump on the way to a detail.
+    val navigationSuiteState = rememberNavigationSuiteScaffoldState()
+    LaunchedEffect(showNavigation) {
+        if (showNavigation) navigationSuiteState.show() else navigationSuiteState.hide()
+    }
+
+    val liveSessions = rememberLiveSessions(sessionsState)
+
+    // Two presentations of the same sessions: a pane where there is a column, a rail elsewhere.
+    val showSupportingPane =
+        shouldShowSupportingPane(
+            route = currentRoute,
+            isMultiPaneWindow = isMultiPaneWindow,
+            hasLiveSessions = liveSessions.isNotEmpty(),
+        )
+    val showLiveSessionsRail =
+        showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty()
+
+    NavigationSuiteScaffold(
         modifier =
             modifier
                 .fillMaxSize()
                 .semantics { testTagsAsResourceId = true },
-        bottomBar = {
-            if (bottomBarState.value) {
-                BottomNavigationBar(
-                    navController,
-                    navigationState,
-                    currentSessions = sessionsState.current,
-                    upNextSessions = sessionsState.upNext,
-                )
+        navigationItems = {
+            DroidconNavigationItems(
+                currentTopLevelRoute = navigationState.topLevelRoute,
+                navigationSuiteType = navigationSuiteType,
+                onNavigate = navController::navigate,
+            )
+        },
+        navigationSuiteType = navigationSuiteType,
+        navigationSuiteColors = droidconNavigationSuiteColors(),
+        containerColor = MaterialTheme.chaiColorsPalette.background,
+        state = navigationSuiteState,
+        primaryActionContent = {
+            if (navigationSuiteType == NavigationSuiteType.NavigationDrawer) {
+                DroidconDrawerHeader()
             }
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-    ) { padding ->
-        Navigation(
-            modifier =
-                Modifier
-                    .padding(padding)
-                    .consumeWindowInsets(padding),
-            navController = navController,
-            navigationState = navigationState,
-            updateBottomBarState = { bottomBarState.value = it },
-            onActionClicked = {
-                showAuthDialog = !showAuthDialog
-            },
-        )
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Navigation(
+                // NavDisplay intercepts back on the start destination too once the supporting
+                // pane is in its entry list, so an unhandled press has to reach the system.
+                onBack = { if (!navController.goBack()) activity?.finish() },
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .then(
+                            // The rail below pays the bottom inset, so the screens must not.
+                            if (showLiveSessionsRail) {
+                                Modifier.consumeWindowInsets(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ),
+                navController = navController,
+                navigationState = navigationState,
+                supportingRoute = Screens.HappeningNow.takeIf { showSupportingPane },
+                entryProvider =
+                    droidconEntryProvider(
+                        navController = navController,
+                        onActionClicked = { showAuthDialog = !showAuthDialog },
+                    ),
+            )
+            if (showLiveSessionsRail) {
+                LiveSessionsRail(
+                    sessions = liveSessions,
+                    onSessionClick = { navController.navigate(Screens.SessionDetails(it)) },
+                )
+            }
+        }
     }
 }

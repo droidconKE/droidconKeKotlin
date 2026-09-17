@@ -32,6 +32,7 @@ dependencies {
     api(projects.core.designsystem)
     api(projects.core.domain)
 
+    api(libs.bundles.adaptive)
     api(libs.bundles.navigation3)
     api(libs.kotlinx.collections.immutable)
     implementation(libs.bundles.coil)
@@ -46,5 +47,6 @@ dependencies {
 kotlin {
     compilerOptions {
         optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
     }
 }

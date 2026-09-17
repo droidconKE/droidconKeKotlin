@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.about
 
+import androidx.compose.runtime.Composable
 import com.android254.presentation.about.view.AboutScreen
 import com.android254.presentation.about.view.AboutScreenUiState
 import com.android254.presentation.feedback.view.FeedBackScreen
@@ -25,32 +26,42 @@ import org.junit.Test
 
 class AboutScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun about() =
-        captureScreen("screens/about") {
-            AboutScreen(
-                uiState =
-                    AboutScreenUiState.Success(
-                        teamMembers =
-                            persistentListOf(
-                                OrganizingTeamMember(
-                                    name = "Member One",
-                                    desc = "Organiser",
-                                    image = "",
-                                ),
-                                OrganizingTeamMember(
-                                    name = "Member Two",
-                                    desc = "Organiser",
-                                    image = "",
-                                ),
-                            ),
-                        stakeHoldersLogos = emptyList(),
-                    ),
-            )
-        }
+    fun about() = captureScreen("screens/about") { About() }
+
+    /** About is prose, so this is the capped measure doing its job. */
+    @Test
+    fun `about across form factors`() = captureFormFactors("form_factors/about") { About() }
+
+    /** The hero draws behind the status bar at every size. */
+    @Test
+    fun `feedback across form factors`() = captureFormFactors("form_factors/feedback") { FeedBackScreen(darkTheme = false) }
 
     @Test
     fun feedback() =
         captureScreen("screens/feedback") {
             FeedBackScreen(darkTheme = false)
         }
+}
+
+@Composable
+private fun About() {
+    AboutScreen(
+        uiState =
+            AboutScreenUiState.Success(
+                teamMembers =
+                    persistentListOf(
+                        OrganizingTeamMember(
+                            name = "Member One",
+                            desc = "Organiser",
+                            image = "",
+                        ),
+                        OrganizingTeamMember(
+                            name = "Member Two",
+                            desc = "Organiser",
+                            image = "",
+                        ),
+                    ),
+                stakeHoldersLogos = emptyList(),
+            ),
+    )
 }

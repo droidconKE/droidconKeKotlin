@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home
 
+import androidx.compose.runtime.Composable
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.screen.HomeScreen
 import com.android254.presentation.home.viewstate.HomeState
@@ -25,16 +26,22 @@ import org.junit.Test
 
 class HomeScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun home() =
-        captureScreen("screens/home") {
-            HomeScreen(
-                viewState =
-                    HomeState(
-                        speakers = speakersDummyData.toImmutableList(),
-                        sessions = fakeSessions,
-                        isSyncing = false,
-                    ),
+    fun home() = captureScreen("screens/home") { Home() }
+
+    /** Home is a single column everywhere; what changes is where that column stops. */
+    @Test
+    fun `home across form factors`() = captureFormFactors("form_factors/home") { Home() }
+}
+
+@Composable
+private fun Home() {
+    HomeScreen(
+        viewState =
+            HomeState(
+                speakers = speakersDummyData.toImmutableList(),
+                sessions = fakeSessions,
                 isSyncing = false,
-            )
-        }
+            ),
+        isSyncing = false,
+    )
 }

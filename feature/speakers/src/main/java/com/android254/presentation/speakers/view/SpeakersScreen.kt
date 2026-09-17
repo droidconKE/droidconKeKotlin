@@ -19,7 +19,7 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -61,7 +61,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.plus
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
@@ -191,12 +193,12 @@ internal fun SpeakersScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(paddingValues),
+                    .consumeWindowInsets(paddingValues),
         ) {
             when (uiState) {
                 is SpeakersScreenUiState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
                     ) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
@@ -204,7 +206,7 @@ internal fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Error -> {
                     Box(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
                     ) {
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
@@ -216,7 +218,7 @@ internal fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Success -> {
                     if (uiState.speakers.isEmpty() && searchQuery.isNotBlank()) {
-                        Box(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
                             ChaiBodyMedium(
                                 modifier =
                                     Modifier
@@ -229,8 +231,8 @@ internal fun SpeakersScreen(
                     } else {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(minSize = SpeakerColumnMinWidth),
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                            modifier = Modifier.fillMaxSize().readablePaneWidth(),
+                            contentPadding = paddingValues.plus(horizontal = 16.dp, top = 8.dp, bottom = 8.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {

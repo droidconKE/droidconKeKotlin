@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +48,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -117,6 +119,8 @@ internal fun AboutScreen(
                 Column(
                     Modifier
                         .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
+                        .readablePaneWidth()
                         .verticalScroll(rememberScrollState())
                         .testTag("about_screen"),
                 ) {

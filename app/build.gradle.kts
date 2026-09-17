@@ -126,6 +126,8 @@ dependencies {
     implementation(libs.bundles.serialization)
     implementation(libs.kotlinx.collections.immutable)
 
+    implementation(libs.compose.material3.adaptive.navigation.suite)
+    implementation(libs.compose.material3.adaptive.navigation3)
     implementation(libs.bundles.navigation3)
     implementation(libs.bundles.coil)
     implementation(libs.compose.activity)
@@ -147,5 +149,6 @@ dependencies {
 kotlin {
     compilerOptions {
         optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+        optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
     }
 }

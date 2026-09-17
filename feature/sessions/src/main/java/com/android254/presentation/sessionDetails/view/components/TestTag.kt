@@ -29,4 +29,5 @@ object TestTag {
     const val ROOM = "$PREFIX room"
     const val LEVEL = "$PREFIX level"
     const val TWITTER_HANDLE_TEXT = "$PREFIX twitterHandleText"
+    const val TABLETOP_BODY = "$PREFIX tabletopBody"
 }

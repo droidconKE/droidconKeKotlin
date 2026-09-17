@@ -68,4 +68,9 @@
     <string name="nav_feed">Feed</string>
     <string name="nav_sessions">Sessions</string>
     <string name="nav_about">About</string>
+
+    <string name="happening_now">Happening now</string>
+    <string name="happening_now_empty">Nothing on right now. The next session will show up here.</string>
+    <string name="select_a_session">Pick a session to see the details</string>
+    <string name="select_a_speaker">Pick a speaker to see their profile</string>
 </resources>

@@ -99,13 +99,14 @@ public fun com.droidconke.chai.components.ChaiBodyLargeBold(bodyText: kotlin.Str
     - overflow: STABLE (known stable type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyMedium(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, maxLines: kotlin.Int): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyMedium(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - bodyText: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
+    - textAlign: STABLE (known stable type)
     - maxLines: STABLE (primitive type)
 
 @Composable

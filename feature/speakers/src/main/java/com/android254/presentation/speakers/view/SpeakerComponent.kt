@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -65,6 +66,7 @@ fun SpeakerComponent(
         modifier =
             modifier
                 .fillMaxWidth()
+                .clickablePointer()
                 .clickable { onClick.invoke() }
                 .semantics(mergeDescendants = true) {}
                 .padding(vertical = 8.dp),

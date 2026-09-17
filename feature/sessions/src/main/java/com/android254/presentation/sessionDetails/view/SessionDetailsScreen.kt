@@ -20,12 +20,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -45,8 +49,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.StatusBarProtection
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
@@ -69,6 +76,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 fun SessionDetailsRoute(
     viewModel: SessionDetailsViewModel,
     onNavigationIconClick: () -> Unit,
+    showTopBar: Boolean = true,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -77,6 +85,7 @@ fun SessionDetailsRoute(
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick,
+        showTopBar = showTopBar,
     )
 }
 
@@ -86,59 +95,123 @@ internal fun SessionDetailsScreen(
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit,
+    showTopBar: Boolean = true,
+    isTabletop: Boolean = rememberIsTabletopPosture(),
 ) {
-    Scaffold(
-        topBar = { TopBar(onNavigationIconClick) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {},
-                modifier =
-                    Modifier
-                        .size(44.dp)
-                        .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                containerColor = ChaiRed,
-                shape = CircleShape,
-            ) {
-                Icon(
-                    modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                    imageVector = Icons.AutoMirrored.Filled.Reply,
-                    contentDescription = null,
-                    tint = ChaiWhite,
-                )
-            }
-        },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
-        contentWindowInsets = DroidconWindowInsets.screenContent,
-    ) { paddingValues ->
-        when (uiState) {
-            is SessionDetailsUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
+    // The scrim is drawn over the content, so the stacking is stated here rather than left to
+    // whatever container the caller happens to use.
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            // As a pane the bar is the title twice over, and a back arrow out of a visible list.
+            topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {},
+                    modifier =
+                        Modifier
+                            .size(44.dp)
+                            .testTag(TestTag.FLOATING_ACTION_BUTTON),
+                    containerColor = ChaiRed,
+                    shape = CircleShape,
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
-
-            is SessionDetailsUiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
-                ) {
-                    ChaiBodyMediumBold(
-                        modifier = Modifier.align(Alignment.Center),
-                        bodyText = uiState.message,
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    Icon(
+                        modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
+                        imageVector = Icons.AutoMirrored.Filled.Reply,
+                        contentDescription = null,
+                        tint = ChaiWhite,
                     )
                 }
-            }
+            },
+            containerColor = MaterialTheme.chaiColorsPalette.background,
+            contentWindowInsets = DroidconWindowInsets.screenContent,
+        ) { paddingValues ->
+            when (uiState) {
+                is SessionDetailsUiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
 
-            is SessionDetailsUiState.Success -> {
-                Body(
-                    paddingValues = paddingValues,
-                    sessionDetails = uiState.data,
-                    bookmarkSession = bookmarkSession,
-                    unBookmarkSession = unBookmarkSession,
-                )
+                is SessionDetailsUiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    ) {
+                        ChaiBodyMediumBold(
+                            modifier = Modifier.align(Alignment.Center),
+                            bodyText = uiState.message,
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                        )
+                    }
+                }
+
+                is SessionDetailsUiState.Success -> {
+                    if (isTabletop) {
+                        TabletopBody(
+                            paddingValues = paddingValues,
+                            sessionDetails = uiState.data,
+                            bookmarkSession = bookmarkSession,
+                            unBookmarkSession = unBookmarkSession,
+                        )
+                    } else {
+                        Body(
+                            paddingValues = paddingValues,
+                            sessionDetails = uiState.data,
+                            bookmarkSession = bookmarkSession,
+                            unBookmarkSession = unBookmarkSession,
+                            drawsUnderStatusBar = !showTopBar,
+                        )
+                    }
+                }
             }
+        }
+        if (!showTopBar) {
+            StatusBarProtection(modifier = Modifier.align(Alignment.TopCenter))
+        }
+    }
+}
+
+/** Half open: the banner above the fold, everything you touch below it. */
+@Composable
+private fun TabletopBody(
+    paddingValues: PaddingValues,
+    sessionDetails: SessionDetailsPresentationModel,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .fillMaxSize()
+                .testTag(TestTag.TABLETOP_BODY),
+    ) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            SessionBannerImage(sessionDetails)
+        }
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 18.dp),
+        ) {
+            SessionSpeakerNameAndFavouriteIcon(
+                sessionDetails = sessionDetails,
+                bookmarkSession = bookmarkSession,
+                unBookmarkSession = unBookmarkSession,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            SessionTitleAndDescription(sessionDetails)
+            Spacer(modifier = Modifier.height(16.dp))
+            SessionTimeAndRoom(sessionDetails)
+            Spacer(modifier = Modifier.height(12.dp))
+            SessionLevel(sessionDetails.level)
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -150,16 +223,23 @@ fun Body(
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
+    drawsUnderStatusBar: Boolean = false,
 ) {
     Column(
         modifier =
             modifier
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .readablePaneWidth()
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        // Inside the scroll, so the title starts below the clock and then travels under it.
+        if (drawsUnderStatusBar) {
+            Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+        }
         CustomDivider()
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
             Spacer(modifier = Modifier.height(24.dp))

@@ -16,6 +16,7 @@
 package com.android254.presentation.invariants
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
@@ -27,7 +28,7 @@ class WindowInsetsInvariantsTest {
                 .flatMap { file ->
                     file
                         .readText()
-                        .scaffoldArgumentLists()
+                        .argumentListsOf(SCAFFOLD_CALL)
                         .filterNot { it.contains("contentWindowInsets") }
                         .map { file.relativeTo(repoRoot).path }
                 }.distinct()
@@ -82,12 +83,112 @@ class WindowInsetsInvariantsTest {
         )
     }
 
-    /**
-     * The argument list of each `Scaffold(` call. The trailing content lambda falls outside the
-     * parentheses, so a nested `Scaffold` is never mistaken for an argument of the outer one.
-     */
-    private fun String.scaffoldArgumentLists(): List<String> =
-        SCAFFOLD_CALL
+    @Test
+    fun `a screen that pads for the system bars and scrolls consumes what it padded`() {
+        val offenders =
+            productionKotlinSources()
+                .filter { file ->
+                    val text = file.readText().withoutComments()
+                    if (!SCROLLABLE.containsMatchIn(text)) {
+                        false
+                    } else {
+                        PADS_BY_SCAFFOLD_INSETS
+                            .findAll(text)
+                            .map { it.groupValues[2] }
+                            .any { padded -> !text.contains("consumeWindowInsets($padded)") }
+                    }
+                }.map { it.relativeTo(repoRoot).path }
+                .sorted()
+                .toList()
+
+        assertEquals(
+            "Padding a scrolling container by the insets and leaving them unconsumed pays for " +
+                "them twice: once here, once in whatever inside reads safeDrawing again. The " +
+                "pattern is padding(innerPadding).consumeWindowInsets(innerPadding). " +
+                "Offending files:",
+            emptyList<String>(),
+            offenders,
+        )
+    }
+
+    @Test
+    fun `a screen's lazy list takes the insets as contentPadding`() {
+        val offenders =
+            productionKotlinSources()
+                .flatMap { file ->
+                    val text = file.readText()
+                    if (!text.handlesScreenInsets()) {
+                        emptySequence()
+                    } else {
+                        text
+                            .argumentListsOf(LAZY_SCROLLABLE)
+                            .filterNot { it.contains("contentPadding") }
+                            .map { file.relativeTo(repoRoot).path }
+                            .asSequence()
+                    }
+                }.distinct()
+                .sorted()
+                .toList()
+
+        assertEquals(
+            "Insets belong in a lazy list's contentPadding, never as padding on its parent: " +
+                "padding the parent clips the list and stops its content scrolling behind the " +
+                "system bars. Offending files:",
+            emptyList<String>(),
+            offenders,
+        )
+    }
+
+    @Test
+    fun `nothing applies safe-drawing padding to an adaptive scaffold`() {
+        val offenders =
+            productionKotlinSources()
+                .flatMap { file ->
+                    file
+                        .readText()
+                        .withoutComments()
+                        .argumentListsOf(ADAPTIVE_SCAFFOLD_CALL)
+                        .filter { SAFE_DRAWING_PADDING.containsMatchIn(it) }
+                        .map { file.relativeTo(repoRoot).path }
+                        .asSequence()
+                }.distinct()
+                .sorted()
+                .toList()
+
+        assertEquals(
+            "NavigationSuiteScaffold manages the insets its own navigation component covers and " +
+                "hands the rest to the screens. Padding it clips the whole app out of the " +
+                "system bar area and quietly ends edge-to-edge. Offending files:",
+            emptyList<String>(),
+            offenders,
+        )
+    }
+
+    @Test
+    fun `the activity turns off navigation bar contrast enforcement`() {
+        val activity = File(repoRoot, MAIN_ACTIVITY_PATH)
+
+        assertTrue(
+            "From SDK 29 the system paints its own translucent scrim behind three-button " +
+                "navigation unless this is off, so the bottom bar's colour stops short of the " +
+                "bottom of the screen. Expected `isNavigationBarContrastEnforced = false` in " +
+                MAIN_ACTIVITY_PATH,
+            activity.readText().contains("isNavigationBarContrastEnforced = false"),
+        )
+    }
+
+    /** The code without the comments: prose about a call must not satisfy or trip a rule. */
+    private fun String.withoutComments(): String = replace(BLOCK_COMMENT, "").replace(LINE_COMMENT, "")
+
+    /** Whether this file is a screen. A component nested in one is not held to these rules. */
+    private fun String.handlesScreenInsets(): Boolean =
+        contains("paddingValues") ||
+            contains("DroidconWindowInsets") ||
+            contains("contentPadding: PaddingValues")
+
+    /** The argument list of each call matching [call], trailing content lambda excluded. */
+    private fun String.argumentListsOf(call: Regex): List<String> =
+        call
             .findAll(this)
             .mapNotNull { match ->
                 val open = match.range.last
@@ -126,5 +227,26 @@ class WindowInsetsInvariantsTest {
 
         // A call, not the declaration in :core:ui and not its import.
         val STATUS_BAR_ICON_CALL = Regex("""(?<!fun )(?<!import )\bStatusBarIconAppearance\(""")
+
+        // Group 2 is the padded name, so the rule can insist that same name is the one consumed.
+        val PADS_BY_SCAFFOLD_INSETS =
+            Regex("""\.padding\(([A-Za-z]+ =\s*)?(paddingValues|innerPadding)\)""")
+
+        val ADAPTIVE_SCAFFOLD_CALL = Regex("""(?<![A-Za-z0-9_])NavigationSuiteScaffold\(""")
+
+        // Scoped to the scaffold's own argument list: padding by safeDrawing is right elsewhere.
+        val SAFE_DRAWING_PADDING =
+            Regex("""safeDrawingPadding\(|windowInsetsPadding\(\s*WindowInsets\.safeDrawing""")
+
+        val BLOCK_COMMENT = Regex("""/\*.*?\*/""", RegexOption.DOT_MATCHES_ALL)
+        val LINE_COMMENT = Regex("""//[^\n]*""")
+
+        val LAZY_SCROLLABLE =
+            Regex("""(?<![A-Za-z0-9_])Lazy(Column|Row|VerticalGrid|HorizontalGrid|VerticalStaggeredGrid)\(""")
+
+        val SCROLLABLE = Regex("""verticalScroll\(|horizontalScroll\(|""" + LAZY_SCROLLABLE.pattern)
+
+        const val MAIN_ACTIVITY_PATH =
+            "app/src/main/java/com/android254/presentation/activity/MainActivity.kt"
     }
 }

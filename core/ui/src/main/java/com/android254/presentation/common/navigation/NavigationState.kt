@@ -94,11 +94,22 @@ class NavigationState(
             } else {
                 listOf(startRoute, topLevelRoute)
             }
+
+    /** The destination on screen, so navigation visibility can be derived rather than pushed. */
+    val currentRoute: NavKey
+        get() = backStacks[topLevelRoute]?.lastOrNull() ?: topLevelRoute
 }
 
+/**
+ * Projects the back stacks onto the flat entry list `NavDisplay` renders.
+ *
+ * @param supportingRoute a destination appended after the real entries, on no back stack, so it
+ * appears with the window rather than with a navigation event and `goBack` never sees it.
+ */
 @Composable
 fun NavigationState.toEntries(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
+    supportingRoute: NavKey? = null,
 ): SnapshotStateList<NavEntry<NavKey>> {
     val decoratedEntries =
         backStacks.mapValues { (_, stack) ->
@@ -113,8 +124,14 @@ fun NavigationState.toEntries(
             )
         }
 
-    return stacksInUse
-        .flatMap { decoratedEntries[it] ?: emptyList() }
+    val supportingEntries =
+        rememberDecoratedNavEntries(
+            backStack = listOfNotNull(supportingRoute),
+            entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator<NavKey>()),
+            entryProvider = entryProvider,
+        )
+
+    return (stacksInUse.flatMap { decoratedEntries[it] ?: emptyList() } + supportingEntries)
         .toMutableStateList()
 }
 

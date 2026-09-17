@@ -45,6 +45,10 @@ data class SessionPresentationModel(
     val eventDay: String,
     val speakers: ImmutableList<SessionSpeakersPresentationModel>,
 ) {
+    /** [venue] is the rooms comma-joined, the same shape the API sends. */
+    val roomList: List<String>
+        get() = venue.split(',').map(String::trim).filter(String::isNotEmpty)
+
     val isServiceSession = isService && speakers.isEmpty()
     val isKeynote = format.contains("Keynote", ignoreCase = true)
     val isWorkshop = format.contains("Workshop", ignoreCase = true)

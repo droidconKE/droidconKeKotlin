@@ -15,12 +15,16 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -40,13 +44,20 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionLoadingComponent(
+    modifier: Modifier = Modifier,
     sessionScreenState: SessionScreenState = SessionScreenState.ALL,
     isSessionLayoutList: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(bottom = 32.dp),
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(bottom = 32.dp),
+    // Same columns and spacing as the loaded list, which is the point of a skeleton.
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = SessionColumnMinWidth),
+        modifier = modifier,
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item {
+        item(span = { GridItemSpan(maxLineSpan) }) {
             Spacer(modifier = Modifier.height(20.dp))
 
             ChaiSubTitle(
@@ -62,19 +73,13 @@ fun SessionLoadingComponent(
 
         if (isSessionLayoutList) {
             repeat(3) { index ->
-                item(key = "loading_header_$index") {
+                item(key = "loading_header_$index", span = { GridItemSpan(maxLineSpan) }) {
                     LoadingTimeHeader()
                 }
-                items(3) {
-                    SessionsLoadingCard()
-                    Spacer(Modifier.height(16.dp))
-                }
+                items(3) { SessionsLoadingCard() }
             }
         } else {
-            items(4) {
-                SessionsLoadingCardWithBannerImage()
-                Spacer(Modifier.height(16.dp))
-            }
+            items(4) { SessionsLoadingCardWithBannerImage() }
         }
     }
 }

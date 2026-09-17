@@ -18,7 +18,11 @@ package com.android254.presentation.sessions.view
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,11 +38,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconWindowSize
+import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import com.android254.presentation.common.fakedata.DAY_TODAY
 import com.android254.presentation.common.fakedata.DAY_TOMORROW
@@ -134,12 +142,16 @@ fun SessionsScreen(
         containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
+        // The day selector stays put, so it takes the top and sides and the list takes the bottom.
+        val layoutDirection = LocalLayoutDirection.current
+        val startGutter = paddingValues.calculateStartPadding(layoutDirection) + ScreenGutter
+        val endGutter = paddingValues.calculateEndPadding(layoutDirection) + ScreenGutter
 
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 20.dp),
+                .consumeWindowInsets(paddingValues)
+                .readablePaneWidth(),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -147,7 +159,12 @@ fun SessionsScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(start = 0.dp, end = 0.dp, top = 5.dp, bottom = 12.dp),
+                        .padding(
+                            start = startGutter,
+                            end = endGutter,
+                            top = paddingValues.calculateTopPadding() + 5.dp,
+                            bottom = 12.dp,
+                        ),
             ) {
                 EventDaySelector(
                     selectedDate = selectedEventDate,
@@ -170,6 +187,13 @@ fun SessionsScreen(
                 )
             }
             SessionsStateComponent(
+                showAgendaGrid = rememberDroidconWindowSize() != DroidconWindowSize.Compact,
+                contentPadding =
+                    PaddingValues(
+                        start = startGutter,
+                        end = endGutter,
+                        bottom = paddingValues.calculateBottomPadding() + 32.dp,
+                    ),
                 sessionsUiState = sessionsUiState,
                 navigateToSessionDetails = navigateToSessionDetails,
                 isRefreshing = isRefreshing,
@@ -255,3 +279,6 @@ enum class SessionScreenState {
     ALL,
     MYSESSIONS,
 }
+
+/** The gutter the designs use either side of a session card. */
+private val ScreenGutter = 20.dp
