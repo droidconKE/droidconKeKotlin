@@ -249,6 +249,13 @@ public fun com.android254.presentation.common.insets.DroidconWindowInsets.screen
   params:
 
 @Composable
+public fun com.android254.presentation.common.insets.StatusBarIconAppearance(darkIcons: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - darkIcons: STABLE (primitive type)
+
+@Composable
 public fun com.android254.presentation.common.navigation.rememberNavigationState(startRoute: androidx.navigation3.runtime.NavKey, topLevelRoutes: kotlinx.collections.immutable.ImmutableSet<androidx.navigation3.runtime.NavKey>): com.android254.presentation.common.navigation.NavigationState
   skippable: false
   restartable: false

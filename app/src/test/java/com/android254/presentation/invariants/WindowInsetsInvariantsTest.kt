@@ -63,6 +63,25 @@ class WindowInsetsInvariantsTest {
         )
     }
 
+    @Test
+    fun `status bar icon appearance is overridden per screen, never shared`() {
+        val offenders =
+            productionKotlinSources()
+                .filter { it.path.contains("/core/") }
+                .filter { file -> STATUS_BAR_ICON_CALL.containsMatchIn(file.readText()) }
+                .map { it.relativeTo(repoRoot).path }
+                .sorted()
+                .toList()
+
+        assertEquals(
+            "StatusBarIconAppearance belongs to the one screen that paints behind the status " +
+                "bar, not to a theme or a shared component. Called from :core: it becomes the " +
+                "global ChaiTheme SideEffect that §3.4 deleted. Offending files:",
+            emptyList<String>(),
+            offenders,
+        )
+    }
+
     /**
      * The text between `Scaffold(` and its matching `)`, one entry per call. The trailing
      * content lambda sits outside those parentheses, so nested `Scaffold`s in a screen's
@@ -105,5 +124,8 @@ class WindowInsetsInvariantsTest {
 
         // `Scaffold(`, but not `ListDetailPaneScaffold(` or any other suffix match.
         val SCAFFOLD_CALL = Regex("""(?<![A-Za-z0-9_])Scaffold\(""")
+
+        // A call, not the declaration in :core:ui and not its import.
+        val STATUS_BAR_ICON_CALL = Regex("""(?<!fun )(?<!import )\bStatusBarIconAppearance\(""")
     }
 }

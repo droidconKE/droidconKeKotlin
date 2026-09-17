@@ -230,7 +230,12 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   bar and consumes it. Every other `Scaffold` declares what is left with `contentWindowInsets =
   DroidconWindowInsets.screenContent`, which covers the keyboard too — `safeDrawing` includes
   it. `WindowInsetsInvariantsTest` fails on a `Scaffold` that declares nothing, because the
-  default is almost never right for a nested one.
+  default is almost never right for a nested one. Status bar *icons* come from the theme via
+  `enableEdgeToEdge()` and need no help — unless the screen draws its own artwork up there, as
+  the feedback hero does, in which case `StatusBarIconAppearance` overrides them and restores
+  the previous value on the way out. Never set it from a theme or a shared component — what
+  made the old `ChaiTheme` `SideEffect` wrong was being global and permanent, not touching the
+  window — and `WindowInsetsInvariantsTest` fails on any call to it from `:core:`.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
   reorders the list.
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a

@@ -206,18 +206,26 @@ to do the work itself. Both devices behave identically on all five:
 - The keyboard moves the feedback field clear of itself, and the bottom bar sits above the
   3-button nav bar rather than under it.
 
-**One thing the manual check found, and it is not fixed.** On `FeedBackScreen` the status bar
-icons are dark on both devices, because `enableEdgeToEdge()` derives their appearance from the
-theme and the theme is light. That was right when the hero could not reach the status bar. Now
-that it does, the clock and status icons sit on saturated blue and teal, and the contrast is
-poor — worst while the bar is expanded, correct again once it collapses to the light
-`TopAppBar`. It is the only screen with a dark surface behind the status bar.
+**One thing the manual check found, now fixed.** On `FeedBackScreen` the status bar icons came
+out dark on both devices, because `enableEdgeToEdge()` derives their appearance from the theme
+and the theme is light. That was the right answer while the hero could not reach the status
+bar. Once it could, the clock and status icons sat on saturated blue and teal.
 
-Fixing it means asking for light icons from that screen and restoring them on the way out,
-following the `isCollapsed` state that is already derived there. That is per-screen window
-control, which is a different thing from the global `SideEffect` in `ChaiTheme` that step 2
-deleted, but it is still the window being touched from a composable — worth a deliberate
-decision rather than a reflex, which is why it is recorded here instead of patched.
+`StatusBarIconAppearance` in `:core:ui` fixes it: a `DisposableEffect` that overrides the icon
+appearance while a screen is in the composition and **restores the previous value on the way
+out**, so a screen that opts in cannot strand the one after it. `FeedBackScreen` drives it off
+the `isCollapsed` state it already derives — light icons over the expanded hero, back to the
+theme's answer once the bar collapses to the light `TopAppBar`.
+
+This is the one place the plan's "no window reads from a composable" instinct does not hold,
+and the distinction is worth stating: step 2 deleted a `SideEffect` in `ChaiTheme` that ran for
+*every* screen and set a property that is a no-op from API 35. This runs for one screen, sets
+a property that is still live, and undoes itself. What made the original wrong was that it was
+global and permanent, not that it touched the window.
+
+Rule of thumb for the next screen that wants it: reach for this only when the screen draws its
+own artwork behind the status bar. A screen whose app bar is a theme surface already gets the
+right icons for free.
 
 ### Also still open from Phase 0
 

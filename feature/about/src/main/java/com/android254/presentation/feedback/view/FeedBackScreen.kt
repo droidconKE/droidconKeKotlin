@@ -60,6 +60,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.StatusBarIconAppearance
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
@@ -98,6 +99,9 @@ internal fun FeedBackScreen(
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
+
+    // Expanded, the hero is behind the status bar and the theme's icons are the wrong ones.
+    StatusBarIconAppearance(darkIcons = isCollapsed.value && !darkTheme)
 
     Scaffold(
         topBar = {
