@@ -21,7 +21,7 @@ public fun com.android254.presentation.speakers.view.SpeakerComponent(speaker: c
     - onClick: STABLE (function type)
 
 @Composable
-private fun com.android254.presentation.speakers.view.SpeakerDetailsContent(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState.Success, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.speakers.view.SpeakerDetailsContent(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState.Success, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, drawsUnderStatusBar: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -29,9 +29,10 @@ private fun com.android254.presentation.speakers.view.SpeakerDetailsContent(uiSt
     - navigateToSessionDetails: STABLE (function type)
     - onBookmark: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - drawsUnderStatusBar: STABLE (primitive type)
 
 @Composable
-public fun com.android254.presentation.speakers.view.SpeakerDetailsRoute(name: kotlin.String, speakersDetailsScreenViewModel: com.android254.presentation.speakers.SpeakerDetailsScreenViewModel, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.speakers.view.SpeakerDetailsRoute(name: kotlin.String, speakersDetailsScreenViewModel: com.android254.presentation.speakers.SpeakerDetailsScreenViewModel, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, showTopBar: kotlin.Boolean): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -39,9 +40,10 @@ public fun com.android254.presentation.speakers.view.SpeakerDetailsRoute(name: k
     - speakersDetailsScreenViewModel: RUNTIME (requires runtime check)
     - navigateBack: STABLE (function type)
     - navigateToSessionDetails: STABLE (function type)
+    - showTopBar: STABLE (primitive type)
 
 @Composable
-internal fun com.android254.presentation.speakers.view.SpeakerDetailsScreen(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.speakers.view.SpeakerDetailsScreen(uiState: com.android254.presentation.speakers.SpeakerDetailsScreenUiState, navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, showTopBar: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -49,6 +51,7 @@ internal fun com.android254.presentation.speakers.view.SpeakerDetailsScreen(uiSt
     - navigateBack: STABLE (function type)
     - navigateToSessionDetails: STABLE (function type)
     - onBookmark: STABLE (function type)
+    - showTopBar: STABLE (primitive type)
 
 @Composable
 public fun com.android254.presentation.speakers.view.SpeakersRoute(speakersScreenViewModel: com.android254.presentation.speakers.SpeakersScreenViewModel, navigateToHomeScreen: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit

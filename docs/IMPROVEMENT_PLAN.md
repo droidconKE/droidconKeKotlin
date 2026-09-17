@@ -6,14 +6,15 @@
 
 ---
 
-## Next up — §4, adaptive & large-screen support
+## Next up — §14, Swahili and the accessibility audit
 
-**§2 is complete** (2026-09-10). Every step in the migration order is closed: the feature
-extraction, `:presentation` folding into `:app`, and the `:core:*` renames.
+**§2 is complete** (2026-09-10) and **§4 landed on 2026-09-17** — see "§4 landed" below, which
+also records four places this document was wrong and one place the edge-to-edge skill is easy
+to misread.
 
-**§4 is next and wants its own branch.** Breakpoints, adaptive navigation, list-detail for
-sessions and speakers, foldable postures, and pointer/keyboard input. It is navigation rework
-plus two feature-area rewrites, not a bundle-with-other-things change.
+**§14 is next**, and is independent of everything above it, so it can run by a separate owner.
+The one piece of §4 still open is the room × time agenda grid, which belongs with the sessions
+feature rather than with the adaptive work; it is called out at the end of "§4 landed".
 
 ### The module split, as landed
 
@@ -226,6 +227,225 @@ global and permanent, not that it touched the window.
 Rule of thumb for the next screen that wants it: reach for this only when the screen draws its
 own artwork behind the status bar. A screen whose app bar is a theme surface already gets the
 right icons for free.
+
+### §4 landed (2026-09-17)
+
+Adaptive and large-screen support is in. The app now picks a navigation bar, a navigation rail
+or a navigation drawer from the window, opens a session or a speaker **beside** its list at
+expanded widths, and carries the live-sessions rail into a standing "happening now" pane where
+there is a column to spare.
+
+**Two official Android skills were read in full and preferred over this section wherever they
+disagreed** — [`jetpack-compose/adaptive`](https://github.com/android/skills/blob/main/jetpack-compose/adaptive/SKILL.md)
+and [`system/edge-to-edge`](https://github.com/android/skills/blob/main/system/edge-to-edge/SKILL.md).
+Four things below were wrong, and one thing everybody assumes about `NavigationSuiteScaffold`
+is wrong too.
+
+#### Correction 1 — §4.4's `NavigableListDetailPaneScaffold` is forbidden
+
+The adaptive skill is unambiguous: *"You must use the Navigation 3 `SceneStrategy` approach to
+implement multi-pane layouts. Do not use `ListDetailPaneScaffold` or `SupportingPaneScaffold`."*
+
+That is not style advice here. `NavigableListDetailPaneScaffold` owns a
+`ThreePaneScaffoldNavigator`, which is a second back stack — and this app already has one, in
+`NavigationController`, with a per-tab stack map and its own `goBack()`. Two back stacks over
+one `NavDisplay` is the kind of bug that only shows up as "back sometimes does nothing".
+
+What landed instead, and what §4.4's code block should be read as:
+
+- `androidx.compose.material3.adaptive:adaptive-navigation3`, which the Compose BOM already
+  manages (see correction 3).
+- `rememberListDetailSceneStrategy` and `rememberSupportingPaneSceneStrategy`, passed to
+  `NavDisplay`'s `sceneStrategies`.
+- `ListDetailSceneStrategy.listPane(detailPlaceholder = { … })` and `.detailPane()` as **entry
+  metadata** in `DroidconEntryProvider`. Nothing branches on window size: the same entry is a
+  full screen on a phone and a pane on a tablet, because the strategy reads the metadata and
+  the window and decides.
+- Distinct `sceneKey`s for the sessions and speakers pairs, so a speaker opened from Home does
+  not get drawn into the sessions scaffold.
+
+`NavigationController` is untouched. `updateBottomBarState` is **gone** — see correction 4.
+
+#### Correction 2 — the strategy expands an empty pane, so it needs a guard
+
+Not in either skill; found by building it. `ListDetailSceneStrategy` expands a second pane
+whenever the window has room, and fills the list pane with whatever list entry it can find in
+the back stack. Tapping a session on **Home** pushes only `SessionDetails`, so on a tablet the
+result is a real detail beside an empty column — and, worse, the detail believes it is a pane,
+drops its app bar and leaves no way back.
+
+`ListPaneRequiredSceneStrategy` wraps the Material strategy and declines the scene when the
+list it would draw is not on the stack, which hands the entries to the next strategy and gives
+a full-width detail with its bar intact. The alternative — pushing the list first so the pane
+has something to show — would change what back does on a phone, where tapping a session on
+Home and pressing back has always returned to Home.
+
+`ListDetailSceneTest` asserts this by rendering the real strategies over stand-in screens and
+checking what `LocalListDetailSceneScope` reports, which is what the detail screens read.
+
+#### Correction 3 — §3.2's catalog entries are stale
+
+§3.2 lists `compose-material3-adaptive*` with an `androidx-adaptive` version ref and
+`androidx.window` alongside. None of that is needed: **Compose BOM 2026.09.00 already manages
+the whole adaptive family** — `adaptive` and `adaptive-layout` at 1.3.0,
+`adaptive-navigation3` at 1.3.0, `material3-adaptive-navigation-suite` at 1.4.0 — and
+`androidx.window:window-core` 1.5.0 arrives transitively. What landed is four BOM-managed
+entries with no version refs, matching how `compose-material3` is already declared, plus an
+`adaptive` bundle. §3.2 also omits `adaptive-navigation3` entirely and lists
+`adaptive-navigation`, which is the `ListDetailPaneScaffoldNavigator` package correction 1
+forbids.
+
+`material3-window-size-class` is not needed either: `currentWindowAdaptiveInfoV2()` returns
+`androidx.window.core.layout.WindowSizeClass`, and §4.2's `WindowWidthSizeClass.COMPACT`
+comparison does not compile against window-core 1.5.0. `DroidconWindowSize` uses
+`isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)` instead.
+
+#### Correction 4 — §16.1 blocks §4 on the design system, and it should not
+
+§16.1 ranks the design-system rebuild ahead of adaptive "because Adaptive needs
+`MaterialExpressiveTheme`". Expressive is still `internal` on material3 1.4.0, as §3.4's
+closing notes already record, so that ordering would block §4 indefinitely. Nothing in the
+adaptive skill wants Expressive. This built on the current `ChaiTheme`, and the navigation
+suite takes the chai palette through `NavigationSuiteDefaults.colors`.
+
+#### The thing everyone gets wrong about `NavigationSuiteScaffold`
+
+The edge-to-edge skill says the adaptive scaffolds *"don't propagate `PaddingValues` to their
+inner contents"*, and the obvious conclusion — that the root stops consuming anything, so
+`screenContent` must now carry the full bottom inset itself — is **wrong**. Reading
+`NavigationSuiteScaffold.kt` in material3-adaptive-navigation-suite 1.4.0 settles it:
+
+- `NavigationSuiteScaffoldLayout` measures the content to `layoutHeight - navigationBarHeight`
+  (or `layoutWidth - railWidth`), so the content area genuinely excludes the navigation
+  component.
+- The content is wrapped in `Modifier.navigationSuiteScaffoldConsumeWindowInsets(...)`, which
+  consumes **the bottom** under a bar, **the start** under a rail or drawer, and **nothing**
+  while the navigation is hidden.
+
+So the §3.4 contract survives intact and gets *more* correct: `DroidconWindowInsets.appBar` and
+`.screenContent` are unchanged, and what they resolve to now moves with the navigation
+component instead of needing a per-size branch. Beside a rail, `screenContent`'s bottom
+becomes the real navigation-bar inset — which it never was before, because the old root always
+consumed it — and that is right, because there is no longer a bottom bar down there.
+
+The one genuinely new owner is the **live-sessions rail**: at rail and drawer sizes it is the
+bottom-most element, so it pads for the bottom inset and `MainScreen` consumes that same inset
+on the content above it. `DroidconWindowInsets`' KDoc now says all of this.
+
+#### What else landed
+
+- **Navigation area visibility is derived, not pushed.** Every entry in `DroidconEntryProvider`
+  used to call `updateBottomBarState(…)` as a side effect *of composing*. It is now
+  `shouldShowNavigation(route, isMultiPaneWindow)`, a pure function beside the keys, driven
+  into `rememberNavigationSuiteScaffoldState()` by a `LaunchedEffect` per the skill's step 2.1.
+  Net deletion, and one class of composition side effect gone. It also implements the skill's
+  rule that full-screen detail mode must be deactivated where the detail is a pane: a session
+  hides the navigation on a phone and leaves it alone on a tablet.
+- **Detail panes drop the app bar.** `SessionDetailsScreen` and `SpeakerDetailsScreen` already
+  render their own title in the body, so as panes the bar was the same words twice plus a back
+  arrow out of a list that never went away. They take `showTopBar`, set from
+  `LocalListDetailSceneScope.current == null` in the entry provider — the scaffold's own
+  answer, so the screen cannot disagree with the layout.
+- **"Happening now" is a supporting pane**, via `SupportingPaneSceneStrategy` with a 320 dp
+  preferred width, appended to the displayed entries by `NavigationState.toEntries` rather
+  than pushed onto a back stack — so it appears and disappears with the window rather than
+  with a navigation event, and `goBack()` never sees it. It yields to the list-detail scene:
+  the second column is either what is on now, or the session you picked.
+- **The drawer takes the logo** into its header (the suite's `primaryActionContent` slot, which
+  is drawn only for the drawer), and the three custom app bars drop theirs at expanded widths
+  through a defaulted `showLogo`, so no call site changed.
+- **Single-pane content is capped at 840 dp and centred** by `Modifier.readablePaneWidth()`, a
+  layout modifier rather than `widthIn` plus an aligning parent, so it composes onto a lazy
+  list — which cannot centre itself through `contentPadding`.
+- **Sessions and speakers are adaptive grids** per the skill's step 4:
+  `GridCells.Adaptive(360.dp)` for sessions, `320.dp` for speakers. The sessions list became a
+  `LazyVerticalGrid`, keeping its sticky time headers — `LazyGridScope.stickyHeader` exists in
+  foundation 1.12.1.
+- **Resizability is declared**: `resizeableActivity`, the `configChanges` set, and the two
+  ChromeOS `WindowManagerPreference` hints. No `screenOrientation` lock existed and none was
+  added.
+
+#### Grid and FlexBox: available, and deliberately not used
+
+The skill warns that `Grid` and `FlexBox` are experimental from Compose 1.11.0-beta01 and asks
+for confirmation before use. This repo resolves **foundation-layout 1.12.1**, which does ship
+both (`androidx.compose.foundation.layout.GridKt`, `FlexBoxKt`, behind `@ExperimentalGridApi`),
+so availability is not the blocker.
+
+They are not used, because step 4.2 applies to a non-lazy `Column` of same-typed items and the
+lists that needed adapting are lazy — step 4.1's `GridCells.Adaptive` covers them, and it is
+stable API. Opting into an experimental layout for a case the stable one already handles is
+not a trade this repo makes.
+
+#### Edge-to-edge gaps from §3.4, now closed
+
+§3.4 landed the ownership contract but left four items from the skill's checklist open:
+
+- **Lazy lists take the insets as `contentPadding`**, not as padding on a parent container —
+  the skill: *"this clips the content and prevents it from scrolling behind the system bars."*
+  Fixed in `FeedScreen`, `SpeakersScreen` and `SessionStateComponent` (plus the loading
+  skeleton, which is a lazy list too). `SessionsScreen` is the awkward one: its day selector
+  is a fixed header above the list, so the top and sides go to the header and the bottom to
+  the list's `contentPadding`.
+- **`verticalScroll` containers consume what they pad** —
+  `.padding(innerPadding).consumeWindowInsets(innerPadding).verticalScroll(…)` in `HomeScreen`,
+  `AboutScreen`, `FeedBackScreen`, `SessionDetailsScreen` and `SpeakerDetailsScreen`.
+- **`window.isNavigationBarContrastEnforced = false`** for SDK 29+, so the bottom bar's colour
+  reaches the bottom of the screen instead of the system painting its own scrim over it.
+- **`StatusBarProtection`**, the skill's gradient scrim at `statusBars.getTop * 1.2f`, on the
+  two detail screens **when they have dropped their app bar** — which is the only place in the
+  app where content scrolls under the status bar with nothing opaque above it.
+
+`AuthDialog` needs nothing: it is not `usePlatformDefaultWidth = false` + `fillMaxSize()`, so
+the skill's full-screen dialog rule does not apply. FABs are inside a `Scaffold` and pass.
+
+#### Tests
+
+`WindowInsetsInvariantsTest` gained four rules and lost none. `AdaptiveInvariantsTest` is new.
+Every one was checked by mutating the source and watching it fail — the guard strategy in
+particular looked like dead code until the test asserted on `LocalListDetailSceneScope` rather
+than on pane widths:
+
+| Invariant | Mutation that must fail it |
+| --- | --- |
+| A screen that pads by the Scaffold insets and scrolls consumes them | drop `consumeWindowInsets` from `HomeScreen` |
+| A screen's lazy list takes the insets as `contentPadding` | drop `contentPadding` from `FeedScreen`'s list |
+| Nothing applies `safeDrawingPadding` to an adaptive scaffold | add it to `MainScreen` |
+| The activity turns off navigation-bar contrast enforcement | flip it to `true` |
+| Multi-pane layouts are Nav3 scenes, never a pane scaffold | use `NavigableListDetailPaneScaffold` |
+| No screen builds its own navigation bar | bring back `BottomAppBar` |
+| Layout decisions read the window, never the configuration | branch on `screenWidthDp` |
+
+`ListDetailSceneTest` renders the real metadata and strategies at 411 dp and 1280 dp;
+`NavigationVisibilityTest` covers the visibility and supporting-pane rules as pure functions.
+
+`FormFactorPreviews` (phone / foldable / tablet / desktop) is in `:core:ui`, and
+`ChaiScreenshotTest.captureFormFactors` records the same four as goldens by overriding
+`DeviceConfigurationOverride.WindowSize` — which is what `currentWindowAdaptiveInfo` reads, so
+the column counts and navigation components in those goldens are the ones the app would really
+choose.
+
+#### Verified on
+
+- **OPPO Reno4, API 31, ColorOS, 3-button navigation.** Compact only: ColorOS denies the shell
+  `WRITE_SETTINGS` and `WRITE_SECURE_SETTINGS`, so neither `settings put user_rotation` nor
+  `wm size` works and the window cannot be widened from adb. What it does prove is the API 31
+  path, where the platform does not enforce edge-to-edge — bottom bar above the 3-button
+  navigation with its colour reaching the bottom edge, navigation hidden on a session detail,
+  content clear of the navigation bar.
+- **RM_Pixel AVD, API 36**, resized with `wm size`/`wm density` through every breakpoint:
+  411 dp (bar), 720 dp (rail), 1706 × 1200 dp (drawer, two panes, supporting pane),
+  960 × 460 dp (expanded width but short — rail, not drawer, which is the phone-landscape
+  rule). Checked the resize itself: going from two panes back to 411 dp restores the detail's
+  app bar and back arrow without recreating the activity. Dark mode checked at drawer size.
+
+**Not done, and deliberately.** §4.4's **room × time agenda grid** is not in this PR.
+`SessionPresentationModel` carries a single `venue` string, not `Session.roomList`, so the grid
+needs a mapper change and a product decision about a session that runs in two rooms. That is
+sessions-feature work, not adaptive plumbing, and it is the one item of §4's definition of done
+below that this PR leaves open. §4.5's **table-top posture split** is also not here: neither
+device on hand is a foldable, so it could not be verified, and `NavigationSuiteScaffold`
+already handles tabletop for navigation placement.
 
 ### Also still open from Phase 0
 
@@ -747,9 +967,24 @@ What follows is the set of entries the later phases assume. Add each one with th
 needs it, not up front. Versions are from authoring time; run `./gradlew versionCatalogUpdate`
 before landing any of them.
 
+> **§4 landed 2026-09-17 and none of the adaptive block below was needed as written.** Compose
+> BOM 2026.09.00 manages the whole adaptive family, so the entries carry no version ref and
+> there is no `androidx-adaptive` version to add; `androidx.window:window-core` 1.5.0 arrives
+> transitively; `material3-window-size-class` is unnecessary because
+> `currentWindowAdaptiveInfoV2()` already returns a `WindowSizeClass`; and the entry that was
+> actually needed, `adaptive-navigation3`, is missing here while `adaptive-navigation` — the
+> forbidden `ListDetailPaneScaffoldNavigator` package — is listed. What landed is:
+>
+> ```toml
+> compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+> compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
+> compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
+> compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+> ```
+
 ```toml
 [libraries]
-# Adaptive / large screen (§4)
+# Adaptive / large screen (§4) — superseded, see the note above
 androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
 androidx-window-core = { module = "androidx.window:window-core", version.ref = "androidx-window" }
 compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-adaptive" }
@@ -2217,7 +2452,15 @@ data and are the ones to do first.
 
 ## 4. Phase 1 — Adaptive & large-screen support
 
-**Depends on: Phase 0 (§3.4 insets, §3.5 M3 bridge, §3.3 B10 nav keys)**
+> **Landed 2026-09-17. Read ["§4 landed"](#4-landed-2026-09-17) first** — it records four
+> places this section is wrong, and the code blocks below have not all been rewritten. In
+> particular §4.4's `NavigableListDetailPaneScaffold` is **forbidden** by the adaptive skill;
+> §4.2's `WindowWidthSizeClass` comparison does not compile against window-core 1.5.0; and
+> §3.2's catalog entries for this phase are unnecessary, because the Compose BOM manages the
+> whole adaptive family. The one item still open is the room × time agenda grid in §4.4.
+
+**Depends on: Phase 0 (§3.4 insets, §3.3 B10 nav keys).** It did **not** depend on §3.5 or on
+M3 Expressive, contrary to §16.1 — see correction 4 in "§4 landed".
 
 ### 4.1 Why this matters more than it looks
 
@@ -2265,7 +2508,9 @@ fun rememberDroidconWindowSize(): DroidconWindowSize {
 }
 ```
 
-> **Do not** branch on `Configuration.screenWidthDp` or `LocalConfiguration.orientation`. Both are wrong in multi-window, wrong on foldables mid-fold, and wrong in a resizable ChromeOS window. `currentWindowAdaptiveInfo()` also carries posture (`isTableTopPosture`), which §4.5 uses.
+> **Do not** branch on `Configuration.screenWidthDp` or `LocalConfiguration.orientation`. Both are wrong in multi-window, wrong on foldables mid-fold, and wrong in a resizable ChromeOS window. `currentWindowAdaptiveInfo()` also carries posture (`isTableTopPosture`), which §4.5 uses. `AdaptiveInvariantsTest` now fails the build on either read.
+
+> **As landed:** the `when` above does not compile. `currentWindowAdaptiveInfoV2().windowSizeClass` is `androidx.window.core.layout.WindowSizeClass`, which has no `WindowWidthSizeClass` and needs no `material3-window-size-class` dependency. The real code is `isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)` — see `core/ui/.../common/adaptive/DroidconWindowSize.kt`, which also holds `rememberIsMultiPaneWindow()` (derived from `calculatePaneScaffoldDirective`, the same source the scene strategies use, so the two cannot drift) and `Modifier.readablePaneWidth()`.
 
 ### 4.3 Navigation that adapts
 
@@ -2338,6 +2583,8 @@ fun DroidconNavigationScaffold(
 }
 ```
 
+> **As landed:** `layoutType` is now `navigationSuiteType`, and `NavigationSuiteType.None` no longer exists — hiding the navigation is `NavigationSuiteScaffoldState.hide()`, per the skill's step 2.1. The drawer is also gated on window *height*, because a drawer in phone landscape eats a third of the screen. The live-sessions rail did not stay in this composable: see `LiveSessionsRail` and `HappeningNowPane`.
+
 **Two important consequences.** First, `showNavigation` replaces the current `updateBottomBarState: (Boolean) -> Unit` callback that every entry in `DroidconEntryProvider` calls as a side effect during composition — which is a side effect in composition and technically a bug (it works because it's idempotent). Derive it instead:
 
 ```kotlin
@@ -2348,94 +2595,92 @@ val isTopLevelDestination: Boolean =
 
 Then delete the `updateBottomBarState` parameter from `droidconEntryProvider` and all nine entries. Net deletion, and one class of composition side effect gone.
 
+> **As landed:** that derivation is wrong in two ways. `Screens.Speakers` is not a top-level destination and *does* keep the navigation, and a detail must keep it too once it is a pane rather than a full screen. The rule is `shouldShowNavigation(route, isMultiPaneWindow)` in `core/ui/.../common/navigation/NavigationVisibility.kt`, covered by `NavigationVisibilityTest`.
+
 Second, the current `BottomNavigationBar` composable stacks the live-sessions `LazyRow` *above* the bar inside the same `bottomBar` slot. That's why the bar is a `Column`. Splitting them (as above) lets the live-sessions rail become a supporting pane on large screens instead of a horizontal scroller nobody sees.
 
 ### 4.4 List-detail for sessions and speakers
 
-The two obvious two-pane candidates. Sessions first:
+> **Rewritten 2026-09-17.** The original text of this section specified
+> `NavigableListDetailPaneScaffold` and `rememberListDetailPaneScaffoldNavigator`. The
+> [adaptive skill](https://github.com/android/skills/blob/main/jetpack-compose/adaptive/SKILL.md)
+> forbids both: *"You must use the Navigation 3 `SceneStrategy` approach to implement
+> multi-pane layouts. Do not use `ListDetailPaneScaffold` or `SupportingPaneScaffold`."*
+>
+> The reason it matters here, beyond the skill saying so: a scaffold navigator is a **second
+> back stack**. This app is on Navigation 3 with a hand-rolled `NavigationController` that owns
+> a stack per top-level destination and its own `goBack()`. Two stacks over one `NavDisplay`
+> is how "back sometimes does nothing" gets shipped. The scene-strategy approach adds no stack
+> at all — it reads metadata off the entries that are already there.
+
+The two obvious two-pane candidates. What landed:
 
 ```kotlin
-// presentation/src/main/java/com/android254/presentation/sessions/view/SessionsRoute.kt
+// app/src/main/java/com/android254/presentation/common/navigation/DroidconSceneStrategies.kt
 
 @Composable
-fun SessionsRoute(
-    sessionsViewModel: SessionsViewModel = hiltViewModel(),
-    navigateToSessionDetails: (String) -> Unit = {},
-) {
-    val uiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
-    val windowSize = rememberDroidconWindowSize()
-
-    if (windowSize.isSinglePane) {
-        // Phone: list only; tapping navigates to a full screen (existing behaviour).
-        SessionsScreen(
-            sessionsUiState = uiState,
-            onSessionClick = navigateToSessionDetails,
-            onEvent = sessionsViewModel::handleEvent,
-        )
-    } else {
-        SessionsListDetail(
-            sessionsUiState = uiState,
-            onEvent = sessionsViewModel::handleEvent,
-        )
+fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
+    val listDetail = rememberListDetailSceneStrategy<NavKey>()
+    val supporting = rememberSupportingPaneSceneStrategy<NavKey>()
+    return remember(listDetail, supporting) {
+        // List-detail first: with a session open beside its list, the right-hand column
+        // belongs to the session, not to what else is on right now.
+        persistentListOf(ListPaneRequiredSceneStrategy(listDetail), supporting)
     }
 }
+```
 
-@Composable
-private fun SessionsListDetail(
-    sessionsUiState: SessionsUiState,
-    onEvent: (SessionsIntentHandler) -> Unit,
+```kotlin
+// app/src/main/java/com/android254/presentation/common/navigation/DroidconEntryProvider.kt
+
+entry<Screens.Sessions>(
+    metadata = listPaneMetadata(DroidconPaneScene.Sessions) {
+        DetailPanePlaceholder(
+            message = stringResource(R.string.select_a_session),
+            icon = painterResource(id = ChaiR.drawable.sessions_icon),
+        )
+    },
 ) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<String>()
+    SessionsRoute(navigateToSessionDetails = { navController.navigate(Screens.SessionDetails(it)) })
+}
 
-    // Predictive back within the scaffold, so back collapses the detail pane
-    // before it leaves the Sessions tab.
-    BackHandler(navigator.canNavigateBack()) {
-        navigator.navigateBack()
-    }
-
-    NavigableListDetailPaneScaffold(
-        navigator = navigator,
-        listPane = {
-            AnimatedPane {
-                SessionsScreen(
-                    sessionsUiState = sessionsUiState,
-                    selectedSessionId = navigator.currentDestination
-                        ?.takeIf { it.pane == ListDetailPaneScaffoldRole.Detail }
-                        ?.contentKey,
-                    onSessionClick = { sessionId ->
-                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, sessionId)
-                    },
-                    onEvent = onEvent,
-                )
-            }
-        },
-        detailPane = {
-            AnimatedPane {
-                val sessionId = navigator.currentDestination?.contentKey
-                if (sessionId == null) {
-                    SessionDetailPlaceholder()   // "Select a session" — never an empty grey box
-                } else {
-                    // key() so switching sessions gets a fresh ViewModel, matching
-                    // the phone behaviour where each detail screen is a new entry.
-                    key(sessionId) {
-                        val viewModel = hiltViewModel<SessionDetailsViewModel, SessionDetailsViewModel.Factory>(
-                            key = sessionId,
-                            creationCallback = { it.create(Screens.SessionDetails(sessionId)) },
-                        )
-                        SessionDetailsRoute(
-                            sessionId = sessionId,
-                            viewModel = viewModel,
-                            // No back arrow when the list is visible beside us.
-                            showNavigationIcon = false,
-                            onNavigationIconClick = { navigator.navigateBack() },
-                        )
-                    }
-                }
-            }
-        },
+entry<Screens.SessionDetails>(metadata = detailPaneMetadata(DroidconPaneScene.Sessions)) { key ->
+    SessionDetailsRoute(
+        viewModel = sessionModel(key),
+        onNavigationIconClick = navController::goBack,
+        // The scaffold's own answer, so the screen cannot disagree with the layout about
+        // whether the list is beside it — and therefore about whether to draw a back arrow.
+        showTopBar = LocalListDetailSceneScope.current == null,
     )
 }
 ```
+
+Speakers is the same shape with `DroidconPaneScene.Speakers`, which is what the `sceneKey`
+exists for: without distinct keys a speaker opened from Home would be drawn into the sessions
+scaffold.
+
+**Nothing branches on window size.** The same entry is a full screen on a phone and a pane on a
+tablet, because `ListDetailSceneStrategy` reads the metadata and the window and returns a scene
+only when the window has room for two panes. That is the whole reason the skill prefers it.
+
+**One guard the skill does not mention.** `ListDetailSceneStrategy` expands a second pane
+whenever there is room and fills the list pane with whatever list entry it can find — nothing,
+if the detail was opened from Home, which pushes only `SessionDetails`. The result on a tablet
+is a real detail beside an empty column, and the detail believes it is a pane and drops its app
+bar. `ListPaneRequiredSceneStrategy` declines the scene when the list is not on the stack, so
+the entries fall through to a full-width single pane with the bar intact.
+
+**Feed stays single-pane** — it is a linear stream, and a stream does not have a detail.
+**About** could take a supporting pane for the organising-team grid; it did not in this PR.
+
+**Agenda grid — still open.** `SessionsScreen` has a list/agenda toggle (`isSessionLayoutList`)
+that currently only switches card styles. On Medium and Expanded the agenda mode should become
+what it wants to be, a **room × time grid**, the way conference schedules are actually read:
+
+> **As landed:** the agenda grid is the one part of §4 this PR did not close —
+> `SessionPresentationModel` carries a single `venue` string rather than `Session.roomList`, so
+> it needs a mapper change and a decision about a session that runs in two rooms. That is
+> sessions-feature work, not adaptive plumbing.
 
 The list pane needs a **selected** visual state it doesn't currently have — on a phone there is no persistent selection, on a tablet there must be:
 
@@ -2619,13 +2864,13 @@ annotation class ChaiA11yPreview
 ```
 
 **Definition of done:**
-- [ ] `NavigationSuiteScaffold` in place; no unconditional `BottomAppBar`
-- [ ] Sessions and Speakers use `NavigableListDetailPaneScaffold` on Medium/Expanded
-- [ ] Agenda grid ships on Medium/Expanded
-- [ ] No `screenOrientation` lock anywhere
-- [ ] Roborazzi screenshot suite (§10) covers phone/foldable/tablet/desktop × light/dark
-- [ ] Manually verified on: Pixel Tablet, Pixel Fold (folded and unfolded, table-top), a resizable ChromeOS window, and split-screen on a phone
-- [ ] Passes [Play's large-screen quality checklist](https://developer.android.com/docs/quality-guidelines/large-screen-app-quality)
+- [x] `NavigationSuiteScaffold` in place; no unconditional `BottomAppBar` — asserted by `AdaptiveInvariantsTest`
+- [x] Sessions and Speakers open a detail beside their list on Expanded — via the Nav3 `SceneStrategy`, **not** `NavigableListDetailPaneScaffold`, which the adaptive skill forbids
+- [ ] **Agenda grid ships on Medium/Expanded** — the one item left open; see §4.4
+- [x] No `screenOrientation` lock anywhere, and resizability declared
+- [x] Roborazzi goldens cover phone/foldable/tablet/desktop (`captureFormFactors`), plus the existing light/dark/200 % matrix at phone size
+- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button) and an API 36 emulator resized through every breakpoint. **Not** verified on a real foldable — neither device on hand folds, which is also why §4.5's table-top split is not implemented
+- [ ] Passes [Play's large-screen quality checklist](https://developer.android.com/docs/quality-guidelines/large-screen-app-quality) — not audited against the checklist itself
 
 ---
 
@@ -7312,6 +7557,7 @@ Struck from the backlog. Kept here only so nobody re-plans it.
 | **Release builds are actually minified** — coverage instrumentation was forcing every build type debuggable, silently disabling R8 | Done |
 | `LICENSE`, rewritten README, `docs/architecture.md`, `docs/static-analysis.md` | Done |
 | **Edge-to-edge and window insets** (§3.4) — app bars own the top, the root owns the bottom bar, every `Scaffold` declares the rest, IME handled | Done — asserted by `WindowInsetsInvariantsTest` |
+| **Adaptive & large-screen support** (§4) — `NavigationSuiteScaffold`, Nav3 list-detail and supporting-pane scenes, adaptive grids, capped single-pane measure, the four edge-to-edge gaps §3.4 left | Done 2026-09-17 — asserted by `AdaptiveInvariantsTest`, `ListDetailSceneTest` and four new rules in `WindowInsetsInvariantsTest`. The room × time agenda grid is the one piece left; see §4.4 |
 
 `safeApiCall` is **not** an open item, contrary to earlier drafts of this section: it has
 production callers in `AuthApi` and `SessionsApi`. Leave it.
@@ -7320,8 +7566,15 @@ production callers in `AuthApi` and `SessionsApi`. Leave it.
 
 Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
 
-Items 1–5 and 10 have since landed; they are struck rather than deleted so the ordering still
+Items 1–5, 7 and 10 have since landed; they are struck rather than deleted so the ordering still
 reads as it was decided. **The list now starts at #6.**
+
+**One correction to the ordering itself.** #7 was placed below #6 because "Adaptive needs #6's
+theme work first" — specifically `MaterialExpressiveTheme`. Expressive is still `internal` on
+material3 1.4.0, so that dependency would have blocked §4 indefinitely, and nothing in the
+Material adaptive guidance wants Expressive. §4 was built on the current `ChaiTheme` and landed
+first. The dependency in §16.3 ("Design system must land §3.5 before Adaptive can use
+`MaterialExpressiveTheme`") is wrong in the same way.
 
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
@@ -7331,7 +7584,7 @@ reads as it was decided. **The list now starts at #6.**
 | ~~**4**~~ | ~~Baseline + startup profile~~ — **done 2026-09-10** | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
 | ~~**5**~~ | ~~Compose compiler stability config~~ — **done** | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
 | **6** | Design-system token restructure, then M3 Expressive | §3.5 → §5 | Needs #3 to review and a Compose BOM with material3 1.4.x. The single biggest visible change available. |
-| **7** | Adaptive & large-screen support | §4 | The README already claims it. Needs #6's theme work first. |
+| ~~**7**~~ | ~~Adaptive & large-screen support~~ — **done 2026-09-17** | §4 | The README already claims it. Did **not** need #6's theme work — see the correction above. |
 | **8** | Swahili + accessibility audit | §14 | Independent of the above; can run in parallel by a separate owner. |
 | **9** | Real size wins: `material-icons-extended`, fonts, Lottie, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
 | ~~**10**~~ | ~~Credential Manager, replacing the deprecated GMS Auth path~~ — **done**, landed with Phase 0 | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
@@ -7356,7 +7609,7 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 **Stage 2 — Make it a 2026 app**
 - §10.2 Roborazzi screenshot suite — **first in this stage**, because it is how everything else here gets reviewed
 - §3.5 → §5 design system: token restructure, then M3 Expressive
-- §4 adaptive & large screen
+- ~~§4 adaptive & large screen~~ — **landed 2026-09-17**, ahead of the design system rather than after it
 - §2 extract `:core:designsystem` plus one feature module, to prove the pattern
 - §14 Swahili + accessibility audit
 - **Milestone:** correct on every form factor · visual regressions caught in CI · contrast test green
@@ -7397,7 +7650,7 @@ The natural split for a small contributor pool, chosen so people don't collide:
 | **Conference ops** | Ticketing, notifications, widget, map | §7, §8, §11.6–11.7 |
 
 Cross-track dependencies to watch:
-- Design system must land §3.5 before Adaptive can use `MaterialExpressiveTheme`.
+- ~~Design system must land §3.5 before Adaptive can use `MaterialExpressiveTheme`.~~ Withdrawn: Expressive is `internal` on material3 1.4.0 and the adaptive work never needed it. §4 landed first.
 - Design system needs §10.2 Roborazzi in place first, or its work is unreviewable.
 - AI needs `:core:testing` from Foundations to test its router.
 

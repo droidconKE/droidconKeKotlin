@@ -94,11 +94,29 @@ class NavigationState(
             } else {
                 listOf(startRoute, topLevelRoute)
             }
+
+    /**
+     * The destination actually on screen — the top of the active stack, not the tab it belongs to.
+     *
+     * Lets the navigation area's visibility be derived rather than pushed at it as a side effect
+     * during composition, which is what every entry in the entry provider used to do.
+     */
+    val currentRoute: NavKey
+        get() = backStacks[topLevelRoute]?.lastOrNull() ?: topLevelRoute
 }
 
+/**
+ * Projects the back stacks onto the flat entry list `NavDisplay` renders.
+ *
+ * @param supportingRoute a destination to append after the real entries, or null. It is not on
+ * any back stack, so `goBack` never sees it and it cannot be popped: it is present exactly while
+ * the caller says the window can show it. This is how the "happening now" supporting pane appears
+ * at expanded widths without a navigation event making it appear.
+ */
 @Composable
 fun NavigationState.toEntries(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
+    supportingRoute: NavKey? = null,
 ): SnapshotStateList<NavEntry<NavKey>> {
     val decoratedEntries =
         backStacks.mapValues { (_, stack) ->
@@ -113,8 +131,14 @@ fun NavigationState.toEntries(
             )
         }
 
-    return stacksInUse
-        .flatMap { decoratedEntries[it] ?: emptyList() }
+    val supportingEntries =
+        rememberDecoratedNavEntries(
+            backStack = listOfNotNull(supportingRoute),
+            entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator<NavKey>()),
+            entryProvider = entryProvider,
+        )
+
+    return (stacksInUse.flatMap { decoratedEntries[it] ?: emptyList() } + supportingEntries)
         .toMutableStateList()
 }
 

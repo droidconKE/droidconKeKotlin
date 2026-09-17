@@ -30,9 +30,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.DeviceConfigurationOverride
+import androidx.compose.ui.test.WindowSize
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.test.core.app.ApplicationProvider
 import coil.Coil
 import coil.ImageLoader
@@ -83,6 +87,46 @@ abstract class ChaiScreenshotTest {
         content: @Composable () -> Unit,
     ) = capture(name = name, fillWindow = true, content = content)
 
+    /**
+     * One golden per form factor, in light mode.
+     *
+     * Overrides the window size rather than the device, because that is what
+     * `currentWindowAdaptiveInfo` reads — so the navigation component, the pane count and the
+     * column count in these goldens are the ones the app would really choose, not a phone
+     * layout stretched to a tablet's dimensions.
+     */
+    protected fun captureFormFactors(
+        name: String,
+        content: @Composable () -> Unit,
+    ) {
+        var formFactor by mutableStateOf(FormFactor.entries.first())
+
+        composeRule.setContent {
+            DeviceConfigurationOverride(
+                DeviceConfigurationOverride.WindowSize(formFactor.size),
+            ) {
+                ChaiTheme(darkTheme = false) {
+                    Surface(color = MaterialTheme.colorScheme.background) {
+                        Box(modifier = Modifier.fillMaxSize().testTag(CAPTURE_TAG)) { content() }
+                    }
+                }
+            }
+        }
+
+        FormFactor.entries.forEach { entry ->
+            formFactor = entry
+            composeRule.waitForIdle()
+            composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
+                filePath = "src/test/screenshots/$name/${entry.id}.png",
+                roborazziOptions =
+                    RoborazziOptions(
+                        compareOptions =
+                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
+                    ),
+            )
+        }
+    }
+
     private fun capture(
         name: String,
         fillWindow: Boolean,
@@ -122,6 +166,17 @@ abstract class ChaiScreenshotTest {
                     ),
             )
         }
+    }
+
+    /** The four sizes the `FormFactorPreviews` annotation previews, as window sizes. */
+    enum class FormFactor(
+        val id: String,
+        val size: DpSize,
+    ) {
+        Phone("phone", DpSize(411.dp, 891.dp)),
+        Foldable("foldable", DpSize(673.dp, 841.dp)),
+        Tablet("tablet", DpSize(1280.dp, 800.dp)),
+        Desktop("desktop", DpSize(1920.dp, 1080.dp)),
     }
 
     enum class ScreenshotVariant(

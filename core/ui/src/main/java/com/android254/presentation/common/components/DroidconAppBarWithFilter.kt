@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
@@ -54,6 +55,7 @@ fun DroidconAppBarWithFilter(
     isFilterActive: Boolean,
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = DroidconWindowInsets.appBar,
+    showLogo: Boolean = rememberShowsAppBarLogo(),
     onFilterButtonClick: () -> Unit,
 ) {
     Row(
@@ -66,10 +68,12 @@ fun DroidconAppBarWithFilter(
                 .testTag("droidcon_topBar_with_Filter"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
-            contentDescription = stringResource(id = R.string.logo),
-        )
+        if (showLogo) {
+            Image(
+                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
+                contentDescription = stringResource(id = R.string.logo),
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
 
         LayoutIconButtons(

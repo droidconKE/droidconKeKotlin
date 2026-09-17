@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,8 +52,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.plus
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
@@ -112,13 +115,13 @@ internal fun FeedScreen(
         Box(
             modifier =
                 Modifier
-                    .padding(paddingValues = paddingValues)
+                    .consumeWindowInsets(paddingValues)
                     .fillMaxSize(),
         ) {
             when (feedUIState) {
                 is FeedUIState.Error -> {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
@@ -142,7 +145,7 @@ internal fun FeedScreen(
 
                 FeedUIState.Loading -> {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
                     ) {
                         repeat(3) {
                             FeedLoadingComponent()
@@ -152,7 +155,12 @@ internal fun FeedScreen(
 
                 is FeedUIState.Success -> {
                     LazyColumn(
-                        modifier = Modifier.testTag("feeds_lazy_column"),
+                        modifier =
+                            Modifier
+                                .testTag("feeds_lazy_column")
+                                .fillMaxSize()
+                                .readablePaneWidth(),
+                        contentPadding = paddingValues.plus(bottom = 16.dp),
                     ) {
                         items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
                             FeedComponent(
@@ -169,7 +177,7 @@ internal fun FeedScreen(
 
                 FeedUIState.Empty -> {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {

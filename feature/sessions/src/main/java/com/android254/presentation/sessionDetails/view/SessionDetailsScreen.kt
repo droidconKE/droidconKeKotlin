@@ -20,12 +20,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -45,8 +49,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.StatusBarProtection
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
@@ -69,6 +75,7 @@ import com.droidconke.chai.components.ChaiBodyMediumBold
 fun SessionDetailsRoute(
     viewModel: SessionDetailsViewModel,
     onNavigationIconClick: () -> Unit,
+    showTopBar: Boolean = true,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -77,6 +84,7 @@ fun SessionDetailsRoute(
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick,
+        showTopBar = showTopBar,
     )
 }
 
@@ -86,9 +94,13 @@ internal fun SessionDetailsScreen(
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit,
+    showTopBar: Boolean = true,
 ) {
     Scaffold(
-        topBar = { TopBar(onNavigationIconClick) },
+        // As a detail pane the bar is pure duplication: the session's own title is the first
+        // thing in the body, and the list beside it already says where you are — which is also
+        // why there is no back arrow to draw.
+        topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {},
@@ -137,9 +149,13 @@ internal fun SessionDetailsScreen(
                     sessionDetails = uiState.data,
                     bookmarkSession = bookmarkSession,
                     unBookmarkSession = unBookmarkSession,
+                    drawsUnderStatusBar = !showTopBar,
                 )
             }
         }
+    }
+    if (!showTopBar) {
+        StatusBarProtection()
     }
 }
 
@@ -150,16 +166,24 @@ fun Body(
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
+    drawsUnderStatusBar: Boolean = false,
 ) {
     Column(
         modifier =
             modifier
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .readablePaneWidth()
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        // Inside the scroll, so the first line of the session title starts below the clock and
+        // then travels under it, which is the whole point of dropping the bar.
+        if (drawsUnderStatusBar) {
+            Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+        }
         CustomDivider()
         Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
             Spacer(modifier = Modifier.height(24.dp))

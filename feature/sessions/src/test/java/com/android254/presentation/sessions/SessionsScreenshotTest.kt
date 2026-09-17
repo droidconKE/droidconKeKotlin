@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions
 
+import androidx.compose.runtime.Composable
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
@@ -31,57 +32,73 @@ import org.junit.Test
 
 class SessionsScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun sessions() =
-        captureScreen("screens/sessions") {
-            SessionsScreen(
-                sessionsUiState =
-                    SessionsUiState(
-                        sessions = persistentMapOf("09:00 AM" to fakeSessions),
-                        sessionStatus = ResultStatus.Success,
-                    ),
-                selectedEventDate = EventDate("1", day = 1),
-                isRefreshing = false,
-                currentSelections = persistentListOf(),
-                navigateToSessionDetails = {},
-                onEvent = {},
-            )
+    fun sessions() = captureScreen("screens/sessions") { Sessions() }
+
+    /** The column count and the gutter cap, at every size the app has to be right on. */
+    @Test
+    fun `sessions across form factors`() = captureFormFactors("form_factors/sessions") { Sessions() }
+
+    /** A detail as a pane: no app bar, no back arrow, its own status bar scrim. */
+    @Test
+    fun `session details as a pane across form factors`() =
+        captureFormFactors("form_factors/session_details_pane") {
+            SessionDetails(showTopBar = false)
         }
 
     @Test
-    fun `session details`() =
-        captureScreen("screens/session_details") {
-            SessionDetailsScreen(
-                uiState =
-                    SessionDetailsUiState.Success(
-                        data =
-                            SessionDetailsPresentationModel(
-                                id = "1",
-                                title = "Welcome at DroidconKE",
-                                description =
-                                    "Welcome to DroidconKE. We are excited to have you here " +
-                                        "and hope you have a great time.",
-                                venue = "Main Hall",
-                                startTime = "10:00",
-                                endTime = "11:00",
-                                amOrPm = "AM",
-                                isStarred = false,
-                                format = "Keynote",
-                                level = "Beginner",
-                                sessionImageUrl = "",
-                                timeSlot = "10:00 - 11:00 AM",
-                                speakers =
-                                    listOf(
-                                        SessionDetailsSpeakerPresentationModel(
-                                            name = "Todd Jason",
-                                            speakerImage = "",
-                                            twitterHandle = "",
-                                        ),
-                                    ),
+    fun `session details`() = captureScreen("screens/session_details") { SessionDetails() }
+}
+
+@Composable
+private fun Sessions() {
+    SessionsScreen(
+        sessionsUiState =
+            SessionsUiState(
+                sessions = persistentMapOf("09:00 AM" to fakeSessions),
+                sessionStatus = ResultStatus.Success,
+            ),
+        selectedEventDate = EventDate("1", day = 1),
+        isRefreshing = false,
+        currentSelections = persistentListOf(),
+        navigateToSessionDetails = {},
+        onEvent = {},
+    )
+}
+
+@Composable
+private fun SessionDetails(showTopBar: Boolean = true) {
+    SessionDetailsScreen(
+        uiState =
+            SessionDetailsUiState.Success(
+                data =
+                    SessionDetailsPresentationModel(
+                        id = "1",
+                        title = "Welcome at DroidconKE",
+                        description =
+                            "Welcome to DroidconKE. We are excited to have you here " +
+                                "and hope you have a great time.",
+                        venue = "Main Hall",
+                        startTime = "10:00",
+                        endTime = "11:00",
+                        amOrPm = "AM",
+                        isStarred = false,
+                        format = "Keynote",
+                        level = "Beginner",
+                        sessionImageUrl = "",
+                        timeSlot = "10:00 - 11:00 AM",
+                        speakers =
+                            listOf(
+                                SessionDetailsSpeakerPresentationModel(
+                                    name = "Todd Jason",
+                                    speakerImage = "",
+                                    twitterHandle = "",
+                                ),
                             ),
                     ),
-                bookmarkSession = {},
-                unBookmarkSession = {},
-                onNavigationIconClick = {},
-            )
-        }
+            ),
+        bookmarkSession = {},
+        unBookmarkSession = {},
+        onNavigationIconClick = {},
+        showTopBar = showTopBar,
+    )
 }

@@ -23,12 +23,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -60,8 +64,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.common.insets.StatusBarProtection
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -89,6 +95,7 @@ fun SpeakerDetailsRoute(
     speakersDetailsScreenViewModel: SpeakerDetailsScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit = {},
     navigateToSessionDetails: (String) -> Unit = {},
+    showTopBar: Boolean = true,
 ) {
     val uiState by speakersDetailsScreenViewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(key1 = name) {
@@ -100,6 +107,7 @@ fun SpeakerDetailsRoute(
         navigateBack = navigateBack,
         navigateToSessionDetails = navigateToSessionDetails,
         onBookmark = speakersDetailsScreenViewModel::onBookmark,
+        showTopBar = showTopBar,
     )
 }
 
@@ -109,37 +117,48 @@ internal fun SpeakerDetailsScreen(
     navigateBack: () -> Unit = {},
     navigateToSessionDetails: (String) -> Unit = {},
     onBookmark: (String) -> Unit = {},
+    showTopBar: Boolean = true,
 ) {
     Scaffold(
+        // As a detail pane the bar says "Speaker details" above a screen whose first line is
+        // the speaker's name, and offers a back arrow out of a list that never went away.
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    ChaiBodyLargeBold(
-                        bodyText = stringResource(id = R.string.speaker_details_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                            contentDescription = stringResource(R.string.back_arrow_icon_description),
-                            tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+            if (showTopBar) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        ChaiBodyLargeBold(
+                            bodyText = stringResource(id = R.string.speaker_details_label),
+                            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                         )
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                        navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                    ),
-            )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) {
+                            Icon(
+                                painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                                contentDescription = stringResource(R.string.back_arrow_icon_description),
+                                tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                            )
+                        }
+                    },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                            navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                        ),
+                )
+            }
         },
         containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
+        ) {
             when (uiState) {
                 is SpeakerDetailsScreenUiState.SpeakerNotFound ->
                     CenteredMessage(uiState.message)
@@ -155,9 +174,13 @@ internal fun SpeakerDetailsScreen(
                         uiState = uiState,
                         navigateToSessionDetails = navigateToSessionDetails,
                         onBookmark = onBookmark,
+                        drawsUnderStatusBar = !showTopBar,
                     )
             }
         }
+    }
+    if (!showTopBar) {
+        StatusBarProtection()
     }
 }
 
@@ -167,6 +190,7 @@ private fun SpeakerDetailsContent(
     navigateToSessionDetails: (String) -> Unit,
     onBookmark: (String) -> Unit,
     modifier: Modifier = Modifier,
+    drawsUnderStatusBar: Boolean = false,
 ) {
     val speaker = uiState.speaker
 
@@ -174,8 +198,13 @@ private fun SpeakerDetailsContent(
         modifier =
             modifier
                 .fillMaxSize()
+                .readablePaneWidth()
                 .verticalScroll(rememberScrollState()),
     ) {
+        // Inside the scroll: the name starts below the clock and then passes under it.
+        if (drawsUnderStatusBar) {
+            Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
+        }
         HorizontalDivider(color = MaterialTheme.chaiColorsPalette.cardsBorderColor)
 
         Column(modifier = Modifier.padding(horizontal = ScreenPadding)) {

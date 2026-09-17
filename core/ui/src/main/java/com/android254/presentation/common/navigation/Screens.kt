@@ -45,6 +45,16 @@ sealed interface Screens : NavKey {
     @Serializable
     data object FeedBack : Screens
 
+    /**
+     * The "happening now" supporting pane.
+     *
+     * Never pushed by [NavigationController]. It is appended to the displayed entries by
+     * [toEntries] when the window is wide enough to hold a supporting pane, so it can appear and
+     * disappear with the window without a back stack entry appearing and disappearing with it.
+     */
+    @Serializable
+    data object HappeningNow : Screens
+
     @Serializable
     data class SessionDetails(
         val sessionId: String,

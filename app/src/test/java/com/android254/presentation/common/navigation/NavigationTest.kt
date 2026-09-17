@@ -66,7 +66,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -102,7 +101,6 @@ class NavigationTest {
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
-                            updateBottomBarState = {},
                             entryProvider = fakeEntryProvider(),
                         )
 
@@ -149,7 +147,6 @@ class NavigationTest {
                         Navigation(
                             navController = navController!!,
                             navigationState = it,
-                            updateBottomBarState = {},
                             entryProvider = fakeEntryProvider(),
                         )
 
@@ -192,7 +189,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -233,7 +229,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -273,7 +268,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -309,7 +303,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -348,7 +341,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -398,7 +390,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -442,7 +433,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }
@@ -511,7 +501,6 @@ class NavigationTest {
                     Navigation(
                         navController = navController!!,
                         navigationState = it,
-                        updateBottomBarState = {},
                         entryProvider = fakeEntryProvider(),
                     )
                 }

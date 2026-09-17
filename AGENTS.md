@@ -28,9 +28,12 @@ records why neither device on hand can produce the baseline-profile comparison.
 ./gradlew :app:generateBaselineProfile        # regenerate the shipped ART profile
 ```
 
-Screenshot goldens live in `src/test/screenshots/`, outside Gradle's tracked outputs. After
-changing anything visual, record with `--rerun-tasks` — an up-to-date test task will otherwise
-leave stale images on disk:
+Screenshot goldens live in `src/test/screenshots/`, in two families: `screens/` is the
+light / dark / 200 %-font matrix at phone size, and `form_factors/` is one image per window
+size (phone, foldable, tablet, desktop) from `ChaiScreenshotTest.captureFormFactors`, which
+overrides the *window* rather than the device so `currentWindowAdaptiveInfo` really sees it.
+They are outside Gradle's tracked outputs, so after changing anything visual, record with
+`--rerun-tasks` — an up-to-date test task will otherwise leave stale images on disk:
 
 ```bash
 ./gradlew recordRoborazziDebug --rerun-tasks   # regenerate
@@ -166,7 +169,8 @@ module first.
 
 ## Stack
 
-Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.08.00, Material 3), **Navigation 3**,
+Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.09.00, Material 3 + material3-adaptive),
+**Navigation 3**,
 Hilt + KSP, Ktor 3, Room 2.8, WorkManager, Firebase (Crashlytics, Remote Config, Messaging,
 Perf). `compileSdk`/`targetSdk` 37, `minSdk` 26.
 
@@ -226,16 +230,37 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   roles). Do not import `ChaiBlue` and friends outside `chai/colors`.
 - **Insets are owned, not inherited.** The app is edge-to-edge, so exactly one thing pays for
   each system bar. An app bar takes the top via `DroidconWindowInsets.appBar`, applied after
-  its background so the background reaches under the status bar. `MainScreen` takes the bottom
-  bar and consumes it. Every other `Scaffold` declares what is left with `contentWindowInsets =
-  DroidconWindowInsets.screenContent`, which covers the keyboard too — `safeDrawing` includes
-  it. `WindowInsetsInvariantsTest` fails on a `Scaffold` that declares nothing, because the
-  default is almost never right for a nested one. Status bar *icons* come from the theme via
-  `enableEdgeToEdge()` and need no help — unless the screen draws its own artwork up there, as
-  the feedback hero does, in which case `StatusBarIconAppearance` overrides them and restores
-  the previous value on the way out. Never set it from a theme or a shared component — what
-  made the old `ChaiTheme` `SideEffect` wrong was being global and permanent, not touching the
-  window — and `WindowInsetsInvariantsTest` fails on any call to it from `:core:`.
+  its background so the background reaches under the status bar. The root
+  `NavigationSuiteScaffold` takes whichever side its navigation component covers — the bottom
+  under a bar, the start under a rail or drawer, nothing while the navigation is hidden — and
+  consumes exactly that. Every other `Scaffold` declares what is left with
+  `contentWindowInsets = DroidconWindowInsets.screenContent`, which covers the keyboard too —
+  `safeDrawing` includes it. The one other owner is the live-sessions rail: beside a rail it is
+  the bottom-most element, so it pays the bottom inset and `MainScreen` consumes it for the
+  content above.
+  **Insets reach a scrolling list through `contentPadding`, never as padding on its parent** —
+  padding the parent clips the list and stops it scrolling behind the system bars. A container
+  that does pad by the insets and then scrolls must `consumeWindowInsets` them as well.
+  `WindowInsetsInvariantsTest` fails on a `Scaffold` that declares nothing, on a lazy list that
+  takes no `contentPadding`, on a padded scroller that consumes nothing, and on any
+  `safeDrawingPadding` — which on an adaptive scaffold silently ends edge-to-edge.
+  Status bar *icons* come from the theme via `enableEdgeToEdge()` and need no help — unless the
+  screen draws its own artwork up there, as the feedback hero does, in which case
+  `StatusBarIconAppearance` overrides them and restores the previous value on the way out.
+  Never set it from a theme or a shared component — what made the old `ChaiTheme` `SideEffect`
+  wrong was being global and permanent, not touching the window — and
+  `WindowInsetsInvariantsTest` fails on any call to it from `:core:`. A screen with no app bar
+  at all, which is what a detail becomes inside a pane, draws `StatusBarProtection` instead.
+- **Layout decisions read the window, never the configuration.** `rememberDroidconWindowSize()`
+  and `rememberIsMultiPaneWindow()` in `:core:ui` are the only two answers a screen needs;
+  `Configuration.screenWidthDp` and `LocalConfiguration.orientation` are wrong in multi-window,
+  wrong on a foldable mid-fold and wrong in a resizable window, and `AdaptiveInvariantsTest`
+  fails on both. **Multi-pane layouts are Navigation 3 scenes** — `ListDetailSceneStrategy` and
+  `SupportingPaneSceneStrategy` over entry metadata. `ListDetailPaneScaffold` and friends are
+  forbidden: each carries its own navigator, which is a second back stack competing with
+  `NavigationController.goBack()`. The navigation area is `NavigationSuiteScaffold`'s, and its
+  visibility is derived by `shouldShowNavigation(route, isMultiPaneWindow)` — never pushed at
+  it as a side effect of composing.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
   reorders the list.
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a
@@ -296,8 +321,12 @@ read `MaterialTheme.colorScheme`. Prefer the M3 role in new code; see §3.5 for 
 
 ## Before you finish
 
-- Tests that fail without your change. A test that passes both ways tests nothing.
-- Checked in dark mode, at 200% font scale, and on a tablet or in split-screen.
+- Tests that fail without your change. A test that passes both ways tests nothing — check it by
+  mutating the code, not by trusting a green run.
+- Checked in dark mode, at 200% font scale, and at a tablet width. `wm size`/`wm density` on an
+  emulator walks every breakpoint without a tablet on the desk; a physical OPPO/ColorOS device
+  will refuse both, because the shell has neither `WRITE_SETTINGS` nor `WRITE_SECURE_SETTINGS`.
+- Anything visual: add `@FormFactorPreviews` and record `captureFormFactors` goldens.
 - No new dependency without a reason in the PR description.
 - Verified on a device if you touched date handling, Room, or anything on the sync path.
 

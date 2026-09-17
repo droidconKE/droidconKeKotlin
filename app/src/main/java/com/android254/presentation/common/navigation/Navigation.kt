@@ -22,18 +22,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.scene.SceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun Navigation(
     navController: NavigationController,
     navigationState: NavigationState,
-    updateBottomBarState: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     onActionClicked: () -> Unit = {},
+    supportingRoute: NavKey? = null,
+    sceneStrategies: ImmutableList<SceneStrategy<NavKey>> = rememberDroidconSceneStrategies(),
     entryProvider: (NavKey) -> NavEntry<NavKey> =
         droidconEntryProvider(
-            updateBottomBarState,
             navController,
             onActionClicked,
         ),
@@ -57,7 +59,8 @@ fun Navigation(
         CompositionLocalProvider(LocalSharedTransitionScope provides sharedScope) {
             NavDisplay(
                 modifier = Modifier.testTag("navigation_display"),
-                entries = navigationState.toEntries(entryProvider),
+                entries = navigationState.toEntries(entryProvider, supportingRoute),
+                sceneStrategies = sceneStrategies,
                 transitionSpec = { transitionSpec },
                 popTransitionSpec = { backTransitionSpec },
                 predictivePopTransitionSpec = { backTransitionSpec },

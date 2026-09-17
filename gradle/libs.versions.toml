@@ -97,6 +97,10 @@ coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
 coil-test = { module = "io.coil-kt:coil-test", version.ref = "coil" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
 compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
+compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
+compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
+compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util" }
@@ -189,6 +193,7 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 # Applied to every Compose module, chai included — keep feature deps per-module.
 compose = ["compose-material3", "compose-materialIcons", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-preview-customview", "compose-preview-customview-poolingcontainer"]
 coil = ["coil-compose", "coil-svg"]
+adaptive = ["compose-material3-adaptive", "compose-material3-adaptive-layout"]
 navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]
 serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 lifecycle = ["lifecycle-livedataKtx", "lifecycle-runtimeKtx"]

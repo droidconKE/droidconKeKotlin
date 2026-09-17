@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.speakers
 
+import androidx.compose.runtime.Composable
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.view.SpeakerDetailsScreen
@@ -59,6 +60,17 @@ class SpeakersScreenshotTest : ChaiScreenshotTest() {
         captureScreen("screens/speakers") {
             SpeakersScreen(uiState = SpeakersScreenUiState.Success(speakers = speakers))
         }
+
+    /** The adaptive column count, and the cap that stops it stretching across a desktop. */
+    @Test
+    fun `speakers across form factors`() =
+        captureFormFactors("form_factors/speakers") {
+            SpeakersScreen(uiState = SpeakersScreenUiState.Success(speakers = speakers))
+        }
+
+    /** A speaker as a pane: no app bar, no back arrow. */
+    @Test
+    fun `speaker details as a pane across form factors`() = captureFormFactors("form_factors/speaker_details_pane") { SpeakerDetails(speaker) }
 
     @Test
     fun `speakers searching`() =
@@ -108,4 +120,16 @@ class SpeakersScreenshotTest : ChaiScreenshotTest() {
                 uiState = SpeakerDetailsScreenUiState.Success(speaker = speaker),
             )
         }
+}
+
+@Composable
+private fun SpeakerDetails(speaker: SpeakerUI) {
+    SpeakerDetailsScreen(
+        uiState =
+            SpeakerDetailsScreenUiState.Success(
+                speaker = speaker,
+                sessions = fakeSessions.take(2).toImmutableList(),
+            ),
+        showTopBar = false,
+    )
 }

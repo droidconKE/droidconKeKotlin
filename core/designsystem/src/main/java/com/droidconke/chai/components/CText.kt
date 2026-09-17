@@ -139,13 +139,14 @@ fun ChaiBodyMedium(
     bodyText: String,
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
+    textAlign: TextAlign = TextAlign.Start,
     maxLines: Int = Int.MAX_VALUE,
 ) = Text(
     text = bodyText,
     modifier = modifier,
     color = textColor,
     style = MaterialTheme.typography.bodyMedium,
-    textAlign = TextAlign.Start,
+    textAlign = textAlign,
     maxLines = maxLines,
     overflow = TextOverflow.Ellipsis,
 )

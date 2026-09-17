@@ -214,19 +214,45 @@ are no route strings. A destination is a `@Serializable` object or class impleme
 `NavKey`, and the back stack is a list of them that the app owns.
 
 ```
-presentation/common/navigation/
-├── Screens.kt              the NavKeys
-├── Navigation.kt           the NavDisplay setup
-├── NavigationController.kt back stack operations
-├── NavigationState.kt      the back stack itself
-├── DroidconEntryProvider.kt key -> screen wiring
-├── TopLevelDestination.kt  bottom bar entries: icon, label, key
-└── NavigationAnimation.kt  transitions
+core/ui   common/navigation/
+├── Screens.kt                the NavKeys
+├── NavigationController.kt   back stack operations
+├── NavigationState.kt        the back stacks, and the entry list NavDisplay renders
+├── NavigationVisibility.kt   which routes show the navigation area, and which take a pane
+├── TopLevelDestination.kt    navigation entries: icon, label, key
+└── NavigationAnimation.kt    transitions
+
+app       common/navigation/
+├── Navigation.kt               the NavDisplay setup
+├── DroidconEntryProvider.kt    key -> screen wiring, and each key's pane role
+├── DroidconSceneStrategies.kt  the SceneStrategies that turn those roles into panes
+└── DroidconNavigationSuite.kt  the navigation items, colours and drawer header
 ```
 
 **Keys carry no display metadata.** They are serialized into `SavedState`, so they must be
 immutable and must never hold a resource ID — a resource ID is not stable across builds.
 Icons and labels belong in `TopLevelDestination`.
+
+**Multi-pane layouts are scenes, not scaffolds.** A `NavEntry` carries metadata saying whether
+it is a list, a detail, a main pane or a supporting pane, and `ListDetailSceneStrategy` /
+`SupportingPaneSceneStrategy` read that metadata plus the window and decide whether two entries
+can be on screen at once. So nothing in a screen branches on window size: the same entry is a
+full screen on a phone and a pane on a tablet.
+
+`ListDetailPaneScaffold` and `NavigableListDetailPaneScaffold` are **forbidden**, and
+`AdaptiveInvariantsTest` fails the build on them. Each owns a `ThreePaneScaffoldNavigator` —
+a second back stack, competing with the one `NavigationController` already keeps per top-level
+destination.
+
+One wrinkle worth knowing: the Material list-detail strategy expands a second pane whenever the
+window has room and fills the list pane with whatever list entry it can find. Reached from
+Home, a session detail has no list behind it, so `ListPaneRequiredSceneStrategy` declines the
+scene and the detail takes the whole window with its app bar intact.
+
+`Screens.HappeningNow` is the exception to "the back stack is the truth": it is appended to the
+displayed entries by `NavigationState.toEntries` when the window is wide enough, never pushed.
+It appears and disappears with the window rather than with a navigation event, and `goBack()`
+never sees it.
 
 ---
 
@@ -240,15 +266,27 @@ The rules that matter:
 
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a
   `remember` — that is how the UI and the data end up disagreeing after a rotation.
+- **Layout reads the window, not the configuration.** `rememberDroidconWindowSize()` gives
+  Compact / Medium / Expanded and `rememberIsMultiPaneWindow()` answers "is there room for two
+  panes", derived from the same directive the scene strategies use so the two cannot disagree.
+  `Configuration.screenWidthDp` and `LocalConfiguration.orientation` are wrong in multi-window,
+  wrong on a foldable mid-fold and wrong in a resizable window; `AdaptiveInvariantsTest` fails
+  on either. Single-pane content is capped at 840 dp and centred by
+  `Modifier.readablePaneWidth()` — 20 dp gutters stretched across a 1600 dp window are not a
+  layout.
 - **Insets are owned, not inherited.** Screens nest `Scaffold`s — the composition root has one
-  for the bottom bar, each screen has one for its top bar — and a nested `Scaffold` left on its
-  defaults will either double-pad an inset or drop it. So the ownership is explicit: the app
-  bar pays for the top (`DroidconWindowInsets.appBar`), the root pays for the bottom bar and
-  *consumes* it, and each screen declares the remainder
-  (`DroidconWindowInsets.screenContent`). Because the root consumes what it pays for, that one
-  declaration is right whether or not the screen keeps the bottom bar. A root that consumed
-  everything, which is what this was until §3.4, leaves the edge-to-edge opt-in doing nothing:
-  no screen can reach the status bar.
+  for the navigation area, each screen has one for its top bar — and a nested `Scaffold` left
+  on its defaults will either double-pad an inset or drop it. So the ownership is explicit: the
+  app bar pays for the top (`DroidconWindowInsets.appBar`); the root `NavigationSuiteScaffold`
+  pays for whichever side its navigation component covers and *consumes exactly that* — the
+  bottom under a bar, the start under a rail or drawer, nothing while it is hidden; and each
+  screen declares the remainder (`DroidconWindowInsets.screenContent`). Because the root
+  consumes what it pays for, that one declaration is right at every window size. A root that
+  consumed everything, which is what this was until §3.4, leaves the edge-to-edge opt-in doing
+  nothing: no screen can reach the status bar.
+  Insets reach a scrolling list through its `contentPadding`; padding the list's parent clips
+  it and stops its content scrolling behind the system bars. A container that pads by the
+  insets *and* scrolls must consume them too.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps the moment a sync
   reorders the list.
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.

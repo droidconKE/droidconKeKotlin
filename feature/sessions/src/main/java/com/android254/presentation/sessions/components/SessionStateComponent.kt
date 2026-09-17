@@ -28,10 +28,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -81,6 +83,7 @@ fun SessionsStateComponent(
     isSessionLayoutList: Boolean,
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -91,7 +94,8 @@ fun SessionsStateComponent(
                 Column(
                     modifier =
                         modifier
-                            .fillMaxSize(),
+                            .fillMaxSize()
+                            .padding(contentPadding),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
@@ -112,6 +116,7 @@ fun SessionsStateComponent(
 
             is ResultStatus.Error -> {
                 SessionsErrorComponent(
+                    modifier = Modifier.padding(contentPadding),
                     errorMessage = sessionsUiState.sessionStatus.errorMessage,
                     retry = {
                         onEvent(SessionsIntentHandler.Retry)
@@ -123,11 +128,13 @@ fun SessionsStateComponent(
                 SessionLoadingComponent(
                     sessionScreenState = sessionScreenState,
                     isSessionLayoutList = isSessionLayoutList,
+                    contentPadding = contentPadding,
                 )
             }
 
             ResultStatus.Success -> {
                 SessionListComponent(
+                    contentPadding = contentPadding,
                     isRefreshing = isRefreshing,
                     pullToRefreshState = pullToRefreshState,
                     sessions = sessionsUiState.sessions,
@@ -151,8 +158,9 @@ fun SessionListComponent(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
-    val listState = rememberLazyListState()
+    val listState = rememberLazyGridState()
 
     val flatSessions: List<SessionPresentationModel> =
         remember(sessions) {
@@ -172,15 +180,20 @@ fun SessionListComponent(
         modifier = modifier,
         state = pullToRefreshState,
     ) {
-        LazyColumn(
+        LazyVerticalGrid(
+            // One column on a phone, more as the window grows. The minimum is the width at
+            // which a card still shows its title, its tags and its speakers without wrapping
+            // into a stack of single words.
+            columns = GridCells.Adaptive(minSize = SessionColumnMinWidth),
             modifier = Modifier.testTag("sessions_list"),
             state = listState,
-            contentPadding = PaddingValues(bottom = 32.dp),
+            contentPadding = contentPadding,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-
+            item(key = "sessions_title", span = { GridItemSpan(maxLineSpan) }) {
                 ChaiSubTitle(
+                    modifier = Modifier.padding(top = 20.dp),
                     titleText =
                         when (sessionScreenState) {
                             SessionScreenState.ALL -> stringResource(R.string.all_sessions)
@@ -188,7 +201,6 @@ fun SessionListComponent(
                         },
                     titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
                 )
-                Spacer(modifier = Modifier.height(20.dp))
             }
             if (isSessionLayoutList) {
                 sessions.entries.forEach { entry ->
@@ -208,7 +220,6 @@ fun SessionListComponent(
                                 onEvent(SessionsIntentHandler.BookmarkSession(it))
                             },
                         )
-                        Spacer(Modifier.height(16.dp))
                     }
                 }
             } else {
@@ -220,13 +231,14 @@ fun SessionListComponent(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
                     )
-
-                    Spacer(Modifier.height(16.dp))
                 }
             }
         }
     }
 }
+
+/** A session card narrower than this stops being legible before it stops fitting. */
+private val SessionColumnMinWidth = 360.dp
 
 @Composable
 fun TimeHeader(time: String) {

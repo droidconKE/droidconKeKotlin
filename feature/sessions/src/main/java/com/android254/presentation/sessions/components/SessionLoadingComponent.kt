@@ -40,11 +40,14 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionLoadingComponent(
+    modifier: Modifier = Modifier,
     sessionScreenState: SessionScreenState = SessionScreenState.ALL,
     isSessionLayoutList: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(bottom = 32.dp),
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(bottom = 32.dp),
+        modifier = modifier,
+        contentPadding = contentPadding,
     ) {
         item {
             Spacer(modifier = Modifier.height(20.dp))

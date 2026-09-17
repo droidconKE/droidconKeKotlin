@@ -5,6 +5,24 @@
 //   ./gradlew :ui:stabilityDump
 
 @Composable
+public fun com.android254.presentation.common.adaptive.rememberDroidconWindowSize(): com.android254.presentation.common.adaptive.DroidconWindowSize
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow(): kotlin.Boolean
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.adaptive.rememberShowsAppBarLogo(): kotlin.Boolean
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 internal fun com.android254.presentation.common.components.AnimatedModalBottomSheetTransition(visible: kotlin.Boolean, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.animation.AnimatedVisibilityScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -30,6 +48,15 @@ private fun com.android254.presentation.common.components.ButtonContent(buttonTe
     - contentColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
+public fun com.android254.presentation.common.components.DetailPanePlaceholder(message: kotlin.String, icon: androidx.compose.ui.graphics.painter.Painter, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - message: STABLE (String is immutable)
+    - icon: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.common.components.DroidConTextField(label: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
@@ -38,25 +65,27 @@ public fun com.android254.presentation.common.components.DroidConTextField(label
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBar(modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBar(modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
     - windowInsets: STABLE (marked @Stable or @Immutable)
+    - showLogo: STABLE (primitive type)
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onButtonClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - windowInsets: STABLE (marked @Stable or @Immutable)
+    - showLogo: STABLE (primitive type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFilter(isListActive: kotlin.Boolean, onListIconClick: kotlin.Function0<kotlin.Unit>, onAgendaIconClick: kotlin.Function0<kotlin.Unit>, isFilterActive: kotlin.Boolean, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, onFilterButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFilter(isListActive: kotlin.Boolean, onListIconClick: kotlin.Function0<kotlin.Unit>, onAgendaIconClick: kotlin.Function0<kotlin.Unit>, isFilterActive: kotlin.Boolean, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean, onFilterButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -66,6 +95,7 @@ public fun com.android254.presentation.common.components.DroidconAppBarWithFilte
     - isFilterActive: STABLE (primitive type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - windowInsets: STABLE (marked @Stable or @Immutable)
+    - showLogo: STABLE (primitive type)
     - onFilterButtonClick: STABLE (function type)
 
 @Composable
@@ -256,6 +286,23 @@ public fun com.android254.presentation.common.insets.StatusBarIconAppearance(dar
     - darkIcons: STABLE (primitive type)
 
 @Composable
+public fun com.android254.presentation.common.insets.StatusBarProtection(modifier: androidx.compose.ui.Modifier, color: androidx.compose.ui.graphics.Color): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - color: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.insets.plus(horizontal: androidx.compose.ui.unit.Dp, top: androidx.compose.ui.unit.Dp, bottom: androidx.compose.ui.unit.Dp): androidx.compose.foundation.layout.PaddingValues
+  skippable: false
+  restartable: false
+  params:
+    - horizontal: STABLE (marked @Stable or @Immutable)
+    - top: STABLE (marked @Stable or @Immutable)
+    - bottom: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.common.navigation.rememberNavigationState(startRoute: androidx.navigation3.runtime.NavKey, topLevelRoutes: kotlinx.collections.immutable.ImmutableSet<androidx.navigation3.runtime.NavKey>): com.android254.presentation.common.navigation.NavigationState
   skippable: false
   restartable: false
@@ -317,11 +364,12 @@ public fun com.android254.presentation.common.navigation.speakerSharedName(speak
     - speakerName: STABLE (String is immutable)
 
 @Composable
-public fun com.android254.presentation.common.navigation.toEntries(entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
+public fun com.android254.presentation.common.navigation.toEntries(entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>, supportingRoute: androidx.navigation3.runtime.NavKey?): androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
   skippable: false
   restartable: false
   params:
     - entryProvider: STABLE (function type)
+    - supportingRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
 
 @Composable
 private fun com.android254.presentation.common.stepper.IconBox(icon: androidx.compose.ui.graphics.vector.ImageVector, accentColor: androidx.compose.ui.graphics.Color, sizeInt: kotlin.Int, modifier: androidx.compose.ui.Modifier, intensity: com.android254.presentation.common.stepper.Intensity): kotlin.Unit
