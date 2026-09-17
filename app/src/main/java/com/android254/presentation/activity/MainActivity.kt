@@ -81,10 +81,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
-        // enableEdgeToEdge() turns contrast enforcement on, which paints the system's own
-        // translucent scrim behind three-button navigation. The navigation bar and rail are
-        // ours and already draw under it, so the scrim is a second, differently coloured bar
-        // on top of the one we drew.
+        // enableEdgeToEdge() turns contrast enforcement on, which paints a second, differently
+        // coloured bar on top of the one we already drew under three-button navigation.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -161,8 +159,7 @@ fun MainScreen(
     val currentRoute = navigationState.currentRoute
     val showNavigation = shouldShowNavigation(currentRoute, isMultiPaneWindow)
 
-    // The navigation area animates in and out rather than being added and removed, so the
-    // content does not jump a bar's height on the way to a detail.
+    // Animated rather than added and removed, so content does not jump on the way to a detail.
     val navigationSuiteState = rememberNavigationSuiteScaffoldState()
     LaunchedEffect(showNavigation) {
         if (showNavigation) navigationSuiteState.show() else navigationSuiteState.hide()
@@ -170,8 +167,7 @@ fun MainScreen(
 
     val liveSessions = rememberLiveSessions(sessionsState)
 
-    // Two presentations of the same sessions: a supporting pane where there is a column to
-    // spare, the horizontal rail everywhere else.
+    // Two presentations of the same sessions: a pane where there is a column, a rail elsewhere.
     val showSupportingPane =
         shouldShowSupportingPane(
             route = currentRoute,
@@ -205,17 +201,14 @@ fun MainScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Navigation(
-                // `NavDisplay` decides whether to intercept back from the entries it is given,
-                // and at expanded widths those include the standing supporting pane — so it
-                // intercepts on the start destination too, where there is nothing to pop.
-                // Without this, back on a tablet's landing screen would do nothing at all.
+                // NavDisplay intercepts back on the start destination too once the supporting
+                // pane is in its entry list, so an unhandled press has to reach the system.
                 onBack = { if (!navController.goBack()) activity?.finish() },
                 modifier =
                     Modifier
                         .weight(1f)
                         .then(
-                            // The rail below is the bottom-most thing on screen and pays for
-                            // the bottom inset, so the screens above must not pay it again.
+                            // The rail below pays the bottom inset, so the screens must not.
                             if (showLiveSessionsRail) {
                                 Modifier.consumeWindowInsets(
                                     WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),

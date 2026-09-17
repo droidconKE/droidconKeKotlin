@@ -38,13 +38,7 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import ke.droidcon.kotlin.core.ui.R
 
-/**
- * The navigation component for the current window.
- *
- * [showsDrawer] comes from `rememberShowsNavigationDrawer()`, which is the same value the app
- * bars use to decide whether to drop their logo — so the drawer cannot take the branding
- * without the bars giving it up, and vice versa.
- */
+/** [showsDrawer] is the same value the app bars use, so the logo cannot end up in neither. */
 fun navigationSuiteTypeFor(
     windowSize: DroidconWindowSize,
     showsDrawer: Boolean,
@@ -55,12 +49,7 @@ fun navigationSuiteTypeFor(
         else -> NavigationSuiteType.NavigationRail
     }
 
-/**
- * The chai palette, applied to whichever navigation component the window ends up with.
- *
- * Not wrapped in `remember`: `NavigationSuiteDefaults.colors` is itself composable, because the
- * defaults it fills in are read from the theme.
- */
+/** The chai palette, for whichever navigation component the window ends up with. */
 @Composable
 fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     val container = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor
@@ -72,12 +61,7 @@ fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     )
 }
 
-/**
- * The four destinations, in the shape the current navigation component wants them.
- *
- * [NavigationSuiteItem] needs the type too: it is what decides whether an item draws as a bar
- * item, a rail item or a drawer row.
- */
+/** The type decides whether an item draws as a bar item, a rail item or a drawer row. */
 @Composable
 fun DroidconNavigationItems(
     currentTopLevelRoute: NavKey,
@@ -125,13 +109,7 @@ fun DroidconNavigationItems(
     }
 }
 
-/**
- * The drawer's header.
- *
- * Goes in the suite's primary-action slot, which is the first thing inside the drawer sheet and
- * is not drawn at all for a bar or a rail. The logo lives here at drawer sizes and the app bars
- * drop theirs, so it appears once.
- */
+/** The drawer's header, in the primary-action slot, which only the drawer draws. */
 @Composable
 fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
     Row(

@@ -28,50 +28,25 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Who pays for which system inset. The split is what lets a screen draw under the status bar at
- * all: a root that consumes the top, as this one did, leaves the edge-to-edge opt-in inert.
+ * Who pays for which system inset.
  *
- * The root is `MainScreen`'s `NavigationSuiteScaffold`. It pays for whichever side its own
- * navigation component covers and **consumes exactly that side** — the bottom under a navigation
- * bar, the start under a rail or drawer, and nothing at all while the navigation is hidden. So
- * the same two declarations below are correct at every window size; what they resolve to moves
- * with the navigation component rather than needing a per-size branch.
- *
- * The one thing the root does not own is the bottom of the content area when something else is
- * sitting there: at rail and drawer sizes the live-sessions rail is the bottom-most element, so
- * it pads for the bottom inset and consumes it on the content's behalf.
+ * The root `NavigationSuiteScaffold` pays for whichever side its navigation component covers and
+ * consumes exactly that, so the two declarations below hold at every window size. The one side
+ * it does not own is the bottom when the live-sessions rail is there, which pays it instead.
  */
 object DroidconWindowInsets {
-    /**
-     * The app bar's share, so its background reaches the status bar instead of stopping below it.
-     *
-     * The horizontal side is genuinely shared: beside a navigation rail the start inset is
-     * already consumed, so this resolves to the end cutout only, which is what it should be.
-     */
+    /** The app bar's share, so its background reaches the status bar rather than stopping below it. */
     val appBar: WindowInsets
         @Composable
         get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
 
-    /**
-     * A screen's share, for `contentWindowInsets`. No top — its app bar took that.
-     *
-     * The bottom is zero under a navigation bar or the live-sessions rail, because both consume
-     * what they pay for, and is the navigation bar or the keyboard when neither is there — which
-     * is the ordinary case beside a rail or a drawer, and on the three routes that hide the
-     * navigation entirely.
-     */
+    /** A screen's share, for `contentWindowInsets`. No top: its app bar took that. */
     val screenContent: WindowInsets
         @Composable
         get() = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
 }
 
-/**
- * This padding with a screen's own gutters added on top.
- *
- * A lazy list has one `contentPadding` and two things to put in it — the insets it must let its
- * content scroll under, and the gutters the design asks for. Adding them is the only way to keep
- * both; picking one is how the first item ends up under the status bar or hard against the edge.
- */
+/** Insets plus the design's gutters: a lazy list has one `contentPadding` and needs both. */
 @Composable
 fun PaddingValues.plus(
     horizontal: Dp = 0.dp,

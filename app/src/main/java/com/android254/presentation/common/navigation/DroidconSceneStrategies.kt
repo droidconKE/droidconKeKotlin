@@ -37,18 +37,11 @@ enum class DroidconPaneScene {
     Speakers,
 }
 
-/**
- * The scene strategies, in the order `NavDisplay` should try them.
- *
- * List-detail comes first: with a session open beside its list, the right-hand column belongs to
- * the session, not to what else is on right now.
- */
+/** List-detail first: with a session open, the right-hand column belongs to it. */
 @Composable
 fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
-    // One entry per back press. The Material default pops until the *scaffold value* changes,
-    // and list-beside-detail has the same scaffold value as list-beside-placeholder — so back
-    // out of a session would carry on past the sessions list and leave the tab entirely. Here
-    // the list is a tab root rather than a sibling entry, which is what makes that wrong.
+    // One entry per back press: the Material default would pop past the list and out of the tab,
+    // because it assumes the list is a sibling entry rather than a tab root.
     val listDetail =
         rememberListDetailSceneStrategy<NavKey>(
             backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
@@ -62,15 +55,9 @@ fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
 /**
  * Declines the list-detail scene when the list it would draw is not on the back stack.
  *
- * `ListDetailSceneStrategy` expands a second pane whenever the window has room for one, and
- * fills the list pane with whatever list entry it can find — nothing, if the detail was opened
- * from somewhere else. Tapping a session on Home pushes only the detail, and the result on a
- * tablet is a real detail beside an empty column.
- *
- * Declining hands the entries to the next strategy, which is how the detail ends up full-width
- * with the navigation drawer still beside it. The alternative — pushing the list first so the
- * pane has something to show — would change what back does on a phone, where tapping a session
- * on Home and pressing back has always returned to Home.
+ * The Material strategy expands a second pane whenever there is room and fills it with whatever
+ * list entry it can find — nothing, for a session opened from Home. Declining hands the entries
+ * on, so the detail takes the window with its back arrow intact.
  */
 internal class ListPaneRequiredSceneStrategy<T : Any>(
     private val delegate: SceneStrategy<T>,
@@ -86,8 +73,7 @@ internal class ListPaneRequiredSceneStrategy<T : Any>(
     }
 }
 
-// Our own markers rather than the library's, whose pane metadata is internal, and rather than
-// the entry key, which NavEntry does not expose.
+// The library's pane metadata is internal and NavEntry does not expose its key.
 internal const val LIST_SCENE_KEY = "ke.droidcon.kotlin.listPaneScene"
 internal const val DETAIL_SCENE_KEY = "ke.droidcon.kotlin.detailPaneScene"
 
@@ -104,12 +90,7 @@ fun listPaneMetadata(
 /** Metadata marking an entry as the detail half of [scene]. */
 fun detailPaneMetadata(scene: DroidconPaneScene): Map<String, Any> = ListDetailSceneStrategy.detailPane(sceneKey = scene) + mapOf(DETAIL_SCENE_KEY to scene)
 
-/**
- * Metadata for a destination that is never a detail.
- *
- * It still needs a role: without one, the walk back from the "happening now" entry stops at it
- * and the supporting pane draws beside nothing.
- */
+/** A destination that is never a detail still needs a role, or the supporting pane finds nothing. */
 fun mainPaneMetadata(): Map<String, Any> = SupportingPaneSceneStrategy.mainPane()
 
 /** Metadata for the standing "happening now" pane. */

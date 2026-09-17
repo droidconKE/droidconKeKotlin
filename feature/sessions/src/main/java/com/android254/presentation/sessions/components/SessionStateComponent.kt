@@ -84,6 +84,7 @@ fun SessionsStateComponent(
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    showAgendaGrid: Boolean = false,
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -134,6 +135,16 @@ fun SessionsStateComponent(
             }
 
             ResultStatus.Success -> {
+                // The agenda toggle becomes a real agenda once there is width for it.
+                if (!isSessionLayoutList && showAgendaGrid) {
+                    AgendaGrid(
+                        modifier = modifier,
+                        sessionsByTime = sessionsUiState.sessions,
+                        navigateToSessionDetails = navigateToSessionDetails,
+                        contentPadding = contentPadding,
+                    )
+                    return@AnimatedContent
+                }
                 SessionListComponent(
                     modifier = modifier,
                     contentPadding = contentPadding,
@@ -183,9 +194,7 @@ fun SessionListComponent(
         state = pullToRefreshState,
     ) {
         LazyVerticalGrid(
-            // One column on a phone, more as the window grows. The minimum is the width at
-            // which a card still shows its title, its tags and its speakers without wrapping
-            // into a stack of single words.
+            // One column on a phone, more as the window grows.
             columns = GridCells.Adaptive(minSize = SessionColumnMinWidth),
             modifier = Modifier.testTag("sessions_list"),
             state = listState,
@@ -239,12 +248,7 @@ fun SessionListComponent(
     }
 }
 
-/**
- * A session card narrower than this stops being legible before it stops fitting.
- *
- * Shared with the loading skeleton so the two cannot choose different column counts and reflow
- * the screen the moment the real sessions arrive.
- */
+/** Shared with the skeleton, so loading finishing does not reflow the screen. */
 internal val SessionColumnMinWidth = 360.dp
 
 @Composable

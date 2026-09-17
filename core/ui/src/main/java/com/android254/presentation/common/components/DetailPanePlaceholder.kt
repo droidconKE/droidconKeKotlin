@@ -35,15 +35,10 @@ import androidx.compose.ui.unit.dp
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 
-/** Test tag, so a screenshot or semantics test can tell an empty pane from a missing one. */
+/** Test tag, so a test can tell an empty pane from a missing one. */
 const val DETAIL_PANE_PLACEHOLDER_TEST_TAG: String = "detail_pane_placeholder"
 
-/**
- * What the detail pane shows before anything in the list has been picked.
- *
- * A two-pane layout has a state a phone never has: the detail exists and is empty. Leaving it
- * blank reads as a rendering bug, so it says what to do instead.
- */
+/** The state a phone never has: the detail exists and is empty. Blank reads as a rendering bug. */
 @Composable
 fun DetailPanePlaceholder(
     message: String,

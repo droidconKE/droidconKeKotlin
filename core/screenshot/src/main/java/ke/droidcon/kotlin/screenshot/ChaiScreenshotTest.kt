@@ -90,10 +90,8 @@ abstract class ChaiScreenshotTest {
     /**
      * One golden per form factor, in light mode.
      *
-     * Overrides the window size rather than the device, because that is what
-     * `currentWindowAdaptiveInfo` reads — so the navigation component, the pane count and the
-     * column count in these goldens are the ones the app would really choose, not a phone
-     * layout stretched to a tablet's dimensions.
+     * Overrides the window rather than the device, because that is what
+     * `currentWindowAdaptiveInfo` reads — so these are the layouts the app would really choose.
      */
     protected fun captureFormFactors(
         name: String,

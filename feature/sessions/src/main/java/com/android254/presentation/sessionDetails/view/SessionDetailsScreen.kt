@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarProtection
@@ -95,14 +96,13 @@ internal fun SessionDetailsScreen(
     unBookmarkSession: (String) -> Unit,
     onNavigationIconClick: () -> Unit,
     showTopBar: Boolean = true,
+    isTabletop: Boolean = rememberIsTabletopPosture(),
 ) {
     // The scrim is drawn over the content, so the stacking is stated here rather than left to
     // whatever container the caller happens to use.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            // As a detail pane the bar is pure duplication: the session's own title is the first
-            // thing in the body, and the list beside it already says where you are — which is also
-            // why there is no back arrow to draw.
+            // As a pane the bar is the title twice over, and a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
             floatingActionButton = {
                 FloatingActionButton(
@@ -147,18 +147,71 @@ internal fun SessionDetailsScreen(
                 }
 
                 is SessionDetailsUiState.Success -> {
-                    Body(
-                        paddingValues = paddingValues,
-                        sessionDetails = uiState.data,
-                        bookmarkSession = bookmarkSession,
-                        unBookmarkSession = unBookmarkSession,
-                        drawsUnderStatusBar = !showTopBar,
-                    )
+                    if (isTabletop) {
+                        TabletopBody(
+                            paddingValues = paddingValues,
+                            sessionDetails = uiState.data,
+                            bookmarkSession = bookmarkSession,
+                            unBookmarkSession = unBookmarkSession,
+                        )
+                    } else {
+                        Body(
+                            paddingValues = paddingValues,
+                            sessionDetails = uiState.data,
+                            bookmarkSession = bookmarkSession,
+                            unBookmarkSession = unBookmarkSession,
+                            drawsUnderStatusBar = !showTopBar,
+                        )
+                    }
                 }
             }
         }
         if (!showTopBar) {
             StatusBarProtection(modifier = Modifier.align(Alignment.TopCenter))
+        }
+    }
+}
+
+/** Half open: the banner above the fold, everything you touch below it. */
+@Composable
+private fun TabletopBody(
+    paddingValues: PaddingValues,
+    sessionDetails: SessionDetailsPresentationModel,
+    bookmarkSession: (String) -> Unit,
+    unBookmarkSession: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .fillMaxSize()
+                .testTag(TestTag.TABLETOP_BODY),
+    ) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            SessionBannerImage(sessionDetails)
+        }
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 18.dp),
+        ) {
+            SessionSpeakerNameAndFavouriteIcon(
+                sessionDetails = sessionDetails,
+                bookmarkSession = bookmarkSession,
+                unBookmarkSession = unBookmarkSession,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            SessionTitleAndDescription(sessionDetails)
+            Spacer(modifier = Modifier.height(16.dp))
+            SessionTimeAndRoom(sessionDetails)
+            Spacer(modifier = Modifier.height(12.dp))
+            SessionLevel(sessionDetails.level)
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -183,8 +236,7 @@ fun Body(
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Inside the scroll, so the first line of the session title starts below the clock and
-        // then travels under it, which is the whole point of dropping the bar.
+        // Inside the scroll, so the title starts below the clock and then travels under it.
         if (drawsUnderStatusBar) {
             Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
         }

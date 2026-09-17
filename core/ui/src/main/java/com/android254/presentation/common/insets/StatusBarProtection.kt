@@ -29,19 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 
-/** Test tag, so a screen that must draw its own protection can be asserted to. */
+/** Test tag, so a screen that must draw its own protection can be asserted on. */
 const val STATUS_BAR_PROTECTION_TEST_TAG: String = "status_bar_protection"
 
 /**
- * A scrim over the status bar, drawn on top of content that scrolls underneath it.
+ * A scrim over the status bar, for a screen with no app bar to keep the clock legible.
  *
- * Only a screen with no app bar needs this: an app bar is an opaque surface and the clock
- * already reads against it. A detail pane, which drops its app bar because the list beside it
- * already says where you are, has nothing up there but its own scrolling body — and a session
- * title passing under the clock is what makes the clock illegible.
- *
- * Taller than the status bar by design (the skill's 1.2 factor), so the gradient has somewhere
- * to fade out instead of ending in a visible edge.
+ * Taller than the bar so the gradient has somewhere to fade out rather than ending in an edge.
  */
 @Composable
 fun StatusBarProtection(

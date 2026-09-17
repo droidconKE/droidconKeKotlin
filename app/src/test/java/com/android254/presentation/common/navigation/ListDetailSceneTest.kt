@@ -52,13 +52,7 @@ private val expandedWindow = DpSize(1280.dp, 900.dp)
 
 private fun tagFor(screen: Screens): String = "pane_${screen::class.simpleName}"
 
-/**
- * What the pane metadata and the scene strategies actually produce, at a phone width and at a
- * width with room for two panes.
- *
- * The screens are stand-ins; the metadata, the strategies and the back stack are the real ones,
- * because those are what decide whether a session opens beside its list or on top of it.
- */
+/** Stand-in screens, real metadata and real strategies, at a phone width and a two-pane width. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
 class ListDetailSceneTest {
@@ -98,18 +92,14 @@ class ListDetailSceneTest {
         composeTestRule.onNodeWithTag(DETAIL_PANE_TAG).assertIsDisplayed()
     }
 
-    /**
-     * The case the guard exists for. Home pushes a session detail with no list behind it, and
-     * the Material strategy would still expand a second pane and fill it with nothing.
-     */
+    /** The case the guard exists for: a detail pushed from Home has no list behind it. */
     @Test
     fun `a session opened with no list behind it takes the whole window`() {
         setContent(expandedWindow) { navController ->
             navController.navigate(Screens.SessionDetails(SESSION_ID))
         }
 
-        // Not merely "the detail is wide": the screens read the scene to decide whether to draw
-        // a back arrow, and a full-screen detail that thinks it is a pane has no way back.
+        // The screens read the scene to decide on a back arrow, so this is not just a width.
         composeTestRule.onNodeWithTag(DETAIL_FULL_TAG).assertIsDisplayed()
 
         val bounds = composeTestRule.onNodeWithTag(DETAIL_FULL_TAG).getUnclippedBoundsInRoot()
@@ -161,8 +151,7 @@ class ListDetailSceneTest {
             entries(Screens.SpeakerDetails(SPEAKER_NAME)).metadata[DETAIL_SCENE_KEY],
         )
 
-        // Key sets, so dropping a role from any entry shows up here rather than as a pane that
-        // silently stops appearing on a tablet nobody tested on.
+        // Key sets, so a dropped role shows up here rather than on a tablet nobody tested on.
         assertEquals(
             listPaneMetadata(DroidconPaneScene.Sessions) {}.keys,
             entries(Screens.Sessions).metadata.keys,
@@ -240,13 +229,7 @@ private fun Stand(screen: Screens) {
     Text(text = tag, modifier = Modifier.fillMaxSize().testTag(tag))
 }
 
-/**
- * A stand-in detail that reports what the real ones read.
- *
- * `SessionDetailsRoute` and `SpeakerDetailsRoute` drop their app bar and back arrow when
- * [LocalListDetailSceneScope] says a list is beside them, so getting that answer wrong is a
- * detail with no way back rather than a cosmetic difference.
- */
+/** Reports what the real details read: getting it wrong is a detail with no way back. */
 @Composable
 private fun StandDetail(screen: Screens) {
     val tag = if (LocalListDetailSceneScope.current == null) DETAIL_FULL_TAG else DETAIL_PANE_TAG

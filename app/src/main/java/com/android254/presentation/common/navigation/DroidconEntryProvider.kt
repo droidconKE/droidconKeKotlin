@@ -43,10 +43,8 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 /**
  * Maps every [Screens] key to its screen, and tells `NavDisplay` which pane each one is.
  *
- * The pane metadata is the whole of the multi-pane wiring: a scene strategy reads it off the
- * entries and decides whether two of them can be on screen at once. Nothing here branches on
- * window size, which is why the same entry serves as a full screen on a phone and as a pane on
- * a tablet.
+ * Nothing here branches on window size: a scene strategy reads the metadata and decides, which
+ * is why the same entry is a full screen on a phone and a pane on a tablet.
  */
 @Composable
 fun droidconEntryProvider(
@@ -93,8 +91,7 @@ fun droidconEntryProvider(
                         navController.goBack()
                     },
                     viewModel = viewModel,
-                    // Set by the scaffold that draws the pane, so the screen cannot disagree
-                    // with the layout about whether the list is beside it.
+                    // The scaffold's own answer, so the screen cannot disagree with the layout.
                     showTopBar = LocalListDetailSceneScope.current == null,
                 )
             }

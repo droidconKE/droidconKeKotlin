@@ -65,13 +65,7 @@ val HappeningNowPaneWidth: Dp = 320.dp
 internal const val LIVE_SESSIONS_RAIL_TEST_TAG = "live_sessions_rail"
 internal const val HAPPENING_NOW_PANE_TEST_TAG = "happening_now_pane"
 
-/**
- * What is on right now, then what is on next.
- *
- * Both lists come from the same minute-ticking flow, and a session cannot be in both — but the
- * rail and the pane key on the session id, and a duplicate key is a crash rather than a
- * duplicated row, so the two are merged once, here.
- */
+/** Merged once, here: both lists key on session id and a duplicate key is a crash. */
 @Composable
 fun rememberLiveSessions(state: SessionUIState): ImmutableList<SessionPresentationModel> =
     remember(state) {
@@ -79,11 +73,10 @@ fun rememberLiveSessions(state: SessionUIState): ImmutableList<SessionPresentati
     }
 
 /**
- * The supporting pane, wired to the same activity-scoped view model the rail reads.
+ * The supporting pane, on the same activity-scoped view model the rail reads.
  *
- * The pane is a navigation entry, and an entry's content is built once per back stack change —
- * so it has to read its sessions through a view model rather than have them handed to it, or it
- * would still be showing whatever was on when the entry was created.
+ * An entry's content is built once per back stack change, so handing it a list would freeze that
+ * list at whatever was on when the entry was created.
  */
 @Composable
 fun HappeningNowRoute(
@@ -98,12 +91,10 @@ fun HappeningNowRoute(
 }
 
 /**
- * The live and up-next sessions, as a horizontal rail under the content.
+ * The live and up-next sessions as a horizontal rail under the content.
  *
- * Sits at the bottom of the content area, so at bar sizes it is exactly where it has always
- * been — above the navigation bar — and at rail sizes it is the bottom-most thing on screen and
- * therefore the thing that pays for the bottom inset. The caller consumes that same inset on the
- * content above, so the screens do not pay for it twice.
+ * At rail sizes it is the bottom-most element, so it pays the bottom inset and the caller
+ * consumes that same inset above it.
  */
 @Composable
 fun LiveSessionsRail(
@@ -116,9 +107,8 @@ fun LiveSessionsRail(
             modifier
                 .testTag(LIVE_SESSIONS_RAIL_TEST_TAG)
                 .fillMaxWidth()
-                // The bottom is real padding: it is not a scroll axis, so it lifts the whole
-                // row off the navigation bar. The horizontal sides go into contentPadding
-                // below, so cards scroll under a cutout instead of stopping short of it.
+                // The bottom is not a scroll axis, so it lifts the row; the sides go into
+                // contentPadding so cards scroll under a cutout.
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
                 .padding(bottom = 8.dp),
         contentPadding =
@@ -139,13 +129,7 @@ fun LiveSessionsRail(
     }
 }
 
-/**
- * The same sessions as a standing supporting pane.
- *
- * A horizontal scroller is a phone affordance — it exists because there is no room. Given a
- * column of its own there is no reason to make anyone swipe sideways through what is on right
- * now, so the pane stacks them and keeps them all visible.
- */
+/** The same sessions stacked: a horizontal scroller exists only because a phone has no room. */
 @Composable
 fun HappeningNowPane(
     sessions: ImmutableList<SessionPresentationModel>,

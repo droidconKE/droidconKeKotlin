@@ -44,10 +44,8 @@ import org.robolectric.annotation.Config
 /**
  * What the system back button does, at the sizes where the answer changes.
  *
- * `NavDisplay` decides whether to intercept back from the entries it is handed, and at expanded
- * widths those include the standing "happening now" pane. So on a tablet it intercepts even on
- * the start destination, where the back stack has nothing to pop — and a back press that is
- * intercepted and then quietly dropped is an app you cannot leave.
+ * `NavDisplay` intercepts back from the entries it is handed, which at expanded widths include
+ * the supporting pane — so it intercepts on the start destination, where nothing can be popped.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -93,11 +91,7 @@ class BackHandlingTest {
         composeTestRule.onNodeWithTag(tag(Screens.Home)).assertExists()
     }
 
-    /**
-     * The Material default pops until the scaffold value changes, which here would carry on
-     * past the list and out of the tab, because list-beside-placeholder and list-beside-detail
-     * are the same scaffold value.
-     */
+    /** The Material default would carry on past the list and out of the tab. */
     @Test
     fun `back out of a detail returns to its list rather than leaving`() {
         val navController = setContent(expandedWindow, supportingRoute = null)

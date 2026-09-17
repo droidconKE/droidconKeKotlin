@@ -49,8 +49,7 @@ fun SessionLoadingComponent(
     isSessionLayoutList: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(bottom = 32.dp),
 ) {
-    // The same columns and spacing as the loaded list, so finishing the load does not reflow
-    // the screen — which is the one thing a skeleton exists to prevent.
+    // Same columns and spacing as the loaded list, which is the point of a skeleton.
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = SessionColumnMinWidth),
         modifier = modifier,

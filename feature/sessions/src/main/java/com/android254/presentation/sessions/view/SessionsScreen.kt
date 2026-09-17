@@ -44,7 +44,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconWindowSize
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import com.android254.presentation.common.fakedata.DAY_TODAY
 import com.android254.presentation.common.fakedata.DAY_TOMORROW
@@ -140,8 +142,7 @@ fun SessionsScreen(
         containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
-        // The day selector stays put while the list scrolls under the navigation bar, so the
-        // top and sides are the header's and the bottom is the list's `contentPadding`.
+        // The day selector stays put, so it takes the top and sides and the list takes the bottom.
         val layoutDirection = LocalLayoutDirection.current
         val startGutter = paddingValues.calculateStartPadding(layoutDirection) + ScreenGutter
         val endGutter = paddingValues.calculateEndPadding(layoutDirection) + ScreenGutter
@@ -186,6 +187,7 @@ fun SessionsScreen(
                 )
             }
             SessionsStateComponent(
+                showAgendaGrid = rememberDroidconWindowSize() != DroidconWindowSize.Compact,
                 contentPadding =
                     PaddingValues(
                         start = startGutter,

@@ -268,6 +268,8 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
   `goBack()` returns whether it moved and the composition root falls through to the system when
   it did not; `BackHandlingTest` drives the real dispatcher rather than calling `goBack()`, which
   is the only way to see this.
+- **A session's rooms come from `roomList`, never the joined `venue` string.** The agenda grid
+  puts a two-room session under both of its rooms, which the joined string cannot express.
 - **Lazy lists need a stable `key`.** Without one, scroll position jumps after a sync
   reorders the list.
 - **ViewModels own state; composables derive it.** Do not mirror ViewModel state in a

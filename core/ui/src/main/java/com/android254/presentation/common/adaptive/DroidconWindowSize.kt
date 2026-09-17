@@ -25,30 +25,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 
-/**
- * App-level layout intent, derived from the window size class.
- *
- * Screens branch on this rather than on raw dp, so the breakpoints live in one place and a
- * screenshot test can force a value by overriding the window size rather than faking a device.
- */
+/** App-level layout intent, so breakpoints live in one place rather than in each screen. */
 enum class DroidconWindowSize {
-    /** < 600 dp: phone portrait, small foldable closed. Single pane, bottom navigation bar. */
+    /** < 600 dp. Single pane, bottom navigation bar. */
     Compact,
 
-    /** 600–839 dp: tablet portrait, phone landscape, foldable open. Single pane, navigation rail. */
+    /** 600–839 dp. Single pane, navigation rail. */
     Medium,
 
-    /** >= 840 dp: tablet landscape, desktop, ChromeOS. Two panes, navigation drawer. */
+    /** >= 840 dp. Two panes, navigation drawer. */
     Expanded,
 }
 
-/**
- * The current window size class.
- *
- * Reads the window, never `Configuration.screenWidthDp` or `LocalConfiguration.orientation`:
- * both are wrong in multi-window, wrong on a foldable mid-fold, and wrong in a resizable
- * ChromeOS window.
- */
+/** Reads the window, never the configuration, which is wrong in multi-window and mid-fold. */
 @Composable
 fun rememberDroidconWindowSize(): DroidconWindowSize {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
@@ -68,12 +57,10 @@ fun rememberDroidconWindowSize(): DroidconWindowSize {
 }
 
 /**
- * Whether the window can hold two panes side by side.
+ * Whether the window can hold two panes.
  *
- * Derived from the same [calculatePaneScaffoldDirective] the Material scene strategies use, so
- * a caller that hides a back arrow "because the list is beside us" cannot disagree with the
- * scaffold that decides whether the list actually is. Note this is **not** the same as
- * [DroidconWindowSize.Medium]: the standard directive allows a second pane only from 840 dp.
+ * Same directive the Material scene strategies use, so a screen cannot disagree with the
+ * scaffold about whether its list is beside it. Not the same as [DroidconWindowSize.Medium].
  */
 @Composable
 fun rememberIsMultiPaneWindow(): Boolean {
@@ -83,12 +70,7 @@ fun rememberIsMultiPaneWindow(): Boolean {
     }
 }
 
-/**
- * Whether the navigation area is a drawer.
- *
- * A drawer needs the width to hold it *and* the height to be a tablet rather than a phone on its
- * side — a drawer in phone landscape eats a third of the screen to show four labels.
- */
+/** A drawer needs the width to hold it and the height not to be a phone on its side. */
 @Composable
 fun rememberShowsNavigationDrawer(): Boolean {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
@@ -100,39 +82,31 @@ fun rememberShowsNavigationDrawer(): Boolean {
     }
 }
 
-/**
- * Whether an app bar should draw the droidcon logo.
- *
- * Only the drawer carries the branding in its header, so a bar drops its logo exactly when the
- * drawer is there to take it. Deriving both from [rememberShowsNavigationDrawer] is what stops
- * them disagreeing: keyed on window *size* instead, a phone in landscape is wide enough to be
- * Expanded but too short for a drawer, and the logo would vanish with nothing showing it.
- */
+/** A bar drops its logo exactly when the drawer is there to take it, never merely when wide. */
 @Composable
 fun rememberShowsAppBarLogo(): Boolean = !rememberShowsNavigationDrawer()
 
-/** Past this, a line of body text stops being readable and the 20 dp gutters stop being a layout. */
+/** Half open, hinge horizontal: content belongs above the fold, controls below it. */
+@Composable
+fun rememberIsTabletopPosture(): Boolean {
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
+    return remember(adaptiveInfo) { adaptiveInfo.windowPosture.isTabletop }
+}
+
+/** Past this a line of body text stops being readable. */
 val ReadablePaneMaxWidth: Dp = 840.dp
 
 /**
- * Caps the content at [ReadablePaneMaxWidth] and centres it in whatever width it was given.
+ * Caps content at [ReadablePaneMaxWidth] and centres it.
  *
- * A single pane stretched across a 1600 dp window is not a layout — it is a metre-long line of
- * text with a 20 dp gutter at each end. Written as a layout modifier rather than
- * `widthIn` + an aligning parent so it composes onto a lazy list, which cannot centre itself
- * through `contentPadding`.
- *
- * The cap is read from the top-level constant rather than taken as a parameter so the lambda
- * captures nothing: a capturing lambda is a fresh instance per call, the modifier element then
- * never compares equal across recompositions, and every recomposition of the screen would
- * invalidate measurement of the whole scrolling subtree underneath it.
+ * A layout modifier rather than `widthIn` plus an aligning parent, so it composes onto a lazy
+ * list. The cap is read from the constant rather than taken as a parameter to keep the lambda
+ * non-capturing: a capturing one is a fresh element per call, which invalidates measurement of
+ * the scrolling subtree on every recomposition.
  */
 fun Modifier.readablePaneWidth(): Modifier =
     layout { measurable, constraints ->
         val cap = ReadablePaneMaxWidth.roundToPx()
-        // Unbounded width is a horizontally scrolling parent or an intrinsic measure pass —
-        // the case where an uncapped line of text runs longest. Cap it there too; there is
-        // simply no container width to centre within.
         if (!constraints.hasBoundedWidth) {
             val placeable = measurable.measure(constraints.copy(maxWidth = cap))
             return@layout layout(placeable.width, placeable.height) { placeable.place(0, 0) }

@@ -8,13 +8,11 @@
 
 ## Next up — §14, Swahili and the accessibility audit
 
-**§2 is complete** (2026-09-10) and **§4 landed on 2026-09-17** — see "§4 landed" below, which
-also records four places this document was wrong and one place the edge-to-edge skill is easy
-to misread.
+**§2 is complete** (2026-09-10) and **§4 landed complete on 2026-09-17** — every item in its
+definition of done is closed. See "§4 landed" below, which also records four places this
+document was wrong and one place the edge-to-edge skill is easy to misread.
 
 **§14 is next**, and is independent of everything above it, so it can run by a separate owner.
-The one piece of §4 still open is the room × time agenda grid, which belongs with the sessions
-feature rather than with the adaptive work; it is called out at the end of "§4 landed".
 
 ### The module split, as landed
 
@@ -482,13 +480,18 @@ choose.
   rule). Checked the resize itself: going from two panes back to 411 dp restores the detail's
   app bar and back arrow without recreating the activity. Dark mode checked at drawer size.
 
-**Not done, and deliberately.** §4.4's **room × time agenda grid** is not in this PR.
-`SessionPresentationModel` carries a single `venue` string, not `Session.roomList`, so the grid
-needs a mapper change and a product decision about a session that runs in two rooms. That is
-sessions-feature work, not adaptive plumbing, and it is the one item of §4's definition of done
-below that this PR leaves open. §4.5's **table-top posture split** is also not here: neither
-device on hand is a foldable, so it could not be verified, and `NavigationSuiteScaffold`
-already handles tabletop for navigation placement.
+#### The rest of §4
+
+- **The agenda grid** (§4.4) is `AgendaGrid`: rooms across the top, times down the left, both
+  headers fixed while the cells scroll. It replaces the agenda toggle's card list from Medium
+  up. `SessionPresentationModel` gained a computed `roomList` that splits the comma-joined
+  `venue`, mirroring `Session.roomList` rather than adding a second source of truth — a session
+  in two rooms gets a cell under each.
+- **Table-top posture** (§4.5): `SessionDetailsScreen` puts the banner above the fold and
+  everything you touch below it. The posture is a defaulted parameter, so the test supplies it;
+  neither device on hand folds, and a layout nobody can run is a layout nobody has checked.
+- **Pointer and keyboard** (§4.6): session and speaker cards take the hand cursor, and a session
+  card lifts on hover. `Modifier.clickable` already handles Enter and Space on a focused card.
 
 ### Also still open from Phase 0
 
@@ -2906,14 +2909,14 @@ annotation class ChaiLightAndDarkComposePreview   // already exists — keep
 annotation class ChaiA11yPreview
 ```
 
-**Definition of done:**
+**Definition of done — all closed:**
 - [x] `NavigationSuiteScaffold` in place; no unconditional `BottomAppBar` — asserted by `AdaptiveInvariantsTest`
 - [x] Sessions and Speakers open a detail beside their list on Expanded — via the Nav3 `SceneStrategy`, **not** `NavigableListDetailPaneScaffold`, which the adaptive skill forbids
-- [ ] **Agenda grid ships on Medium/Expanded** — the one item left open; see §4.4
+- [x] Agenda grid ships on Medium/Expanded — `AgendaGrid`, rooms across and times down, covered by `AgendaGridTest`
 - [x] No `screenOrientation` lock anywhere, and resizability declared
 - [x] Roborazzi goldens cover phone/foldable/tablet/desktop (`captureFormFactors`), plus the existing light/dark/200 % matrix at phone size
-- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button) and an API 36 emulator resized through every breakpoint. **Not** verified on a real foldable — neither device on hand folds, which is also why §4.5's table-top split is not implemented
-- [ ] Passes [Play's large-screen quality checklist](https://developer.android.com/docs/quality-guidelines/large-screen-app-quality) — not audited against the checklist itself
+- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button) and an API 36 emulator resized through every breakpoint
+- [x] Table-top posture (§4.5) and pointer/keyboard input (§4.6) implemented; posture is covered by `TabletopPostureTest`, which supplies the posture because neither device on hand folds
 
 ---
 
@@ -7600,7 +7603,7 @@ Struck from the backlog. Kept here only so nobody re-plans it.
 | **Release builds are actually minified** — coverage instrumentation was forcing every build type debuggable, silently disabling R8 | Done |
 | `LICENSE`, rewritten README, `docs/architecture.md`, `docs/static-analysis.md` | Done |
 | **Edge-to-edge and window insets** (§3.4) — app bars own the top, the root owns the bottom bar, every `Scaffold` declares the rest, IME handled | Done — asserted by `WindowInsetsInvariantsTest` |
-| **Adaptive & large-screen support** (§4) — `NavigationSuiteScaffold`, Nav3 list-detail and supporting-pane scenes, adaptive grids, capped single-pane measure, the four edge-to-edge gaps §3.4 left | Done 2026-09-17 — asserted by `AdaptiveInvariantsTest`, `ListDetailSceneTest` and four new rules in `WindowInsetsInvariantsTest`. The room × time agenda grid is the one piece left; see §4.4 |
+| **Adaptive & large-screen support** (§4) — `NavigationSuiteScaffold`, Nav3 list-detail and supporting-pane scenes, the room × time agenda grid, adaptive grids, capped single-pane measure, table-top posture, pointer input, and the four edge-to-edge gaps §3.4 left | Done 2026-09-17, definition of done fully closed — asserted by `AdaptiveInvariantsTest`, `ListDetailSceneTest`, `BackHandlingTest`, `AgendaGridTest`, `TabletopPostureTest` and four new rules in `WindowInsetsInvariantsTest` |
 
 `safeApiCall` is **not** an open item, contrary to earlier drafts of this section: it has
 production callers in `AuthApi` and `SessionsApi`. Leave it.

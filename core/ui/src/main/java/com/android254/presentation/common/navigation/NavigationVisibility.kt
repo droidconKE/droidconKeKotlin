@@ -17,13 +17,7 @@ package com.android254.presentation.common.navigation
 
 import androidx.navigation3.runtime.NavKey
 
-/**
- * The list this route is the detail of, or null if it is not a detail of anything.
- *
- * One declaration for two decisions that must not drift: which pairs of entries form a
- * list-detail scene, and whether a detail is currently full-screen — which is the same question
- * as whether its list is beside it.
- */
+/** The list this route is the detail of. One declaration for two decisions that must not drift. */
 val Screens.listPaneRoute: Screens?
     get() =
         when (this) {
@@ -35,11 +29,9 @@ val Screens.listPaneRoute: Screens?
 /**
  * Whether the navigation area should be visible on [route].
  *
- * Three routes used to hide the bottom bar by calling back into the composition root as a side
- * effect of composing. Two of them hide it because they are full-screen details, and the
- * Material guidance is explicit that full-screen mode must be switched off once the detail is a
- * pane instead — so on a window wide enough to hold both panes, they stop hiding it. Feedback is
- * not a detail of anything; it is a focused task that owns the window at every size.
+ * A detail hides it only while it is full-screen: the Material guidance is explicit that
+ * full-screen mode must be switched off once the detail is a pane. Feedback is not a detail of
+ * anything, so it owns the window at every size.
  */
 fun shouldShowNavigation(
     route: NavKey,
@@ -52,13 +44,10 @@ fun shouldShowNavigation(
     }
 
 /**
- * Whether the standing "happening now" pane should be beside the content on [route].
+ * Whether the standing "happening now" pane belongs beside [route].
  *
  * Only where there is a second column to spare and something to put in it. A detail keeps that
- * column for itself; the routes that hide the navigation are focused tasks that should not gain
- * a sidebar; and [hasLiveSessions] is what stops a 320 dp column being held open for an
- * empty-state sentence every day of the year that is not the conference — which is most of
- * them, and is already why the rail hides itself.
+ * column for itself, and [hasLiveSessions] stops one being held open for an empty state.
  */
 fun shouldShowSupportingPane(
     route: NavKey,

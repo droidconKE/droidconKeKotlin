@@ -177,17 +177,10 @@ class WindowInsetsInvariantsTest {
         )
     }
 
-    /**
-     * The code, without the comments. A rule about what the app calls must not be satisfied —
-     * or tripped — by prose describing the call.
-     */
+    /** The code without the comments: prose about a call must not satisfy or trip a rule. */
     private fun String.withoutComments(): String = replace(BLOCK_COMMENT, "").replace(LINE_COMMENT, "")
 
-    /**
-     * Whether this file is a screen — something handed a `Scaffold`'s padding, or declaring the
-     * inset contract, or taking a list's `contentPadding`. A component nested inside one of
-     * those has no business reading insets and is not held to these rules.
-     */
+    /** Whether this file is a screen. A component nested in one is not held to these rules. */
     private fun String.handlesScreenInsets(): Boolean =
         contains("paddingValues") ||
             contains("DroidconWindowInsets") ||
@@ -235,19 +228,13 @@ class WindowInsetsInvariantsTest {
         // A call, not the declaration in :core:ui and not its import.
         val STATUS_BAR_ICON_CALL = Regex("""(?<!fun )(?<!import )\bStatusBarIconAppearance\(""")
 
-        // Applying a Scaffold's own padding, as opposed to being handed a list's contentPadding.
-        // Group 2 is the name that was padded, so the rule can insist the same name is the one
-        // consumed — a different name consumed elsewhere in the file proves nothing about this
-        // scroller. `innerPadding` is in here because it is what the Material guidance calls
-        // it, so it is the name the next screen is most likely to use.
+        // Group 2 is the padded name, so the rule can insist that same name is the one consumed.
         val PADS_BY_SCAFFOLD_INSETS =
             Regex("""\.padding\(([A-Za-z]+ =\s*)?(paddingValues|innerPadding)\)""")
 
         val ADAPTIVE_SCAFFOLD_CALL = Regex("""(?<![A-Za-z0-9_])NavigationSuiteScaffold\(""")
 
-        // Both spellings of the same mistake. Scoped to the adaptive scaffold's own argument
-        // list, because padding by safeDrawing is correct almost everywhere else — the app bars
-        // and the live-sessions rail all do it.
+        // Scoped to the scaffold's own argument list: padding by safeDrawing is right elsewhere.
         val SAFE_DRAWING_PADDING =
             Regex("""safeDrawingPadding\(|windowInsetsPadding\(\s*WindowInsets\.safeDrawing""")
 

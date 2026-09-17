@@ -18,13 +18,7 @@ package com.android254.presentation.utils
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 
-/**
- * The four window sizes this app has to be right on, in the IDE preview pane.
- *
- * Phone and foldable are one pane with a bar and a rail; tablet and desktop are where the
- * second pane appears and where a stretched phone layout stops being excusable.
- * `ChaiScreenshotTest.captureFormFactors` records the same four as goldens.
- */
+/** The four window sizes this app has to be right on. `captureFormFactors` records the same four. */
 @Preview(name = "phone", device = Devices.PHONE, group = "form factor", showBackground = true)
 @Preview(name = "foldable", device = Devices.FOLDABLE, group = "form factor", showBackground = true)
 @Preview(name = "tablet", device = Devices.TABLET, group = "form factor", showBackground = true)

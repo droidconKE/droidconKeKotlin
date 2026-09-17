@@ -19,12 +19,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.File
 
-/**
- * The rules that keep the adaptive layer honest.
- *
- * Each one is something the Material adaptive guidance states outright and that is easy to undo
- * by reaching for the API that looks obvious in autocomplete.
- */
+/** Rules the Material adaptive guidance states outright and autocomplete makes easy to undo. */
 class AdaptiveInvariantsTest {
     @Test
     fun `multi-pane layouts are Navigation 3 scenes, never a pane scaffold`() {
@@ -81,13 +76,7 @@ class AdaptiveInvariantsTest {
         )
     }
 
-    /**
-     * The code, without the comments.
-     *
-     * These rules are about what the app calls, and every one of them is also something the
-     * KDoc here explains you must not call — matching the prose would make the documentation
-     * the violation.
-     */
+    /** The code without the comments: every rule here is also something the KDoc names. */
     private fun String.withoutComments(): String = replace(BLOCK_COMMENT, "").replace(LINE_COMMENT, "")
 
     private fun productionKotlinSources(): Sequence<File> =
@@ -100,32 +89,22 @@ class AdaptiveInvariantsTest {
         // Gradle runs unit tests with the module directory as the working directory.
         val repoRoot: File = File("..").canonicalFile
 
-        // Every pane scaffold and every pane navigator. Written as (…Pane)Scaffold rather than
-        // (…)PaneScaffold because the latter expands to "SupportingPanePaneScaffold", a type
-        // that does not exist — which left the half of this rule the message talks about most
-        // unable to fire at all.
+        // (…Pane)Scaffold, not (…)PaneScaffold: the latter expands to SupportingPanePaneScaffold.
         val PANE_SCAFFOLD =
             Regex(
                 """\b(Navigable)?(ListDetailPane|SupportingPane|ThreePane)Scaffold\b""" +
                     """|\bremember(ListDetailPane|SupportingPane|ThreePane)ScaffoldNavigator\b""",
             )
 
-        // The navigation components themselves, prefixed or not — `ShortNavigationBar` and
-        // `WideNavigationRail` are the Expressive spellings of the two this rule exists to ban,
-        // and a leading word boundary alone would let both straight through. The prefix has to
-        // start with a capital so the match is a composable rather than any identifier ending
-        // in one of these names, such as `rememberShowsNavigationDrawer`. `Item` and `State`
-        // suffixes do not match either, because those are legitimate inside the suite.
+        // Prefixed spellings too: ShortNavigationBar and WideNavigationRail are the Expressive
+        // names for the two this bans. The capital keeps rememberShowsNavigationDrawer out.
         val OWN_NAVIGATION_BAR =
             Regex(
                 """(?<![A-Za-z0-9_])([A-Z][A-Za-z]*)?""" +
                     """(BottomAppBar|BottomNavigation|NavigationBar|NavigationRail|NavigationDrawer|DrawerSheet)\(""",
             )
 
-        // Any read of the configuration for layout, including the two-step idiom
-        // `val configuration = LocalConfiguration.current` … `configuration.orientation`, which
-        // matching the inline chain alone would miss. Nothing in src/main reads it for any
-        // other reason, so the whole composition local is the rule.
+        // The whole composition local, since matching the inline chain misses the hoisted idiom.
         val CONFIGURATION_LAYOUT_READ =
             Regex("""\bLocalConfiguration\b|\b(screenWidthDp|screenHeightDp|smallestScreenWidthDp)\b""")
 
