@@ -14,6 +14,13 @@ document was wrong and one place the edge-to-edge skill is easy to misread.
 
 **§14 is next**, and is independent of everything above it, so it can run by a separate owner.
 
+§16.1 still ranks **#6, the design-system token restructure, above it** — that ordering has not
+changed, and #6 is the larger win. It is not listed as next here for one reason: its second half
+(M3 Expressive, §5.2) is blocked on material3 1.4.0, where `MaterialExpressiveTheme`,
+`MotionScheme` and the `*Emphasized` typography roles are all `internal`. The token restructure
+half is **not** blocked and can start whenever someone picks it up. §14 is named here because it
+needs nobody else and nothing else.
+
 ### The module split, as landed
 
 `:presentation` is gone. Its composition root — `activity`, `notifications`,
@@ -533,8 +540,9 @@ choose.
   `venue`, mirroring `Session.roomList` rather than adding a second source of truth — a session
   in two rooms gets a cell under each.
 - **Table-top posture** (§4.5): `SessionDetailsScreen` puts the banner above the fold and
-  everything you touch below it. The posture is a defaulted parameter, so the test supplies it;
-  neither device on hand folds, and a layout nobody can run is a layout nobody has checked.
+  everything you touch below it. The posture is a defaulted parameter, so the test supplies it
+  rather than waiting on hardware — a layout nobody can run is a layout nobody has checked. A
+  foldable AVD covers the rest; see "A foldable emulator, and what it caught".
 - **Pointer and keyboard** (§4.6): session and speaker cards take the hand cursor, and a session
   card lifts on hover. `Modifier.clickable` already handles Enter and Space on a focused card.
 
@@ -1084,7 +1092,7 @@ compose-material3-adaptive-navigation = { module = "androidx.compose.material3.a
 compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
 compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
 
-# Auth (§3.7)
+# Auth (§3.7) — already added; §3.7 landed and these three are in the catalog
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
@@ -1809,10 +1817,10 @@ This is not a compromise position. It's the architecture chai was clearly reachi
 > **Corrected 2026-09-03: the BOM is fine; Expressive is not public API.**
 >
 > The earlier note here said BOM `2025.06.00` pinned material3 to 1.3.2 and that a BOM bump
-> would unblock Expressive. The first half is stale — BOM `2026.08.00` resolves material3 to
-> **1.4.0**:
+> would unblock Expressive. The first half is stale — the BOM has moved twice since and still
+> resolves material3 to **1.4.0** (re-checked 2026-09-17 on BOM `2026.09.00`):
 > ```bash
-> ./gradlew :chai:dependencies --configuration debugCompileClasspath | grep material3
+> ./gradlew :core:ui:dependencies --configuration debugCompileClasspath | grep material3
 > # androidx.compose.material3:material3 -> 1.4.0
 > ```
 > The conclusion still holds, for a different reason. In 1.4.0 the whole Expressive surface is
@@ -2548,7 +2556,8 @@ data and are the ones to do first.
 > particular §4.4's `NavigableListDetailPaneScaffold` is **forbidden** by the adaptive skill;
 > §4.2's `WindowWidthSizeClass` comparison does not compile against window-core 1.5.0; and
 > §3.2's catalog entries for this phase are unnecessary, because the Compose BOM manages the
-> whole adaptive family. The one item still open is the room × time agenda grid in §4.4.
+> whole adaptive family. Nothing in §4 is open — the room × time agenda grid closed with the
+> rest of it.
 
 **Depends on: Phase 0 (§3.4 insets, §3.3 B10 nav keys).** It did **not** depend on §3.5 or on
 M3 Expressive, contrary to §16.1 — see correction 4 in "§4 landed".
@@ -2710,16 +2719,30 @@ The two obvious two-pane candidates. What landed:
 // app/src/main/java/com/android254/presentation/common/navigation/DroidconSceneStrategies.kt
 
 @Composable
-fun rememberDroidconSceneStrategies(): ImmutableList<SceneStrategy<NavKey>> {
-    val listDetail = rememberListDetailSceneStrategy<NavKey>()
-    val supporting = rememberSupportingPaneSceneStrategy<NavKey>()
+fun rememberDroidconSceneStrategies(
+    // Measured from the space the display has, not the window — see "A foldable emulator".
+    directive: PaneScaffoldDirective,
+): ImmutableList<SceneStrategy<NavKey>> {
+    val listDetail =
+        rememberListDetailSceneStrategy<NavKey>(
+            backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
+            directive = directive,
+        )
+    val supporting = rememberSupportingPaneSceneStrategy<NavKey>(directive = directive)
     return remember(listDetail, supporting) {
         // List-detail first: with a session open beside its list, the right-hand column
         // belongs to the session, not to what else is on right now.
-        persistentListOf(ListPaneRequiredSceneStrategy(listDetail), supporting)
+        persistentListOf(
+            ListPaneRequiredSceneStrategy(listDetail),
+            SupportingPaneRequiredSceneStrategy(supporting),
+        )
     }
 }
 ```
+
+Both guards are load-bearing, and so is the `directive` parameter — its default measures the
+window, which the navigation component sits inside. All three were found on a foldable rather
+than by reading the API.
 
 ```kotlin
 // app/src/main/java/com/android254/presentation/common/navigation/DroidconEntryProvider.kt
@@ -2764,14 +2787,14 @@ the entries fall through to a full-width single pane with the bar intact.
 **Feed stays single-pane** — it is a linear stream, and a stream does not have a detail.
 **About** could take a supporting pane for the organising-team grid; it did not in this PR.
 
-**Agenda grid — still open.** `SessionsScreen` has a list/agenda toggle (`isSessionLayoutList`)
-that currently only switches card styles. On Medium and Expanded the agenda mode should become
-what it wants to be, a **room × time grid**, the way conference schedules are actually read:
+**Agenda grid — landed.** `SessionsScreen` had a list/agenda toggle (`isSessionLayoutList`)
+that only switched card styles. On Medium and Expanded the agenda mode is now what it wanted to
+be, a **room × time grid**, the way conference schedules are actually read:
 
-> **As landed:** the agenda grid is the one part of §4 this PR did not close —
-> `SessionPresentationModel` carries a single `venue` string rather than `Session.roomList`, so
-> it needs a mapper change and a decision about a session that runs in two rooms. That is
-> sessions-feature work, not adaptive plumbing.
+> **As landed:** no mapper change was needed. `SessionPresentationModel` gained a computed
+> `roomList` that splits the comma-joined `venue` — the same shape the API sends, and the same
+> split `Session.roomList` already does — rather than adding a second source of truth. A session
+> that runs in two rooms gets a cell under each. Covered by `AgendaGridTest`.
 
 The list pane needs a **selected** visual state it doesn't currently have — on a phone there is no persistent selection, on a tablet there must be:
 
@@ -2960,8 +2983,8 @@ annotation class ChaiA11yPreview
 - [x] Agenda grid ships on Medium/Expanded — `AgendaGrid`, rooms across and times down, covered by `AgendaGridTest`
 - [x] No `screenOrientation` lock anywhere, and resizability declared
 - [x] Roborazzi goldens cover phone/foldable/tablet/desktop (`captureFormFactors`), plus the existing light/dark/200 % matrix at phone size
-- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button) and an API 36 emulator resized through every breakpoint
-- [x] Table-top posture (§4.5) and pointer/keyboard input (§4.6) implemented; posture is covered by `TabletopPostureTest`, which supplies the posture because neither device on hand folds
+- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button), an API 36 emulator resized through every breakpoint, and a Pixel Fold AVD at 841 × 701 dp in OPENED and HALF_OPENED
+- [x] Table-top posture (§4.5) and pointer/keyboard input (§4.6) implemented; posture is covered by `TabletopPostureTest`, which supplies the posture rather than waiting on hardware — no physical device on hand folds, though a foldable AVD does, and is what caught both pane defects
 
 ---
 
@@ -7371,7 +7394,10 @@ val updateType = if (featureToggle.forceUpdate) AppUpdateType.IMMEDIATE else App
 
 ## 14. Accessibility and localization
 
-**Depends on: §3.3 B10 — nav labels are hardcoded Kotlin strings today, so the navigation bar literally cannot be translated until that lands.**
+**No longer depends on anything.** This section used to be blocked on §3.3 B10, because the
+navigation labels were hardcoded Kotlin strings. B10 landed: `TopLevelDestination` carries
+`@StringRes` labels (`R.string.nav_home` and friends) and the bar is translatable today. §14 can
+start whenever someone picks it up.
 
 ### 14.1 Swahili
 
@@ -7405,7 +7431,9 @@ Practical scope: **UI chrome in Swahili, content in its original language.** Ses
 </resources>
 ```
 
-This requires the string-resource work from §3.3 B10 to land first: today the bottom nav labels are hardcoded Kotlin strings in `Screens`, so **the navigation bar cannot be translated at all.**
+The string-resource work this used to wait on has landed. The navigation labels moved off
+`Screens` and onto `TopLevelDestination` as `@StringRes` values, so the bar translates with
+everything else — add `values-sw` and it follows.
 
 Have a native Swahili speaker from the community review the translations. Machine-translated UI strings in a language you don't speak is how you end up with something unintentionally funny on the biggest screen at the conference.
 
