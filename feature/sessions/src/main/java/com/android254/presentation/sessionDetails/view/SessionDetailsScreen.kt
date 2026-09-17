@@ -96,66 +96,70 @@ internal fun SessionDetailsScreen(
     onNavigationIconClick: () -> Unit,
     showTopBar: Boolean = true,
 ) {
-    Scaffold(
-        // As a detail pane the bar is pure duplication: the session's own title is the first
-        // thing in the body, and the list beside it already says where you are — which is also
-        // why there is no back arrow to draw.
-        topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {},
-                modifier =
-                    Modifier
-                        .size(44.dp)
-                        .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                containerColor = ChaiRed,
-                shape = CircleShape,
-            ) {
-                Icon(
-                    modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                    imageVector = Icons.AutoMirrored.Filled.Reply,
-                    contentDescription = null,
-                    tint = ChaiWhite,
-                )
-            }
-        },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
-        contentWindowInsets = DroidconWindowInsets.screenContent,
-    ) { paddingValues ->
-        when (uiState) {
-            is SessionDetailsUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
+    // The scrim is drawn over the content, so the stacking is stated here rather than left to
+    // whatever container the caller happens to use.
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            // As a detail pane the bar is pure duplication: the session's own title is the first
+            // thing in the body, and the list beside it already says where you are — which is also
+            // why there is no back arrow to draw.
+            topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {},
+                    modifier =
+                        Modifier
+                            .size(44.dp)
+                            .testTag(TestTag.FLOATING_ACTION_BUTTON),
+                    containerColor = ChaiRed,
+                    shape = CircleShape,
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    Icon(
+                        modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
+                        imageVector = Icons.AutoMirrored.Filled.Reply,
+                        contentDescription = null,
+                        tint = ChaiWhite,
+                    )
                 }
-            }
+            },
+            containerColor = MaterialTheme.chaiColorsPalette.background,
+            contentWindowInsets = DroidconWindowInsets.screenContent,
+        ) { paddingValues ->
+            when (uiState) {
+                is SessionDetailsUiState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
 
-            is SessionDetailsUiState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().padding(paddingValues),
-                ) {
-                    ChaiBodyMediumBold(
-                        modifier = Modifier.align(Alignment.Center),
-                        bodyText = uiState.message,
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                is SessionDetailsUiState.Error -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                    ) {
+                        ChaiBodyMediumBold(
+                            modifier = Modifier.align(Alignment.Center),
+                            bodyText = uiState.message,
+                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                        )
+                    }
+                }
+
+                is SessionDetailsUiState.Success -> {
+                    Body(
+                        paddingValues = paddingValues,
+                        sessionDetails = uiState.data,
+                        bookmarkSession = bookmarkSession,
+                        unBookmarkSession = unBookmarkSession,
+                        drawsUnderStatusBar = !showTopBar,
                     )
                 }
             }
-
-            is SessionDetailsUiState.Success -> {
-                Body(
-                    paddingValues = paddingValues,
-                    sessionDetails = uiState.data,
-                    bookmarkSession = bookmarkSession,
-                    unBookmarkSession = unBookmarkSession,
-                    drawsUnderStatusBar = !showTopBar,
-                )
-            }
         }
-    }
-    if (!showTopBar) {
-        StatusBarProtection()
+        if (!showTopBar) {
+            StatusBarProtection(modifier = Modifier.align(Alignment.TopCenter))
+        }
     }
 }
 

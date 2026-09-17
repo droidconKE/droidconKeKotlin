@@ -100,14 +100,32 @@ class AdaptiveInvariantsTest {
         // Gradle runs unit tests with the module directory as the working directory.
         val repoRoot: File = File("..").canonicalFile
 
+        // Every pane scaffold and every pane navigator. Written as (…Pane)Scaffold rather than
+        // (…)PaneScaffold because the latter expands to "SupportingPanePaneScaffold", a type
+        // that does not exist — which left the half of this rule the message talks about most
+        // unable to fire at all.
         val PANE_SCAFFOLD =
-            Regex("""\b(Navigable)?(ListDetail|SupportingPane)PaneScaffold\b|rememberListDetailPaneScaffoldNavigator""")
+            Regex(
+                """\b(Navigable)?(ListDetailPane|SupportingPane|ThreePane)Scaffold\b""" +
+                    """|\bremember(ListDetailPane|SupportingPane|ThreePane)ScaffoldNavigator\b""",
+            )
 
-        // The Material bar and rail themselves, not a NavigationSuiteItem or our own components.
+        // The navigation components themselves, prefixed or not — `ShortNavigationBar` and
+        // `WideNavigationRail` are the Expressive spellings of the two this rule exists to ban,
+        // and a leading word boundary would let both straight through. The `Item` and `State`
+        // suffixes are not matched, because those are legitimate inside a NavigationSuiteItem.
         val OWN_NAVIGATION_BAR =
-            Regex("""(?<![A-Za-z0-9_])(BottomAppBar|BottomNavigation|NavigationBar|NavigationRail)\(""")
+            Regex(
+                """(?<![A-Za-z0-9_])[A-Za-z]*""" +
+                    """(BottomAppBar|BottomNavigation|NavigationBar|NavigationRail|NavigationDrawer|DrawerSheet)\(""",
+            )
 
-        val CONFIGURATION_LAYOUT_READ = Regex("""screenWidthDp|LocalConfiguration\.current\.orientation""")
+        // Any read of the configuration for layout, including the two-step idiom
+        // `val configuration = LocalConfiguration.current` … `configuration.orientation`, which
+        // matching the inline chain alone would miss. Nothing in src/main reads it for any
+        // other reason, so the whole composition local is the rule.
+        val CONFIGURATION_LAYOUT_READ =
+            Regex("""\bLocalConfiguration\b|\b(screenWidthDp|screenHeightDp|smallestScreenWidthDp)\b""")
 
         val BLOCK_COMMENT = Regex("""/\*.*?\*/""", RegexOption.DOT_MATCHES_ALL)
         val LINE_COMMENT = Regex("""//[^\n]*""")

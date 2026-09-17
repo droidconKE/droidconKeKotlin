@@ -88,10 +88,15 @@ class WindowInsetsInvariantsTest {
         val offenders =
             productionKotlinSources()
                 .filter { file ->
-                    val text = file.readText()
-                    PADS_BY_SCAFFOLD_INSETS.containsMatchIn(text) &&
-                        SCROLLABLE.containsMatchIn(text) &&
-                        !text.contains("consumeWindowInsets(")
+                    val text = file.readText().withoutComments()
+                    if (!SCROLLABLE.containsMatchIn(text)) {
+                        false
+                    } else {
+                        PADS_BY_SCAFFOLD_INSETS
+                            .findAll(text)
+                            .map { it.groupValues[2] }
+                            .any { padded -> !text.contains("consumeWindowInsets($padded)") }
+                    }
                 }.map { it.relativeTo(repoRoot).path }
                 .sorted()
                 .toList()
@@ -138,8 +143,15 @@ class WindowInsetsInvariantsTest {
     fun `nothing applies safe-drawing padding to an adaptive scaffold`() {
         val offenders =
             productionKotlinSources()
-                .filter { file -> file.readText().contains("safeDrawingPadding(") }
-                .map { it.relativeTo(repoRoot).path }
+                .flatMap { file ->
+                    file
+                        .readText()
+                        .withoutComments()
+                        .argumentListsOf(ADAPTIVE_SCAFFOLD_CALL)
+                        .filter { SAFE_DRAWING_PADDING.containsMatchIn(it) }
+                        .map { file.relativeTo(repoRoot).path }
+                        .asSequence()
+                }.distinct()
                 .sorted()
                 .toList()
 
@@ -164,6 +176,12 @@ class WindowInsetsInvariantsTest {
             activity.readText().contains("isNavigationBarContrastEnforced = false"),
         )
     }
+
+    /**
+     * The code, without the comments. A rule about what the app calls must not be satisfied —
+     * or tripped — by prose describing the call.
+     */
+    private fun String.withoutComments(): String = replace(BLOCK_COMMENT, "").replace(LINE_COMMENT, "")
 
     /**
      * Whether this file is a screen — something handed a `Scaffold`'s padding, or declaring the
@@ -218,7 +236,23 @@ class WindowInsetsInvariantsTest {
         val STATUS_BAR_ICON_CALL = Regex("""(?<!fun )(?<!import )\bStatusBarIconAppearance\(""")
 
         // Applying a Scaffold's own padding, as opposed to being handed a list's contentPadding.
-        val PADS_BY_SCAFFOLD_INSETS = Regex("""\.padding\((paddingValues =\s*)?paddingValues\)""")
+        // Group 2 is the name that was padded, so the rule can insist the same name is the one
+        // consumed — a different name consumed elsewhere in the file proves nothing about this
+        // scroller. `innerPadding` is in here because it is what the Material guidance calls
+        // it, so it is the name the next screen is most likely to use.
+        val PADS_BY_SCAFFOLD_INSETS =
+            Regex("""\.padding\(([A-Za-z]+ =\s*)?(paddingValues|innerPadding)\)""")
+
+        val ADAPTIVE_SCAFFOLD_CALL = Regex("""(?<![A-Za-z0-9_])NavigationSuiteScaffold\(""")
+
+        // Both spellings of the same mistake. Scoped to the adaptive scaffold's own argument
+        // list, because padding by safeDrawing is correct almost everywhere else — the app bars
+        // and the live-sessions rail all do it.
+        val SAFE_DRAWING_PADDING =
+            Regex("""safeDrawingPadding\(|windowInsetsPadding\(\s*WindowInsets\.safeDrawing""")
+
+        val BLOCK_COMMENT = Regex("""/\*.*?\*/""", RegexOption.DOT_MATCHES_ALL)
+        val LINE_COMMENT = Regex("""//[^\n]*""")
 
         val LAZY_SCROLLABLE =
             Regex("""(?<![A-Za-z0-9_])Lazy(Column|Row|VerticalGrid|HorizontalGrid|VerticalStaggeredGrid)\(""")

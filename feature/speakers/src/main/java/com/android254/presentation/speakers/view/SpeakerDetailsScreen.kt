@@ -119,68 +119,72 @@ internal fun SpeakerDetailsScreen(
     onBookmark: (String) -> Unit = {},
     showTopBar: Boolean = true,
 ) {
-    Scaffold(
-        // As a detail pane the bar says "Speaker details" above a screen whose first line is
-        // the speaker's name, and offers a back arrow out of a list that never went away.
-        topBar = {
-            if (showTopBar) {
-                CenterAlignedTopAppBar(
-                    title = {
-                        ChaiBodyLargeBold(
-                            bodyText = stringResource(id = R.string.speaker_details_label),
-                            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                        )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = navigateBack) {
-                            Icon(
-                                painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                                contentDescription = stringResource(R.string.back_arrow_icon_description),
-                                tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+    // The scrim is drawn over the content, so the stacking is stated here rather than left to
+    // whatever container the caller happens to use.
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            // As a detail pane the bar says "Speaker details" above a screen whose first line is
+            // the speaker's name, and offers a back arrow out of a list that never went away.
+            topBar = {
+                if (showTopBar) {
+                    CenterAlignedTopAppBar(
+                        title = {
+                            ChaiBodyLargeBold(
+                                bodyText = stringResource(id = R.string.speaker_details_label),
+                                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
                             )
-                        }
-                    },
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                            navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                        ),
-                )
-            }
-        },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
-        contentWindowInsets = DroidconWindowInsets.screenContent,
-    ) { paddingValues ->
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .consumeWindowInsets(paddingValues),
-        ) {
-            when (uiState) {
-                is SpeakerDetailsScreenUiState.SpeakerNotFound ->
-                    CenteredMessage(uiState.message)
-
-                is SpeakerDetailsScreenUiState.Error ->
-                    CenteredMessage(uiState.message)
-
-                is SpeakerDetailsScreenUiState.Loading ->
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-
-                is SpeakerDetailsScreenUiState.Success ->
-                    SpeakerDetailsContent(
-                        uiState = uiState,
-                        navigateToSessionDetails = navigateToSessionDetails,
-                        onBookmark = onBookmark,
-                        drawsUnderStatusBar = !showTopBar,
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = navigateBack) {
+                                Icon(
+                                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
+                                    tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                )
+                            }
+                        },
+                        colors =
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color.Transparent,
+                                titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                            ),
                     )
+                }
+            },
+            containerColor = MaterialTheme.chaiColorsPalette.background,
+            contentWindowInsets = DroidconWindowInsets.screenContent,
+        ) { paddingValues ->
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues),
+            ) {
+                when (uiState) {
+                    is SpeakerDetailsScreenUiState.SpeakerNotFound ->
+                        CenteredMessage(uiState.message)
+
+                    is SpeakerDetailsScreenUiState.Error ->
+                        CenteredMessage(uiState.message)
+
+                    is SpeakerDetailsScreenUiState.Loading ->
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+
+                    is SpeakerDetailsScreenUiState.Success ->
+                        SpeakerDetailsContent(
+                            uiState = uiState,
+                            navigateToSessionDetails = navigateToSessionDetails,
+                            onBookmark = onBookmark,
+                            drawsUnderStatusBar = !showTopBar,
+                        )
+                }
             }
         }
-    }
-    if (!showTopBar) {
-        StatusBarProtection()
+        if (!showTopBar) {
+            StatusBarProtection(modifier = Modifier.align(Alignment.TopCenter))
+        }
     }
 }
 

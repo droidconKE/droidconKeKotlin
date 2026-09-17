@@ -97,20 +97,29 @@ fun rememberShowsAppBarLogo(): Boolean = rememberDroidconWindowSize() != Droidco
 val ReadablePaneMaxWidth: Dp = 840.dp
 
 /**
- * Caps the content at [max] and centres it in whatever width it was given.
+ * Caps the content at [ReadablePaneMaxWidth] and centres it in whatever width it was given.
  *
  * A single pane stretched across a 1600 dp window is not a layout — it is a metre-long line of
  * text with a 20 dp gutter at each end. Written as a layout modifier rather than
  * `widthIn` + an aligning parent so it composes onto a lazy list, which cannot centre itself
  * through `contentPadding`.
+ *
+ * The cap is read from the top-level constant rather than taken as a parameter so the lambda
+ * captures nothing: a capturing lambda is a fresh instance per call, the modifier element then
+ * never compares equal across recompositions, and every recomposition of the screen would
+ * invalidate measurement of the whole scrolling subtree underneath it.
  */
-fun Modifier.readablePaneWidth(max: Dp = ReadablePaneMaxWidth): Modifier =
+fun Modifier.readablePaneWidth(): Modifier =
     layout { measurable, constraints ->
+        val cap = ReadablePaneMaxWidth.roundToPx()
+        // Unbounded width is a horizontally scrolling parent or an intrinsic measure pass —
+        // the case where an uncapped line of text runs longest. Cap it there too; there is
+        // simply no container width to centre within.
         if (!constraints.hasBoundedWidth) {
-            val placeable = measurable.measure(constraints)
+            val placeable = measurable.measure(constraints.copy(maxWidth = cap))
             return@layout layout(placeable.width, placeable.height) { placeable.place(0, 0) }
         }
-        val width = minOf(constraints.maxWidth, max.roundToPx())
+        val width = minOf(constraints.maxWidth, cap)
         val placeable =
             measurable.measure(
                 constraints.copy(minWidth = minOf(constraints.minWidth, width), maxWidth = width),
