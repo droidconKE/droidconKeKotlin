@@ -14,46 +14,88 @@ public fun com.android254.presentation.activity.MainScreen(modifier: androidx.co
     - authViewModel: STABLE (class with no mutable properties)
 
 @Composable
-public fun com.android254.presentation.common.bottomnav.BottomNavItem(isSelected: kotlin.Boolean, destination: com.android254.presentation.common.navigation.TopLevelDestination, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.common.livesessions.HappeningNowPane(sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - isSelected: STABLE (primitive type)
-    - destination: STABLE (class with no mutable properties)
-    - onClick: STABLE (function type)
+    - sessions: STABLE (known stable type)
+    - onSessionClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.bottomnav.BottomNavigationBar(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, modifier: androidx.compose.ui.Modifier, currentSessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, upNextSessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>): kotlin.Unit
+public fun com.android254.presentation.common.livesessions.HappeningNowRoute(onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, viewModel: com.android254.presentation.activity.MainViewModel): kotlin.Unit
   skippable: false
   restartable: true
   params:
-    - navController: UNSTABLE (has mutable properties or unstable members)
-    - navigationState: UNSTABLE (has mutable properties or unstable members)
-    - modifier: STABLE (marked @Stable or @Immutable)
-    - currentSessions: STABLE (known stable type)
-    - upNextSessions: STABLE (known stable type)
+    - onSessionClick: STABLE (function type)
+    - viewModel: UNSTABLE (has mutable properties or unstable members)
 
 @Composable
-public fun com.android254.presentation.common.navigation.Navigation(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, updateBottomBarState: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>, entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): kotlin.Unit
-  skippable: false
+public fun com.android254.presentation.common.livesessions.LiveSessionsRail(sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
   restartable: true
   params:
-    - navController: UNSTABLE (has mutable properties or unstable members)
-    - navigationState: UNSTABLE (has mutable properties or unstable members)
-    - updateBottomBarState: STABLE (function type)
+    - sessions: STABLE (known stable type)
+    - onSessionClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - onActionClicked: STABLE (function type)
-    - entryProvider: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.navigation.droidconEntryProvider(updateBottomBarState: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, navController: com.android254.presentation.common.navigation.NavigationController, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
+public fun com.android254.presentation.common.livesessions.rememberLiveSessions(state: com.android254.presentation.sessions.models.SessionUIState): kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>
   skippable: false
   restartable: false
   params:
-    - updateBottomBarState: STABLE (function type)
+    - state: STABLE (class with no mutable properties)
+
+@Composable
+public fun com.android254.presentation.common.navigation.DroidconDrawerHeader(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.navigation.DroidconNavigationItems(currentTopLevelRoute: androidx.navigation3.runtime.NavKey, navigationSuiteType: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType, onNavigate: kotlin.Function1<com.android254.presentation.common.navigation.Screens, kotlin.Unit>): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - currentTopLevelRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - navigationSuiteType: RUNTIME (requires runtime check)
+    - onNavigate: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.common.navigation.Navigation(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>, supportingRoute: androidx.navigation3.runtime.NavKey?, onBack: kotlin.Function0<kotlin.Unit>, sceneStrategies: kotlinx.collections.immutable.ImmutableList<androidx.navigation3.scene.SceneStrategy<androidx.navigation3.runtime.NavKey>>?, entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - navController: UNSTABLE (has mutable properties or unstable members)
+    - navigationState: UNSTABLE (has mutable properties or unstable members)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - onActionClicked: STABLE (function type)
+    - supportingRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - onBack: STABLE (function type)
+    - sceneStrategies: STABLE (known stable type)
+    - entryProvider: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.common.navigation.droidconEntryProvider(navController: com.android254.presentation.common.navigation.NavigationController, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>
+  skippable: false
+  restartable: false
+  params:
     - navController: UNSTABLE (has mutable properties or unstable members)
     - onActionClicked: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.common.navigation.droidconNavigationSuiteColors(): androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.navigation.rememberDroidconSceneStrategies(directive: androidx.compose.material3.adaptive.layout.PaneScaffoldDirective): kotlinx.collections.immutable.ImmutableList<androidx.navigation3.scene.SceneStrategy<androidx.navigation3.runtime.NavKey>>
+  skippable: false
+  restartable: false
+  params:
+    - directive: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.common.navigation.sessionModel(key: com.android254.presentation.common.navigation.Screens.SessionDetails, viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel): com.android254.presentation.sessionDetails.SessionDetailsViewModel

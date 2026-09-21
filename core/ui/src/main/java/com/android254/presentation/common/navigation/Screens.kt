@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.common.navigation
 
+import androidx.compose.runtime.Immutable
 import androidx.navigation3.runtime.NavKey
 import kotlinx.collections.immutable.ImmutableSet
 import kotlinx.serialization.Serializable
@@ -25,6 +26,7 @@ import kotlinx.serialization.Serializable
  * Keys are immutable data and nothing else — they are serialized to `SavedState`. Display
  * metadata lives in [TopLevelDestination].
  */
+@Immutable
 @Serializable
 sealed interface Screens : NavKey {
     @Serializable
@@ -44,6 +46,10 @@ sealed interface Screens : NavKey {
 
     @Serializable
     data object FeedBack : Screens
+
+    /** The supporting pane. Never pushed; [toEntries] appends it when the window is wide enough. */
+    @Serializable
+    data object HappeningNow : Screens
 
     @Serializable
     data class SessionDetails(

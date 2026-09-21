@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
@@ -45,6 +46,7 @@ import ke.droidcon.kotlin.core.ui.R
 fun DroidconAppBar(
     modifier: Modifier = Modifier,
     windowInsets: WindowInsets = DroidconWindowInsets.appBar,
+    showLogo: Boolean = rememberShowsAppBarLogo(),
     onActionClicked: () -> Unit = {},
 ) {
     Row(
@@ -57,10 +59,12 @@ fun DroidconAppBar(
                 .testTag("droidcon_topBar_notSignedIn"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
-            contentDescription = stringResource(id = R.string.logo),
-        )
+        if (showLogo) {
+            Image(
+                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
+                contentDescription = stringResource(id = R.string.logo),
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(

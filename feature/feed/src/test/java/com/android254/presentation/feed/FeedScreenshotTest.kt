@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.feed
 
+import androidx.compose.runtime.Composable
 import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feed.view.FeedUIState
 import com.android254.presentation.models.FeedUI
@@ -23,33 +24,39 @@ import org.junit.Test
 
 class FeedScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun feed() =
-        captureScreen("screens/feed") {
-            FeedScreen(
-                feedUIState =
-                    FeedUIState.Success(
-                        feeds =
-                            listOf(
-                                FeedUI(
-                                    title = "Call for speakers is open",
-                                    body =
-                                        "Submissions close at the end of the month. Talks, " +
-                                            "workshops and lightning sessions all welcome.",
-                                    topic = "Announcement",
-                                    url = "",
-                                    image = "",
-                                    createdAt = "2026-08-01",
-                                ),
-                                FeedUI(
-                                    title = "Venue announced",
-                                    body = "This year we are back at the Sarit Expo Centre.",
-                                    topic = "Logistics",
-                                    url = "",
-                                    image = "",
-                                    createdAt = "2026-08-02",
-                                ),
-                            ),
+    fun feed() = captureScreen("screens/feed") { Feed() }
+
+    /** A stream stays one column; the cap is what keeps it readable on a desktop. */
+    @Test
+    fun `feed across form factors`() = captureFormFactors("form_factors/feed") { Feed() }
+}
+
+@Composable
+private fun Feed() {
+    FeedScreen(
+        feedUIState =
+            FeedUIState.Success(
+                feeds =
+                    listOf(
+                        FeedUI(
+                            title = "Call for speakers is open",
+                            body =
+                                "Submissions close at the end of the month. Talks, " +
+                                    "workshops and lightning sessions all welcome.",
+                            topic = "Announcement",
+                            url = "",
+                            image = "",
+                            createdAt = "2026-08-01",
+                        ),
+                        FeedUI(
+                            title = "Venue announced",
+                            body = "This year we are back at the Sarit Expo Centre.",
+                            topic = "Logistics",
+                            url = "",
+                            image = "",
+                            createdAt = "2026-08-02",
+                        ),
                     ),
-            )
-        }
+            ),
+    )
 }

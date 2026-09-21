@@ -61,20 +61,24 @@ class NavigationController(
         }
     }
 
-    fun goBack() {
+    /**
+     * Handles a back event.
+     *
+     * @return whether anything moved. False leaves the press to the system: `NavDisplay`
+     * intercepts on the start destination too once the supporting pane is in its entry list.
+     */
+    fun goBack(): Boolean {
         val currentStack = state.backStacks[state.topLevelRoute] ?: error("Stack for ${state.topLevelRoute} not found")
         val currentRoute = currentStack.last()
 
         // If we're at the base of the current route, go back to the start route stack.
         if (currentRoute == state.topLevelRoute) {
-            if (state.topLevelRoute != state.startRoute) {
-                state.lastDirection = NavDirection.RIGHT
-
-                state.topLevelRoute = state.startRoute
-            }
-        } else {
-            state.lastDirection = NavDirection.INNER
-            currentStack.removeLastOrNull()
+            if (state.topLevelRoute == state.startRoute) return false
+            state.lastDirection = NavDirection.RIGHT
+            state.topLevelRoute = state.startRoute
+            return true
         }
+        state.lastDirection = NavDirection.INNER
+        return currentStack.removeLastOrNull() != null
     }
 }
