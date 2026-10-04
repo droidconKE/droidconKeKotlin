@@ -2,8 +2,8 @@
     <style name="Theme.Droidcon" parent="android:Theme.Material.Light.NoActionBar" />
 
     <style name="Theme.MySplash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/splash_screen_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/droidcon_icon</item>
+        <item name="windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/Theme.Droidcon</item>
     </style>
 </resources>
