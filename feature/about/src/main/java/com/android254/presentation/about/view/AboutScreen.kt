@@ -54,7 +54,6 @@ import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiTitle
@@ -89,7 +88,6 @@ internal fun AboutScreen(
                 },
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         when (uiState) {
@@ -108,7 +106,7 @@ internal fun AboutScreen(
                     ChaiBodyMediumBold(
                         modifier = Modifier.align(Alignment.Center),
                         bodyText = uiState.message,
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                        textColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -182,7 +180,7 @@ fun AboutDroidconSection(
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp),
             titleText = stringResource(id = R.string.about),
-            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
+            titleColor = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -193,7 +191,7 @@ fun AboutDroidconSection(
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp),
             bodyText = droidconDesc,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -216,7 +214,7 @@ fun OrganizingTeamSection(
                 Modifier
                     .fillMaxWidth(),
             titleText = stringResource(id = R.string.about_organizing_team),
-            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
+            titleColor = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(30.dp))

@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -39,16 +38,16 @@ fun TopBar(
         modifier = modifier.testTag(TestTag.TOP_BAR),
         colors =
             TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.chaiColorsPalette.background,
-                navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                scrolledContainerColor = MaterialTheme.chaiColorsPalette.background,
-                titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                actionIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                containerColor = MaterialTheme.colorScheme.background,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                scrolledContainerColor = MaterialTheme.colorScheme.background,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                actionIconContentColor = MaterialTheme.colorScheme.onSurface,
             ),
         title = {
             ChaiBodyLarge(
                 bodyText = stringResource(id = R.string.session_details_label),
-                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                textColor = MaterialTheme.colorScheme.onSurface,
             )
         },
         navigationIcon = {
@@ -58,7 +57,7 @@ fun TopBar(
                 Icon(
                     painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                     contentDescription = stringResource(R.string.back_arrow_icon_description),
-                    tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         },

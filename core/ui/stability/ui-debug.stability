@@ -162,14 +162,6 @@ public fun com.android254.presentation.common.components.LayoutIconButtons(isLis
     - onAgendaIconClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.Loader(modifier: androidx.compose.ui.Modifier, message: kotlin.String): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - modifier: STABLE (marked @Stable or @Immutable)
-    - message: STABLE (String is immutable)
-
-@Composable
 public fun com.android254.presentation.common.components.LoadingBox(height: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, width: androidx.compose.ui.unit.Dp, widthRatio: kotlin.Float?, cornerRadius: androidx.compose.ui.unit.Dp, brush: androidx.compose.ui.graphics.Brush?, color: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true

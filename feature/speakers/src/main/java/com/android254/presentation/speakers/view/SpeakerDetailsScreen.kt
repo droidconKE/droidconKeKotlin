@@ -74,7 +74,6 @@ import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -119,19 +118,17 @@ internal fun SpeakerDetailsScreen(
     onBookmark: (String) -> Unit = {},
     showTopBar: Boolean = true,
 ) {
-    // The scrim is drawn over the content, so the stacking is stated here rather than left to
-    // whatever container the caller happens to use.
+    // The scrim draws over the content, so stack it here rather than rely on the caller.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            // As a detail pane the bar says "Speaker details" above a screen whose first line is
-            // the speaker's name, and offers a back arrow out of a list that never went away.
+            // As a pane the bar repeats the name and offers a back arrow out of a visible list.
             topBar = {
                 if (showTopBar) {
                     CenterAlignedTopAppBar(
                         title = {
                             ChaiBodyLargeBold(
                                 bodyText = stringResource(id = R.string.speaker_details_label),
-                                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                textColor = MaterialTheme.colorScheme.onSurface,
                             )
                         },
                         navigationIcon = {
@@ -139,20 +136,19 @@ internal fun SpeakerDetailsScreen(
                                 Icon(
                                     painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
                                     contentDescription = stringResource(R.string.back_arrow_icon_description),
-                                    tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         },
                         colors =
                             TopAppBarDefaults.topAppBarColors(
                                 containerColor = Color.Transparent,
-                                titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                                navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                             ),
                     )
                 }
             },
-            containerColor = MaterialTheme.chaiColorsPalette.background,
             contentWindowInsets = DroidconWindowInsets.screenContent,
         ) { paddingValues ->
             Box(
@@ -209,7 +205,7 @@ private fun SpeakerDetailsContent(
         if (drawsUnderStatusBar) {
             Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.safeDrawing))
         }
-        HorizontalDivider(color = MaterialTheme.chaiColorsPalette.cardsBorderColor)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
         Column(modifier = Modifier.padding(horizontal = ScreenPadding)) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -220,7 +216,7 @@ private fun SpeakerDetailsContent(
                         .testTag("speaker_name")
                         .speakerSharedName(speaker.name),
                 titleText = speaker.name,
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
 
             speaker.tagline?.takeIf(String::isNotBlank)?.let { tagline ->
@@ -228,7 +224,7 @@ private fun SpeakerDetailsContent(
                 ChaiBodyMedium(
                     modifier = Modifier.testTag("speaker_tagline"),
                     bodyText = tagline,
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -257,7 +253,7 @@ private fun SpeakerDetailsContent(
                 ChaiBodyMedium(
                     modifier = Modifier.testTag("speaker_bio"),
                     bodyText = bio,
-                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    textColor = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -266,7 +262,7 @@ private fun SpeakerDetailsContent(
             ChaiSubTitle(
                 modifier = Modifier.testTag("sessions_heading"),
                 titleText = stringResource(R.string.speaker_sessions_label),
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -275,7 +271,7 @@ private fun SpeakerDetailsContent(
                 ChaiBodyMedium(
                     modifier = Modifier.testTag("no_sessions"),
                     bodyText = stringResource(R.string.speaker_no_sessions_label),
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             } else {
                 uiState.sessions.forEach { session ->
@@ -315,7 +311,7 @@ private fun TwitterHandleRow(
     ) {
         ChaiBodyMedium(
             bodyText = stringResource(R.string.twitter_handle_label),
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
 
         CButton(
@@ -326,17 +322,17 @@ private fun TwitterHandleRow(
                         border =
                             BorderStroke(
                                 1.dp,
-                                MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                                MaterialTheme.colorScheme.primary,
                             ),
                         shape = RoundedCornerShape(10.dp),
                     ).clip(RoundedCornerShape(10.dp)),
             onClick = { uriHandler.openUri(twitterHandle) },
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
-                    contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-                    disabledContainerColor = MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
-                    disabledContentColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                    disabledContentColor = MaterialTheme.colorScheme.primary,
                 ),
             shape = RoundedCornerShape(10.dp),
             isEnabled = true,
@@ -344,12 +340,12 @@ private fun TwitterHandleRow(
             Icon(
                 painter = painterResource(id = R.drawable.ic_twitter),
                 contentDescription = stringResource(id = R.string.share),
-                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                tint = MaterialTheme.colorScheme.primary,
             )
             ChaiBodyMedium(
                 modifier = Modifier.padding(start = 6.dp),
                 bodyText = twitterHandle.substringAfterLast('/').substringBefore('?'),
-                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                textColor = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
             )
         }
@@ -362,7 +358,7 @@ private fun CenteredMessage(message: String) {
         ChaiBodyMediumBold(
             modifier = Modifier.align(Alignment.Center),
             bodyText = message,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmall
 
 @Composable
@@ -36,12 +35,12 @@ fun TimeAndVenueComponent(
     ) {
         ChaiBodyXSmall(
             bodyText = "${session.startTime} - ${session.endTime}",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
         )
         ChaiBodyXSmall(
             bodyText = session.venue.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 2,
         )
     }

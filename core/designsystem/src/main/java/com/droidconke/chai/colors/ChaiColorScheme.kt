@@ -34,8 +34,6 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
 
-// Authored from the brand palette in `atoms/Color.kt` rather than derived from [ChaiColors],
-// so `primary` is an accent in both themes rather than an accent in one and a surface in the other.
 internal val ChaiLightColorScheme: ColorScheme =
     lightColorScheme(
         primary = ChaiBlue,
@@ -54,7 +52,7 @@ internal val ChaiLightColorScheme: ColorScheme =
         onSurface = ChaiGrey90,
         onSurfaceVariant = ChaiSmokeyGrey,
         surfaceContainerLowest = ChaiWhite,
-        surfaceContainerLow = ChaiLightGrey90,
+        surfaceContainerLow = ChaiWhite,
         surfaceContainer = ChaiLightGrey,
         surfaceContainerHigh = ChaiLightGrey,
         surfaceContainerHighest = ChaiGrey.copy(alpha = SURFACE_TINT).compositeOver(ChaiWhite),
@@ -66,7 +64,7 @@ internal val ChaiLightColorScheme: ColorScheme =
 
 internal val ChaiDarkColorScheme: ColorScheme =
     darkColorScheme(
-        primary = ChaiTeal,
+        primary = ChaiTeal90,
         onPrimary = ChaiCoal,
         primaryContainer = ChaiSubtleGrey,
         onPrimaryContainer = ChaiTeal90,
@@ -80,7 +78,7 @@ internal val ChaiDarkColorScheme: ColorScheme =
         onSurface = ChaiWhite,
         onSurfaceVariant = ChaiGrey,
         surfaceContainerLowest = ChaiBlack,
-        surfaceContainerLow = ChaiGrey90,
+        surfaceContainerLow = ChaiSubtleGrey,
         surfaceContainer = ChaiSubtleGrey,
         surfaceContainerHigh = ChaiDarkGrey,
         surfaceContainerHighest = ChaiSmokeyGrey,

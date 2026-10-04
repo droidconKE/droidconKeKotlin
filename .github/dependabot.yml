@@ -12,6 +12,12 @@ updates:
       timezone: Africa/Nairobi
     open-pull-requests-limit: 5
     labels: [ dependencies ]
+    # material3 is pinned to a 1.5.0 alpha for Expressive; stop it drifting onto the 1.6 alphas.
+    ignore:
+      - dependency-name: "androidx.compose.material3:material3"
+        versions: [ ">=1.6.0-alpha01" ]
+      - dependency-name: "androidx.compose.material3:material3-adaptive-navigation-suite"
+        versions: [ ">=1.6.0-alpha01" ]
     # Grouped so a quiet week is one PR, not forty.
     groups:
       androidx-compose:

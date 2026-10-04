@@ -38,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
@@ -83,7 +82,7 @@ fun SessionSpeakerNameAndFavouriteIcon(
             ChaiTitle(
                 modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
                 titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
 
             IconButton(
@@ -102,7 +101,7 @@ fun SessionSpeakerNameAndFavouriteIcon(
                             .testTag(TestTag.FAVOURITE_ICON),
                     imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                     contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                    tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.colorScheme.primary,
                 )
             }
         }

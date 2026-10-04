@@ -51,7 +51,6 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.components.CurrentSessionComponent
 import com.android254.presentation.sessions.models.SessionUIState
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
@@ -59,23 +58,20 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
-/** Wide enough for a session card to still read as a card rather than a squeezed row. */
+/** Wide enough to still read as a card. */
 val HappeningNowPaneWidth: Dp = 320.dp
 
 internal const val LIVE_SESSIONS_RAIL_TEST_TAG = "live_sessions_rail"
 internal const val HAPPENING_NOW_PANE_TEST_TAG = "happening_now_pane"
 
-/** Merged once, here: both lists key on session id and a duplicate key is a crash. */
+/** Merged once: both lists key on session id, and a duplicate key crashes. */
 @Composable
 fun rememberLiveSessions(state: SessionUIState): ImmutableList<SessionPresentationModel> =
     remember(state) {
         (state.current + state.upNext).distinctBy { it.id }.toImmutableList()
     }
 
-/**
- * The supporting pane, on the same activity-scoped view model the rail reads. An entry's content
- * is built once per back stack change, so a list handed in would freeze at what was on then.
- */
+/** Reads the view model itself: entry content is built once per back stack change. */
 @Composable
 fun HappeningNowRoute(
     onSessionClick: (String) -> Unit,
@@ -88,10 +84,7 @@ fun HappeningNowRoute(
     )
 }
 
-/**
- * The live and up-next sessions as a horizontal rail under the content. It is the bottom-most
- * element here, so it pays the bottom inset and the caller consumes that same inset above it.
- */
+/** The live and up-next rail. As the bottom-most element it pays the bottom inset. */
 @Composable
 fun LiveSessionsRail(
     sessions: ImmutableList<SessionPresentationModel>,
@@ -103,8 +96,7 @@ fun LiveSessionsRail(
             modifier
                 .testTag(LIVE_SESSIONS_RAIL_TEST_TAG)
                 .fillMaxWidth()
-                // Sides go into contentPadding so cards scroll under a cutout; the bottom is
-                // not a scroll axis, so it lifts the row instead.
+                // Sides scroll under a cutout via contentPadding; the bottom lifts the row.
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
                 .padding(bottom = 8.dp),
         contentPadding =
@@ -125,7 +117,7 @@ fun LiveSessionsRail(
     }
 }
 
-/** The same sessions stacked: a horizontal scroller exists only because a phone has no room. */
+/** The same sessions stacked, for the pane. */
 @Composable
 fun HappeningNowPane(
     sessions: ImmutableList<SessionPresentationModel>,
@@ -134,7 +126,7 @@ fun HappeningNowPane(
 ) {
     Surface(
         modifier = modifier.testTag(HAPPENING_NOW_PANE_TEST_TAG).fillMaxSize(),
-        color = MaterialTheme.chaiColorsPalette.background,
+        color = MaterialTheme.colorScheme.background,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -147,14 +139,14 @@ fun HappeningNowPane(
             item(key = "happening-now-title") {
                 ChaiSubTitle(
                     titleText = stringResource(R.string.happening_now),
-                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                    titleColor = MaterialTheme.colorScheme.primary,
                 )
             }
             if (sessions.isEmpty()) {
                 item(key = "happening-now-empty") {
                     ChaiBodyMedium(
                         bodyText = stringResource(R.string.happening_now_empty),
-                        textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                        textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -173,7 +165,7 @@ fun HappeningNowPane(
 @Composable
 private fun LiveSessionsRailPreview() {
     ChaiTheme {
-        Surface(color = MaterialTheme.chaiColorsPalette.background) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             LiveSessionsRail(
                 sessions = fakeSessions.take(2).toImmutableList(),
                 onSessionClick = {},

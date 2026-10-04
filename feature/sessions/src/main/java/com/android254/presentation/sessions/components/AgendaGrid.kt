@@ -48,7 +48,6 @@ import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodyXSmall
@@ -65,10 +64,7 @@ private val RoomColumnWidth = 196.dp
 private val SlotHeight = 132.dp
 private val RoomHeaderHeight = 48.dp
 
-/**
- * The day as a room-by-time grid — the way a schedule is read, and impossible on a phone. The
- * room row and time gutter stay put while the cells scroll.
- */
+/** The day as a room-by-time grid. The room row and time gutter stay put while cells scroll. */
 @Composable
 fun AgendaGrid(
     sessionsByTime: ImmutableMap<String, ImmutableList<SessionPresentationModel>>,
@@ -152,7 +148,7 @@ private fun TimeLabel(
     ) {
         ChaiBodyXSmallBold(
             bodyText = time,
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -192,14 +188,14 @@ private fun AgendaCell(
         modifier =
             cell
                 .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.chaiColorsPalette.cardsBackground)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .border(
                     width = if (session.sessionStatus == SessionStatus.Ongoing) 1.5.dp else 1.dp,
                     color =
                         if (session.sessionStatus == SessionStatus.Ongoing) {
                             accent
                         } else {
-                            MaterialTheme.chaiColorsPalette.cardsBorderColor
+                            MaterialTheme.colorScheme.outlineVariant
                         },
                     shape = RoundedCornerShape(8.dp),
                 ).clickable { onClick(session.id) }
@@ -208,7 +204,7 @@ private fun AgendaCell(
     ) {
         ChaiBodyMediumBold(
             bodyText = session.title,
-            textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+            textColor = MaterialTheme.colorScheme.primary,
             maxLines = 3,
         )
         if (session.format.isNotBlank()) {
@@ -217,7 +213,7 @@ private fun AgendaCell(
         session.speakers.firstOrNull()?.let { speaker ->
             ChaiBodyXSmall(
                 bodyText = speaker.name,
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
             )
         }
@@ -237,7 +233,7 @@ private fun agendaPreviewData(): ImmutableMap<String, ImmutableList<SessionPrese
 @Composable
 private fun AgendaGridPreview() {
     ChaiTheme {
-        Surface(color = MaterialTheme.chaiColorsPalette.background) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             AgendaGrid(sessionsByTime = agendaPreviewData(), navigateToSessionDetails = {})
         }
     }

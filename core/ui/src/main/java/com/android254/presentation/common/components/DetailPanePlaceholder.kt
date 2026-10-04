@@ -32,13 +32,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 
-/** Test tag, so a test can tell an empty pane from a missing one. */
 const val DETAIL_PANE_PLACEHOLDER_TEST_TAG: String = "detail_pane_placeholder"
 
-/** The state a phone never has: the detail exists and is empty. Blank reads as a rendering bug. */
+/** An empty detail pane. Blank would read as a rendering bug. */
 @Composable
 fun DetailPanePlaceholder(
     message: String,
@@ -47,7 +45,7 @@ fun DetailPanePlaceholder(
 ) {
     Surface(
         modifier = modifier.testTag(DETAIL_PANE_PLACEHOLDER_TEST_TAG).fillMaxSize(),
-        color = MaterialTheme.chaiColorsPalette.background,
+        color = MaterialTheme.colorScheme.background,
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(32.dp),
@@ -57,14 +55,14 @@ fun DetailPanePlaceholder(
             Icon(
                 modifier = Modifier.size(56.dp),
                 painter = icon,
-                // Decorative: the message below carries the meaning.
+                // Decorative: the message carries the meaning.
                 contentDescription = null,
-                tint = MaterialTheme.chaiColorsPalette.textWeakColor,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(16.dp))
             ChaiBodyMedium(
                 bodyText = message,
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
         }

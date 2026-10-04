@@ -6,20 +6,61 @@
 
 ---
 
-## Next up — §14, Swahili and the accessibility audit
+## Next up — §14, the accessibility audit
 
-**§2 is complete** (2026-09-10) and **§4 landed complete on 2026-09-17** — every item in its
-definition of done is closed. See "§4 landed" below, which also records four places this
-document was wrong and one place the edge-to-edge skill is easy to misread.
+**#6 landed on 2026-10-04**: the token restructure (§3.5) and M3 Expressive (§5.2) in one PR. See
+"§3.5 and §5.2 landed" below. It needed a material3 **alpha**, which is the one thing to know
+before touching the theme.
 
-**§14 is next**, and is independent of everything above it, so it can run by a separate owner.
+**§14 is next.** Swahili was dropped from it the same day — the app is built for a global
+audience and ships in English — so §14 is now the accessibility audit alone. It depends on
+nothing and can run by a separate owner. §5.2's component work (button group, bookmark morph,
+loading consolidation) is the alternative if a visible change is wanted first.
 
-§16.1 still ranks **#6, the design-system token restructure, above it** — that ordering has not
-changed, and #6 is the larger win. It is not listed as next here for one reason: its second half
-(M3 Expressive, §5.2) is blocked on material3 1.4.0, where `MaterialExpressiveTheme`,
-`MotionScheme` and the `*Emphasized` typography roles are all `internal`. The token restructure
-half is **not** blocked and can start whenever someone picks it up. §14 is named here because it
-needs nobody else and nothing else.
+### §3.5 and §5.2 landed (2026-10-04)
+
+**Tokens.** `ChaiColors` went from 38 tokens to 6, and 213 call sites now read
+`MaterialTheme.colorScheme`. The §3.5 mapping table was a guide, not a spec: checked value by
+value, several rows were wrong. `secondaryButtonColor` was Blue/Teal90, not `secondary` (which is
+red in both themes); dark `primary` was `ChaiBlack`, so the pull-to-refresh indicator and the
+feedback button were black in dark mode. Two scheme changes made the mapping exact:
+
+- **Dark `primary` is `ChaiTeal90`, not `ChaiTeal`.** Headings, buttons and links were already
+  Teal90 in dark (33 call sites); only the selected nav icon used the saturated teal.
+- **`surfaceContainerLow` is White / `ChaiSubtleGrey`**, which is what cards already were, so
+  `cardsBackground` maps onto the role Material's own cards use.
+
+The six tokens left are the ones no role holds in both themes: `loadingShimmerColor`,
+`tealAccentColor`, `selectedDayContentColor`, `badgeContainerColor`, `switchThumbColor`,
+`switchOffIconColor`. Each has a KDoc saying why.
+
+**Visible changes** were reviewed in the goldens, all in the migration commit: dark-mode accents
+on the feedback button, pull-to-refresh, "View all" and Share; a raised text field and a dimmed
+inactive icon in dark; a visible text-field border in light. Two more have no golden and were
+checked on an Android 16 emulator: unselected filter buttons take an `onSurfaceVariant` border
+(lighter in light mode, unchanged in dark), and the "My sessions" switch's off track is
+`onSurfaceVariant` so the white thumb stays visible on it in dark mode.
+
+**Expressive needed an alpha.** `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized`
+roles are `internal` in material3 1.4.0, the newest stable and what BOM `2026.09.00` manages.
+They are public in **1.5.0-alpha29**, so `material3` and `material3-adaptive-navigation-suite`
+are pinned there with a `version.ref` that overrides the BOM. The pin is wider than it looks:
+1.5.0-alpha29 depends on foundation 1.13.0-alpha01, which lifts `ui`, `runtime`, `foundation`
+and `animation` to **1.13.0-alpha01** across the app (`material3-adaptive` stays on 1.3.0). The
+pin on its own moved no golden and no stability baseline. **Remove the `version.ref` once a BOM
+manages a stable 1.5.0.**
+
+**What Expressive changed:** `ChaiTheme` provides `MaterialExpressiveTheme` with
+`MotionScheme.expressive()`; `ChaiTypography` fills the fifteen `*Emphasized` roles, each its base
+role one weight heavier, capped at Bold because Montserrat is bundled no heavier; and
+pull-to-refresh uses the Expressive `LoadingIndicator`. No golden moved — the colours, shapes and
+sizes passed in are unchanged, and a still frame does not show motion. Lottie went with the unused
+`Loader`.
+
+**Still open in §5.2:** the `ButtonGroup` day selector, the bookmark shape morph, consolidating
+the loading states, and the corner-radius decision (`CShapes` stays 3/7/9/10 dp — a design call).
+No `ChaiMotion` was built: features read `MaterialTheme.motionScheme` directly, and a chai motion
+tier would have no caller yet.
 
 ### The module split, as landed
 
@@ -343,6 +384,8 @@ material3 **1.5.0-alpha17**, which it read; this repo is on **1.4.0**, whose `Sc
 `safeInsets.insets = contentWindowInsets.exclude(consumedWindowInsets)` through
 `onConsumedWindowInsetsChanged`. The contract holds. It is worth knowing that it stops holding
 on some later material3, because that is the day every screen grows a second navigation-bar gap.
+**Re-checked 2026-10-04 on the pinned 1.5.0-alpha29:** its `Scaffold` still excludes consumed
+insets the same way, so the contract holds there too. Check again on each material3 bump.
 
 #### What else landed
 
@@ -550,11 +593,9 @@ choose.
 
 - Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see
   §3.9). B6 and B10 protect user data and are the ones to do first.
-- The `ChaiColors` token migration: tier 2 exists and stock components are on-brand, but the
-  38 tier-3 tokens still back ~170 call sites. Migrate feature by feature, then delete.
-- Expressive is unreachable on material3 1.4.0 — `MaterialExpressiveTheme`, `MotionScheme` and
-  the `*Emphasized` typography roles are all `internal`. §5.2 is blocked on the library, not on
-  this repo. Re-check when material3 moves.
+- ~~The `ChaiColors` token migration~~ — done 2026-10-04, 38 tokens down to 6.
+- ~~Expressive is unreachable on material3 1.4.0~~ — reached 2026-10-04 by pinning material3
+  1.5.0-alpha29. The pin comes out when a BOM manages a stable 1.5.0.
 
 ---
 
@@ -1657,7 +1698,7 @@ sealed interface Screens : NavKey {
 
 ```kotlin
 // presentation/.../common/navigation/TopLevelDestination.kt
-// Display metadata lives here — and the label is a resource, so it localises (§14).
+// Display metadata lives here — and the label is a resource, not a hardcoded string.
 enum class TopLevelDestination(
     val route: Screens,
     @DrawableRes val selectedIcon: Int,
@@ -1842,6 +1883,10 @@ This is not a compromise position. It's the architecture chai was clearly reachi
 >
 > Re-check this table when material3 next moves; the moment those go public, §5.2 becomes the
 > one-line change it was designed to be.
+>
+> **Update 2026-10-04:** all three are public in material3 **1.5.0-alpha29**, and
+> `MaterialExpressiveTheme` needs no opt-in there. The repo pins that alpha to reach them — see
+> "§3.5 and §5.2 landed" at the top. `ButtonGroup` and `LoadingIndicator` exist in it too.
 
 **And the target is Material 3 Expressive, not plain M3.** That's a requirement, and it changes the token design in three specific ways that are cheaper to build in now than to retrofit:
 
@@ -2331,10 +2376,10 @@ Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a
 - [x] `grep -rn "MaterialTheme.colorScheme"` returns only on-brand values — verified against the
       §10.2 goldens, not just by grep
 - [x] `LocalChaiColorsPalette` errors on missing provider instead of rendering `Color.Unspecified`
-- [ ] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3
-      role — **not started.** Deliberately deferred: the 38 tokens back ~170 call sites, and
-      deprecating them in place would emit ~170 build warnings against this repo's zero-warning
-      rule. Migrate feature by feature as §4 and §5 touch them, then delete.
+- [x] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3
+      role — **done 2026-10-04: 6 tokens.** Done as one PR rather than feature by feature; the
+      visible changes are all in the migration commit's goldens, apart from the pin and theme
+      commits, which moved none.
 - [x] Dark-mode elevation direction decided **with design**, and recorded here — **decided
       2026-09-04: reversed to the M3 direction.** Raised surfaces are now lighter than the
       background in dark (`surfaces`/`cardsBackground`/`bottomSheetBackgroundColor` →
@@ -2350,12 +2395,11 @@ Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a
 - [x] `ChaiTheme` no longer touches `LocalView`, the Activity, or the window (B5)
 - [ ] A rule prevents tier-1 palette references outside `chai/colors` — not started
 
-**Expressive-readiness gate.** Three of the four items are **not achievable on material3 1.4.0**
-— see the corrected note above. Revisit when the Expressive APIs go public:
-- [ ] ~~`ChaiTypography` fills the `*Emphasized` roles~~ — blocked: the roles are `internal`
-- [ ] ~~`ChaiMotionScheme` and `ChaiMotion` provided by `ChaiTheme`~~ — blocked: `MotionScheme`
-      is `internal`
-- [ ] ~~Spike `MaterialExpressiveTheme` before §3.5 merges~~ — blocked: it is `internal`
+**Expressive-readiness gate.** Unblocked 2026-10-04 on material3 1.5.0-alpha29:
+- [x] `ChaiTypography` fills the `*Emphasized` roles — each is its base role one weight heavier
+- [x] `ChaiTheme` provides a `MotionScheme` — `MotionScheme.expressive()`. No `ChaiMotionScheme`
+      or `ChaiMotion`: nothing would read a chai motion tier yet
+- [x] ~~Spike~~ Adopt `MaterialExpressiveTheme` — landed, rather than spiked
 - [x] Corner-radius scale question logged for §5.2 (keep 3/7/9/10, or move toward Expressive's
       larger ramp) — `CShapes` is wired as-is, preserving today's radii; the scale itself is
       still an open §5.2 question
@@ -3007,6 +3051,11 @@ The single biggest UX gap today: **the app never tells you where to be.** There'
 
 ### 5.2 Adopt M3 Expressive
 
+> **Status 2026-10-04:** the theme half landed — `MaterialExpressiveTheme`, the expressive
+> `MotionScheme`, the `*Emphasized` roles, and the pull-to-refresh `LoadingIndicator`, on a pinned
+> material3 1.5.0-alpha29. The component work below (`ButtonGroup`, the bookmark morph, loading
+> consolidation) and the corner-radius decision are still open.
+
 Material 3 Expressive brings shape morphing, spring-based motion schemes, button groups, and loading indicators that read as *deliberate* rather than default. Combined with §3.5's `ColorScheme` bridge:
 
 ```kotlin
@@ -3442,13 +3491,13 @@ fun sessionsScreen_hasNoAccessibilityViolations() {
 ```
 
 **Definition of done:**
-- [ ] `MaterialExpressiveTheme` with brand `ColorScheme`, `Typography` (base **and** `*Emphasized`), `Shapes`, and `MotionScheme` — all four sourced from chai, none defaulted
-- [ ] The diff from §3.5's `ChaiTheme` is the theme-function swap plus `motionScheme`, nothing more
+- [x] `MaterialExpressiveTheme` with brand `ColorScheme`, `Typography` (base **and** `*Emphasized`), `Shapes`, and `MotionScheme` — none defaulted. The motion scheme is Material's `expressive()`, not a chai one
+- [x] The diff from §3.5's `ChaiTheme` is the theme-function swap plus `motionScheme`, nothing more
 - [ ] Corner-radius scale decision made with design and recorded
 - [ ] Zero hardcoded `Color` literals inside composables (lint rule to enforce)
 - [ ] Zero hardcoded animation durations or springs in feature code — motion comes from `MaterialTheme.motionScheme` or `LocalChaiMotion`
 - [ ] Loading states consolidated from 9 implementations to 2
-- [ ] Accompanist and Lottie removed
+- [x] Accompanist and Lottie removed
 - [ ] Shared element transitions on session and speaker cards
 - [ ] Notes ship, offline, no auth
 - [ ] Full TalkBack pass on every screen, recorded as a checklist in the PR
@@ -4645,9 +4694,9 @@ class SessionTranslator @Inject constructor() {
 }
 ```
 
-Priority language pairs for droidcon Kenya: **English → Swahili** (and back), then French and Portuguese for pan-African attendees.
+Offer the attendee's device language as the target rather than a fixed list — the audience is global, and ML Kit downloads each model on demand.
 
-Wire it as a per-screen toggle, not a global setting — someone reading English session titles may still want a Swahili description.
+Wire it as a per-screen toggle, not a global setting — someone reading English session titles may still want a description in their own language.
 
 **Live audio captioning** (transcribe a talk in real time) is technically reachable via Gemma 3n's audio modality or a cloud speech API, but: it needs the microphone during a talk, it drains battery, it's ethically fraught to record speakers without consent, and quality in a large room with poor acoustics is bad. **Recommendation: don't build it.** Instead, lobby the organisers for official captions and surface *those*. That is the version that actually helps.
 
@@ -6023,18 +6072,12 @@ private val Montserrat = FontFamily(
 
 > **Trade-off, stated plainly:** downloadable fonts add a first-launch fetch and a fallback-font flash on devices without Play services. For a conference app whose users are on Play-enabled Android phones, the size win is worth it — but if the brand cares about a pixel-perfect first frame, bundle **one variable font file** instead. Either beats five static files.
 
-**3. Remove unused dependencies.** Still open: `lottie-compose`, `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These are actually *used*, so unlike the dead catalog entries already deleted they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
+**3. Remove unused dependencies.** Still open: ~~`lottie-compose`~~ (removed 2026-10-04 — its one caller was dead), `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These are actually *used*, so unlike the dead catalog entries already deleted they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
 
-**4. Per-app language + locale filtering.** Once §14's translations land:
-
-```kotlin
-android {
-    androidResources {
-        generateLocaleConfig = true
-        localeFilters += listOf("en", "sw", "fr", "pt")
-    }
-}
-```
+**4. ~~Per-app language + locale filtering~~ — dropped 2026-10-04.** It depended on §14's
+Swahili translations, which are out of scope: the app ships in English for a global audience,
+so there is no second language for a per-app picker to switch to. `localeFilters` on its own
+stays off — see [`docs/performance.md`](performance.md).
 
 **5. Deduplicate drawables.** Twelve identical XML drawables exist in both `chai` and `presentation`. Single source in `chai`.
 
@@ -7150,8 +7193,6 @@ fastlane/metadata/android/
 │       ├── sevenInchScreenshots/
 │       ├── tenInchScreenshots/
 │       └── tvScreenshots/
-└── sw-KE/
-    └── … (see §14)
 ```
 
 ```ruby
@@ -7388,75 +7429,17 @@ val updateType = if (featureToggle.forceUpdate) AppUpdateType.IMMEDIATE else App
 
 - **Pre-launch report** — free automated testing across a device farm on every internal-track upload. Read it; it catches crashes and accessibility issues you won't.
 - **Store listing experiments** — A/B the feature graphic and short description. Free conversion data.
-- **Custom store listing for Kenya** with Swahili copy (§14).
 
 ---
 
-## 14. Accessibility and localization
+## 14. Accessibility
 
-**No longer depends on anything.** This section used to be blocked on §3.3 B10, because the
-navigation labels were hardcoded Kotlin strings. B10 landed: `TopLevelDestination` carries
-`@StringRes` labels (`R.string.nav_home` and friends) and the bar is translatable today. §14 can
-start whenever someone picks it up.
+**Swahili was dropped on 2026-10-04.** The app is built for a global audience, not only for
+attendees in Kenya, so it ships in English and this section is the accessibility audit alone.
+Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings (§3.3 B10) are
+`@StringRes` values on `TopLevelDestination`, which is also what TalkBack reads.
 
-### 14.1 Swahili
-
-The app is for a Kenyan conference and ships English only. Swahili is the national language, spoken by the majority of the country. Adding it is:
-
-- The right thing to do.
-- A visible statement about who the app is for.
-- A real accessibility win for attendees who aren't comfortable in technical English.
-- A strong story for the Play listing and a good conference talk.
-
-Practical scope: **UI chrome in Swahili, content in its original language.** Session titles and descriptions are written by speakers in English and shouldn't be machine-translated in place — but the *app* around them can be Swahili, and §6.10's on-device translation offers per-item translation on demand.
-
-```xml
-<!-- presentation/src/main/res/values-sw/strings.xml -->
-<resources>
-    <string name="nav_home">Nyumbani</string>
-    <string name="nav_sessions">Vipindi</string>
-    <string name="nav_feed">Habari</string>
-    <string name="nav_ticket">Tikiti</string>
-    <string name="nav_about">Kuhusu</string>
-
-    <string name="session_live_now">Inaendelea sasa</string>
-    <string name="session_starred">Umehifadhi kipindi hiki</string>
-    <string name="sessions_my_sessions">Vipindi vyangu</string>
-
-    <!-- Plurals work differently per language — never build these by string concat -->
-    <plurals name="sessions_count">
-        <item quantity="one">Kipindi %d</item>
-        <item quantity="other">Vipindi %d</item>
-    </plurals>
-</resources>
-```
-
-The string-resource work this used to wait on has landed. The navigation labels moved off
-`Screens` and onto `TopLevelDestination` as `@StringRes` values, so the bar translates with
-everything else — add `values-sw` and it follows.
-
-Have a native Swahili speaker from the community review the translations. Machine-translated UI strings in a language you don't speak is how you end up with something unintentionally funny on the biggest screen at the conference.
-
-Add per-app language support so users can pick independently of the system:
-
-```xml
-<!-- app/src/main/res/xml/locales_config.xml -->
-<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
-    <locale android:name="en" />
-    <locale android:name="sw" />
-</locale-config>
-```
-
-```xml
-<application android:localeConfig="@xml/locales_config" ...>
-```
-
-```kotlin
-// In-app language picker
-AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("sw"))
-```
-
-### 14.2 Accessibility checklist
+### 14.1 Accessibility checklist
 
 Beyond §5.6's semantics work, the things that need explicit verification:
 
@@ -7685,8 +7668,8 @@ production callers in `AuthApi` and `SessionsApi`. Leave it.
 
 Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
 
-Items 1–5, 7 and 10 have since landed; they are struck rather than deleted so the ordering still
-reads as it was decided. **The list now starts at #6.**
+Items 1–7 and 10 have since landed; they are struck rather than deleted so the ordering still
+reads as it was decided. **The list now starts at #8.**
 
 **One correction to the ordering itself.** #7 was placed below #6 because "Adaptive needs #6's
 theme work first" — specifically `MaterialExpressiveTheme`. Expressive is still `internal` on
@@ -7702,10 +7685,10 @@ first. The dependency in §16.3 ("Design system must land §3.5 before Adaptive 
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
 | ~~**4**~~ | ~~Baseline + startup profile~~ — **done 2026-09-10** | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
 | ~~**5**~~ | ~~Compose compiler stability config~~ — **done** | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
-| **6** | Design-system token restructure, then M3 Expressive | §3.5 → §5 | Needs #3 to review and a Compose BOM with material3 1.4.x. The single biggest visible change available. |
+| ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-04**, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. §5.2's component work is still open. |
 | ~~**7**~~ | ~~Adaptive & large-screen support~~ — **done 2026-09-17** | §4 | The README already claims it. Did **not** need #6's theme work — see the correction above. |
-| **8** | Swahili + accessibility audit | §14 | Independent of the above; can run in parallel by a separate owner. |
-| **9** | Real size wins: `material-icons-extended`, fonts, Lottie, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
+| **8** | Accessibility audit (Swahili dropped 2026-10-04) | §14 | Independent of the above; can run in parallel by a separate owner. |
+| **9** | Real size wins: `material-icons-extended`, fonts, ~~Lottie~~, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
 | ~~**10**~~ | ~~Credential Manager, replacing the deprecated GMS Auth path~~ — **done**, landed with Phase 0 | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
 
 Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
@@ -7727,10 +7710,10 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 
 **Stage 2 — Make it a 2026 app**
 - §10.2 Roborazzi screenshot suite — **first in this stage**, because it is how everything else here gets reviewed
-- §3.5 → §5 design system: token restructure, then M3 Expressive
+- ~~§3.5 → §5 design system: token restructure, then M3 Expressive~~ — **landed 2026-10-04**; §5.2 components still open
 - ~~§4 adaptive & large screen~~ — **landed 2026-09-17**, ahead of the design system rather than after it
 - §2 extract `:core:designsystem` plus one feature module, to prove the pattern
-- §14 Swahili + accessibility audit
+- §14 accessibility audit
 - **Milestone:** correct on every form factor · visual regressions caught in CI · contrast test green
 
 **Stage 3 — Make it worth installing**
@@ -7862,8 +7845,7 @@ Quick reference for where each finding lives.
 ```
 chai/.../components/CText.kt: CParagraph, CPageTitle, CSubtitle, CActionText
 presentation/src/main/res/drawable/*                 # 9 duplicated from chai
-presentation/.../common/components/{Loader,LoadingBox,AnimatedShimmerEffect}.kt  # consolidate to 2
-presentation/src/main/res/raw/loading.json           # with the Lottie dependency
+presentation/.../common/components/{LoadingBox,AnimatedShimmerEffect}.kt  # consolidate to 2 (Loader deleted)
 ```
 
 ### New modules

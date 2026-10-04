@@ -313,15 +313,18 @@ The rules that matter:
 
 ## Design system
 
-`chai` holds the colours, typography and shared components. Read
-`MaterialTheme.chaiColorsPalette` for semantic colours or `MaterialTheme.colorScheme` for
-Material roles. Do not import `ChaiBlue` and friends outside `chai/colors`.
+`chai` holds the colours, typography, shapes and shared components, and sits underneath Material
+3 Expressive rather than beside it. `ChaiTheme` provides `MaterialExpressiveTheme` with chai's
+`colorScheme`, `typography` (base and `*Emphasized` roles), `shapes`, and the expressive
+`MotionScheme`, so stock Material components are on-brand without passing colours.
 
-One caveat worth knowing before you add a component: **chai currently runs alongside Material
-3 rather than underneath it.** `ChaiTheme` does not pass a `colorScheme`, so stock Material
-components render in Material's default purple. If a new component's colours look wrong, that
-is why. Pass colours explicitly until the design-system rebuild lands — see
-[`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md).
+Read `MaterialTheme.colorScheme` for colour. `MaterialTheme.chaiColorsPalette` holds the six
+colours no Material role expresses in both themes — the loading shimmer, the pastel teal, and a
+few component colours — and a token is added there only when no role fits. Do not import
+`ChaiBlue` and friends outside `chai/colors`.
+
+The Expressive APIs are only public in material3 1.5.0-alpha29, which the version catalog pins
+over the BOM — see `AGENTS.md`.
 
 ---
 

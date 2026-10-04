@@ -43,7 +43,6 @@ import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
@@ -61,7 +60,7 @@ fun AuthDialog(
 
     AlertDialog(
         modifier = Modifier,
-        containerColor = MaterialTheme.chaiColorsPalette.surfaces,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         shape = RoundedCornerShape(12.dp),
         onDismissRequest = onDismiss,
         text = {
@@ -69,7 +68,7 @@ fun AuthDialog(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.chaiColorsPalette.surfaces),
+                        .background(color = MaterialTheme.colorScheme.surfaceContainer),
             ) {
                 Spacer(
                     modifier =
@@ -119,7 +118,7 @@ fun AuthDialog(
                 ChaiTextButtonLight(
                     modifier = Modifier.testTag("cancel_button"),
                     bodyText = "Cancel", // Strangely, using stringResource(..) causes a build error,
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },

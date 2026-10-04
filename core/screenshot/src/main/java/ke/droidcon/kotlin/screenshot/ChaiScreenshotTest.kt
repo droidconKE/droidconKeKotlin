@@ -77,10 +77,12 @@ abstract class ChaiScreenshotTest {
         )
     }
 
+    /** [frameMillis] pauses the clock and captures that far in, for content that never idles. */
     protected fun captureComponent(
         name: String,
+        frameMillis: Long? = null,
         content: @Composable () -> Unit,
-    ) = capture(name = name, fillWindow = false, content = content)
+    ) = capture(name = name, fillWindow = false, frameMillis = frameMillis, content = content)
 
     protected fun captureScreen(
         name: String,
@@ -128,9 +130,11 @@ abstract class ChaiScreenshotTest {
     private fun capture(
         name: String,
         fillWindow: Boolean,
+        frameMillis: Long? = null,
         content: @Composable () -> Unit,
     ) {
         var variant by mutableStateOf(ScreenshotVariant.entries.first())
+        if (frameMillis != null) composeRule.mainClock.autoAdvance = false
 
         // setContent may only be called once per test, so the matrix is driven by state.
         composeRule.setContent {
@@ -155,6 +159,7 @@ abstract class ChaiScreenshotTest {
         ScreenshotVariant.entries.forEach { entry ->
             variant = entry
             composeRule.waitForIdle()
+            frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
                 roborazziOptions =

@@ -66,7 +66,7 @@ fun SessionLoadingComponent(
                         SessionScreenState.ALL -> stringResource(R.string.all_sessions)
                         SessionScreenState.MYSESSIONS -> stringResource(R.string.my_sessions)
                     },
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -89,9 +89,9 @@ fun LoadingTimeHeader() {
     AnimatedShimmerEffect(
         gradientColors =
             persistentListOf(
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
-                MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
+                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
             ),
     ) { brush ->
         Column(
@@ -109,7 +109,7 @@ fun LoadingTimeHeader() {
 private fun SessionLoadingPreview() {
     ChaiTheme {
         Surface(
-            color = MaterialTheme.chaiColorsPalette.background,
+            color = MaterialTheme.colorScheme.background,
         ) {
             SessionLoadingComponent()
         }

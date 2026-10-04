@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -66,7 +65,6 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -104,8 +102,7 @@ fun SessionsScreen(
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Derived from the ViewModel rather than mirrored here, so rotation cannot leave the
-    // switch and the applied filter disagreeing.
+    // Derived, not mirrored, so rotation cannot desync the switch and the filter.
     val showMySessions = sessionsUiState.showMySessionsOnly
 
     val bottomSheetState =
@@ -139,7 +136,6 @@ fun SessionsScreen(
                 onFilterButtonClick = { showFilterSheet = true },
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         // The day selector stays put, so it takes the top and sides and the list takes the bottom.
@@ -202,8 +198,7 @@ fun SessionsScreen(
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
             )
-            // Gated on our own flag, not `bottomSheetState.isVisible`, which would skip
-            // the enter animation.
+            // Our own flag: `bottomSheetState.isVisible` would skip the enter animation.
             if (showFilterSheet) {
                 ModalBottomSheet(
                     sheetState = bottomSheetState,

@@ -16,6 +16,7 @@
 package com.droidconke.chai.components
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -24,17 +25,9 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.droidconke.chai.chaiColorsPalette
 
-/**
- * Pull to refresh, with the indicator coloured from the theme.
- *
- * `ChaiTheme` passes no `colorScheme`, so the stock Material indicator would render in
- * Material's default purple. Colours are passed explicitly here so call sites cannot forget.
- *
- * Hoist [state] when the box sits inside content that recomposes away — an `AnimatedContent`
- * branch, say — or the indicator restarts mid-gesture.
- */
+/** Pull to refresh in the brand accent. Hoist [state] if the box can recompose away mid-gesture. */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ChaiPullToRefreshBox(
     isRefreshing: Boolean,
@@ -49,12 +42,12 @@ fun ChaiPullToRefreshBox(
         modifier = modifier,
         state = state,
         indicator = {
-            PullToRefreshDefaults.Indicator(
+            PullToRefreshDefaults.LoadingIndicator(
                 state = state,
                 isRefreshing = isRefreshing,
                 modifier = Modifier.align(Alignment.TopCenter),
-                containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
-                color = MaterialTheme.chaiColorsPalette.primary,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                color = MaterialTheme.colorScheme.primary,
             )
         },
         content = content,

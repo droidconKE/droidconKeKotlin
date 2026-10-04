@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 
@@ -50,7 +49,7 @@ fun HomeSpeakersLoadingComponent(modifier: Modifier = Modifier) {
         ) {
             ChaiSubTitle(
                 titleText = stringResource(id = R.string.speakers_label),
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
             LoadingBox(height = 20.dp, width = 80.dp)
         }

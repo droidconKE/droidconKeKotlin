@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SponsorPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -59,7 +58,7 @@ fun SponsorsCard(
                 modifier
                     .fillMaxWidth()
                     .background(
-                        color = MaterialTheme.chaiColorsPalette.surfaces,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(10.dp),
                     ).padding(horizontal = 30.dp, vertical = 10.dp)
                     .testTag("sponsors_section"),
@@ -68,7 +67,7 @@ fun SponsorsCard(
             ChaiSubTitle(
                 modifier = Modifier.fillMaxWidth(),
                 titleText = stringResource(id = R.string.sponsors_title),
-                titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                titleColor = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
             )
 

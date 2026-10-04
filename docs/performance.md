@@ -25,6 +25,11 @@ dex, which is the price of splitting.
 
 ### Re-measured on 2026-09-13, on the build this branch ships
 
+> These numbers predate the 2026-10-04 move to material3 1.5.0-alpha29, which also lifted the
+> rest of Compose to 1.13.0-alpha01 (see `AGENTS.md`, Stack). They have not been re-measured on
+> it. The baseline profile was regenerated on it the same day; re-run the benchmark before
+> quoting these numbers for that build.
+
 Same device and method, after the size and manifest work (medians of 15 cold starts,
 `POST_NOTIFICATIONS` granted):
 
@@ -343,8 +348,9 @@ Release APK (universal, unsigned): 6,417,593 → **4,618,830 bytes, −28%**.
 Left alone on purpose: `androidx.window` and `androidx.biometric` are transitive (Compose UI,
 Credential Manager) and R8 already strips what is unused; the x86 `.so` files (33 KB) only
 exist in the universal APK, bundles split them out; `localeFilters` would trim library strings
-further but would hand Swahili users English in Compose's own accessibility strings; the
-`META-INF/**/LICENSE.txt` copies are a legal question rather than a size one. The Compose
+further but would hand any non-English device English in Compose's own accessibility
+strings, and the audience is global; the `META-INF/**/LICENSE.txt` copies are a legal
+question rather than a size one. The Compose
 stability analyzer's runtime (`com.github.skydoves:compose-stability-runtime`) is on the
 release classpath because its plugin adds it to every variant; its consumer rules keep six
 small classes, the instrumentation itself is debug-only by the plugin's default, and the few KB

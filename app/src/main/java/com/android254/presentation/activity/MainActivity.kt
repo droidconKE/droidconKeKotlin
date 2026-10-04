@@ -70,7 +70,6 @@ import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -81,8 +80,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
-        // enableEdgeToEdge() turns contrast enforcement on, which paints a second, differently
-        // coloured bar on top of the one we already drew under three-button navigation.
+        // Contrast enforcement would paint a second bar over ours under three-button navigation.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -96,8 +94,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Should move to the first bookmark: a launch-time prompt with no context gets
-        // denied, and the rationale branch below only logs.
+        // Should move to the first bookmark: a launch-time prompt with no context gets denied.
         askNotificationPermission()
     }
 
@@ -159,7 +156,7 @@ fun MainScreen(
     val currentRoute = navigationState.currentRoute
     val showNavigation = shouldShowNavigation(currentRoute, isMultiPaneWindow)
 
-    // Animated rather than added and removed, so content does not jump on the way to a detail.
+    // Animated so content does not jump on the way to a detail.
     val navigationSuiteState = rememberNavigationSuiteScaffoldState()
     LaunchedEffect(showNavigation) {
         if (showNavigation) navigationSuiteState.show() else navigationSuiteState.hide()
@@ -167,7 +164,7 @@ fun MainScreen(
 
     val liveSessions = rememberLiveSessions(sessionsState)
 
-    // Two presentations of the same sessions: a pane where there is a column, a rail elsewhere.
+    // A pane where there is a column, a rail elsewhere.
     val showSupportingPane =
         shouldShowSupportingPane(
             route = currentRoute,
@@ -191,7 +188,7 @@ fun MainScreen(
         },
         navigationSuiteType = navigationSuiteType,
         navigationSuiteColors = droidconNavigationSuiteColors(),
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         state = navigationSuiteState,
         primaryActionContent = {
             if (navigationSuiteType == NavigationSuiteType.NavigationDrawer) {
@@ -201,8 +198,7 @@ fun MainScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Navigation(
-                // NavDisplay intercepts back on the start destination too once the supporting
-                // pane is in its entry list, so an unhandled press has to reach the system.
+                // With the supporting pane listed, NavDisplay intercepts back even at the start destination.
                 onBack = { if (!navController.goBack()) activity?.finish() },
                 modifier =
                     Modifier

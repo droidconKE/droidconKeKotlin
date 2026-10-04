@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyLarge
@@ -72,14 +71,13 @@ fun SessionsFilterPanel(
                     color = ChaiGrey90.copy(alpha = 0.52f),
                 ),
     ) {
-        // The Visible Content
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .background(
-                        color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(bottomEnd = 14.dp, bottomStart = 14.dp),
                     ).padding(start = 24.dp, end = 24.dp, top = 48.dp, bottom = 36.dp),
         ) {
@@ -96,11 +94,11 @@ fun SessionsFilterPanel(
                         painter = painterResource(id = R.drawable.ic_filter),
                         contentDescription = null,
                         modifier = Modifier.padding(end = 12.dp),
-                        tint = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     ChaiBodyLarge(
                         bodyText = stringResource(id = R.string.filter_button_label),
-                        textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                        textColor = MaterialTheme.colorScheme.primary,
                     )
                 }
 
@@ -111,7 +109,7 @@ fun SessionsFilterPanel(
                             onDismiss()
                         },
                     bodyText = stringResource(id = R.string.cancel),
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 
@@ -122,7 +120,7 @@ fun SessionsFilterPanel(
                 ) {
                     ChaiSubTitle(
                         titleText = stringResource(id = filter.key.resId),
-                        titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                        titleColor = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     MultiToggleButton(
@@ -144,8 +142,8 @@ fun SessionsFilterPanel(
                 shape = MaterialTheme.shapes.small,
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
-                        contentColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
                 modifier =
                     Modifier
@@ -154,7 +152,7 @@ fun SessionsFilterPanel(
             ) {
                 CPrimaryButtonText(
                     text = stringResource(R.string.filter_button_label).uppercase(),
-                    textColor = MaterialTheme.chaiColorsPalette.secondaryButtonTextColor,
+                    textColor = MaterialTheme.colorScheme.onPrimary,
                 )
             }
             Spacer(modifier = Modifier.height(40.dp))

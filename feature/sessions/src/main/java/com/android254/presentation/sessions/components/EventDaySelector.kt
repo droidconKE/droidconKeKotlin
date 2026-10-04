@@ -50,9 +50,9 @@ fun EventDaySelector(
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             LazyRow(modifier = modifier) {

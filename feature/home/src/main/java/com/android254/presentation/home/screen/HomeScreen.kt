@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -54,7 +53,6 @@ import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun HomeRoute(
@@ -105,7 +103,6 @@ internal fun HomeScreen(
                 onActionClicked = onActionClicked,
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         PullToRefreshBox(

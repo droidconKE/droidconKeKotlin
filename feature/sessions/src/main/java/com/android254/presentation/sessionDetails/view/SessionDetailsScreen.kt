@@ -69,7 +69,6 @@ import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 
 @Composable
@@ -98,11 +97,10 @@ internal fun SessionDetailsScreen(
     showTopBar: Boolean = true,
     isTabletop: Boolean = rememberIsTabletopPosture(),
 ) {
-    // The scrim is drawn over the content, so the stacking is stated here rather than left to
-    // whatever container the caller happens to use.
+    // The scrim draws over the content, so stack it here rather than rely on the caller.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            // As a pane the bar is the title twice over, and a back arrow out of a visible list.
+            // As a pane the bar repeats the title and offers a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
             floatingActionButton = {
                 FloatingActionButton(
@@ -122,7 +120,6 @@ internal fun SessionDetailsScreen(
                     )
                 }
             },
-            containerColor = MaterialTheme.chaiColorsPalette.background,
             contentWindowInsets = DroidconWindowInsets.screenContent,
         ) { paddingValues ->
             when (uiState) {
@@ -141,7 +138,7 @@ internal fun SessionDetailsScreen(
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
                             bodyText = uiState.message,
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }

@@ -43,7 +43,6 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmall
 import ke.droidcon.kotlin.core.ui.R
 
@@ -57,7 +56,7 @@ fun DroidconAppBarWithFeedbackButton(
     Row(
         modifier =
             modifier
-                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .windowInsetsPadding(windowInsets)
                 .height(64.dp)
@@ -96,13 +95,13 @@ fun FeedbackButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_feedback_emoji),
             contentDescription = null,
-            tint = MaterialTheme.chaiColorsPalette.textNormalColor,
+            tint = MaterialTheme.colorScheme.onSurface,
         )
 
         ChaiBodyXSmall(
             modifier = Modifier,
             bodyText = stringResource(id = R.string.feedback),
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_send_icon),

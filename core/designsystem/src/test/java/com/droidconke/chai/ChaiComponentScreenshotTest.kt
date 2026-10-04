@@ -16,8 +16,11 @@
 package com.droidconke.chai
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Save
@@ -34,6 +37,7 @@ import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiBodyXSmallBold
+import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
 import com.droidconke.chai.components.ChaiTextLabelLarge
@@ -119,6 +123,18 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
             "Sessions run in Sapphire and Opal, and a talk can be scheduled in both rooms " +
                 "at once, which is exactly the case that wraps onto a third line."
     }
+
+    @Test
+    fun `pull to refresh while refreshing`() =
+        captureComponent("chai/pull_to_refresh_refreshing", frameMillis = 1_000) {
+            ChaiPullToRefreshBox(
+                isRefreshing = true,
+                onRefresh = {},
+                modifier = Modifier.fillMaxWidth().height(160.dp),
+            ) {
+                Box(modifier = Modifier.fillMaxSize())
+            }
+        }
 }
 
 @Composable

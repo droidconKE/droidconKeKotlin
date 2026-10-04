@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal90
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
@@ -56,7 +55,7 @@ fun FeedShareSection(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(color = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor)
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .padding(start = 20.dp, top = 36.dp, end = 16.dp, bottom = 48.dp)
                 .testTag("share_bottom_sheet"),
     ) {
@@ -72,11 +71,11 @@ fun FeedShareSection(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = stringResource(id = R.string.share),
                     modifier = Modifier.padding(end = 12.dp),
-                    tint = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
                 ChaiSubTitle(
                     titleText = stringResource(id = R.string.share),
-                    titleColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    titleColor = MaterialTheme.colorScheme.onSurface,
                 )
             }
 
@@ -86,7 +85,7 @@ fun FeedShareSection(
                         onCancelClicked()
                     },
                 bodyText = stringResource(id = R.string.cancel),
-                textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                textColor = MaterialTheme.colorScheme.onSurface,
             )
         }
 
@@ -134,14 +133,14 @@ fun PlatformButton(
         Icon(
             painter = painterResource(id = icon),
             contentDescription = stringResource(id = R.string.share),
-            tint = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor,
+            tint = MaterialTheme.colorScheme.onSurface,
         )
         ChaiBodyMedium(
             modifier =
                 Modifier
                     .padding(start = 22.dp),
             bodyText = platform,
-            textColor = MaterialTheme.chaiColorsPalette.outlinedButtonTextColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

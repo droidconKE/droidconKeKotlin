@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionsFilterOption
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -55,7 +54,7 @@ fun MultiToggleButton(
 ) {
     val unselectedColor = Color.Unspecified
     val selectedContentColor = ChaiGrey90
-    val unselectedContentColor = MaterialTheme.chaiColorsPalette.textNormalColor
+    val unselectedContentColor = MaterialTheme.colorScheme.onSurface
     val chunkedOptions = toggleStates.chunked(3)
 
     chunkedOptions.forEach { filterOptions ->
@@ -96,7 +95,7 @@ fun MultiToggleButton(
                                 if (isButtonSelected) {
                                     ChaiGrey90
                                 } else {
-                                    MaterialTheme.chaiColorsPalette.inactiveMultiSelectButtonBorderColor
+                                    MaterialTheme.colorScheme.onSurfaceVariant
                                 },
                         ),
                     backgroundColor = backgroundColor,

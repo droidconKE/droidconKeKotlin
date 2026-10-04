@@ -64,17 +64,13 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 
-/**
- * An ongoing session gets the pulsing venue accent; everything else gets a hairline.
- * A caller that renders the card on an already-grouped surface can opt out entirely.
- */
+/** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
 private fun cardBorder(
     showBorder: Boolean,
     isOngoing: Boolean,
@@ -127,7 +123,7 @@ fun SessionsCard(
             showBorder = showBorder,
             isOngoing = session.sessionStatus == SessionStatus.Ongoing,
             ongoingColor = venueAccent.copy(alpha = animatedBorderAlpha),
-            defaultColor = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+            defaultColor = MaterialTheme.colorScheme.outlineVariant,
         )
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -147,7 +143,7 @@ fun SessionsCard(
         border = border,
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
@@ -191,7 +187,7 @@ fun SessionsCard(
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 thickness = 1.dp,
-                color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+                color = MaterialTheme.colorScheme.outlineVariant,
             )
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -201,11 +197,11 @@ fun SessionsCard(
             ) {
                 ChaiBodyXSmall(
                     bodyText = session.venue.uppercase(),
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 ChaiBodyXSmall(
                     bodyText = "${session.startTime} ${session.amOrPm} - ${session.endTime}",
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -231,7 +227,7 @@ fun SessionTitleComponent(
                     .weight(1f)
                     .sessionSharedTitle(session.id),
             titleText = session.title,
-            titleColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            titleColor = MaterialTheme.colorScheme.onSurface,
         )
 
         IconButton(
@@ -244,7 +240,7 @@ fun SessionTitleComponent(
                 Icon(
                     imageVector = if (isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                     contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (isStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                    tint = if (isStarred) ChaiRed else MaterialTheme.colorScheme.primary,
                 )
             }
         }
@@ -270,7 +266,7 @@ fun SessionPresenterComponents(
 
         ChaiBodySmall(
             bodyText = speaker.name,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

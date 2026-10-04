@@ -57,7 +57,6 @@ import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -76,7 +75,7 @@ fun SessionsCardWithBannerImage(
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
         AsyncImage(
@@ -113,7 +112,7 @@ fun SessionsCardWithBannerImage(
             ChaiBodySmallBold(
                 modifier = Modifier.sessionSharedTitle(session.id),
                 bodyText = session.title,
-                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                textColor = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(16.dp))
             SpeakerDetailsAndLikeButtonComponent(
@@ -171,7 +170,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
             Icon(
                 imageVector = if (isSessionStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (isSessionStarred) ChaiRed else MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                tint = if (isSessionStarred) ChaiRed else MaterialTheme.colorScheme.primary,
             )
         }
     }

@@ -35,8 +35,7 @@ private val Montserrat =
     )
 
 // Sizes are chai's own, so the display and headline ramp keeps Material's.
-// The Expressive `*Emphasized` roles are internal in material3 1.4.0 and cannot be filled.
-val ChaiTypography: Typography =
+private val ChaiBaseTypography: Typography =
     with(Typography()) {
         copy(
             displayLarge = displayLarge.chai(FontWeight.Bold),
@@ -57,8 +56,29 @@ val ChaiTypography: Typography =
         )
     }
 
-// A [size] marks a role backing a chai text composable; those drop Material's letter spacing,
-// which widens labels enough to wrap a session card's room/time row at large font scales.
+// One weight heavier than the base role, capped at Bold: the heaviest bundled Montserrat.
+val ChaiTypography: Typography =
+    with(ChaiBaseTypography) {
+        copy(
+            displayLargeEmphasized = displayLarge.emphasized(),
+            displayMediumEmphasized = displayMedium.emphasized(),
+            displaySmallEmphasized = displaySmall.emphasized(),
+            headlineLargeEmphasized = headlineLarge.emphasized(),
+            headlineMediumEmphasized = headlineMedium.emphasized(),
+            headlineSmallEmphasized = headlineSmall.emphasized(),
+            titleLargeEmphasized = titleLarge.emphasized(),
+            titleMediumEmphasized = titleMedium.emphasized(),
+            titleSmallEmphasized = titleSmall.emphasized(),
+            bodyLargeEmphasized = bodyLarge.emphasized(),
+            bodyMediumEmphasized = bodyMedium.emphasized(),
+            bodySmallEmphasized = bodySmall.emphasized(),
+            labelLargeEmphasized = labelLarge.emphasized(),
+            labelMediumEmphasized = labelMedium.emphasized(),
+            labelSmallEmphasized = labelSmall.emphasized(),
+        )
+    }
+
+// Chai-sized roles drop letter spacing, which wraps session card labels at large font scales.
 private fun TextStyle.chai(
     weight: FontWeight,
     size: Int? = null,
@@ -70,3 +90,13 @@ private fun TextStyle.chai(
     lineHeight = lineHeight?.sp ?: this.lineHeight,
     letterSpacing = if (size != null) 0.sp else letterSpacing,
 )
+
+private fun TextStyle.emphasized() =
+    copy(
+        fontWeight =
+            when (fontWeight) {
+                FontWeight.Normal -> FontWeight.Medium
+                FontWeight.Medium -> FontWeight.SemiBold
+                else -> FontWeight.Bold
+            },
+    )

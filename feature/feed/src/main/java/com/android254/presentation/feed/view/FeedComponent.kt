@@ -43,7 +43,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiBodyXSmall
@@ -58,9 +57,9 @@ fun FeedComponent(
     Column(
         modifier =
             modifier
-                .background(color = MaterialTheme.chaiColorsPalette.surfaces)
+                .background(color = MaterialTheme.colorScheme.surfaceContainer)
                 .padding(vertical = (0.5).dp)
-                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .wrapContentHeight(),
@@ -68,7 +67,7 @@ fun FeedComponent(
     ) {
         ChaiBodyMedium(
             bodyText = feed.body,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
 
         feed.image?.let {
@@ -106,20 +105,20 @@ fun FeedComponent(
             ) {
                 ChaiBodySmallBold(
                     bodyText = stringResource(id = R.string.share),
-                    textColor = MaterialTheme.chaiColorsPalette.textButtonColor,
+                    textColor = MaterialTheme.colorScheme.primary,
                 )
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_share),
                     contentDescription = stringResource(id = R.string.share),
                     modifier = Modifier.padding(start = 8.dp),
-                    tint = MaterialTheme.chaiColorsPalette.textButtonColor,
+                    tint = MaterialTheme.colorScheme.primary,
                 )
             }
 
             ChaiBodyXSmall(
                 bodyText = feed.createdAt,
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

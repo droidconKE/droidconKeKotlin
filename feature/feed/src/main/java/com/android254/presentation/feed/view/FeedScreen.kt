@@ -59,7 +59,6 @@ import com.android254.presentation.common.insets.plus
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
@@ -91,7 +90,7 @@ internal fun FeedScreen(
 
     if (bottomSheetState.isVisible) {
         ModalBottomSheet(
-            containerColor = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
             sheetState = bottomSheetState,
             dragHandle = {},
             onDismissRequest = { scope.launch { bottomSheetState.hide() } },
@@ -109,7 +108,6 @@ internal fun FeedScreen(
                 },
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         Box(
@@ -138,7 +136,7 @@ internal fun FeedScreen(
 
                         ChaiBodyMediumBold(
                             bodyText = feedUIState.message,
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -185,13 +183,13 @@ internal fun FeedScreen(
                             modifier = Modifier.size(70.dp),
                             painter = painterResource(id = ChaiR.drawable.feed_icon),
                             contentDescription = stringResource(id = R.string.feed_icon_description),
-                            tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(20.dp))
 
                         ChaiBodyMediumBold(
                             bodyText = "No items",
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }

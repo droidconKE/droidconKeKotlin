@@ -40,7 +40,6 @@ import com.android254.presentation.models.OrganizingTeamMember
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -77,7 +76,7 @@ fun OrganizingTeamComponent(
         ChaiBodySmall(
             modifier = Modifier.fillMaxWidth(),
             bodyText = teamMember.name,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
 
@@ -86,7 +85,7 @@ fun OrganizingTeamComponent(
         ChaiTextLabelLarge(
             modifier = Modifier.fillMaxWidth(),
             bodyText = teamMember.desc,
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
     }

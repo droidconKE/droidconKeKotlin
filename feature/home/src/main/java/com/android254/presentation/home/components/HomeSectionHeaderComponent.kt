@@ -35,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelMedium
@@ -58,7 +57,7 @@ fun HomeSectionHeaderComponent(
     ) {
         ChaiSubTitle(
             titleText = sectionLabel,
-            titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+            titleColor = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -70,7 +69,7 @@ fun HomeSectionHeaderComponent(
         ) {
             ChaiBodyXSmallBold(
                 bodyText = stringResource(id = R.string.view_all_label),
-                textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary,
+                textColor = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Box(
@@ -79,14 +78,14 @@ fun HomeSectionHeaderComponent(
                         .height(22.dp)
                         .width(34.dp)
                         .background(
-                            color = MaterialTheme.chaiColorsPalette.linkTextColorPrimary.copy(alpha = 0.11f),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.11f),
                             shape = RoundedCornerShape(14.dp),
                         ),
             ) {
                 ChaiTextLabelMedium(
                     modifier = Modifier.align(Alignment.Center),
                     bodyText = stringResource(id = R.string.format_plus_label, sectionSize),
-                    textColor = MaterialTheme.chaiColorsPalette.linkTextColorPrimary,
+                    textColor = MaterialTheme.colorScheme.primary,
                 )
             }
         }
