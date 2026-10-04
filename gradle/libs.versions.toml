@@ -27,6 +27,7 @@ profileinstaller = "1.4.1"
 agp = "9.3.1"
 chucker = "4.3.1"
 androidxComposeBom = "2026.09.00"
+material3 = "1.5.0-alpha29"
 remote_config = "22.1.2"
 detekt = "1.23.8"
 ktlint = "14.2.0"
@@ -96,11 +97,11 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil"}
 coil-test = { module = "io.coil-kt:coil-test", version.ref = "coil" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "activity"}
-compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
 compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
 compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
+compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util" }
