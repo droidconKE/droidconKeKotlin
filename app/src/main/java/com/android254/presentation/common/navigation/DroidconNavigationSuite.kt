@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationItemColors
+import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
@@ -43,9 +44,9 @@ fun navigationSuiteTypeFor(
     showsDrawer: Boolean,
 ): NavigationSuiteType =
     when {
-        windowSize == DroidconWindowSize.Compact -> NavigationSuiteType.NavigationBar
-        showsDrawer -> NavigationSuiteType.NavigationDrawer
-        else -> NavigationSuiteType.NavigationRail
+        windowSize == DroidconWindowSize.Compact -> NavigationSuiteType.ShortNavigationBarCompact
+        showsDrawer -> NavigationSuiteType.WideNavigationRailExpanded
+        else -> NavigationSuiteType.WideNavigationRailCollapsed
     }
 
 /** The chai palette, for whichever navigation component the window ends up with. */
@@ -53,8 +54,9 @@ fun navigationSuiteTypeFor(
 fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     val container = MaterialTheme.colorScheme.surfaceContainerLowest
     return NavigationSuiteDefaults.colors(
-        navigationBarContainerColor = container,
         shortNavigationBarContainerColor = container,
+        wideNavigationRailColors = WideNavigationRailDefaults.colors(containerColor = container),
+        navigationBarContainerColor = container,
         navigationRailContainerColor = container,
         navigationDrawerContainerColor = container,
     )
@@ -94,11 +96,9 @@ fun DroidconNavigationItems(
             },
             colors =
                 NavigationItemColors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     selectedTextColor = MaterialTheme.colorScheme.secondary,
-                    selectedIndicatorColor =
-                        MaterialTheme.colorScheme.primary
-                            .copy(alpha = 0.15f),
+                    selectedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurface,
                     disabledIconColor = MaterialTheme.colorScheme.onSurface,

@@ -192,7 +192,7 @@ fun MainScreen(
         containerColor = MaterialTheme.colorScheme.background,
         state = navigationSuiteState,
         primaryActionContent = {
-            if (navigationSuiteType == NavigationSuiteType.NavigationDrawer) {
+            if (navigationSuiteType == NavigationSuiteType.WideNavigationRailExpanded) {
                 DroidconDrawerHeader()
             }
         },
