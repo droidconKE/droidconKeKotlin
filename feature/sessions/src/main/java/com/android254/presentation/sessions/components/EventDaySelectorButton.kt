@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelLarge
 
@@ -50,17 +49,17 @@ fun EventDaySelectorButton(
                 .size(51.dp)
                 .clickable { onClick() }
                 .background(
-                    color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.chaiColorsPalette.tealAccentColor.copy(alpha = 0.11f),
+                    color = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(5.dp),
                 ).padding(start = 5.dp),
     ) {
         ChaiSubTitle(
             titleText = title,
-            titleColor = if (selected) MaterialTheme.chaiColorsPalette.selectedDayContentColor else MaterialTheme.colorScheme.onSurface,
+            titleColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
         )
         ChaiTextLabelLarge(
             bodyText = subtitle,
-            textColor = if (selected) MaterialTheme.chaiColorsPalette.selectedDayContentColor else MaterialTheme.colorScheme.onSurface,
+            textColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
         )
     }
 }

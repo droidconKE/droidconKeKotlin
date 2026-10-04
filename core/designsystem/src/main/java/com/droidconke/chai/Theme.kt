@@ -29,7 +29,7 @@ import com.droidconke.chai.colors.ChaiDarkColorScheme
 import com.droidconke.chai.colors.ChaiLightColorPalette
 import com.droidconke.chai.colors.ChaiLightColorScheme
 import com.droidconke.chai.colors.LocalChaiColorsPalette
-import com.droidconke.chai.utils.CShapes
+import com.droidconke.chai.utils.ChaiShapes
 
 @Composable
 fun ChaiTheme(
@@ -43,7 +43,7 @@ fun ChaiTheme(
         MaterialExpressiveTheme(
             colorScheme = colorScheme,
             motionScheme = MotionScheme.expressive(),
-            shapes = CShapes,
+            shapes = ChaiShapes,
             typography = ChaiTypography,
             content = content,
         )

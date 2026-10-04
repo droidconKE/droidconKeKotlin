@@ -40,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextButtonLight
@@ -124,7 +123,7 @@ fun PlatformButton(
             modifier
                 .fillMaxWidth()
                 .padding(6.dp),
-        border = BorderStroke(1.dp, ChaiTeal90),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors =
             ButtonDefaults.outlinedButtonColors(
                 contentColor = Color.White,

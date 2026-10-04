@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -64,7 +65,6 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiGrey90
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -204,7 +204,7 @@ fun SessionsScreen(
                     sheetState = bottomSheetState,
                     onDismissRequest = { showFilterSheet = false },
                     shape = RoundedCornerShape(0.dp),
-                    containerColor = ChaiGrey90.copy(alpha = 0.52f),
+                    containerColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.52f),
                     dragHandle = {},
                 ) {
                     SessionsFilterPanel(

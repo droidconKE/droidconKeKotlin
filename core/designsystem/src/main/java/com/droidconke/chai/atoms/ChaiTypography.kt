@@ -20,6 +20,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import ke.droidcon.kotlin.chai.R
 
@@ -32,6 +33,7 @@ private val Montserrat =
         Font(R.font.montserrat_medium, FontWeight.Medium),
         Font(R.font.montserrat_semi_bold, FontWeight.SemiBold),
         Font(R.font.montserrat_bold, FontWeight.Bold),
+        Font(R.font.montserrat_extra_bold, FontWeight.ExtraBold),
     )
 
 // Sizes are chai's own, so the display and headline ramp keeps Material's.
@@ -56,16 +58,16 @@ private val ChaiBaseTypography: Typography =
         )
     }
 
-// One weight heavier than the base role, capped at Bold: the heaviest bundled Montserrat.
+// One weight heavier than the base role; display and headline roles also tighten, poster style.
 val ChaiTypography: Typography =
     with(ChaiBaseTypography) {
         copy(
-            displayLargeEmphasized = displayLarge.emphasized(),
-            displayMediumEmphasized = displayMedium.emphasized(),
-            displaySmallEmphasized = displaySmall.emphasized(),
-            headlineLargeEmphasized = headlineLarge.emphasized(),
-            headlineMediumEmphasized = headlineMedium.emphasized(),
-            headlineSmallEmphasized = headlineSmall.emphasized(),
+            displayLargeEmphasized = displayLarge.emphasized().copy(letterSpacing = (-0.01).em),
+            displayMediumEmphasized = displayMedium.emphasized().copy(letterSpacing = (-0.01).em),
+            displaySmallEmphasized = displaySmall.emphasized().copy(letterSpacing = (-0.01).em),
+            headlineLargeEmphasized = headlineLarge.emphasized().copy(letterSpacing = (-0.01).em),
+            headlineMediumEmphasized = headlineMedium.emphasized().copy(letterSpacing = (-0.01).em),
+            headlineSmallEmphasized = headlineSmall.emphasized().copy(letterSpacing = (-0.01).em),
             titleLargeEmphasized = titleLarge.emphasized(),
             titleMediumEmphasized = titleMedium.emphasized(),
             titleSmallEmphasized = titleSmall.emphasized(),
@@ -97,6 +99,7 @@ private fun TextStyle.emphasized() =
             when (fontWeight) {
                 FontWeight.Normal -> FontWeight.Medium
                 FontWeight.Medium -> FontWeight.SemiBold
-                else -> FontWeight.Bold
+                FontWeight.SemiBold -> FontWeight.Bold
+                else -> FontWeight.ExtraBold
             },
     )

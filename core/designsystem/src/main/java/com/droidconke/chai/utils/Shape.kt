@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 package com.droidconke.chai.utils
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Shapes
-import androidx.compose.ui.unit.dp
 
-val CShapes =
-    Shapes(
-        small = RoundedCornerShape(3.dp),
-        medium = RoundedCornerShape(7.dp),
-        large = RoundedCornerShape(9.dp),
-        extraLarge = RoundedCornerShape(10.dp),
-    )
+import androidx.compose.material3.Shapes
+
+// Material 3 Expressive's corner scale: 4, 8, 12, 16, 20, 28, 32 and 48 dp.
+val ChaiShapes = Shapes()

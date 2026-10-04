@@ -63,7 +63,6 @@ import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
@@ -240,7 +239,7 @@ fun SessionTitleComponent(
                 Icon(
                     imageVector = if (isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                     contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (isStarred) ChaiRed else MaterialTheme.colorScheme.primary,
+                    tint = if (isStarred) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                 )
             }
         }

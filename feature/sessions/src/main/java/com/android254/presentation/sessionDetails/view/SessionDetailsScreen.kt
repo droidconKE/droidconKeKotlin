@@ -67,8 +67,6 @@ import com.android254.presentation.sessionDetails.view.components.SpeakerTwitter
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiBodyMediumBold
 
 @Composable
@@ -109,14 +107,14 @@ internal fun SessionDetailsScreen(
                         Modifier
                             .size(44.dp)
                             .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                    containerColor = ChaiRed,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     shape = CircleShape,
                 ) {
                     Icon(
                         modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
                         imageVector = Icons.AutoMirrored.Filled.Reply,
                         contentDescription = null,
-                        tint = ChaiWhite,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     )
                 }
             },

@@ -64,9 +64,7 @@ import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarIconAppearance
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.atoms.ChaiLightGrey
-import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -121,8 +119,8 @@ internal fun FeedBackScreen(
                         },
                         colors =
                             TopAppBarDefaults.topAppBarColors(
-                                titleContentColor = ChaiWhite,
-                                navigationIconContentColor = ChaiWhite,
+                                titleContentColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
+                                navigationIconContentColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
                                 containerColor = Color.Transparent,
                             ),
                     )
@@ -157,8 +155,8 @@ internal fun FeedBackScreen(
                     colors =
                         TopAppBarDefaults.topAppBarColors(
                             containerColor = Color.Transparent,
-                            titleContentColor = ChaiWhite,
-                            navigationIconContentColor = ChaiWhite,
+                            titleContentColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
+                            navigationIconContentColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
                         ),
                 )
             }
@@ -207,7 +205,7 @@ internal fun FeedBackScreen(
                     Column(
                         modifier =
                             Modifier
-                                .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer, shape = RoundedCornerShape(4.dp))
                                 .size(68.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -224,7 +222,7 @@ internal fun FeedBackScreen(
 
                         ChaiBodyXSmallBold(
                             bodyText = stringResource(R.string.Bad),
-                            textColor = ChaiGrey90,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
 
@@ -233,7 +231,7 @@ internal fun FeedBackScreen(
                     Column(
                         modifier =
                             Modifier
-                                .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer, shape = RoundedCornerShape(4.dp))
                                 .size(68.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -250,7 +248,7 @@ internal fun FeedBackScreen(
 
                         ChaiBodyXSmallBold(
                             bodyText = stringResource(R.string.Okay),
-                            textColor = ChaiGrey90,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
 
@@ -259,7 +257,7 @@ internal fun FeedBackScreen(
                     Column(
                         modifier =
                             Modifier
-                                .background(color = ChaiLightGrey, shape = RoundedCornerShape(4.dp))
+                                .background(color = MaterialTheme.colorScheme.surfaceContainer, shape = RoundedCornerShape(4.dp))
                                 .size(68.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -276,7 +274,7 @@ internal fun FeedBackScreen(
 
                         ChaiBodyXSmallBold(
                             bodyText = stringResource(R.string.Great),
-                            textColor = ChaiGrey90,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }

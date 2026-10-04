@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.models.EventDate
-import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -50,9 +49,9 @@ fun EventDaySelector(
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             LazyRow(modifier = modifier) {

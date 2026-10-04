@@ -23,8 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmall
 
 @Composable
@@ -36,11 +34,11 @@ fun SessionLevel(
         modifier =
             modifier
                 .background(
-                    color = MaterialTheme.chaiColorsPalette.badgeContainerColor,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
                     shape = RoundedCornerShape(5.dp),
                 ).padding(vertical = 3.dp, horizontal = 9.dp)
                 .testTag(TestTag.LEVEL),
         bodyText = "#$sessionLevel".uppercase(),
-        textColor = ChaiWhite,
+        textColor = MaterialTheme.colorScheme.onTertiaryContainer,
     )
 }

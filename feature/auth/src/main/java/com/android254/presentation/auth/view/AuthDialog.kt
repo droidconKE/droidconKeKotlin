@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -42,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.components.ChaiTextButtonLight
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
@@ -79,8 +79,8 @@ fun AuthDialog(
                 GoogleSignInButton(
                     text = stringResource(id = R.string.sign_in_with_google_label),
                     icon = painterResource(id = R.drawable.btn_google_icon),
-                    borderColor = ChaiWhite,
-                    backgroundColor = ChaiWhite,
+                    borderColor = Color.White,
+                    backgroundColor = Color.White,
                     isLoading = loading,
                     modifier =
                         Modifier

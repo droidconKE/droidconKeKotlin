@@ -42,7 +42,6 @@ import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiGrey
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.core.ui.R
 
@@ -136,7 +135,7 @@ fun FilterButton(
     modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
 ) {
-    val stateColors = if (isActive) MaterialTheme.colorScheme.primary else ChaiGrey
+    val stateColors = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier =
@@ -179,7 +178,7 @@ private fun ToolbarPreview() {
                 modifier =
                     Modifier
                         .height(32.dp)
-                        .background(color = ChaiGrey),
+                        .background(color = MaterialTheme.colorScheme.outlineVariant),
             )
 
             DroidconAppBarWithFilter(
@@ -193,7 +192,7 @@ private fun ToolbarPreview() {
                 modifier =
                     Modifier
                         .height(32.dp)
-                        .background(color = ChaiGrey),
+                        .background(color = MaterialTheme.colorScheme.outlineVariant),
             )
 
             DroidconAppBarWithFilter(
@@ -207,7 +206,7 @@ private fun ToolbarPreview() {
                 modifier =
                     Modifier
                         .height(32.dp)
-                        .background(color = ChaiGrey),
+                        .background(color = MaterialTheme.colorScheme.outlineVariant),
             )
 
             DroidconAppBarWithFilter(

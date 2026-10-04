@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
@@ -61,14 +60,14 @@ fun SessionSpeakerNameAndFavouriteIcon(
                     Modifier
                         .height(14.dp)
                         .width(15.dp),
-                tint = ChaiRed,
+                tint = MaterialTheme.colorScheme.secondary,
             )
 
             Spacer(modifier = Modifier.width(6.dp))
 
             ChaiTextLabelLarge(
                 bodyText = stringResource(id = R.string.speaker_label),
-                textColor = ChaiRed,
+                textColor = MaterialTheme.colorScheme.secondary,
             )
         }
 
@@ -101,7 +100,7 @@ fun SessionSpeakerNameAndFavouriteIcon(
                             .testTag(TestTag.FAVOURITE_ICON),
                     imageVector = if (sessionDetails.isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                     contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (sessionDetails.isStarred) ChaiRed else MaterialTheme.colorScheme.primary,
+                    tint = if (sessionDetails.isStarred) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
                 )
             }
         }

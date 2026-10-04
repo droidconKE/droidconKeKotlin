@@ -40,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.MultiToggleButton
 import com.android254.presentation.models.SessionsFilterOption
-import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.CPrimaryButtonText
 import com.droidconke.chai.components.ChaiBodyLarge
@@ -68,7 +67,7 @@ fun SessionsFilterPanel(
             modifier
                 .fillMaxSize()
                 .background(
-                    color = ChaiGrey90.copy(alpha = 0.52f),
+                    color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.52f),
                 ),
     ) {
         Column(

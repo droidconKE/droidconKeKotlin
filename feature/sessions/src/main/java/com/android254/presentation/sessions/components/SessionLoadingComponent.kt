@@ -37,7 +37,6 @@ import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
@@ -89,9 +88,9 @@ fun LoadingTimeHeader() {
     AnimatedShimmerEffect(
         gradientColors =
             persistentListOf(
-                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
-                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
-                MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
+                MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f),
+                MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
             ),
     ) { brush ->
         Column(

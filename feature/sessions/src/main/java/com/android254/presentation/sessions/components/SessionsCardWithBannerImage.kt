@@ -55,8 +55,6 @@ import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -152,7 +150,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
                         .size(32.dp)
                         .border(
                             width = 1.dp,
-                            color = ChaiTeal,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = CircleShape,
                         ).clip(CircleShape),
             )
@@ -170,7 +168,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
             Icon(
                 imageVector = if (isSessionStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
                 contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (isSessionStarred) ChaiRed else MaterialTheme.colorScheme.primary,
+                tint = if (isSessionStarred) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
             )
         }
     }

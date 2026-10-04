@@ -39,7 +39,6 @@ import coil.request.ImageRequest
 import com.android254.presentation.models.OrganizingTeamMember
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -68,7 +67,7 @@ fun OrganizingTeamComponent(
                 Modifier
                     .size(99.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .border(2.dp, ChaiTeal, RoundedCornerShape(12.dp)),
+                    .border(2.dp, MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(12.dp)),
         )
 
         Spacer(Modifier.height(6.dp))
