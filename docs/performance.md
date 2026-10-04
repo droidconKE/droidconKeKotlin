@@ -27,7 +27,8 @@ dex, which is the price of splitting.
 
 > These numbers predate the 2026-10-04 move to material3 1.5.0-alpha29, which also lifted the
 > rest of Compose to 1.13.0-alpha01 (see `AGENTS.md`, Stack). They have not been re-measured on
-> it. Regenerate the baseline profile and re-run the benchmark before quoting them for that build.
+> it. The baseline profile was regenerated on it the same day; re-run the benchmark before
+> quoting these numbers for that build.
 
 Same device and method, after the size and manifest work (medians of 15 cold starts,
 `POST_NOTIFICATIONS` granted):
