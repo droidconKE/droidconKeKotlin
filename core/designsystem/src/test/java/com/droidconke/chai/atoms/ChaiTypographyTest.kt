@@ -18,6 +18,7 @@ package com.droidconke.chai.atoms
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -44,9 +45,10 @@ class ChaiTypographyTest {
         }
 
     @Test
-    fun `every emphasized role is set in Montserrat at its base role's size`() {
+    fun `every emphasized role keeps its base role's font, size and line height`() {
         emphasizedByBase.forEach { (role, styles) ->
             val (base, emphasized) = styles
+            assertNotNull("$role font", base.fontFamily)
             assertEquals("$role font", base.fontFamily, emphasized.fontFamily)
             assertEquals("$role size", base.fontSize, emphasized.fontSize)
             assertEquals("$role line height", base.lineHeight, emphasized.lineHeight)
