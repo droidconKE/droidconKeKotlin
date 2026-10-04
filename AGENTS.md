@@ -186,11 +186,13 @@ Consequences worth knowing before you edit a build file:
 - The `android { }` block resolves to `com.android.build.api.dsl.*`, not the legacy
   `com.android.build.gradle.*` types.
 - Source sets belong to AGP, so a `languageSettings` opt-in no longer reaches the compile
-  tasks. Use `kotlin { compilerOptions { optIn.add(...) } }` — see `core:ui`.
+  tasks. Use `kotlin { compilerOptions { optIn.add(...) } }`. The Material 3 and Expressive
+  opt-ins are already applied to every Compose module by `configureAndroidCompose`.
 
 Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
-implementing `NavKey`; there is no `NavHost` or route strings. See
-`presentation/.../common/navigation/`.
+implementing `NavKey`; there is no `NavHost` or route strings. The keys are in
+`core/ui/.../common/navigation/`; the `NavDisplay` and scene strategies are in
+`app/.../common/navigation/`.
 
 **material3 is pinned to an alpha, over the BOM.** `MaterialExpressiveTheme`, `MotionScheme` and
 the `*Emphasized` type roles are `internal` in the stable 1.4.0, so `libs.versions.toml` gives
@@ -331,9 +333,12 @@ must be immutable and must not hold resource IDs. Icons and labels live in
 - `LocalChaiColorsPalette` throws if no `ChaiTheme` wraps the content. A composable under test
   needs `ChaiTheme { }` around it; it will no longer silently render `Color.Unspecified`.
 
-`ChaiColors` holds six tokens, each one a colour no Material role holds in both themes. Read
+`ChaiColors` holds three tokens, all for the brand-blue hero panel. Read
 `MaterialTheme.colorScheme` first; add a `ChaiColors` token only when no role fits, with a KDoc
-saying why. Motion comes from `MaterialTheme.motionScheme` (the expressive scheme), not
+saying why. **Neon green is never text**: it is a container with ink on it. Selected states pass
+`secondaryContainer` explicitly, since Material's toggles default to `primary`. Pick a logo or
+other light/dark asset with `MaterialTheme.isDarkTheme`, not `isSystemInDarkTheme()`, which a
+themed preview or screenshot can't override. Motion comes from `MaterialTheme.motionScheme`, not
 hand-written springs.
 
 ---
@@ -345,6 +350,10 @@ hand-written springs.
 - Checked in dark mode, at 200% font scale, and at a tablet width. `wm size`/`wm density` on an
   emulator walks every breakpoint without a tablet on the desk; a physical OPPO/ColorOS device
   will refuse both, because the shell has neither `WRITE_SETTINGS` nor `WRITE_SECURE_SETTINGS`.
+  For a fold, `avdmanager create avd -d pixel_fold` gives a virtual hinge whose posture
+  `adb shell cmd device_state state <n>` sets (`print-states` lists them). Test one dp over a breakpoint —
+  an unfolded Pixel Fold is 841 dp wide — and check the content width, not only the window: the
+  navigation component sits between them.
 - Anything visual: add `@FormFactorPreviews` and record `captureFormFactors` goldens.
 - No new dependency without a reason in the PR description.
 - Verified on a device if you touched date handling, Room, or anything on the sync path.
@@ -356,10 +365,9 @@ hand-written springs.
 [`docs/architecture.md`](docs/architecture.md) is the long-form version of this file, with
 diagrams. [`docs/static-analysis.md`](docs/static-analysis.md) covers the tooling.
 
-`docs/IMPROVEMENT_PLAN.md` is the roadmap: an audit of the current state, then phased work
-covering adaptive/large-screen support, a design-system rebuild onto Material 3 Expressive,
-on-device and cloud AI features, ticketing, performance, and testing.
+`docs/IMPROVEMENT_PLAN.md` is the roadmap. It lists pending work only, in phases: the rest of
+the Material 3 Expressive design system, accessibility, on-device and cloud AI features,
+ticketing, notifications, performance, and testing.
 
-Read §1.3 (known defects) and §16.0 (the P0 list) before starting anything substantial —
-some of what looks like a bug is already documented, and some of what looks intentional is
-a defect with a fix already specified.
+Read §16.1 (the priority order) before starting anything substantial, and §3.9 for fixed
+defects that still have no regression test.

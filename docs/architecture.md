@@ -92,6 +92,10 @@ The `:core:*` renames of the data tier changed Gradle paths only. `:core:databas
 `ke.droidcon.kotlin.datasource.local` in source, the way `:core:designsystem` is still
 `com.droidconke.chai`.
 
+There is no `core:datastore`. The preferences code is two files in `core:data`, too little to be a
+module of its own. Modules the roadmap still needs, such as `core:ai` and `feature:ticket`, are
+created with the work that needs them rather than ahead of it.
+
 `core:database` and `core:network` do not depend on `core:domain`. They own their own DTOs and
 Room entities. `core:data` is the only module that sees both representations, and the mappers
 there are the seam between them.
@@ -258,6 +262,12 @@ window has room and fills the list pane with whatever list entry it can find. Re
 Home, a session detail has no list behind it, so `ListPaneRequiredSceneStrategy` declines the
 scene and the detail takes the whole window with its app bar intact.
 
+Back out of a detail pops one destination at a time
+(`BackNavigationBehavior.PopUntilCurrentDestinationChange`). The Material default pops until the
+scaffold *value* changes, and list-beside-placeholder has the same value as list-beside-detail, so
+it kept going and popped the sessions list too. That default assumes the list is a sibling entry;
+here it is a tab root.
+
 `Screens.HappeningNow` is the exception to "the back stack is the truth": it is appended to the
 displayed entries by `NavigationState.toEntries` when there is a column to spare, never pushed.
 `Navigation` drops it again if the measured directive cannot lay out two panes — `NavDisplay`
@@ -285,7 +295,10 @@ The rules that matter:
   wrong on a foldable mid-fold and wrong in a resizable window; `AdaptiveInvariantsTest` fails
   on either. Single-pane content is capped at 840 dp and centred by
   `Modifier.readablePaneWidth()` — 20 dp gutters stretched across a 1600 dp window are not a
-  layout.
+  layout. The navigation drawer needs a tall window as well as a wide one: a phone in landscape
+  (891 × 411 dp) is Expanded by width, and a drawer there would take a third of the screen, so it
+  gets a rail. App bars drop their logo only when the drawer is there to carry it — both read
+  `rememberShowsNavigationDrawer()`, so they cannot disagree.
 - **Insets are owned, not inherited.** Screens nest `Scaffold`s — the composition root has one
   for the navigation area, each screen has one for its top bar — and a nested `Scaffold` left
   on its defaults will either double-pad an inset or drop it. So the ownership is explicit: the
@@ -294,7 +307,7 @@ The rules that matter:
   bottom under a bar, the start under a rail or drawer, nothing while it is hidden; and each
   screen declares the remainder (`DroidconWindowInsets.screenContent`). Because the root
   consumes what it pays for, that one declaration is right at every window size. A root that
-  consumed everything, which is what this was until §3.4, leaves the edge-to-edge opt-in doing
+  consumed everything, which is what this used to be, leaves the edge-to-edge opt-in doing
   nothing: no screen can reach the status bar.
   Insets reach a scrolling list through its `contentPadding`; padding the list's parent clips
   it and stops its content scrolling behind the system bars. A container that pads by the
@@ -318,10 +331,28 @@ The rules that matter:
 `colorScheme`, `typography` (base and `*Emphasized` roles), `shapes`, and the expressive
 `MotionScheme`, so stock Material components are on-brand without passing colours.
 
-Read `MaterialTheme.colorScheme` for colour. `MaterialTheme.chaiColorsPalette` holds the six
-colours no Material role expresses in both themes — the loading shimmer, the pastel teal, and a
-few component colours — and a token is added there only when no role fits. Do not import
-`ChaiBlue` and friends outside `chai/colors`.
+The palette is the 2026 brand from droidcon.co.ke: the website's blue and green ramps and its
+neutrals, in `atoms/Color.kt`. Blue leads in light mode and neon green in dark, as on the website,
+because blue text on black is only 3.7:1. Dark mode is true black with `#191D1D` cards. Neon green
+is only ever a fill with ink on it (`secondaryContainer`, and dark `primary`): as text on white it
+is 1.36:1. Selected states (the navigation pill, the chosen day, a starred session, the live
+badge) take `secondaryContainer` explicitly, because Material's default is `primary`.
+
+Read `MaterialTheme.colorScheme` for colour. `MaterialTheme.chaiColorsPalette` holds three
+tokens for the brand-blue hero panel, the one colour no role holds in both themes. Add a token
+only when no role fits. A detekt `ForbiddenImport` rule fails the build on a palette import
+outside `chai/colors` and `chai/atoms`.
+
+Shapes are Material 3 Expressive's scale (4 to 48 dp). Typography is Montserrat, including
+ExtraBold for the Emphasized display and headline roles. The website's display face, Rauschen B,
+isn't bundled: its web licence doesn't cover embedding in an APK, the file is a `.woff2`, and
+it has one weight. Swapping it in later is a change to the one `FontFamily` in `ChaiTypography`.
+
+`MaterialTheme.isDarkTheme` reads the theme's own background rather than the system setting, so a
+`ChaiTheme(darkTheme = true)` preview or screenshot picks the right logo.
+
+Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-cookie morph),
+`LiveBadge`, `EmptyStatePanel`, `FilterOptionChips` and `rememberSpeakerAvatarShape()`.
 
 The Expressive APIs are only public in material3 1.5.0-alpha29, which the version catalog pins
 over the BOM — see `AGENTS.md`.
@@ -350,7 +381,16 @@ Compose lint checks.
 The build runs on **AGP's built-in Kotlin**. `org.jetbrains.kotlin.android` is not applied
 anywhere, and `android.newDsl` and `android.builtInKotlin` are both left at their AGP 9
 defaults. Do not add the Kotlin Android plugin back — under the new DSL, applying both is a
-hard error, not a warning.
+hard error, not a warning. Two `gradle.properties` settings that older guides recommend are wrong
+under AGP 9: `android.nonFinalResIds=false` makes `minifyReleaseWithR8` fail once optimized
+resource shrinking is on, and `android.defaults.buildfeatures.buildconfig` is deprecated.
+
+Both the application and library plugins set `unitTests.isIncludeAndroidResources`. Without it
+Robolectric cannot see the merged manifest, cannot resolve the `ComponentActivity` that
+`compose-ui-test-manifest` contributes, and every `createComposeRule()` test fails. `app`'s
+`src/test/resources/robolectric.properties` pins a plain `Application`, because
+`DroidconApp.onCreate` starts WorkManager and the second test class to boot it fails with
+"WorkManager is already initialized".
 
 Instrumentation tests run on Gradle Managed Devices declared in `ManagedDevices.kt`: `api30`
 and `api34`, both `aosp-atd`, with the ABI keyed off the host so CI and Apple Silicon each
@@ -366,10 +406,9 @@ Do not lower `minSdk` below 26.
 
 ## Where this is going
 
-[`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) is the roadmap: an audit of the current state,
-then phased work covering adaptive and large-screen support, a design-system rebuild onto
-Material 3 Expressive, on-device and cloud AI features, ticketing, performance and testing.
+[`IMPROVEMENT_PLAN.md`](IMPROVEMENT_PLAN.md) is the roadmap. It lists pending work only, in
+phases: the rest of the Material 3 Expressive design system, accessibility, on-device and cloud
+AI features, ticketing, notifications, performance and testing.
 
-Read §1.3 (known defects) and §16.0 (the P0 list) before starting anything substantial. Some
-of what looks like a bug is already documented, and some of what looks intentional is a
-defect with a fix already specified.
+Read §16.1 (the priority order) before starting anything substantial, and §3.9 for fixed
+defects that still have no regression test.
