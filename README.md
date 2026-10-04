@@ -189,7 +189,7 @@ Fuller treatment, including the navigation model and the Room schema: **[docs/ar
 | Concern            | Choice                                                        |
 |--------------------|---------------------------------------------------------------|
 | Language           | Kotlin 2.4, coroutines and Flow                               |
-| UI                 | Jetpack Compose, Material 3, `chai` design system             |
+| UI                 | Jetpack Compose, Material 3 Expressive, `chai` design system  |
 | Adaptive           | material3-adaptive — bar / rail / drawer and two panes, by window size |
 | Navigation         | **Navigation 3** — `@Serializable` `NavKey`s, no route strings |
 | DI                 | Hilt with KSP                                                 |

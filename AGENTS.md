@@ -169,8 +169,8 @@ module first.
 
 ## Stack
 
-Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.09.00, Material 3 + material3-adaptive),
-**Navigation 3**,
+Kotlin 2.4, AGP 9.3 on Gradle 9.7, Compose (BOM 2026.09.00, Material 3 Expressive +
+material3-adaptive), **Navigation 3**,
 Hilt + KSP, Ktor 3, Room 2.8, WorkManager, Firebase (Crashlytics, Remote Config, Messaging,
 Perf). `compileSdk`/`targetSdk` 37, `minSdk` 26.
 
@@ -191,6 +191,13 @@ Consequences worth knowing before you edit a build file:
 Navigation 3 is not Navigation 2 with a new name. Destinations are `@Serializable` keys
 implementing `NavKey`; there is no `NavHost` or route strings. See
 `presentation/.../common/navigation/`.
+
+**material3 is pinned to an alpha, over the BOM.** `MaterialExpressiveTheme`, `MotionScheme` and
+the `*Emphasized` type roles are `internal` in the stable 1.4.0, so `libs.versions.toml` gives
+`material3` (and `material3-adaptive-navigation-suite`, same group) a `version.ref` of
+1.5.0-alpha29. That lifts `ui`, `runtime`, `foundation` and `animation` to 1.13.0-alpha01
+transitively, so the whole Compose stack is on alphas. Re-record goldens when Dependabot bumps
+it, and drop the `version.ref` once a BOM manages a stable 1.5.0.
 
 ---
 
@@ -323,8 +330,10 @@ must be immutable and must not hold resource IDs. Icons and labels live in
 - `LocalChaiColorsPalette` throws if no `ChaiTheme` wraps the content. A composable under test
   needs `ChaiTheme { }` around it; it will no longer silently render `Color.Unspecified`.
 
-The tier-3 `ChaiColors` tokens are mid-migration: ~38 of them still back call sites that should
-read `MaterialTheme.colorScheme`. Prefer the M3 role in new code; see §3.5 for the mapping.
+`ChaiColors` holds six tokens, each one a colour no Material role holds in both themes. Read
+`MaterialTheme.colorScheme` first; add a `ChaiColors` token only when no role fits, with a KDoc
+saying why. Motion comes from `MaterialTheme.motionScheme` (the expressive scheme), not
+hand-written springs.
 
 ---
 
