@@ -22,6 +22,7 @@ import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.graphics.luminance
 import com.droidconke.chai.atoms.ChaiTypography
 import com.droidconke.chai.colors.ChaiColors
 import com.droidconke.chai.colors.ChaiDarkColorPalette
@@ -54,3 +55,9 @@ val MaterialTheme.chaiColorsPalette: ChaiColors
     @Composable
     @ReadOnlyComposable
     get() = LocalChaiColorsPalette.current
+
+/** Read from the theme rather than the system, so a previewed or screenshotted [ChaiTheme] agrees. */
+val MaterialTheme.isDarkTheme: Boolean
+    @Composable
+    @ReadOnlyComposable
+    get() = colorScheme.background.luminance() < 0.5f

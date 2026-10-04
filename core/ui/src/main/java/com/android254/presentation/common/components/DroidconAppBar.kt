@@ -16,7 +16,6 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
@@ -61,7 +61,7 @@ fun DroidconAppBar(
     ) {
         if (showLogo) {
             Image(
-                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
+                painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
             )
         }

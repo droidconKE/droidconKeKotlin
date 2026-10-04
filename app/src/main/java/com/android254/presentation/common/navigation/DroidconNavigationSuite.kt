@@ -16,7 +16,6 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.android254.presentation.common.adaptive.DroidconWindowSize
 import com.droidconke.chai.components.ChaiTextLabelSmall
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
 /** [showsDrawer] is the same value the app bars use, so the logo cannot end up in neither. */
@@ -118,7 +118,7 @@ fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
             painter =
                 painterResource(
                     id =
-                        if (isSystemInDarkTheme()) {
+                        if (MaterialTheme.isDarkTheme) {
                             R.drawable.droidcon_logo_dark
                         } else {
                             R.drawable.droidcon_logo

@@ -16,7 +16,6 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -42,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -90,7 +90,7 @@ fun SponsorsCard(
                                 .weight(0.5f)
                                 .height(50.dp)
                         }
-                    val logo = if (isSystemInDarkTheme()) sponsor.logo.replace(".png", "-dark.png") else sponsor.logo
+                    val logo = if (MaterialTheme.isDarkTheme) sponsor.logo.replace(".png", "-dark.png") else sponsor.logo
                     AsyncImage(
                         modifier = customModifier,
                         model =

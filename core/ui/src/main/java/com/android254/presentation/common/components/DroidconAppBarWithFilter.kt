@@ -18,7 +18,6 @@ package com.android254.presentation.common.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyLarge
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
@@ -68,7 +68,7 @@ fun DroidconAppBarWithFilter(
     ) {
         if (showLogo) {
             Image(
-                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
+                painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
             )
         }
