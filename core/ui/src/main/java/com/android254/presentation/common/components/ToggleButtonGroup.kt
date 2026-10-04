@@ -95,7 +95,7 @@ fun MultiToggleButton(
                                 if (isButtonSelected) {
                                     ChaiGrey90
                                 } else {
-                                    MaterialTheme.colorScheme.outline
+                                    MaterialTheme.colorScheme.onSurfaceVariant
                                 },
                         ),
                     backgroundColor = backgroundColor,

@@ -59,13 +59,11 @@ fun CustomSwitch(
     iconInnerPadding: Dp = 4.dp,
     thumbSize: Dp = 24.dp,
 ) {
-    // this is to disable the ripple effect
     val interactionSource =
         remember {
             MutableInteractionSource()
         }
 
-    // for moving the thumb
     val alignment by animateAlignmentAsState(if (checked) 1f else -1f)
 
     Column(
@@ -73,7 +71,6 @@ fun CustomSwitch(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // outer toggle container
         Box(
             modifier =
                 Modifier
@@ -86,23 +83,21 @@ fun CustomSwitch(
                     },
             contentAlignment = Alignment.Center,
         ) {
-            // this is the horizontal rounded rectangle
             Box(
                 modifier =
                     Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .background(
-                            color = if (checked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface,
+                            color = if (checked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant,
                         ).height(17.dp)
                         .width(54.dp),
             )
-            // thumb with icon
             Icon(
                 modifier =
                     Modifier
                         .size(size = thumbSize)
                         .background(
-                            color = if (checked) MaterialTheme.chaiColorsPalette.switchThumbColor else MaterialTheme.chaiColorsPalette.switchThumbColor,
+                            color = MaterialTheme.chaiColorsPalette.switchThumbColor,
                             shape = CircleShape,
                         ).padding(all = iconInnerPadding)
                         .align(alignment),

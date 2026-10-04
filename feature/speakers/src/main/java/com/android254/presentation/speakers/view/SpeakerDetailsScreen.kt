@@ -118,12 +118,10 @@ internal fun SpeakerDetailsScreen(
     onBookmark: (String) -> Unit = {},
     showTopBar: Boolean = true,
 ) {
-    // The scrim is drawn over the content, so the stacking is stated here rather than left to
-    // whatever container the caller happens to use.
+    // The scrim draws over the content, so stack it here rather than rely on the caller.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            // As a detail pane the bar says "Speaker details" above a screen whose first line is
-            // the speaker's name, and offers a back arrow out of a list that never went away.
+            // As a pane the bar repeats the name and offers a back arrow out of a visible list.
             topBar = {
                 if (showTopBar) {
                     CenterAlignedTopAppBar(
@@ -151,7 +149,6 @@ internal fun SpeakerDetailsScreen(
                     )
                 }
             },
-            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = DroidconWindowInsets.screenContent,
         ) { paddingValues ->
             Box(

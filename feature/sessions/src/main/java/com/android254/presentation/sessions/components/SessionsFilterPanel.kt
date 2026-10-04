@@ -71,7 +71,6 @@ fun SessionsFilterPanel(
                     color = ChaiGrey90.copy(alpha = 0.52f),
                 ),
     ) {
-        // The Visible Content
         Column(
             modifier =
                 Modifier

@@ -97,11 +97,10 @@ internal fun SessionDetailsScreen(
     showTopBar: Boolean = true,
     isTabletop: Boolean = rememberIsTabletopPosture(),
 ) {
-    // The scrim is drawn over the content, so the stacking is stated here rather than left to
-    // whatever container the caller happens to use.
+    // The scrim draws over the content, so stack it here rather than rely on the caller.
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-            // As a pane the bar is the title twice over, and a back arrow out of a visible list.
+            // As a pane the bar repeats the title and offers a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
             floatingActionButton = {
                 FloatingActionButton(
@@ -121,7 +120,6 @@ internal fun SessionDetailsScreen(
                     )
                 }
             },
-            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = DroidconWindowInsets.screenContent,
         ) { paddingValues ->
             when (uiState) {

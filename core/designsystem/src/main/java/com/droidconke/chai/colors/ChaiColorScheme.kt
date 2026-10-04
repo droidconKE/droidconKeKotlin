@@ -34,8 +34,6 @@ import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
 
-// Authored from the brand palette in `atoms/Color.kt` rather than derived from [ChaiColors],
-// so `primary` is an accent in both themes rather than an accent in one and a surface in the other.
 internal val ChaiLightColorScheme: ColorScheme =
     lightColorScheme(
         primary = ChaiBlue,

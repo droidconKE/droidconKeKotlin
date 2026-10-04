@@ -108,7 +108,6 @@ internal fun FeedScreen(
                 },
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         Box(

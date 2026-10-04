@@ -21,17 +21,12 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.chaiColorsPalette
 
-/**
- * The accent colour distinguishing sessions by room.
- *
- * A composable so it tracks the theme; room names come from the API and change yearly, so
- * an unrecognised room falls back to the neutral accent rather than failing.
- */
+/** A session's room accent. Room names change yearly, so an unknown room gets the neutral one. */
 @Composable
 @ReadOnlyComposable
 fun venueAccentColor(venue: String): Color {
     val colorScheme = MaterialTheme.colorScheme
-    // A session can span rooms; the API joins them with a comma.
+    // The API comma-joins a session's rooms.
     val primaryRoom =
         venue
             .split(',')
@@ -41,7 +36,7 @@ fun venueAccentColor(venue: String): Color {
 
     return when {
         primaryRoom.equals("Opal", ignoreCase = true) -> colorScheme.secondary
-        primaryRoom.equals("Sapphire", ignoreCase = true) -> MaterialTheme.chaiColorsPalette.tealAccent
+        primaryRoom.equals("Sapphire", ignoreCase = true) -> MaterialTheme.chaiColorsPalette.tealAccentColor
         else -> colorScheme.primary
     }
 }

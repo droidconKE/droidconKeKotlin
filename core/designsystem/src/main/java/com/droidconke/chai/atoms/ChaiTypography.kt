@@ -56,8 +56,7 @@ private val ChaiBaseTypography: Typography =
         )
     }
 
-// Each Emphasized role is its base role one weight heavier. Montserrat is bundled up to Bold, so
-// a role that is already Bold stays Bold rather than being synthesised heavier.
+// One weight heavier than the base role, capped at Bold: the heaviest bundled Montserrat.
 val ChaiTypography: Typography =
     with(ChaiBaseTypography) {
         copy(
@@ -79,8 +78,7 @@ val ChaiTypography: Typography =
         )
     }
 
-// A [size] marks a role backing a chai text composable; those drop Material's letter spacing,
-// which widens labels enough to wrap a session card's room/time row at large font scales.
+// Chai-sized roles drop letter spacing, which wraps session card labels at large font scales.
 private fun TextStyle.chai(
     weight: FontWeight,
     size: Int? = null,

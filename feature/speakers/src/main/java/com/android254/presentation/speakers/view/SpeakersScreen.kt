@@ -183,7 +183,6 @@ internal fun SpeakersScreen(
                     ),
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         ChaiPullToRefreshBox(

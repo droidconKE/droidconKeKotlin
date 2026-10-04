@@ -193,7 +193,6 @@ fun SessionListComponent(
         state = pullToRefreshState,
     ) {
         LazyVerticalGrid(
-            // One column on a phone, more as the window grows.
             columns = GridCells.Adaptive(minSize = SessionColumnMinWidth),
             modifier = Modifier.testTag("sessions_list"),
             state = listState,

@@ -26,12 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
-/**
- * Pull to refresh, with the indicator in the brand accent rather than Material's grey default.
- *
- * Hoist [state] when the box sits inside content that recomposes away — an `AnimatedContent`
- * branch, say — or the indicator restarts mid-gesture.
- */
+/** Pull to refresh in the brand accent. Hoist [state] if the box can recompose away mid-gesture. */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ChaiPullToRefreshBox(

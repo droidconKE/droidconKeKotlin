@@ -61,12 +61,8 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
-            // Legacy DSL on purpose. AGP 9.3's optimization {} block is the documented
-            // replacement, but the baseline profile plugin turns minification off for its
-            // nonMinifiedRelease variant via isMinifyEnabled, and does not know about the new
-            // block — so that variant gets minified anyway and generation produces a profile
-            // full of repackaged names like La0;, which cannot match a shipped build.
-            // Revisit when androidx.baselineprofile understands the new DSL.
+            // Legacy DSL on purpose: the baseline profile plugin ignores optimization {}, so its
+            // nonMinifiedRelease variant would be minified. See docs/performance.md#r8.
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))

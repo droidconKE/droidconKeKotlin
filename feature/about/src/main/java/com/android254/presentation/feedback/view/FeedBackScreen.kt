@@ -163,7 +163,6 @@ internal fun FeedBackScreen(
                 )
             }
         },
-        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->

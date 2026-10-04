@@ -115,7 +115,6 @@ fun CurrentSessionComponent(
                             .border(1.dp, Color.Gray.copy(alpha = 0.5f), CircleShape),
                     contentScale = ContentScale.Crop,
                 )
-                // Status Indicator Dot
                 if (isNow) {
                     Box(
                         modifier =
@@ -148,7 +147,6 @@ fun CurrentSessionComponent(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Status Badge
                     Box(
                         modifier =
                             Modifier

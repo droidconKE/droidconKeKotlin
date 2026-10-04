@@ -50,7 +50,7 @@ fun EventDaySelectorButton(
                 .size(51.dp)
                 .clickable { onClick() }
                 .background(
-                    color = if (selected) MaterialTheme.colorScheme.secondary else (MaterialTheme.chaiColorsPalette.tealAccent).copy(alpha = 0.11f),
+                    color = if (selected) MaterialTheme.colorScheme.secondary else MaterialTheme.chaiColorsPalette.tealAccentColor.copy(alpha = 0.11f),
                     shape = RoundedCornerShape(5.dp),
                 ).padding(start = 5.dp),
     ) {

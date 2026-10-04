@@ -70,10 +70,7 @@ import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 
-/**
- * An ongoing session gets the pulsing venue accent; everything else gets a hairline.
- * A caller that renders the card on an already-grouped surface can opt out entirely.
- */
+/** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
 private fun cardBorder(
     showBorder: Boolean,
     isOngoing: Boolean,

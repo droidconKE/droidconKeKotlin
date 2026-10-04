@@ -25,23 +25,20 @@ import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiTeal90
 import com.droidconke.chai.atoms.ChaiWhite
 
-/**
- * Tier 3: the colours Material's roles cannot express. Everything else is read from
- * `MaterialTheme.colorScheme`.
- *
- * A token belongs here only when no role holds its value in both themes.
- */
+/** Colours no Material role holds in both themes. Read `MaterialTheme.colorScheme` first. */
 @Immutable
 data class ChaiColors(
-    /** Skeleton fill, between the card and its border in both themes. */
+    /** Skeleton fill, between card and border in both themes. */
     val loadingShimmerColor: Color,
-    /** The pastel teal in both themes. `tertiary` is the saturated teal in light. */
-    val tealAccent: Color,
-    /** White on the red accent in both themes, where `onSecondary` turns dark in dark. */
+    /** Pastel teal in both themes; `tertiary` is the saturated teal in light. */
+    val tealAccentColor: Color,
+    /** White on the red accent in both themes; `onSecondary` is dark in dark. */
     val selectedDayContentColor: Color,
-    /** Dark in both themes, so the white level label reads on a light or dark card. */
+    /** Dark in both themes, under the white level label. */
     val badgeContainerColor: Color,
+    /** White in both themes, which no role is. */
     val switchThumbColor: Color,
+    /** Dark grey on the white thumb in both themes. */
     val switchOffIconColor: Color,
 )
 
@@ -53,7 +50,7 @@ val LocalChaiColorsPalette =
 val ChaiLightColorPalette =
     ChaiColors(
         loadingShimmerColor = ChaiGrey,
-        tealAccent = ChaiTeal90,
+        tealAccentColor = ChaiTeal90,
         selectedDayContentColor = ChaiWhite,
         badgeContainerColor = ChaiCoal,
         switchThumbColor = ChaiWhite,
@@ -63,7 +60,7 @@ val ChaiLightColorPalette =
 val ChaiDarkColorPalette =
     ChaiColors(
         loadingShimmerColor = ChaiDarkGrey,
-        tealAccent = ChaiTeal90,
+        tealAccentColor = ChaiTeal90,
         selectedDayContentColor = ChaiWhite,
         badgeContainerColor = ChaiDarkGrey,
         switchThumbColor = ChaiWhite,

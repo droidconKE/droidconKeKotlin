@@ -88,7 +88,6 @@ internal fun AboutScreen(
                 },
             )
         },
-        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         when (uiState) {

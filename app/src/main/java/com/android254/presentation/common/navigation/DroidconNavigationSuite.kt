@@ -77,7 +77,7 @@ fun DroidconNavigationItems(
             icon = {
                 Icon(
                     painter = painterResource(id = destination.icon),
-                    // Decorative: the label beside it carries the name for screen readers.
+                    // Decorative: the label carries the name.
                     contentDescription = null,
                 )
             },
