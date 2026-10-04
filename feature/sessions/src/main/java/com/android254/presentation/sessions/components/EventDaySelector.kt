@@ -15,17 +15,31 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.models.EventDate
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -37,6 +51,7 @@ fun ordinal(i: Int): String {
     }
 }
 
+/** A connected button group: the selected day morphs to a neon pill. */
 @Composable
 fun EventDaySelector(
     selectedDate: EventDate,
@@ -56,21 +71,47 @@ fun EventDaySelector(
         ) { brush ->
             LazyRow(modifier = modifier) {
                 items(3) {
-                    LoadingBox(height = 51.dp, width = 51.dp, brush = brush, cornerRadius = 5.dp)
-                    Spacer(Modifier.width(16.dp))
+                    LoadingBox(height = 48.dp, width = 64.dp, brush = brush, cornerRadius = 24.dp)
+                    Spacer(Modifier.width(ButtonGroupDefaults.ConnectedSpaceBetween))
                 }
             }
         }
     } else {
-        LazyRow(modifier = modifier) {
-            items(eventDates, key = { it.value }) { eventDay ->
-                EventDaySelectorButton(
-                    title = ordinal(eventDay.value.toInt()),
-                    subtitle = "Day ${eventDay.day}",
-                    onClick = { updateSelectedDay(eventDay) },
-                    selected = selectedDate == eventDay,
-                )
-                Spacer(Modifier.width(16.dp))
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        ) {
+            eventDates.forEachIndexed { index, eventDay ->
+                ToggleButton(
+                    checked = selectedDate == eventDay,
+                    onCheckedChange = { checked -> if (checked) updateSelectedDay(eventDay) },
+                    modifier = Modifier.semantics { role = Role.RadioButton },
+                    shapes =
+                        when (index) {
+                            0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                            eventDates.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                            else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                        },
+                    colors =
+                        ToggleButtonDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                            checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        ),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = ordinal(eventDay.value.toInt()),
+                            style = MaterialTheme.typography.titleSmallEmphasized,
+                        )
+                        Text(
+                            text = stringResource(R.string.event_day_label, eventDay.day),
+                            style = MaterialTheme.typography.labelSmall,
+                        )
+                    }
+                }
             }
         }
     }

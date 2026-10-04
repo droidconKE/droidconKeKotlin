@@ -38,7 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.components.MultiToggleButton
+import com.android254.presentation.common.components.FilterOptionChips
 import com.android254.presentation.models.SessionsFilterOption
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.CPrimaryButtonText
@@ -122,8 +122,8 @@ fun SessionsFilterPanel(
                         titleColor = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.height(12.dp))
-                    MultiToggleButton(
-                        toggleStates = filter.value.toImmutableList(),
+                    FilterOptionChips(
+                        options = filter.value.toImmutableList(),
                         onClick = {
                             updateSelectedFilterOptionList(it)
                         },

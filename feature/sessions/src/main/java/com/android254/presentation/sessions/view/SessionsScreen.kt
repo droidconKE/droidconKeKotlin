@@ -57,8 +57,8 @@ import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
-import com.android254.presentation.sessions.components.CustomSwitch
 import com.android254.presentation.sessions.components.EventDaySelector
+import com.android254.presentation.sessions.components.MySessionsSwitch
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsIntentHandler
@@ -170,7 +170,7 @@ fun SessionsScreen(
                     eventDates = sessionsUiState.eventDays,
                     isLoading = sessionsUiState.sessionStatus is ResultStatus.Loading,
                 )
-                CustomSwitch(
+                MySessionsSwitch(
                     checked = showMySessions,
                     onCheckedChange = { checked ->
                         // Off clears every filter; on adds only the bookmark facet.

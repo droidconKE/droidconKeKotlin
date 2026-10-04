@@ -16,11 +16,14 @@
 package com.android254.presentation.sessions
 
 import androidx.compose.runtime.Composable
+import com.android254.presentation.common.components.FilterOptionChips
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
+import com.android254.presentation.models.SessionsFilterCategory
+import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
 import com.android254.presentation.sessions.models.SessionsUiState
@@ -28,6 +31,7 @@ import com.android254.presentation.sessions.view.SessionsScreen
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableList
 import org.junit.Test
 
 class SessionsScreenshotTest : ChaiScreenshotTest() {
@@ -47,6 +51,20 @@ class SessionsScreenshotTest : ChaiScreenshotTest() {
 
     @Test
     fun `session details`() = captureScreen("screens/session_details") { SessionDetails() }
+
+    @Test
+    fun `filter chips`() =
+        captureComponent("components/filter_chips") {
+            val options =
+                persistentListOf("Beginner", "Intermediate", "Advanced").map {
+                    SessionsFilterOption(label = it, value = it, type = SessionsFilterCategory.Level)
+                }
+            FilterOptionChips(
+                currentSelections = persistentListOf(options[1]),
+                options = options.toImmutableList(),
+                onClick = {},
+            )
+        }
 }
 
 @Composable
@@ -56,8 +74,9 @@ private fun Sessions() {
             SessionsUiState(
                 sessions = persistentMapOf("09:00 AM" to fakeSessions),
                 sessionStatus = ResultStatus.Success,
+                eventDays = persistentListOf(EventDate("5", day = 1), EventDate("6", day = 2), EventDate("7", day = 3)),
             ),
-        selectedEventDate = EventDate("1", day = 1),
+        selectedEventDate = EventDate("5", day = 1),
         isRefreshing = false,
         currentSelections = persistentListOf(),
         navigateToSessionDetails = {},

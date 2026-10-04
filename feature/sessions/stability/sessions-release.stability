@@ -135,19 +135,6 @@ public fun com.android254.presentation.sessions.components.CurrentSessionCompone
     - onClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.CustomSwitch(checked: kotlin.Boolean, onCheckedChange: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, width: androidx.compose.ui.unit.Dp, height: androidx.compose.ui.unit.Dp, iconInnerPadding: androidx.compose.ui.unit.Dp, thumbSize: androidx.compose.ui.unit.Dp): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - checked: STABLE (primitive type)
-    - onCheckedChange: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
-    - width: STABLE (marked @Stable or @Immutable)
-    - height: STABLE (marked @Stable or @Immutable)
-    - iconInnerPadding: STABLE (marked @Stable or @Immutable)
-    - thumbSize: STABLE (marked @Stable or @Immutable)
-
-@Composable
 public fun com.android254.presentation.sessions.components.EventDaySelector(selectedDate: com.android254.presentation.models.EventDate, updateSelectedDay: kotlin.Function1<com.android254.presentation.models.EventDate, kotlin.Unit>, eventDates: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.EventDate>, modifier: androidx.compose.ui.Modifier, isLoading: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
@@ -159,21 +146,19 @@ public fun com.android254.presentation.sessions.components.EventDaySelector(sele
     - isLoading: STABLE (primitive type)
 
 @Composable
-public fun com.android254.presentation.sessions.components.EventDaySelectorButton(title: kotlin.String, subtitle: kotlin.String, selected: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - title: STABLE (String is immutable)
-    - subtitle: STABLE (String is immutable)
-    - selected: STABLE (primitive type)
-    - onClick: STABLE (function type)
-    - modifier: STABLE (marked @Stable or @Immutable)
-
-@Composable
 public fun com.android254.presentation.sessions.components.LoadingTimeHeader(): kotlin.Unit
   skippable: true
   restartable: true
   params:
+
+@Composable
+public fun com.android254.presentation.sessions.components.MySessionsSwitch(checked: kotlin.Boolean, onCheckedChange: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - checked: STABLE (primitive type)
+    - onCheckedChange: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.sessions.components.RoomHeader(room: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -298,13 +283,6 @@ private fun com.android254.presentation.sessions.components.agendaPreviewData():
   skippable: false
   restartable: false
   params:
-
-@Composable
-private fun com.android254.presentation.sessions.components.animateAlignmentAsState(targetBiasValue: kotlin.Float): androidx.compose.runtime.State<androidx.compose.ui.BiasAlignment>
-  skippable: false
-  restartable: false
-  params:
-    - targetBiasValue: STABLE (primitive type)
 
 @Composable
 private fun com.android254.presentation.sessions.components.rememberAgendaCells(sessionsByTime: kotlinx.collections.immutable.ImmutableMap<kotlin.String, kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>>): kotlin.collections.Map<kotlin.Pair<kotlin.String, kotlin.String>, com.android254.presentation.models.SessionPresentationModel>
