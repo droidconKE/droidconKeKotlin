@@ -20,6 +20,6 @@ import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 
-/** One shape for square headshots, so the shared-element transition doesn't snap. */
+/** One shape for square headshots, so moving between home and the speakers list doesn't snap. */
 @Composable
 fun rememberSpeakerAvatarShape(): Shape = MaterialShapes.Cookie4Sided.toShape()

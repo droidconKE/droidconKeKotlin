@@ -334,8 +334,8 @@ The rules that matter:
 The palette is the 2026 brand from droidcon.co.ke: the website's blue and green ramps and its
 neutrals, in `atoms/Color.kt`. Blue leads in light mode and neon green in dark, as on the website,
 because blue text on black is only 3.7:1. Dark mode is true black with `#191D1D` cards. Neon green
-is only ever a fill with ink on it (`secondaryContainer`, and dark `primary`): as text on white it
-is 1.36:1. Selected states (the navigation pill, the chosen day, a starred session, the live
+is never text on a light surface (1.36:1 on white): in light mode it is a fill with ink on it. It
+is text only on black (dark `primary`) and as headline-size text on the blue hero (4.1:1). Selected states (the navigation pill, the chosen day, a starred session, the live
 badge) take `secondaryContainer` explicitly, because Material's default is `primary`.
 
 Read `MaterialTheme.colorScheme` for colour. `MaterialTheme.chaiColorsPalette` holds three
@@ -352,7 +352,8 @@ it has one weight. Swapping it in later is a change to the one `FontFamily` in `
 `ChaiTheme(darkTheme = true)` preview or screenshot picks the right logo.
 
 Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-cookie morph),
-`LiveBadge`, `EmptyStatePanel`, `FilterOptionChips` and `rememberSpeakerAvatarShape()`.
+`LiveBadge`, `EmptyStatePanel`, `FilterOptionChips`, `ConnectedToggleGroup` and
+`rememberSpeakerAvatarShape()`.
 
 The Expressive APIs are only public in material3 1.5.0-alpha29, which the version catalog pins
 over the BOM — see `AGENTS.md`.

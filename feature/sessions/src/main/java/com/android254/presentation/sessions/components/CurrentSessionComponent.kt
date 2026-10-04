@@ -160,12 +160,7 @@ fun CurrentSessionComponent(
                                     ).padding(horizontal = 10.dp, vertical = 4.dp),
                         ) {
                             ChaiBodySmallBold(
-                                bodyText =
-                                    if (isNow) {
-                                        stringResource(R.string.now).uppercase()
-                                    } else {
-                                        stringResource(R.string.up_next).uppercase()
-                                    },
+                                bodyText = stringResource(R.string.up_next).uppercase(),
                                 textColor = venueAccent,
                             )
                         }

@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 
 // The 2026 brand: droidcon.co.ke's blue and green ramps and its neutrals.
 
-val ChaiBlue50 = Color(0xFFEDF6FF)
 val ChaiBlue100 = Color(0xFFD6EAFF)
 val ChaiBlue200 = Color(0xFFB5DBFF)
 val ChaiBlue300 = Color(0xFF83C6FF)

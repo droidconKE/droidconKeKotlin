@@ -335,7 +335,7 @@ must be immutable and must not hold resource IDs. Icons and labels live in
 
 `ChaiColors` holds three tokens, all for the brand-blue hero panel. Read
 `MaterialTheme.colorScheme` first; add a `ChaiColors` token only when no role fits, with a KDoc
-saying why. **Neon green is never text**: it is a container with ink on it. Selected states pass
+saying why. **Neon green is never text on a light surface**: there it is a container with ink on it. It is text only on black (dark `primary`) and as headline-size text on the blue hero. Selected states pass
 `secondaryContainer` explicitly, since Material's toggles default to `primary`. Pick a logo or
 other light/dark asset with `MaterialTheme.isDarkTheme`, not `isSystemInDarkTheme()`, which a
 themed preview or screenshot can't override. Motion comes from `MaterialTheme.motionScheme`, not

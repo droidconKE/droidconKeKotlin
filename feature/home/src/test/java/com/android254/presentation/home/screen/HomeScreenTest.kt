@@ -83,12 +83,15 @@ class HomeScreenTest {
 
         composeTestRule.onNodeWithText(live.title).assertIsDisplayed()
         composeTestRule.onNodeWithText("LIVE").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("${fakeSessions[2].startTime} ${fakeSessions[2].amOrPm}", substring = true)
+            .assertIsDisplayed()
         composeTestRule.onNodeWithTag("home_header").performClick()
         assertEquals(live.id, opened)
     }
 
     @Test
-    fun `the hero falls back to the next session when nothing is live`() {
+    fun `with nothing live the hero welcomes, even when a session is up next`() {
         val next = fakeSessions[2]
         composeTestRule.setContent {
             ChaiTheme {
@@ -96,7 +99,8 @@ class HomeScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithText(next.title).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Welcome", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(next.title).assertDoesNotExist()
         composeTestRule.onNodeWithText("LIVE").assertDoesNotExist()
     }
 

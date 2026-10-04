@@ -27,7 +27,7 @@ import com.droidconke.chai.atoms.ChaiWhite
 data class ChaiColors(
     /** The brand-blue panel, the same blue in both themes. */
     val heroContainerColor: Color,
-    /** Neon on the blue panel, for display-size text only (4.1:1). */
+    /** Neon on the blue panel, for headline and display text only (4.1:1). */
     val heroContentColor: Color,
     /** White on the blue panel, for anything smaller than display type. */
     val heroOnContainerColor: Color,

@@ -67,6 +67,7 @@ import com.android254.presentation.common.navigation.droidconEntryProvider
 import com.android254.presentation.common.navigation.droidconNavigationSuiteColors
 import com.android254.presentation.common.navigation.navigationSuiteTypeFor
 import com.android254.presentation.common.navigation.rememberNavigationState
+import com.android254.presentation.common.navigation.shouldShowLiveSessionsRail
 import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
@@ -171,9 +172,13 @@ fun MainScreen(
             isMultiPaneWindow = isMultiPaneWindow,
             hasLiveSessions = liveSessions.isNotEmpty(),
         )
-    // Home leads with the same sessions in its hero.
     val showLiveSessionsRail =
-        showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty() && currentRoute != Screens.Home
+        shouldShowLiveSessionsRail(
+            route = currentRoute,
+            isMultiPaneWindow = isMultiPaneWindow,
+            liveSessionCount = liveSessions.size,
+            liveNowCount = sessionsState.current.size,
+        )
 
     NavigationSuiteScaffold(
         modifier =

@@ -18,6 +18,7 @@ package com.android254.presentation.sessions.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -44,14 +46,16 @@ fun MySessionsSwitch(
 ) {
     val stateText = stringResource(if (checked) R.string.my_sessions_on else R.string.my_sessions_off)
     Column(
-        modifier = modifier,
+        modifier =
+            modifier
+                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
+                .semantics { stateDescription = stateText },
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Switch(
             checked = checked,
-            onCheckedChange = onCheckedChange,
-            modifier = Modifier.semantics { stateDescription = stateText },
+            onCheckedChange = null,
             thumbContent = {
                 Icon(
                     imageVector = Icons.Filled.Star,

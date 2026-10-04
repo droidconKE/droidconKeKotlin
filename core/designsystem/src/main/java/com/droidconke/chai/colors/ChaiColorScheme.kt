@@ -43,7 +43,7 @@ import com.droidconke.chai.atoms.ChaiInk
 import com.droidconke.chai.atoms.ChaiOnErrorDark
 import com.droidconke.chai.atoms.ChaiWhite
 
-// Neon green is only ever a container with ink on it: as text on white it is 1.36:1.
+// Neon is never text on a light surface (1.36:1 on white): in light it is a container with ink on it.
 internal val ChaiLightColorScheme: ColorScheme =
     lightColorScheme(
         primary = ChaiBlue700,

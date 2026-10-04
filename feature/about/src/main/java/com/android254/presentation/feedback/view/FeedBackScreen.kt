@@ -18,12 +18,10 @@ package com.android254.presentation.feedback.view
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +32,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -43,8 +40,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
@@ -63,12 +58,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.components.ConnectedToggleGroup
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarIconAppearance
 import com.droidconke.chai.ChaiTheme
@@ -78,25 +71,23 @@ import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
+import kotlinx.collections.immutable.toImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun FeedBackRoute(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     navigateBack: () -> Unit = {},
 ) {
-    FeedBackScreen(
-        darkTheme = darkTheme,
-        navigateBack = navigateBack,
-    )
+    FeedBackScreen(navigateBack = navigateBack)
 }
 
 @Composable
 internal fun FeedBackScreen(
-    darkTheme: Boolean,
     navigateBack: () -> Unit = {},
 ) {
+    val darkTheme = MaterialTheme.isDarkTheme
     var value by remember {
         mutableStateOf("")
     }
@@ -274,7 +265,7 @@ fun FeedbackTitle(modifier: Modifier = Modifier) {
 @Composable
 private fun FeedBackScreenPreview() {
     ChaiTheme {
-        FeedBackScreen(darkTheme = isSystemInDarkTheme())
+        FeedBackScreen()
     }
 }
 
@@ -290,40 +281,20 @@ private enum class FeedbackRatingOption(
 @Composable
 private fun FeedbackRating(modifier: Modifier = Modifier) {
     var selected by rememberSaveable { mutableStateOf<FeedbackRatingOption?>(null) }
-    val options = FeedbackRatingOption.entries
-    Row(
+    ConnectedToggleGroup(
+        items = FeedbackRatingOption.entries.toImmutableList(),
+        selected = selected,
+        onSelect = { selected = it },
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
-    ) {
-        options.forEachIndexed { index, option ->
-            ToggleButton(
-                checked = selected == option,
-                onCheckedChange = { checked -> selected = option.takeIf { checked } },
-                modifier = Modifier.semantics { role = Role.RadioButton },
-                shapes =
-                    when (index) {
-                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-                        options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    },
-                colors =
-                    ToggleButtonDefaults.colors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
-                        checkedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        checkedContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    ),
-                contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp),
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        modifier = Modifier.size(36.dp),
-                        painter = painterResource(id = option.face),
-                        contentDescription = null,
-                    )
-                    Text(text = stringResource(option.label), style = MaterialTheme.typography.labelMedium)
-                }
-            }
+        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 10.dp),
+    ) { option ->
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                modifier = Modifier.size(36.dp),
+                painter = painterResource(id = option.face),
+                contentDescription = null,
+            )
+            Text(text = stringResource(option.label), style = MaterialTheme.typography.labelMedium)
         }
     }
 }

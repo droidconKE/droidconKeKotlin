@@ -14,8 +14,9 @@ The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architect
 system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
 it starts from is recorded in the rebrand PR.
 
-After §14, two visible items remain: the phase-aware home and schedule conflicts (§5.3), then
-the 3D cube (§12). §5.3 goes first because it answers more of §5.1's definition of world class.
+§14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
+Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
+conflicts (§5.3), then the 3D cube (§12).
 
 ---
 
@@ -308,16 +309,17 @@ Not more animation. The conference apps people remember are the ones that answer
 
 Everything in this phase serves one of those four. Anything that doesn't is decoration, and decoration is what makes conference apps feel like brochures.
 
-**Question 1 is answered (2026-10-05).** Home's hero shows the live session, its room and end
-time, and what's next; with nothing live it features the next session. On a phone the
-live-sessions rail is hidden on Home, where it would only repeat the hero. Questions 2 to 4 are
+**Question 1 is answered (2026-10-05).** While a session is live, Home's hero shows it, its room
+and end time, and what's next. With nothing live it welcomes, because up-next has no upper
+bound and could be weeks away. On a phone the live-sessions rail is hidden on Home only when a
+single session is live, the case the hero covers; parallel live sessions keep the rail. Questions 2 to 4 are
 still open: conflicts (§5.3), speaker cross-links, and the ticket (§7).
 
 ### 5.2 Adopt M3 Expressive — mostly done
 
 Landed on 2026-10-05, on material3 1.5.0-alpha29:
 - the theme, Emphasized type and the Expressive corner scale;
-- a connected `ButtonGroup` day selector and feedback rating;
+- connected `ToggleButton` groups (`ButtonGroupDefaults` shapes) for the day selector and feedback rating, shared as `ConnectedToggleGroup`;
 - the bookmark shape morph and cookie-shaped speaker avatars;
 - `FilterChip` filters, the M3 switch and `LiveBadge`;
 - the short navigation bar and wide navigation rail;
@@ -327,8 +329,8 @@ Still open:
 - **Loading consolidation.** The per-screen skeletons, `LoadingBox` and `AnimatedShimmerEffect`
   remain. Consolidate to one skeleton primitive for content-shaped loading, and use
   `LoadingIndicator` for full-screen and indeterminate loads.
-- **Day-selector overflow.** The button group fits three days. A longer event needs
-  `ButtonGroup`'s `overflowIndicator`.
+- **Day-selector overflow.** The group fits three days and doesn't scroll. A longer event
+  needs a scrolling row, or a move to `ButtonGroup` and its `overflowIndicator`.
 - **The material3 pin.** Remove the `version.ref` once a BOM manages a stable 1.5.0 (see
   `AGENTS.md`).
 
@@ -354,7 +356,7 @@ sealed interface ConferencePhase {
 | **Before** | Countdown, "build your agenda" CTA, speaker highlights, ticket status |
 | **During, session hours** | **Now / Next card** (biggest element on screen), then *your* starred day, then live feed |
 | **During, off hours** | Tomorrow's starred sessions, "rate today's sessions" prompt, social feed |
-| **After** | Personal recap (§6.10), session recordings, "what you missed", feedback prompt |
+| **After** | Personal recap (§6.11), session recordings, "what you missed", feedback prompt |
 
 ```kotlin
 @Composable
@@ -431,7 +433,7 @@ data class ScheduleConflict(
 )
 ```
 
-Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.6): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
+Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.7): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
 
 ### 5.4 Motion that carries meaning
 
@@ -3998,7 +4000,7 @@ val updateType = if (featureToggle.forceUpdate) AppUpdateType.IMMEDIATE else App
 
 **Swahili was dropped on 2026-10-04.** The app is built for a global audience, not only for
 attendees in Kenya, so it ships in English and this section is the accessibility audit alone.
-Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings (§3.3 B10) are
+Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings are
 `@StringRes` values on `TopLevelDestination`, which is also what TalkBack reads.
 
 ### 14.1 Accessibility checklist
@@ -4203,7 +4205,7 @@ Stage 1, making the codebase safe to change, is complete.
 - Retrospective driven by analytics: which features got used? Instrument for this during Stage 3, not after.
 - Prune. Anything with negligible engagement is a candidate for deletion, not iteration.
 
-**Deliberately deferred:** job board (§11.1), code challenge (§11.3), booking (§11.4b), the cube (§12), connections (§11.2). Each needs either a backend commitment or a named editorial owner. Revisit at the §11.0 planning meeting — and if the answer is "nobody owns the content," the answer is no.
+**Deliberately deferred:** job board (§11.1), code challenge (§11.3), booking (§11.4b), connections (§11.2). Each needs either a backend commitment or a named editorial owner. Revisit at the §11.0 planning meeting — and if the answer is "nobody owns the content," the answer is no.
 
 ### 16.3 Parallelisation
 
@@ -4218,6 +4220,8 @@ The natural split for a small contributor pool, chosen so people don't collide:
 | **Conference ops** | Ticketing, notifications, widget, map | §7, §8, §11.6–11.7 |
 
 Cross-track dependencies to watch:
+- AI (§6) needs `:core:testing` to test its router.
+- The cube (§12) needs nothing, but lands after §14 so its reduced-motion path is audited with the rest.
 
 ### 16.4 Definition of done, per PR
 

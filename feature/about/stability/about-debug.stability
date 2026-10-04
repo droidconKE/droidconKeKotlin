@@ -47,19 +47,17 @@ public fun com.android254.presentation.about.view.OrganizingTeamSection(organizi
     - onClickMember: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.feedback.view.FeedBackRoute(darkTheme: kotlin.Boolean, navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.feedback.view.FeedBackRoute(navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - darkTheme: STABLE (primitive type)
     - navigateBack: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.feedback.view.FeedBackScreen(darkTheme: kotlin.Boolean, navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.feedback.view.FeedBackScreen(navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - darkTheme: STABLE (primitive type)
     - navigateBack: STABLE (function type)
 
 @Composable

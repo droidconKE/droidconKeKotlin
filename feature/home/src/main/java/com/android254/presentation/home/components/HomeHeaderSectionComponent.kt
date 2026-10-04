@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,7 +46,7 @@ import ke.droidcon.kotlin.core.ui.R
 private const val LARGE_FONT_SCALE = 1.5f
 private const val HERO_MAX_LINES = 5
 
-/** Answers "where do I need to be?" with the live or next session; otherwise welcomes. */
+/** Answers "where do I need to be?" while a session is live, with what's next; otherwise welcomes. */
 @Composable
 fun HomeHeaderSectionComponent(
     modifier: Modifier = Modifier,
@@ -54,7 +55,8 @@ fun HomeHeaderSectionComponent(
     onSessionClick: (String) -> Unit = {},
 ) {
     val palette = MaterialTheme.chaiColorsPalette
-    val featured = liveSession ?: nextSession
+    val openLabel = stringResource(R.string.open_session)
+    val featured = liveSession
     val displayStyle =
         if (LocalDensity.current.fontScale > LARGE_FONT_SCALE) {
             MaterialTheme.typography.headlineSmallEmphasized
@@ -68,17 +70,20 @@ fun HomeHeaderSectionComponent(
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.extraLarge)
                 .background(palette.heroContainerColor)
-                .then(if (featured != null) Modifier.clickable { onSessionClick(featured.id) } else Modifier)
-                .padding(20.dp),
+                .then(
+                    if (featured != null) {
+                        Modifier.clickable(onClickLabel = openLabel, role = Role.Button) { onSessionClick(featured.id) }
+                    } else {
+                        Modifier
+                    },
+                ).padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        when {
-            liveSession != null ->
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    LiveBadge()
-                    HeroLabel(stringResource(R.string.hero_live_room_until, liveSession.venue, liveSession.endTime))
-                }
-            nextSession != null -> HeroLabel(stringResource(R.string.hero_up_next, nextSession.startTime, nextSession.venue))
+        if (liveSession != null) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                LiveBadge()
+                HeroLabel(stringResource(R.string.hero_live_room_until, liveSession.venue, liveSession.endTime))
+            }
         }
         Text(
             text = featured?.title ?: stringResource(id = R.string.home_header_welcome_label),
@@ -89,7 +94,7 @@ fun HomeHeaderSectionComponent(
             modifier = Modifier.semantics { heading() },
         )
         if (liveSession != null && nextSession != null) {
-            HeroLabel(stringResource(R.string.hero_up_next, nextSession.startTime, nextSession.title), maxLines = 1)
+            HeroLabel(stringResource(R.string.hero_up_next, "${nextSession.startTime} ${nextSession.amOrPm}", nextSession.title), maxLines = 1)
         }
     }
 }

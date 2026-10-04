@@ -20,9 +20,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -31,17 +31,14 @@ import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.toPath
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Outline
@@ -50,6 +47,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Density
@@ -60,6 +58,7 @@ import androidx.graphics.shapes.Morph
 import ke.droidcon.kotlin.core.ui.R
 
 private const val STARRED_SCALE = 1.25f
+private val MIN_TOUCH_TARGET = 48.dp
 
 /** Starring morphs a circle into a neon cookie with a spring. */
 @Composable
@@ -70,34 +69,43 @@ fun BookmarkButton(
     size: Dp = 36.dp,
 ) {
     val morph = remember { Morph(MaterialShapes.Circle, MaterialShapes.Cookie9Sided) }
-    val progress by animateFloatAsState(
-        targetValue = if (isBookmarked) 1f else 0f,
-        animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
-        label = "bookmark-morph",
-    )
-    val container by animateColorAsState(
-        targetValue = if (isBookmarked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-        animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
-        label = "bookmark-container",
-    )
+    val progress =
+        animateFloatAsState(
+            targetValue = if (isBookmarked) 1f else 0f,
+            animationSpec = MaterialTheme.motionScheme.fastSpatialSpec(),
+            label = "bookmark-morph",
+        )
+    val container =
+        animateColorAsState(
+            targetValue = if (isBookmarked) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
+            animationSpec = MaterialTheme.motionScheme.fastEffectsSpec(),
+            label = "bookmark-container",
+        )
     val scale = remember { Animatable(1f) }
-    var wasBookmarked by remember { mutableStateOf(isBookmarked) }
+    val wasBookmarked = remember { booleanArrayOf(isBookmarked) }
     LaunchedEffect(isBookmarked) {
-        if (isBookmarked && !wasBookmarked) {
+        val justStarred = isBookmarked && !wasBookmarked[0]
+        wasBookmarked[0] = isBookmarked
+        if (justStarred) {
             scale.animateTo(STARRED_SCALE, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
             scale.animateTo(1f, spring(dampingRatio = Spring.DampingRatioLowBouncy))
+        } else {
+            scale.snapTo(1f)
         }
-        wasBookmarked = isBookmarked
     }
+    val label = stringResource(R.string.star_session_icon_description)
     val stateText = stringResource(if (isBookmarked) R.string.session_starred else R.string.session_not_starred)
 
     Box(
         modifier =
             modifier
-                .minimumInteractiveComponentSize()
+                .sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
                 .clip(CircleShape)
                 .toggleable(value = isBookmarked, role = Role.Checkbox, onValueChange = { onToggle() })
-                .semantics { stateDescription = stateText },
+                .semantics {
+                    contentDescription = label
+                    stateDescription = stateText
+                },
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -107,13 +115,14 @@ fun BookmarkButton(
                     .graphicsLayer {
                         scaleX = scale.value
                         scaleY = scale.value
-                    }.clip(MorphShape(morph, progress))
-                    .background(container),
+                        shape = MorphShape(morph, progress.value)
+                        clip = true
+                    }.drawBehind { drawRect(container.value) },
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = if (isBookmarked) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                contentDescription = stringResource(R.string.star_session_icon_description),
+                contentDescription = null,
                 tint = if (isBookmarked) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(size * 0.55f),
             )
