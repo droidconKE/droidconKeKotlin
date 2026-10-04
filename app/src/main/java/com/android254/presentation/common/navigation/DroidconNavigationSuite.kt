@@ -49,7 +49,6 @@ fun navigationSuiteTypeFor(
         else -> NavigationSuiteType.WideNavigationRailCollapsed
     }
 
-/** The chai palette, for whichever navigation component the window ends up with. */
 @Composable
 fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     val container = MaterialTheme.colorScheme.surfaceContainerLowest
@@ -62,7 +61,6 @@ fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     )
 }
 
-/** The type decides whether an item draws as a bar item, a rail item or a drawer row. */
 @Composable
 fun DroidconNavigationItems(
     currentTopLevelRoute: NavKey,
@@ -108,7 +106,7 @@ fun DroidconNavigationItems(
     }
 }
 
-/** The drawer's header, in the primary-action slot, which only the drawer draws. */
+/** The expanded rail's header; only that type draws the primary-action slot. */
 @Composable
 fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
     Row(

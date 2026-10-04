@@ -44,7 +44,7 @@ import ke.droidcon.kotlin.core.ui.R
 private const val PULSE_MILLIS = 1_000
 private const val PULSE_MIN_ALPHA = 0.35f
 
-/** A neon pill with a pulsing dot. Infinite transitions ignore the animation scale, so it is read here. */
+/** Infinite transitions ignore the animation scale, so the pulse reads it directly. */
 @Composable
 fun LiveBadge(modifier: Modifier = Modifier) {
     val resolver = LocalContext.current.contentResolver

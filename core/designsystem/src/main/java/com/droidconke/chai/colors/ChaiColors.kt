@@ -20,7 +20,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlue700
 import com.droidconke.chai.atoms.ChaiGreen500
-import com.droidconke.chai.atoms.ChaiInk
 import com.droidconke.chai.atoms.ChaiWhite
 
 /** Colours no Material role holds in both themes. Read `MaterialTheme.colorScheme` first. */
@@ -32,10 +31,6 @@ data class ChaiColors(
     val heroContentColor: Color,
     /** White on the blue panel, for anything smaller than display type. */
     val heroOnContainerColor: Color,
-    /** White in both themes, which no role is. */
-    val switchThumbColor: Color,
-    /** Ink on the white thumb in both themes. */
-    val switchOffIconColor: Color,
 )
 
 val LocalChaiColorsPalette =
@@ -48,8 +43,6 @@ private val ChaiBrandColors =
         heroContainerColor = ChaiBlue700,
         heroContentColor = ChaiGreen500,
         heroOnContainerColor = ChaiWhite,
-        switchThumbColor = ChaiWhite,
-        switchOffIconColor = ChaiInk,
     )
 
 val ChaiLightColorPalette = ChaiBrandColors

@@ -51,7 +51,6 @@ fun ordinal(i: Int): String {
     }
 }
 
-/** A connected button group: the selected day morphs to a neon pill. */
 @Composable
 fun EventDaySelector(
     selectedDate: EventDate,

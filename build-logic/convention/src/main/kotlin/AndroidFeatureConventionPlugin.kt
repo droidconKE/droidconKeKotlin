@@ -19,8 +19,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-// Everything a :feature: module gets by default. A feature declares only what is genuinely
-// its own; if two features need the same thing, that thing belongs in :core:ui.
+// A :feature: module's defaults; anything two features share belongs in :core:ui.
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {

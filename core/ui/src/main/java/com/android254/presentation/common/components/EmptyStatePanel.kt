@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-/** Empty and error states share the hero panel's shape, so they read as intentional rather than broken. */
+/** Empty and error states, in the hero panel's shape. */
 @Composable
 fun EmptyStatePanel(
     icon: Painter,

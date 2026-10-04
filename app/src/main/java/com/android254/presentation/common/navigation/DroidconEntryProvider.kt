@@ -43,12 +43,7 @@ import com.android254.presentation.speakers.view.SpeakersRoute
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
-/**
- * Maps every [Screens] key to its screen, and tells `NavDisplay` which pane each one is.
- *
- * Nothing here branches on window size: a scene strategy reads the metadata and decides, which
- * is why the same entry is a full screen on a phone and a pane on a tablet.
- */
+/** Maps each key to its screen. Scene strategies read the pane metadata, so nothing here branches on window size. */
 @Composable
 fun droidconEntryProvider(
     navController: NavigationController,

@@ -60,7 +60,7 @@ import ke.droidcon.kotlin.core.ui.R
 
 private const val STARRED_SCALE = 1.25f
 
-/** Starring morphs the button from a circle into a neon cookie with a spring; unstarring settles back. */
+/** Starring morphs a circle into a neon cookie with a spring. */
 @Composable
 fun BookmarkButton(
     isBookmarked: Boolean,
