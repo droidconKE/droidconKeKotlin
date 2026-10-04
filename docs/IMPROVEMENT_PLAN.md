@@ -31,12 +31,15 @@ feedback button were black in dark mode. Two scheme changes made the mapping exa
   `cardsBackground` maps onto the role Material's own cards use.
 
 The six tokens left are the ones no role holds in both themes: `loadingShimmerColor`,
-`tealAccent`, `selectedDayContentColor`, `badgeContainerColor`, `switchThumbColor`,
+`tealAccentColor`, `selectedDayContentColor`, `badgeContainerColor`, `switchThumbColor`,
 `switchOffIconColor`. Each has a KDoc saying why.
 
-**Visible changes** were reviewed in the goldens, one commit each: dark-mode accents on the
-feedback button, pull-to-refresh, "View all" and Share; a raised text field and a dimmed inactive
-icon in dark; a visible text-field border in light. Nothing else moved.
+**Visible changes** were reviewed in the goldens, all in the migration commit: dark-mode accents
+on the feedback button, pull-to-refresh, "View all" and Share; a raised text field and a dimmed
+inactive icon in dark; a visible text-field border in light. Two more have no golden and were
+checked on an Android 16 emulator: unselected filter buttons take an `onSurfaceVariant` border
+(lighter in light mode, unchanged in dark), and the "My sessions" switch's off track is
+`onSurfaceVariant` so the white thumb stays visible on it in dark mode.
 
 **Expressive needed an alpha.** `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized`
 roles are `internal` in material3 1.4.0, the newest stable and what BOM `2026.09.00` manages.
@@ -381,6 +384,8 @@ material3 **1.5.0-alpha17**, which it read; this repo is on **1.4.0**, whose `Sc
 `safeInsets.insets = contentWindowInsets.exclude(consumedWindowInsets)` through
 `onConsumedWindowInsetsChanged`. The contract holds. It is worth knowing that it stops holding
 on some later material3, because that is the day every screen grows a second navigation-bar gap.
+**Re-checked 2026-10-04 on the pinned 1.5.0-alpha29:** its `Scaffold` still excludes consumed
+insets the same way, so the contract holds there too. Check again on each material3 bump.
 
 #### What else landed
 
@@ -2372,8 +2377,9 @@ Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a
       §10.2 goldens, not just by grep
 - [x] `LocalChaiColorsPalette` errors on missing provider instead of rendering `Color.Unspecified`
 - [x] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3
-      role — **done 2026-10-04: 6 tokens.** Done as one PR rather than feature by feature, with
-      the visible changes isolated in their own commit's goldens.
+      role — **done 2026-10-04: 6 tokens.** Done as one PR rather than feature by feature; the
+      visible changes are all in the migration commit's goldens, apart from the pin and theme
+      commits, which moved none.
 - [x] Dark-mode elevation direction decided **with design**, and recorded here — **decided
       2026-09-04: reversed to the M3 direction.** Raised surfaces are now lighter than the
       background in dark (`surfaces`/`cardsBackground`/`bottomSheetBackgroundColor` →

@@ -196,8 +196,9 @@ implementing `NavKey`; there is no `NavHost` or route strings. See
 the `*Emphasized` type roles are `internal` in the stable 1.4.0, so `libs.versions.toml` gives
 `material3` (and `material3-adaptive-navigation-suite`, same group) a `version.ref` of
 1.5.0-alpha29. That lifts `ui`, `runtime`, `foundation` and `animation` to 1.13.0-alpha01
-transitively, so the whole Compose stack is on alphas. Re-record goldens when Dependabot bumps
-it, and drop the `version.ref` once a BOM manages a stable 1.5.0.
+transitively, so the whole Compose stack is on alphas. When Dependabot bumps it, re-record
+goldens and re-check that `Scaffold` still excludes consumed insets, which the inset contract
+relies on. Drop the `version.ref` once a BOM manages a stable 1.5.0.
 
 ---
 
@@ -232,9 +233,9 @@ it, and drop the `version.ref` once a BOM manages a stable 1.5.0.
   either. Before adding a rule, check the merged config in
   `app/build/outputs/mapping/release/configuration.txt`: the libraries ship most of what people
   reach for. `./gradlew :app:analyzeReleaseR8Config` scores what the rules cost.
-- **Colours come from the theme**, never from the raw palette. Read
-  `MaterialTheme.chaiColorsPalette` (semantic) or `MaterialTheme.colorScheme` (Material
-  roles). Do not import `ChaiBlue` and friends outside `chai/colors`.
+- **Colours come from the theme**, never from the raw palette. Read `MaterialTheme.colorScheme`,
+  and `MaterialTheme.chaiColorsPalette` only for the few colours no role holds. Do not import
+  `ChaiBlue` and friends outside `chai/colors`.
 - **Insets are owned, not inherited.** The app is edge-to-edge, so exactly one thing pays for
   each system bar. An app bar takes the top via `DroidconWindowInsets.appBar`, applied after
   its background so the background reaches under the status bar. The root
