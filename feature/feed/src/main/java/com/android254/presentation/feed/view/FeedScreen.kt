@@ -16,24 +16,17 @@
 package com.android254.presentation.feed.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -44,7 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,12 +47,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
+import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.plus
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.launch
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -118,25 +111,15 @@ internal fun FeedScreen(
         ) {
             when (feedUIState) {
                 is FeedUIState.Error -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(paddingValues).padding(20.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Image(
-                            modifier =
-                                Modifier
-                                    .width(50.dp)
-                                    .height(50.dp),
-                            imageVector = Icons.Rounded.Error,
-                            contentDescription = "Error",
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.error),
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        ChaiBodyMediumBold(
-                            bodyText = feedUIState.message,
-                            textColor = MaterialTheme.colorScheme.onSurface,
+                        EmptyStatePanel(
+                            icon = rememberVectorPainter(Icons.Rounded.Error),
+                            message = feedUIState.message,
+                            badgeColor = MaterialTheme.colorScheme.errorContainer,
+                            iconColor = MaterialTheme.colorScheme.onErrorContainer,
                         )
                     }
                 }
@@ -152,47 +135,32 @@ internal fun FeedScreen(
                 }
 
                 is FeedUIState.Success -> {
-                    LazyColumn(
-                        modifier =
-                            Modifier
-                                .testTag("feeds_lazy_column")
-                                .fillMaxSize()
-                                .readablePaneWidth(),
-                        contentPadding = paddingValues.plus(bottom = 16.dp),
-                    ) {
-                        items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
-                            FeedComponent(
-                                feed = feedPresentationModel,
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                scope.launch {
-                                    bottomSheetState.show()
+                    if (feedUIState.feeds.isEmpty()) {
+                        FeedEmptyState(Modifier.padding(paddingValues))
+                    } else {
+                        LazyColumn(
+                            modifier =
+                                Modifier
+                                    .testTag("feeds_lazy_column")
+                                    .fillMaxSize()
+                                    .readablePaneWidth(),
+                            contentPadding = paddingValues.plus(bottom = 16.dp),
+                        ) {
+                            items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
+                                FeedComponent(
+                                    feed = feedPresentationModel,
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    scope.launch {
+                                        bottomSheetState.show()
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                FeedUIState.Empty -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(70.dp),
-                            painter = painterResource(id = ChaiR.drawable.feed_icon),
-                            contentDescription = stringResource(id = R.string.feed_icon_description),
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        ChaiBodyMediumBold(
-                            bodyText = "No items",
-                            textColor = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                }
+                FeedUIState.Empty -> FeedEmptyState(Modifier.padding(paddingValues))
             }
         }
     }
@@ -235,5 +203,15 @@ private fun FeedScreenPreview() {
                     ),
             )
         }
+    }
+}
+
+@Composable
+private fun FeedEmptyState(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize().padding(20.dp), contentAlignment = Alignment.Center) {
+        EmptyStatePanel(
+            icon = painterResource(id = ChaiR.drawable.feed_icon),
+            message = stringResource(id = R.string.feed_empty),
+        )
     }
 }

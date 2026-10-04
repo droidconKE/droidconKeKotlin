@@ -51,6 +51,7 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 
@@ -63,6 +64,8 @@ fun HomeRoute(
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
+    liveSession: SessionPresentationModel? = null,
+    nextSession: SessionPresentationModel? = null,
 ) {
     val homeState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
@@ -76,6 +79,8 @@ fun HomeRoute(
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
         onRefresh = { homeViewModel.startRefresh() },
+        liveSession = liveSession,
+        nextSession = nextSession,
     )
 }
 
@@ -91,6 +96,8 @@ internal fun HomeScreen(
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
+    liveSession: SessionPresentationModel? = null,
+    nextSession: SessionPresentationModel? = null,
 ) {
     val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
     val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
@@ -123,7 +130,11 @@ internal fun HomeScreen(
                         .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                HomeHeaderSectionComponent()
+                HomeHeaderSectionComponent(
+                    liveSession = liveSession,
+                    nextSession = nextSession,
+                    onSessionClick = onSessionClicked,
+                )
                 HomeBannerSection(viewState)
                 HomeSpacer()
 

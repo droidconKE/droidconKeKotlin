@@ -22,6 +22,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
@@ -34,6 +36,7 @@ import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -66,6 +69,35 @@ class HomeScreenTest {
         }
 
         composeTestRule.onNodeWithTag("home_header").assertIsDisplayed()
+    }
+
+    @Test
+    fun `the hero leads with the live session and opens it`() {
+        val live = fakeSessions[1]
+        var opened: String? = null
+        composeTestRule.setContent {
+            ChaiTheme {
+                HomeHeaderSectionComponent(liveSession = live, nextSession = fakeSessions[2], onSessionClick = { opened = it })
+            }
+        }
+
+        composeTestRule.onNodeWithText(live.title).assertIsDisplayed()
+        composeTestRule.onNodeWithText("LIVE").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("home_header").performClick()
+        assertEquals(live.id, opened)
+    }
+
+    @Test
+    fun `the hero falls back to the next session when nothing is live`() {
+        val next = fakeSessions[2]
+        composeTestRule.setContent {
+            ChaiTheme {
+                HomeHeaderSectionComponent(nextSession = next)
+            }
+        }
+
+        composeTestRule.onNodeWithText(next.title).assertIsDisplayed()
+        composeTestRule.onNodeWithText("LIVE").assertDoesNotExist()
     }
 
     @Test

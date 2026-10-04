@@ -171,8 +171,9 @@ fun MainScreen(
             isMultiPaneWindow = isMultiPaneWindow,
             hasLiveSessions = liveSessions.isNotEmpty(),
         )
+    // Home leads with the same sessions in its hero.
     val showLiveSessionsRail =
-        showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty()
+        showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty() && currentRoute != Screens.Home
 
     NavigationSuiteScaffold(
         modifier =

@@ -48,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android254.presentation.common.adaptive.clickablePointer
@@ -61,7 +60,6 @@ import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.core.ui.R
 
 /** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
 private fun cardBorder(
@@ -109,8 +107,6 @@ fun SessionsCard(
         label = "border_alpha",
     )
 
-    val nowTextColor = venueAccent.copy(animatedBorderAlpha)
-
     val border =
         cardBorder(
             showBorder = showBorder,
@@ -157,13 +153,7 @@ fun SessionsCard(
                     SessionTag(tagText = session.level)
                 }
                 if (session.sessionStatus == SessionStatus.Ongoing) {
-                    SessionTag(
-                        tagText = stringResource(R.string.now),
-                        isNowTag = true,
-                        dotColor = nowTextColor,
-                        textColor = nowTextColor,
-                        backgroundColor = nowTextColor.copy(alpha = 0.15f),
-                    )
+                    LiveBadge(modifier = Modifier.align(Alignment.CenterVertically))
                 }
             }
 

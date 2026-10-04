@@ -14,6 +14,13 @@ public fun com.android254.presentation.feed.view.FeedComponent(feed: com.android
     - onClickItem: STABLE (function type)
 
 @Composable
+private fun com.android254.presentation.feed.view.FeedEmptyState(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.feed.view.FeedLoadingComponent(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

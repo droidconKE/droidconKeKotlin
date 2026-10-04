@@ -68,6 +68,9 @@
     <string name="my_sessions_off">Showing all sessions</string>
     <string name="now">Now</string>
     <string name="up_next">Up Next</string>
+    <string name="live_badge">Live</string>
+    <string name="hero_live_room_until">%1$s · until %2$s</string>
+    <string name="hero_up_next">Next at %1$s · %2$s</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_feed">Feed</string>
@@ -75,6 +78,7 @@
     <string name="nav_about">About</string>
 
     <string name="happening_now">Happening now</string>
+    <string name="feed_empty">No posts yet. Updates from the organisers will show up here.</string>
     <string name="happening_now_empty">Nothing on right now. The next session will show up here.</string>
     <string name="select_a_session">Pick a session to see the details</string>
     <string name="select_a_speaker">Pick a speaker to see their profile</string>

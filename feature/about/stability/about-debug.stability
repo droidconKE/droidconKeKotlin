@@ -63,6 +63,13 @@ internal fun com.android254.presentation.feedback.view.FeedBackScreen(darkTheme:
     - navigateBack: STABLE (function type)
 
 @Composable
+private fun com.android254.presentation.feedback.view.FeedbackRating(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.feedback.view.FeedbackTitle(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

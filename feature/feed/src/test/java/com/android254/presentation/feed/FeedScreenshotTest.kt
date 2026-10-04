@@ -29,6 +29,9 @@ class FeedScreenshotTest : ChaiScreenshotTest() {
     /** A stream stays one column; the cap is what keeps it readable on a desktop. */
     @Test
     fun `feed across form factors`() = captureFormFactors("form_factors/feed") { Feed() }
+
+    @Test
+    fun `feed with no posts`() = captureScreen("screens/feed_empty") { FeedScreen(feedUIState = FeedUIState.Empty) }
 }
 
 @Composable

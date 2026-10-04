@@ -17,27 +17,27 @@ package com.android254.presentation.home.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.components.ChaiBodyXSmallBold
-import com.droidconke.chai.components.ChaiSubTitle
-import com.droidconke.chai.components.ChaiTextLabelMedium
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
@@ -55,39 +55,34 @@ fun HomeSectionHeaderComponent(
                 .padding(vertical = 16.dp)
                 .testTag("sectionHeader"),
     ) {
-        ChaiSubTitle(
-            titleText = sectionLabel,
-            titleColor = MaterialTheme.colorScheme.primary,
+        Text(
+            text = sectionLabel,
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() },
         )
         Spacer(modifier = Modifier.weight(1f))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier =
-                Modifier
-                    .clickable { onViewAllClicked() }
-                    .testTag("viewAll"),
+        Button(
+            onClick = onViewAllClicked,
+            modifier = Modifier.testTag("viewAll"),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+            contentPadding = PaddingValues(start = 14.dp, end = 6.dp),
         ) {
-            ChaiBodyXSmallBold(
-                bodyText = stringResource(id = R.string.view_all_label),
-                textColor = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Box(
+            Text(text = stringResource(id = R.string.view_all_label), style = MaterialTheme.typography.labelMedium)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(id = R.string.format_plus_label, sectionSize),
+                style = MaterialTheme.typography.labelSmallEmphasized,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
                 modifier =
                     Modifier
-                        .height(22.dp)
-                        .width(34.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.11f),
-                            shape = RoundedCornerShape(14.dp),
-                        ),
-            ) {
-                ChaiTextLabelMedium(
-                    modifier = Modifier.align(Alignment.Center),
-                    bodyText = stringResource(id = R.string.format_plus_label, sectionSize),
-                    textColor = MaterialTheme.colorScheme.primary,
-                )
-            }
+                        .background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+            )
         }
     }
 }
