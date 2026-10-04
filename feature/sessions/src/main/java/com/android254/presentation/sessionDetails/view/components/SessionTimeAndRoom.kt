@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmall
 
 @Composable
@@ -39,18 +38,18 @@ fun SessionTimeAndRoom(
         ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.TIME_SLOT),
             bodyText = sessionDetails.timeSlot.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChaiBodyXSmall(
             bodyText = "|",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.width(16.dp))
         ChaiBodyXSmall(
             modifier = Modifier.testTag(TestTag.ROOM),
             bodyText = sessionDetails.venue.uppercase(),
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

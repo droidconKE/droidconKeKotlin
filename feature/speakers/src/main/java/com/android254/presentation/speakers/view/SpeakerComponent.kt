@@ -47,7 +47,6 @@ import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyXSmallBold
@@ -100,7 +99,7 @@ fun SpeakerComponent(
                         .testTag("name")
                         .speakerSharedName(speaker.name),
                 bodyText = speaker.name,
-                textColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                textColor = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
             )
 
@@ -108,7 +107,7 @@ fun SpeakerComponent(
                 ChaiBodyMedium(
                     modifier = Modifier.testTag("bio"),
                     bodyText = tagline,
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                 )
             }

@@ -69,7 +69,6 @@ import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 
 @Composable
@@ -122,7 +121,7 @@ internal fun SessionDetailsScreen(
                     )
                 }
             },
-            containerColor = MaterialTheme.chaiColorsPalette.background,
+            containerColor = MaterialTheme.colorScheme.background,
             contentWindowInsets = DroidconWindowInsets.screenContent,
         ) { paddingValues ->
             when (uiState) {
@@ -141,7 +140,7 @@ internal fun SessionDetailsScreen(
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
                             bodyText = uiState.message,
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }

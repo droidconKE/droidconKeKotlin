@@ -31,14 +31,13 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun FeedLoadingComponent(modifier: Modifier = Modifier) {
     Column(
         modifier =
             modifier
-                .background(color = MaterialTheme.chaiColorsPalette.background)
+                .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 10.dp),
     ) {

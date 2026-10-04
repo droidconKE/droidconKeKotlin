@@ -37,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.COutlinedButton
 import com.droidconke.chai.components.ChaiBodyMedium
 import ke.droidcon.kotlin.core.ui.R
@@ -63,7 +62,7 @@ fun SpeakerTwitterHandle(
     ) {
         ChaiBodyMedium(
             bodyText = stringResource(R.string.twitter_handle_label),
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
 
         COutlinedButton(
@@ -71,7 +70,7 @@ fun SpeakerTwitterHandle(
             shape = RoundedCornerShape(10.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    MaterialTheme.chaiColorsPalette.outlinedButtonBackgroundColor,
+                    MaterialTheme.colorScheme.surfaceContainerLowest,
                 ),
         ) {
             Icon(
@@ -81,7 +80,7 @@ fun SpeakerTwitterHandle(
                     Modifier
                         .height(20.dp)
                         .width(20.dp),
-                tint = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                tint = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.width(5.dp))
@@ -89,7 +88,7 @@ fun SpeakerTwitterHandle(
             ChaiBodyMedium(
                 modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
                 bodyText = speaker.twitterHandle,
-                textColor = MaterialTheme.chaiColorsPalette.secondaryButtonColor,
+                textColor = MaterialTheme.colorScheme.primary,
             )
         }
     }

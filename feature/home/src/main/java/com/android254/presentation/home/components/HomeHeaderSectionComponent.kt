@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.core.ui.R
 
@@ -31,7 +30,7 @@ fun HomeHeaderSectionComponent(modifier: Modifier = Modifier) {
     ChaiBodyMediumBold(
         modifier = modifier.testTag("home_header"),
         bodyText = stringResource(id = R.string.home_header_welcome_label),
-        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+        textColor = MaterialTheme.colorScheme.onSurface,
     )
 }
 

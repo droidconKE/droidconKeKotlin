@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 
@@ -41,7 +40,7 @@ fun SessionTitleAndDescription(
                     .testTag(TestTag.SESSION_TITLE)
                     .sessionSharedTitle(sessionDetails.id),
             bodyText = sessionDetails.title,
-            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
 
         Spacer(modifier = Modifier.height(15.dp))
@@ -49,7 +48,7 @@ fun SessionTitleAndDescription(
         ChaiBodyMedium(
             modifier = Modifier.testTag(TestTag.SESSION_DESCRIPTION),
             bodyText = sessionDetails.description,
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

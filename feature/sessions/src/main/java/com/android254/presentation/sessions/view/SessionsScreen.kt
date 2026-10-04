@@ -66,7 +66,6 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -139,7 +138,7 @@ fun SessionsScreen(
                 onFilterButtonClick = { showFilterSheet = true },
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         // The day selector stays put, so it takes the top and sides and the list takes the bottom.

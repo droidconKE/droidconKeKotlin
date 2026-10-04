@@ -30,7 +30,7 @@ import com.droidconke.chai.chaiColorsPalette
 @Composable
 @ReadOnlyComposable
 fun venueAccentColor(venue: String): Color {
-    val palette = MaterialTheme.chaiColorsPalette
+    val colorScheme = MaterialTheme.colorScheme
     // A session can span rooms; the API joins them with a comma.
     val primaryRoom =
         venue
@@ -40,8 +40,8 @@ fun venueAccentColor(venue: String): Color {
             .orEmpty()
 
     return when {
-        primaryRoom.equals("Opal", ignoreCase = true) -> palette.eventDaySelectorActiveSurfaceColor
-        primaryRoom.equals("Sapphire", ignoreCase = true) -> palette.eventDaySelectorInactiveSurfaceColor
-        else -> palette.textTitlePrimaryColor
+        primaryRoom.equals("Opal", ignoreCase = true) -> colorScheme.secondary
+        primaryRoom.equals("Sapphire", ignoreCase = true) -> MaterialTheme.chaiColorsPalette.tealAccent
+        else -> colorScheme.primary
     }
 }

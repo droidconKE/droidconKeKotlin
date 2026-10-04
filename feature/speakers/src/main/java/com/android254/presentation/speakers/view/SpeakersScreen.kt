@@ -68,7 +68,6 @@ import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -131,7 +130,7 @@ internal fun SpeakersScreen(
                     } else {
                         ChaiBodyLargeBold(
                             bodyText = stringResource(id = R.string.speakers_label),
-                            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 },
@@ -151,7 +150,7 @@ internal fun SpeakersScreen(
                                         R.string.back_arrow_icon_description
                                     },
                                 ),
-                            tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                            tint = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 },
@@ -162,7 +161,7 @@ internal fun SpeakersScreen(
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = stringResource(R.string.clear_search_icon_description),
-                                    tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                    tint = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -171,7 +170,7 @@ internal fun SpeakersScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = stringResource(R.string.search_speakers_icon_description),
-                                tint = MaterialTheme.chaiColorsPalette.textBoldColor,
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                         }
                     }
@@ -179,12 +178,12 @@ internal fun SpeakersScreen(
                 colors =
                     TopAppBarDefaults.topAppBarColors(
                         containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                        navigationIconContentColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                     ),
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         ChaiPullToRefreshBox(
@@ -211,7 +210,7 @@ internal fun SpeakersScreen(
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
                             bodyText = uiState.message,
-                            textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                            textColor = MaterialTheme.colorScheme.onSurface,
                         )
                     }
                 }
@@ -225,7 +224,7 @@ internal fun SpeakersScreen(
                                         .align(Alignment.Center)
                                         .testTag("emptySearchResults"),
                                 bodyText = stringResource(R.string.no_speakers_found_label),
-                                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     } else {
@@ -268,7 +267,7 @@ private fun SpeakersSearchField(
         placeholder = {
             ChaiBodyMedium(
                 bodyText = stringResource(R.string.search_speakers_hint),
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -279,9 +278,9 @@ private fun SpeakersSearchField(
                 unfocusedContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                cursorColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                focusedTextColor = MaterialTheme.chaiColorsPalette.textBoldColor,
-                unfocusedTextColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                cursorColor = MaterialTheme.colorScheme.onSurface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
             ),
     )
 }

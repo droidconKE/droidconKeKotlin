@@ -39,7 +39,6 @@ import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
 
@@ -87,7 +86,7 @@ fun HomeSpeakerComponent(
                         end.linkTo(parent.end)
                     }.speakerSharedName(speaker.name),
             bodyText = speaker.name,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
         )
     }

@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -54,7 +53,7 @@ fun OrganizedBySection(
             modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.chaiColorsPalette.surfaces,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(10.dp),
                 ).padding(vertical = 20.dp)
                 .testTag("organized_by_section"),
@@ -65,7 +64,7 @@ fun OrganizedBySection(
                 Modifier
                     .padding(start = 20.dp),
             titleText = stringResource(id = R.string.organized_by),
-            titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
+            titleColor = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(40.dp))

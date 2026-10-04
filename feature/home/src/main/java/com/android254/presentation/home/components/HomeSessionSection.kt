@@ -40,7 +40,6 @@ import coil.compose.AsyncImage
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodySmallBold
 import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.core.ui.R
@@ -87,7 +86,7 @@ fun HomeSessionContent(
             modifier
                 .width(140.dp)
                 .wrapContentHeight(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = { onSessionClick(session.id) },
     ) {
         AsyncImage(
@@ -116,14 +115,14 @@ fun HomeSessionContent(
             ChaiBodySmallBold(
                 modifier = Modifier.sessionSharedTitle(session.id),
                 bodyText = session.title,
-                textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                textColor = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
             )
             Spacer(Modifier.height(4.dp))
 
             ChaiTextLabelLarge(
                 bodyText = "@ ${session.startTime} | ${session.venue} ",
-                textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

@@ -43,7 +43,6 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.core.ui.R
 
@@ -97,8 +96,8 @@ fun LayoutIconButtons(
     modifier: Modifier = Modifier,
     onAgendaIconClick: () -> Unit,
 ) {
-    val listIconColor = if (isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
-    val agendaIconColor = if (!isListActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else MaterialTheme.chaiColorsPalette.radioButtonColors
+    val listIconColor = if (isListActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+    val agendaIconColor = if (!isListActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier = modifier,
@@ -137,7 +136,7 @@ fun FilterButton(
     modifier: Modifier = Modifier,
     onButtonClick: () -> Unit,
 ) {
-    val stateColors = if (isActive) MaterialTheme.chaiColorsPalette.secondaryButtonColor else ChaiGrey
+    val stateColors = if (isActive) MaterialTheme.colorScheme.primary else ChaiGrey
 
     Row(
         modifier =

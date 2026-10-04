@@ -70,7 +70,6 @@ import com.android254.presentation.common.navigation.rememberNavigationState
 import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -191,7 +190,7 @@ fun MainScreen(
         },
         navigationSuiteType = navigationSuiteType,
         navigationSuiteColors = droidconNavigationSuiteColors(),
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         state = navigationSuiteState,
         primaryActionContent = {
             if (navigationSuiteType == NavigationSuiteType.NavigationDrawer) {

@@ -39,7 +39,7 @@ fun LoadingBox(
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
     brush: Brush? = null,
-    color: Color = MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+    color: Color = MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
 ) {
     Box(
         modifier =

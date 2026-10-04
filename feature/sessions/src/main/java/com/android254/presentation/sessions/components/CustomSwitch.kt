@@ -92,7 +92,7 @@ fun CustomSwitch(
                     Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .background(
-                            color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffBackgroundColor,
+                            color = if (checked) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface,
                         ).height(17.dp)
                         .width(54.dp),
             )
@@ -102,19 +102,19 @@ fun CustomSwitch(
                     Modifier
                         .size(size = thumbSize)
                         .background(
-                            color = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconBackgroundColor else MaterialTheme.chaiColorsPalette.toggleOffIconBackgroundColor,
+                            color = if (checked) MaterialTheme.chaiColorsPalette.switchThumbColor else MaterialTheme.chaiColorsPalette.switchThumbColor,
                             shape = CircleShape,
                         ).padding(all = iconInnerPadding)
                         .align(alignment),
                 imageVector = Icons.Filled.Star,
                 contentDescription = if (checked) "Enabled" else "Disabled",
-                tint = if (checked) MaterialTheme.chaiColorsPalette.toggleOnIconColor else MaterialTheme.chaiColorsPalette.toggleOffIconColor,
+                tint = if (checked) MaterialTheme.colorScheme.secondary else MaterialTheme.chaiColorsPalette.switchOffIconColor,
             )
         }
 
         ChaiTextLabelSmall(
             bodyText = "My sessions",
-            textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -135,7 +135,7 @@ private fun animateAlignmentAsState(
 private fun CustomSwitchPreview() {
     ChaiTheme {
         Column(
-            modifier = Modifier.background(color = MaterialTheme.chaiColorsPalette.background),
+            modifier = Modifier.background(color = MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             CustomSwitch(checked = false, onCheckedChange = {})

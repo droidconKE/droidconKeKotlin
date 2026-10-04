@@ -67,7 +67,6 @@ import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiGrey90
 import com.droidconke.chai.atoms.ChaiLightGrey
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLarge
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -164,7 +163,7 @@ internal fun FeedBackScreen(
                 )
             }
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
@@ -181,7 +180,7 @@ internal fun FeedBackScreen(
             Spacer(modifier = Modifier.height(30.dp))
             ChaiSubTitle(
                 titleText = stringResource(R.string.feedback_improve_label),
-                titleColor = MaterialTheme.chaiColorsPalette.textLabelAndHeadings,
+                titleColor = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.height(10.dp))
             Column(
@@ -190,7 +189,7 @@ internal fun FeedBackScreen(
                         .fillMaxWidth()
                         .padding(20.dp)
                         .background(
-                            color = MaterialTheme.chaiColorsPalette.cardsBackground,
+                            color = MaterialTheme.colorScheme.surfaceContainerLow,
                             shape = RoundedCornerShape(8.dp),
                         ),
                 verticalArrangement = Arrangement.Center,
@@ -199,7 +198,7 @@ internal fun FeedBackScreen(
                 Spacer(modifier = Modifier.height(40.dp))
                 ChaiBodySmall(
                     bodyText = stringResource(R.string.feedback_event_label),
-                    textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                    textColor = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.height(30.dp))
                 Row(
@@ -298,11 +297,11 @@ internal fun FeedBackScreen(
                 },
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
-                        unfocusedContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
-                        disabledContainerColor = MaterialTheme.chaiColorsPalette.textFieldBackgroundColor,
-                        focusedBorderColor = MaterialTheme.chaiColorsPalette.textFieldBorderColor,
-                        unfocusedBorderColor = MaterialTheme.chaiColorsPalette.textFieldBorderColor,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        focusedBorderColor = MaterialTheme.colorScheme.outline,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     ),
                 shape = RoundedCornerShape(8.dp),
             )
@@ -319,8 +318,8 @@ internal fun FeedBackScreen(
                 shape = RoundedCornerShape(8.dp),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.chaiColorsPalette.primary,
-                        contentColor = Color.White,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                     ),
             ) {
                 ChaiBodyMediumBold(

@@ -45,14 +45,14 @@ fun SessionsLoadingCardWithBannerImage(modifier: Modifier = Modifier) {
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.surfaces),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             LoadingBox(height = 140.dp, widthRatio = 1f, brush = brush, cornerRadius = 0.dp)

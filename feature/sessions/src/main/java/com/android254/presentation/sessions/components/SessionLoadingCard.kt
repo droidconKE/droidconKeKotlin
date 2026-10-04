@@ -48,14 +48,14 @@ fun SessionsLoadingCard(modifier: Modifier = Modifier) {
                 .wrapContentHeight(),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.cardsBackground),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingStateOnCardsColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
+                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             Column(

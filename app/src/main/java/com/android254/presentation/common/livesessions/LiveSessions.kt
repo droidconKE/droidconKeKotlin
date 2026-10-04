@@ -51,7 +51,6 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.sessions.components.CurrentSessionComponent
 import com.android254.presentation.sessions.models.SessionUIState
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
@@ -134,7 +133,7 @@ fun HappeningNowPane(
 ) {
     Surface(
         modifier = modifier.testTag(HAPPENING_NOW_PANE_TEST_TAG).fillMaxSize(),
-        color = MaterialTheme.chaiColorsPalette.background,
+        color = MaterialTheme.colorScheme.background,
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -147,14 +146,14 @@ fun HappeningNowPane(
             item(key = "happening-now-title") {
                 ChaiSubTitle(
                     titleText = stringResource(R.string.happening_now),
-                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                    titleColor = MaterialTheme.colorScheme.primary,
                 )
             }
             if (sessions.isEmpty()) {
                 item(key = "happening-now-empty") {
                     ChaiBodyMedium(
                         bodyText = stringResource(R.string.happening_now_empty),
-                        textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                        textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -173,7 +172,7 @@ fun HappeningNowPane(
 @Composable
 private fun LiveSessionsRailPreview() {
     ChaiTheme {
-        Surface(color = MaterialTheme.chaiColorsPalette.background) {
+        Surface(color = MaterialTheme.colorScheme.background) {
             LiveSessionsRail(
                 sessions = fakeSessions.take(2).toImmutableList(),
                 onSessionClick = {},

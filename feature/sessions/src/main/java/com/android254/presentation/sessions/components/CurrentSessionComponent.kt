@@ -55,7 +55,6 @@ import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -95,7 +94,7 @@ fun CurrentSessionComponent(
         onClick = { onClicked(session.id) },
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.chaiColorsPalette.cardsBackground,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
             ),
     ) {
         Row(
@@ -125,7 +124,7 @@ fun CurrentSessionComponent(
                                 .align(Alignment.BottomStart)
                                 .offset(x = 2.dp, y = (-2).dp)
                                 .background(venueAccent.copy(alpha), CircleShape)
-                                .border(2.dp, MaterialTheme.chaiColorsPalette.cardsBackground, CircleShape),
+                                .border(2.dp, MaterialTheme.colorScheme.surfaceContainerLow, CircleShape),
                     )
                 }
             }
@@ -142,7 +141,7 @@ fun CurrentSessionComponent(
                 ) {
                     ChaiBodyLargeBold(
                         bodyText = session.title,
-                        textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+                        textColor = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                     )
@@ -172,7 +171,7 @@ fun CurrentSessionComponent(
                 val speakerInfo = session.speakers.joinToString(", ") { it.name }
                 ChaiBodyMedium(
                     bodyText = "$speakerInfo • ${session.venue}",
-                    textColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                 )
             }
@@ -188,7 +187,7 @@ private fun CurrentSessionUpNextPreview() {
 
     ChaiTheme {
         Surface(
-            color = MaterialTheme.chaiColorsPalette.background,
+            color = MaterialTheme.colorScheme.background,
         ) {
             CurrentSessionComponent(
                 session = session,
@@ -206,7 +205,7 @@ private fun CurrentSessionCurrentPreview() {
 
     ChaiTheme {
         Surface(
-            color = MaterialTheme.chaiColorsPalette.background,
+            color = MaterialTheme.colorScheme.background,
         ) {
             CurrentSessionComponent(
                 session = session,

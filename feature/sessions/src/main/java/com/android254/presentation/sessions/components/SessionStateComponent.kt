@@ -62,7 +62,6 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
@@ -110,7 +109,7 @@ fun SessionsStateComponent(
 
                     ChaiBodyMediumBold(
                         bodyText = sessionsUiState.sessionStatus.emptyMessage,
-                        textColor = MaterialTheme.chaiColorsPalette.textNormalColor,
+                        textColor = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -210,7 +209,7 @@ fun SessionListComponent(
                             SessionScreenState.ALL -> stringResource(R.string.all_sessions)
                             SessionScreenState.MYSESSIONS -> stringResource(R.string.my_sessions)
                         },
-                    titleColor = MaterialTheme.chaiColorsPalette.textTitlePrimaryColor,
+                    titleColor = MaterialTheme.colorScheme.primary,
                 )
             }
             if (isSessionLayoutList) {
@@ -258,19 +257,19 @@ fun TimeHeader(time: String) {
         modifier =
             Modifier
                 .background(
-                    color = MaterialTheme.chaiColorsPalette.background,
+                    color = MaterialTheme.colorScheme.background,
                 ).fillMaxWidth()
                 .padding(vertical = 12.dp),
     ) {
         ChaiBodyLargeBold(
             bodyText = time,
-            textColor = MaterialTheme.chaiColorsPalette.textBoldColor,
+            textColor = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(modifier = Modifier.width(12.dp))
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 1.dp,
-            color = MaterialTheme.chaiColorsPalette.cardsBorderColor,
+            color = MaterialTheme.colorScheme.outlineVariant,
         )
     }
 }
@@ -280,7 +279,7 @@ fun TimeHeader(time: String) {
 private fun SessionListPreview() {
     ChaiTheme {
         Surface(
-            color = MaterialTheme.chaiColorsPalette.background,
+            color = MaterialTheme.colorScheme.background,
         ) {
             SessionListComponent(
                 isRefreshing = false,

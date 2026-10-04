@@ -54,7 +54,6 @@ import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun HomeRoute(
@@ -105,7 +104,7 @@ internal fun HomeScreen(
                 onActionClicked = onActionClicked,
             )
         },
-        containerColor = MaterialTheme.chaiColorsPalette.background,
+        containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         PullToRefreshBox(

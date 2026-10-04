@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.android254.presentation.common.adaptive.DroidconWindowSize
-import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import ke.droidcon.kotlin.core.ui.R
 
@@ -52,7 +51,7 @@ fun navigationSuiteTypeFor(
 /** The chai palette, for whichever navigation component the window ends up with. */
 @Composable
 fun droidconNavigationSuiteColors(): NavigationSuiteColors {
-    val container = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor
+    val container = MaterialTheme.colorScheme.surfaceContainerLowest
     return NavigationSuiteDefaults.colors(
         navigationBarContainerColor = container,
         shortNavigationBarContainerColor = container,
@@ -87,23 +86,23 @@ fun DroidconNavigationItems(
                     bodyText = stringResource(destination.label),
                     textColor =
                         if (isSelected) {
-                            MaterialTheme.chaiColorsPalette.activeBottomNavTextColor
+                            MaterialTheme.colorScheme.secondary
                         } else {
-                            MaterialTheme.chaiColorsPalette.textNormalColor
+                            MaterialTheme.colorScheme.onSurface
                         },
                 )
             },
             colors =
                 NavigationItemColors(
-                    selectedIconColor = MaterialTheme.chaiColorsPalette.activeBottomNavIconColor,
-                    selectedTextColor = MaterialTheme.chaiColorsPalette.activeBottomNavTextColor,
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.secondary,
                     selectedIndicatorColor =
-                        MaterialTheme.chaiColorsPalette.activeBottomNavIconColor
+                        MaterialTheme.colorScheme.primary
                             .copy(alpha = 0.15f),
-                    unselectedIconColor = MaterialTheme.chaiColorsPalette.inactiveBottomNavIconColor,
-                    unselectedTextColor = MaterialTheme.chaiColorsPalette.textNormalColor,
-                    disabledIconColor = MaterialTheme.chaiColorsPalette.inactiveBottomNavIconColor,
-                    disabledTextColor = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledIconColor = MaterialTheme.colorScheme.onSurface,
+                    disabledTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
         )
     }
