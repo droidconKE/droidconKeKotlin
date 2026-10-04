@@ -16,6 +16,7 @@
 package com.droidconke.chai.components
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
  * Hoist [state] when the box sits inside content that recomposes away — an `AnimatedContent`
  * branch, say — or the indicator restarts mid-gesture.
  */
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ChaiPullToRefreshBox(
     isRefreshing: Boolean,
@@ -45,7 +47,7 @@ fun ChaiPullToRefreshBox(
         modifier = modifier,
         state = state,
         indicator = {
-            PullToRefreshDefaults.Indicator(
+            PullToRefreshDefaults.LoadingIndicator(
                 state = state,
                 isRefreshing = isRefreshing,
                 modifier = Modifier.align(Alignment.TopCenter),

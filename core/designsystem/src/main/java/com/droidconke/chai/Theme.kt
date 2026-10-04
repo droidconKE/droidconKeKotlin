@@ -16,7 +16,9 @@
 package com.droidconke.chai
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -38,10 +40,11 @@ fun ChaiTheme(
     val chaiColors = if (darkTheme) ChaiDarkColorPalette else ChaiLightColorPalette
 
     CompositionLocalProvider(LocalChaiColorsPalette provides chaiColors) {
-        MaterialTheme(
+        MaterialExpressiveTheme(
             colorScheme = colorScheme,
-            typography = ChaiTypography,
+            motionScheme = MotionScheme.expressive(),
             shapes = CShapes,
+            typography = ChaiTypography,
             content = content,
         )
     }
