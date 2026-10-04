@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -52,7 +52,6 @@ import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
 
 private val SpeakerAvatarSize = 100.dp
-private val SpeakerAvatarShape = RoundedCornerShape(16.dp)
 
 @Composable
 fun SpeakerComponent(
@@ -82,7 +81,7 @@ fun SpeakerComponent(
             modifier =
                 Modifier
                     .size(SpeakerAvatarSize)
-                    .speakerSharedImage(speaker.name, SpeakerAvatarShape),
+                    .speakerSharedImage(speaker.name, rememberSpeakerAvatarShape()),
         )
 
         Column(

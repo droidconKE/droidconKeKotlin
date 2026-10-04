@@ -50,13 +50,3 @@ dependencies {
     testImplementation(libs.bundles.test)
     testImplementation(libs.test.robolectric)
 }
-
-kotlin {
-    sourceSets {
-        all {
-            languageSettings.apply {
-                optIn("androidx.compose.material3.ExperimentalMaterial3Api")
-            }
-        }
-    }
-}

@@ -42,6 +42,8 @@ internal fun Project.configureAndroidCompose(
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
             freeCompilerArgs.addAll(buildComposeMetricsParameters())
+            optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+            optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
         }
     }
 }

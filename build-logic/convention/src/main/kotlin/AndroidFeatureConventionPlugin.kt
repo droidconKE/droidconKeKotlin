@@ -18,8 +18,6 @@ import com.android254.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // Everything a :feature: module gets by default. A feature declares only what is genuinely
 // its own; if two features need the same thing, that thing belongs in :core:ui.
@@ -34,10 +32,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 apply("droidconke.android.hilt")
                 apply("org.jetbrains.kotlin.plugin.compose")
                 apply("com.github.skydoves.compose.stability.analyzer")
-            }
-
-            tasks.withType<KotlinCompile>().configureEach {
-                compilerOptions.optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
             }
 
             dependencies {

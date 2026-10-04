@@ -20,7 +20,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -54,6 +54,7 @@ fun HomeSpeakerComponent(
                 .clickable { onClick.invoke() },
     ) {
         val (headShot, speakerName) = createRefs()
+        val avatarShape = rememberSpeakerAvatarShape()
         AsyncImage(
             model = speaker.imageUrl,
             placeholder = painterResource(R.drawable.smiling),
@@ -62,14 +63,14 @@ fun HomeSpeakerComponent(
             modifier =
                 Modifier
                     .size(85.dp)
-                    .speakerSharedImage(speaker.name, RoundedCornerShape(12.dp))
+                    .speakerSharedImage(speaker.name, avatarShape)
                     .border(
                         border =
                             BorderStroke(
                                 2.dp,
                                 color = MaterialTheme.colorScheme.secondaryContainer,
                             ),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = avatarShape,
                     ).constrainAs(headShot) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)

@@ -51,6 +51,8 @@
     <string name="speaker_details_label">Speaker</string>
     <string name="filter_button_label">Filter</string>
     <string name="star_session_icon_description">star session</string>
+    <string name="session_starred">In my sessions</string>
+    <string name="session_not_starred">Not in my sessions</string>
     <string name="retry_label">Retry</string>
     <string name="sessions_icon_description">sessions icon</string>
     <string name="feed_icon_description">feed icon</string>

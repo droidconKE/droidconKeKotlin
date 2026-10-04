@@ -245,7 +245,7 @@ private fun SpeakerDetailsContent(
                         .fillMaxWidth()
                         .widthIn(max = SpeakerImageMaxWidth)
                         .aspectRatio(SPEAKER_IMAGE_ASPECT_RATIO)
-                        .speakerSharedImage(speaker.name, RoundedCornerShape(16.dp)),
+                        .speakerSharedImage(speaker.name, MaterialTheme.shapes.extraLarge),
             )
 
             speaker.bio?.takeIf(String::isNotBlank)?.let { bio ->

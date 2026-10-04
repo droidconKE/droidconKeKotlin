@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.common.components
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -37,14 +36,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -229,20 +223,10 @@ fun SessionTitleComponent(
             titleColor = MaterialTheme.colorScheme.onSurface,
         )
 
-        IconButton(
-            modifier = Modifier.size(32.dp),
-            onClick = {
-                onBookmark(session.id)
-            },
-        ) {
-            Crossfade(targetState = session.isStarred, label = "star_crossfade") { isStarred ->
-                Icon(
-                    imageVector = if (isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                    contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (isStarred) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
+        BookmarkButton(
+            isBookmarked = session.isStarred,
+            onToggle = { onBookmark(session.id) },
+        )
     }
 }
 

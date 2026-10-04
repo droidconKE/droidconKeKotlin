@@ -65,6 +65,16 @@ public fun com.android254.presentation.common.components.AnimatedShimmerEffect(g
     - content: STABLE (composable function type)
 
 @Composable
+public fun com.android254.presentation.common.components.BookmarkButton(isBookmarked: kotlin.Boolean, onToggle: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, size: androidx.compose.ui.unit.Dp): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - isBookmarked: STABLE (primitive type)
+    - onToggle: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - size: STABLE (marked @Stable or @Immutable)
+
+@Composable
 private fun com.android254.presentation.common.components.ButtonContent(buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
@@ -276,6 +286,12 @@ private fun com.android254.presentation.common.components.ToggleButton(buttonSha
     - contentColor: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
     - onClick: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.common.components.rememberSpeakerAvatarShape(): androidx.compose.ui.graphics.Shape
+  skippable: false
+  restartable: false
+  params:
 
 @Composable
 public fun com.android254.presentation.common.divider.CustomDivider(modifier: androidx.compose.ui.Modifier): kotlin.Unit
