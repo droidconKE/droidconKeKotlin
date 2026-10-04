@@ -121,7 +121,6 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.google.identity.googleid)
-    implementation(libs.lottie.compose)
     implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.bundles.serialization)
     implementation(libs.kotlinx.collections.immutable)

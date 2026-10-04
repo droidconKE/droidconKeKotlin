@@ -46,7 +46,6 @@ poolingcontainer = "1.1.0"
 constraintlayout = "1.1.2"
 credentials = "1.6.0"
 googleid = "1.2.1"
-lottie = "6.7.1"
 datastore = "1.2.1"
 timber = "5.0.1"
 test_corektx = "1.7.0"
@@ -125,7 +124,6 @@ google-identity-googleid = { module = "com.google.android.libraries.identity.goo
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }

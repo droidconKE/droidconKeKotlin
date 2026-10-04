@@ -40,7 +40,6 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.compose.lifecycle.runtime)
     implementation(libs.kotlin.coroutines.datetime)
-    implementation(libs.lottie.compose)
     implementation(libs.timber)
 }
 
