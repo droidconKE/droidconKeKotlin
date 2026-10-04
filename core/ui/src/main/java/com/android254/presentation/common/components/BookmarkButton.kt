@@ -24,6 +24,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarOutline
@@ -94,6 +95,7 @@ fun BookmarkButton(
         modifier =
             modifier
                 .minimumInteractiveComponentSize()
+                .clip(CircleShape)
                 .toggleable(value = isBookmarked, role = Role.Checkbox, onValueChange = { onToggle() })
                 .semantics { stateDescription = stateText },
         contentAlignment = Alignment.Center,
