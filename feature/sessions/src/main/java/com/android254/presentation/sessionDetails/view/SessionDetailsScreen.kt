@@ -16,6 +16,8 @@
 package com.android254.presentation.sessionDetails.view
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -254,27 +257,20 @@ fun Body(
             SessionBannerImage(sessionDetails)
         }
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        CustomDivider()
-
-        Spacer(modifier = Modifier.height(19.dp))
-
-        Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
+        Column(
+            modifier =
+                Modifier
+                    .padding(horizontal = 18.dp)
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.extraLarge)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
             SessionTimeAndRoom(sessionDetails)
-
-            Spacer(modifier = Modifier.height(15.dp))
-
             SessionLevel(sessionDetails.level)
-
-            Spacer(modifier = Modifier.height(18.dp))
-        }
-
-        CustomDivider()
-
-        Spacer(modifier = Modifier.height(18.dp))
-
-        Column(modifier = Modifier.padding(start = 18.dp, end = 18.dp)) {
             sessionDetails.speakers.forEach { speaker ->
                 if (speaker.twitterHandle.isNotEmpty()) {
                     SpeakerTwitterHandle(speaker)

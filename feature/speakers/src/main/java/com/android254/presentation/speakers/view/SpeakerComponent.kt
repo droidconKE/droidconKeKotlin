@@ -16,6 +16,7 @@
 package com.android254.presentation.speakers.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.components.HeadshotRingWidth
 import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
@@ -69,6 +71,7 @@ fun SpeakerComponent(
                 .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val avatarShape = rememberSpeakerAvatarShape()
         AsyncImage(
             model =
                 ImageRequest
@@ -81,7 +84,8 @@ fun SpeakerComponent(
             modifier =
                 Modifier
                     .size(SpeakerAvatarSize)
-                    .speakerSharedImage(speaker.name, rememberSpeakerAvatarShape()),
+                    .speakerSharedImage(speaker.name, avatarShape)
+                    .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
         )
 
         Column(

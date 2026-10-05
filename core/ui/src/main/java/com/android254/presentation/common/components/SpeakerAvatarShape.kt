@@ -19,7 +19,10 @@ import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.toShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 
-/** One shape for square headshots, so moving between home and the speakers list doesn't snap. */
+/** One shape for every square headshot (home, speakers, organisers), ringed in [HeadshotRingWidth] of neon. */
 @Composable
 fun rememberSpeakerAvatarShape(): Shape = MaterialShapes.Cookie4Sided.toShape()
+
+val HeadshotRingWidth = 2.dp

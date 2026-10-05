@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
+import com.android254.presentation.common.components.HeadshotRingWidth
 import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
@@ -67,7 +68,7 @@ fun HomeSpeakerComponent(
                     .border(
                         border =
                             BorderStroke(
-                                2.dp,
+                                HeadshotRingWidth,
                                 color = MaterialTheme.colorScheme.secondaryContainer,
                             ),
                         shape = avatarShape,

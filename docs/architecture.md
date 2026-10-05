@@ -355,6 +355,9 @@ Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-coo
 `LiveBadge`, `EmptyStatePanel`, `FilterOptionChips`, `ConnectedToggleGroup` and
 `rememberSpeakerAvatarShape()`.
 
+Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
+`HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.
+
 The Expressive APIs are only public in material3 1.5.0-alpha29, which the version catalog pins
 over the BOM — see `AGENTS.md`.
 

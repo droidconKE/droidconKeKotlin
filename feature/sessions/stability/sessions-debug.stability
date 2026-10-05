@@ -49,6 +49,15 @@ private fun com.android254.presentation.sessionDetails.view.TabletopBody(padding
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.sessionDetails.view.components.DetailPill(text: kotlin.String, color: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - color: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.sessionDetails.view.components.SessionBannerImage(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

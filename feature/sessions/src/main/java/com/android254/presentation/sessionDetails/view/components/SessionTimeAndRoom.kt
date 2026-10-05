@@ -15,41 +15,58 @@
  */
 package com.android254.presentation.sessionDetails.view.components
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chai.colors.venueAccentColor
 
 @Composable
 fun SessionTimeAndRoom(
     sessionDetails: SessionDetailsPresentationModel,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        ChaiBodyXSmall(
+        DetailPill(
+            text = sessionDetails.timeSlot.uppercase(),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.testTag(TestTag.TIME_SLOT),
-            bodyText = sessionDetails.timeSlot.uppercase(),
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        ChaiBodyXSmall(
-            bodyText = "|",
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        ChaiBodyXSmall(
+        DetailPill(
+            text = sessionDetails.venue.uppercase(),
+            color = venueAccentColor(sessionDetails.venue),
             modifier = Modifier.testTag(TestTag.ROOM),
-            bodyText = sessionDetails.venue.uppercase(),
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+}
+
+@Composable
+private fun DetailPill(
+    text: String,
+    color: Color,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMediumEmphasized,
+        color = color,
+        modifier =
+            modifier
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest, CircleShape)
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+    )
 }

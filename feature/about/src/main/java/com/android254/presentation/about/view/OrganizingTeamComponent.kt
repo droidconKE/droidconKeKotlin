@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,6 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.components.HeadshotRingWidth
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.models.OrganizingTeamMember
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
@@ -58,6 +59,7 @@ fun OrganizingTeamComponent(
                 ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val avatarShape = rememberSpeakerAvatarShape()
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
             placeholder = painterResource(ChaiR.drawable.droidcon_icon),
@@ -66,8 +68,8 @@ fun OrganizingTeamComponent(
             modifier =
                 Modifier
                     .size(99.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(2.dp, MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(12.dp)),
+                    .clip(avatarShape)
+                    .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
         )
 
         Spacer(Modifier.height(6.dp))

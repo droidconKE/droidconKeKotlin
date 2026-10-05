@@ -19,13 +19,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 
 @Composable
@@ -34,13 +36,15 @@ fun SessionTitleAndDescription(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        ChaiBodyLargeBold(
+        Text(
             modifier =
                 Modifier
                     .testTag(TestTag.SESSION_TITLE)
-                    .sessionSharedTitle(sessionDetails.id),
-            bodyText = sessionDetails.title,
-            textColor = MaterialTheme.colorScheme.onSurface,
+                    .sessionSharedTitle(sessionDetails.id)
+                    .semantics { heading() },
+            text = sessionDetails.title,
+            style = MaterialTheme.typography.headlineMediumEmphasized,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         Spacer(modifier = Modifier.height(15.dp))
