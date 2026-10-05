@@ -51,7 +51,7 @@ fun OrganizedBySection(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.semantics { heading() },
         )
-        EvenGrid(items = organizationLogos, columns = 3) { logo, cellModifier ->
+        AdaptiveEvenGrid(items = organizationLogos, minColumns = 3, minCellWidth = 160.dp) { logo, cellModifier ->
             LogoTile(logos = persistentListOf(logo), name = "", modifier = cellModifier)
         }
     }

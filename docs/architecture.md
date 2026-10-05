@@ -354,7 +354,7 @@ it has one weight. Swapping it in later is a change to the one `FontFamily` in `
 Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-cookie morph),
 `LiveBadge`, `EmptyStatePanel`, `FilterOptionChips`, `ConnectedToggleGroup`,
 `rememberSpeakerAvatarShape()`, `LogoTile` (partner logos, falling back to the next URL and then
-the name) and `EvenGrid` (equal-width rows that line up). Button labels are sentence case.
+the name) `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (adds columns as the window widens). Button labels are sentence case.
 
 Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
 `HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.

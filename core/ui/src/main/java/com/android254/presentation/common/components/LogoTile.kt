@@ -18,12 +18,14 @@ package com.android254.presentation.common.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,7 +75,7 @@ fun LogoTile(
             )
         } else {
             AsyncImage(
-                modifier = Modifier.fillMaxWidth().height(logoHeight),
+                modifier = Modifier.widthIn(max = logoHeight * MAX_LOGO_ASPECT).fillMaxWidth().height(logoHeight),
                 model =
                     ImageRequest
                         .Builder(LocalContext.current)
@@ -108,3 +110,21 @@ fun <T> EvenGrid(
         }
     }
 }
+
+@Composable
+fun <T> AdaptiveEvenGrid(
+    items: ImmutableList<T>,
+    minColumns: Int,
+    minCellWidth: Dp,
+    modifier: Modifier = Modifier,
+    spacing: Dp = 12.dp,
+    rowSpacing: Dp = spacing,
+    cell: @Composable (T, Modifier) -> Unit,
+) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val columns = ((maxWidth + spacing) / (minCellWidth + spacing)).toInt().coerceAtLeast(minColumns)
+        EvenGrid(items = items, columns = columns, spacing = spacing, rowSpacing = rowSpacing, cell = cell)
+    }
+}
+
+private const val MAX_LOGO_ASPECT = 3f

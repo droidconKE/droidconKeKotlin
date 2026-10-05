@@ -17,7 +17,6 @@ package com.android254.presentation.about.view
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
@@ -50,8 +49,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.components.AdaptiveEvenGrid
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
-import com.android254.presentation.common.components.EvenGrid
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizingTeamMember
@@ -224,20 +223,18 @@ fun OrganizingTeamSection(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-            val columns = ((maxWidth + TeamGridGap) / (TeamCellMinWidth + TeamGridGap)).toInt().coerceAtLeast(MIN_TEAM_COLUMNS)
-            EvenGrid(
-                items = organizingTeam,
-                columns = columns,
-                spacing = TeamGridGap,
-                rowSpacing = 24.dp,
-            ) { teamMember, cellModifier ->
-                OrganizingTeamComponent(
-                    modifier = cellModifier,
-                    teamMember = teamMember,
-                    onClickMember = onClickMember,
-                )
-            }
+        AdaptiveEvenGrid(
+            items = organizingTeam,
+            minColumns = MIN_TEAM_COLUMNS,
+            minCellWidth = TeamCellMinWidth,
+            spacing = TeamGridGap,
+            rowSpacing = 24.dp,
+        ) { teamMember, cellModifier ->
+            OrganizingTeamComponent(
+                modifier = cellModifier,
+                teamMember = teamMember,
+                onClickMember = onClickMember,
+            )
         }
     }
 }
