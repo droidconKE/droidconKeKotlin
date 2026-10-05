@@ -31,7 +31,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 
-/** Single-select connected toggle buttons: the selection takes the neon pill and can't be cleared. */
 @Composable
 fun <T> ConnectedToggleGroup(
     items: ImmutableList<T>,

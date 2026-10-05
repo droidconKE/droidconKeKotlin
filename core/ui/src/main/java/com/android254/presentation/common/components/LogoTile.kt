@@ -46,7 +46,6 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 
-/** A partner logo on a rounded tile. Tries each of [logos] in turn, then shows [name] rather than an empty tile. */
 @Composable
 fun LogoTile(
     logos: ImmutableList<String>,
@@ -91,7 +90,6 @@ fun LogoTile(
     }
 }
 
-/** Lays [items] out [columns] to a row with equal widths, so a short last row still lines up. */
 @Composable
 fun <T> EvenGrid(
     items: ImmutableList<T>,

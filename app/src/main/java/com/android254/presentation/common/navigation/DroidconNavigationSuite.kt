@@ -106,7 +106,6 @@ fun DroidconNavigationItems(
     }
 }
 
-/** The expanded rail's header; only that type draws the primary-action slot. */
 @Composable
 fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
     Row(

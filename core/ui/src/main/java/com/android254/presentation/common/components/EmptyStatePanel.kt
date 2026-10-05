@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-/** Empty and error states: a neon cookie badge and a message, centred with no card around them. */
 @Composable
 fun EmptyStatePanel(
     icon: Painter,

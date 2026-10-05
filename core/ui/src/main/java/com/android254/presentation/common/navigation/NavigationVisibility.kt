@@ -54,7 +54,7 @@ fun shouldShowSupportingPane(
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
 
-/** The rail under the content. Home hides it only for a single live session, which its hero already shows. */
+/** Home hides the rail only for a single live session, which its hero already shows. */
 fun shouldShowLiveSessionsRail(
     route: NavKey,
     isMultiPaneWindow: Boolean,

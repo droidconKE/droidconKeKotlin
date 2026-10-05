@@ -17,5 +17,4 @@ package com.droidconke.chai.utils
 
 import androidx.compose.material3.Shapes
 
-// Material 3 Expressive's corner scale: 4, 8, 12, 16, 20, 28, 32 and 48 dp.
 val ChaiShapes = Shapes()

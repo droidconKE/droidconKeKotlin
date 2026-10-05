@@ -25,7 +25,6 @@ import com.droidconke.chai.atoms.ChaiWhite
 /** Colours no Material role holds in both themes. Read `MaterialTheme.colorScheme` first. */
 @Immutable
 data class ChaiColors(
-    /** The brand-blue panel, the same blue in both themes. */
     val heroContainerColor: Color,
     /** Neon on the blue panel, for headline and display text only (4.1:1). */
     val heroContentColor: Color,

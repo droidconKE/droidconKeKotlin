@@ -26,7 +26,6 @@ import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Test
 
-/** The full home capture stops above the sponsors, so they get one of their own. */
 class SponsorsScreenshotTest : ChaiScreenshotTest() {
     override fun placeholderImage() = wideLogoImage()
 

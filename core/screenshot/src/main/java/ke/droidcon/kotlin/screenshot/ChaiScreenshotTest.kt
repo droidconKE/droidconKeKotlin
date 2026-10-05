@@ -63,8 +63,7 @@ abstract class ChaiScreenshotTest {
     val composeRule = createComposeRule()
 
     // Without a fake loader, Coil races the capture and goldens alternate between runs.
-    // `intercept` rather than `default`: only intercepted requests have their crossfade
-    // stripped, and a crossfade runs on the system clock, which Robolectric never advances.
+    // Not `default`: it keeps the crossfade, which never finishes on Robolectric's frozen clock.
     @OptIn(ExperimentalCoilApi::class)
     @Before
     fun installDeterministicImageLoader() {
@@ -81,7 +80,7 @@ abstract class ChaiScreenshotTest {
         )
     }
 
-    /** A colour has no size, so `ContentScale.Fit` draws nothing; logo tests use [wideLogoImage]. */
+    /** Sizeless, so `ContentScale.Fit` draws nothing; logo tests use [wideLogoImage]. */
     protected open fun placeholderImage(): Drawable = ColorDrawable(PLACEHOLDER_IMAGE_COLOR)
 
     protected fun wideLogoImage(): Drawable =

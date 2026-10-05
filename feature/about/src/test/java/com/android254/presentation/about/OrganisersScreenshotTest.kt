@@ -30,7 +30,6 @@ import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Test
 
-/** The full About capture stops above the grids, so they get one of their own. */
 class OrganisersScreenshotTest : ChaiScreenshotTest() {
     override fun placeholderImage() = wideLogoImage()
 

@@ -43,7 +43,7 @@ import com.android254.presentation.speakers.view.SpeakersRoute
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
-/** Maps each key to its screen. Scene strategies read the pane metadata, so nothing here branches on window size. */
+/** Scene strategies read the pane metadata, so nothing here branches on window size. */
 @Composable
 fun droidconEntryProvider(
     navController: NavigationController,

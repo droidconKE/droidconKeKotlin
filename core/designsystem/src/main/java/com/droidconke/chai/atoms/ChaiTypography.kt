@@ -58,7 +58,7 @@ private val ChaiBaseTypography: Typography =
         )
     }
 
-// One weight heavier than the base role; display and headline roles also tighten, poster style.
+// One weight heavier; display and headline roles also tighten.
 val ChaiTypography: Typography =
     with(ChaiBaseTypography) {
         copy(

@@ -46,7 +46,6 @@ import ke.droidcon.kotlin.core.ui.R
 private const val LARGE_FONT_SCALE = 1.5f
 private const val HERO_MAX_LINES = 5
 
-/** Answers "where do I need to be?" while a session is live, with what's next; otherwise welcomes. */
 @Composable
 fun HomeHeaderSectionComponent(
     modifier: Modifier = Modifier,

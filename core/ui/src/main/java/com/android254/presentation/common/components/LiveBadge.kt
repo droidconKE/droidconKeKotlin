@@ -44,7 +44,7 @@ import ke.droidcon.kotlin.core.ui.R
 private const val PULSE_MILLIS = 1_000
 private const val PULSE_MIN_ALPHA = 0.35f
 
-/** At animation scale 0 an infinite transition snaps to its end value, so the pulse holds at full opacity instead. */
+/** With animations off an infinite transition snaps to its end value, so hold full opacity. */
 @Composable
 fun LiveBadge(modifier: Modifier = Modifier) {
     val resolver = LocalContext.current.contentResolver
