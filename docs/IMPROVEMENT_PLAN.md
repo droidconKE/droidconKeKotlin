@@ -17,7 +17,7 @@ once per sync. See §3.10.
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
 system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
-it starts from is recorded in the rebrand PR.
+it starts from is in `docs/architecture.md`.
 
 §14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
 Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
@@ -305,8 +305,8 @@ fun SessionCard(
 }
 ```
 
-Apply the same pattern to the speaker cards. **About** could also take a supporting pane for the
-organising-team grid at expanded widths — through `SupportingPaneSceneStrategy` metadata, never a
+Apply the same pattern to the speaker cards. **About**'s grids already add columns as the window
+widens; it could also take a supporting pane for the organising team at expanded widths — through `SupportingPaneSceneStrategy` metadata, never a
 `SupportingPaneScaffold`.
 
 ### 4.6 Keyboard and mouse: a context menu
@@ -347,6 +347,9 @@ Landed on 2026-10-05, on material3 1.5.0-alpha29:
 - `FilterChip` filters, the M3 switch and `LiveBadge`;
 - the short navigation bar and wide navigation rail;
 - the pull-to-refresh `LoadingIndicator`.
+- a polish pass: one Share button on feed posts (the system share sheet), a plain sign-in
+  dialog, sponsor and organiser logo tiles with grids that add columns on wider windows, and a
+  filter bottom sheet.
 
 Still open:
 - **Loading consolidation.** The per-screen skeletons, `LoadingBox` and `AnimatedShimmerEffect`

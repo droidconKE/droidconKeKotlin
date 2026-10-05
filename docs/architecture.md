@@ -338,6 +338,30 @@ is never text on a light surface (1.36:1 on white): in light mode it is a fill w
 is text only on black (dark `primary`) and as headline-size text on the blue hero (4.1:1). Selected states (the navigation pill, the chosen day, a starred session, the live
 badge) take `secondaryContainer` explicitly, because Material's default is `primary`.
 
+Rooms take a colour from the scheme: Opal is `secondary` (green), Sapphire is `tertiary` (blue),
+and any other room is neutral grey, never `primary`, because dark `primary` is green too
+(`SessionAccents.kt`).
+
+Contrast for the pairs the app draws, from the shipped scheme. WCAG AA needs 4.5:1 for text and
+3:1 for borders, icons and display-size text. This is where the accessibility audit (plan §14)
+starts.
+
+| Pair | Theme | Colours | Ratio | Needs |
+|---|---|---|---|---|
+| `primary` text on screen | Light | `#0055FF` on `#FFFFFF` | 5.6:1 | 4.5:1 |
+| `secondary` (green) text | Light | `#06752A` on `#FFFFFF` | 5.9:1 | 4.5:1 |
+| Ink on neon (selected states) | Both | `#20201E` on `#00FF4F` | 12.0:1 | 4.5:1 |
+| `onSurfaceVariant` on `surfaceContainer` | Light | `#707070` on `#F5F5F5` | 4.5:1 | 4.5:1 |
+| `outline` on `surfaceContainer` | Light | `#8A8A8A` on `#F5F5F5` | 3.2:1 | 3:1 |
+| Neon display type on the hero | Both | `#00FF4F` on `#0055FF` | 4.1:1 | 3:1 |
+| White text on the hero | Both | `#FFFFFF` on `#0055FF` | 5.6:1 | 4.5:1 |
+| `primary` text on screen | Dark | `#00FF4F` on `#000000` | 15.4:1 | 4.5:1 |
+| `onSurfaceVariant` on a card | Dark | `#A3A3A3` on `#191D1D` | 6.7:1 | 4.5:1 |
+| `outline` on a card | Dark | `#6B6B6B` on `#191D1D` | 3.2:1 | 3:1 |
+| `tertiary` (Sapphire) text | Dark | `#83C6FF` on `#000000` | 11.5:1 | 4.5:1 |
+| Neon as text (not allowed) | Light | `#00FF4F` on `#FFFFFF` | 1.4:1 | 4.5:1 |
+| Blue as text (not allowed) | Dark | `#0055FF` on `#000000` | 3.7:1 | 4.5:1 |
+
 Read `MaterialTheme.colorScheme` for colour. `MaterialTheme.chaiColorsPalette` holds three
 tokens for the brand-blue hero panel, the one colour no role holds in both themes. Add a token
 only when no role fits. A detekt `ForbiddenImport` rule fails the build on a palette import
@@ -347,6 +371,9 @@ Shapes are Material 3 Expressive's scale (4 to 48 dp). Typography is Montserrat,
 ExtraBold for the Emphasized display and headline roles. The website's display face, Rauschen B,
 isn't bundled: its web licence doesn't cover embedding in an APK, the file is a `.woff2`, and
 it has one weight. Swapping it in later is a change to the one `FontFamily` in `ChaiTypography`.
+
+Home's hero title is display type, so above 1.5× font scale it drops to
+`headlineMediumEmphasized` and caps its lines rather than filling the screen.
 
 `MaterialTheme.isDarkTheme` reads the theme's own background rather than the system setting, so a
 `ChaiTheme(darkTheme = true)` preview or screenshot picks the right logo.
