@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LoadingBox
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.droidconke.chai.ChaiTheme
 
 @Composable
@@ -33,7 +34,7 @@ fun HomeSpeakersLoadingItem(modifier: Modifier = Modifier) {
         modifier = modifier.padding(horizontal = 8.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LoadingBox(height = 80.dp, width = 80.dp)
+        LoadingBox(height = 80.dp, width = 80.dp, shape = rememberSpeakerAvatarShape())
         Spacer(modifier = Modifier.height(10.dp))
         LoadingBox(height = 20.dp, width = 60.dp)
     }
