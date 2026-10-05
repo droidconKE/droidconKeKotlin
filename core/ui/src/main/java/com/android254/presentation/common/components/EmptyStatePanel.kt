@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
-/** Empty and error states, in the hero panel's shape. */
+/** Empty and error states: a neon cookie badge and a message, centred with no card around them. */
 @Composable
 fun EmptyStatePanel(
     icon: Painter,
@@ -49,9 +49,7 @@ fun EmptyStatePanel(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .padding(horizontal = 32.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {

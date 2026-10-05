@@ -15,32 +15,22 @@
  */
 package com.android254.presentation.common.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
-import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
-import ke.droidcon.kotlin.chai.R as ChaiR
+import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -52,55 +42,17 @@ fun OrganizedBySection(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceContainer,
-                    shape = RoundedCornerShape(10.dp),
-                ).padding(vertical = 20.dp)
                 .testTag("organized_by_section"),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ChaiTitle(
-            modifier =
-                Modifier
-                    .padding(start = 20.dp),
-            titleText = stringResource(id = R.string.organized_by),
-            titleColor = MaterialTheme.colorScheme.primary,
+        Text(
+            text = stringResource(id = R.string.organized_by),
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() },
         )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        FlowRow(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            maxItemsInEachRow = 3,
-        ) {
-            organizationLogos.forEach { logo ->
-
-                AsyncImage(
-                    modifier =
-                        Modifier
-                            .height(80.dp)
-                            .padding(6.dp),
-                    model =
-                        if (logo.endsWith("svg")) {
-                            ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(logo)
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build()
-                        } else {
-                            ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(logo)
-                                .build()
-                        },
-                    placeholder = painterResource(ChaiR.drawable.ic_google_logo_icon),
-                    contentDescription = stringResource(id = R.string.logo),
-                )
-            }
+        EvenGrid(items = organizationLogos, columns = 3) { logo, cellModifier ->
+            LogoTile(logos = persistentListOf(logo), name = "", modifier = cellModifier)
         }
     }
 }

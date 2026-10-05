@@ -57,11 +57,12 @@ fun HomeHeaderSectionComponent(
     val palette = MaterialTheme.chaiColorsPalette
     val openLabel = stringResource(R.string.open_session)
     val featured = liveSession
+    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
     val displayStyle =
-        if (LocalDensity.current.fontScale > LARGE_FONT_SCALE) {
-            MaterialTheme.typography.headlineSmallEmphasized
-        } else {
+        if (featured != null && !largeFont) {
             MaterialTheme.typography.headlineMediumEmphasized
+        } else {
+            MaterialTheme.typography.titleLargeEmphasized
         }
     Column(
         modifier =

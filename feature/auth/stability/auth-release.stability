@@ -13,7 +13,7 @@ public fun com.android254.presentation.auth.view.AuthDialog(onDismiss: kotlin.Fu
     - viewModel: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.auth.view.GoogleSignInButton(text: kotlin.String, icon: androidx.compose.ui.graphics.painter.Painter, modifier: androidx.compose.ui.Modifier, loadingText: kotlin.String, isLoading: kotlin.Boolean, borderColor: androidx.compose.ui.graphics.Color, backgroundColor: androidx.compose.ui.graphics.Color, progressIndicatorColor: androidx.compose.ui.graphics.Color, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.auth.view.GoogleSignInButton(text: kotlin.String, icon: androidx.compose.ui.graphics.painter.Painter, modifier: androidx.compose.ui.Modifier, loadingText: kotlin.String, isLoading: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -22,8 +22,5 @@ public fun com.android254.presentation.auth.view.GoogleSignInButton(text: kotlin
     - modifier: STABLE (marked @Stable or @Immutable)
     - loadingText: STABLE (String is immutable)
     - isLoading: STABLE (primitive type)
-    - borderColor: STABLE (marked @Stable or @Immutable)
-    - backgroundColor: STABLE (marked @Stable or @Immutable)
-    - progressIndicatorColor: STABLE (marked @Stable or @Immutable)
     - onClick: STABLE (function type)
 

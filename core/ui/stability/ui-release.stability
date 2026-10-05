@@ -149,6 +149,18 @@ public fun com.android254.presentation.common.components.EmptyStatePanel(icon: a
     - iconColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
+public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.EvenGrid>, columns: kotlin.Int, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.EvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - items: STABLE (known stable type)
+    - columns: STABLE (primitive type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - spacing: STABLE (marked @Stable or @Immutable)
+    - rowSpacing: STABLE (marked @Stable or @Immutable)
+    - cell: STABLE (composable function type)
+
+@Composable
 public fun com.android254.presentation.common.components.FeedbackButton(modifier: androidx.compose.ui.Modifier, onButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -215,6 +227,16 @@ public fun com.android254.presentation.common.components.LoadingBox(height: andr
     - shape: STABLE (marked @Stable or @Immutable)
     - brush: STABLE (marked @Stable or @Immutable)
     - color: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.components.LogoTile(logos: kotlinx.collections.immutable.ImmutableList<kotlin.String>, name: kotlin.String, modifier: androidx.compose.ui.Modifier, logoHeight: androidx.compose.ui.unit.Dp): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - logos: STABLE (known stable type)
+    - name: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - logoHeight: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.OrganizedBySection(organizationLogos: kotlinx.collections.immutable.ImmutableList<kotlin.String>, modifier: androidx.compose.ui.Modifier): kotlin.Unit

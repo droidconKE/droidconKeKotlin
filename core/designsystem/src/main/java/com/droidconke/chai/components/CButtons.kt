@@ -92,7 +92,7 @@ fun CPrimaryButton(
         colors = colors,
         shape = ChaiShapes.extraLarge,
         content = {
-            CPrimaryButtonText(text = title, textAllCaps = true)
+            CPrimaryButtonText(text = title)
         },
     )
 }

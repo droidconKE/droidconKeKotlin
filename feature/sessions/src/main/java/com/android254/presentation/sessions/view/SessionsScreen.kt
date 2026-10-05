@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -203,9 +202,7 @@ fun SessionsScreen(
                 ModalBottomSheet(
                     sheetState = bottomSheetState,
                     onDismissRequest = { showFilterSheet = false },
-                    shape = RoundedCornerShape(0.dp),
-                    containerColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.52f),
-                    dragHandle = {},
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 ) {
                     SessionsFilterPanel(
                         onDismiss = { showFilterSheet = false },

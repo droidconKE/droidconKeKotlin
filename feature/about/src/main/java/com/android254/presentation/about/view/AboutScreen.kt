@@ -16,11 +16,10 @@
 package com.android254.presentation.about.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -28,12 +27,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -50,13 +51,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
+import com.android254.presentation.common.components.EvenGrid
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -174,13 +175,15 @@ fun AboutDroidconSection(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        ChaiTitle(
+        Text(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-            titleText = stringResource(id = R.string.about),
-            titleColor = MaterialTheme.colorScheme.primary,
+                    .padding(start = 20.dp, end = 20.dp)
+                    .semantics { heading() },
+            text = stringResource(id = R.string.about),
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.primary,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -209,23 +212,28 @@ fun OrganizingTeamSection(
                 .padding(start = 20.dp, end = 20.dp)
                 .testTag("organizing_team_section"),
     ) {
-        ChaiTitle(
+        Text(
             modifier =
                 Modifier
-                    .fillMaxWidth(),
-            titleText = stringResource(id = R.string.about_organizing_team),
-            titleColor = MaterialTheme.colorScheme.primary,
+                    .fillMaxWidth()
+                    .semantics { heading() },
+            text = stringResource(id = R.string.about_organizing_team),
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.primary,
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            organizingTeam.forEach { teamMember ->
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val columns = ((maxWidth + TeamGridGap) / (TeamCellMinWidth + TeamGridGap)).toInt().coerceAtLeast(MIN_TEAM_COLUMNS)
+            EvenGrid(
+                items = organizingTeam,
+                columns = columns,
+                spacing = TeamGridGap,
+                rowSpacing = 24.dp,
+            ) { teamMember, cellModifier ->
                 OrganizingTeamComponent(
-                    modifier = Modifier.width(106.dp),
+                    modifier = cellModifier,
                     teamMember = teamMember,
                     onClickMember = onClickMember,
                 )
@@ -297,3 +305,7 @@ private fun AboutScreenPreview() {
 }
 
 private const val TEAM_IMAGE_ASPECT_RATIO = 824f / 470f
+
+private val TeamGridGap = 16.dp
+private val TeamCellMinWidth = 104.dp
+private const val MIN_TEAM_COLUMNS = 3
