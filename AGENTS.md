@@ -32,6 +32,8 @@ Screenshot goldens live in `src/test/screenshots/`, in two families: `screens/` 
 light / dark / 200 %-font matrix at phone size, and `form_factors/` is one image per window
 size (phone, foldable, tablet, desktop) from `ChaiScreenshotTest.captureFormFactors`, which
 overrides the *window* rather than the device so `currentWindowAdaptiveInfo` really sees it.
+Every image loads as a flat grey placeholder with no size, which `ContentScale.Fit` draws as
+nothing; a test of logos overrides `placeholderImage()` with `wideLogoImage()`.
 They are outside Gradle's tracked outputs, so after changing anything visual, record with
 `--rerun-tasks` — an up-to-date test task will otherwise leave stale images on disk:
 

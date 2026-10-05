@@ -16,6 +16,8 @@
 package ke.droidcon.kotlin.screenshot
 
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -61,13 +63,15 @@ abstract class ChaiScreenshotTest {
     val composeRule = createComposeRule()
 
     // Without a fake loader, Coil races the capture and goldens alternate between runs.
+    // `intercept` rather than `default`: only intercepted requests have their crossfade
+    // stripped, and a crossfade runs on the system clock, which Robolectric never advances.
     @OptIn(ExperimentalCoilApi::class)
     @Before
     fun installDeterministicImageLoader() {
         val engine =
             FakeImageLoaderEngine
                 .Builder()
-                .default(ColorDrawable(PLACEHOLDER_IMAGE_COLOR))
+                .intercept(predicate = { true }, drawable = placeholderImage())
                 .build()
         Coil.setImageLoader(
             ImageLoader
@@ -76,6 +80,15 @@ abstract class ChaiScreenshotTest {
                 .build(),
         )
     }
+
+    /** A colour has no size, so `ContentScale.Fit` draws nothing; logo tests use [wideLogoImage]. */
+    protected open fun placeholderImage(): Drawable = ColorDrawable(PLACEHOLDER_IMAGE_COLOR)
+
+    protected fun wideLogoImage(): Drawable =
+        GradientDrawable().apply {
+            setColor(PLACEHOLDER_IMAGE_COLOR)
+            setSize(WIDE_LOGO_WIDTH_PX, WIDE_LOGO_HEIGHT_PX)
+        }
 
     /** [frameMillis] pauses the clock and captures that far in, for content that never idles. */
     protected fun captureComponent(
@@ -196,5 +209,7 @@ abstract class ChaiScreenshotTest {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
         const val CHANGE_THRESHOLD = 0.001f
         const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
+        const val WIDE_LOGO_WIDTH_PX = 600
+        const val WIDE_LOGO_HEIGHT_PX = 100
     }
 }
