@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.feed.view
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,20 +25,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Error
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +54,6 @@ import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
-import kotlinx.coroutines.launch
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -64,35 +63,31 @@ fun FeedRoute(
 ) {
     val feedUIState by feedViewModel.uiState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
     FeedScreen(
         feedUIState = feedUIState,
         navigateToFeedbackScreen = navigateToFeedbackScreen,
+        onShare = { feed -> context.startActivity(shareIntent(feed)) },
     )
+}
+
+private fun shareIntent(feed: FeedUI): Intent {
+    val text = listOf(feed.title, feed.body, feed.url).filter(String::isNotBlank).joinToString("\n\n")
+    val send =
+        Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, feed.title)
+            putExtra(Intent.EXTRA_TEXT, text)
+        }
+    return Intent.createChooser(send, null)
 }
 
 @Composable
 internal fun FeedScreen(
     feedUIState: FeedUIState,
     navigateToFeedbackScreen: () -> Unit = {},
+    onShare: (FeedUI) -> Unit = {},
 ) {
-    val bottomSheetState =
-        rememberModalBottomSheetState(
-            skipPartiallyExpanded = true,
-        )
-    val scope = rememberCoroutineScope()
-
-    if (bottomSheetState.isVisible) {
-        ModalBottomSheet(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            sheetState = bottomSheetState,
-            dragHandle = {},
-            onDismissRequest = { scope.launch { bottomSheetState.hide() } },
-        ) {
-            FeedShareSection(
-                onCancelClicked = { scope.launch { bottomSheetState.hide() } },
-            )
-        }
-    }
     Scaffold(
         topBar = {
             DroidconAppBarWithFeedbackButton(
@@ -146,15 +141,18 @@ internal fun FeedScreen(
                                     .readablePaneWidth(),
                             contentPadding = paddingValues.plus(bottom = 16.dp),
                         ) {
-                            items(feedUIState.feeds, key = { it.title }) { feedPresentationModel ->
+                            itemsIndexed(feedUIState.feeds, key = { _, feed -> feed.title }) { index, feedPresentationModel ->
+                                if (index > 0) {
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 20.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                    )
+                                }
                                 FeedComponent(
                                     feed = feedPresentationModel,
                                     modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    scope.launch {
-                                        bottomSheetState.show()
-                                    }
-                                }
+                                    onShare = { onShare(feedPresentationModel) },
+                                )
                             }
                         }
                     }

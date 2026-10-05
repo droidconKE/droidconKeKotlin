@@ -22,11 +22,13 @@ import androidx.compose.ui.test.performClick
 import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
 import com.android254.presentation.feed.FeedViewModel
+import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -81,30 +83,17 @@ class FeedScreenTest {
     }
 
     @Test
-    fun `test share bottom sheet is shown`() {
-        coEvery { repo.fetchFeed() } returns
-            flowOf(
-                listOf(
-                    Feed(
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                    ),
-                ),
-            )
-
-        val viewModel = FeedViewModel(repo, testDispatcher)
+    fun `tapping share hands that post to the share sheet`() {
+        val post = FeedUI(title = "Venue announced", body = "Back at Sarit", topic = "", url = "https://droidcon.co.ke", image = null, createdAt = "")
+        var shared: FeedUI? = null
         composeTestRule.setContent {
             ChaiTheme {
-                FeedRoute(feedViewModel = viewModel)
+                FeedScreen(feedUIState = FeedUIState.Success(listOf(post)), onShare = { shared = it })
             }
         }
-        composeTestRule.onNodeWithTag("share_button").assertExists()
+
         composeTestRule.onNodeWithTag("share_button").performClick()
-        composeTestRule.onNodeWithTag("share_bottom_sheet").assertIsDisplayed()
+        assertEquals(post, shared)
     }
 
     @Test
