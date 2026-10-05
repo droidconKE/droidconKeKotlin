@@ -8,7 +8,12 @@
 
 ---
 
-## Next up — §14, the accessibility audit
+## Next up — fix duplicated sessions after sync (§3.10), then §14
+
+**Worth fixing next (not caused by the rebrand PR):** the home screen's session count climbs with
+every sync (+80, then +240, then +1,040 on a fresh install), and the same session shows up several
+times. A fresh install of `main` does the same, so sessions are probably being inserted more than
+once per sync. See §3.10.
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
 system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
@@ -245,6 +250,24 @@ B6 and B10 protect user data, so do those first. B3 and B4 were build-configurat
 would only assert the build script.
 
 ---
+
+### 3.10 Duplicated sessions after sync
+
+Found during the 2026-10-05 device pass. Home's "View all" count climbs on every sync (+80, then
++240, then +1,040 on a fresh install) and the same session appears several times. A fresh install
+of a `main` build shows the same, so it predates the rebrand.
+
+**Likely cause, not yet verified:** `SessionEntity` has `@PrimaryKey(autoGenerate = true) val id`
+and no unique index on `remote_id`, and `BaseDao` inserts with `OnConflictStrategy.REPLACE`. With
+an auto-generated key, `REPLACE` never finds a conflict, so each sync inserts every session again.
+
+**Fix:** a unique index on `remote_id`, so `REPLACE` (or an `@Upsert`) updates in place, with a
+migration that first deletes duplicate rows keeping one per `remote_id`. Register it in
+`Database.ALL_MIGRATIONS`; `fallbackToDestructiveMigration()` stays banned, because bookmarks
+live in this table. Check bookmarks survive: they may be keyed on the generated `id`.
+
+**Tests:** a DAO test that syncs the same payload twice and expects the row count unchanged, and a
+migration test from a database with duplicates.
 
 ## 4. Phase 1 — Adaptive follow-ups
 
@@ -4161,6 +4184,7 @@ struck row has landed.
 
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
+| **1** | Fix duplicated sessions after sync | §3.10 | A data bug users see on the first screen: counts climb and sessions repeat on every sync. |
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
 | **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. Previously struck as done; it never landed. |
 | ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |
