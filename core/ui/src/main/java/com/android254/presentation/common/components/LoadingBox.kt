@@ -27,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.droidconke.chai.chaiColorsPalette
 
 @Composable
 fun LoadingBox(
@@ -38,15 +38,16 @@ fun LoadingBox(
     width: Dp = 0.dp,
     widthRatio: Float? = null,
     cornerRadius: Dp = 5.dp,
+    shape: Shape = RoundedCornerShape(cornerRadius),
     brush: Brush? = null,
-    color: Color = MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+    color: Color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
 ) {
     Box(
         modifier =
             modifier
                 .customWidth(widthRatio, width)
                 .height(height)
-                .clip(RoundedCornerShape(cornerRadius))
+                .clip(shape)
                 .customBackground(brush, color),
     )
 }

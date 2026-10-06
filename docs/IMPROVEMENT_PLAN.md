@@ -1,601 +1,27 @@
 # droidconKE Android — Modernization & Product Plan
 
-> **Status:** Draft for review · **Author:** Staff engineering review · **Date:** 2026-08-13
-> **Repo:** `droidconKeKotlin` · **Branch:** `main` @ `654c374`
-> **Scope:** Full-stack app review — tech debt, modern Android practices, intelligent (AI) experiences, adaptive UI, ticketing, performance, testing, notifications, UX, new product surfaces, and store presence.
+> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-05
+> **Repo:** `droidconKeKotlin`
+> **Scope:** What is left to build — the design system, adaptive follow-ups, intelligent (AI) experiences, ticketing, notifications, performance, testing, new product surfaces, and store presence.
+>
+> Finished work is not recorded here. How the app works today is in [`docs/architecture.md`](architecture.md), [`docs/performance.md`](performance.md) and [`AGENTS.md`](../AGENTS.md). The history is in git.
 
 ---
 
-## Next up — §14, the accessibility audit
-
-**#6 landed on 2026-10-04**: the token restructure (§3.5) and M3 Expressive (§5.2) in one PR. See
-"§3.5 and §5.2 landed" below. It needed a material3 **alpha**, which is the one thing to know
-before touching the theme.
-
-**§14 is next.** Swahili was dropped from it the same day — the app is built for a global
-audience and ships in English — so §14 is now the accessibility audit alone. It depends on
-nothing and can run by a separate owner. §5.2's component work (button group, bookmark morph,
-loading consolidation) is the alternative if a visible change is wanted first.
-
-### §3.5 and §5.2 landed (2026-10-04)
-
-**Tokens.** `ChaiColors` went from 38 tokens to 6, and 213 call sites now read
-`MaterialTheme.colorScheme`. The §3.5 mapping table was a guide, not a spec: checked value by
-value, several rows were wrong. `secondaryButtonColor` was Blue/Teal90, not `secondary` (which is
-red in both themes); dark `primary` was `ChaiBlack`, so the pull-to-refresh indicator and the
-feedback button were black in dark mode. Two scheme changes made the mapping exact:
-
-- **Dark `primary` is `ChaiTeal90`, not `ChaiTeal`.** Headings, buttons and links were already
-  Teal90 in dark (33 call sites); only the selected nav icon used the saturated teal.
-- **`surfaceContainerLow` is White / `ChaiSubtleGrey`**, which is what cards already were, so
-  `cardsBackground` maps onto the role Material's own cards use.
-
-The six tokens left are the ones no role holds in both themes: `loadingShimmerColor`,
-`tealAccentColor`, `selectedDayContentColor`, `badgeContainerColor`, `switchThumbColor`,
-`switchOffIconColor`. Each has a KDoc saying why.
-
-**Visible changes** were reviewed in the goldens, all in the migration commit: dark-mode accents
-on the feedback button, pull-to-refresh, "View all" and Share; a raised text field and a dimmed
-inactive icon in dark; a visible text-field border in light. Two more have no golden and were
-checked on an Android 16 emulator: unselected filter buttons take an `onSurfaceVariant` border
-(lighter in light mode, unchanged in dark), and the "My sessions" switch's off track is
-`onSurfaceVariant` so the white thumb stays visible on it in dark mode.
-
-**Expressive needed an alpha.** `MaterialExpressiveTheme`, `MotionScheme` and the `*Emphasized`
-roles are `internal` in material3 1.4.0, the newest stable and what BOM `2026.09.00` manages.
-They are public in **1.5.0-alpha29**, so `material3` and `material3-adaptive-navigation-suite`
-are pinned there with a `version.ref` that overrides the BOM. The pin is wider than it looks:
-1.5.0-alpha29 depends on foundation 1.13.0-alpha01, which lifts `ui`, `runtime`, `foundation`
-and `animation` to **1.13.0-alpha01** across the app (`material3-adaptive` stays on 1.3.0). The
-pin on its own moved no golden and no stability baseline. **Remove the `version.ref` once a BOM
-manages a stable 1.5.0.**
-
-**What Expressive changed:** `ChaiTheme` provides `MaterialExpressiveTheme` with
-`MotionScheme.expressive()`; `ChaiTypography` fills the fifteen `*Emphasized` roles, each its base
-role one weight heavier, capped at Bold because Montserrat is bundled no heavier; and
-pull-to-refresh uses the Expressive `LoadingIndicator`. No golden moved — the colours, shapes and
-sizes passed in are unchanged, and a still frame does not show motion. Lottie went with the unused
-`Loader`.
-
-**Still open in §5.2:** the `ButtonGroup` day selector, the bookmark shape morph, consolidating
-the loading states, and the corner-radius decision (`CShapes` stays 3/7/9/10 dp — a design call).
-No `ChaiMotion` was built: features read `MaterialTheme.motionScheme` directly, and a chai motion
-tier would have no caller yet.
-
-### The module split, as landed
-
-`:presentation` is gone. Its composition root — `activity`, `notifications`,
-`common/navigation`, `common/bottomnav`, `di` — moved into `:app`, which is now the only
-module that depends on every feature. Seven modules came out of it first:
-
-| Module | Came from | Notes |
-| --- | --- | --- |
-| `:feature:speakers` | `speakers` | Merged separately, ahead of the rest |
-| `:feature:home` | `home` | |
-| `:feature:sessions` | `sessions` + `sessionDetails` | The plan lists one `sessions` feature; the detail screen is the same domain |
-| `:feature:feed` | `feed` | |
-| `:feature:about` | `about` + `feedback` | The plan gives feedback no module of its own. Revisit if §11.5 grows it |
-| `:feature:auth` | `auth` | |
-| `:core:testing` | `sessions` test source set | Shared test doubles, consumed via `testImplementation` |
-
-`SessionMapper` moved to `:core:ui` as `com.android254.presentation.mappers` — `home`,
-`sessions` and `MainViewModel` all use it, so it was never sessions-only.
-
-`:core:testing` holds `FakeSyncWorkManager` and nothing else yet. `fakeEntryProvider` was the
-other candidate and stayed with the composition root: `NavigationTest` is its only consumer,
-and moving it would pull Compose and navigation3 onto a shared test module to serve one
-caller.
-
-Each feature owns its goldens. Verification was confirmed to still fail on a corrupted golden
-rather than passing as an up-to-date no-op. Stability baselines dumped per module, debug and
-release.
-
-#### What folding `:presentation` into `:app` turned up
-
-Neither was visible until the composition root became application-module code, and both are
-fixed in the convention plugins rather than patched in `:app`:
-
-- **`AndroidApplicationConventionPlugin` never set `unitTests.isIncludeAndroidResources`**,
-  which its library twin always has. Robolectric then cannot see the merged manifest, falls
-  back to the `org.robolectric.default` package, and cannot resolve the `ComponentActivity`
-  that `compose-ui-test-manifest` contributes — killing every `createComposeRule()` test.
-- **Robolectric then booted the real `DroidconApp`**, whose `onCreate()` starts WorkManager
-  sync. The second test class to boot it hit "WorkManager is already initialized", so which
-  tests failed depended on class ordering. `app/src/test/resources/robolectric.properties`
-  pins a plain `Application`.
-
-Also: `:presentation`'s `themes.xml` declared a `Theme.Droidcon` that had always been dead,
-since an application module's resources beat a library's. Only `Theme.MySplash` carried over.
-And `:app` needed Compose, hence a `droidconke.android.application.compose` convention plugin
-alongside the library one.
-
-#### The renames
-
-`:domain`, `:data`, `:datasource:local` and `:datasource:remote` became `:core:domain`,
-`:core:data`, `:core:database` and `:core:network`. Gradle paths only — Kotlin packages and
-namespaces stayed, as `:core:designsystem` kept `com.droidconke.chai` — so it touched nine
-`projects.*` accessors and `settings.gradle.kts` rather than every file.
-
-**`:core:datastore` was not created.** §2 groups it with the renames, but there is no module
-to rename: the preferences code is two files inside `:core:data`. Splitting those out is the
-symmetry-for-its-own-sake §16 warns against.
-
-### Correction: the "every feature area is clean" audit was wrong
-
-The audit reported on 2026-09-05 that every remaining area imported nothing from
-`:presentation`. Extracting them disproved it — `home` imports
-`sessions.mappers.toPresentationModel`, a **feature-to-feature** dependency, which the audit
-grep should have caught and did not. Two lessons:
-
-- **Do not trust the grep alone.** The only reliable check is to move the module and compile.
-  Every real coupling in this work surfaced that way, never from analysis: `@IoDispatcher`,
-  `@ConferenceTimeZone`/`Clock`, `SessionMapper`, `FakeSyncWorkManager`.
-- **Test source sets couple features too**, and no import-of-main-sources audit sees it.
-
-### Not created, and why
-
-Seven feature modules in §2's list have no code behind them yet — `ticket`, `notes`,
-`assistant`, `gamification`, `jobboard`, `challenge`, `networking` — as do `:core:ai`,
-`:core:analytics`, `:widget`, `:benchmark` and `:baselineprofile`. They arrive with the phases
-that need them (§6, §7, §9, §11). Creating empty shells now would be scaffolding for work
-nobody has started.
-
-Four of the five `:core:*` names that shadowed existing modules — `domain`, `data`,
-`database`, `network` — landed as renames on 2026-09-10. `datastore` did not: there was no
-module to rename, only two files inside `:core:data`. See "The renames" above.
-
-### §9.1-9.2 landed (2026-09-10)
-
-`:benchmarks` exists, the baseline profile is generated and shipped, and startup is
-measured. See [`docs/performance.md`](performance.md). Three corrections to what §9.1 and
-§9.2 specify below:
-
-- **No hand-rolled `benchmark` build type.** The baseline profile plugin creates
-  `benchmarkRelease` and `nonMinifiedRelease` on `:app` itself. §9.1's `create("benchmark")`
-  block is the pre-plugin pattern and is not needed.
-- **`com.android.test` is applied by id, not catalog alias**, and the Kotlin plugin is not
-  applied at all. §9.1 shows `alias(libs.plugins.kotlin.android)`, which is a hard error
-  here — AGP 9's built-in Kotlin owns that. A versioned request for `com.android.test` also
-  fails, because build-logic already has AGP on the classpath.
-- **Benchmark 1.5.0 works with AGP 9.4 and `android.newDsl` on.** The 1.4.x line required
-  `newDsl=false`, which this repo cannot set. Worth knowing before anyone pins an older
-  version.
-
-**Measured: the profile takes first-launch cold start from 1335 ms to 1047 ms, −22%**, on a
-Ciontek CS50C (Android 14). The startup profile separately cut the primary dex 36%, from
-6.07 MB to 3.90 MB. Full results and method in [`docs/performance.md`](performance.md).
-
-The OPPO Reno4 cannot produce that comparison — ColorOS stubs `cmd package compile` and it is
-below the API 33 floor — so a second device was needed. It is still the right device for jank
-work, which needs no forced compile.
-
-### §9.3-9.4 pass (2026-09-11)
-
-A gap review against the [android/skills `r8-analyzer`](https://github.com/android/skills/tree/main/performance/r8-analyzer)
-skill and the six sections of the Android performance overview. Details and numbers are in
-[`docs/performance.md`](performance.md); what landed:
-
-- **R8 is healthy, not just configured.** The configuration analyzer scores the release build
-  98% on optimization, obfuscation and shrinking, with zero global rules. Every expensive keep
-  rule is an AGP default or a library consumer rule. `app.keep` lost its three
-  kotlinx-serialization rules — the library ships identical consumer rules now — and its
-  redundant `-keepattributes`; it is a single `-dontwarn`. §9.3's "verify the defaults" item is
-  done; the `optimization {}` migration stays blocked on the baseline profile plugin.
-- **Release APK 6.42 MB → 4.62 MB (−28%)** without touching any of §9.4's numbered items: the
-  View-based Material Components and AppCompat libraries were direct dependencies of three
-  modules for one theme parent (now the platform theme, −425 KB of `resources.arsc` and ~370
-  resource files); `team.png` was an 896 KB PNG photograph (now a 141 KB WebP); the seven
-  Montserrat weights carried Cyrillic (subset to Latin, −626 KB, outlines verified identical);
-  and 64 `.proto` schemas plus `.kotlin_builtins` shipped in the APK for nothing (packaging
-  excludes, −385 KB). §9.4 items 1–6 remain as written.
-- **ProfileInstaller was disabled by the manifest.** Removing the whole
-  `androidx.startup.InitializationProvider` to stop WorkManager's auto-init also stopped
-  `ProfileInstallerInitializer`, so nothing installed the baseline profile on devices Play did
-  not deliver it to. Now only `WorkManagerInitializer` is removed. This corrects the
-  `tools:node="remove"` snippet in §9.2 below.
-- **TTFD.** `HomeScreen` reports fully drawn when real content is on screen, so
-  `StartupTimingMetric` and Play Vitals get a time-to-full-display. Measured on the CS50C: 3.2 s
-  without compilation, 2.7 s with the profile — network-bound by construction, since every cold
-  start syncs before the home sections show content.
-- **Startup is not in `Application.onCreate`.** The traces put `makeApplication` at 9 ms and
-  Firebase's provider initialisation at ~82 ms of the 233 ms `bindApplication`; the WorkManager
-  enqueue deferral §9.5 suggests would buy single-digit milliseconds and was not done.
-
-### §3.4 landed (2026-09-17)
-
-Edge-to-edge is no longer only opted into — it now does something. Step 1 and step 2 had
-already shipped: `MainActivity` calls `enableEdgeToEdge()` and nothing writes `statusBarColor`
-any more. Step 3, the part that matters, had not.
-
-The correction to what §3.4 sketches below: it puts the whole contract in `MainScreen` and
-threads `contentPadding` down through `Navigation` into every screen. That is not needed here,
-because **every screen already has its own `Scaffold` with its own top bar**. The insets split
-along that seam instead, and no screen signature changed:
-
-- **App bars own the top.** `DroidconAppBar`, `DroidconAppBarWithFeedbackButton` and
-  `DroidconAppBarWithFilter` are plain `Row`s, not M3 `TopAppBar`s, so none of them knew about
-  insets. Each now takes a `windowInsets` parameter defaulting to
-  `DroidconWindowInsets.appBar`, applied after its background so the background reaches the top
-  of the window and the content sits below the status bar.
-- **The root owns the bottom.** `MainScreen`'s `Scaffold` is `contentWindowInsets =
-  WindowInsets(0, 0, 0, 0)` and consumes only the bottom bar. It no longer eats the top inset,
-  which is what had made the opt-in inert: with the root consuming everything, no screen could
-  draw under the status bar even if it wanted to.
-- **Each screen declares the rest** with `contentWindowInsets =
-  DroidconWindowInsets.screenContent`. Because the root *consumes* what it pays for, the same
-  declaration is correct on the five screens that keep the bottom bar and the three that hide
-  it — it resolves to zero in the first case and to the navigation bar in the second, with no
-  per-screen special casing.
-- **The IME comes free.** `WindowInsets.safeDrawing` already includes the keyboard, so the
-  same declaration moves the feedback form's `OutlinedTextField` clear of it. The activity
-  gained `android:windowSoftInputMode="adjustResize"`, which it never had.
-- **Two latent bugs fell out.** `AboutScreen` and `SessionDetailsScreen` never applied
-  `paddingValues` in their loading and error branches, so both drew under their own top bar.
-
-On the definition of done below: the first two items are closed and asserted by
-`WindowInsetsInvariantsTest`, which fails on any `Scaffold` in `src/main` that declares no
-`contentWindowInsets` and on any return of `statusBarColor`. The third is **partly** closed.
-Robolectric reports no system bars at all, so the screen goldens cannot show a cutout or a
-3-button nav bar; what is captured instead is the three app bars with a cutout-sized inset
-passed in explicitly (`AppBarInsetsScreenshotTest`).
-
-The fourth, the two-device manual check, is **done**. Checked on the `RM_Pixel` API 36
-emulator in both gesture and 3-button navigation, and on the OPPO Reno4 — ColorOS, 3-button
-navigation, and **API 31 rather than the API 30 this section assumed**; what matters is that it
-is below API 35, where the platform does not enforce edge-to-edge and `enableEdgeToEdge()` has
-to do the work itself. Both devices behave identically on all five:
-
-- All three custom app bars tint under the status bar with their content clear of it.
-- `SessionDetailsScreen`, which hides the bottom bar, still clears the navigation bar — the
-  path that exists only because the root *consumes* what it pays for.
-- `FeedBackScreen`'s hero draws under the status bar. This is the one thing that was
-  impossible before: with the root eating the top inset, no screen could reach up there.
-- The keyboard moves the feedback field clear of itself, and the bottom bar sits above the
-  3-button nav bar rather than under it.
-
-**One thing the manual check found, now fixed.** On `FeedBackScreen` the status bar icons came
-out dark on both devices, because `enableEdgeToEdge()` derives their appearance from the theme
-and the theme is light. That was the right answer while the hero could not reach the status
-bar. Once it could, the clock and status icons sat on saturated blue and teal.
-
-`StatusBarIconAppearance` in `:core:ui` fixes it: a `DisposableEffect` that overrides the icon
-appearance while a screen is in the composition and **restores the previous value on the way
-out**, so a screen that opts in cannot strand the one after it. `FeedBackScreen` drives it off
-the `isCollapsed` state it already derives — light icons over the expanded hero, back to the
-theme's answer once the bar collapses to the light `TopAppBar`.
-
-This is the one place the plan's "no window reads from a composable" instinct does not hold,
-and the distinction is worth stating: step 2 deleted a `SideEffect` in `ChaiTheme` that ran for
-*every* screen and set a property that is a no-op from API 35. This runs for one screen, sets
-a property that is still live, and undoes itself. What made the original wrong was that it was
-global and permanent, not that it touched the window.
-
-Rule of thumb for the next screen that wants it: reach for this only when the screen draws its
-own artwork behind the status bar. A screen whose app bar is a theme surface already gets the
-right icons for free.
-
-### §4 landed (2026-09-17)
-
-Adaptive and large-screen support is in. The app now picks a navigation bar, a navigation rail
-or a navigation drawer from the window, opens a session or a speaker **beside** its list at
-expanded widths, and carries the live-sessions rail into a standing "happening now" pane where
-there is a column to spare.
-
-**Two official Android skills were read in full and preferred over this section wherever they
-disagreed** — [`jetpack-compose/adaptive`](https://github.com/android/skills/blob/main/jetpack-compose/adaptive/SKILL.md)
-and [`system/edge-to-edge`](https://github.com/android/skills/blob/main/system/edge-to-edge/SKILL.md).
-Four things below were wrong, and one thing everybody assumes about `NavigationSuiteScaffold`
-is wrong too.
-
-#### Correction 1 — §4.4's `NavigableListDetailPaneScaffold` is forbidden
-
-The adaptive skill is unambiguous: *"You must use the Navigation 3 `SceneStrategy` approach to
-implement multi-pane layouts. Do not use `ListDetailPaneScaffold` or `SupportingPaneScaffold`."*
-
-That is not style advice here. `NavigableListDetailPaneScaffold` owns a
-`ThreePaneScaffoldNavigator`, which is a second back stack — and this app already has one, in
-`NavigationController`, with a per-tab stack map and its own `goBack()`. Two back stacks over
-one `NavDisplay` is the kind of bug that only shows up as "back sometimes does nothing".
-
-What landed instead, and what §4.4's code block should be read as:
-
-- `androidx.compose.material3.adaptive:adaptive-navigation3`, which the Compose BOM already
-  manages (see correction 3).
-- `rememberListDetailSceneStrategy` and `rememberSupportingPaneSceneStrategy`, passed to
-  `NavDisplay`'s `sceneStrategies`.
-- `ListDetailSceneStrategy.listPane(detailPlaceholder = { … })` and `.detailPane()` as **entry
-  metadata** in `DroidconEntryProvider`. Nothing branches on window size: the same entry is a
-  full screen on a phone and a pane on a tablet, because the strategy reads the metadata and
-  the window and decides.
-- Distinct `sceneKey`s for the sessions and speakers pairs, so a speaker opened from Home does
-  not get drawn into the sessions scaffold.
-
-`NavigationController` is untouched. `updateBottomBarState` is **gone** — see correction 4.
-
-#### Correction 2 — the strategy expands an empty pane, so it needs a guard
-
-Not in either skill; found by building it. `ListDetailSceneStrategy` expands a second pane
-whenever the window has room, and fills the list pane with whatever list entry it can find in
-the back stack. Tapping a session on **Home** pushes only `SessionDetails`, so on a tablet the
-result is a real detail beside an empty column — and, worse, the detail believes it is a pane,
-drops its app bar and leaves no way back.
-
-`ListPaneRequiredSceneStrategy` wraps the Material strategy and declines the scene when the
-list it would draw is not on the stack, which hands the entries to the next strategy and gives
-a full-width detail with its bar intact. The alternative — pushing the list first so the pane
-has something to show — would change what back does on a phone, where tapping a session on
-Home and pressing back has always returned to Home.
-
-`ListDetailSceneTest` asserts this by rendering the real strategies over stand-in screens and
-checking what `LocalListDetailSceneScope` reports, which is what the detail screens read.
-
-#### Correction 3 — §3.2's catalog entries are stale
-
-§3.2 lists `compose-material3-adaptive*` with an `androidx-adaptive` version ref and
-`androidx.window` alongside. None of that is needed: **Compose BOM 2026.09.00 already manages
-the whole adaptive family** — `adaptive` and `adaptive-layout` at 1.3.0,
-`adaptive-navigation3` at 1.3.0, `material3-adaptive-navigation-suite` at 1.4.0 — and
-`androidx.window:window-core` 1.5.0 arrives transitively. What landed is four BOM-managed
-entries with no version refs, matching how `compose-material3` is already declared, plus an
-`adaptive` bundle. §3.2 also omits `adaptive-navigation3` entirely and lists
-`adaptive-navigation`, which is the `ListDetailPaneScaffoldNavigator` package correction 1
-forbids.
-
-`material3-window-size-class` is not needed either: `currentWindowAdaptiveInfoV2()` returns
-`androidx.window.core.layout.WindowSizeClass`, and §4.2's `WindowWidthSizeClass.COMPACT`
-comparison does not compile against window-core 1.5.0. `DroidconWindowSize` uses
-`isWidthAtLeastBreakpoint(WIDTH_DP_MEDIUM_LOWER_BOUND)` instead.
-
-#### Correction 4 — §16.1 blocks §4 on the design system, and it should not
-
-§16.1 ranks the design-system rebuild ahead of adaptive "because Adaptive needs
-`MaterialExpressiveTheme`". Expressive is still `internal` on material3 1.4.0, as §3.4's
-closing notes already record, so that ordering would block §4 indefinitely. Nothing in the
-adaptive skill wants Expressive. This built on the current `ChaiTheme`, and the navigation
-suite takes the chai palette through `NavigationSuiteDefaults.colors`.
-
-#### The thing everyone gets wrong about `NavigationSuiteScaffold`
-
-The edge-to-edge skill says the adaptive scaffolds *"don't propagate `PaddingValues` to their
-inner contents"*, and the obvious conclusion — that the root stops consuming anything, so
-`screenContent` must now carry the full bottom inset itself — is **wrong**. Reading
-`NavigationSuiteScaffold.kt` in material3-adaptive-navigation-suite 1.4.0 settles it:
-
-- `NavigationSuiteScaffoldLayout` measures the content to `layoutHeight - navigationBarHeight`
-  (or `layoutWidth - railWidth`), so the content area genuinely excludes the navigation
-  component.
-- The content is wrapped in `Modifier.navigationSuiteScaffoldConsumeWindowInsets(...)`, which
-  consumes **the bottom** under a bar, **the start** under a rail or drawer, and **nothing**
-  while the navigation is hidden.
-
-So the §3.4 contract survives intact and gets *more* correct: `DroidconWindowInsets.appBar` and
-`.screenContent` are unchanged, and what they resolve to now moves with the navigation
-component instead of needing a per-size branch. Beside a rail, `screenContent`'s bottom
-becomes the real navigation-bar inset — which it never was before, because the old root always
-consumed it — and that is right, because there is no longer a bottom bar down there.
-
-The one genuinely new owner is the **live-sessions rail**: at rail and drawer sizes it is the
-bottom-most element, so it pads for the bottom inset and `MainScreen` consumes that same inset
-on the content above it. `DroidconWindowInsets`' KDoc now says all of this.
-
-A review claimed this rationale was wrong — that `Scaffold` reads `contentWindowInsets`
-directly and never sees `consumeWindowInsets`, so every screen double-pays. That is true of
-material3 **1.5.0-alpha17**, which it read; this repo is on **1.4.0**, whose `Scaffold` does
-`safeInsets.insets = contentWindowInsets.exclude(consumedWindowInsets)` through
-`onConsumedWindowInsetsChanged`. The contract holds. It is worth knowing that it stops holding
-on some later material3, because that is the day every screen grows a second navigation-bar gap.
-**Re-checked 2026-10-04 on the pinned 1.5.0-alpha29:** its `Scaffold` still excludes consumed
-insets the same way, so the contract holds there too. Check again on each material3 bump.
-
-#### What else landed
-
-- **Navigation area visibility is derived, not pushed.** Every entry in `DroidconEntryProvider`
-  used to call `updateBottomBarState(…)` as a side effect *of composing*. It is now
-  `shouldShowNavigation(route, isMultiPaneWindow)`, a pure function beside the keys, driven
-  into `rememberNavigationSuiteScaffoldState()` by a `LaunchedEffect` per the skill's step 2.1.
-  Net deletion, and one class of composition side effect gone. It also implements the skill's
-  rule that full-screen detail mode must be deactivated where the detail is a pane: a session
-  hides the navigation on a phone and leaves it alone on a tablet.
-- **Detail panes drop the app bar.** `SessionDetailsScreen` and `SpeakerDetailsScreen` already
-  render their own title in the body, so as panes the bar was the same words twice plus a back
-  arrow out of a list that never went away. They take `showTopBar`, set from
-  `LocalListDetailSceneScope.current == null` in the entry provider — the scaffold's own
-  answer, so the screen cannot disagree with the layout.
-- **"Happening now" is a supporting pane**, via `SupportingPaneSceneStrategy` with a 320 dp
-  preferred width, appended to the displayed entries by `NavigationState.toEntries` rather
-  than pushed onto a back stack — so it appears and disappears with the window rather than
-  with a navigation event, and `goBack()` never sees it. It yields to the list-detail scene:
-  the second column is either what is on now, or the session you picked.
-- **The drawer takes the logo** into its header (the suite's `primaryActionContent` slot, which
-  is drawn only for the drawer), and the three custom app bars drop theirs at expanded widths
-  through a defaulted `showLogo`, so no call site changed.
-- **Single-pane content is capped at 840 dp and centred** by `Modifier.readablePaneWidth()`, a
-  layout modifier rather than `widthIn` plus an aligning parent, so it composes onto a lazy
-  list — which cannot centre itself through `contentPadding`.
-- **Sessions and speakers are adaptive grids** per the skill's step 4:
-  `GridCells.Adaptive(360.dp)` for sessions, `320.dp` for speakers. The sessions list became a
-  `LazyVerticalGrid`, keeping its sticky time headers — `LazyGridScope.stickyHeader` exists in
-  foundation 1.12.1.
-- **Resizability is declared**: `resizeableActivity`, the `configChanges` set, and the two
-  ChromeOS `WindowManagerPreference` hints. No `screenOrientation` lock existed and none was
-  added.
-
-#### Grid and FlexBox: available, and deliberately not used
-
-The skill warns that `Grid` and `FlexBox` are experimental from Compose 1.11.0-beta01 and asks
-for confirmation before use. This repo resolves **foundation-layout 1.12.1**, which does ship
-both (`androidx.compose.foundation.layout.GridKt`, `FlexBoxKt`, behind `@ExperimentalGridApi`),
-so availability is not the blocker.
-
-They are not used, because step 4.2 applies to a non-lazy `Column` of same-typed items and the
-lists that needed adapting are lazy — step 4.1's `GridCells.Adaptive` covers them, and it is
-stable API. Opting into an experimental layout for a case the stable one already handles is
-not a trade this repo makes.
-
-#### Edge-to-edge gaps from §3.4, now closed
-
-§3.4 landed the ownership contract but left four items from the skill's checklist open:
-
-- **Lazy lists take the insets as `contentPadding`**, not as padding on a parent container —
-  the skill: *"this clips the content and prevents it from scrolling behind the system bars."*
-  Fixed in `FeedScreen`, `SpeakersScreen` and `SessionStateComponent` (plus the loading
-  skeleton, which is a lazy list too). `SessionsScreen` is the awkward one: its day selector
-  is a fixed header above the list, so the top and sides go to the header and the bottom to
-  the list's `contentPadding`.
-- **`verticalScroll` containers consume what they pad** —
-  `.padding(innerPadding).consumeWindowInsets(innerPadding).verticalScroll(…)` in `HomeScreen`,
-  `AboutScreen`, `FeedBackScreen`, `SessionDetailsScreen` and `SpeakerDetailsScreen`.
-- **`window.isNavigationBarContrastEnforced = false`** for SDK 29+, so the bottom bar's colour
-  reaches the bottom of the screen instead of the system painting its own scrim over it.
-- **`StatusBarProtection`**, the skill's gradient scrim at `statusBars.getTop * 1.2f`, on the
-  two detail screens **when they have dropped their app bar** — which is the only place in the
-  app where content scrolls under the status bar with nothing opaque above it.
-
-`AuthDialog` needs nothing: it is not `usePlatformDefaultWidth = false` + `fillMaxSize()`, so
-the skill's full-screen dialog rule does not apply. FABs are inside a `Scaffold` and pass.
-
-#### Three things a review caught, and what they cost
-
-Worth recording, because none of them is visible from the diff and two would have shipped.
-
-**Back was swallowed on a tablet's landing screen.** `NavDisplay` decides whether to intercept
-back from the entry list it is handed — `isBackEnabled = scene.previousEntries.isNotEmpty()`,
-and then `repeat(entries.size - scene.previousEntries.size) { onBack() }`. The appended
-"happening now" entry is in that list, so at expanded widths back was intercepted on the start
-destination too, where `goBack()` has nothing to pop and silently did nothing. A tablet user on
-Home could not leave the app.
-
-The fix is the smallest honest one: `goBack()` now returns whether it moved, and `MainScreen`
-passes `onBack = { if (!navController.goBack()) activity?.finish() }`. The general lesson for
-anything appended to the displayed entries: **`NavDisplay` counts what it is given**, so a
-synthetic entry has to come with a story about back.
-
-**Back out of a detail left the tab entirely.** The Material default,
-`BackNavigationBehavior.PopUntilScaffoldValueChange`, pops until the scaffold *value* changes —
-and list-beside-placeholder has the same value as list-beside-detail, so it kept going and
-popped the sessions list too. That default assumes the list is a sibling entry; here it is a
-tab root. `PopUntilCurrentDestinationChange` pops one destination at a time, which is what a
-back press out of a session should do.
-
-**The logo vanished in phone landscape.** `rememberShowsAppBarLogo()` keyed on `Expanded`,
-while the drawer that was supposed to carry the logo also required the window to be tall
-enough. A phone in landscape is 891 × 411 dp — Expanded by width, under the 480 dp height bound
-— so it got a rail with no header and app bars with no logo. Both now derive from
-`rememberShowsNavigationDrawer()`, so the bar cannot give up the logo unless the drawer is
-there to take it.
-
-The same review found that four of the new invariants could not fail on the mistake they name.
-The worst was `(ListDetail|SupportingPane)PaneScaffold`, which expands to
-`SupportingPanePaneScaffold` — a type that does not exist — so the half of the rule covering
-the supporting pane this section introduces was unreachable. A regex invariant needs its own
-mutation check, not just a green run.
-
-#### A foldable emulator, and what it caught
-
-The brief for this work said an emulator cannot show a real foldable posture. That is not true
-of a **foldable AVD**: `avdmanager create avd -d pixel_fold` produces a device with a virtual
-hinge (`hw.sensor.hinge=yes`, postures 0-30 / 30-150 / 150-180) whose states are settable with
-`adb shell cmd device_state state 1` — CLOSED, HALF_OPENED, OPENED, REAR_DISPLAY_MODE. It is
-free, local, and `androidx.window` reads it exactly as it reads real hardware.
-
-It paid for itself on the first run. An unfolded Pixel Fold is **841 × 701 dp** — one dp over
-the two-pane threshold — and at that size the whole screen collapsed to 20 dp wide beside the
-drawer. The cause: every top-level destination carries a main-pane role, so
-`SupportingPaneSceneStrategy` formed a two-pane scene out of the main entry alone and starved
-it beside an empty column. The same trap as the list-detail one, which had a guard; the
-supporting one did not, and gating the pane on having live sessions is what exposed it.
-
-The lesson worth keeping is about where the test belongs. The first attempt asserted the
-rendered width of the main pane, and passed with the guard removed — because that assertion was
-really about the Material scaffold's measurement, not about our rule. `PaneGuardTest` asserts
-the rule instead: given these entries, does the guard delegate or decline. That fails the moment
-either guard is removed.
-
-A second run on the same device caught the deeper version of it. With the supporting pane
-guarded, opening **Sessions** squeezed the list to 20 dp beside its own "pick a session"
-placeholder. The guards were never the whole story: both strategies default their
-`PaneScaffoldDirective` to `calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())`, which
-measures the **window**. The navigation component lives inside that window, so a 360 dp drawer had
-already been spent before content was measured — the strategies split 481 dp as though they had
-841 dp.
-
-The fix is to measure. `Navigation` wraps its display in a `BoxWithConstraints` and builds the
-directive from what the box actually has (`rememberContentPaneDirective`), and both strategies take
-it. A supporting entry that will not fit is dropped there too, because `NavDisplay` falls back to
-drawing the last entry it was given — appending a pane that cannot be laid out replaces the screen
-with it rather than putting it alongside.
-
-Deciding pane counts from the content area rather than the window has one rule attached:
-`shouldShowNavigation` must stay window-level. It controls the navigation component, which
-controls the content width — deriving it from the content width instead makes the two feed each
-other, and in exactly this band (window expanded, content not) it oscillates.
-
-Worth testing at a window a *single dp* over a breakpoint. Every other size checked here —
-411, 720, 960, 1706 — sits comfortably inside a class and misses it. Worth testing the **content**
-area too, and not only the window: the two differ by whatever the navigation component costs, and
-every breakpoint decision that matters is on the wrong side of that difference.
-
-#### Tests
-
-`WindowInsetsInvariantsTest` gained four rules and lost none. `AdaptiveInvariantsTest` is new.
-Every one was checked by mutating the source and watching it fail — the guard strategy in
-particular looked like dead code until the test asserted on `LocalListDetailSceneScope` rather
-than on pane widths:
-
-| Invariant | Mutation that must fail it |
-| --- | --- |
-| A screen that pads by the Scaffold insets and scrolls consumes them | drop `consumeWindowInsets` from `HomeScreen` |
-| A screen's lazy list takes the insets as `contentPadding` | drop `contentPadding` from `FeedScreen`'s list |
-| Nothing applies `safeDrawingPadding` to an adaptive scaffold | add it to `MainScreen` |
-| The activity turns off navigation-bar contrast enforcement | flip it to `true` |
-| Multi-pane layouts are Nav3 scenes, never a pane scaffold | use `NavigableListDetailPaneScaffold` |
-| No screen builds its own navigation bar | bring back `BottomAppBar` |
-| Layout decisions read the window, never the configuration | branch on `screenWidthDp` |
-
-`ListDetailSceneTest` renders the real metadata and strategies at 411 dp and 1280 dp;
-`NavigationVisibilityTest` covers the visibility and supporting-pane rules as pure functions.
-
-`FormFactorPreviews` (phone / foldable / tablet / desktop) is in `:core:ui`, and
-`ChaiScreenshotTest.captureFormFactors` records the same four as goldens by overriding
-`DeviceConfigurationOverride.WindowSize` — which is what `currentWindowAdaptiveInfo` reads, so
-the column counts and navigation components in those goldens are the ones the app would really
-choose.
-
-#### Verified on
-
-- **OPPO Reno4, API 31, ColorOS, 3-button navigation.** Compact only: ColorOS denies the shell
-  `WRITE_SETTINGS` and `WRITE_SECURE_SETTINGS`, so neither `settings put user_rotation` nor
-  `wm size` works and the window cannot be widened from adb. What it does prove is the API 31
-  path, where the platform does not enforce edge-to-edge — bottom bar above the 3-button
-  navigation with its colour reaching the bottom edge, navigation hidden on a session detail,
-  content clear of the navigation bar.
-- **RM_Pixel AVD, API 36**, resized with `wm size`/`wm density` through every breakpoint:
-  411 dp (bar), 720 dp (rail), 1706 × 1200 dp (drawer, two panes, supporting pane),
-  960 × 460 dp (expanded width but short — rail, not drawer, which is the phone-landscape
-  rule). Checked the resize itself: going from two panes back to 411 dp restores the detail's
-  app bar and back arrow without recreating the activity. Dark mode checked at drawer size.
-
-#### The rest of §4
-
-- **The agenda grid** (§4.4) is `AgendaGrid`: rooms across the top, times down the left, both
-  headers fixed while the cells scroll. It replaces the agenda toggle's card list from Medium
-  up. `SessionPresentationModel` gained a computed `roomList` that splits the comma-joined
-  `venue`, mirroring `Session.roomList` rather than adding a second source of truth — a session
-  in two rooms gets a cell under each.
-- **Table-top posture** (§4.5): `SessionDetailsScreen` puts the banner above the fold and
-  everything you touch below it. The posture is a defaulted parameter, so the test supplies it
-  rather than waiting on hardware — a layout nobody can run is a layout nobody has checked. A
-  foldable AVD covers the rest; see "A foldable emulator, and what it caught".
-- **Pointer and keyboard** (§4.6): session and speaker cards take the hand cursor, and a session
-  card lifts on hover. `Modifier.clickable` already handles Enter and Space on a focused card.
-
-### Also still open from Phase 0
-
-- Six of the B findings are closed in code but not by a test (B3, B4, B5, B6, B7, B10 — see
-  §3.9). B6 and B10 protect user data and are the ones to do first.
-- ~~The `ChaiColors` token migration~~ — done 2026-10-04, 38 tokens down to 6.
-- ~~Expressive is unreachable on material3 1.4.0~~ — reached 2026-10-04 by pinning material3
-  1.5.0-alpha29. The pin comes out when a BOM manages a stable 1.5.0.
+## Next up — fix duplicated sessions after sync (§3.10), then §14
+
+**Worth fixing next (not caused by the rebrand PR):** the home screen's session count climbs with
+every sync (+80, then +240, then +1,040 on a fresh install), and the same session shows up several
+times. A fresh install of `main` does the same, so sessions are probably being inserted more than
+once per sync. See §3.10.
+
+The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
+system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
+it starts from is in `docs/architecture.md`.
+
+§14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
+Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
+conflicts (§5.3), then the 3D cube (§12).
 
 ---
 
@@ -614,445 +40,68 @@ There are deliberately no time estimates here. This is volunteer work with varia
 
 This document is deliberately exhaustive because you asked for exhaustive. It is not a commitment to build all of it. Shipping everything here in one conference cycle would leave the app in a half-migrated state, which is worse than where it is now.
 
-**Read §16 first.** It contains the sequencing and a "if you only do five things" list. Phase 0 is non-negotiable groundwork; everything after it is independently shippable and independently cancellable.
+**Read §16 first.** It holds the ranked priority order and the stages. What is left of Phase 0 is small (§3); everything after it is independently shippable and independently cancellable.
 
 ### Version numbers
 
-Dependency versions below reflect what was current at authoring time. Before landing any of them, run:
+Dependency versions below reflect what was current when each section was written. Before landing any of them, check what is current:
 
 ```bash
-./gradlew versionCatalogUpdate   # plugin is already declared, just not wired — see §3.2
+./gradlew dependencyUpdates
 ```
-
-The `toml-checker` / `toml-updater` plugins are already in `libs.versions.toml` but never applied to the root project. §3.2 fixes that.
 
 ---
 
 ## 1. Where the codebase stands today
 
-### 1.1 Inventory
-
-| Metric | Value |
-| --- | --- |
-| Kotlin files | 297 |
-| Kotlin LOC | ~21,300 |
-| Gradle modules | 7 (`app`, `chai`, `data`, `datasource:local`, `datasource:remote`, `domain`, `presentation`) + `build-logic` |
-| Convention plugins | 9 |
-| First commit | 2023-02-11 |
-| Kotlin / AGP | 2.1.21 / 8.10.1 |
-| compileSdk / minSdk / targetSdk | 36 / 24 / 36 (app), **34 (libraries)** — target state is **37** (§3.1) |
-| Compose BOM | 2025.06.00 |
-| Navigation | **Navigation 3** (`navigation3-runtime` 1.0.0) |
-| Networking | Ktor 3.1.3 |
-| Persistence | Room 2.7.1 (schema v5), DataStore Preferences |
-| DI | Hilt 2.56.2 + KSP |
-| Sync | WorkManager + Firebase Remote Config feature toggles |
-| Quality gates | ktlint, detekt, spotless, Jacoco, Codecov |
-| Test files | 33 unit/Robolectric · **2 instrumentation (both scaffolding)** |
-
-### 1.2 What is genuinely good — do not regress this
-
-Being explicit here matters, because a modernization plan can read as "everything is broken." It isn't. This codebase is above the median for a community conference app:
-
-1. **Real module boundaries.** `domain` is pure Kotlin with no Android dependency. `data` depends on `domain`, not the reverse. `datasource:local` and `datasource:remote` are separately consumable. This is the hard part of clean architecture and it's done.
-2. **Convention plugins.** `build-logic/` follows the Now in Android pattern. Adding a module is cheap. Most community apps copy-paste 200-line `build.gradle.kts` files into every module; this one doesn't.
-3. **Navigation 3, already.** `NavigationState` with per-tab back stacks, `rememberSerializable` for process-death survival, a `NavigationController` with directional transition tracking. This is ahead of most production apps in 2026 and is a genuine differentiator for a conference app that developers will read the source of.
-4. **A design system module (`chai`).** Semantic color tokens (38 of them), a typography scale, atoms/components/icons separation. The bones are right even where the implementation needs work (§5).
-5. **Feature toggles wired to Remote Config.** `RemoteFeatureToggle` already exists. This is exactly the infrastructure needed to ship AI features safely behind a kill switch (§6.11) — a rare thing to already have.
-6. **MVI-ish unidirectional flow in `sessions`.** `SessionsIntentHandler` + a single `SessionsUiState` derived via `combine` + `stateIn`. The pattern is correct.
-7. **Offline-first by construction.** Room is the source of truth, `Flow` all the way to the UI, WorkManager reconciles. The app works on Nairobi conference-venue wifi, which is the actual requirement.
-
-### 1.3 Findings — correctness bugs
-
-These are real defects, ordered by user impact. Each has a fix in §3.3.
-
-#### B1 — Selecting any room filter empties the session list
-
-> **Corrected after review.** An earlier draft of this plan named the *topics* filter as the headline bug. That was wrong, and the correction matters because it changes what ships first. Topics is unreachable dead code (see B11). The **room** filter is the one that's broken, and unlike topics it is fully exposed in the UI.
-
-Three facts that only bite in combination:
-
-1. `SessionsFilterPanel.loadFilters()` hardcodes the room options as `"Room A"`, `"Room B"`, `"Room C"`.
-2. `data/.../mappers/SessionMapper.kt:70` builds the session's room field from the API: `rooms = this.rooms.joinToString(separator = ",") { it.title }` — real venue titles, and comma-joined when a session spans rooms. `SessionPresentationModel.color`'s `when (venue)` tells us the real names are `"Opal"`, `"Sapphire"`, and others.
-3. `SessionsViewModel.filterSessions()` tests `filterState.rooms.contains(it.rooms)` — a `List<String>.contains(String)`, i.e. exact whole-string equality.
-
-So `listOf("Room A").contains("Opal")` is `false` for every session. **Tap any room filter and the list goes empty.**
-
-Even with the names corrected, the comparison is still wrong: a session in `"Opal,Sapphire"` would never match a filter for `"Opal"`, because the filter compares against the joined string rather than the parts.
-
-**User-visible effect:** the room filter appears to work, highlights correctly, and returns nothing. On a conference day, a user trying to find what's on in the room they're sitting in gets an empty screen.
-
-#### B11 — `java.time` on minSdk 24 with core library desugaring never enabled — **resolved**
-
-> Fixed twice over: desugaring was enabled, and `minSdk` later moved to 26 where `java.time` is
-> native. The crash is now unreachable rather than guarded. Kept for the reasoning below, which is
-> why `minSdk` must not drop below 26 without restoring the guard.
-
-> Numbered B11 because it was found last, during the review pass in §1.3a. It is placed here because it is the **most severe finding in the document** and priority is not the same thing as discovery order. See §1.3a for the full priority ordering.
-
-It crashes the app on devices the manifest claims to support.
-
-- `minSdk = 24` (`KotlinAndroid.kt`).
-- `java.time` was added in **API 26**.
-- `isCoreLibraryDesugaringEnabled` appears **nowhere** in the build.
-- `desugar_jdk_libs` is declared in `libs.versions.toml` — both a version and a library alias — and **wired to no module**. Someone knew this was needed and never finished.
-
-`java.time` is used in production code in three modules:
-
-| File | Usage |
-| --- | --- |
-| `data/.../mappers/SessionMapper.kt:26-28` | `LocalDateTime.parse(...).toInstant(ZoneOffset.ofHours(3))` in `fromString()` |
-| `datasource/remote/.../feed/model/FeedDTO.kt:21` | `LocalDateTime` field |
-| `datasource/remote/.../feed/deserializer/LocalDateTimeSerializer.kt:24` | `LocalDateTime` + `DateTimeFormatter` |
-
-`SessionMapper.fromString()` is called from `SessionDTO.toEntity()`, which runs on **every session sync** — and sync runs at launch. So on Android 7.0 and 7.1 the app throws `NoClassDefFoundError` the first time it syncs.
-
-**Fix:** §3.1's `isCoreLibraryDesugaringEnabled = true` plus the `coreLibraryDesugaring` dependency. That change was already in this plan, but framed as an enabler for a future `kotlinx-datetime` refactor. It is not an enabler — **it is a crash fix, and it is the single highest-priority change in this document.**
-
-**Verify before and after** on an API 24 emulator. And add a CI instrumentation matrix entry at API 24 (§15.1 currently starts at 26, which is exactly why nobody caught this).
-
-#### B2 — Destructive Room migration wipes bookmarks
-
-`datasource/local/.../di/DatabaseModule.kt` calls `.fallbackToDestructiveMigration()` with only `MIGRATION_4_5` registered.
-
-**User-visible effect:** any future schema change without a hand-written migration silently deletes every starred session. For a conference app, the starred-sessions list *is* the user's personal agenda. Losing it the morning of day 1 is a severe failure. Additionally `exportSchema = false` means there is no schema snapshot, so migration tests are impossible and Room can't generate auto-migrations.
-
-#### B3 — `-Xjvm-default=all` is a no-op
-
-`presentation/build.gradle.kts`:
-
-```kotlin
-kotlinOptions {
-    freeCompilerArgs + "-Xjvm-default=all"   // result discarded
-}
-```
-
-`+` on a `List` returns a new list; nothing is assigned. The flag has never been applied.
-
-#### B4 — Library modules target SDK 34, app targets 36; both should be 37
-
-`AndroidLibraryConventionPlugin` sets `defaultConfig.targetSdk = 34`; `AndroidApplicationConventionPlugin` sets `36`. Library `targetSdk` only affects instrumentation tests, so the effect is that **library-module instrumented tests run under different platform behaviour than the shipping app** — including the edge-to-edge and predictive-back behaviour changes that land at 35/36. Tests can pass while the app is broken.
-
-Two things to fix, not one:
-
-1. **The drift.** Two hardcoded numbers in two plugins with nothing tying them together. Both must come from a single version-catalog entry so they cannot diverge again.
-2. **The level.** Move to `compileSdk = 37` / `targetSdk = 37` across every module.
-
-Bumping to 37 is the part with actual behavioural risk, and it needs its own PR with its own testing pass rather than riding along with the drift fix. Land the shared version ref first (mechanical, zero behaviour change), then bump the shared value to 37 in a second PR where the only thing under review is the platform-behaviour fallout. Review [the behaviour changes for apps targeting 37](https://developer.android.com/about/versions) before that second PR — edge-to-edge enforcement (§3.4) is the one already known to affect this app.
-
-#### B5 — `findActivity()` throws in previews and non-Activity contexts
-
-`chai/src/main/java/com/droidconke/chai/Theme.kt`:
-
-```kotlin
-private fun Context.findActivity(): Activity {
-    // ...
-    throw IllegalStateException("Activity absent")
-}
-```
-
-Guarded by `if (!view.isInEditMode)`, which covers Studio previews but **not** Robolectric, Roborazzi, or any composition hosted outside an Activity (e.g. a Glance widget host, a `ComposeView` in a Service, or a screenshot test). This will block the screenshot-testing work in §10 until fixed.
-
-#### B6 — Screen-level state that doesn't survive rotation
-
-`SessionsScreen.kt`: `showMySessions` uses `remember { mutableStateOf(false) }` while its siblings use `rememberSaveable`. Rotating the device resets the "My Sessions" toggle but **not** the underlying `filterState` in the ViewModel — so the switch reads OFF while the list is still filtered to bookmarks. Divergent state between UI and ViewModel.
-
-`isFilterDialogOpen` is written in three places and never read. Dead state.
-
-#### B7 — Splash-screen race
-
-`MainActivity.onCreate`:
-
-```kotlin
-var keepSplashScreen = true
-splashScreen.setKeepOnScreenCondition { keepSplashScreen }
-lifecycleScope.launch { /* ... */ keepSplashScreen = false }
-```
-
-A plain local `var` mutated from a coroutine and read from a platform callback on the main thread. It happens to work because both run on the main dispatcher, but it's unsynchronized-by-luck, and `setKeepOnScreenCondition` blocks the first frame on a *network-dependent* Remote Config fetch. On a cold start with bad connectivity this holds the splash screen for the full Remote Config timeout.
-
-#### B8 — Theme colours hardcoded in `CText`
-
-`chai/.../components/CText.kt`: `CParagraph` hardcodes `ChaiBlack`, `CPageTitle` hardcodes `ChaiBlue`, `CSubtitle` and `CActionText` hardcode `ChaiRed`. These four are theme-blind — black text on a dark background in dark mode.
-
-#### B9 — `SimpleDateFormat` in a ViewModel
-
-`SessionsViewModel:63` instantiates `SimpleDateFormat("dd", Locale.getDefault())` per emission. `SimpleDateFormat` is not thread-safe, and `kotlinx-datetime` plus core library desugaring are **already dependencies**. Also: the "which day is today" default-selection logic compares a `dd` day-of-month string against event-day strings, which breaks for any event spanning a month boundary.
-
-#### B10 — Mutable state inside serializable navigation keys
-
-```kotlin
-@Serializable
-sealed class Screens(
-    @DrawableRes var icon: Int,
-    var title: String,
-) : NavKey
-```
-
-`var` in a navigation key that gets serialized to `SavedState`. Also: `title` is a hardcoded English string, so **the entire bottom navigation bar is unlocalizable** (§14), and icon resource IDs are not stable across builds — persisting them across process death is unsound in principle.
-
-#### B12 — Session-type filter is broken by letter case
-
-`SessionsFilterPanel.loadFilters()` sets `value = "keynote"` and `value = "codelab"` in lower case. The comparison is `filterState.sessionTypes.contains(it.sessionFormat)` — case-sensitive exact match. `SessionPresentationModel.isKeynote` uses `format.contains("Keynote", ignoreCase = true)`, which tells us the API returns the capitalised form.
-
-So the Keynote and Codelab filters return nothing. `"Session"`, `"Workshop"`, `"Lightning talk"` and `"Panel discussion"` are capitalised and may work, which is why this reads as flaky rather than broken.
-
-Same root cause as B1: **filter option values are hand-typed constants in a composable rather than derived from the data.** Fixing the strings fixes today's bug; deriving the options fixes the class of bug.
-
-#### B13 — withdrawn. The branch is reachable; the finding was wrong
-
-```kotlin
-// data/.../repos/AuthManager.kt:46
-} catch (e: Exception) {
-    when (e) {
-        is ServerError, is NetworkError ->
-            DataResult.Error("Login failed", networkError = true, exc = e)
-        else -> DataResult.Error("Login failed", exc = e)
-    }
-}
-```
-
-This was filed on the premise that `safeApiCall` had no callers and `AuthApi.googleLogin` did not
-go through it. Both halves are false: `googleLogin` and `logout` are wrapped in `safeApiCall`, so
-`ServerError` and `NetworkError` do get thrown and the `networkError = true` branch is reachable.
-`AuthManagerTest` is testing real behaviour.
-
-What is actually left here is smaller and is not a bug: `safeApiCall` is
-`@Deprecated("Use dataResultSafeApiCall")`, and its two callers have not moved. Migrate them, or
-drop the annotation — a deprecation nobody acts on is noise. Do **not** delete `safeApiCall`;
-earlier drafts of this plan and of §16.0 said to, and that would have broken login.
-
-#### B14 — Eight of ten lazy lists have no `key`
-
-Only `VerticalStepComponent` and `SessionStateComponent` pass `key`. Missing at:
-
-| File | Line |
-| --- | --- |
-| `home/components/HomeSessionSection.kt` | 67 |
-| `home/components/HomeSpeakersSection.kt` | 53 |
-| `speakers/view/SpeakersScreen.kt` | 142 |
-| `common/bottomnav/BottomNavigationBar.kt` | 72, 80 |
-| `sessions/components/EventDaySelector.kt` | 42 |
-| `feed/view/FeedShareSection.kt` | 103 |
-| `feed/view/FeedScreen.kt` | 155 |
-
-Without keys, Compose identifies items positionally: scroll position jumps when a list reorders after sync, item animations attach to the wrong rows, and items re-compose that should have skipped. §9.5 previously listed this as something to "confirm" — it isn't a maybe, it's eight sites.
-
-`HomeSpeakersSection.kt:53` compounds it with `items(speakers.take(8))`, which allocates a fresh list on every recomposition and so defeats skipping by identity. Hoist the slice to the ViewModel or `remember` it.
-
-#### B15 — Session card colours can never respond to dark mode
-
-```kotlin
-// presentation/.../models/SessionPresentationModel.kt:26-28, 47
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiTeal
-// …
-val color = when (venue) {
-    "Opal" -> ChaiRed
-    "Sapphire" -> ChaiTeal
-    else -> ChaiBlue
-}
-```
-
-A plain data class reaching into the tier-1 brand palette. Because it isn't `@Composable`, it cannot read `MaterialTheme` — so these colours are **structurally incapable** of responding to theme, dark mode, or contrast settings. It also hardcodes venue names, which change every year.
-
-This is the single best argument for §3.5's rule against tier-1 palette references outside `chai/colors`, and the fix is to move the mapping into the composable that draws the card, keyed off a semantic token.
-
-#### B16 — Two more `SimpleDateFormat` sites, and a masked NPE
-
-B9 named `SessionsViewModel`. There are two others:
-
-- `data/.../repos/SessionsManager.kt:88` — `SimpleDateFormat("dd", Locale.getDefault())`, in the data layer.
-- `presentation/.../utils/DateAndTimeUtils.kt:24` — `SimpleDateFormat(...).parse(this)` returns a nullable `Date?`, then `timePosted.time` dereferences it. The `catch (e: Exception)` two lines down silently swallows the resulting NPE and returns the raw input string, so a malformed timestamp renders as an ISO-8601 blob in the feed instead of "2 days ago".
-
-Both are covered by the same `kotlinx-datetime` migration, which is only safe **after** B11's desugaring fix.
-
-### 1.3a Priority ordering of the correctness findings
-
-Findings are numbered in discovery order. This is the order to fix them in:
-
-| Priority | Finding | Why this rank |
-| --- | --- | --- |
-| **P0** | B11 desugaring | Crashes on a supported API level. Nothing else matters if the app doesn't start. |
-| **P0** | B2 destructive migration | Silently deletes the user's agenda. Latent, but unbounded damage when it fires. |
-| **P0** | B1 room filter | Fully exposed broken feature on a core screen. |
-| **P1** | B12 filter case · B6 state divergence · B7 splash race | User-visible, bounded, cheap. |
-| ~~P1~~ | ~~B13 unreachable branch~~ | Withdrawn — the branch is reachable. See §1.3. |
-| **P1** | B4 targetSdk drift | Blocks trustworthy instrumentation tests. |
-| **P2** | B14 lazy keys · B15 card colours · B5 `findActivity` | Quality and correctness-of-architecture; B5 blocks §10.2. |
-| **P2** | B3 no-op flag · B8 theme-blind text · B9/B16 date handling · B10 nav keys | Cleanup, or prerequisites for later phases. |
-| **Deferred** | B11a topics filter (see §1.4) | Dead code. Delete it or spec it with the backend; don't half-build it. |
-
-### 1.4 Findings — deprecated and dead code
-
-| Item | Location | Replacement |
-| --- | --- | --- |
-| `GoogleSignIn` / GMS Auth API | `GoogleSignInHandler`, `AuthViewModel`, `AuthDialog`, `GoogleSignInButton` | Credential Manager + Google ID |
-| `HomeBannerSection` | commented out in `HomeScreen` | Decide: ship or delete. |
-| `chai` drawables duplicated in `presentation` | 9 identical files remain | Single source in `chai`. |
-
-The `compose` bundle is applied to **every** Compose module by `AndroidLibraryComposeConventionPlugin`, so `chai` — a pure design-system module — pulled in `paging-compose`, `runtime-livedata`, `constraintlayout-compose`, and `navigation3`. That's the bundle-as-kitchen-sink antipattern. **Done:** `coil` and `navigation3` are separate bundles now, and they plus `activity-compose`, `constraintlayout-compose` and `lifecycle-runtime-compose` are declared in `presentation`.
+The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the pieces fit is in [`docs/architecture.md`](architecture.md). This section lists only the findings from the original audit that are still open. Every correctness bug it found (B1–B16) is fixed or withdrawn; the fixes that still lack a regression test are in §3.9.
 
 ### 1.5 Findings — architecture
 
-**A1 — No adaptive layout support at all.** No `androidx.window`, no `material3-adaptive`, no `WindowSizeClass`, no `@PreviewScreenSizes`. The README claims the app "is optimized for phones and tablets of all shapes and sizes." It is not — it renders a phone layout stretched across a tablet, with a bottom bar on a 13" screen. Google Play surfaces large-screen quality in store rankings and on ChromeOS/foldables; this is both a UX and a distribution problem. (§4)
+**A5 — Domain models carry transport types.** `Session.startDateTime: String`, `endDateTime: String`, `startTime: String`, `endTime: String` — four string fields where two `Instant`s belong. Parsing is spread across the data-layer `SessionMapper`, `SessionsManager`, the presentation `SessionMapper` in `core:ui`, `DateAndTimeUtils` and `SessionsViewModel`. Timezone handling is implicit.
 
-**A2 — No edge-to-edge, no insets handling.** Zero references to `WindowInsets`, `enableEdgeToEdge`, `safeDrawing`, or `systemBarsPadding` in 297 files. Edge-to-edge is enforced for apps targeting SDK 35+; the app targets 36 today and 37 after §3.1. Right now the framework's compatibility path is doing the work, and the manual `statusBarColor` write is a no-op. On API 35+ devices the layout is being saved by luck. **This must be fixed before the targetSdk 37 bump**, not after — bumping the target while insets are unhandled turns a latent problem into a visible one. (§3.4)
-
-**A3 — `chai` bypasses Material 3 entirely.** `ChaiTheme` calls `MaterialTheme(content = content)` — default `colorScheme`, default `typography`, default `shapes` — then layers a parallel `ChaiColors` on a `CompositionLocal`. Consequences:
-
-- Every stock M3 component (`ModalBottomSheet`, `Snackbar`, `Slider`, `DatePicker`, `TextField`, `NavigationBar`) renders in **Material's default purple**, not brand colours. You can see this in `SessionsScreen`, which has to manually pass `containerColor = ChaiGrey90.copy(alpha = 0.52f)` to `ModalBottomSheet` to compensate.
-- No dynamic colour, no M3 Expressive, no `MotionScheme`.
-- Typography is ~20 hand-rolled composable functions (`ChaiBodySmallBold`, `ChaiTextLabelLarge`, …) instead of a `Typography` object. `LocalTextStyle` doesn't work, `TextStyle` can't be overridden at a call site, and every new variant needs a new function. There are already 18 of them.
-- `staticCompositionLocalOf { ChaiColors() }` defaults every colour to `Color.Unspecified`. Forget the provider and the UI renders invisible rather than failing loudly.
-
-**A4 — `presentation` is a monolith.** 120 files, one module: home, sessions, speakers, feed, about, feedback, auth, notifications, navigation, and `MainActivity`. Every UI change recompiles everything. Feature-level ownership is impossible. Build times will get materially worse as the features in §11 land. (§2)
-
-**A5 — Domain models carry transport types.** `Session.startDateTime: String`, `endDateTime: String`, `startTime: String`, `endTime: String` — four string fields where two `Instant`s belong. Parsing is duplicated across `SessionMapper` (data), `SessionMapper` (presentation), `DateAndTimeUtils`, and `SessionsViewModel`. Timezone handling is implicit.
-
-**A6 — No screenshot tests, no E2E tests.** The two `androidTest` files are IDE scaffolding. All UI testing is Robolectric in `src/test`. There is no test that launches the app and walks a user journey, and no protection against visual regression in `chai` — which is exactly what a design system needs. (§10)
-
-**A7 — No performance instrumentation.** No baseline profile, no startup profile, no macrobenchmark module, no `profileinstaller`. Cold-start and scroll performance are unmeasured, therefore unmanaged. Firebase Performance is a dependency but no custom traces are defined. (§9)
+**A6 — No end-to-end tests.** The only instrumented test is `SessionMapperInstrumentedTest`. Nothing launches the app and walks a user journey. (§10.3)
 
 **A8 — Notifications are receive-only.** `MessagingService` handles FCM; `DroidconNotificationManager` posts. There are no local session reminders, no notification channels per category, no user preference surface, and the permission request fires unconditionally on first launch with no rationale (`MainActivity.askNotificationPermission` logs a rationale to Timber instead of showing one). (§8)
 
 ### 1.6 Findings — build & developer experience
 
-**D5 — CI gaps.** CI on every PR, current action versions, and `./gradlew lint` all landed.
-What is still missing: a dependency-review job, an APK-size diff, and a screenshot diff — each
-blocked on something that does not exist yet (§10.2 for screenshots, a size-diff action for the
-other). The release workflow also force-pushes straight to `track: production` with
-`status: completed` — no internal track, no staged rollout, no gate. (§13.5)
+**D5 — CI and release gaps.** CI runs on every PR, including Android Lint and screenshot verification. Still missing: a dependency-review job and an APK-size diff, which needs a size-diff action (§15.1). The release workflow also pushes straight to the production track with `status: completed` — no internal track, no staged rollout, no gate. (§13.2)
 
 ### 1.7 Findings — security & hygiene
 
-**S1 — Debug keystore and its passwords committed.**
-
-```kotlin
-signingConfigs {
-    getByName("debug") {
-        storeFile = file("../keystore/dckedebug.keystore")
-        keyAlias = "dcke"
-        keyPassword = "droidconkenya"
-        storePassword = "droidconkenya"
-    }
-}
-```
-
-A shared debug keystore committed to a public repo is a **deliberate and defensible choice** for an OSS project — it lets contributors install builds over each other and keeps Firebase debug SHA-1 registration stable. Keep it, but document *why* in the README so nobody "fixes" it, and make sure the *release* keystore is nowhere near the repo (it isn't — it comes from `secrets.PLAYSTORE_SIGNING_KEY`, which is correct).
-
-**S3 — `app/google-services.json` is tracked.** Standard practice and not a secret (it contains public client identifiers), but it means **anyone can point their own build at the production Firebase project**. Once §6 lands, that Firebase project will be paying for Gemini API calls. Firebase **App Check** becomes mandatory before any AI feature ships. (§6.11)
-
-**S4 — No network security config.** Ktor talks HTTPS to `api.droidcon.co.ke`, but there's no `networkSecurityConfig` pinning cleartext to off. Add `android:usesCleartextTraffic="false"`.
+**S3 — `app/google-services.json` is tracked.** Standard practice and not a secret (it contains public client identifiers), but it means **anyone can point their own build at the production Firebase project**. Once §6 lands, that Firebase project will be paying for Gemini API calls. Firebase **App Check** becomes mandatory before any AI feature ships. (§6.5, §6.12)
 
 ---
 
-## 2. Target architecture
+## 2. Modules still to come
 
-The current 7-module layout has served well, but `presentation` at 120 files is the bottleneck. Target:
+The module split is done; [`docs/architecture.md`](architecture.md#modules) has the layout. These modules are planned and do not exist yet. Each arrives with the phase that needs it — an empty shell created ahead of the work is scaffolding nobody maintains.
 
-```
-:app                          — Application, MainActivity, DI graph root, manifest merge
-:build-logic                  — convention plugins (existing)
+| Module | For | Section |
+| --- | --- | --- |
+| `:core:ai` | The inference abstraction | §6.2 |
+| `:core:analytics` | Analytics and Crashlytics behind one interface | §15.4 |
+| `:feature:ticket` | Ticketing and QR | §7 |
+| `:feature:notes` | Session notes | §5.5 |
+| `:feature:assistant` | The conference assistant | §6.8 |
+| `:feature:gamification` | Session check-in by photo | §6.9 |
+| `:feature:jobboard` | Job board | §11.1 |
+| `:feature:networking` | Connections | §11.2 |
+| `:feature:challenge` | Code challenges | §11.3 |
+| `:widget` | Glance "what's on now" widget | §11.7 |
 
-:core:model                   — pure Kotlin data classes (from :domain/models)
-:core:domain                  — repository interfaces, use cases (from :domain)
-:core:data                    — repository impls, sync, mappers (from :data)
-:core:database                — Room (from :datasource:local)
-:core:network                 — Ktor, DTOs (from :datasource:remote)
-:core:datastore               — preferences / encrypted prefs
-:core:designsystem            — chai 2.0: theme, tokens, typography, components
-:core:ui                      — shared composables that know about domain models
-:core:common                  — Result, dispatchers, extensions
-:core:analytics               — analytics + Crashlytics abstraction
-:core:ai                      — NEW. inference abstraction (§6)
-:core:testing                 — test doubles, rules, fake data
-:core:screenshot              — NEW. Roborazzi harness + shared previews
-
-:feature:home
-:feature:sessions
-:feature:speakers
-:feature:feed
-:feature:about
-:feature:auth
-:feature:ticket               — NEW (§7)
-:feature:notes                — NEW (§11.5)
-:feature:assistant            — NEW (§6.7)
-:feature:gamification         — NEW (§6.8)
-:feature:jobboard             — NEW (§11.1)
-:feature:challenge            — NEW (§11.3)
-:feature:networking           — NEW (§11.2)
-
-:widget                       — NEW. Glance "next session" widget (§11.7)
-:benchmark                    — NEW. macrobenchmark (§9.1)
-:baselineprofile              — NEW. baseline + startup profile generator (§9.2)
-```
-
-**Do not big-bang this.** The migration order that minimises risk:
-
-1. ~~Extract `:core:designsystem` (rename `chai`, keep the artifact)~~ — **done 2026-09-04.**
-   Gradle path only; the Kotlin package stays `com.droidconke.chai`. `:screenshot-testing`
-   became `:core:screenshot` at the same time.
-2. ~~Split `:core:model` out of `:domain`~~ — **done.** It is a JVM module, not an Android
-   library, so the no-Android rule is enforced by the build rather than by review.
-3. ~~Extract **one** feature end-to-end~~ — **done: `:feature:speakers`.** Two modules had to
-   come out first, which the original order did not anticipate:
-   - **`:core:ui`** — the models, shared components, navigation primitives and resources that
-     every feature reaches for. Nothing could be extracted before it existed.
-   - **`:core:common`** — the `@IoDispatcher` qualifier, which lived in `:datasource:remote`
-     and is used by five modules. A UI feature cannot depend on the network module to get it.
-4. ~~Extract the rest one PR per feature~~ — **done 2026-09-10.** `home`, `sessions`
-   (with `sessionDetails`), `feed`, `about` (with `feedback`) and `auth` came out together
-   rather than one PR at a time, because the couplings between them only surfaced once they
-   were all moving. `:core:testing` came out with them. The pattern is written up under
-   "Extracting an existing feature" in `AGENTS.md`.
-
-   **That audit was wrong — see the correction in "Next up".** It claimed no feature imported
-   another; extracting them found `home` importing `sessions.mappers.toPresentationModel`, and
-   a shared test fake coupling `home`'s tests to `sessions`'. Import analysis is a useful
-   first pass, not a verification. Move the module and compile.
-
-   The audit is worth repeating before each extraction, because it is what caught the two
-   blockers this work had to clear — `@IoDispatcher` and, later, `@ConferenceTimeZone`/`Clock`,
-   both DI qualifiers a feature could not reach without depending on the wrong module:
-
-   ```bash
-   # what does a feature still need from :presentation itself?
-   grep -rh "^import com.android254.presentation" presentation/src/main/java/com/android254/presentation/<area>
-   ```
-
-   `notifications` is the one exception and is not a feature: it needs `MainActivity` to build
-   a PendingIntent, so it belongs with the composition root in `:app`.
-5. ~~Rename `:datasource:*` and `:data`/`:domain` to `:core:*` **last**~~ — **done 2026-09-10.**
-   Gradle paths only; Kotlin packages and namespaces stayed, so it touched nine `projects.*`
-   accessors and `settings.gradle.kts` rather than every file. `:core:datastore` was skipped —
-   see "Next up". `:presentation` folded into `:app` at the same time, which §2 had gated on
-   the last feature leaving.
-
-`DroidconEntryProvider`, `Navigation` and `BottomNavigationBar` all know about every feature,
-so they are the composition root. They stayed in `:presentation` until the last feature left,
-and then moved to `:app` with `MainActivity`, notifications and the DI module — at which point
-`:presentation` was deleted.
-
-Rule: **a feature module never depends on another feature module.** Cross-feature navigation goes through `NavKey`s owned by `:core:ui` (or a thin `:core:navigation`), which is how the current `DroidconEntryProvider` already works — that pattern survives the split intact.
+`:core:datastore` is not planned. The preferences code is two files inside `:core:data`, and splitting them out would be symmetry for its own sake.
 
 ---
 
 ## 3. Phase 0 — Foundations
 
-**Must land before anything else. No dependencies.**
-
-Nothing in Phases 1–10 is safe to build on top of the current build configuration and theme layer. This phase is unglamorous and entirely internal. It is also the phase that makes every subsequent phase cheaper.
+Most of Phase 0 has landed: the build configuration, the bug fixes (§3.3), edge-to-edge (§3.4), Credential Manager (§3.7) and AGP 9 (§3.8). Those subsections are deleted and their numbers are not reused. What is left is below.
 
 ### 3.1 Compose compiler configuration
 
-Everything else in this section has landed: `dependencyResolutionManagement` with
-`FAIL_ON_PROJECT_REPOS`, the configuration cache, parallel execution, the 4 GB heap, type-safe
-project accessors, the shared `targetSdk`, desugaring, `compilerOptions`, and the split Compose
-bundle.
-
-What remains is the Compose compiler plugin's own extension. `AndroidCompose.kt` still drives
+The Compose compiler plugin's own extension is not configured. `AndroidCompose.kt` still drives
 metrics through `freeCompilerArgs` strings, which is the pre-plugin way of doing it and gives no
 stability configuration at all:
 
@@ -1085,7 +134,7 @@ extensions.configure<ComposeCompilerGradlePluginExtension> {
 # Types the Compose compiler should treat as stable.
 kotlinx.collections.immutable.ImmutableList
 kotlinx.collections.immutable.ImmutableSet
-kotlinx.datetime.Instant
+kotlin.time.Instant
 kotlinx.datetime.LocalDateTime
 com.android254.domain.models.*
 ```
@@ -1100,44 +149,11 @@ baseline, and the diff is reviewed rather than rubber-stamped.
 
 ### 3.2 Version catalog additions for later phases
 
-The cleanup itself is done — the catalog is current, `toml-checker` and `toml-updater` are
-applied, and `./gradlew dependencyUpdates` works. Dead entries are gone and the bundles are split.
-
-What follows is the set of entries the later phases assume. Add each one with the phase that
-needs it, not up front. Versions are from authoring time; run `./gradlew versionCatalogUpdate`
-before landing any of them.
-
-> **§4 landed 2026-09-17 and none of the adaptive block below was needed as written.** Compose
-> BOM 2026.09.00 manages the whole adaptive family, so the entries carry no version ref and
-> there is no `androidx-adaptive` version to add; `androidx.window:window-core` 1.5.0 arrives
-> transitively; `material3-window-size-class` is unnecessary because
-> `currentWindowAdaptiveInfoV2()` already returns a `WindowSizeClass`; and the entry that was
-> actually needed, `adaptive-navigation3`, is missing here while `adaptive-navigation` — the
-> forbidden `ListDetailPaneScaffoldNavigator` package — is listed. What landed is:
->
-> ```toml
-> compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive" }
-> compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
-> compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
-> compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
-> ```
+The entries the later phases assume. Add each one with the phase that needs it, not up front, and
+check the version first with `./gradlew dependencyUpdates`.
 
 ```toml
 [libraries]
-# Adaptive / large screen (§4) — superseded, see the note above
-androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
-androidx-window-core = { module = "androidx.window:window-core", version.ref = "androidx-window" }
-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidx-adaptive" }
-compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "androidx-adaptive" }
-compose-material3-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "androidx-adaptive" }
-compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite" }
-compose-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class" }
-
-# Auth (§3.7) — already added; §3.7 landed and these three are in the catalog
-androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
-androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
-google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
-
 # Camera + QR (§7)
 camerax-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
 camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
@@ -1166,1268 +182,35 @@ filament-android = { module = "com.google.android.filament:filament-android", ve
 filament-utils = { module = "com.google.android.filament:filament-utils-android", version.ref = "filament" }
 filament-gltfio = { module = "com.google.android.filament:gltfio-android", version.ref = "filament" }
 
-# Perf (§9)
-androidx-benchmark-macro = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmark" }
-androidx-benchmark-micro = { module = "androidx.benchmark:benchmark-junit4", version.ref = "benchmark" }
-androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
-androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
-
-# Testing (§10)
-roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
-roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
-roborazzi-junit-rule = { module = "io.github.takahirom.roborazzi:roborazzi-junit-rule", version.ref = "roborazzi" }
-
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutable-collections" }
-
 [bundles]
-# Split out of the old kitchen-sink `compose` bundle (§1.4)
-compose-core = [
-    "compose-ui", "compose-ui-util", "compose-ui-tooling-preview",
-    "compose-material3", "compose-lifecycle-runtime",
-]
-compose-adaptive = [
-    "compose-material3-adaptive", "compose-material3-adaptive-layout",
-    "compose-material3-adaptive-navigation", "compose-material3-adaptive-navigation-suite",
-]
-navigation3 = [
-    "androidx-navigation3-runtime", "androidx-navigation3-ui",
-    "androidx-lifecycle-viewmodel-navigation3",
-]
 camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-compose"]
-roborazzi = ["roborazzi", "roborazzi-compose", "roborazzi-junit-rule"]
-
-[plugins]
-android-test = { id = "com.android.test", version.ref = "agp" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "benchmark" }
-roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-screenshot = { id = "com.android.compose.screenshot", version.ref = "agp" }
 ```
 
-Also collapse the duplicate version refs: `gradleplugin` and `agp` are both `8.10.1` and both used; `androidx-activity` and `activity` are both `1.10.1`; `androidx-lifecycle`, `lifecycle`, and `runtime` overlap. One ref each.
-
-Then replace every `project(":x")` with the type-safe accessor:
-
-```kotlin
-dependencies {
-    implementation(projects.chai)
-    implementation(projects.data)
-    implementation(projects.datasource.local)
-    implementation(projects.datasource.remote)
-    implementation(projects.domain)
-    implementation(projects.presentation)
-}
-```
-
-### 3.3 Fix the confirmed bugs
-
-#### B1 / B12 — make the room and session-type filters actually match
-
-Two layers to fix, and doing only the first leaves the bug class in place.
-
-**Layer 1 — derive the filter options from the data, don't hand-type them.** `loadFilters()` hardcoding `"Room A"` is the root cause of B1, and hardcoding `"keynote"` is the root cause of B12. The values must come from the same source as the values they'll be compared against:
-
-```kotlin
-// presentation/.../sessions/view/SessionsViewModel.kt
-
-/**
- * Filter options derived from the loaded sessions, so an option can never name a
- * room, level, or format the data doesn't contain. Replaces the hand-typed list in
- * SessionsFilterPanel.loadFilters(), which named rooms ("Room A") that the venue
- * has never had.
- */
-private fun buildFilterOptions(sessions: List<Session>): List<SessionsFilterOption> {
-    fun options(
-        category: SessionsFilterCategory,
-        values: Iterable<String>,
-    ) = values.asSequence()
-        .map(String::trim)
-        .filter(String::isNotBlank)
-        .distinctBy { it.lowercase() }
-        .sorted()
-        .map { SessionsFilterOption(type = category, label = it, value = it) }
-        .toList()
-
-    return options(SessionsFilterCategory.Room, sessions.flatMap { it.roomList }) +
-        options(SessionsFilterCategory.Level, sessions.map { it.sessionLevel }) +
-        options(SessionsFilterCategory.SessionType, sessions.map { it.sessionFormat })
-}
-```
-
-Labels now come from the API rather than `strings.xml`. That's a deliberate trade: room and format names are data, not UI copy, and a translated label that no longer matches the value it filters on is exactly the bug we're fixing. Keep the `session_filter_label_*` strings only for the **category headings**.
-
-**Layer 2 — fix the comparison.** `Session.rooms` is a comma-joined string (`SessionMapper.kt:70`), so give the domain model a parsed accessor and compare against the parts:
-
-```kotlin
-// domain/src/main/java/com/android254/domain/models/Session.kt
-
-data class Session(
-    // …
-    /** Comma-joined room titles, as returned by the API. Prefer [roomList]. */
-    val rooms: String,
-) {
-    /**
-     * The individual rooms this session runs in. A session can span rooms, in which
-     * case [rooms] is "Opal,Sapphire" — filtering against the joined string would
-     * never match either one.
-     */
-    val roomList: List<String>
-        get() = rooms.split(',').map(String::trim).filter(String::isNotEmpty)
-}
-```
-
-Then the predicate:
-
-```kotlin
-// presentation/.../sessions/view/SessionsFilterState.kt
-
-data class SessionsFilterState(
-    val levels: List<String> = emptyList(),
-    val rooms: List<String> = emptyList(),
-    val sessionTypes: List<String> = emptyList(),
-    val isBookmarked: Boolean = false,
-) {
-    val isActive: Boolean
-        get() = levels.isNotEmpty() || rooms.isNotEmpty() ||
-            sessionTypes.isNotEmpty() || isBookmarked
-
-    /** A session matches when it satisfies every *non-empty* facet. */
-    fun matches(session: Session): Boolean =
-        levels.matchesOrEmpty(session.sessionLevel) &&
-            sessionTypes.matchesOrEmpty(session.sessionFormat) &&
-            // Multi-room sessions match a filter for any one of their rooms.
-            rooms.matchesAnyOrEmpty(session.roomList) &&
-            (!isBookmarked || session.isBookmarked)
-
-    // Case-insensitive throughout: the API capitalises "Keynote", the old hardcoded
-    // filter said "keynote", and `contains` is case-sensitive (B12).
-    private fun List<String>.matchesOrEmpty(value: String) =
-        isEmpty() || any { it.equals(value.trim(), ignoreCase = true) }
-
-    private fun List<String>.matchesAnyOrEmpty(values: List<String>) =
-        isEmpty() || values.any { value -> any { it.equals(value, ignoreCase = true) } }
-}
-```
-
-Note `topics` is **gone** from the state class. Per §1.4 it was never reachable; delete it along with `SessionsFilterCategory.Topic` rather than carrying a field nothing can populate.
-
-Then collapse the filter chain — five sequential `.filter {}` calls each re-testing "is this facet empty" become one predicate:
-
-```kotlin
-// presentation/src/main/java/com/android254/presentation/sessions/view/SessionsViewModel.kt
-
-private fun filterSessions(
-    sessions: List<Session>,
-    filterState: SessionsFilterState,
-    selectedEventDay: EventDate,
-): List<SessionPresentationModel> =
-    sessions.asSequence()
-        .filter { filterState.matches(it) }
-        .distinctBy { it.remoteId }
-        .map { it.toPresentationModel() }
-        .filter { it.eventDay == selectedEventDay.value }
-        .toList()
-```
-
-**Tests that must exist before this merges.** These are written to fail against today's code — that's the point:
-
-```kotlin
-// presentation/src/test/.../sessions/view/SessionsFilterStateTest.kt
-
-@Test
-fun `room filter matches a real venue room name`() {
-    // Fails today: loadFilters() would have supplied "Room A".
-    val state = SessionsFilterState(rooms = listOf("Opal"))
-    assertThat(state.matches(sampleSession(rooms = "Opal"))).isTrue()
-    assertThat(state.matches(sampleSession(rooms = "Sapphire"))).isFalse()
-}
-
-@Test
-fun `room filter matches a session spanning multiple rooms`() {
-    // Fails today: the comparison was against the whole joined string.
-    val state = SessionsFilterState(rooms = listOf("Opal"))
-    assertThat(state.matches(sampleSession(rooms = "Opal,Sapphire"))).isTrue()
-}
-
-@Test
-fun `session type filter ignores case`() {
-    // Fails today: B12 — "keynote" never matched "Keynote".
-    val state = SessionsFilterState(sessionTypes = listOf("keynote"))
-    assertThat(state.matches(sampleSession(sessionFormat = "Keynote"))).isTrue()
-}
-
-@Test
-fun `empty filter state matches everything`() {
-    assertThat(SessionsFilterState().matches(sampleSession())).isTrue()
-}
-
-@Test
-fun `filter options never name a value absent from the data`() {
-    val sessions = listOf(
-        sampleSession(rooms = "Opal", sessionFormat = "Keynote", sessionLevel = "Advanced"),
-        sampleSession(rooms = "Sapphire,Opal", sessionFormat = "Workshop", sessionLevel = "Advanced"),
-    )
-    val options = buildFilterOptions(sessions)
-
-    // Every option must match at least one session, or it's a dead filter (B1).
-    options.forEach { option ->
-        val state = SessionsFilterState.from(option)
-        assertThat(sessions.any { state.matches(it) })
-            .withFailMessage("Filter option '%s' matches no session", option.value)
-            .isTrue()
-    }
-    // And levels de-duplicate case-insensitively.
-    assertThat(options.count { it.type == SessionsFilterCategory.Level }).isEqualTo(1)
-}
-```
-
-That last test is the one worth keeping forever — it is a property, not an example, and it makes the whole B1/B12 class of bug impossible to reintroduce.
-
-#### B2 — stop destroying user bookmarks
-
-```kotlin
-// datasource/local/.../di/DatabaseModule.kt
-
-@Provides
-@Singleton
-fun providesDatabase(
-    @ApplicationContext context: Context,
-): Database =
-    Room.databaseBuilder(context, Database::class.java, DATABASE_NAME)
-        .addMigrations(*Database.ALL_MIGRATIONS)
-        // No fallbackToDestructiveMigration. A missing migration must fail loudly
-        // in CI, not silently delete the user's personal agenda on their phone.
-        .build()
-
-private const val DATABASE_NAME = "droidconke-database"
-```
-
-> Renaming the database from `dcke22-database` is a migration in itself — existing installs would start empty. Either keep the old name (recommended: it's invisible to users and the sync worker would refill it anyway, but a fresh DB on upgrade day means losing bookmarks, which is exactly what we're fixing) **or** ship a one-time `SupportSQLiteOpenHelper` copy. Recommendation: **keep `dcke22-database`.** The cost of the rename is real; the benefit is cosmetic.
-
-Turn on schema export so migrations become testable and auto-migrations become possible:
-
-```kotlin
-// datasource/local/build.gradle.kts
-android {
-    defaultConfig {
-        ksp { arg("room.schemaLocation", "$projectDir/schemas") }
-    }
-    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
-}
-```
-
-```kotlin
-@Database(
-    entities = [ /* ... */ ],
-    version = 6,
-    exportSchema = true,          // was false
-    autoMigrations = [
-        AutoMigration(from = 5, to = 6),
-    ],
-)
-```
-
-And a migration test that runs in CI:
-
-```kotlin
-// datasource/local/src/androidTest/.../MigrationTest.kt
-@RunWith(AndroidJUnit4::class)
-class MigrationTest {
-    @get:Rule
-    val helper = MigrationTestHelper(
-        InstrumentationRegistry.getInstrumentation(),
-        Database::class.java,
-    )
-
-    @Test
-    fun migrate5To6_preservesBookmarks() {
-        // Column is `sessionId`, not `session_id` — BookmarkEntity declares
-        // `var sessionId: String` with no @ColumnInfo, so Room uses the property name.
-        helper.createDatabase(TEST_DB, 5).use { db ->
-            db.execSQL("INSERT INTO bookmarks (sessionId) VALUES ('session-42')")
-        }
-
-        val db = helper.runMigrationsAndValidate(TEST_DB, 6, true)
-        db.query("SELECT sessionId FROM bookmarks").use { cursor ->
-            assertThat(cursor.moveToFirst()).isTrue()
-            assertThat(cursor.getString(0)).isEqualTo("session-42")
-        }
-    }
-
-    private companion object { const val TEST_DB = "migration-test" }
-}
-```
-
-**This test is the whole point of the fix.** It is the difference between "we intend not to lose bookmarks" and "we cannot lose bookmarks."
-
-#### B3 / B4 — handled in §3.1 (`compilerOptions`, shared `targetSdk` version ref)
-
-`-Xjvm-default=all` is the Kotlin 1.x spelling; on Kotlin 2.1 use `-jvm-default=all` (the compiler warns about the old name). Since the flag was never actually applied, verify nothing depended on it, then add it to the convention plugin if interface default methods on the JVM are actually wanted — for this codebase, they aren't. **Recommendation: delete the line rather than fix it.**
-
-#### B5 — make `findActivity` nullable
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/Theme.kt
-
-private tailrec fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
-```
-
-Every caller then handles `null`. After §3.4 there is exactly one caller left, and after §3.5 there are none — the whole helper goes away, because edge-to-edge is configured once in `MainActivity` rather than as a `SideEffect` in the theme. **A theme composable should not be reaching for the Activity window.**
-
-#### B6 — hoist screen state into the ViewModel
-
-`showMySessions` is not UI-local state; it is a *filter*, and the filter lives in `SessionsFilterState`. Derive it instead of duplicating it:
-
-```kotlin
-// SessionsUiState.kt
-data class SessionsUiState(
-    val sessions: List<SessionPresentationModel> = emptyList(),
-    val eventDays: List<EventDate> = emptyList(),
-    val sessionStatus: ResultStatus = ResultStatus.Loading,
-    val showMySessionsOnly: Boolean = false,     // NEW — derived from filterState.isBookmarked
-    val isFilterActive: Boolean = false,         // NEW — derived from filterState.isActive
-    val isListLayout: Boolean = true,
-)
-```
-
-```kotlin
-// SessionsViewModel — inside the combine block
-SessionsUiState(
-    sessions = filteredSessions,
-    eventDays = sessionDays,
-    sessionStatus = getResultStatus(filteredSessions),
-    showMySessionsOnly = filterState.isBookmarked,
-    isFilterActive = filterState.isActive,
-    isListLayout = layoutState,
-)
-```
-
-```kotlin
-// SessionsScreen — no local mirror of ViewModel state
-CustomSwitch(
-    checked = sessionsUiState.showMySessionsOnly,
-    onCheckedChange = { onEvent(SessionsIntentHandler.ToggleBookmarkFilter) },
-)
-```
-
-Delete `isFilterDialogOpen` (dead). Keep the bottom-sheet visibility in `rememberSaveable` — that genuinely *is* UI-local.
-
-Also: `SessionsScreen` currently renders `ModalBottomSheet` inside `if (bottomSheetState.isVisible)`. That's inverted — `ModalBottomSheet` owns its own show/hide animation, and gating it on `isVisible` means the enter animation is skipped and `onDismissRequest` fights the guard. Use a separate boolean:
-
-```kotlin
-var showFilterSheet by rememberSaveable { mutableStateOf(false) }
-
-if (showFilterSheet) {
-    ModalBottomSheet(
-        onDismissRequest = { showFilterSheet = false },
-        sheetState = bottomSheetState,
-        containerColor = MaterialTheme.chaiColorsPalette.bottomSheetBackgroundColor,
-    ) {
-        SessionsFilterPanel(
-            onDismiss = { showFilterSheet = false },
-            // ...
-        )
-    }
-}
-```
-
-Note the `containerColor` now comes from the theme instead of the hardcoded `ChaiGrey90.copy(alpha = 0.52f)` — that hardcode existed only because `MaterialTheme` had no brand `colorScheme` (A3). §3.5 removes the need for it entirely.
-
-#### B7 — don't block first frame on the network
-
-```kotlin
-// MainActivity.kt
-@AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-
-    private val viewModel: MainViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        // Keep the splash only until the *first cached data* is ready — never on a network call.
-        splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
-
-        setContent {
-            ChaiTheme {
-                DroidconApp(
-                    windowSizeClass = calculateWindowSizeClass(this),
-                )
-            }
-        }
-    }
-}
-```
-
-```kotlin
-// MainViewModel.kt
-@HiltViewModel
-class MainViewModel @Inject constructor(
-    private val remoteFeatureToggle: RemoteFeatureToggle,
-    private val syncDataWorkManager: SyncDataWorkManager,
-    sessionsRepo: SessionsRepo,
-) : ViewModel() {
-
-    private val _isInitialising = MutableStateFlow(true)
-    val isInitialising: StateFlow<Boolean> = _isInitialising.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            // Local cache decides how fast we can draw. 700 ms is a hard ceiling —
-            // past that we show the UI with skeletons rather than an inert splash.
-            withTimeoutOrNull(INITIALISATION_TIMEOUT_MS) {
-                sessionsRepo.fetchSessions().first()
-            }
-            _isInitialising.value = false
-        }
-
-        // Sync is fire-and-forget and must never gate the first frame.
-        viewModelScope.launch {
-            runCatching { remoteFeatureToggle.syncNowIfEmpty() }
-                .onSuccess { shouldSync -> if (shouldSync) syncDataWorkManager.startSync() }
-                .onFailure { Timber.w(it, "Feature toggle fetch failed; continuing with cached config") }
-        }
-    }
-
-    private companion object { const val INITIALISATION_TIMEOUT_MS = 700L }
-}
-```
-
-#### B8 — delete the theme-blind text composables
-
-`CParagraph`, `CPageTitle`, `CSubtitle`, `CActionText` are superseded by the `Chai*` family and hardcode colours. Grep confirms limited usage. **Delete them** rather than fix them; §5 replaces the whole typography layer anyway.
-
-#### B9 / B16 — `kotlinx-datetime` instead of `SimpleDateFormat`
-
-> **Corrected after review.** An earlier draft said `MainViewModel` reads wall-clock time directly and proposed a new `TimeModule`. Both were wrong. `PresentationModule.providesClock()` **already** provides `Clock`, and `MainViewModel` **already** injects it and threads `now` through to `toPresentationModel(now)`. The DI is in place; don't rebuild it.
-
-What's actually left to fix:
-
-| Site | Problem |
-| --- | --- |
-| `SessionsViewModel:63` | `SimpleDateFormat("dd")`. Does **not** inject the available `Clock`. |
-| `SessionsManager:88` | `SimpleDateFormat("dd")` in the data layer. |
-| `SessionMapper.kt:31` | `toPresentationModel(now: Instant = Clock.System.now())` — a default argument that silently reaches for the system clock. Callers that forget to pass `now` become untestable. |
-| `DateAndTimeUtils.kt:24` | `SimpleDateFormat` plus a nullable `parse()` dereference masked by a broad catch (B16). |
-
-> **Sequencing matters here.** All of these move to `java.time`/`kotlinx-datetime`, and `java.time` on minSdk 24 needs desugaring. **B11 must land first**, or this refactor turns a latent crash into a widespread one.
-
-For `SessionsViewModel`, inject the `Clock` that already exists rather than adding a provider:
-
-```kotlin
-@HiltViewModel
-class SessionsViewModel @Inject constructor(
-    private val sessionsRepo: SessionsRepo,
-    private val syncDataWorkManager: SyncDataWorkManager,
-    private val clock: Clock,                                 // already provided
-    @ConferenceTimeZone private val timeZone: TimeZone,       // new — see below
-) : ViewModel()
-```
-
-Drop the default argument so the clock is always explicit:
-
-```kotlin
-// presentation/.../sessions/mappers/SessionMapper.kt
-// Was: fun Session.toPresentationModel(now: Instant = Clock.System.now())
-fun Session.toPresentationModel(now: Instant): SessionPresentationModel { … }
-```
-
-The "which day should be selected by default" logic is also wrong across a month boundary. Fix both:
-
-```kotlin
-// presentation/.../sessions/view/SessionsViewModel.kt
-
-private fun defaultSelectedDay(
-    days: List<EventDate>,
-    clock: Clock = Clock.System,
-    zone: TimeZone = TimeZone.of("Africa/Nairobi"),
-): EventDate? {
-    if (days.isEmpty()) return null
-    val today = clock.now().toLocalDateTime(zone).date
-    return days.firstOrNull { it.date == today } ?: days.first()
-}
-```
-
-`EventDate` gains a real `LocalDate` instead of a `"dd"` string:
-
-```kotlin
-data class EventDate(
-    val date: LocalDate,
-    val label: String,       // "Day 1"
-    val displayDate: String, // "6 Nov"
-)
-```
-
-Add only the missing piece — the timezone qualifier — to the **existing** `PresentationModule`, which already provides `Clock`:
-
-```kotlin
-// presentation/src/main/java/com/android254/presentation/di/PresentationModule.kt
-// `providesClock()` already exists here. Add the qualifier alongside it; do not
-// create a new TimeModule.
-
-@Provides
-@ConferenceTimeZone
-fun providesConferenceTimeZone(): TimeZone = TimeZone.of("Africa/Nairobi")
-```
-
-> **Why a fixed conference timezone and not the device's?** A session is at 14:00 EAT regardless of where the attendee's phone thinks it is. Remote attendees and anyone whose phone clock drifted should see the schedule in venue time. Render *relative* times ("in 20 minutes") from the device clock, and *absolute* times in `Africa/Nairobi`.
-
-#### B10 — mutable state inside serializable navigation keys
-
-```kotlin
-// presentation/.../common/navigation/Screens.kt
-// Keys are pure, immutable, serializable data. No resources, no display strings.
-@Serializable
-sealed interface Screens : NavKey {
-    @Serializable data object Home : Screens
-    @Serializable data object Feed : Screens
-    @Serializable data object Sessions : Screens
-    @Serializable data object About : Screens
-    @Serializable data object Speakers : Screens
-    @Serializable data object Feedback : Screens
-    @Serializable data object Ticket : Screens
-    @Serializable data class SessionDetails(val sessionId: String) : Screens
-    @Serializable data class SpeakerDetails(val speakerName: String) : Screens
-}
-```
-
-```kotlin
-// presentation/.../common/navigation/TopLevelDestination.kt
-// Display metadata lives here — and the label is a resource, not a hardcoded string.
-enum class TopLevelDestination(
-    val route: Screens,
-    @DrawableRes val selectedIcon: Int,
-    @DrawableRes val unselectedIcon: Int,
-    @StringRes val labelRes: Int,
-    @StringRes val contentDescriptionRes: Int,
-) {
-    HOME(Screens.Home, R.drawable.home_icon_filled, R.drawable.home_icon, R.string.nav_home, R.string.nav_home_cd),
-    FEED(Screens.Feed, R.drawable.feed_icon_filled, R.drawable.feed_icon, R.string.nav_feed, R.string.nav_feed_cd),
-    SESSIONS(Screens.Sessions, R.drawable.sessions_icon_filled, R.drawable.sessions_icon, R.string.nav_sessions, R.string.nav_sessions_cd),
-    TICKET(Screens.Ticket, R.drawable.ticket_icon_filled, R.drawable.ticket_icon, R.string.nav_ticket, R.string.nav_ticket_cd),
-    ABOUT(Screens.About, R.drawable.about_icon_filled, R.drawable.about_icon, R.string.nav_about, R.string.nav_about_cd),
-    ;
-
-    companion object {
-        val routes: List<Screens> = entries.map { it.route }
-        val routeSet: Set<Screens> = routes.toSet()
-        fun fromRoute(route: Screens): TopLevelDestination? = entries.firstOrNull { it.route == route }
-    }
-}
-```
-
-This also gives the nav bar filled/outlined icon states (a Material 3 expectation the current single-icon model can't express).
-
-### 3.4 Edge-to-edge and window insets — done
-
-> **Landed 2026-09-17.** See "§3.4 landed" at the top of this document for what shipped and
-> where it diverges from the sketch below, which is kept for the reasoning. The short version:
-> the contract splits at the app bar rather than threading `contentPadding` through
-> `Navigation`, because every screen already owns a `Scaffold`.
-
-This is a **correctness** issue, not polish. The app targets SDK 36 today and 37 after §3.1 — edge-to-edge is mandatory at both. Today the app has zero insets handling and one deprecated `statusBarColor` write. **Land this before the targetSdk bump.**
-
-**Step 1 — opt in once, in the Activity:**
-
-```kotlin
-// MainActivity.onCreate, before setContent
-enableEdgeToEdge()
-```
-
-**Step 2 — delete the `SideEffect` from `chai/Theme.kt`.** `window.statusBarColor` and `navigationBarColor` are no-ops on API 35+. The correct control surface is the appearance of the *icons*, and `enableEdgeToEdge()` derives that from the theme automatically. The theme composable becomes purely declarative:
-
-```kotlin
-// Sketch only — §3.5 step 3 has the canonical ChaiTheme, including the token
-// arguments and the Expressive-readiness pieces. The point here is what's *absent*.
-@Composable
-fun ChaiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    // No window reads, no Activity lookup, no SideEffect. Previews and
-    // Robolectric now work identically to the real app (fixes B5).
-    CompositionLocalProvider(
-        LocalChaiColorsPalette provides if (darkTheme) ChaiDarkComponentColors else ChaiLightComponentColors,
-    ) {
-        MaterialTheme(
-            colorScheme = if (darkTheme) ChaiDarkColorScheme else ChaiLightColorScheme,
-            typography = ChaiTypography,
-            shapes = ChaiShapes,
-            content = content,
-        )
-    }
-}
-```
-
-**Step 3 — consume insets deliberately.** The current `MainScreen` does:
-
-```kotlin
-Scaffold(bottomBar = { … }) { padding ->
-    Column(Modifier.padding(padding)) { Navigation(…) }   // ← wrong
-}
-```
-
-Two problems: a `Column` wrapper adds a layout node for nothing, and `Modifier.padding(padding)` insets the *whole* nav host — so a screen that wants to draw its hero image behind the status bar can't. Correct shape:
-
-```kotlin
-@Composable
-fun DroidconApp(
-    windowSizeClass: WindowSizeClass,
-    viewModel: MainViewModel = hiltViewModel(),
-) {
-    val navigationState = rememberNavigationState(
-        startRoute = Screens.Home,
-        topLevelRoutes = TopLevelDestination.routeSet,
-    )
-    val navController = remember(navigationState) { NavigationController(navigationState) }
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    DroidconNavigationScaffold(
-        windowSizeClass = windowSizeClass,
-        navigationState = navigationState,
-        onNavigate = navController::navigate,
-        showNavigation = uiState.isTopLevelDestination,
-        liveSessions = uiState.liveSessions,
-    ) { contentPadding ->
-        Navigation(
-            navController = navController,
-            navigationState = navigationState,
-            // Screens receive the padding and decide where to apply it —
-            // some consume it, some draw behind it.
-            contentPadding = contentPadding,
-        )
-    }
-}
-```
-
-And per-screen, the two idioms to standardise on:
-
-```kotlin
-// (a) Screen with a top bar that should tint under the status bar:
-Scaffold(
-    topBar = { DroidconAppBar(scrollBehavior = scrollBehavior) },
-    contentWindowInsets = WindowInsets.safeDrawing,
-) { padding -> /* content */ }
-
-// (b) Screen with a hero that draws edge-to-edge, content that doesn't:
-LazyColumn(
-    contentPadding = WindowInsets.safeDrawing
-        .only(WindowInsetsSides.Bottom)
-        .asPaddingValues(),
-) {
-    item { HeroImage(Modifier.fillMaxWidth()) }   // behind the status bar, by design
-    items(sessions) { SessionCard(it, Modifier.padding(horizontal = 20.dp)) }
-}
-```
-
-**Step 4 — the keyboard.** `FeedBackScreen` and `DroidConTextField` have text input with no IME handling. Add:
-
-```xml
-<!-- app/src/main/AndroidManifest.xml -->
-<activity
-    android:name="com.android254.presentation.activity.MainActivity"
-    android:windowSoftInputMode="adjustResize"
-    ... />
-```
-
-```kotlin
-Column(Modifier.imePadding()) { /* form */ }
-// or, for a scrolling form:
-LazyColumn(contentPadding = WindowInsets.safeDrawing.union(WindowInsets.ime).asPaddingValues())
-```
-
-**Definition of done:**
-- `grep -r "statusBarColor\|navigationBarColor" --include=*.kt` returns nothing.
-- Every `Scaffold` either sets `contentWindowInsets` explicitly or documents why the default is right.
-- Screenshot tests (§10) include a device config with a cutout and a 3-button nav bar.
-- Manual check on an API 36 device *and* an API 30 device — edge-to-edge behaviour diverges and both must look correct.
-
-### 3.5 chai and Material 3 — the recommendation
-
-This section answers a direct question: should chai be made to match Material 3's tokens, and if so, how?
-
-**Short answer: keep chai, don't replace it — but chai is missing a layer, and that missing layer is exactly what Material 3's `ColorScheme` / `Typography` / `Shapes` / `MotionScheme` provide. Insert M3 underneath chai as the role layer, and keep chai on top as the brand layer.**
-
-This is not a compromise position. It's the architecture chai was clearly reaching for — `CFonts.kt`'s own doc comment describes a `CTypography` file that was never written, and `CShapes` exists but was never wired up. The design intent is already there; the middle tier just never got built.
-
-> **Corrected 2026-09-03: the BOM is fine; Expressive is not public API.**
->
-> The earlier note here said BOM `2025.06.00` pinned material3 to 1.3.2 and that a BOM bump
-> would unblock Expressive. The first half is stale — the BOM has moved twice since and still
-> resolves material3 to **1.4.0** (re-checked 2026-09-17 on BOM `2026.09.00`):
-> ```bash
-> ./gradlew :core:ui:dependencies --configuration debugCompileClasspath | grep material3
-> # androidx.compose.material3:material3 -> 1.4.0
-> ```
-> The conclusion still holds, for a different reason. In 1.4.0 the whole Expressive surface is
-> `internal`, so no dependency change reaches it:
->
-> | API | State in 1.4.0 |
-> | --- | --- |
-> | `MaterialExpressiveTheme` | `internal` |
-> | `MotionScheme.standard()` / `.expressive()`, `MaterialTheme.motionScheme` | `internal` |
-> | `Typography`'s `*Emphasized` roles and the constructor that sets them | `internal` |
-> | `ButtonGroup`, `FloatingToolbar`, `LoadingIndicator` | absent |
->
-> So §5.2 is blocked on material3 making these public, not on this repo's dependency choices.
-> Two knock-on corrections to the Expressive-readiness gate below:
-> - `ChaiTypography` **cannot** fill the `*Emphasized` roles. It fills the 15 base roles.
-> - `ChaiMotionScheme` **cannot** exist. chai has no motion tier and cannot gain one that
->   Material components will honour until `MotionScheme` is public. Named chai-local specs
->   (`ChaiMotion`) are still possible, but they would be dead code today, so they are not built.
->
-> Re-check this table when material3 next moves; the moment those go public, §5.2 becomes the
-> one-line change it was designed to be.
->
-> **Update 2026-10-04:** all three are public in material3 **1.5.0-alpha29**, and
-> `MaterialExpressiveTheme` needs no opt-in there. The repo pins that alpha to reach them — see
-> "§3.5 and §5.2 landed" at the top. `ButtonGroup` and `LoadingIndicator` exist in it too.
-
-**And the target is Material 3 Expressive, not plain M3.** That's a requirement, and it changes the token design in three specific ways that are cheaper to build in now than to retrofit:
-
-1. **Typography needs the `*Emphasized` roles.** M3 Expressive's `Typography` carries `displayLargeEmphasized`, `headlineMediumEmphasized`, `titleLargeEmphasized`, and so on. Expressive components reach for them. If chai only fills the base roles, every emphasized style silently falls back to the Material default font — Montserrat everywhere except the places Expressive is trying to draw attention to.
-2. **chai needs a motion tier, which it does not have at all today.** chai has colour, type, shape, spacing, and alpha. It has zero motion tokens. `MaterialExpressiveTheme` takes a `MotionScheme`, and that's the mechanism behind Expressive's spring-based transitions and shape morphing. This is a genuinely new tier for chai, not a rename.
-3. **`CShapes`' corner scale will fight Expressive.** 3/7/9/10 dp is a tight, conservative ramp — Material's own default is 8/12/16/28 dp, and Expressive leans *further* into large and varied radii plus `MaterialShapes` morphing. Wiring `CShapes` in as-is is correct for step 1 (it preserves today's look), but the scale itself is a design decision to revisit in §5.2.
-
-So the sequencing below is deliberate but the *shape* of the tokens is Expressive-ready from the start: §3.5 lands the full token structure under plain `MaterialTheme` so the diff reads as "the purple is gone," and §5.2 flips one call to `MaterialExpressiveTheme` and passes the motion scheme. **The tokens are not rebuilt between those two steps** — that's the whole point of getting the tiering right first.
-
-#### Why this isn't optional: what's broken right now
-
-I want to be concrete, because "adopt design tokens" is the kind of advice that gets deprioritised as architectural taste. These are live defects, today, on `main`:
-
-**1. `CPrimaryButton` — chai's own primary button — renders in Material's default purple.**
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/components/CButtons.kt:86-92
-colors = ButtonDefaults.buttonColors(
-    contentColor = MaterialTheme.colorScheme.primary,          // ← Material default purple
-    disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaDisabled),
-),
-```
-
-`containerColor` isn't specified, so it falls back to `ButtonDefaults`' default — which is also `colorScheme.primary`. Since `ChaiTheme` never passes a `colorScheme`, that's Material's stock purple. The label is drawn by `CPrimaryButtonText`, whose `TextStyle` colour comes from `chaiColorsPalette.textButtonColor` — so in light mode the app's primary button is **`ChaiBlue` (#000CEB) text on Material default purple**. Two dark, saturated colours with almost no contrast between them. `COutlinedPrimaryButton` has the same problem for its content and border.
-
-**2. Eight call sites already read `MaterialTheme.colorScheme`, which chai has never defined.**
-
-| File | Reads |
-| --- | --- |
-| `chai/components/CButtons.kt` | `colorScheme.primary` ×3 |
-| `presentation/common/stepper/VerticalStepComponent.kt` | `colorScheme.primary`, `colorScheme.outline`, whole `colorScheme` |
-| `presentation/feed/view/FeedScreen.kt` | `colorScheme.error`, `colorScheme.surface` |
-
-`VerticalStepComponent` is the stepper down the left of the sessions list — a prominent element, drawn in default Material purple and default Material grey in a blue-and-teal branded app.
-
-**3. `CShapes` is defined and never reaches `MaterialTheme`.**
-
-```kotlin
-// chai/utils/Shape.kt — small 3dp, medium 7dp, large 9dp, extraLarge 10dp
-```
-
-It's used at exactly two call sites (`CShapes.extraLarge` in `CButtons`), and never passed as `MaterialTheme(shapes = …)`. So chai buttons have 10 dp corners while every stock M3 component uses Material's default scale — a `ModalBottomSheet` with 28 dp top corners, a `Card` with 12 dp. Corner radii are inconsistent across the app by construction.
-
-**4. `primary` means two different things in the two palettes.**
-
-```kotlin
-ChaiLightColorPalette: primary = ChaiBlue    // #000CEB — a brand accent
-ChaiDarkColorPalette:  primary = ChaiBlack   // #000000 — a background
-```
-
-In light mode `primary` is the accent colour. In dark mode it's a surface colour. That's only possible because `primary` has no defined contract — it's whatever each palette's author needed at the time. And nobody noticed, because `chaiColorsPalette.primary` has **exactly one usage in the entire codebase** (`FeedBackScreen.kt:312`). The most important role in any design system is effectively unused, while the undefined Material default with the same name is used four times.
-
-**5. The token surface is accretion, not expressiveness.**
-
-38 tokens. Reference counts:
-
-| | Tokens | References |
-| --- | --- | --- |
-| Top 7 (`textNormalColor`, `background`, `textBoldColor`, `textWeakColor`, `secondaryButtonColor`, `textTitlePrimaryColor`, `surfaces`) | 7 | **116** |
-| Everything else | 31 | 58 |
-| …of which have ≤2 references | **23** | 33 |
-
-Two-thirds of all colour usage flows through seven tokens. Twenty-three tokens are effectively single-use — `toggleOffIconBackgroundColor`, `inactiveMultiSelectButtonBorderColor`, `badgeBackgroundColor`, `eventDaySelectorInactiveSurfaceColor`. These aren't design decisions promoted to tokens; they're component-local colour choices that had nowhere else to live. **That's the symptom of a missing semantic tier: with nothing to derive from, every new component must invent new global tokens.**
-
-**6. No foreground/background pairing, so contrast cannot be guaranteed.**
-
-chai has nine-plus text colours (`textNormalColor`, `textBoldColor`, `textWeakColor`, `textTitlePrimaryColor`, `textLabelAndHeadings`, `textButtonColor`, `secondaryButtonTextColor`, `outlinedButtonTextColor`, `eventDaySelector*TextColor`) and none is structurally bound to a background. M3's `primary`/`onPrimary`, `surface`/`onSurface` pairing makes the relationship part of the type. This is why §14's contrast test will fail on first run — nothing in the current model prevents a bad pair.
-
-**7. No tonal elevation ramp — and dark mode is inverted relative to M3.**
-
-Six ad-hoc background tokens (`background`, `surfaces`, `cardsBackground`, `bottomSheetBackgroundColor`, `badgeBackgroundColor`, `textFieldBackgroundColor`) stand in for what M3 models as `surface` plus a five-step `surfaceContainerLowest…Highest` ramp. And in dark mode:
-
-```kotlin
-background      = ChaiGrey90  // #20201E
-surfaces        = ChaiBlack   // #000000
-cardsBackground = ChaiBlack   // #000000
-```
-
-Cards are **darker** than the background they sit on. M3's elevation model is the opposite — a raised surface is lighter in dark mode. Either choice can be defended, but it needs to be made deliberately, because every stock M3 component assumes the M3 direction, and right now chai components and M3 components disagree about which way "up" is.
-
-#### The diagnosis: chai has tiers 1 and 3, and no tier 2
-
-Every mature design system converges on three tiers. chai has the outer two:
-
-| Tier | What it is | chai today |
-| --- | --- | --- |
-| **1. Reference** | Raw palette. No meaning, just values. `ChaiBlue`, `ChaiTeal90`. | ✅ `atoms/Color.kt` — clean, well-documented, 15 colours |
-| **2. System / semantic** | Role-based and theme-aware. "What is an accent? What goes on top of a surface? How does elevation read?" | ❌ **Missing.** Skipped entirely. |
-| **3. Component** | Per-component decisions, derived from tier 2. `eventDaySelectorActiveSurfaceColor`. | ⚠️ 38 tokens, derived from **tier 1 directly** |
-
-Tier 3 wiring straight to tier 1 is why there are 38 tokens for what should be a dozen, why contrast is unguaranteeable, and why stock M3 components are off-brand: there is no shared vocabulary between chai's components and Material's.
-
-**Material 3's `ColorScheme` is a well-specified tier 2.** It's not a competing design system — it's a role vocabulary with a contrast contract, tested across light/dark, and every Compose component already speaks it. Adopting it as chai's semantic tier costs nothing in brand identity, because tier 1 (the actual brand colours) and tier 3 (the actual brand components) both stay.
-
-#### What I recommend *against*
-
-**Replacing chai with plain Material 3.** You'd lose named brand intent (`eventDaySelectorActiveSurfaceColor` genuinely communicates more than `tertiaryContainer`), you'd lose the module boundary that makes the design system reviewable in isolation, and you'd be forcing brand-specific decisions into roles that don't fit them. chai's naming is a real asset. Keep it.
-
-**Leaving them parallel, as today.** Every stock M3 component is off-brand forever, every new component needs colour overrides at the call site (which `SessionsScreen` already demonstrates — `containerColor = ChaiGrey90.copy(alpha = 0.52f)` passed to `ModalBottomSheet` purely to compensate), and M3 Expressive (§5.2) is unreachable because it's built on `ColorScheme` and `MotionScheme`.
-
-#### The implementation
-
-**Step 1 — define the semantic tier explicitly, from tier 1.** Write the `ColorScheme` by hand from the brand palette. Do *not* derive it from the existing `ChaiColors` — that would propagate the `primary`-means-two-things problem into the new tier.
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/colors/ChaiColorScheme.kt
-
-/**
- * Tier 2: chai's semantic colour roles, expressed as a Material 3 [ColorScheme].
- *
- * Authored directly from the tier-1 brand palette in `atoms/Color.kt`. This is the
- * single source of truth for "what is an accent", "what goes on a surface", and how
- * elevation reads — for chai components *and* for every stock Material component.
- *
- * Note `primary`: in the previous model this was ChaiBlue in light and ChaiBlack in
- * dark, i.e. an accent in one theme and a background in the other. Here it is an
- * accent in both. ChaiTeal is the dark-theme accent, which is what the old
- * `activeBottomNavIconColor` and `textLabelAndHeadings` were already using.
- */
-internal val ChaiLightColorScheme: ColorScheme = lightColorScheme(
-    primary = ChaiBlue,
-    onPrimary = ChaiWhite,
-    primaryContainer = ChaiLightGrey90,
-    onPrimaryContainer = ChaiBlue,
-
-    secondary = ChaiRed,
-    onSecondary = ChaiWhite,
-    secondaryContainer = ChaiRed.copy(alpha = 0.12f).compositeOver(ChaiWhite),
-    onSecondaryContainer = ChaiCoal,
-
-    tertiary = ChaiTeal,
-    onTertiary = ChaiCoal,
-
-    background = ChaiWhite,
-    onBackground = ChaiGrey90,
-
-    // The tonal ramp replaces `surfaces` / `cardsBackground` /
-    // `bottomSheetBackgroundColor` / `textFieldBackgroundColor` / `badgeBackgroundColor`.
-    surface = ChaiWhite,
-    onSurface = ChaiGrey90,
-    onSurfaceVariant = ChaiSmokeyGrey,            // was `textWeakColor`
-    surfaceContainerLowest = ChaiWhite,
-    surfaceContainerLow = ChaiLightGrey90,
-    surfaceContainer = ChaiLightGrey,
-    surfaceContainerHigh = ChaiLightGrey,
-    surfaceContainerHighest = ChaiGrey.copy(alpha = 0.24f).compositeOver(ChaiWhite),
-
-    outline = ChaiGrey,
-    outlineVariant = ChaiLightGrey,
-
-    error = ChaiRed,
-    onError = ChaiWhite,
-)
-
-internal val ChaiDarkColorScheme: ColorScheme = darkColorScheme(
-    primary = ChaiTeal,                            // was ChaiBlack — see KDoc above
-    onPrimary = ChaiCoal,
-    primaryContainer = ChaiSubtleGrey,
-    onPrimaryContainer = ChaiTeal90,
-
-    secondary = ChaiRed,
-    onSecondary = ChaiCoal,
-
-    tertiary = ChaiTeal90,
-    onTertiary = ChaiCoal,
-
-    background = ChaiGrey90,
-    onBackground = ChaiWhite,
-
-    // Elevation reads *lighter* going up, matching M3 and every stock component.
-    // This is a deliberate reversal of the old model, where cards were black on a
-    // grey background. Review this with design before merging.
-    surface = ChaiGrey90,
-    onSurface = ChaiWhite,
-    onSurfaceVariant = ChaiGrey,
-    surfaceContainerLowest = ChaiBlack,
-    surfaceContainerLow = ChaiGrey90,
-    surfaceContainer = ChaiSubtleGrey,
-    surfaceContainerHigh = ChaiDarkGrey,
-    surfaceContainerHighest = ChaiSmokeyGrey,
-
-    outline = ChaiSmokeyGrey,
-    outlineVariant = ChaiSubtleGrey,
-
-    error = ChaiRed,
-    onError = ChaiCoal,
-)
-```
-
-> The dark-mode elevation reversal is the one change here with a visible design consequence. Flag it explicitly for whoever owns chai's visual design — it is not a change to make unilaterally in a PR titled "wire up M3 tokens." Screenshot tests (§10.2) make the before/after reviewable, which is a good reason to land §10.2 first.
-
-**Step 2 — shrink `ChaiColors` to the tokens that are genuinely brand-specific.** Of the 38, roughly 28 are restatements of an M3 role. Keep the ~10 that carry real brand meaning:
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/colors/ChaiColors.kt
-
-/**
- * Tier 3: component tokens that carry brand meaning Material's roles don't express.
- *
- * Everything that *is* an M3 role now lives in [ChaiLightColorScheme] /
- * [ChaiDarkColorScheme] and is read via `MaterialTheme.colorScheme`. This class holds
- * only decisions specific to droidcon's visual language.
- *
- * The bar for adding a token here: it must be used by more than one component, and it
- * must not be expressible as an M3 role. Otherwise put it in the component.
- */
-@Immutable
-data class ChaiColors(
-    /** Nav bar label colour, which is deliberately *not* the icon colour. Brand quirk. */
-    val activeBottomNavTextColor: Color,
-    /** Day chips: red active / teal inactive is a droidcon signature, not a Material pattern. */
-    val eventDaySelectorActiveSurfaceColor: Color,
-    val eventDaySelectorActiveTextColor: Color,
-    val eventDaySelectorInactiveSurfaceColor: Color,
-    val eventDaySelectorInactiveTextColor: Color,
-    /** Session-card accent spacers (the green/orange dividers). */
-    val sessionCardAccentGreen: Color,
-    val sessionCardAccentOrange: Color,
-    /** Shimmer base for loading skeletons — needs to sit between surface and container. */
-    val loadingShimmerColor: Color,
-    /** Brand link colour; M3 has no link role. */
-    val linkTextColor: Color,
-    /** "Live now" pulse. Distinct from `error` even though both are red today. */
-    val liveIndicatorColor: Color,
-)
-
-// Fail loudly rather than rendering invisible UI. The old default gave every token
-// Color.Unspecified, so a missing provider produced a blank screen, not an error.
-val LocalChaiColorsPalette = staticCompositionLocalOf<ChaiColors> {
-    error("No ChaiColors provided. Wrap content in ChaiTheme { }.")
-}
-```
-
-The migration mapping, for the 28 that go away:
-
-| Removed chai token | Replacement |
-| --- | --- |
-| `primary` | `colorScheme.primary` |
-| `background` (21 uses) | `colorScheme.background` |
-| `surfaces` (10) | `colorScheme.surface` |
-| `cardsBackground` (5) | `colorScheme.surfaceContainerLow` |
-| `cardsBorderColor`, `bottomNavBorderColor`, `inactiveMultiSelectButtonBorderColor`, `textFieldBorderColor` | `colorScheme.outlineVariant` / `outline` |
-| `textNormalColor` (25), `textBoldColor` (18) | `colorScheme.onSurface` / `onBackground` |
-| `textWeakColor` (16) | `colorScheme.onSurfaceVariant` |
-| `textTitlePrimaryColor` (11), `textLabelAndHeadings` (5) | `colorScheme.primary` (light) / `onBackground` (dark) — see note below |
-| `secondaryButtonColor` (15), `secondaryButtonTextColor` | `colorScheme.secondary` / `onSecondary` |
-| `outlinedButtonBackgroundColor`, `outlinedButtonTextColor`, `textButtonColor` | `colorScheme.surface` / `primary` |
-| `activeBottomNavIconColor`, `inactiveBottomNavIconColor`, `bottomNavBackgroundColor` | `colorScheme.primary` / `onSurfaceVariant` / `surfaceContainer` |
-| `bottomSheetBackgroundColor`, `badgeBackgroundColor`, `textFieldBackgroundColor` | the `surfaceContainer*` ramp |
-| 6 × `toggle*` | `SwitchDefaults.colors()` — M3's `Switch` already models every one of these states |
-| `radioButtonColors` | `RadioButtonDefaults.colors()` |
-| `loadingStateOnCardsColor` | kept, renamed `loadingShimmerColor` |
-
-> `textTitlePrimaryColor` is the one genuinely awkward mapping: it was `ChaiBlue` in light (an accent) and `ChaiWhite` in dark (plain foreground).
->
-> **Decided 2026-09-04: headings are accented in both themes.** Dark moves from `ChaiWhite` to
-> `ChaiTeal90` — the accent the nav bar and `textLabelAndHeadings` already used there — so the
-> blue headings that read as droidcon in light have an equivalent in dark rather than flattening
-> to plain foreground.
-
-**Step 3 — one theme entry point that provides all three tiers.**
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/Theme.kt
-
-@Composable
-fun ChaiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    val colorScheme = if (darkTheme) ChaiDarkColorScheme else ChaiLightColorScheme
-    val chaiColors = if (darkTheme) ChaiDarkComponentColors else ChaiLightComponentColors
-
-    // No LocalView, no findActivity, no SideEffect, no window writes (fixes B5).
-    // Edge-to-edge is configured once in MainActivity (§3.4) — a theme composable
-    // has no business reaching for the Activity window.
-    CompositionLocalProvider(
-        LocalChaiColorsPalette provides chaiColors,
-        LocalChaiMotion provides ChaiMotion.Default,
-    ) {
-        // Plain MaterialTheme here, MaterialExpressiveTheme in §5.2 — see step 4b.
-        // The token arguments do not change between the two.
-        MaterialTheme(
-            colorScheme = colorScheme,
-            typography = ChaiTypography,
-            shapes = ChaiShapes,          // CShapes, finally connected
-            content = content,
-        )
-    }
-}
-
-/** Retained so the ~170 existing `MaterialTheme.chaiColorsPalette` call sites keep compiling. */
-val MaterialTheme.chaiColorsPalette: ChaiColors
-    @Composable @ReadOnlyComposable
-    get() = LocalChaiColorsPalette.current
-```
-
-Deliberately plain `MaterialTheme` here, not `MaterialExpressiveTheme`. **Phase 0 fixes correctness without changing how the app looks** — that keeps this PR reviewable as "the purple is gone" rather than "everything moved." §5.2 upgrades to `MaterialExpressiveTheme` and `MotionScheme.expressive()` as a deliberate visual change, on top of a foundation that already works.
-
-**Step 4 — typography, the tier that was documented but never written.** `CFonts.kt` says chai's typography "consists of 2 files that work together: CTypography and CFont". `CTypography` does not exist. Build it:
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/atoms/ChaiTypography.kt
-
-/**
- * Tier 2 typography. One [FontFamily] with weight variants, so `FontWeight.Bold` on
- * any style resolves to montserrat_bold — rather than five separate families that
- * each hardcode one weight, as in the previous `CFonts.kt`.
- */
-private val Montserrat = FontFamily(
-    Font(R.font.montserrat_light, FontWeight.Light),
-    Font(R.font.montserrat_regular, FontWeight.Normal),
-    Font(R.font.montserrat_medium, FontWeight.Medium),
-    Font(R.font.montserrat_semi_bold, FontWeight.SemiBold),
-    Font(R.font.montserrat_bold, FontWeight.Bold),
-)
-
-val ChaiTypography: Typography = with(Typography()) {
-    copy(
-        displayLarge = displayLarge.withChai(FontWeight.Bold),
-        displayMedium = displayMedium.withChai(FontWeight.Bold),
-        displaySmall = displaySmall.withChai(FontWeight.Bold),
-        headlineLarge = headlineLarge.withChai(FontWeight.Bold),
-        headlineMedium = headlineMedium.withChai(FontWeight.SemiBold),
-        headlineSmall = headlineSmall.withChai(FontWeight.SemiBold),
-        titleLarge = titleLarge.withChai(FontWeight.SemiBold),
-        titleMedium = titleMedium.withChai(FontWeight.Medium),
-        titleSmall = titleSmall.withChai(FontWeight.Medium),
-        bodyLarge = bodyLarge.withChai(FontWeight.Normal),
-        bodyMedium = bodyMedium.withChai(FontWeight.Normal),
-        bodySmall = bodySmall.withChai(FontWeight.Normal),
-        labelLarge = labelLarge.withChai(FontWeight.Medium),
-        labelMedium = labelMedium.withChai(FontWeight.Medium),
-        labelSmall = labelSmall.withChai(FontWeight.Medium),
-
-        // Expressive emphasis roles. Fill these even though §3.5 ships under plain
-        // MaterialTheme — otherwise every Expressive component that reaches for an
-        // emphasized style in §5.2 silently renders in the Material default font.
-        displayLargeEmphasized = displayLargeEmphasized.withChai(FontWeight.Bold),
-        displayMediumEmphasized = displayMediumEmphasized.withChai(FontWeight.Bold),
-        displaySmallEmphasized = displaySmallEmphasized.withChai(FontWeight.Bold),
-        headlineLargeEmphasized = headlineLargeEmphasized.withChai(FontWeight.Bold),
-        headlineMediumEmphasized = headlineMediumEmphasized.withChai(FontWeight.Bold),
-        headlineSmallEmphasized = headlineSmallEmphasized.withChai(FontWeight.Bold),
-        titleLargeEmphasized = titleLargeEmphasized.withChai(FontWeight.Bold),
-        titleMediumEmphasized = titleMediumEmphasized.withChai(FontWeight.SemiBold),
-        titleSmallEmphasized = titleSmallEmphasized.withChai(FontWeight.SemiBold),
-        bodyLargeEmphasized = bodyLargeEmphasized.withChai(FontWeight.Medium),
-        bodyMediumEmphasized = bodyMediumEmphasized.withChai(FontWeight.Medium),
-        bodySmallEmphasized = bodySmallEmphasized.withChai(FontWeight.Medium),
-        labelLargeEmphasized = labelLargeEmphasized.withChai(FontWeight.SemiBold),
-        labelMediumEmphasized = labelMediumEmphasized.withChai(FontWeight.SemiBold),
-        labelSmallEmphasized = labelSmallEmphasized.withChai(FontWeight.SemiBold),
-    )
-}
-
-private fun TextStyle.withChai(weight: FontWeight) =
-    copy(fontFamily = Montserrat, fontWeight = weight)
-```
-
-> Check the exact `*Emphasized` property names against the Material 3 version you land on — this set arrived with Expressive and the surface has been moving. If some don't exist yet, fill what does and leave a TODO rather than dropping the idea; the point is that emphasis styles must carry Montserrat, not that all fifteen exist today.
-
-**Step 4b — add the motion tier chai doesn't have.** This is the piece that makes chai able to drive Expressive rather than merely coexist with it:
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/motion/ChaiMotion.kt
-
-/**
- * Tier 2 motion. chai had no motion tokens at all before this — every animation in
- * the app hardcoded its own `tween`/`spring`, which is why §5.4's transitions and
- * §12's cube each invented their own timing.
- *
- * [ChaiMotionScheme] is what gets handed to `MaterialExpressiveTheme` in §5.2, so
- * stock Expressive components and chai components share one motion language.
- */
-val ChaiMotionScheme: MotionScheme = MotionScheme.expressive()
-
-/**
- * Named specs for animations that aren't driven by a Material component, so screens
- * stop hardcoding durations. Read these via `MaterialTheme.motionScheme` where the
- * standard roles fit; use these only for droidcon-specific motion.
- */
-@Immutable
-data class ChaiMotion(
-    /** The bookmark star's bounce. Deliberately springier than the standard scheme. */
-    val bookmarkBounce: FiniteAnimationSpec<Float>,
-    /** "Live now" pulse. Slow enough not to distract during a talk. */
-    val livePulse: DurationBasedAnimationSpec<Float>,
-    /** Session-card selection in two-pane mode (§4.4). */
-    val paneSelection: FiniteAnimationSpec<Color>,
-) {
-    companion object {
-        val Default = ChaiMotion(
-            bookmarkBounce = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            livePulse = tween(durationMillis = 1200, easing = FastOutSlowInEasing),
-            paneSelection = tween(durationMillis = 200),
-        )
-    }
-}
-
-val LocalChaiMotion = staticCompositionLocalOf { ChaiMotion.Default }
-```
-
-Once this exists, §5.2's change to `ChaiTheme` is genuinely one line plus one argument:
-
-```kotlin
-// §3.5 ships this:
-MaterialTheme(colorScheme = …, typography = ChaiTypography, shapes = ChaiShapes, content = content)
-
-// §5.2 changes it to this. No token rework — that's the payoff for tiering first.
-MaterialExpressiveTheme(
-    colorScheme = …,
-    typography = ChaiTypography,
-    shapes = ChaiShapes,
-    motionScheme = ChaiMotionScheme,
-    content = content,
-)
-```
-
-chai's existing sizes map onto the M3 scale closely enough that this is mostly a rename:
-
-| chai composable | Size / weight today | M3 role |
-| --- | --- | --- |
-| `ChaiTitle` | 20sp W700 | `titleLarge` (22sp) |
-| `ChaiSubTitle` | 18sp W700 | `titleMedium` |
-| `ChaiBodyLarge` / `Bold` | 18sp W400 / W600 | `bodyLarge` |
-| `ChaiBodyMedium` / `Bold` | 16sp W400 / W600 | `bodyMedium` |
-| `ChaiBodySmall` / `Bold` | 14sp W400 / W700 | `bodySmall` |
-| `ChaiBodyXSmall` / `Bold` | 12sp W400 / W500 | `labelMedium` |
-| `ChaiTextLabelLarge` | 11sp W400 | `labelSmall` |
-| `CPrimaryButtonText` | 18sp W600 | `labelLarge` |
-
-Then turn the 18 text composables into deprecated shims, so this doesn't have to be one 200-file PR:
-
-```kotlin
-@Deprecated(
-    "Use Text(style = MaterialTheme.typography.bodyMedium). Chai text composables " +
-        "cannot participate in LocalTextStyle, cannot be overridden per call site, " +
-        "and hardcode lineHeight in sp (which clips at 200% font scale).",
-    ReplaceWith("Text(text = bodyText, color = textColor, style = MaterialTheme.typography.bodyMedium)"),
-)
-@Composable
-fun ChaiBodyMedium(
-    modifier: Modifier = Modifier,
-    bodyText: String,
-    textColor: Color = Color.Unspecified,
-    maxLines: Int = Int.MAX_VALUE,
-) = Text(
-    text = bodyText,
-    modifier = modifier,
-    color = textColor,
-    style = MaterialTheme.typography.bodyMedium,
-    maxLines = maxLines,
-    overflow = TextOverflow.Ellipsis,
-)
-```
-
-And delete the four theme-blind ones outright (B8): `CParagraph`, `CPageTitle`, `CSubtitle`, `CActionText` hardcode `ChaiBlack` / `ChaiBlue` / `ChaiRed` and are superseded.
-
-> **Accessibility note.** The current composables pair `fontSize` in `sp` (correct — scales with user preference) with a hardcoded `lineHeight` in `sp` (not correct — doesn't scale proportionally), which clips text at large font scales. `MaterialTheme.typography` carries the framework's tested line-height ratios. This is a real fix, not a cosmetic one. Verify at 200% in §14.
-
-**Step 5 — a lint rule so tier 1 can't be used directly in UI code.** The whole structure decays the first time someone writes `color = ChaiBlue` in a screen:
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/lint/RawColorDetector.kt — or a detekt rule
-//
-// Flags direct references to tier-1 palette values (ChaiBlue, ChaiTeal90, …) outside
-// the chai colors package. Tier 1 is an input to tier 2, not a UI-layer API.
-```
-
-A detekt `ForbiddenImport` rule on `com.droidconke.chai.atoms.Chai*` colours outside `com.droidconke.chai.colors` is the cheap version and takes an afternoon.
-
-#### Sequencing
-
-The whole thing is incremental, and every step leaves the app shippable:
-
-1. **Write tier 2** (`ChaiColorScheme`, `ChaiTypography`, wire `ChaiShapes`). Additive — nothing breaks. The purple disappears from `CButtons`, `VerticalStepComponent`, and `FeedScreen` the moment `MaterialTheme` gets a real `colorScheme`. **This alone fixes defects 1–3 above and is worth landing on its own.**
-2. **Land Roborazzi (§10.2)** so steps 3–4 are reviewable as image diffs rather than as arguments.
-3. **Deprecate, don't delete.** Keep all 38 tokens as `@Deprecated` properties delegating to the new scheme. Zero call-site changes required; the compiler now lists every migration site for you.
-4. **Migrate feature by feature**, as features get touched for §4 and §5 anyway. Screenshot tests catch anything that shifts.
-5. **Delete the deprecated tokens** once the count reaches zero.
-
-Do **not** do this as one PR. It touches ~170 call sites across 120 files, and a diff that size gets rubber-stamped, which defeats the point.
-
-**Definition of done for §3.5:**
-- [x] `MaterialTheme` receives a real `colorScheme`, `typography`, and `shapes`
-- [x] `grep -rn "MaterialTheme.colorScheme"` returns only on-brand values — verified against the
-      §10.2 goldens, not just by grep
-- [x] `LocalChaiColorsPalette` errors on missing provider instead of rendering `Color.Unspecified`
-- [x] `ChaiColors` is ≤12 tokens, and each remaining one has a KDoc explaining why it isn't an M3
-      role — **done 2026-10-04: 6 tokens.** Done as one PR rather than feature by feature; the
-      visible changes are all in the migration commit's goldens, apart from the pin and theme
-      commits, which moved none.
-- [x] Dark-mode elevation direction decided **with design**, and recorded here — **decided
-      2026-09-04: reversed to the M3 direction.** Raised surfaces are now lighter than the
-      background in dark (`surfaces`/`cardsBackground`/`bottomSheetBackgroundColor` →
-      `ChaiSubtleGrey` on a `ChaiGrey90` background), so chai and stock Material finally agree on
-      which way elevation reads. Two knock-ons that the goldens caught and that anyone repeating
-      this should expect: the session tag chips were filled with `cardsBorderColor`, which became
-      the card's own colour and made them vanish — they now take
-      `colorScheme.surfaceContainerHighest`; and `CustomDivider` was drawn in `surfaces`, which
-      became a thick visible bar — it now takes `colorScheme.outlineVariant`, which is the role a
-      divider should have had all along.
-- [x] `CShapes` reaches `MaterialTheme`; corner radii consistent between chai and stock components
-- [ ] §14's contrast test passes for both schemes — §14 not built yet
-- [x] `ChaiTheme` no longer touches `LocalView`, the Activity, or the window (B5)
-- [ ] A rule prevents tier-1 palette references outside `chai/colors` — not started
-
-**Expressive-readiness gate.** Unblocked 2026-10-04 on material3 1.5.0-alpha29:
-- [x] `ChaiTypography` fills the `*Emphasized` roles — each is its base role one weight heavier
-- [x] `ChaiTheme` provides a `MotionScheme` — `MotionScheme.expressive()`. No `ChaiMotionScheme`
-      or `ChaiMotion`: nothing would read a chai motion tier yet
-- [x] ~~Spike~~ Adopt `MaterialExpressiveTheme` — landed, rather than spiked
-- [x] Corner-radius scale question logged for §5.2 (keep 3/7/9/10, or move toward Expressive's
-      larger ramp) — `CShapes` is wired as-is, preserving today's radii; the scale itself is
-      still an open §5.2 question
+### 3.5 chai and Material 3 — done
+
+The token restructure landed on 2026-10-04 and the 2026 rebrand on 2026-10-05.
+`docs/architecture.md` ("Design system") describes the result: Material roles first, three
+`ChaiColors` tokens for the brand-blue hero panel, and a detekt rule against raw palette imports
+outside `chai/colors`. One item moves to §14: a test that checks contrast for every role pair
+the app draws.
 
 ### 3.6 One year, one name
 
-Four different years appear in the codebase. Pick a **year-agnostic** identity so this never recurs:
+The year names are gone from the project, class and theme names. Two things still tie the app to
+one conference year.
 
-| From | To |
-| --- | --- |
-| `rootProject.name = "DroidconKE2023"` | `"droidconKE"` |
-| `com.android254.droidcon.app.DroidconApp` | `ke.droidcon.kotlin.DroidconApplication` |
-| `com.android254.droidcon.crashlytics.CrashlyticsTree` | `ke.droidcon.kotlin.core.analytics.CrashlyticsTree` |
-| `ChaiTheme` | `ChaiTheme` |
-| `Theme.DroidconKE2023` / `Theme.MySplash` | `Theme.Droidcon` / `Theme.Droidcon.Splash` |
-| `com.android254.*` packages | `ke.droidcon.kotlin.*` |
-| `dcke22-database` | **unchanged** (see B2 — renaming costs user data) |
-
-The event slug (`droidconke-2025-898`) must move out of a compiled constant and into Remote Config, so a new conference year does not require an app release:
+**The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2025-898"` lives in
+`core/network/.../remote/Constants.kt`. Move it into Remote Config, so a new conference year does
+not need an app release:
 
 ```kotlin
-// datasource/remote/.../utils/RemoteConfigConfig.kt
+// core/network/.../utils/RemoteConfigConfig.kt
 val eventSlug: String get() = remoteConfig.getString(KEY_EVENT_SLUG)
 val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 ```
 
 ```xml
-<!-- datasource/remote/src/main/res/xml/remote_config_defaults.xml -->
+<!-- core/network/src/main/res/xml/remote_config_defaults.xml -->
 <entry>
     <key>event_slug</key>
     <value>droidconke-2025-898</value>
@@ -2440,407 +223,62 @@ val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 
 `UrlProvider` then composes URLs at call time rather than as compile-time constants. **This one change means the 2027 app is a config edit, not a release.**
 
-Do the package rename as a single mechanical PR with no behaviour change, immediately after §3.1 lands and before feature work starts. Announce it — it invalidates every open PR.
+**The About copy names 2023.** `about_droidcon` in `core/ui`'s `strings.xml` says the conference
+"will be held in Nairobi, Kenya on November 8th to 10th 2023". Rewrite it without a date, or fill
+the dates from the same Remote Config values.
 
-### 3.7 Credential Manager
+**Packages are still split** between `com.android254.*` and `ke.droidcon.kotlin.*`. Renaming them
+is one mechanical PR that invalidates every open PR (§17.1). Do it in a quiet period, or decide
+not to.
 
-GMS `GoogleSignIn` is deprecated and being removed. Replace `GoogleSignInHandler`:
+`dcke22-database` and `dcke22-pref` keep their names. Renaming either is a migration that costs
+users their bookmarks, for a cosmetic gain.
 
-```kotlin
-// presentation/src/main/java/com/android254/presentation/auth/GoogleSignInHandler.kt
+### 3.9 Phase 0 — what is left
 
-class GoogleSignInHandler @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
-    private val credentialManager = CredentialManager.create(context)
+Every B finding from the original audit is fixed in code. Four of the fixes are not held by a
+test, so nothing stops them coming back:
 
-    /**
-     * Returns a Google ID token, or null when the user dismisses the sheet or no
-     * credential is available. [filterByAuthorizedAccounts] = false on the retry
-     * pass so first-time users still see a picker.
-     */
-    suspend fun signIn(activityContext: Context): Result<String> = runCatching {
-        val nonce = generateNonce()
-
-        suspend fun attempt(filterByAuthorizedAccounts: Boolean): GetCredentialResponse {
-            val googleIdOption = GetGoogleIdOption.Builder()
-                .setServerClientId(context.getString(R.string.default_web_client_id))
-                .setFilterByAuthorizedAccounts(filterByAuthorizedAccounts)
-                .setAutoSelectEnabled(filterByAuthorizedAccounts)
-                .setNonce(nonce)
-                .build()
-
-            return credentialManager.getCredential(
-                context = activityContext,
-                request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build(),
-            )
-        }
-
-        val response = try {
-            attempt(filterByAuthorizedAccounts = true)
-        } catch (e: NoCredentialException) {
-            Timber.d(e, "No previously authorized account; showing full picker")
-            attempt(filterByAuthorizedAccounts = false)
-        }
-
-        val credential = response.credential
-        require(credential is CustomCredential && credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-            "Unexpected credential type: ${credential.type}"
-        }
-        GoogleIdTokenCredential.createFrom(credential.data).idToken
-    }.onFailure { e ->
-        when (e) {
-            is GetCredentialCancellationException -> Timber.d("User cancelled sign-in")
-            else -> Timber.e(e, "Google sign-in failed")
-        }
-    }
-
-    suspend fun signOut() {
-        runCatching { credentialManager.clearCredentialState(ClearCredentialStateRequest()) }
-    }
-
-    private fun generateNonce(): String =
-        ByteArray(32).also { SecureRandom().nextBytes(it) }
-            .let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
-}
-```
-
-The nonce should ideally be issued by the backend and verified on token exchange. If `api.droidcon.co.ke` doesn't support that yet, file it as a backend ticket — a client-generated nonce still prevents token replay across *this* app's sessions, which is most of the value.
-
-`AuthViewModel` loses the `ActivityResultLauncher` plumbing entirely; `AuthDialog` calls a suspend function. Net deletion of ~60 lines.
-
-> **Found while verifying §3.7 on a device: the sign-in dialog has no entry point.**
->
-> `MainActivity` wires `onActionClicked = { showAuthDialog = !showAuthDialog }` and threads it
-> through `HomeScreen` → `HomeToolbarComponent` → `DroidconAppBar`. `DroidconAppBar` then accepts
-> the parameter and never uses it — its body is a logo and a `Spacer`. Since that app bar is the
-> *signed-out* branch of `HomeToolbarComponent`, there is no way to reach `AuthDialog` from the
-> UI at all.
->
-> So the Credential Manager rewrite is covered by `AuthViewModelTest` and builds and installs,
-> but the sheet itself could not be exercised on a device. Adding the missing action is a design
-> question (what icon, where), not a mechanical fix, so it is left open here rather than
-> invented. Whoever adds it should verify the picker end to end at the same time.
-
-### 3.8 AGP 9 — done
-
-AGP 9.3.1 on Gradle 9.7 with Kotlin 2.4.10, `compileSdk`/`targetSdk` 37, and **no opt-out flags**.
-
-The migration is finished, including the part this section spent most of its length warning
-about. `android.newDsl=false` and `android.builtInKotlin=false` were carried for a while because
-detekt and ktlint-gradle needed them; ktlint-gradle 14.1.0 added built-in Kotlin support, which
-removed the last real dependency, and both flags are gone. `org.jetbrains.kotlin.android` is no
-longer applied by the convention plugins — under the new DSL, applying it alongside AGP's own
-Kotlin support is a hard error rather than a warning.
-
-Three things the migration changed that are easy to trip over later:
-
-- Library modules have no `defaultConfig.targetSdk`. Only the test APK does, via
-  `testOptions.targetSdk`.
-- `android { }` resolves to `com.android.build.api.dsl.*`, not the legacy
-  `com.android.build.gradle.*` types.
-- Source sets belong to AGP, so a `languageSettings` opt-in no longer reaches the compile tasks.
-  Use `kotlin { compilerOptions { optIn.add(...) } }`.
-
-Two `gradle.properties` settings this plan previously recommended are now wrong and were **not**
-applied: `android.nonFinalResIds=false` is deprecated and makes `minifyReleaseWithR8` fail once
-optimized resource shrinking is on, and `android.defaults.buildfeatures.buildconfig` is deprecated
-too.
-
-**Managed devices below API 27 do not work under AGP 9 with `newDsl=false`.** Moot at `minSdk` 26,
-but if the floor is ever lowered again, expect it back.
-
-**One deprecation warning remains and is not fixable here:** detekt 1.23.8's Gradle plugin calls
-`ReportingExtension.file(String)`, which Gradle 10 removes. Confirmed by bisecting the root
-`plugins` block. detekt 2.0 has the fix and has not shipped.
-
-### 3.9 Phase 0 definition of done
-
-- [x] `./gradlew build` passes with the configuration cache enabled
-- [x] `./gradlew build --warning-mode all` produces no Gradle deprecation warnings from this
-      repo's own code — one remains from inside detekt 1.23.8 (§3.8)
-- [x] `./gradlew lint` passes with no baseline
-- [x] An instrumentation run passes on every device in the matrix (api30, api34)
-- [x] CI runs on Kotlin-only PRs (§15)
-- [x] `targetSdk` comes from one version-catalog entry, referenced by both convention plugins
-- [x] Single Gradle wrapper; `build-logic/gradle/` deleted
-- [x] AGP-9-readiness plugin bumps landed
-- [ ] B1–B16 each closed by a **test**, not just a code change — **partially, audited below**
-
-**B1–B16 test coverage, audited 2026-09-03.** Eight of the fifteen live findings (B13 was
-withdrawn) are held by a test that fails without the fix. The rest are closed in code only:
-
-| Closed by a test | How |
+| Finding | What a test would assert |
 | --- | --- |
-| B1, B12 | `SessionsFilterStateTest` — room, multi-room and case-insensitive matching; `SessionsFilterOptionsTest` asserts no offered option matches zero sessions |
-| B2 | `DatabaseMigrationTest` fails if `fallbackToDestructiveMigration` returns |
-| B8, B15 | The §10.2 dark-mode goldens. Theme-blind text and card colours cannot regress without moving an image |
-| B9, B16 | `DateFormattingInvariantsTest` fails if `SimpleDateFormat` reappears in any `src/main` |
-| B14 | Every real lazy list now passes a `key`; `FeedScreenTest` covers the duplicate-key crash that a non-unique key produces |
+| B5 — the theme threw outside an Activity | `ChaiTheme` renders with no Activity behind it. It no longer touches `LocalView`, so this is a small Robolectric test |
+| B6 — the "My sessions" switch reset on rotation while the list stayed filtered | The switch survives recreation. Needs a `SavedStateHandle` / process-death test, which the suite has no harness for yet |
+| B7 — the splash screen waited on a network call | The splash releases on cached data, never on Remote Config. Needs a startup test |
+| B10 — mutable state and resource IDs in navigation keys | Every `NavKey` is immutable and holds no resource ID. A reflection test over the implementations would close it |
 
-| Code-only, no test | Why not, and what it would take |
-| --- | --- |
-| B3, B4 | Build configuration (`compilerOptions`, one `targetSdk` catalog entry). A test would assert the build script, not behaviour |
-| B5 | `ChaiTheme` no longer touches `LocalView`. Rendering it off an Activity would be the test |
-| B6 | Rotation survival. Needs a `SavedStateHandle` / process-death test, which the suite has no harness for yet |
-| B7 | Splash-screen race. Needs a startup test |
-| B10 | Nav keys must stay immutable and hold no resource IDs. A reflection test over the `NavKey` implementations would close it |
-
-Closing the remaining six is worth its own pass; B6 and B10 are the two that protect real user
-data and are the ones to do first.
-- [x] APK size recorded as a **baseline number** in this document (§9.4)
-- [x] `CONTRIBUTING.md` notes the Android Studio requirement — IntelliJ IDEA does not support AGP 9
+B6 and B10 protect user data, so do those first. B3 and B4 were build-configuration fixes; a test
+would only assert the build script.
 
 ---
 
-## 4. Phase 1 — Adaptive & large-screen support
+### 3.10 Duplicated sessions after sync
 
-> **Landed 2026-09-17. Read ["§4 landed"](#4-landed-2026-09-17) first** — it records four
-> places this section is wrong, and the code blocks below have not all been rewritten. In
-> particular §4.4's `NavigableListDetailPaneScaffold` is **forbidden** by the adaptive skill;
-> §4.2's `WindowWidthSizeClass` comparison does not compile against window-core 1.5.0; and
-> §3.2's catalog entries for this phase are unnecessary, because the Compose BOM manages the
-> whole adaptive family. Nothing in §4 is open — the room × time agenda grid closed with the
-> rest of it.
+Found during the 2026-10-05 device pass. Home's "View all" count climbs on every sync (+80, then
++240, then +1,040 on a fresh install) and the same session appears several times. A fresh install
+of a `main` build shows the same, so it predates the rebrand.
 
-**Depends on: Phase 0 (§3.4 insets, §3.3 B10 nav keys).** It did **not** depend on §3.5 or on
-M3 Expressive, contrary to §16.1 — see correction 4 in "§4 landed".
+**Likely cause, not yet verified:** `SessionEntity` has `@PrimaryKey(autoGenerate = true) val id`
+and no unique index on `remote_id`, and `BaseDao` inserts with `OnConflictStrategy.REPLACE`. With
+an auto-generated key, `REPLACE` never finds a conflict, so each sync inserts every session again.
 
-### 4.1 Why this matters more than it looks
+**Fix:** a unique index on `remote_id`, so `REPLACE` (or an `@Upsert`) updates in place, with a
+migration that first deletes duplicate rows keeping one per `remote_id`. Register it in
+`Database.ALL_MIGRATIONS`; `fallbackToDestructiveMigration()` stays banned, because bookmarks
+live in this table. Check bookmarks survive: they may be keyed on the generated `id`.
 
-A conference app has an unusually strong large-screen case. During a session, the person next to you is on a tablet. Speakers review the agenda on a Chromebook. The organiser team runs the whole conference off two iPads and a Surface. And Google Play ranks large-screen quality directly — apps that pass the large-screen quality tier get promoted in tablet/foldable surfaces, which is free distribution for a community app with no marketing budget.
+**Tests:** a DAO test that syncs the same payload twice and expects the row count unchanged, and a
+migration test from a database with duplicates.
 
-Right now a 13" tablet gets a phone layout stretched to 1600 dp with a bottom navigation bar at the bottom of a screen nobody's thumb can reach.
+## 4. Phase 1 — Adaptive follow-ups
 
-### 4.2 The three breakpoints
+Adaptive and large-screen support has landed. How it works — the navigation suite, the Navigation 3
+scenes and their guards, the measured pane directive — is in
+[`docs/architecture.md`](architecture.md#navigation). Three small items were left out of it.
 
-Standardise on Material 3's window size classes and derive a small app-level abstraction, so screens don't each re-derive layout decisions:
+### 4.4 List-detail: a selected state for the list pane
 
-```kotlin
-// chai/src/main/java/com/droidconke/chai/adaptive/DroidconWindowSize.kt
-
-/**
- * App-level layout intent, derived from the window size class.
- *
- * Screens branch on this rather than on raw dp, so the breakpoints live in one place
- * and screenshot tests can force a value without a fake window.
- */
-enum class DroidconWindowSize {
-    /** < 600 dp: phone portrait, small foldable closed. Single pane, bottom bar. */
-    Compact,
-    /** 600–839 dp: tablet portrait, phone landscape, foldable open. Two panes, nav rail. */
-    Medium,
-    /** >= 840 dp: tablet landscape, desktop, ChromeOS. Two panes + nav drawer. */
-    Expanded,
-    ;
-
-    val isSinglePane: Boolean get() = this == Compact
-}
-
-val LocalDroidconWindowSize = staticCompositionLocalOf { DroidconWindowSize.Compact }
-
-@Composable
-fun rememberDroidconWindowSize(): DroidconWindowSize {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    return remember(adaptiveInfo) {
-        when (adaptiveInfo.windowSizeClass.windowWidthSizeClass) {
-            WindowWidthSizeClass.COMPACT -> DroidconWindowSize.Compact
-            WindowWidthSizeClass.MEDIUM -> DroidconWindowSize.Medium
-            else -> DroidconWindowSize.Expanded
-        }
-    }
-}
-```
-
-> **Do not** branch on `Configuration.screenWidthDp` or `LocalConfiguration.orientation`. Both are wrong in multi-window, wrong on foldables mid-fold, and wrong in a resizable ChromeOS window. `currentWindowAdaptiveInfo()` also carries posture (`isTableTopPosture`), which §4.5 uses. `AdaptiveInvariantsTest` now fails the build on either read.
-
-> **As landed:** the `when` above does not compile. `currentWindowAdaptiveInfoV2().windowSizeClass` is `androidx.window.core.layout.WindowSizeClass`, which has no `WindowWidthSizeClass` and needs no `material3-window-size-class` dependency. The real code is `isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)` — see `core/ui/.../common/adaptive/DroidconWindowSize.kt`, which also holds `rememberIsMultiPaneWindow()` (derived from `calculatePaneScaffoldDirective`, the same source the scene strategies use, so the two cannot drift) and `Modifier.readablePaneWidth()`.
-
-### 4.3 Navigation that adapts
-
-Replace the unconditional `BottomAppBar` with `NavigationSuiteScaffold`, which picks bottom bar / nav rail / permanent drawer per size class:
-
-```kotlin
-// presentation/src/main/java/com/android254/presentation/common/navigation/DroidconNavigationScaffold.kt
-
-@Composable
-fun DroidconNavigationScaffold(
-    navigationState: NavigationState,
-    onNavigate: (Screens) -> Unit,
-    showNavigation: Boolean,
-    liveSessions: List<SessionPresentationModel>,
-    modifier: Modifier = Modifier,
-    content: @Composable (PaddingValues) -> Unit,
-) {
-    val windowSize = rememberDroidconWindowSize()
-    val currentRoute = navigationState.topLevelRoute
-
-    val layoutType = when {
-        !showNavigation -> NavigationSuiteType.None
-        windowSize == DroidconWindowSize.Expanded -> NavigationSuiteType.NavigationDrawer
-        windowSize == DroidconWindowSize.Medium -> NavigationSuiteType.NavigationRail
-        else -> NavigationSuiteType.NavigationBar
-    }
-
-    NavigationSuiteScaffold(
-        modifier = modifier,
-        layoutType = layoutType,
-        navigationSuiteColors = NavigationSuiteDefaults.colors(
-            navigationBarContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-            navigationRailContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-            navigationDrawerContainerColor = MaterialTheme.chaiColorsPalette.bottomNavBackgroundColor,
-        ),
-        navigationSuiteItems = {
-            TopLevelDestination.entries.forEach { destination ->
-                val selected = destination.route == currentRoute
-                item(
-                    selected = selected,
-                    onClick = { onNavigate(destination.route) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(
-                                if (selected) destination.selectedIcon else destination.unselectedIcon,
-                            ),
-                            // Label is adjacent, so the icon is decorative for TalkBack.
-                            contentDescription = null,
-                        )
-                    },
-                    label = { Text(stringResource(destination.labelRes)) },
-                    // Announced by TalkBack instead of the raw label — lets us say
-                    // "Sessions tab, 2 of 5" style descriptions (§14).
-                    modifier = Modifier.semantics {
-                        contentDescription = destination.contentDescriptionRes.let { "" }
-                    },
-                )
-            }
-        },
-    ) {
-        // The "live now / up next" rail is a phone-only affordance: on Medium and
-        // Expanded it becomes a persistent supporting pane instead (§4.4).
-        Column {
-            if (windowSize == DroidconWindowSize.Compact && liveSessions.isNotEmpty()) {
-                LiveSessionsRail(sessions = liveSessions, onSessionClick = { /* … */ })
-            }
-            content(PaddingValues())
-        }
-    }
-}
-```
-
-> **As landed:** `layoutType` is now `navigationSuiteType`, and `NavigationSuiteType.None` no longer exists — hiding the navigation is `NavigationSuiteScaffoldState.hide()`, per the skill's step 2.1. The drawer is also gated on window *height*, because a drawer in phone landscape eats a third of the screen. The live-sessions rail did not stay in this composable: see `LiveSessionsRail` and `HappeningNowPane`.
-
-**Two important consequences.** First, `showNavigation` replaces the current `updateBottomBarState: (Boolean) -> Unit` callback that every entry in `DroidconEntryProvider` calls as a side effect during composition — which is a side effect in composition and technically a bug (it works because it's idempotent). Derive it instead:
-
-```kotlin
-// MainViewModel / DroidconApp
-val isTopLevelDestination: Boolean =
-    navigationState.currentEntry in TopLevelDestination.routeSet
-```
-
-Then delete the `updateBottomBarState` parameter from `droidconEntryProvider` and all nine entries. Net deletion, and one class of composition side effect gone.
-
-> **As landed:** that derivation is wrong in two ways. `Screens.Speakers` is not a top-level destination and *does* keep the navigation, and a detail must keep it too once it is a pane rather than a full screen. The rule is `shouldShowNavigation(route, isMultiPaneWindow)` in `core/ui/.../common/navigation/NavigationVisibility.kt`, covered by `NavigationVisibilityTest`.
-
-Second, the current `BottomNavigationBar` composable stacks the live-sessions `LazyRow` *above* the bar inside the same `bottomBar` slot. That's why the bar is a `Column`. Splitting them (as above) lets the live-sessions rail become a supporting pane on large screens instead of a horizontal scroller nobody sees.
-
-### 4.4 List-detail for sessions and speakers
-
-> **Rewritten 2026-09-17.** The original text of this section specified
-> `NavigableListDetailPaneScaffold` and `rememberListDetailPaneScaffoldNavigator`. The
-> [adaptive skill](https://github.com/android/skills/blob/main/jetpack-compose/adaptive/SKILL.md)
-> forbids both: *"You must use the Navigation 3 `SceneStrategy` approach to implement
-> multi-pane layouts. Do not use `ListDetailPaneScaffold` or `SupportingPaneScaffold`."*
->
-> The reason it matters here, beyond the skill saying so: a scaffold navigator is a **second
-> back stack**. This app is on Navigation 3 with a hand-rolled `NavigationController` that owns
-> a stack per top-level destination and its own `goBack()`. Two stacks over one `NavDisplay`
-> is how "back sometimes does nothing" gets shipped. The scene-strategy approach adds no stack
-> at all — it reads metadata off the entries that are already there.
-
-The two obvious two-pane candidates. What landed:
-
-```kotlin
-// app/src/main/java/com/android254/presentation/common/navigation/DroidconSceneStrategies.kt
-
-@Composable
-fun rememberDroidconSceneStrategies(
-    // Measured from the space the display has, not the window — see "A foldable emulator".
-    directive: PaneScaffoldDirective,
-): ImmutableList<SceneStrategy<NavKey>> {
-    val listDetail =
-        rememberListDetailSceneStrategy<NavKey>(
-            backNavigationBehavior = BackNavigationBehavior.PopUntilCurrentDestinationChange,
-            directive = directive,
-        )
-    val supporting = rememberSupportingPaneSceneStrategy<NavKey>(directive = directive)
-    return remember(listDetail, supporting) {
-        // List-detail first: with a session open beside its list, the right-hand column
-        // belongs to the session, not to what else is on right now.
-        persistentListOf(
-            ListPaneRequiredSceneStrategy(listDetail),
-            SupportingPaneRequiredSceneStrategy(supporting),
-        )
-    }
-}
-```
-
-Both guards are load-bearing, and so is the `directive` parameter — its default measures the
-window, which the navigation component sits inside. All three were found on a foldable rather
-than by reading the API.
-
-```kotlin
-// app/src/main/java/com/android254/presentation/common/navigation/DroidconEntryProvider.kt
-
-entry<Screens.Sessions>(
-    metadata = listPaneMetadata(DroidconPaneScene.Sessions) {
-        DetailPanePlaceholder(
-            message = stringResource(R.string.select_a_session),
-            icon = painterResource(id = ChaiR.drawable.sessions_icon),
-        )
-    },
-) {
-    SessionsRoute(navigateToSessionDetails = { navController.navigate(Screens.SessionDetails(it)) })
-}
-
-entry<Screens.SessionDetails>(metadata = detailPaneMetadata(DroidconPaneScene.Sessions)) { key ->
-    SessionDetailsRoute(
-        viewModel = sessionModel(key),
-        onNavigationIconClick = navController::goBack,
-        // The scaffold's own answer, so the screen cannot disagree with the layout about
-        // whether the list is beside it — and therefore about whether to draw a back arrow.
-        showTopBar = LocalListDetailSceneScope.current == null,
-    )
-}
-```
-
-Speakers is the same shape with `DroidconPaneScene.Speakers`, which is what the `sceneKey`
-exists for: without distinct keys a speaker opened from Home would be drawn into the sessions
-scaffold.
-
-**Nothing branches on window size.** The same entry is a full screen on a phone and a pane on a
-tablet, because `ListDetailSceneStrategy` reads the metadata and the window and returns a scene
-only when the window has room for two panes. That is the whole reason the skill prefers it.
-
-**One guard the skill does not mention.** `ListDetailSceneStrategy` expands a second pane
-whenever there is room and fills the list pane with whatever list entry it can find — nothing,
-if the detail was opened from Home, which pushes only `SessionDetails`. The result on a tablet
-is a real detail beside an empty column, and the detail believes it is a pane and drops its app
-bar. `ListPaneRequiredSceneStrategy` declines the scene when the list is not on the stack, so
-the entries fall through to a full-width single pane with the bar intact.
-
-**Feed stays single-pane** — it is a linear stream, and a stream does not have a detail.
-**About** could take a supporting pane for the organising-team grid; it did not in this PR.
-
-**Agenda grid — landed.** `SessionsScreen` had a list/agenda toggle (`isSessionLayoutList`)
-that only switched card styles. On Medium and Expanded the agenda mode is now what it wanted to
-be, a **room × time grid**, the way conference schedules are actually read:
-
-> **As landed:** no mapper change was needed. `SessionPresentationModel` gained a computed
-> `roomList` that splits the comma-joined `venue` — the same shape the API sends, and the same
-> split `Session.roomList` already does — rather than adding a second source of truth. A session
-> that runs in two rooms gets a cell under each. Covered by `AgendaGridTest`.
-
-The list pane needs a **selected** visual state it doesn't currently have — on a phone there is no persistent selection, on a tablet there must be:
+On a phone there is no persistent selection. With the detail beside the list there must be, and
+neither the session card nor the speaker card shows which one is open:
 
 ```kotlin
 // SessionsCard.kt
@@ -2854,7 +292,7 @@ fun SessionCard(
         targetValue = if (isSelected) {
             MaterialTheme.colorScheme.primary
         } else {
-            MaterialTheme.chaiColorsPalette.cardsBorderColor
+            MaterialTheme.colorScheme.outlineVariant
         },
         label = "session-card-border",
     )
@@ -2867,174 +305,21 @@ fun SessionCard(
 }
 ```
 
-Apply the same pattern to `SpeakersRoute` → `SpeakerDetailsRoute`. Feed stays single-pane (it's a linear stream). About gains a `SupportingPaneScaffold` on Expanded with the organising-team grid as the supporting pane.
+Apply the same pattern to the speaker cards. **About**'s grids already add columns as the window
+widens; it could also take a supporting pane for the organising team at expanded widths — through `SupportingPaneSceneStrategy` metadata, never a
+`SupportingPaneScaffold`.
 
-**Agenda grid view.** `SessionsScreen` already has a list/agenda toggle (`isSessionLayoutList`). On Medium/Expanded the agenda mode should become what it wants to be — a **room × time grid**, the way conference schedules are actually read:
+### 4.6 Keyboard and mouse: a context menu
 
-```kotlin
-@Composable
-fun AgendaGrid(
-    rooms: List<String>,
-    slots: List<TimeSlot>,
-    sessionsBySlot: Map<Pair<String, TimeSlot>, SessionPresentationModel>,
-    onSessionClick: (String) -> Unit,
-) {
-    // Sticky room headers across the top, sticky times down the left.
-    val horizontalScroll = rememberScrollState()
-    val verticalScroll = rememberScrollState()
-
-    Row {
-        Column(Modifier.width(TimeGutterWidth).verticalScroll(verticalScroll)) {
-            Spacer(Modifier.height(RoomHeaderHeight))
-            slots.forEach { slot -> TimeLabel(slot, Modifier.height(SlotHeight)) }
-        }
-        Column(Modifier.horizontalScroll(horizontalScroll)) {
-            Row(Modifier.height(RoomHeaderHeight)) {
-                rooms.forEach { room -> RoomHeader(room, Modifier.width(RoomColumnWidth)) }
-            }
-            Column(Modifier.verticalScroll(verticalScroll)) {
-                slots.forEach { slot ->
-                    Row(Modifier.height(SlotHeight)) {
-                        rooms.forEach { room ->
-                            AgendaCell(
-                                session = sessionsBySlot[room to slot],
-                                modifier = Modifier.width(RoomColumnWidth),
-                                onClick = onSessionClick,
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-```
-
-This is the single highest-value large-screen feature — it's the view organisers and speakers actually want, and it's impossible on a phone.
-
-### 4.5 Foldables and posture
-
-Two behaviours worth the small effort:
-
-```kotlin
-// Table-top posture (half-open, hinge horizontal): put content above the fold,
-// controls below. Ideal for watching a session livestream or the agenda grid.
-@Composable
-fun SessionDetailsScreen(session: SessionDetailsPresentationModel) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val foldingFeature = adaptiveInfo.windowPosture.hingeList.firstOrNull()
-    val isTableTop = adaptiveInfo.windowPosture.isTabletop
-
-    if (isTableTop && foldingFeature != null) {
-        Column {
-            SessionBannerImage(session, Modifier.weight(1f))        // top half
-            Spacer(Modifier.height(with(LocalDensity.current) { foldingFeature.bounds.height().toDp() }))
-            SessionActionsAndDescription(session, Modifier.weight(1f))  // bottom half
-        }
-    } else {
-        SessionDetailsSinglePane(session)
-    }
-}
-```
-
-Declare resizability so the app isn't letterboxed:
-
-```xml
-<!-- app/src/main/AndroidManifest.xml -->
-<application ...>
-    <activity
-        android:name="com.android254.presentation.activity.MainActivity"
-        android:resizeableActivity="true"
-        android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden|density|uiMode"
-        android:windowSoftInputMode="adjustResize"
-        android:exported="true">
-        <!-- ... -->
-    </activity>
-    <!-- Explicitly opt in to large-screen and ChromeOS -->
-    <meta-data android:name="WindowManagerPreference:FreeformWindowSize" android:value="maximize" />
-    <meta-data android:name="WindowManagerPreference:SuppressWindowControlNavigationButton" android:value="true" />
-</application>
-```
-
-```xml
-<!-- Do not lock orientation. If any screen currently does, remove it. -->
-<!-- android:screenOrientation="portrait"  ← must not appear anywhere -->
-```
-
-### 4.6 Keyboard, mouse, and stylus
-
-ChromeOS and tablet-with-keyboard users are real. Cheap, high-signal additions:
-
-```kotlin
-// Focus traversal order for keyboard nav
-Column(Modifier.focusGroup()) {
-    sessions.forEach { session ->
-        SessionCard(
-            session = session,
-            modifier = Modifier
-                .focusable()
-                .onKeyEvent { event ->
-                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
-                        onSessionClick(session.id); true
-                    } else false
-                },
-        )
-    }
-}
-```
-
-```kotlin
-// Hover states — invisible on phones, expected on desktop
-val interactionSource = remember { MutableInteractionSource() }
-val isHovered by interactionSource.collectIsHoveredAsState()
-val elevation by animateDpAsState(if (isHovered) 8.dp else 2.dp, label = "card-elevation")
-
-Card(
-    onClick = onClick,
-    interactionSource = interactionSource,
-    elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-) { /* … */ }
-```
-
-Plus: right-click context menu on a session card (bookmark / share / add to calendar), and `Modifier.pointerHoverIcon(PointerIcon.Hand)` on clickables.
-
-### 4.7 Previews and tests
-
-Every screen gets multi-size previews, so regressions are visible in the IDE:
-
-```kotlin
-// presentation/src/main/java/com/android254/presentation/utils/Previews.kt
-
-@Preview(name = "phone", device = Devices.PHONE, group = "size")
-@Preview(name = "foldable", device = Devices.FOLDABLE, group = "size")
-@Preview(name = "tablet", device = Devices.TABLET, group = "size")
-@Preview(name = "desktop", device = Devices.DESKTOP, group = "size")
-annotation class ChaiScreenSizePreview
-
-@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-annotation class ChaiLightAndDarkComposePreview   // already exists — keep
-
-@ChaiLightAndDarkComposePreview
-@Preview(name = "font 200%", fontScale = 2.0f)
-@Preview(name = "rtl", locale = "ar")
-annotation class ChaiA11yPreview
-```
-
-**Definition of done — all closed:**
-- [x] `NavigationSuiteScaffold` in place; no unconditional `BottomAppBar` — asserted by `AdaptiveInvariantsTest`
-- [x] Sessions and Speakers open a detail beside their list on Expanded — via the Nav3 `SceneStrategy`, **not** `NavigableListDetailPaneScaffold`, which the adaptive skill forbids
-- [x] Agenda grid ships on Medium/Expanded — `AgendaGrid`, rooms across and times down, covered by `AgendaGridTest`
-- [x] No `screenOrientation` lock anywhere, and resizability declared
-- [x] Roborazzi goldens cover phone/foldable/tablet/desktop (`captureFormFactors`), plus the existing light/dark/200 % matrix at phone size
-- [x] Manually verified on an OPPO Reno4 (API 31, ColorOS, 3-button), an API 36 emulator resized through every breakpoint, and a Pixel Fold AVD at 841 × 701 dp in OPENED and HALF_OPENED
-- [x] Table-top posture (§4.5) and pointer/keyboard input (§4.6) implemented; posture is covered by `TabletopPostureTest`, which supplies the posture rather than waiting on hardware — no physical device on hand folds, though a foldable AVD does, and is what caught both pane defects
+Session and speaker cards take the hand cursor, a session card lifts on hover, and
+`Modifier.clickable` already handles Enter and Space. Still missing: a right-click context menu on
+a session card — bookmark, share, add to calendar.
 
 ---
 
 ## 5. Phase 2 — Design system 2.0 and world-class UX
 
-**Depends on: §3.5 (the token bridge). Parallelisable across contributors once that lands.**
+**No remaining dependencies: §3.5 landed. Parallelisable across contributors.**
 
 ### 5.1 What "world class" actually means here
 
@@ -3047,148 +332,38 @@ Not more animation. The conference apps people remember are the ones that answer
 
 Everything in this phase serves one of those four. Anything that doesn't is decoration, and decoration is what makes conference apps feel like brochures.
 
-The single biggest UX gap today: **the app never tells you where to be.** There's a `CurrentSessionComponent` in a horizontal scroller above the bottom bar — easy to miss, and it competes with navigation. That should be the most prominent thing on the home screen during conference hours.
+**Question 1 is answered (2026-10-05).** While a session is live, Home's hero shows it, its room
+and end time, and what's next. With nothing live it welcomes, because up-next has no upper
+bound and could be weeks away. On a phone the live-sessions rail is hidden on Home only when a
+single session is live, the case the hero covers; parallel live sessions keep the rail. Questions 2 to 4 are
+still open: conflicts (§5.3), speaker cross-links, and the ticket (§7).
 
-### 5.2 Adopt M3 Expressive
+### 5.2 Adopt M3 Expressive — mostly done
 
-> **Status 2026-10-04:** the theme half landed — `MaterialExpressiveTheme`, the expressive
-> `MotionScheme`, the `*Emphasized` roles, and the pull-to-refresh `LoadingIndicator`, on a pinned
-> material3 1.5.0-alpha29. The component work below (`ButtonGroup`, the bookmark morph, loading
-> consolidation) and the corner-radius decision are still open.
+Landed on 2026-10-05, on material3 1.5.0-alpha29:
+- the theme, Emphasized type and the Expressive corner scale;
+- connected `ToggleButton` groups (`ButtonGroupDefaults` shapes) for the day selector and feedback rating, shared as `ConnectedToggleGroup`;
+- the bookmark shape morph and cookie-shaped speaker avatars;
+- `FilterChip` filters, the M3 switch and `LiveBadge`;
+- the short navigation bar and wide navigation rail;
+- the pull-to-refresh `LoadingIndicator`.
+- a polish pass: one Share button on feed posts (the system share sheet), a plain sign-in
+  dialog, sponsor and organiser logo tiles with grids that add columns on wider windows, and a
+  filter bottom sheet.
 
-Material 3 Expressive brings shape morphing, spring-based motion schemes, button groups, and loading indicators that read as *deliberate* rather than default. Combined with §3.5's `ColorScheme` bridge:
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/Theme.kt
-
-@Composable
-fun ChaiTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
-) {
-    val colorScheme = if (darkTheme) ChaiDarkColorScheme else ChaiLightColorScheme
-    val chaiColors = if (darkTheme) ChaiDarkComponentColors else ChaiLightComponentColors
-
-    CompositionLocalProvider(
-        LocalChaiColorsPalette provides chaiColors,
-        LocalChaiMotion provides ChaiMotion.Default,
-        LocalChaiSpacing provides ChaiSpacing,
-    ) {
-        // The *only* delta from §3.5's version: MaterialTheme → MaterialExpressiveTheme,
-        // plus the motionScheme argument. Every token is unchanged, because §3.5 built
-        // them Expressive-ready. If this is a bigger diff than that, §3.5 was skipped.
-        MaterialExpressiveTheme(
-            colorScheme = colorScheme,
-            typography = ChaiTypography,        // already carries the *Emphasized roles
-            shapes = ChaiShapes,
-            motionScheme = ChaiMotionScheme,
-            content = content,
-        )
-    }
-}
-```
-
-**Revisit the corner-radius scale here.** `CShapes` is 3/7/9/10 dp against Material's default 8/12/16/28 dp, and Expressive pushes further toward large, varied radii. Wiring `CShapes` through unchanged in §3.5 was deliberate — it preserved the existing look while the plumbing changed. Now is the point to decide whether that tight scale is a brand signature worth keeping or an artefact of an older visual language. Screenshot tests (§10.2) make the comparison concrete; take both versions to whoever owns chai's design rather than deciding it in a PR.
-
-Concrete places Expressive pays off:
-
-**Event-day selector → `ButtonGroup`.** `EventDaySelector` + `EventDaySelectorButton` hand-roll a segmented control. Replace with the real thing, which gets keyboard nav, correct semantics, and the expressive press-morph for free:
-
-```kotlin
-@Composable
-fun EventDaySelector(
-    eventDays: List<EventDate>,
-    selectedDate: EventDate,
-    onDaySelected: (EventDate) -> Unit,
-) {
-    ButtonGroup(
-        overflowIndicator = { menuState ->
-            FilledIconButton(onClick = { menuState.show() }) {
-                Icon(Icons.Default.MoreVert, stringResource(R.string.more_event_days))
-            }
-        },
-    ) {
-        eventDays.forEach { day ->
-            toggleableItem(
-                checked = day == selectedDate,
-                onCheckedChange = { onDaySelected(day) },
-                label = day.label,
-            )
-        }
-    }
-}
-```
-
-The `overflowIndicator` matters: a three-day conference fits, a five-day one does not, and the hand-rolled `Row` currently just clips.
-
-**Loading states → `LoadingIndicator` / `ContainedLoadingIndicator`.** There are currently four bespoke loading implementations: `AnimatedShimmerEffect`, `Loader`, `LoadingBox`, plus a Lottie `loading.json`, and per-screen skeletons (`HomeSessionLoadingComponent`, `HomeSpeakersLoadingComponent`, `SessionLoadingComponent`, `SessionLoadingCard`, `FeedLoadingComponent`). Consolidate to **two**: a shimmer skeleton for content-shaped loading, and `LoadingIndicator` for indeterminate actions. **Delete Lottie** — it's a 1.5 MB dependency with one usage (§9.4).
-
-**Pull-to-refresh → `PullToRefreshBox`.** Kills the deprecated accompanist dep:
-
-```kotlin
-@Composable
-fun HomeScreen(isSyncing: Boolean, onRefresh: () -> Unit, /* … */) {
-    val pullState = rememberPullToRefreshState()
-
-    Scaffold(topBar = { /* … */ }) { padding ->
-        PullToRefreshBox(
-            isRefreshing = isSyncing,
-            onRefresh = onRefresh,
-            state = pullState,
-            modifier = Modifier.padding(padding),
-            indicator = {
-                PullToRefreshDefaults.LoadingIndicator(
-                    state = pullState,
-                    isRefreshing = isSyncing,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            },
-        ) { /* content */ }
-    }
-}
-```
-
-**Shape morphing on the bookmark toggle.** Starring a session is the app's most emotionally significant interaction — it's the user building their day. Make it feel like something:
-
-```kotlin
-@Composable
-fun BookmarkButton(isBookmarked: Boolean, onToggle: () -> Unit) {
-    val shape = rememberAnimatedShape(
-        if (isBookmarked) MaterialShapes.Cookie9Sided else MaterialShapes.Circle,
-    )
-    val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(isBookmarked) {
-        if (isBookmarked) {
-            scale.animateTo(1.25f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
-            scale.animateTo(1f, spring(dampingRatio = Spring.DampingRatioLowBouncy))
-        }
-    }
-
-    FilledIconToggleButton(
-        checked = isBookmarked,
-        onCheckedChange = { onToggle() },
-        shape = shape,
-        modifier = Modifier
-            .graphicsLayer { scaleX = scale.value; scaleY = scale.value }
-            .semantics {
-                stateDescription = if (isBookmarked) {
-                    stringResource(R.string.session_starred)
-                } else {
-                    stringResource(R.string.session_not_starred)
-                }
-            },
-    ) {
-        Icon(
-            imageVector = if (isBookmarked) ChaiIcons.StarFilled else ChaiIcons.StarOutline,
-            contentDescription = null,
-        )
-    }
-}
-```
+Still open:
+- **Loading consolidation.** The per-screen skeletons, `LoadingBox` and `AnimatedShimmerEffect`
+  remain. Consolidate to one skeleton primitive for content-shaped loading, and use
+  `LoadingIndicator` for full-screen and indeterminate loads.
+- **Day-selector overflow.** The group fits three days and doesn't scroll. A longer event
+  needs a scrolling row, or a move to `ButtonGroup` and its `overflowIndicator`.
+- **The material3 pin.** Remove the `version.ref` once a BOM manages a stable 1.5.0 (see
+  `AGENTS.md`).
 
 ### 5.3 The home screen, rethought
+
+> **Status 2026-10-05:** the Now/Next card landed as home's hero. The phase model below (before,
+> during and after the event) and `DetectScheduleConflictsUseCase` are still open.
 
 Current home: header → (commented-out banner) → sessions section → speakers section → sponsors. It's a directory. During the conference it should be a **dashboard**.
 
@@ -3207,7 +382,7 @@ sealed interface ConferencePhase {
 | **Before** | Countdown, "build your agenda" CTA, speaker highlights, ticket status |
 | **During, session hours** | **Now / Next card** (biggest element on screen), then *your* starred day, then live feed |
 | **During, off hours** | Tomorrow's starred sessions, "rate today's sessions" prompt, social feed |
-| **After** | Personal recap (§6.10), session recordings, "what you missed", feedback prompt |
+| **After** | Personal recap (§6.11), session recordings, "what you missed", feedback prompt |
 
 ```kotlin
 @Composable
@@ -3284,7 +459,7 @@ data class ScheduleConflict(
 )
 ```
 
-Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.6): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
+Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.7): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
 
 ### 5.4 Motion that carries meaning
 
@@ -3491,13 +666,9 @@ fun sessionsScreen_hasNoAccessibilityViolations() {
 ```
 
 **Definition of done:**
-- [x] `MaterialExpressiveTheme` with brand `ColorScheme`, `Typography` (base **and** `*Emphasized`), `Shapes`, and `MotionScheme` — none defaulted. The motion scheme is Material's `expressive()`, not a chai one
-- [x] The diff from §3.5's `ChaiTheme` is the theme-function swap plus `motionScheme`, nothing more
-- [ ] Corner-radius scale decision made with design and recorded
 - [ ] Zero hardcoded `Color` literals inside composables (lint rule to enforce)
-- [ ] Zero hardcoded animation durations or springs in feature code — motion comes from `MaterialTheme.motionScheme` or `LocalChaiMotion`
+- [ ] Zero hardcoded animation durations or springs in feature code — motion comes from `MaterialTheme.motionScheme`
 - [ ] Loading states consolidated from 9 implementations to 2
-- [x] Accompanist and Lottie removed
 - [ ] Shared element transitions on session and speaker cards
 - [ ] Notes ship, offline, no auth
 - [ ] Full TalkBack pass on every screen, recorded as a checklist in the PR
@@ -3507,7 +678,7 @@ fun sessionsScreen_hasNoAccessibilityViolations() {
 
 ## 6. Phase 3 — Intelligent experiences
 
-**Depends on: Phase 0, and `:core:testing` from §10.4 · Highest product upside, highest risk**
+**Depends on: Phase 0 · Highest product upside, highest risk**
 
 ### 6.1 Principles before APIs
 
@@ -4020,7 +1191,7 @@ class CloudGeminiEngine @Inject constructor(
 **App Check is mandatory before this ships.** `google-services.json` is public in this repo, so without App Check anyone can burn the project's Gemini quota:
 
 ```kotlin
-// app/src/main/java/.../DroidconApplication.kt
+// app/src/main/java/com/android254/droidcon/app/DroidconApp.kt
 override fun onCreate() {
     super.onCreate()
     Firebase.initialize(this)
@@ -4296,7 +1467,7 @@ class EmptyAgendaException : Exception("No starred sessions to summarise")
 **The non-AI fallback, which is not a consolation prize.** Most of this is computable without a model, and the deterministic version is *more* trustworthy:
 
 ```kotlin
-// domain/src/main/java/com/android254/domain/usecase/BuildDeterministicAgendaSummaryUseCase.kt
+// core/domain/src/main/java/com/android254/domain/usecase/BuildDeterministicAgendaSummaryUseCase.kt
 
 /**
  * The always-available agenda summary. No model, no network, no device requirements.
@@ -4367,7 +1538,7 @@ fun AgendaSummarySheet(viewModel: AgendaSummaryViewModel = hiltViewModel()) {
                 Text(
                     stringResource(R.string.agenda_ai_unavailable),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.chaiColorsPalette.textWeakColor,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -4771,7 +1942,7 @@ class InferenceQuotaGuard @Inject constructor(
 **First, `RemoteFeatureToggle` needs typed accessors — it has none.** Found during review: the class exposes only `sync()`, `syncNowIfEmpty()` and `getString(key)`. Every `featureToggle.cloudInferenceEnabled` / `maxDailyInferenceCalls` read in §6.5 and §6.12 above is against API that **does not exist yet**. The entire AI safety story depends on adding it, so add it first:
 
 ```kotlin
-// datasource/remote/.../utils/RemoteFeatureToggle.kt
+// core/network/.../utils/RemoteFeatureToggle.kt
 
 class RemoteFeatureToggle(
     private val remoteConfig: FirebaseRemoteConfig,
@@ -4817,7 +1988,7 @@ class RemoteFeatureToggle(
 
 Note `cloudInferenceEnabled` and `onDeviceInferenceEnabled` both `&&` with `aiEnabled`, so `ai_enabled = false` is a true master switch — you cannot leave a sub-flag on by accident.
 
-`RemoteFeatureToggleTest` already exists in `datasource/remote/src/test`; extend it to cover the master-switch behaviour and the rollout hash stability.
+`RemoteFeatureToggleTest` already exists in `core/network/src/test`; extend it to cover the master-switch behaviour and the rollout hash stability.
 
 **Remote Config keys** — add to `remote_config_defaults.xml` so every AI feature has an independent off switch and a rollout dial:
 
@@ -5326,7 +2497,7 @@ See §11.2 for the connections surface this feeds.
 
 ## 8. Phase 5 — Notifications
 
-**Depends on: Phase 0 (§3.3 B10 for localizable strings)**
+**Depends on: Phase 0**
 
 ### 8.1 Current state
 
@@ -5371,7 +2542,7 @@ Delete the unconditional `askNotificationPermission()` from `MainActivity`.
 One channel means one choice: all or nothing. Users choose nothing.
 
 ```kotlin
-// presentation/src/main/java/com/android254/presentation/notifications/NotificationChannels.kt
+// app/src/main/java/com/android254/presentation/notifications/NotificationChannels.kt
 
 enum class NotificationChannelSpec(
     val id: String,
@@ -5693,298 +2864,28 @@ fun NotificationSettingsScreen(viewModel: NotificationSettingsViewModel = hiltVi
 
 ## 9. Phase 6 — Performance, R8, and app size
 
-**Depends on: Phase 0 · §9.1 must land before §9.2–9.5 — everything else here is unverifiable without it**
-
-### 9.1 Measure before optimising
-
-Nothing here is currently measured. First step is a macrobenchmark module, so every later claim is a number.
-
-```kotlin
-// benchmark/build.gradle.kts
-plugins {
-    alias(libs.plugins.android.test)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.baselineprofile)
-}
-
-android {
-    namespace = "ke.droidcon.kotlin.benchmark"
-    compileSdk = 37
-    defaultConfig {
-        minSdk = 28                 // macrobenchmark requires 28+
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    targetProjectPath = ":app"
-    // Benchmarks must run against a release-shaped build.
-    experimentalProperties["android.experimental.self-instrumenting"] = true
-}
-
-baselineProfile {
-    useConnectedDevices = true
-}
-
-dependencies {
-    implementation(libs.androidx.benchmark.macro)
-    implementation(libs.androidx.uiautomator)
-    implementation(libs.junit4)
-    implementation(libs.androidx.test.junit4)
-}
-```
-
-```kotlin
-// benchmark/src/main/kotlin/.../StartupBenchmark.kt
-
-@RunWith(AndroidJUnit4::class)
-class StartupBenchmark {
-    @get:Rule val rule = MacrobenchmarkRule()
-
-    @Test fun startupNoCompilation() = startup(CompilationMode.None())
-
-    @Test fun startupBaselineProfile() = startup(
-        CompilationMode.Partial(baselineProfileMode = BaselineProfileMode.Require),
-    )
-
-    @Test fun startupFullCompilation() = startup(CompilationMode.Full())
-
-    private fun startup(mode: CompilationMode) = rule.measureRepeated(
-        packageName = PACKAGE,
-        metrics = listOf(StartupTimingMetric()),
-        iterations = 10,
-        startupMode = StartupMode.COLD,
-        compilationMode = mode,
-        setupBlock = { pressHome() },
-    ) {
-        startActivityAndWait()
-        // Wait for real content, not just the first frame — otherwise we are
-        // measuring how fast we can draw a splash screen.
-        device.wait(Until.hasObject(By.res("home_sessions_section")), 10_000)
-    }
-
-    private companion object { const val PACKAGE = "ke.droidcon.kotlin" }
-}
-```
-
-```kotlin
-// benchmark/src/main/kotlin/.../ScrollBenchmark.kt
-
-@RunWith(AndroidJUnit4::class)
-class ScrollBenchmark {
-    @get:Rule val rule = MacrobenchmarkRule()
-
-    @Test
-    fun scrollSessionsList() = rule.measureRepeated(
-        packageName = PACKAGE,
-        metrics = listOf(
-            FrameTimingMetric(),
-            // Which composables are recomposing, and how much they cost.
-            TraceSectionMetric("SessionCard", TraceSectionMetric.Mode.Sum),
-        ),
-        iterations = 10,
-        startupMode = StartupMode.WARM,
-        compilationMode = CompilationMode.Partial(),
-        setupBlock = {
-            startActivityAndWait()
-            device.findObject(By.res("nav_sessions")).click()
-            device.wait(Until.hasObject(By.res("sessions_list")), 5_000)
-        },
-    ) {
-        val list = device.findObject(By.res("sessions_list"))
-        list.setGestureMargin(device.displayWidth / 5)
-        repeat(4) {
-            list.fling(Direction.DOWN)
-            device.waitForIdle()
-        }
-    }
-
-    private companion object { const val PACKAGE = "ke.droidcon.kotlin" }
-}
-```
-
-This requires `testTag`s that survive R8 — enable them in the benchmark build type:
-
-```kotlin
-// app/build.gradle.kts
-buildTypes {
-    create("benchmark") {
-        initWith(getByName("release"))
-        signingConfig = signingConfigs.getByName("debug")
-        matchingFallbacks += listOf("release")
-        // testTag → resource-id for UiAutomator
-        buildConfigField("boolean", "USE_SEMANTIC_TEST_TAGS", "true")
-        isProfileable = true
-        isMinifyEnabled = true
-        isShrinkResources = true
-    }
-}
-```
-
-```kotlin
-// In the app's root composable — testTags become UiAutomator-visible only in
-// benchmark builds, so production apps don't ship semantics overhead.
-Modifier.semantics { if (BuildConfig.USE_SEMANTIC_TEST_TAGS) testTagsAsResourceId = true }
-```
-
-### 9.2 Baseline and startup profiles
-
-The single highest-ROI performance change available — typically 20–30% faster cold start for the cost of a Gradle plugin.
-
-```kotlin
-// baselineprofile/src/main/kotlin/.../BaselineProfileGenerator.kt
-
-@RunWith(AndroidJUnit4::class)
-class BaselineProfileGenerator {
-    @get:Rule val rule = BaselineProfileRule()
-
-    @Test
-    fun generate() = rule.collect(
-        packageName = "ke.droidcon.kotlin",
-        // Include the code paths users actually hit in the first 30 seconds.
-        includeInStartupProfile = true,
-    ) {
-        pressHome()
-        startActivityAndWait()
-
-        // Home: wait for content, scroll it.
-        device.wait(Until.hasObject(By.res("home_sessions_section")), 10_000)
-        device.findObject(By.res("home_scroll"))?.fling(Direction.DOWN)
-
-        // Sessions: the heaviest list in the app.
-        device.findObject(By.res("nav_sessions")).click()
-        device.wait(Until.hasObject(By.res("sessions_list")), 5_000)
-        device.findObject(By.res("sessions_list")).fling(Direction.DOWN)
-
-        // Session details: the most common navigation.
-        device.findObject(By.res("sessions_list")).children.first().click()
-        device.wait(Until.hasObject(By.res("session_details_title")), 5_000)
-        device.pressBack()
-
-        // Ticket: must be instant (§7.3).
-        device.findObject(By.res("nav_ticket")).click()
-        device.wait(Until.hasObject(By.res("ticket_qr")), 5_000)
-
-        device.findObject(By.res("nav_feed")).click()
-        device.wait(Until.hasObject(By.res("feed_list")), 5_000)
-    }
-}
-```
-
-```kotlin
-// app/build.gradle.kts
-plugins {
-    alias(libs.plugins.baselineprofile)
-}
-
-dependencies {
-    implementation(libs.androidx.profileinstaller)   // required at runtime
-    baselineProfile(projects.baselineprofile)
-}
-
-baselineProfile {
-    // Regenerate manually, commit the result. Generating in CI on every PR is slow
-    // and flaky; a committed profile is reviewable and deterministic.
-    automaticGenerationDuringBuild = false
-    saveInSrc = true
-    dexLayoutOptimization = true       // R8 uses the startup profile to order DEX
-}
-```
-
-Commit `app/src/main/baseline-prof.txt` and `app/src/main/startup-prof.txt`, and **record the before/after numbers in the PR description.** Regenerate whenever navigation or startup changes materially.
+The benchmark module, the baseline and startup profiles, an R8 health check and a −28 % APK pass
+have landed. Numbers, method and the open questions are in [`docs/performance.md`](performance.md).
+What is left is below.
 
 ### 9.3 R8 configuration
 
-Current state: `isMinifyEnabled = true` on release, no resource shrinking, R8 full mode not explicitly declared, `proguardFiles` also applied to the debug build (harmless, but it means debug builds carry rules they never use).
+R8 is healthy: full mode, resource shrinking inside R8, and keep rules in
+`app/src/main/keepRules/` (see [`docs/performance.md`](performance.md#r8)). Three things remain:
 
-```kotlin
-// app/build.gradle.kts
-buildTypes {
-    debug {
-        isDebuggable = true
-        applicationIdSuffix = ".debug"          // install alongside release
-        versionNameSuffix = "-debug"
-        signingConfig = signingConfigs.getByName("debug")
-        // No proguardFiles on debug — minification is off, so they do nothing.
-    }
-
-    release {
-        isMinifyEnabled = true
-        isShrinkResources = true                // NEW — was missing
-        signingConfig = signingConfigs.getByName("release")
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro",
-        )
-        // Ship mapping + a readable configuration for debugging R8 output.
-        ndk { debugSymbolLevel = "FULL" }
-    }
-}
-```
-
-```properties
-# gradle.properties
-android.enableR8.fullMode=true
-
-# Fail the build when a keep rule references a class that no longer exists —
-# catches stale keep rules instead of silently keeping nothing.
-android.r8.strictFullModeForKeepRules=true
-```
-
-Keep rules to add, with reasons — an unexplained keep rule is technical debt:
-
-```proguard
-# app/proguard-rules.pro
-
-# --- Crash reports we can actually read -------------------------------------
--keepattributes SourceFile,LineNumberTable
--renamesourcefileattribute SourceFile
-
-# --- kotlinx.serialization ---------------------------------------------------
-# (existing rules are correct; keeping them)
--keepattributes *Annotation*, InnerClasses
--dontnote kotlinx.serialization.**
-
-# Navigation 3 keys are serialized to SavedState by fully-qualified name.
-# Renaming them breaks process-death restore in a way that only shows up on
-# a real device with "don't keep activities" on.
--keep,includedescriptorclasses class com.android254.presentation.common.navigation.Screens { *; }
--keep,includedescriptorclasses class com.android254.presentation.common.navigation.Screens$* { *; }
-
-# --- Room -------------------------------------------------------------------
-# Entities are reflected over by generated code in some configurations.
--keep class ke.droidcon.kotlin.datasource.local.model.** { *; }
-
-# --- Ktor -------------------------------------------------------------------
--dontwarn io.ktor.**
--dontwarn org.slf4j.**
--keep class io.ktor.client.engine.okhttp.OkHttpEngineContainer { *; }
-
-# --- Firebase AI Logic / ML Kit (§6) ---------------------------------------
-# Response models are deserialized reflectively.
--keep class com.google.firebase.ai.type.** { *; }
--keep class com.google.mlkit.genai.** { *; }
-
-# --- Enum valueOf is used by DataStore and Remote Config mapping ------------
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
-# --- Diagnostics (uncomment when investigating size) ------------------------
-# -printusage build/outputs/mapping/release/usage.txt
-# -printconfiguration build/outputs/mapping/release/full-config.txt
-# -whyareyoukeeping class com.example.SomeClass
-```
-
-**Newer R8 capabilities worth evaluating** (verify against the AGP version you land on — these move):
-
-- **Full mode is default** from AGP 8.0. It enables aggressive interface-method optimisation, enum unboxing, class merging, and argument propagation. Explicitly declaring it documents intent.
-- **DEX layout optimisation** from the startup profile — enabled above via `dexLayoutOptimization = true`. Orders methods in the DEX by startup order, reducing page faults on cold start.
-- **Partial shrinking** (`android.r8.partialShrinking`, experimental) — shrinks app code while skipping library code, trading size for build speed. Worth measuring on this codebase; the win is build time, not APK size.
-- **`strictFullModeForKeepRules`** — makes stale keep rules an error. Turn it on; keep rules rot silently otherwise.
-- **Resource shrinking with the new shrinker** — enabled by default in recent AGP. Verify with `resources.txt` in the mapping output that nothing needed was removed.
+- **Move release to the `optimization {}` block** once `androidx.baselineprofile` understands it.
+  Today the new block breaks baseline profile generation.
+- **Evaluate `android.r8.strictFullModeForKeepRules=true`**, which makes a keep rule that names a
+  missing class an error. Keep rules rot silently otherwise. Check first whether AGP 9.3 already
+  defaults it.
+- **Measure partial shrinking** (`android.r8.partialShrinking`, experimental), which skips library
+  code. The win is build time, not APK size.
 
 ### 9.4 App size
 
-Record a baseline *before* changing anything, so wins are provable:
+The release APK is 4.62 MB after the 2026-09-11 pass
+([`docs/performance.md`](performance.md#app-size)). Measure each change below against a fresh
+number rather than assuming a win:
 
 ```bash
 ./gradlew :app:bundleRelease
@@ -6011,28 +2912,23 @@ Write the number here as a **tracked baseline**:
 
 | Date | Version | Download size (Pixel-class) | Install size | Notes |
 | --- | --- | --- | --- | --- |
-| 2026-08-13 | 1.0.0 (vc 1) | 6,420,105 B — 6.12 MiB | 10,596,026 B — 10.11 MiB | Pre-Phase-0 baseline |
-| 2026-08-13 | 1.0.0 (vc 1) | 6,416,765 B — 6.12 MiB | 10,587,545 B — 10.10 MiB | After removing `accompanist-swiperefresh`, `gson`, `result-jvm`, `paging-*`, `runtime-livedata`, `compose-compiler`, and splitting the `compose` bundle |
 | 2026-09-03 | 1.0.0 (vc 1) | 5,205,416 B — 4.96 MiB | 8,553,954 B — 8.16 MiB | End of Phase 0. Includes §3.7 swapping `play-services-auth` for `androidx.credentials` + `googleid` |
 
-**−3,340 B download: 0.05%.** Deleting unused dependencies does not shrink the APK — R8 was
-already stripping them. The win was a smaller dependency graph and one fewer frozen
-artifact pinned into the build, not bytes. The real size wins below are the ones R8 cannot
-prove are unused: `material-icons-extended`, the Montserrat files, Lottie, and
-`play-services-auth`. Measure each against the baseline rather than assuming.
+That row predates the APK pass, so record a fresh one before the first change.
 
-Wins, ordered by return on effort:
+R8 already strips unused code, so deleting an unused dependency barely moves the number. The wins
+left are the ones R8 cannot prove are unused. In order of return on effort:
 
 **1. Drop `material-icons-extended`.** It's in the global `compose` bundle, so *every* Compose module pulls it. R8 does shrink unused icons, but the build-time cost is significant (thousands of generated classes to process) and the risk of an accidental full-keep is real.
 
-The stronger argument, found during review: it's a **frozen artifact**. It resolves to `1.7.8` while `compose-ui` resolves to `1.9.5` — Google stopped publishing new versions. Depending on a frozen artifact for the app's entire icon set is a slow-moving liability regardless of bytes.
+The stronger argument, found during review: it's a **frozen artifact**. Google stopped publishing it, so it stays on 1.7.x while the rest of Compose moves on. Depending on a frozen artifact for the app's entire icon set is a slow-moving liability regardless of bytes.
 
 **One blocker to clear first:** `SessionPresentationModel` uses `Icons.Default.CoPresent` and `Icons.Default.MicExternalOn`, both extended-only. Vector those two into `ChaiIcons` before removing the dependency, or the build breaks. (`Icons.Default.Build` and `Icons.Default.Coffee` are in `material-icons-core` and are fine.)
 
 Replace with `material-icons-core` plus a curated set:
 
 ```kotlin
-// chai/src/main/java/com/droidconke/chai/icons/ChaiIcons.kt
+// core/designsystem/src/main/java/com/droidconke/chai/icons/ChaiIcons.kt
 
 /**
  * The app's icon set. Adding an icon here is a deliberate act, which keeps the
@@ -6051,7 +2947,7 @@ object ChaiIcons {
 }
 ```
 
-**2. Fonts.** Five separate static Montserrat files are shipped. A single variable font, or downloadable fonts, replaces them:
+**2. Fonts.** Seven static Montserrat files ship, already subset to Latin. A single variable font, or downloadable fonts, replaces them:
 
 ```kotlin
 // Downloadable fonts — zero bytes in the APK, cached by Play services.
@@ -6072,58 +2968,28 @@ private val Montserrat = FontFamily(
 
 > **Trade-off, stated plainly:** downloadable fonts add a first-launch fetch and a fallback-font flash on devices without Play services. For a conference app whose users are on Play-enabled Android phones, the size win is worth it — but if the brand cares about a pixel-perfect first frame, bundle **one variable font file** instead. Either beats five static files.
 
-**3. Remove unused dependencies.** Still open: ~~`lottie-compose`~~ (removed 2026-10-04 — its one caller was dead), `gms-play-services-auth`, `constraintlayout-compose` (3 usages — check whether each is necessary). These are actually *used*, so unlike the dead catalog entries already deleted they will move the number. Measure each removal; Lottie and play-services-auth are the biggest.
+**3. Remove `constraintlayout-compose`.** `app` and `feature:home` still use it. Check whether each
+use is necessary, and measure the removal.
 
-**4. ~~Per-app language + locale filtering~~ — dropped 2026-10-04.** It depended on §14's
-Swahili translations, which are out of scope: the app ships in English for a global audience,
-so there is no second language for a per-app picker to switch to. `localeFilters` on its own
-stays off — see [`docs/performance.md`](performance.md).
-
-**5. Deduplicate drawables.** Twelve identical XML drawables exist in both `chai` and `presentation`. Single source in `chai`.
-
-**6. Add a CI size gate,** so size regressions are caught in review rather than at release (§15).
+**4. Add a CI size gate,** so size regressions are caught in review rather than at release (§15.1).
 
 ### 9.5 Runtime performance
 
 **Compose stability.** With Kotlin 2.x, strong skipping is on by default, but unstable parameters still break skipping. Run:
 
 ```bash
-./gradlew :presentation:assembleRelease -PenableComposeCompilerReports=true
+./gradlew assembleRelease -PenableComposeCompilerReports=true
 ```
 
-Then read `build/compose-reports/*-composables.txt` for `skippable=false` / `restartable=false`. Expected offenders in this codebase:
-
-- `SessionsUiState` holds `List<SessionPresentationModel>` — `List` is an interface, so it's unstable. Fix with `kotlinx.collections.immutable`:
-
-```kotlin
-data class SessionsUiState(
-    val sessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
-    val eventDays: ImmutableList<EventDate> = persistentListOf(),
-    // …
-)
-```
-
-Or, cheaper and nearly as effective, add the types to `compose_compiler_config.conf` (§3.1) — which is why that file is there.
-
-- Lambdas captured in `LazyColumn` item content: hoist to stable references so items skip.
-
-**`LazyColumn` keys.** Not a "confirm" — **8 of 10 call sites are missing them** (B14). Full list in §1.3. Fix every one:
-
-```kotlin
-LazyColumn {
-    items(
-        items = sessions,
-        key = { it.id },                     // required for correct reuse + animation
-        contentType = { it.sessionStatus },  // improves item reuse across types
-    ) { session -> SessionCard(session) }
-}
-```
+Then read each module's `build/compose-reports/*-composables.txt` for `skippable=false` /
+`restartable=false`. The cheapest fix for most offenders is the stability configuration file in
+§3.1. Also hoist lambdas captured in lazy item content to stable references, so items skip.
 
 **Coil configuration.** Currently default. Sessions and speakers screens load many remote images:
 
 ```kotlin
-// app/src/main/java/.../DroidconApplication.kt
-class DroidconApplication : Application(), SingletonImageLoader.Factory {
+// app/src/main/java/com/android254/droidcon/app/DroidconApp.kt
+class DroidconApp : Application(), SingletonImageLoader.Factory {
     override fun newImageLoader(context: PlatformContext): ImageLoader =
         ImageLoader.Builder(context)
             .memoryCache {
@@ -6144,7 +3010,9 @@ class DroidconApplication : Application(), SingletonImageLoader.Factory {
 
 Consider upgrading Coil 2.7 → Coil 3 while here (multiplatform-ready, and the API surface is close enough that the migration is mostly imports).
 
-**Firebase Performance custom traces** on the paths that matter:
+**Firebase Performance custom traces.** First settle the open question in
+[`docs/performance.md`](performance.md#still-open): whether Performance Monitoring earns its ~30 ms
+of main thread at startup at all. If it stays, trace the paths that matter:
 
 ```kotlin
 suspend fun <T> traced(name: String, block: suspend () -> T): T {
@@ -6160,155 +3028,39 @@ traced("ticket_render") { generateQrBitmap(...) }
 ```
 
 **Definition of done:**
-- [ ] Macrobenchmark module with startup + scroll benchmarks
-- [ ] Baseline and startup profiles generated, committed, and their effect measured
-- [ ] `isShrinkResources = true`, R8 full mode explicit
-- [ ] Every keep rule has a comment explaining why
-- [ ] APK size baseline and post-optimisation numbers in the table above
 - [ ] Compose stability report clean, or each remaining unstable type justified
-- [ ] Cold start on a low-end device (2 GB RAM, API 26) under 2 seconds to first content
+- [ ] Coil memory and disk caches configured
+- [ ] A decision on Firebase Performance Monitoring, with custom traces if it stays
+- [ ] Each §9.4 size win measured against a recorded number
+- [ ] Time to full display under 2 seconds on a low-end device — 2.7 s on the CS50C today, with the profile, and network-bound
 
 ---
 
 ## 10. Phase 7 — Testing
 
-**Depends on: Phase 0 — §3.3 B5 (`findActivity` throws) hard-blocks screenshot tests, §3.5 blocks meaningful goldens**
+**Depends on: nothing.** What this phase needed from Phase 0 has landed.
 
 ### 10.1 Where the gaps are
 
-33 unit/Robolectric test files is respectable. But:
+Screenshot tests (Roborazzi: light, dark and 200 % font at phone size, plus four form factors),
+Room migration tests and a shared `:core:testing` module are in place. The gaps:
 
-- **Zero E2E tests.** The two `androidTest` files are IDE scaffolding.
-- **Zero screenshot tests.** For a design-system module, this is the most valuable test type available and it's absent.
-- **Zero migration tests** (§3.3 B2 adds the first).
-- **Zero accessibility assertions.**
+- **No end-to-end tests.** The only instrumented test is `SessionMapperInstrumentedTest`.
+- **No accessibility assertions.**
 - **Coverage is measured but not gated.** Jacoco + Codecov are configured; nothing fails a PR.
+- **Four fixed defects have no regression test** (§3.9).
 
-### 10.2 Screenshot testing with Roborazzi
+### 10.2 Screenshot coverage gaps
 
-Roborazzi over the official Compose Preview Screenshot Testing plugin, for one decisive reason: the project already uses Robolectric, so Roborazzi runs on the JVM in the existing `test` source set with no emulator, and it can capture *interaction* states — a pressed button, a bottom sheet mid-open, a scrolled list — which preview-based testing cannot.
+The Roborazzi harness lives in `:core:screenshot`; [`AGENTS.md`](../AGENTS.md#commands) has the
+record and verify commands. Two gaps:
 
-```kotlin
-// build-logic/convention/src/main/kotlin/AndroidLibraryRoborazziConventionPlugin.kt
-
-class AndroidLibraryRoborazziConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) = with(target) {
-        pluginManager.apply("io.github.takahirom.roborazzi")
-
-        extensions.configure<LibraryExtension> {
-            testOptions.unitTests.isIncludeAndroidResources = true
-        }
-
-        dependencies {
-            add("testImplementation", libs.findBundle("roborazzi").get())
-            add("testImplementation", libs.findLibrary("test-robolectric").get())
-            add("testImplementation", libs.findLibrary("compose-ui-test-junit").get())
-        }
-    }
-}
-```
-
-```kotlin
-// core/screenshot/src/main/kotlin/.../ChaiScreenshotTest.kt
-
-/**
- * Base for Chai screenshot tests.
- *
- * Every component is captured across the matrix that actually breaks things:
- * light/dark, phone/tablet, and default/200% font scale. Those three axes catch
- * the overwhelming majority of real visual regressions.
- */
-@RunWith(RobolectricTestRunner::class)
-@GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [34], qualifiers = RobolectricDeviceQualifiers.Pixel7)
-abstract class ChaiScreenshotTest {
-
-    @get:Rule val composeRule = createComposeRule()
-
-    protected fun captureMatrix(
-        name: String,
-        content: @Composable () -> Unit,
-    ) {
-        ScreenshotVariant.entries.forEach { variant ->
-            composeRule.setContent {
-                TestHarness(
-                    darkMode = variant.isDark,
-                    fontScale = variant.fontScale,
-                    size = variant.size,
-                ) {
-                    ChaiTheme(darkTheme = variant.isDark) { content() }
-                }
-            }
-            composeRule.onRoot().captureRoboImage(
-                "src/test/screenshots/$name/${variant.id}.png",
-                roborazziOptions = RoborazziOptions(
-                    compareOptions = RoborazziOptions.CompareOptions(
-                        // 0.1% tolerance absorbs font-rendering noise across JDKs
-                        // without hiding real layout changes.
-                        changeThreshold = 0.001f,
-                    ),
-                ),
-            )
-        }
-    }
-
-    enum class ScreenshotVariant(
-        val id: String,
-        val isDark: Boolean,
-        val fontScale: Float,
-        val size: DpSize,
-    ) {
-        PhoneLight("phone_light", false, 1f, DpSize(412.dp, 915.dp)),
-        PhoneDark("phone_dark", true, 1f, DpSize(412.dp, 915.dp)),
-        PhoneLargeFont("phone_font_200", false, 2f, DpSize(412.dp, 915.dp)),
-        TabletLight("tablet_light", false, 1f, DpSize(1280.dp, 800.dp)),
-        TabletDark("tablet_dark", true, 1f, DpSize(1280.dp, 800.dp)),
-    }
-}
-```
-
-```kotlin
-// chai/src/test/kotlin/.../SessionCardScreenshotTest.kt
-
-class SessionCardScreenshotTest : ChaiScreenshotTest() {
-
-    @Test fun default() = captureMatrix("session_card/default") {
-        SessionCard(session = FakeSessions.regular, onClick = {})
-    }
-
-    @Test fun bookmarked() = captureMatrix("session_card/bookmarked") {
-        SessionCard(session = FakeSessions.regular.copy(isStarred = true), onClick = {})
-    }
-
-    @Test fun live() = captureMatrix("session_card/live") {
-        SessionCard(session = FakeSessions.regular.copy(sessionStatus = SessionStatus.Ongoing), onClick = {})
-    }
-
-    @Test fun selectedForTwoPane() = captureMatrix("session_card/selected") {
-        SessionCard(session = FakeSessions.regular, isSelected = true, onClick = {})
-    }
-
-    /** Long titles and long speaker lists are where cards actually break. */
-    @Test fun longContent() = captureMatrix("session_card/long_content") {
-        SessionCard(session = FakeSessions.pathologicallyLong, onClick = {})
-    }
-
-    @Test fun missingImage() = captureMatrix("session_card/no_image") {
-        // Empty string, not null — the field is a non-null String with a "" default.
-        SessionCard(session = FakeSessions.regular.copy(sessionImage = ""), onClick = {})
-    }
-}
-```
-
-Note `FakeSessions.pathologicallyLong` — the fake data in `presentation/common/fakedata/FakeSessions.kt` currently only has happy-path values. Add deliberate edge cases: 200-character titles, eight speakers, missing images, empty descriptions, non-Latin characters. **Those are the cases that break layouts, so those are the ones worth screenshotting.**
-
-Commands:
-
-```bash
-./gradlew recordRoborazziDebug     # regenerate goldens
-./gradlew verifyRoborazziDebug     # verify (CI)
-./gradlew compareRoborazziDebug    # produce diff images for review
-```
+- **The fake data is all happy path.** `FakeSessions` in `core/ui/.../common/fakedata/` has no edge
+  cases. Add deliberate ones — 200-character titles, eight speakers, missing images, empty
+  descriptions, non-Latin characters — and capture them. **Those are the cases that break layouts,
+  so those are the ones worth screenshotting.**
+- **Diffs are an artifact, not a comment.** CI uploads the Roborazzi output; posting the diff
+  images to the PR would put them where reviewers look.
 
 ### 10.3 End-to-end tests
 
@@ -6411,15 +3163,18 @@ Journeys to cover:
 | 3 | Offline: sessions + ticket + degraded AI | The actual conference network |
 | 4 | Ticket displays and scans | Gate failure is the worst failure |
 | 5 | Session details → notes → autosave → reopen | Data loss path |
-| 6 | Filter by topic, level, room, and combinations | Where B1 lived |
+| 6 | Filter by level, room, session type, and combinations | Where the room-filter bug lived |
 | 7 | Deep link from notification, cold start | Notifications are useless if this breaks |
 | 8 | Sign in → sign out → data intact | Auth regressions eat local data |
 | 9 | Rotation on every screen | State-loss regressions |
 | 10 | Two-pane on tablet: select, rotate, back | New surface, new bugs |
 
-### 10.4 Fix the test infrastructure
+### 10.4 Finish the test infrastructure
 
-**`:core:testing`** so fakes stop being duplicated. Today `FakeSyncWorkManager` lives in `presentation/src/test`, `SampleData` in `data/src/test`, `MockTokenProvider` and `SamplePaginationMetaData` in `datasource/remote/src/test`, and `FakeEntryProvider` in `presentation/src/test`. None are reusable.
+`:core:testing` exists but holds one fake, `FakeSyncWorkManager`. The rest are still private to
+their modules: `SampleData` in `core/data`'s tests, and `MockTokenProvider` and
+`SamplePaginationMetaData` in `core/network`'s. Move a fake when a second module needs it, and add
+hand-written repository fakes as the features that need them arrive:
 
 ```kotlin
 // core/testing/src/main/kotlin/.../repository/FakeSessionsRepo.kt
@@ -6460,7 +3215,9 @@ class MainDispatcherRule(
 }
 ```
 
-Also: **replace `Clock.System` with an injected `Clock` everywhere**, so time-dependent tests aren't flaky. `SessionsManager`, `SessionsViewModel`, and `MainViewModel` all read wall-clock time directly. `core/testing` provides:
+`Clock` is injected — `TimeModule` in `:core:common` provides it. One default argument still
+reaches for the system clock: `getTimeDifference(nowMillis = System.currentTimeMillis())` in
+`DateAndTimeUtils`. Pass the time in, and add a `TestClock` to `:core:testing`:
 
 ```kotlin
 class TestClock(private var current: Instant = Instant.parse("2026-11-06T09:00:00Z")) : Clock {
@@ -6502,15 +3259,13 @@ tasks.withType<JacocoCoverageVerification>().configureEach {
 And exclude what shouldn't count — generated code, DI modules, previews, `@Composable` preview functions — otherwise the number is noise.
 
 **Definition of done:**
-- [ ] `:core:testing` module; every duplicated fake consolidated
-- [ ] `Clock` injected everywhere; no direct `Clock.System` / `System.currentTimeMillis()` in production code
-- [ ] Roborazzi covering every `chai` component and every screen, across 5 variants
-- [ ] `verifyRoborazziDebug` in CI, with diff images posted to the PR
+- [ ] Shared fakes in `:core:testing` once a second module needs them
+- [ ] No `System.currentTimeMillis()` default in production code
+- [ ] Edge-case fake data captured in screenshots
 - [ ] 10 E2E journeys passing on an emulator in CI
-- [ ] Room migration tests
+- [ ] Regression tests for B5, B6, B7 and B10 (§3.9)
 - [ ] Accessibility checks enabled in Compose tests
 - [ ] Coverage gate enforced, with an agreed ratchet schedule
-- [ ] `ExampleUnitTest` / `ExampleInstrumentedTest` deleted
 
 ---
 
@@ -6900,7 +3655,7 @@ Requires `https://droidcon.co.ke/.well-known/assetlinks.json` with the release s
 Map URIs to `NavKey`s in one place:
 
 ```kotlin
-// presentation/.../navigation/DeepLinkResolver.kt
+// app/.../common/navigation/DeepLinkResolver.kt
 
 object DeepLinkResolver {
     /**
@@ -6939,231 +3694,68 @@ And make sharing produce those links. `FeedShareSection` exists for the feed; se
 
 ---
 
-## 12. Phase 9 — Filament 3D hero animation
+## 12. Phase 9 — 3D cube hero
 
-**No dependencies. Pure delight, zero functional value, and that's fine.**
+**No dependencies. Decided 2026-10-05: draw it with Compose Canvas, not a 3D engine.**
 
 ### 12.1 What and why
 
-A 3D Rubik's-cube animation — faces carrying the conference identity, solving itself on the home screen or the about screen. It has no functional purpose. Its purpose is that developers screenshot it and post it, and it says "this app was made by people who care."
+A 3D Rubik's cube with faces carrying the conference identity, solving itself on screen. It has
+no functional purpose. Its purpose is that developers screenshot it and post it, and it says
+"this app was made by people who care."
 
-Two ways to build it. **Try the second one first.**
+### 12.2 What the website does, and why the app doesn't copy it
 
-### 12.2 Option A: Compose-only (recommended first attempt)
+droidcon.co.ke's hero (`components/home/Banner.tsx` in droidconKE2022Web) is a Spline scene: 27
+cubies, a choreographed solve authored to run once over 30 seconds, then replayed every 30
+seconds in alternating directions. It is skipped for reduced-motion users and where WebGL is
+missing, and its replay pauses off screen.
 
-A Rubik's cube is 27 axis-aligned boxes. That's tractable with `Canvas` and hand-rolled projection, at zero dependency cost, and it'll run on every device the app supports.
+The app does not embed it:
+- the scene is downloaded from `prod.spline.design` at runtime, so it needs a network
+  connection, fails offline, and sends a request to a third party on every view;
+- the scene file is opaque, so a pull request cannot review a change to it;
+- a native 3D runtime costs megabytes per ABI, needs a fallback where GLES is missing, and very
+  few contributors could maintain it.
+
+### 12.3 The build: Compose Canvas
+
+A cube is 27 axis-aligned cubelets. With back faces culled, at most three faces of each are
+visible, so every frame is a few hundred projected quads, which `Canvas` draws easily on every
+supported device. No dependencies.
+
+- **Faces** use the brand palette: blue 700, neon green 500, ink, white, blue 300 and green 300.
+  The centre cubelet of the neon face carries the "con" mark from the wordmark.
+- **Motion** follows the website: a scripted 12-move solve in standard notation, each quarter
+  turn on `MaterialTheme.motionScheme.defaultSpatialSpec()`, then a slow idle yaw. It replays
+  every 30 seconds, alternating direction, as the website does.
+- **Placement:** at the top of the About screen at every window size, and in the trailing half of
+  Home's hero panel on medium and wider windows. Never on a phone's Home, which needs the space
+  for now and next.
+- **Structure:** a pure `CubeState` (positions and orientations) with `apply(move)`, kept apart
+  from the renderer, so the maths is tested without a device.
 
 ```kotlin
-// chai/src/main/java/com/droidconke/chai/hero/CubeHero.kt
-
-/**
- * A 3D Rubik's cube, rendered in Compose with a hand-rolled projection.
- *
- * No Filament, no glTF, no GPU pipeline: 27 cubelets × 6 faces, back-face culled,
- * painter-sorted. On a mid-range device this holds 60fps comfortably, and it adds
- * zero bytes of dependency.
- *
- * Try this before reaching for Filament (§12.3).
- */
+// core/designsystem/.../chai/hero/CubeHero.kt
 @Composable
-fun CubeHero(
-    modifier: Modifier = Modifier,
-    faceColors: List<Color> = ChaiCubeFaces,
-    rotationsPerMinute: Float = 6f,
-) {
-    val reduceMotion = LocalReduceMotion.current
-    val infinite = rememberInfiniteTransition(label = "cube")
+fun CubeHero(modifier: Modifier = Modifier, moves: List<CubeMove> = SignatureSolve)
 
-    val yaw by if (reduceMotion) {
-        remember { mutableFloatStateOf(0.6f) }
-    } else {
-        infinite.animateFloat(
-            initialValue = 0f,
-            targetValue = 2f * PI.toFloat(),
-            animationSpec = infiniteRepeatable(
-                tween((60_000 / rotationsPerMinute).toInt(), easing = LinearEasing),
-            ),
-            label = "cube-yaw",
-        )
-    }
-
-    // A gentle pitch oscillation reads as "alive" without being distracting.
-    val pitch by infinite.animateFloat(
-        initialValue = -0.25f,
-        targetValue = 0.25f,
-        animationSpec = infiniteRepeatable(tween(7_000, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "cube-pitch",
-    )
-
-    Canvas(
-        modifier
-            .aspectRatio(1f)
-            .semantics {
-                // Decorative. Do not make TalkBack users listen to a description
-                // of a spinning cube.
-                hideFromAccessibility()
-            },
-    ) {
-        val quads = buildCubeQuads(faceColors)
-            .map { it.rotated(yaw = yaw, pitch = pitch) }
-            .filter { it.facesViewer() }                 // back-face culling
-            .sortedBy { it.averageDepth }                // painter's algorithm
-
-        val scale = size.minDimension * 0.28f
-        val centre = Offset(size.width / 2f, size.height / 2f)
-
-        quads.forEach { quad ->
-            val path = Path().apply {
-                val projected = quad.vertices.map { it.project(scale, centre) }
-                moveTo(projected[0].x, projected[0].y)
-                projected.drop(1).forEach { lineTo(it.x, it.y) }
-                close()
-            }
-            // Simple Lambertian shade so the faces read as 3D.
-            drawPath(path, quad.color.shadedBy(quad.normal))
-            drawPath(path, Color.Black.copy(alpha = 0.35f), style = Stroke(width = 2f))
-        }
-    }
-}
-
-private data class Vec3(val x: Float, val y: Float, val z: Float)
-
-private fun Vec3.project(scale: Float, centre: Offset): Offset {
-    // Weak perspective — enough depth cue without a full projection matrix.
-    val perspective = 1f / (1f + z * 0.18f)
-    return Offset(
-        x = centre.x + x * scale * perspective,
-        y = centre.y + y * scale * perspective,
-    )
+data class CubeState(val cubelets: List<Cubelet>) {
+    fun apply(move: CubeMove): CubeState
 }
 ```
 
-Complete this with the "solving" choreography — sequenced layer rotations following a real solve, so it looks intentional rather than random. Model it as a list of moves and animate through them:
+**Non-negotiables:**
+- Pause when off screen or when the app is not resumed (`LifecycleResumeEffect` plus visibility).
+- Respect reduced motion: show the solved cube at a three-quarter angle, with no animation.
+- `hideFromAccessibility()`, because it is decoration.
+- Never on the startup path. About is never the start destination, and Home only draws it after
+  first content.
+- A Remote Config kill switch, `cube_hero_enabled`, in case it costs battery in the field.
 
-```kotlin
-/** Standard Rubik's notation. A short scripted solve reads better than randomness. */
-private val SolveSequence = listOf(
-    Move.R, Move.U, Move.RPrime, Move.UPrime,
-    Move.F, Move.RPrime, Move.FPrime, Move.R,
-    // …
-)
-```
-
-### 12.3 Option B: Filament
-
-Reach for Filament only if Option A can't deliver the visual you want — realistic materials, image-based lighting, reflections, a glTF asset authored by a designer.
-
-```kotlin
-// chai/src/main/java/com/droidconke/chai/hero/FilamentCubeHero.kt
-
-@Composable
-fun FilamentCubeHero(modifier: Modifier = Modifier) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var isSupported by remember { mutableStateOf<Boolean?>(null) }
-
-    LaunchedEffect(Unit) { isSupported = FilamentSupport.isDeviceSupported() }
-
-    when (isSupported) {
-        // Never leave a hole in the layout while probing.
-        null -> Box(modifier.aspectRatio(1f))
-        // Filament requires OpenGL ES 3.0+ / Vulkan. Fall back, don't crash.
-        false -> CubeHero(modifier)
-        true -> AndroidView(
-            modifier = modifier.aspectRatio(1f),
-            factory = { context ->
-                SurfaceView(context).also { surfaceView ->
-                    val renderer = CubeRenderer(context, surfaceView)
-                    lifecycleOwner.lifecycle.addObserver(renderer)
-                }
-            },
-        )
-    }
-}
-```
-
-```kotlin
-/**
- * Filament renderer for the cube hero.
- *
- * Filament is a manual-resource-management API: every Engine, Scene, View, Renderer,
- * SwapChain, and entity must be explicitly destroyed, in order. Leaking any of them
- * leaks native memory that the GC will never reclaim. Hence the LifecycleObserver.
- */
-private class CubeRenderer(
-    private val context: Context,
-    private val surfaceView: SurfaceView,
-) : DefaultLifecycleObserver {
-
-    private lateinit var engine: Engine
-    private lateinit var renderer: Renderer
-    private lateinit var scene: Scene
-    private lateinit var view: View
-    private lateinit var camera: Camera
-    private lateinit var displayHelper: DisplayHelper
-    private lateinit var uiHelper: UiHelper
-    private lateinit var modelViewer: ModelViewer
-
-    private var swapChain: SwapChain? = null
-
-    private val frameCallback = object : Choreographer.FrameCallback {
-        override fun doFrame(frameTimeNanos: Long) {
-            choreographer.postFrameCallback(this)
-            modelViewer.render(frameTimeNanos)
-        }
-    }
-    private val choreographer = Choreographer.getInstance()
-
-    override fun onCreate(owner: LifecycleOwner) {
-        Utils.init()
-        modelViewer = ModelViewer(surfaceView).apply {
-            scene.skybox = null                       // transparent, blends with the app
-            view.blendMode = View.BlendMode.TRANSLUCENT
-            renderer.clearOptions = renderer.clearOptions.apply { clear = true }
-        }
-
-        // A designer-authored .glb keeps the visual out of Kotlin.
-        context.assets.open("models/rubiks_cube.glb").use { input ->
-            val bytes = ByteBuffer.wrap(input.readBytes())
-            modelViewer.loadModelGlb(bytes)
-            modelViewer.transformToUnitCube()
-        }
-
-        // Image-based lighting is what makes Filament worth the cost.
-        loadIndirectLight("environments/studio_ibl.ktx")
-    }
-
-    override fun onResume(owner: LifecycleOwner) = choreographer.postFrameCallback(frameCallback)
-
-    override fun onPause(owner: LifecycleOwner) = choreographer.removeFrameCallback(frameCallback)
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        choreographer.removeFrameCallback(frameCallback)
-        // Order matters — Filament will assert if you destroy the Engine first.
-        modelViewer.destroyModel()
-        // ModelViewer owns engine/view/scene teardown internally.
-    }
-}
-```
-
-**Costs to weigh honestly:**
-
-| Concern | Impact |
-| --- | --- |
-| APK size | Filament native libs: ~3–5 MB per ABI. Real. |
-| Device support | Needs GLES 3.0+. Fine on the target install base, but needs a fallback path. |
-| Battery | Continuous 3D on a home screen drains battery. Pause when off-screen; do not animate forever. |
-| Maintenance | Native lifecycle management. A leak here is a native OOM, which is much harder to debug than a Kotlin one. |
-| Reviewability | Very few contributors will be able to review Filament code. Bus factor of one. |
-
-**Recommendation: build Option A.** It gets 80% of the delight for 5% of the cost and the whole team can maintain it. Keep Filament as a stretch goal for a contributor who specifically wants to build it — and if they do, gate it behind Remote Config so it can be turned off if it burns battery in the field.
-
-**Non-negotiables either way:**
-- Pause when off-screen (`LifecycleEventEffect` / `Lifecycle.State.RESUMED` gating).
-- Honour reduced-motion: static pose, no animation.
-- `hideFromAccessibility()` — it's decoration.
-- Never on the critical startup path. Load after first content is on screen.
-
----
+**Tests:** unit tests on `CubeState` (any move applied four times is the identity; a scramble
+followed by its inverse is solved), a Roborazzi golden of the static pose with the clock paused,
+and a macrobenchmark on About showing p90 frame time under 16 ms.
 
 ## 13. Phase 10 — Play Store presence
 
@@ -7172,8 +3764,6 @@ private class CubeRenderer(
 ### 13.1 Current state
 
 `fastlane/` has an `Appfile`, a `Fastfile` with lint/test/build lanes, and `whatsnew/whatsnew-en-US`. There is **no `fastlane/metadata/android/` directory**, which means the entire store listing — title, descriptions, screenshots, feature graphic — is managed by hand in the Play Console. It is not versioned, not reviewable, and not reproducible.
-
-Also: `fastlane/report.xml` is committed build output. Delete it and gitignore it.
 
 ### 13.2 Version the listing
 
@@ -7249,7 +3839,7 @@ end
     debugSymbols: app/build/intermediates/merged_native_libs/release/out/lib
 ```
 
-Note `mappingFile` and `debugSymbols` — currently not uploaded, which means **production crash reports are unreadable**. That's a one-line fix with immediate value.
+`mappingFile` is already uploaded. `debugSymbols` is not, so add it in the same change as the staged rollout.
 
 ### 13.3 Automate screenshots
 
@@ -7348,7 +3938,7 @@ private fun captureStoreShot(
 }
 ```
 
-**Do generate tablet screenshots.** Play requires 7" and 10" screenshots to be eligible for large-screen promotion, and after §4 the app will actually deserve them.
+**Do generate tablet screenshots.** Play requires 7" and 10" screenshots to be eligible for large-screen promotion, and the app now deserves them.
 
 ### 13.4 Listing copy
 
@@ -7436,7 +4026,7 @@ val updateType = if (featureToggle.forceUpdate) AppUpdateType.IMMEDIATE else App
 
 **Swahili was dropped on 2026-10-04.** The app is built for a global audience, not only for
 attendees in Kenya, so it ships in English and this section is the accessibility audit alone.
-Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings (§3.3 B10) are
+Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings are
 `@StringRes` values on `TopLevelDestination`, which is also what TalkBack reads.
 
 ### 14.1 Accessibility checklist
@@ -7448,7 +4038,7 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **TalkBack** | Every screen navigable; every action reachable; no unlabelled controls; reading order logical |
 | **Font scale** | Legible and unclipped at 200%; no fixed-height text containers |
 | **Display size** | Largest display size setting doesn't break layouts |
-| **Contrast** | 4.5:1 for body text, 3:1 for large text — **audit `ChaiColors` pairs**; `textWeakColor` on `background` is the likely failure |
+| **Contrast** | 4.5:1 for body text, 3:1 for large text — **audit every role pair**; the tightest today is `onSurfaceVariant` on `surfaceContainer` at 4.54:1 in light, and neon on the hero blue (4.1:1) is display-size only |
 | **Touch targets** | 48×48 dp minimum; audit every `IconButton` and the bottom nav items |
 | **Colour independence** | Session status (live/upcoming/past) must not be conveyed by colour alone — add an icon or text |
 | **Reduced motion** | Continuous animations respect the setting (§5.4, §12) |
@@ -7548,65 +4138,17 @@ class ColorContrastTest {
 
 ## 15. CI/CD and developer experience
 
-**No dependencies. Highest leverage per hour spent in this entire document — do §15.1 first, before anything else in the plan.**
+CI runs on every pull request — read `.github/workflows/pr.yml` rather than a copy here — and
+Dependabot opens weekly grouped updates. What is left:
 
-### 15.1 CI on every pull request
+### 15.1 CI gaps
 
-**Done** — `.github/workflows/pr.yml`. Static analysis, Android Lint, Compose stability, unit
-tests with coverage, debug and release builds, and instrumentation on Gradle Managed Devices, on
-`pull_request`, `merge_group` and push to `main`. Read the workflow rather than a copy here.
-
-Still missing, each blocked on something that does not exist: a screenshot-diff job (needs §10.2
-Roborazzi) and an APK-size gate (needs a `.github/actions/apk-size-diff` action).
-
-### 15.2 Dependabot
-
-**Done** — `.github/dependabot.yml`, weekly on Monday, grouped by AndroidX, Compose, Kotlin + KSP,
-Firebase, Ktor, Room, Hilt, test libraries and static analysis, across both `gradle` and
-`github-actions`.
-
-Two deliberate choices worth keeping: nothing is auto-merged, and AGP is left ungrouped so an AGP
-bump always arrives as its own reviewable PR.
+- **An APK-size gate.** It needs a `.github/actions/apk-size-diff` action (§9.4).
+- **A dependency-review job.**
 
 ### 15.3 Contributor experience
 
-The repo has `CONTRIBUTING.md` and a 400-line README. Improve targeted things:
-
-**A module map in the README.** New contributors currently have to reverse-engineer where things live. A short table plus a Mermaid dependency graph pays for itself immediately.
-
-**Document the debug-keystore decision** (§1.7 S1) so nobody "fixes" it.
-
 **Add `.editorconfig` rules that match ktlint,** so the IDE and CI agree. Currently `.editorconfig` exists — verify it encodes the same rules ktlint enforces, otherwise contributors get formatted-then-rejected.
-
-**A PR template with a real checklist:**
-
-```markdown
-<!-- .github/pull_request_template.md -->
-## What
-<!-- One paragraph. What changes, and why. -->
-
-## How to verify
-<!-- Steps a reviewer can follow. "Ran the app" is not steps. -->
-
-## Checklist
-- [ ] `./gradlew spotlessApply ktlintFormat` run
-- [ ] Tests added or updated (and they fail without the change)
-- [ ] Screenshot goldens updated if UI changed (`./gradlew recordRoborazziDebug`)
-- [ ] Strings in `strings.xml`, not hardcoded
-- [ ] Colours from `MaterialTheme` / `chaiColorsPalette`, not literals
-- [ ] Content descriptions on non-decorative images/icons
-- [ ] Checked in dark mode
-- [ ] Checked at 200% font scale
-- [ ] Checked on a tablet or in split-screen
-- [ ] No new dependency, or the new dependency is justified below
-
-## Screenshots
-| Before | After |
-| --- | --- |
-|  |  |
-```
-
-**A `/run` path that just works.** Document one command that builds and installs a debug build, and make sure it works on a clean clone with no local setup beyond the JDK. Verify `local.properties` isn't required.
 
 ### 15.4 Observability
 
@@ -7634,62 +4176,25 @@ if (!syncedSuccessfully) {
 }
 ```
 
-And upload mapping files (§13.2), without which every release crash report is unreadable obfuscated garbage.
-
 ---
 
 ## 16. Roadmap and sequencing
 
-### 16.0 What has landed
-
-Struck from the backlog. Kept here only so nobody re-plans it.
-
-| Area | State |
-| --- | --- |
-| P0 defect list — desugaring, `fallbackToDestructiveMigration`, filter options derived from data, topics path deleted, single `targetSdk`, lazy-list keys, `AuthManager` error branch, `speakers.take` hoisted, `packagingOptions` → `packaging`, `getTimeDifference`, example tests and untracked files | Done |
-| CI on every PR (§15.1) · weekly grouped Dependabot (§15.2) | Done |
-| Year-agnostic rename (§3.6) | Done |
-| Dead catalog entries and the `compose` bundle split (§1.4) · accompanist → M3 `PullToRefreshBox` | Done |
-| `minSdk` 24 → 26 · app-size baseline recorded (§9.4) | Done |
-| **AGP 9 + Gradle 9.7 + Kotlin 2.4 + `targetSdk` 37, with both opt-out flags removed** (§3.8) | Done — the migration is finished, not half-done |
-| **Gradle config cleanup** — `dependencyResolutionManagement` + `FAIL_ON_PROJECT_REPOS`, configuration cache, parallel, 4 GB heap, type-safe project accessors (D1–D3) | Done |
-| **Static-analysis toolchain** — ktlint-gradle 14.2.0, spotless 8.9.0, jacoco 0.8.15 | Done |
-| **Android Lint baseline deleted** (D6) — severity now decided per rule in `config/lint/lint.xml` | Done |
-| **Slack compose-lints + skydoves compose-stability-analyzer**, both wired into CI with committed `.stability` baselines | Done — see `docs/static-analysis.md` |
-| **Release builds are actually minified** — coverage instrumentation was forcing every build type debuggable, silently disabling R8 | Done |
-| `LICENSE`, rewritten README, `docs/architecture.md`, `docs/static-analysis.md` | Done |
-| **Edge-to-edge and window insets** (§3.4) — app bars own the top, the root owns the bottom bar, every `Scaffold` declares the rest, IME handled | Done — asserted by `WindowInsetsInvariantsTest` |
-| **Adaptive & large-screen support** (§4) — `NavigationSuiteScaffold`, Nav3 list-detail and supporting-pane scenes, the room × time agenda grid, adaptive grids, capped single-pane measure, table-top posture, pointer input, and the four edge-to-edge gaps §3.4 left | Done 2026-09-17, definition of done fully closed — asserted by `AdaptiveInvariantsTest`, `ListDetailSceneTest`, `BackHandlingTest`, `AgendaGridTest`, `TabletopPostureTest` and four new rules in `WindowInsetsInvariantsTest` |
-
-`safeApiCall` is **not** an open item, contrary to earlier drafts of this section: it has
-production callers in `AuthApi` and `SessionsApi`. Leave it.
-
 ### 16.1 Priority order — what to do next
 
-Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
-
-Items 1–7 and 10 have since landed; they are struck rather than deleted so the ordering still
-reads as it was decided. **The list now starts at #8.**
-
-**One correction to the ordering itself.** #7 was placed below #6 because "Adaptive needs #6's
-theme work first" — specifically `MaterialExpressiveTheme`. Expressive is still `internal` on
-material3 1.4.0, so that dependency would have blocked §4 indefinitely, and nothing in the
-Material adaptive guidance wants Expressive. §4 was built on the current `ChaiTheme` and landed
-first. The dependency in §16.3 ("Design system must land §3.5 before Adaptive can use
-`MaterialExpressiveTheme`") is wrong in the same way.
+Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work. A
+struck row has landed.
 
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
-| ~~**1**~~ | ~~Edge-to-edge + window insets~~ — **done 2026-09-17** | §3.4 | Correctness, not polish. `targetSdk` 37 already shipped, so the app is already subject to enforced edge-to-edge — this is now remedial rather than preparatory. |
-| ~~**2**~~ | ~~Test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes~~ — **done** | §10.4 | Everything below is easier to review with it, and the `Clock` injection unblocks testing anything time-dependent. |
+| **1** | Fix duplicated sessions after sync | §3.10 | A data bug users see on the first screen: counts climb and sessions repeat on every sync. |
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
-| ~~**4**~~ | ~~Baseline + startup profile~~ — **done 2026-09-10** | §9.2 | Best startup gain per unit of work, no product decisions needed. Also adds the benchmark module the perf section assumes. |
-| ~~**5**~~ | ~~Compose compiler stability config~~ — **done** | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. |
-| ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-04**, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. §5.2's component work is still open. |
-| ~~**7**~~ | ~~Adaptive & large-screen support~~ — **done 2026-09-17** | §4 | The README already claims it. Did **not** need #6's theme work — see the correction above. |
+| **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. Previously struck as done; it never landed. |
+| ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |
 | **8** | Accessibility audit (Swahili dropped 2026-10-04) | §14 | Independent of the above; can run in parallel by a separate owner. |
-| **9** | Real size wins: `material-icons-extended`, fonts, ~~Lottie~~, `play-services-auth` | §9.4 | Baseline is recorded, so these are now measurable. Unlike the deleted dead entries, R8 cannot strip these. |
-| ~~**10**~~ | ~~Credential Manager, replacing the deprecated GMS Auth path~~ — **done**, landed with Phase 0 | §3.7 | Deprecated API on a login path. Not urgent, but not shrinking either. |
+| **9** | Real size wins: `material-icons-extended`, fonts, `constraintlayout-compose` | §9.4 | Measurable against a recorded number. Unlike dead catalog entries, R8 cannot strip these. |
+| **10** | Phase-aware home and schedule conflicts | §5.3 | Answers question 2 of §5.1, and the hero already has the slot. |
+| **11** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
 
 Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
@@ -7699,22 +4204,12 @@ The AI section is still deliberately last. It is the most interesting part of th
 
 Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippable when it completes. Move to the next when the previous one's milestone is met — not on a date.
 
-**Stage 1 — Make the codebase safe to change** — *substantially complete*
-- ~~§15.1 CI on all PRs~~ · ~~§3.6 rename~~ · ~~P0 list~~ · ~~§3.8 AGP 9 (flags removed)~~ · ~~§3.1 Gradle config~~ · ~~static-analysis toolchain and lint baseline~~ — all landed
-- ~~§10.4 test infrastructure: `:core:testing`, injected `Clock`, consolidated fakes~~ — landed with the module split
-- ~~§9.1–9.2 benchmark module + baseline profile~~ — landed 2026-09-10
-- ~~§3.4 edge-to-edge and insets~~ — **landed 2026-09-17**; `targetSdk` 37 had shipped with the AGP 9 work, so this was remedial by the time it was done
-- **Milestone:** green CI on every PR ✅ · startup measured with a number written down ✅ (§9.1–9.2, [`docs/performance.md`](performance.md))
-
-**Stage 1 is complete.**
+Stage 1, making the codebase safe to change, is complete.
 
 **Stage 2 — Make it a 2026 app**
-- §10.2 Roborazzi screenshot suite — **first in this stage**, because it is how everything else here gets reviewed
-- ~~§3.5 → §5 design system: token restructure, then M3 Expressive~~ — **landed 2026-10-04**; §5.2 components still open
-- ~~§4 adaptive & large screen~~ — **landed 2026-09-17**, ahead of the design system rather than after it
-- §2 extract `:core:designsystem` plus one feature module, to prove the pattern
+- ~~§3.5 → §5 design system: token restructure, rebrand, then M3 Expressive~~ — **landed 2026-10-05**
 - §14 accessibility audit
-- **Milestone:** correct on every form factor · visual regressions caught in CI · contrast test green
+- **Milestone:** contrast test green
 
 **Stage 3 — Make it worth installing**
 - §6 intelligent experiences, every flag default-off
@@ -7737,7 +4232,7 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 - Retrospective driven by analytics: which features got used? Instrument for this during Stage 3, not after.
 - Prune. Anything with negligible engagement is a candidate for deletion, not iteration.
 
-**Deliberately deferred:** job board (§11.1), code challenge (§11.3), booking (§11.4b), Filament (§12), connections (§11.2). Each needs either a backend commitment or a named editorial owner. Revisit at the §11.0 planning meeting — and if the answer is "nobody owns the content," the answer is no.
+**Deliberately deferred:** job board (§11.1), code challenge (§11.3), booking (§11.4b), connections (§11.2). Each needs either a backend commitment or a named editorial owner. Revisit at the §11.0 planning meeting — and if the answer is "nobody owns the content," the answer is no.
 
 ### 16.3 Parallelisation
 
@@ -7752,9 +4247,8 @@ The natural split for a small contributor pool, chosen so people don't collide:
 | **Conference ops** | Ticketing, notifications, widget, map | §7, §8, §11.6–11.7 |
 
 Cross-track dependencies to watch:
-- ~~Design system must land §3.5 before Adaptive can use `MaterialExpressiveTheme`.~~ Withdrawn: Expressive is `internal` on material3 1.4.0 and the adaptive work never needed it. §4 landed first.
-- Design system needs §10.2 Roborazzi in place first, or its work is unreviewable.
-- AI needs `:core:testing` from Foundations to test its router.
+- AI (§6) needs `:core:testing` to test its router.
+- The cube (§12) needs nothing, but lands after §14 so its reduced-motion path is audited with the rest.
 
 ### 16.4 Definition of done, per PR
 
@@ -7782,14 +4276,9 @@ Non-negotiable for every PR in every phase:
 | **Model hallucination in a user-visible place.** The agenda summary invents a session. | Medium | Medium | Structured output constrained to provided ids, deterministic path always shown alongside (§6.7), thumbs-down monitoring with a 25% kill threshold. |
 | **Package rename invalidates every open PR.** | High | Medium | Announce two weeks ahead, do it in one mechanical PR, merge everything outstanding first, do it during a quiet period. |
 | **Gemma model download over mobile data.** A user pays for 500 MB by accident. | Medium | High | Unmetered-only default, explicit size in the UI, opt-in with a confirmation, cancellable (§6.4). |
-| **Large-screen work regresses phone UX.** | Medium | Medium | Screenshot matrix includes phone variants (§10.2). Phone is the primary form factor and stays the default code path. |
-| **No AGP 9.x supports API 37 when the migration is ready.** AGP 9.0 caps at 36.1, and both targetSdk 37 and AGP 9 are committed. | Medium | Medium | Prerequisite work (§3.8 steps 1–5) is version-independent, so it proceeds regardless. Contingency: targetSdk 37 on latest AGP 8.x first, AGP 9 after. Check the API cap before pinning any AGP version. |
-| **Expressive work starts before the material3 bump** and burns a sprint on code that cannot compile. | Medium | Low | The BOM/material3 1.4.x bump is a named prerequisite in §3.5 and a Stage 2 line item. §3.5's colour work can land on 1.3.2; only the Expressive pieces are blocked. |
-| **Kotlin 2.1 → 2.3 breaks something subtle.** Bundled into the AGP bump, it becomes impossible to bisect. | Medium | Medium | Its own PR, ahead of the AGP work (§3.8 §7 step 4). Screenshot tests and E2E journeys are the safety net. |
 | **Backend isn't ready** for signed tickets, jobs, or bookings. | **High** | Medium | Start the backend conversation during Stage 2, not Stage 3. Every backend-dependent feature has a documented degraded v0. |
 | **Editorial features ship empty.** Job board with no jobs; challenges with no challenges. | High | Medium | Do not build without a named owner who has committed to content (§11.0). |
-| **Filament battery drain** in the field. | Low | Medium | Remote Config gate, pause off-screen, Compose fallback is the default (§12.3). |
-| **New contributors bounce** off a 400-line README and an unfamiliar architecture. | Medium | Medium | Module map, good-first-issue labels, a `/run` command that works on a clean clone (§15.3). |
+| **Cube battery drain** in the field. | Low | Medium | Pause off screen, reduced-motion static pose, and the `cube_hero_enabled` Remote Config switch (§12.3). |
 
 ### 17.2 Open questions — need answers from outside engineering
 
@@ -7807,55 +4296,32 @@ Non-negotiable for every PR in every phase:
 
 8. **Coil 2 → 3** now or later? Recommendation: during Phase 2, while touching the image-loading surface anyway.
 9. **Kover instead of Jacoco**? Kover is Kotlin-native and handles inline functions better. Low priority; Jacoco works.
-10. **KMP?** `:domain` and most of `:data` are already pure Kotlin. Making them multiplatform would enable an iOS app and a web agenda from the same models. **Genuinely worth considering** — but only if someone wants to build the iOS app. Note that this interacts with §3.8: AGP 9 introduces `com.android.kotlin.multiplatform.library` for KMP modules, and the [JetBrains AGP 9 migration skill](https://github.com/Kotlin/kotlin-agent-skills/tree/main/skills/kotlin-tooling-agp9-migration) is written primarily for exactly that migration. If KMP is on the table, doing it *after* AGP 9 rather than before avoids migrating the same modules twice.
-11. **Module split depth** (§2) — is the full `:core:*` / `:feature:*` split worth it at 21k LOC? Recommendation: split `:core:designsystem` and the largest features; don't split for the sake of symmetry. Seven well-bounded modules beat twenty-five badly-bounded ones.
-12. **How much analytics?** Deciding what to prune post-conference requires knowing what got used. Instrument in Q3, and be explicit in the Data Safety form.
+10. **KMP?** `:core:model` is a JVM module and most of `:core:data` is plain Kotlin. Making them multiplatform would enable an iOS app and a web agenda from the same models. **Genuinely worth considering** — but only if someone wants to build the iOS app. AGP 9 is in, so KMP modules would use `com.android.kotlin.multiplatform.library`.
+11. **How much analytics?** Deciding what to prune post-conference requires knowing what got used. Instrument in Q3, and be explicit in the Data Safety form.
 
 ---
 
 ## 18. Appendix A — file-by-file change index
 
-Quick reference for where each finding lives.
-
-### Correctness
-
-| Finding | File | Section |
-| --- | --- | --- |
-| B1 topics filter dead | `presentation/.../sessions/view/SessionsViewModel.kt`, `SessionsFilterState.kt`, `domain/.../models/Session.kt` | §3.3 |
-| B2 destructive migration | `datasource/local/.../di/DatabaseModule.kt`, `Database.kt` | §3.3 |
-| B3 no-op compiler flag | `presentation/build.gradle.kts` | §3.3 |
-| B4 targetSdk mismatch (34/36 → shared ref, then 37) | `build-logic/.../AndroidLibraryConventionPlugin.kt`, `AndroidApplicationConventionPlugin.kt` | §3.1 |
-| B5 `findActivity` throws | `chai/.../Theme.kt` | §3.3 |
-| B6 state not saveable | `presentation/.../sessions/view/SessionsScreen.kt` | §3.3 |
-| B7 splash blocks on network | `presentation/.../activity/MainActivity.kt`, `MainViewModel.kt` | §3.3 |
-| B8 hardcoded colours | `chai/.../components/CText.kt` | §3.3 |
-| B9 `SimpleDateFormat` | `presentation/.../sessions/view/SessionsViewModel.kt` | §3.3 |
-| B10 mutable nav keys | `presentation/.../common/navigation/Screens.kt` | §3.3 |
+Quick reference for where the pending changes land.
 
 ### Build
 
 | Change | File | Section |
 | --- | --- | --- |
-| `isShrinkResources`, benchmark buildType | `app/build.gradle.kts` | §9.3 |
-| Keep rules with reasons | `app/proguard-rules.pro` | §9.3 |
-| Stability config | `compose_compiler_config.conf` (new) | §3.1 |
+| Stability config | `compose_compiler_config.conf` (new), `build-logic/.../AndroidCompose.kt` | §3.1 |
+| Event slug from Remote Config | `core/network/.../remote/Constants.kt`, `RemoteConfigConfig.kt`, `UrlProvider.kt` | §3.6 |
 
-### Deletions
+### Consolidations
 
 ```
-chai/.../components/CText.kt: CParagraph, CPageTitle, CSubtitle, CActionText
-presentation/src/main/res/drawable/*                 # 9 duplicated from chai
-presentation/.../common/components/{LoadingBox,AnimatedShimmerEffect}.kt  # consolidate to 2 (Loader deleted)
+core/ui/.../common/components/{LoadingBox,AnimatedShimmerEffect}.kt  # one loading treatment (§5.2)
 ```
 
 ### New modules
 
 ```
-benchmark/                    §9.1
-baselineprofile/              §9.2
 core/ai/                      §6.2
-core/testing/                 §10.4
-core/screenshot/              §10.2
 widget/                       §11.7
 feature/ticket/               §7
 ```
@@ -7872,7 +4338,7 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | --- | --- |
 | [Now in Android](https://github.com/android/nowinandroid) | Convention plugin structure (already partially adopted — go further), `:core`/`:feature` module conventions, `:core:testing` patterns, Roborazzi setup, baseline profile module layout |
 | [jetpacker (ai-samples)](https://github.com/android/ai-samples/tree/main/jetpacker) | Firebase AI Logic + ML Kit GenAI wiring, on-device/cloud fallback patterns, structured output usage |
-| [Adaptive JetStream](https://github.com/android/adaptive-apps-samples/tree/main/AdaptiveJetStream) | `NavigationSuiteScaffold`, `ListDetailPaneScaffold`, posture handling, the adaptive navigation patterns in §4 |
+| [Adaptive JetStream](https://github.com/android/adaptive-apps-samples/tree/main/AdaptiveJetStream) | `NavigationSuiteScaffold` and posture handling. It uses `ListDetailPaneScaffold`, which this app forbids — see [`docs/architecture.md`](architecture.md#navigation) |
 | [Socialite](https://github.com/android/socialite) | CameraX + Compose integration, media handling, `camera-compose` viewfinder usage |
 | [Compose Samples](https://github.com/android/compose-samples) | Jetsnack for design-system layering; Jetcaster for adaptive + media; Reply for two-pane navigation |
 | [Google I/O app](https://github.com/google/iosched) | Conference-app domain modelling, schedule conflict handling, agenda UX prior art |
@@ -7900,8 +4366,7 @@ The apps and docs this plan draws on, and what specifically to take from each.
 - [R8 / shrinking](https://developer.android.com/build/shrink-code)
 - [Compose performance](https://developer.android.com/develop/ui/compose/performance)
 
-**Build & AGP 9**
-- [JetBrains AGP 9 migration skill](https://github.com/Kotlin/kotlin-agent-skills/tree/main/skills/kotlin-tooling-agp9-migration) — the source for §3.8's version and plugin tables. `VERSION-MATRIX.md` and `PLUGIN-COMPATIBILITY.md` are the two files to read; the migration procedure itself is KMP-scoped and doesn't apply to this repo yet (see §3.8's scope caveat)
+**Build**
 - [AGP release notes & upgrade guide](https://developer.android.com/build/releases/gradle-plugin)
 - [Gradle 9 upgrade guide](https://docs.gradle.org/current/userguide/upgrading_version_8.html)
 - [Now in Android's `build-logic`](https://github.com/android/nowinandroid/tree/main/build-logic) — the reference for convention-plugin structure this repo already follows
@@ -7909,7 +4374,6 @@ The apps and docs this plan draws on, and what specifically to take from each.
 **Other**
 - [Edge to edge](https://developer.android.com/develop/ui/compose/layouts/insets)
 - [Material 3 Expressive](https://m3.material.io/) and [Compose Material 3](https://developer.android.com/develop/ui/compose/designsystems/material3)
-- [Credential Manager](https://developer.android.com/identity/sign-in/credential-manager-siwg)
 - [Roborazzi](https://github.com/takahirom/roborazzi)
 - [Compose accessibility](https://developer.android.com/develop/ui/compose/accessibility)
 
@@ -7919,14 +4383,5 @@ The apps and docs this plan draws on, and what specifically to take from each.
 
 | Date | Change |
 | --- | --- |
-| 2026-09-17 | **§3.4 rewritten as done.** Edge-to-edge insets landed; the section keeps its reasoning but records where the implementation diverges — the contract splits at the app bar rather than threading `contentPadding` through `Navigation`, because every screen already owns a `Scaffold`. §16.0 gains the row, §16.1 strikes items 1–5 and 10 (all landed; #10 Credential Manager shipped with Phase 0 and the list had gone stale), and **Stage 1 is marked complete** — its two remaining items, §10.4 and §9.1–9.2, had both landed without the section being updated. The screenshot bullet in §3.4's definition of done is recorded as only partly closeable: Robolectric reports no system bars, so a cutout is reachable for the app bars and not for the screens. |
-| 2026-08-14 | Pruned again against the merged codebase. **§3.8 rewritten as done** — AGP 9 landed with both opt-out flags removed, so Stage 4.5, the half-migration risk row and the detekt-2.0 gate are all deleted; the two `gradle.properties` settings this plan recommended are recorded as wrong under AGP 9. **§3.1 collapsed** to the one thing left in it, the Compose compiler stability configuration, and promoted to #5 in §16.1. **§3.2 trimmed** to the forward-looking catalog entries. **§1.6 D1–D3, D6, D7 and §1.7 S2 deleted** — Gradle config cleanup, the lint baseline, the second wrapper and `api_key.txt` are all done. §1.4 pruned to what still exists, and the `safeApiCall` item withdrawn: it has production callers, so earlier drafts calling it dead were wrong. §15.1/§15.2 compressed to their outcomes. §16.0 records the static-analysis toolchain, the Compose lint and stability rule sets, and the release-minification fix. |
-| 2026-08-13 | Initial plan. Audit of `main` @ `7a8317c`. |
-| 2026-08-13 | targetSdk target raised to 37 (B4, §3.1). Time estimates removed throughout — the plan commits to ordering, not dates. §3.5 rewritten as an explicit chai/Material 3 recommendation with the evidence behind it. §3.8 added: AGP 9 migration, grounded in the JetBrains AGP 9 migration skill's version and plugin-compatibility tables. |
-| 2026-08-13 | Reviewed the plan against the codebase and re-audited the codebase for gaps. Corrections and additions: **B11** added — `java.time` at minSdk 24 with desugaring never enabled, a crash on a supported API level and now the highest-priority item. **B1 corrected** — the broken filter is rooms, not topics; topics is unreachable dead code (§1.4). **B12–B16** added. **B9 corrected** — `Clock` is already provided and injected; the proposed `TimeModule` was a duplicate. **§3.5** gained a hard material3 1.4.x prerequisite: BOM 2025.06.00 resolves material3 to 1.3.2, which contains no Expressive API. **§6.12** gained the `RemoteFeatureToggle` typed accessors the AI kill switches depend on and that did not exist. Fixed wrong column name in the migration test and two `sessionImageUrl` compile errors. CI matrix extended down to API 24. **§16.0** added: the P0 list. AGP 9 + targetSdk 37 both committed, which pins the AGP to the earliest 9.x supporting API 37. |
-
-
-
-
-
-| 2026-08-13 | Pruned the plan to what is left. §16 restructured: **§16.0** now records what has landed rather than listing it as work — the P0 defects, CI on every PR, Dependabot, the year-agnostic rename, dead catalog entries, accompanist, AGP 9 with Gradle 9.7 and Kotlin 2.4, the size baseline. One P0 item remains open (`safeApiCall`). **§16.1** replaced "if you only do five things" with a ranked ten-item priority order, since the original top two are done. Stage 1 marked substantially complete; Stage 2 reordered to put Roborazzi first, because it is what makes design-system work reviewable. **Stage 4.5 rewritten**: AGP 9 has landed, so the remaining work is removing `newDsl=false` and `builtInKotlin=false`, gated entirely on detekt 2.0 upstream. §15.1's YAML sketch deleted in favour of pointing at the real workflow. **minSdk raised 24 → 26**, which resolves B11 by making it unreachable and removed the api24 managed device; API-24 references corrected throughout. §3.8 gained the finding that managed devices below API 27 do not work under AGP 9 with `newDsl=false`. |
+| 2026-10-05 | Pruned to pending work only. Deleted the landed-work notes at the top, §1.1–1.4, §3.3, §3.4, §3.7, §3.8, most of §4, §9.1–9.2, §16.0 and the struck roadmap rows; git keeps them. Durable facts moved to `docs/architecture.md`, `docs/performance.md`, `AGENTS.md` and `README.md`. §16.1 #5 is no longer struck: the Compose stability configuration (§3.1) never landed. |
+| 2026-10-05 | Recorded the 2026 rebrand and Expressive components: §3.5 and the landed-work block move to `docs/architecture.md`, §5.2 lists only what is left, §5.1 and §5.3 note the Now/Next hero, and §12 is decided on a Compose Canvas cube after reviewing the website's Spline scene. |

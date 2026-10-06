@@ -34,12 +34,12 @@ class AboutScreenshotTest : ChaiScreenshotTest() {
 
     /** The hero draws behind the status bar at every size. */
     @Test
-    fun `feedback across form factors`() = captureFormFactors("form_factors/feedback") { FeedBackScreen(darkTheme = false) }
+    fun `feedback across form factors`() = captureFormFactors("form_factors/feedback") { FeedBackScreen() }
 
     @Test
     fun feedback() =
         captureScreen("screens/feedback") {
-            FeedBackScreen(darkTheme = false)
+            FeedBackScreen()
         }
 }
 

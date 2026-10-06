@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -51,6 +50,7 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 
@@ -63,6 +63,8 @@ fun HomeRoute(
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
+    liveSession: SessionPresentationModel? = null,
+    nextSession: SessionPresentationModel? = null,
 ) {
     val homeState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
@@ -76,10 +78,11 @@ fun HomeRoute(
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
         onRefresh = { homeViewModel.startRefresh() },
+        liveSession = liveSession,
+        nextSession = nextSession,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
     viewState: HomeState,
@@ -91,6 +94,8 @@ internal fun HomeScreen(
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
+    liveSession: SessionPresentationModel? = null,
+    nextSession: SessionPresentationModel? = null,
 ) {
     val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
     val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
@@ -123,7 +128,11 @@ internal fun HomeScreen(
                         .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                HomeHeaderSectionComponent()
+                HomeHeaderSectionComponent(
+                    liveSession = liveSession,
+                    nextSession = nextSession,
+                    onSessionClick = onSessionClicked,
+                )
                 HomeBannerSection(viewState)
                 HomeSpacer()
 

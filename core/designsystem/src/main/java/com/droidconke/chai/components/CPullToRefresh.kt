@@ -16,7 +16,6 @@
 package com.droidconke.chai.components
 
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 /** Pull to refresh in the brand accent. Hoist [state] if the box can recompose away mid-gesture. */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ChaiPullToRefreshBox(
     isRefreshing: Boolean,

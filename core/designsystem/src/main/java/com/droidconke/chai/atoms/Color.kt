@@ -17,31 +17,31 @@ package com.droidconke.chai.atoms
 
 import androidx.compose.ui.graphics.Color
 
-/**
- * these are the Primary colours from Chai's Design spec document
- */
+val ChaiBlue100 = Color(0xFFD6EAFF)
+val ChaiBlue200 = Color(0xFFB5DBFF)
+val ChaiBlue300 = Color(0xFF83C6FF)
+val ChaiBlue700 = Color(0xFF0055FF)
+val ChaiBlue800 = Color(0xFF0842C5)
+val ChaiBlue900 = Color(0xFF0D3C9B)
 
-val ChaiBlue = Color(0xFF000CEB)
+val ChaiGreen300 = Color(0xFF70FF9B)
+val ChaiGreen500 = Color(0xFF00FF4F)
+val ChaiGreen800 = Color(0xFF06752A)
+
 val ChaiWhite = Color(0xFFFFFFFF)
-
-/**
- * these are the Secondary colours from Chai's Design spec document
- */
-
-val ChaiRed = Color(0xFFFF6E4D)
-val ChaiTeal = Color(0xFF00E2C3)
-
-/**
- * these are the Neutrals from the Chai's Design spec document
- */
-
-val ChaiLightGrey90 = Color(0xFFF6F6F8)
-val ChaiLightGrey = Color(0xFFF5F5F5)
-val ChaiGrey = Color(0xFFB1B1B1)
-val ChaiSmokeyGrey = Color(0xFF707070)
-val ChaiDarkGrey = Color(0xFF5A5A5A)
-val ChaiCoal = Color(0xFF191D1D)
 val ChaiBlack = Color(0xFF000000)
-val ChaiGrey90 = Color(0xFF20201E)
-val ChaiTeal90 = Color(0xFF7DE1C3)
-val ChaiSubtleGrey = Color(0xFF383836)
+val ChaiInk = Color(0xFF20201E)
+
+val ChaiGrey100 = Color(0xFFF5F5F5)
+val ChaiGrey150 = Color(0xFFEEEEEE)
+val ChaiGrey200 = Color(0xFFE5E7EB)
+val ChaiGrey400 = Color(0xFFA3A3A3)
+val ChaiGrey500 = Color(0xFF8A8A8A)
+val ChaiGrey600 = Color(0xFF707070)
+val ChaiGrey700 = Color(0xFF6B6B6B)
+val ChaiGrey800 = Color(0xFF2B2B29)
+val ChaiGrey900 = Color(0xFF191D1D)
+
+val ChaiErrorLight = Color(0xFFBA1A1A)
+val ChaiErrorDark = Color(0xFFFFB4AB)
+val ChaiOnErrorDark = Color(0xFF690005)

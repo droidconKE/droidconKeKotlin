@@ -35,7 +35,6 @@ import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -50,9 +49,9 @@ fun SessionsLoadingCardWithBannerImage(modifier: Modifier = Modifier) {
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             LoadingBox(height = 140.dp, widthRatio = 1f, brush = brush, cornerRadius = 0.dp)

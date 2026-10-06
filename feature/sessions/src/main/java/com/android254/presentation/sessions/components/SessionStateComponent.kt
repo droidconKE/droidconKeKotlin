@@ -61,7 +61,6 @@ import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiBlue
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
@@ -103,7 +102,7 @@ fun SessionsStateComponent(
                         modifier = Modifier.size(70.dp),
                         painter = painterResource(id = ChaiR.drawable.sessions_icon),
                         contentDescription = stringResource(id = R.string.sessions_icon_description),
-                        tint = ChaiBlue,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 

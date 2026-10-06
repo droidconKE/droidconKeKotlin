@@ -15,18 +15,24 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
+import com.android254.presentation.common.components.ConnectedToggleGroup
 import com.android254.presentation.common.components.LoadingBox
 import com.android254.presentation.models.EventDate
-import com.droidconke.chai.chaiColorsPalette
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -50,28 +56,34 @@ fun EventDaySelector(
         AnimatedShimmerEffect(
             gradientColors =
                 persistentListOf(
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.2f),
-                    MaterialTheme.chaiColorsPalette.loadingShimmerColor.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f),
+                    MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
                 ),
         ) { brush ->
             LazyRow(modifier = modifier) {
                 items(3) {
-                    LoadingBox(height = 51.dp, width = 51.dp, brush = brush, cornerRadius = 5.dp)
-                    Spacer(Modifier.width(16.dp))
+                    LoadingBox(height = 48.dp, width = 64.dp, brush = brush, cornerRadius = 24.dp)
+                    Spacer(Modifier.width(ButtonGroupDefaults.ConnectedSpaceBetween))
                 }
             }
         }
     } else {
-        LazyRow(modifier = modifier) {
-            items(eventDates, key = { it.value }) { eventDay ->
-                EventDaySelectorButton(
-                    title = ordinal(eventDay.value.toInt()),
-                    subtitle = "Day ${eventDay.day}",
-                    onClick = { updateSelectedDay(eventDay) },
-                    selected = selectedDate == eventDay,
+        ConnectedToggleGroup(
+            items = eventDates,
+            selected = selectedDate,
+            onSelect = updateSelectedDay,
+            modifier = modifier,
+        ) { eventDay ->
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = ordinal(eventDay.value.toInt()),
+                    style = MaterialTheme.typography.titleSmallEmphasized,
                 )
-                Spacer(Modifier.width(16.dp))
+                Text(
+                    text = stringResource(R.string.event_day_label, eventDay.day),
+                    style = MaterialTheme.typography.labelSmall,
+                )
             }
         }
     }

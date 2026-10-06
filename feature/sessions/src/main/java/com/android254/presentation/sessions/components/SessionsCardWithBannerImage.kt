@@ -28,13 +28,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,14 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.components.BookmarkButton
 import com.android254.presentation.common.components.TimeAndVenueComponent
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.sessions.view.SessionsViewModel
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -152,7 +146,7 @@ fun SpeakerDetailsAndLikeButtonComponent(
                         .size(32.dp)
                         .border(
                             width = 1.dp,
-                            color = ChaiTeal,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = CircleShape,
                         ).clip(CircleShape),
             )
@@ -161,17 +155,9 @@ fun SpeakerDetailsAndLikeButtonComponent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(
-            modifier = Modifier.size(32.dp),
-            onClick = {
-                onBookmarkClicked()
-            },
-        ) {
-            Icon(
-                imageVector = if (isSessionStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                contentDescription = stringResource(R.string.star_session_icon_description),
-                tint = if (isSessionStarred) ChaiRed else MaterialTheme.colorScheme.primary,
-            )
-        }
+        BookmarkButton(
+            isBookmarked = isSessionStarred,
+            onToggle = onBookmarkClicked,
+        )
     }
 }

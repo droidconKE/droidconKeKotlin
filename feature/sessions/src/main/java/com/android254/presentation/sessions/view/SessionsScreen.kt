@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -56,15 +56,14 @@ import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
-import com.android254.presentation.sessions.components.CustomSwitch
 import com.android254.presentation.sessions.components.EventDaySelector
+import com.android254.presentation.sessions.components.MySessionsSwitch
 import com.android254.presentation.sessions.components.SessionsFilterPanel
 import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiGrey90
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -170,7 +169,7 @@ fun SessionsScreen(
                     eventDates = sessionsUiState.eventDays,
                     isLoading = sessionsUiState.sessionStatus is ResultStatus.Loading,
                 )
-                CustomSwitch(
+                MySessionsSwitch(
                     checked = showMySessions,
                     onCheckedChange = { checked ->
                         // Off clears every filter; on adds only the bookmark facet.
@@ -203,9 +202,7 @@ fun SessionsScreen(
                 ModalBottomSheet(
                     sheetState = bottomSheetState,
                     onDismissRequest = { showFilterSheet = false },
-                    shape = RoundedCornerShape(0.dp),
-                    containerColor = ChaiGrey90.copy(alpha = 0.52f),
-                    dragHandle = {},
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 ) {
                     SessionsFilterPanel(
                         onDismiss = { showFilterSheet = false },

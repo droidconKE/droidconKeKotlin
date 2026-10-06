@@ -187,10 +187,10 @@ fun ChaiTextButtonLight(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
 ) = Text(
-    text = bodyText.uppercase(),
+    text = bodyText,
     modifier = modifier,
     color = textColor,
-    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Light),
+    style = MaterialTheme.typography.labelLarge,
     textAlign = TextAlign.Start,
 )
 

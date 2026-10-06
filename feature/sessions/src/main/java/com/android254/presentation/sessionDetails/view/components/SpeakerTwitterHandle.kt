@@ -22,7 +22,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
-import com.droidconke.chai.components.COutlinedButton
 import com.droidconke.chai.components.ChaiBodyMedium
 import ke.droidcon.kotlin.core.ui.R
 
@@ -65,12 +65,13 @@ fun SpeakerTwitterHandle(
             textColor = MaterialTheme.colorScheme.onSurface,
         )
 
-        COutlinedButton(
+        Button(
             onClick = { context.startActivity(intent) },
-            shape = RoundedCornerShape(10.dp),
+            shape = CircleShape,
             colors =
                 ButtonDefaults.buttonColors(
-                    MaterialTheme.colorScheme.surfaceContainerLowest,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                 ),
         ) {
             Icon(
@@ -88,7 +89,7 @@ fun SpeakerTwitterHandle(
             ChaiBodyMedium(
                 modifier = Modifier.testTag(TestTag.TWITTER_HANDLE_TEXT),
                 bodyText = speaker.twitterHandle,
-                textColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.onSurface,
             )
         }
     }

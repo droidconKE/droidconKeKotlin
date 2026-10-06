@@ -56,16 +56,12 @@ class ChaiTypographyTest {
     }
 
     @Test
-    fun `every emphasized role is heavier than its base role unless the base is already bold`() {
+    fun `every emphasized role is one bundled weight heavier than its base role`() {
         emphasizedByBase.forEach { (role, styles) ->
-            val (base, emphasized) = styles
-            val baseWeight = requireNotNull(base.fontWeight)
-            val emphasizedWeight = requireNotNull(emphasized.fontWeight)
-            if (baseWeight >= FontWeight.Bold) {
-                assertEquals("$role weight", FontWeight.Bold, emphasizedWeight)
-            } else {
-                assertTrue("$role weight $emphasizedWeight vs $baseWeight", emphasizedWeight > baseWeight)
-            }
+            val baseWeight = requireNotNull(styles.first.fontWeight)
+            val emphasizedWeight = requireNotNull(styles.second.fontWeight)
+            assertTrue("$role weight $emphasizedWeight vs $baseWeight", emphasizedWeight > baseWeight)
+            assertTrue("$role weight $emphasizedWeight", emphasizedWeight <= FontWeight.ExtraBold)
         }
     }
 }

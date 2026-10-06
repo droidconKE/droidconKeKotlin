@@ -16,8 +16,6 @@
 package com.android254.presentation.speakers.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +32,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -44,13 +42,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +56,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -78,8 +78,6 @@ import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.components.ChaiSubTitle
-import com.droidconke.chai.components.ChaiTitle
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -210,13 +208,15 @@ private fun SpeakerDetailsContent(
         Column(modifier = Modifier.padding(horizontal = ScreenPadding)) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            ChaiTitle(
+            Text(
                 modifier =
                     Modifier
                         .testTag("speaker_name")
-                        .speakerSharedName(speaker.name),
-                titleText = speaker.name,
-                titleColor = MaterialTheme.colorScheme.primary,
+                        .speakerSharedName(speaker.name)
+                        .semantics { heading() },
+                text = speaker.name,
+                style = MaterialTheme.typography.headlineMediumEmphasized,
+                color = MaterialTheme.colorScheme.primary,
             )
 
             speaker.tagline?.takeIf(String::isNotBlank)?.let { tagline ->
@@ -245,7 +245,7 @@ private fun SpeakerDetailsContent(
                         .fillMaxWidth()
                         .widthIn(max = SpeakerImageMaxWidth)
                         .aspectRatio(SPEAKER_IMAGE_ASPECT_RATIO)
-                        .speakerSharedImage(speaker.name, RoundedCornerShape(16.dp)),
+                        .speakerSharedImage(speaker.name, MaterialTheme.shapes.extraLarge),
             )
 
             speaker.bio?.takeIf(String::isNotBlank)?.let { bio ->
@@ -259,10 +259,11 @@ private fun SpeakerDetailsContent(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            ChaiSubTitle(
-                modifier = Modifier.testTag("sessions_heading"),
-                titleText = stringResource(R.string.speaker_sessions_label),
-                titleColor = MaterialTheme.colorScheme.primary,
+            Text(
+                modifier = Modifier.testTag("sessions_heading").semantics { heading() },
+                text = stringResource(R.string.speaker_sessions_label),
+                style = MaterialTheme.typography.headlineSmallEmphasized,
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -315,26 +316,14 @@ private fun TwitterHandleRow(
         )
 
         CButton(
-            modifier =
-                Modifier
-                    .testTag("twitter_button")
-                    .border(
-                        border =
-                            BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.primary,
-                            ),
-                        shape = RoundedCornerShape(10.dp),
-                    ).clip(RoundedCornerShape(10.dp)),
+            modifier = Modifier.testTag("twitter_button"),
             onClick = { uriHandler.openUri(twitterHandle) },
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                    disabledContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                 ),
-            shape = RoundedCornerShape(10.dp),
+            shape = CircleShape,
             isEnabled = true,
         ) {
             Icon(
@@ -345,7 +334,7 @@ private fun TwitterHandleRow(
             ChaiBodyMedium(
                 modifier = Modifier.padding(start = 6.dp),
                 bodyText = twitterHandle.substringAfterLast('/').substringBefore('?'),
-                textColor = MaterialTheme.colorScheme.primary,
+                textColor = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
             )
         }

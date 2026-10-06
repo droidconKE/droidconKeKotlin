@@ -5,6 +5,14 @@
 //   ./gradlew :home:stabilityDump
 
 @Composable
+private fun com.android254.presentation.home.components.HeroLabel(text: kotlin.String, maxLines: kotlin.Int): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - maxLines: STABLE (primitive type)
+
+@Composable
 public fun com.android254.presentation.home.components.HomeBannerSection(homeState: com.android254.presentation.home.viewstate.HomeState): kotlin.Unit
   skippable: false
   restartable: true
@@ -26,11 +34,14 @@ public fun com.android254.presentation.home.components.HomeEventPoster(modifier:
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.home.components.HomeHeaderSectionComponent(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.home.components.HomeHeaderSectionComponent(modifier: androidx.compose.ui.Modifier, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+    - liveSession: STABLE (class with no mutable properties)
+    - nextSession: STABLE (class with no mutable properties)
+    - onSessionClick: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.home.components.HomeSectionHeaderComponent(sectionLabel: kotlin.String, sectionSize: kotlin.Int, onViewAllClicked: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -125,7 +136,7 @@ public fun com.android254.presentation.home.components.HomeToolbarComponent(isSi
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \): kotlin.Unit
+public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -136,9 +147,11 @@ public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.
     - navigateToSessionScreen: STABLE (function type)
     - onActionClicked: STABLE (function type)
     - onSessionClicked: STABLE (function type)
+    - liveSession: STABLE (class with no mutable properties)
+    - nextSession: STABLE (class with no mutable properties)
 
 @Composable
-internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -151,4 +164,6 @@ internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.a
     - onActionClicked: STABLE (function type)
     - onSessionClicked: STABLE (function type)
     - onRefresh: STABLE (function type)
+    - liveSession: STABLE (class with no mutable properties)
+    - nextSession: STABLE (class with no mutable properties)
 

@@ -49,6 +49,19 @@ public fun com.android254.presentation.common.adaptive.rememberShowsNavigationDr
   params:
 
 @Composable
+public fun com.android254.presentation.common.components.AdaptiveEvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.AdaptiveEvenGrid>, minColumns: kotlin.Int, minCellWidth: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.AdaptiveEvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - items: STABLE (known stable type)
+    - minColumns: STABLE (primitive type)
+    - minCellWidth: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - spacing: STABLE (marked @Stable or @Immutable)
+    - rowSpacing: STABLE (marked @Stable or @Immutable)
+    - cell: STABLE (composable function type)
+
+@Composable
 internal fun com.android254.presentation.common.components.AnimatedModalBottomSheetTransition(visible: kotlin.Boolean, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.animation.AnimatedVisibilityScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -65,13 +78,26 @@ public fun com.android254.presentation.common.components.AnimatedShimmerEffect(g
     - content: STABLE (composable function type)
 
 @Composable
-private fun com.android254.presentation.common.components.ButtonContent(buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.android254.presentation.common.components.BookmarkButton(isBookmarked: kotlin.Boolean, onToggle: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, size: androidx.compose.ui.unit.Dp): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - buttonTexts: STABLE (known stable type)
-    - index: STABLE (primitive type)
-    - contentColor: STABLE (marked @Stable or @Immutable)
+    - isBookmarked: STABLE (primitive type)
+    - onToggle: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - size: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.components.ConnectedToggleGroup(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.ConnectedToggleGroup>, selected: T of com.android254.presentation.common.components.ConnectedToggleGroup?, onSelect: kotlin.Function1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, itemContent: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - items: STABLE (known stable type)
+    - selected: RUNTIME (requires runtime check)
+    - onSelect: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - contentPadding: STABLE (marked @Stable or @Immutable)
+    - itemContent: STABLE (composable function type)
 
 @Composable
 public fun com.android254.presentation.common.components.DetailPanePlaceholder(message: kotlin.String, icon: androidx.compose.ui.graphics.painter.Painter, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -125,6 +151,29 @@ public fun com.android254.presentation.common.components.DroidconAppBarWithFilte
     - onFilterButtonClick: STABLE (function type)
 
 @Composable
+public fun com.android254.presentation.common.components.EmptyStatePanel(icon: androidx.compose.ui.graphics.painter.Painter, message: kotlin.String, modifier: androidx.compose.ui.Modifier, badgeColor: androidx.compose.ui.graphics.Color, iconColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - icon: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - message: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - badgeColor: STABLE (marked @Stable or @Immutable)
+    - iconColor: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.EvenGrid>, columns: kotlin.Int, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.EvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - items: STABLE (known stable type)
+    - columns: STABLE (primitive type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - spacing: STABLE (marked @Stable or @Immutable)
+    - rowSpacing: STABLE (marked @Stable or @Immutable)
+    - cell: STABLE (composable function type)
+
+@Composable
 public fun com.android254.presentation.common.components.FeedbackButton(modifier: androidx.compose.ui.Modifier, onButtonClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -140,6 +189,16 @@ public fun com.android254.presentation.common.components.FilterButton(isActive: 
     - isActive: STABLE (primitive type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - onButtonClick: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.common.components.FilterOptionChips(currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, options: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, onClick: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - currentSelections: STABLE (known stable type)
+    - options: STABLE (known stable type)
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.FullscreenDialog(onDismissRequest: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, dismissOnBackPress: kotlin.Boolean, content: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<com.android254.presentation.common.components.ModalTransitionDialogHelper, kotlin.Unit>): kotlin.Unit
@@ -162,7 +221,14 @@ public fun com.android254.presentation.common.components.LayoutIconButtons(isLis
     - onAgendaIconClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.LoadingBox(height: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, width: androidx.compose.ui.unit.Dp, widthRatio: kotlin.Float?, cornerRadius: androidx.compose.ui.unit.Dp, brush: androidx.compose.ui.graphics.Brush?, color: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.android254.presentation.common.components.LiveBadge(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.common.components.LoadingBox(height: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, width: androidx.compose.ui.unit.Dp, widthRatio: kotlin.Float?, cornerRadius: androidx.compose.ui.unit.Dp, shape: androidx.compose.ui.graphics.Shape, brush: androidx.compose.ui.graphics.Brush?, color: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -171,22 +237,19 @@ public fun com.android254.presentation.common.components.LoadingBox(height: andr
     - width: STABLE (marked @Stable or @Immutable)
     - widthRatio: STABLE (class with no mutable properties)
     - cornerRadius: STABLE (marked @Stable or @Immutable)
+    - shape: STABLE (marked @Stable or @Immutable)
     - brush: STABLE (marked @Stable or @Immutable)
     - color: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.MultiToggleButton(currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, toggleStates: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, modifier: androidx.compose.ui.Modifier, borderSize: androidx.compose.ui.unit.Dp, buttonHeight: androidx.compose.ui.unit.Dp, selectedColor: androidx.compose.ui.graphics.Color, enabled: kotlin.Boolean, onClick: kotlin.Function1<com.android254.presentation.models.SessionsFilterOption, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.LogoTile(logos: kotlinx.collections.immutable.ImmutableList<kotlin.String>, name: kotlin.String, modifier: androidx.compose.ui.Modifier, logoHeight: androidx.compose.ui.unit.Dp): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - currentSelections: STABLE (known stable type)
-    - toggleStates: STABLE (known stable type)
+    - logos: STABLE (known stable type)
+    - name: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - borderSize: STABLE (marked @Stable or @Immutable)
-    - buttonHeight: STABLE (marked @Stable or @Immutable)
-    - selectedColor: STABLE (marked @Stable or @Immutable)
-    - enabled: STABLE (primitive type)
-    - onClick: STABLE (function type)
+    - logoHeight: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.OrganizedBySection(organizationLogos: kotlinx.collections.immutable.ImmutableList<kotlin.String>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -204,7 +267,7 @@ public fun com.android254.presentation.common.components.SessionPresenterCompone
     - speaker: STABLE (class with no mutable properties)
 
 @Composable
-public fun com.android254.presentation.common.components.SessionTag(tagText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, backgroundColor: androidx.compose.ui.graphics.Color, isNowTag: kotlin.Boolean, dotColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.android254.presentation.common.components.SessionTag(tagText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, backgroundColor: androidx.compose.ui.graphics.Color): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -212,8 +275,6 @@ public fun com.android254.presentation.common.components.SessionTag(tagText: kot
     - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - backgroundColor: STABLE (marked @Stable or @Immutable)
-    - isNowTag: STABLE (primitive type)
-    - dotColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.SessionTitleComponent(session: com.android254.presentation.models.SessionPresentationModel, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -244,16 +305,6 @@ public fun com.android254.presentation.common.components.SponsorsCard(sponsors: 
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.common.components.TextContent(buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - buttonTexts: STABLE (known stable type)
-    - index: STABLE (primitive type)
-    - contentColor: STABLE (marked @Stable or @Immutable)
-    - modifier: STABLE (marked @Stable or @Immutable)
-
-@Composable
 public fun com.android254.presentation.common.components.TimeAndVenueComponent(session: com.android254.presentation.models.SessionPresentationModel, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
@@ -262,20 +313,10 @@ public fun com.android254.presentation.common.components.TimeAndVenueComponent(s
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.common.components.ToggleButton(buttonShape: androidx.compose.foundation.shape.CornerBasedShape, border: androidx.compose.foundation.BorderStroke, backgroundColor: androidx.compose.ui.graphics.Color, elevation: androidx.compose.material3.ButtonElevation, enabled: kotlin.Boolean, buttonTexts: kotlinx.collections.immutable.ImmutableList<kotlin.String>, index: kotlin.Int, contentColor: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: true
-  restartable: true
+public fun com.android254.presentation.common.components.rememberSpeakerAvatarShape(): androidx.compose.ui.graphics.Shape
+  skippable: false
+  restartable: false
   params:
-    - buttonShape: STABLE (known stable type)
-    - border: STABLE (marked @Stable or @Immutable)
-    - backgroundColor: STABLE (marked @Stable or @Immutable)
-    - elevation: STABLE (marked @Stable or @Immutable)
-    - enabled: STABLE (primitive type)
-    - buttonTexts: STABLE (known stable type)
-    - index: STABLE (primitive type)
-    - contentColor: STABLE (marked @Stable or @Immutable)
-    - modifier: STABLE (marked @Stable or @Immutable)
-    - onClick: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.common.divider.CustomDivider(modifier: androidx.compose.ui.Modifier): kotlin.Unit

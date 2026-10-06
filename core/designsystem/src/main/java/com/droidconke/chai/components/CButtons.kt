@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.utils.CShapes
+import com.droidconke.chai.utils.ChaiShapes
 import com.droidconke.chai.utils.SeparatorSpace
 
 @Composable
@@ -90,9 +90,9 @@ fun CPrimaryButton(
         isEnabled = isEnabled,
         modifier = modifier,
         colors = colors,
-        shape = CShapes.extraLarge,
+        shape = ChaiShapes.extraLarge,
         content = {
-            CPrimaryButtonText(text = title, textAllCaps = true)
+            CPrimaryButtonText(text = title)
         },
     )
 }
@@ -107,7 +107,7 @@ fun COutlinedPrimaryButton(
     COutlinedButton(
         onClick = onClick,
         modifier = modifier,
-        shape = CShapes.extraLarge,
+        shape = ChaiShapes.extraLarge,
         colors =
             ButtonDefaults.outlinedButtonColors(
                 containerColor = MaterialTheme.colorScheme.surface,

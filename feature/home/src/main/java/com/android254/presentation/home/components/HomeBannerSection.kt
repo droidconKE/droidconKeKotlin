@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,9 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.domain.models.HomeBanner
 import com.android254.presentation.home.viewstate.HomeState
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiBlack
-import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiSubTitle
 import com.droidconke.chai.components.ChaiTextLabelMedium
 import ke.droidcon.kotlin.core.ui.R
@@ -90,7 +89,7 @@ fun HomeCallForSpeakersLink(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .aspectRatio(4.2f)
                 .testTag("home_call_for_speakers_link"),
-        colors = CardDefaults.cardColors(containerColor = ChaiTeal),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.chaiColorsPalette.heroContainerColor),
     ) {
         Row(
             modifier =
@@ -114,11 +113,11 @@ fun HomeCallForSpeakersLink(modifier: Modifier = Modifier) {
             ) {
                 ChaiSubTitle(
                     titleText = stringResource(id = R.string.home_banner_call_for_speakers_label),
-                    titleColor = ChaiWhite,
+                    titleColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
                 )
                 ChaiTextLabelMedium(
                     bodyText = stringResource(id = R.string.home_banner_call_for_speakers_apply_to_speak_label),
-                    textColor = ChaiBlack,
+                    textColor = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
                 )
             }
 
@@ -126,7 +125,7 @@ fun HomeCallForSpeakersLink(modifier: Modifier = Modifier) {
                 painter = painterResource(id = R.drawable.ic_home_speakers_card_play),
                 contentDescription = stringResource(id = R.string.home_banner_call_for_speakers_image_description),
                 modifier = Modifier.align(Alignment.CenterVertically),
-                tint = ChaiWhite,
+                tint = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
             )
         }
     }

@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
-import com.droidconke.chai.chaiColorsPalette
 
 /** A session's room accent. Room names change yearly, so an unknown room gets the neutral one. */
 @Composable
@@ -36,7 +35,7 @@ fun venueAccentColor(venue: String): Color {
 
     return when {
         primaryRoom.equals("Opal", ignoreCase = true) -> colorScheme.secondary
-        primaryRoom.equals("Sapphire", ignoreCase = true) -> MaterialTheme.chaiColorsPalette.tealAccentColor
-        else -> colorScheme.primary
+        primaryRoom.equals("Sapphire", ignoreCase = true) -> colorScheme.tertiary
+        else -> colorScheme.onSurfaceVariant
     }
 }

@@ -282,6 +282,10 @@ To see what is out of date:
 ./gradlew dependencyUpdates
 ```
 
+Dependabot opens grouped updates every Monday (`.github/dependabot.yml`). Nothing is
+auto-merged, and AGP is left out of every group so an AGP bump always arrives as its own
+reviewable PR.
+
 ---
 
 ## Compose previews and ViewModels

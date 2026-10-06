@@ -15,19 +15,20 @@
  */
 package com.android254.presentation.feed.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,33 +42,51 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.components.SessionTag
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.components.ChaiBodyMedium
-import com.droidconke.chai.components.ChaiBodySmallBold
-import com.droidconke.chai.components.ChaiBodyXSmall
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun FeedComponent(
     feed: FeedUI,
     modifier: Modifier = Modifier,
-    onClickItem: (Int) -> Unit,
+    onShare: () -> Unit = {},
 ) {
     Column(
         modifier =
             modifier
-                .background(color = MaterialTheme.colorScheme.surfaceContainer)
-                .padding(vertical = (0.5).dp)
-                .background(color = MaterialTheme.colorScheme.background)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
-                .wrapContentHeight(),
+                .padding(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ChaiBodyMedium(
-            bodyText = feed.body,
-            textColor = MaterialTheme.colorScheme.onSurface,
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (feed.topic.isNotBlank()) {
+                SessionTag(tagText = feed.topic)
+            }
+            Text(
+                text = feed.createdAt,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        if (feed.title.isNotBlank()) {
+            Text(
+                text = feed.title,
+                style = MaterialTheme.typography.titleLargeEmphasized,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+
+        Text(
+            text = feed.body,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         feed.image?.let {
@@ -75,9 +94,9 @@ fun FeedComponent(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(209.dp)
-                        .clip(shape = RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.FillHeight,
+                        .aspectRatio(FEED_IMAGE_ASPECT_RATIO)
+                        .clip(MaterialTheme.shapes.largeIncreased),
+                contentScale = ContentScale.Crop,
                 model =
                     ImageRequest
                         .Builder(LocalContext.current)
@@ -87,42 +106,28 @@ fun FeedComponent(
             )
         }
 
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        FilledTonalButton(
+            onClick = onShare,
+            modifier = Modifier.testTag("share_button"),
+            colors =
+                ButtonDefaults.filledTonalButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
         ) {
-            TextButton(
-                onClick = {
-                    onClickItem(1)
-                },
-                modifier =
-                    Modifier
-                        .testTag("share_button")
-                        .offset(x = (-12).dp),
-            ) {
-                ChaiBodySmallBold(
-                    bodyText = stringResource(id = R.string.share),
-                    textColor = MaterialTheme.colorScheme.primary,
-                )
-
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_share),
-                    contentDescription = stringResource(id = R.string.share),
-                    modifier = Modifier.padding(start = 8.dp),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
-
-            ChaiBodyXSmall(
-                bodyText = feed.createdAt,
-                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            Icon(
+                painter = painterResource(id = R.drawable.ic_share),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.primary,
             )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(text = stringResource(id = R.string.share), style = MaterialTheme.typography.labelLarge)
         }
     }
 }
+
+private const val FEED_IMAGE_ASPECT_RATIO = 16f / 9f
 
 @Preview
 @Composable
@@ -132,7 +137,6 @@ private fun Preview() {
             modifier = Modifier,
             feed =
                 FeedUI("Feed", "Feed feed", "test", "", "", ""),
-            onClickItem = {},
         )
     }
 }

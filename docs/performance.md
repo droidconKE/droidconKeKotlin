@@ -78,6 +78,9 @@ interaction after launch rather than in the number above.
 
 It applies `com.android.test` by id rather than by catalog alias, because build-logic already
 puts AGP on the classpath and a versioned request for a plugin already there fails to resolve.
+There is no hand-written `benchmark` build type: the baseline profile plugin creates
+`benchmarkRelease` and `nonMinifiedRelease` on `:app` itself. Benchmark 1.5.0 is the floor —
+the 1.4.x line needs `android.newDsl=false`, which this repo cannot set.
 
 ## Running it
 

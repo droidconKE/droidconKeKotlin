@@ -143,7 +143,6 @@ dependencies {
 }
 kotlin {
     compilerOptions {
-        optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
         optIn.add("androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi")
     }
 }

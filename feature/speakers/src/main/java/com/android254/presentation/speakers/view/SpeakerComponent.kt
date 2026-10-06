@@ -15,7 +15,7 @@
  */
 package com.android254.presentation.speakers.view
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,19 +41,19 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.components.HeadshotRingWidth
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
 
 private val SpeakerAvatarSize = 100.dp
-private val SpeakerAvatarShape = RoundedCornerShape(16.dp)
 
 @Composable
 fun SpeakerComponent(
@@ -71,6 +71,7 @@ fun SpeakerComponent(
                 .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val avatarShape = rememberSpeakerAvatarShape()
         AsyncImage(
             model =
                 ImageRequest
@@ -83,7 +84,8 @@ fun SpeakerComponent(
             modifier =
                 Modifier
                     .size(SpeakerAvatarSize)
-                    .speakerSharedImage(speaker.name, SpeakerAvatarShape),
+                    .speakerSharedImage(speaker.name, avatarShape)
+                    .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
         )
 
         Column(
@@ -126,12 +128,12 @@ private fun SpeakingNowBadge(modifier: Modifier = Modifier) {
         modifier =
             modifier
                 .testTag("speakingNowBadge")
-                .border(
-                    border = BorderStroke(1.dp, ChaiTeal),
-                    shape = RoundedCornerShape(6.dp),
+                .background(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = CircleShape,
                 ).padding(horizontal = 12.dp, vertical = 6.dp),
         bodyText = stringResource(R.string.speaking_now_label).uppercase(),
-        textColor = ChaiTeal,
+        textColor = MaterialTheme.colorScheme.onSecondaryContainer,
     )
 }
 

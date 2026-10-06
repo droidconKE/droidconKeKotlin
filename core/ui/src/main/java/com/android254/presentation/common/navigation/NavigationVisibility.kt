@@ -53,3 +53,15 @@ fun shouldShowSupportingPane(
         hasLiveSessions &&
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
+
+/** Home hides the rail only for a single live session, which its hero already shows. */
+fun shouldShowLiveSessionsRail(
+    route: NavKey,
+    isMultiPaneWindow: Boolean,
+    liveSessionCount: Int,
+    liveNowCount: Int,
+): Boolean =
+    shouldShowNavigation(route, isMultiPaneWindow) &&
+        !isMultiPaneWindow &&
+        liveSessionCount > 0 &&
+        !(route == Screens.Home && liveNowCount == 1)

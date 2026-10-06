@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.common.components
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -37,14 +36,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,7 +48,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android254.presentation.common.adaptive.clickablePointer
@@ -63,12 +56,10 @@ import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import com.droidconke.chai.atoms.ChaiRed
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
-import ke.droidcon.kotlin.core.ui.R
 
 /** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
 private fun cardBorder(
@@ -116,8 +107,6 @@ fun SessionsCard(
         label = "border_alpha",
     )
 
-    val nowTextColor = venueAccent.copy(animatedBorderAlpha)
-
     val border =
         cardBorder(
             showBorder = showBorder,
@@ -164,13 +153,7 @@ fun SessionsCard(
                     SessionTag(tagText = session.level)
                 }
                 if (session.sessionStatus == SessionStatus.Ongoing) {
-                    SessionTag(
-                        tagText = stringResource(R.string.now),
-                        isNowTag = true,
-                        dotColor = nowTextColor,
-                        textColor = nowTextColor,
-                        backgroundColor = nowTextColor.copy(alpha = 0.15f),
-                    )
+                    LiveBadge(modifier = Modifier.align(Alignment.CenterVertically))
                 }
             }
 
@@ -230,20 +213,10 @@ fun SessionTitleComponent(
             titleColor = MaterialTheme.colorScheme.onSurface,
         )
 
-        IconButton(
-            modifier = Modifier.size(32.dp),
-            onClick = {
-                onBookmark(session.id)
-            },
-        ) {
-            Crossfade(targetState = session.isStarred, label = "star_crossfade") { isStarred ->
-                Icon(
-                    imageVector = if (isStarred) Icons.Rounded.Star else Icons.Rounded.StarOutline,
-                    contentDescription = stringResource(R.string.star_session_icon_description),
-                    tint = if (isStarred) ChaiRed else MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
+        BookmarkButton(
+            isBookmarked = session.isStarred,
+            onToggle = { onBookmark(session.id) },
+        )
     }
 }
 
