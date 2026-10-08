@@ -37,13 +37,49 @@ Out of scope (explicitly deferred, not forgotten):
 
 `IMPROVEMENT_PLAN.md`'s §11.7 code sample uses
 `EntryPointAccessors.fromApplication<WidgetEntryPoint>(context)` inside
-`provideGlance`. This repo doesn't use that pattern anywhere — every
-other non-`Activity` Hilt consumer (`SyncDataWorker` via `@HiltWorker`)
-uses Hilt's native support for that component type. `GlanceAppWidgetReceiver`
-is a `BroadcastReceiver`, and Hilt supports `BroadcastReceiver` injection
-natively via `@AndroidEntryPoint`. This spec uses that instead — it's more
-idiomatic to the existing codebase and a better worked example of
-"how Hilt reaches a non-Activity component."
+`provideGlance`. This spec uses `@AndroidEntryPoint` on the
+`GlanceAppWidgetReceiver` with constructor injection into
+`NextSessionWidget` instead. This isn't just a style preference — checked
+against the official Android docs (via `android docs search`/`fetch`),
+the plan's pattern is solving a problem this module doesn't have:
+
+- The "Hilt in Multi-Module Projects" doc (`kb://android/training/dependency-injection/hilt-multi-module`)
+  is explicit about when `EntryPointAccessors` + a hand-built `@EntryPoint`
+  interface is required: **dynamic feature modules**, where the
+  feature-module → app dependency direction is inverted (Play Feature
+  Delivery), so normal Hilt annotation processing can't run across that
+  boundary. Its own worked example (`LoginModuleDependencies`, consumed via
+  `EntryPointAccessors.fromApplication()` in the feature module) is exactly
+  the plan's snippet shape.
+- `:widget` is not a dynamic feature module. It's a plain
+  `include(":widget")` library module in `settings.gradle.kts`, with
+  `:app` depending on it in the normal, non-inverted direction — the same
+  shape as every other `:core:*`/`:feature:*` module already in this
+  build. Regular Hilt codegen runs over it with no special handling
+  needed, so the specific justification for the plan's snippet doesn't
+  apply here.
+- Hilt's own doc (`kb://android/training/dependency-injection/hilt-android`)
+  lists `BroadcastReceiver` as a natively supported `@AndroidEntryPoint`
+  target, generated against `SingletonComponent` — the exact same
+  component `EntryPointAccessors.fromApplication()` reaches into. Both
+  approaches resolve against the identical dependency graph; there is no
+  capability difference between them here.
+- Glance's own "Create an app widget" doc
+  (`kb://android/develop/ui/compose/glance/create-app-widget`) doesn't
+  mention Hilt or DI at all — it shows plain instantiation
+  (`override val glanceAppWidget: GlanceAppWidget = MyAppWidget()`). The
+  plan's `EntryPointAccessors` snippet isn't "the official Glance way"
+  either; it's one of two valid ways to bridge Hilt into that property,
+  and it happens to be the one meant for a module topology this repo
+  doesn't have.
+
+Net effect of the `@AndroidEntryPoint` choice: no extra `@EntryPoint`
+interface to maintain, `NextSessionWidget` stays a plain class
+constructable with a fake `SessionsRepo` in tests (no live Hilt-initialized
+`Application` required, unlike resolving through
+`EntryPointAccessors.fromApplication(context)`), and it matches the one
+DI idiom already used elsewhere in this codebase (`SyncDataWorker`'s
+`@HiltWorker`) instead of introducing a second, codebase-unique pattern.
 
 The plan's snippet also references `MainActivity` by a placeholder
 package; the real class is `com.android254.presentation.activity.MainActivity`.
