@@ -172,8 +172,15 @@ lifecycle of its own. `SessionsRepo` already exposes
 - **No current session, one upcoming** — "Up next" label, title, time + room.
 - **Nothing scheduled** — empty-state string.
 
-Tap target on the whole widget → `actionStartActivity<MainActivity>()`
-pointed at `com.android254.presentation.activity.MainActivity`.
+Tap target on the whole widget → opens the app. `MainActivity` lives in
+`:app`, and `:app` depends on `:widget`, so `:widget` cannot reference
+`MainActivity` by class (that would be a circular module dependency).
+Instead, resolve the launcher intent at runtime —
+`context.packageManager.getLaunchIntentForPackage(context.packageName)`
+— and pass the resulting `Intent` to Glance's `actionStartActivity(Intent)`
+overload, which takes a plain `Intent` rather than a reified class
+reference. No new manifest work needed; this just asks the OS which
+activity is already declared as `MAIN`/`LAUNCHER`.
 
 Strings live in `widget/src/main/res/values/strings.xml`
 (`widget_happening_now`, `widget_up_next`, `widget_no_sessions`),
@@ -183,22 +190,36 @@ Colors: default `GlanceTheme.colors` for v1 — no custom `ColorProviders`.
 
 ### Refresh trigger
 
-In `core/data/.../SyncDataWorker.doWork()`, after `syncedSuccessfully`
-is confirmed `true`, call `NextSessionWidget(...).updateAll(appContext)`
-(or the Glance-generated equivalent) before returning `Result.success()`.
+Confirmed: `:core:data` only depends on other `:core:*` modules (see its
+`build.gradle.kts`), so it cannot depend on the top-level `:widget`
+module without inverting the existing layering. Resolved the same way
+this codebase already resolves this exact shape of problem for sync —
+the `Syncable`/`Synchronizer` interface pair in `core/domain/.../sync/`,
+where the low-level interface lives in `:core:domain` and the concrete
+behaviour is supplied from a module that sits above it:
+
+- New interface `WidgetRefresher` in
+  `core/domain/src/main/java/com/android254/domain/widget/WidgetRefresher.kt`:
+  `interface WidgetRefresher { suspend fun refresh() }`.
+- `:widget` provides the implementation (`NextSessionWidgetRefresher`,
+  injected with `@ApplicationContext` and `SessionsRepo`, calling
+  `NextSessionWidget(sessionsRepo).updateAll(context)`) and binds it to
+  `WidgetRefresher` via a Hilt `@Binds` module installed in
+  `SingletonComponent`.
+- `SyncDataWorker` (which already depends on `:core:domain`) injects
+  `WidgetRefresher` and calls `refresh()` after `syncedSuccessfully` is
+  confirmed `true`, before returning `Result.success()`.
+- `:app` depends on both `:core:data` and `:widget`, so Hilt's
+  `SingletonComponent` sees both sides and resolves the binding at the
+  app's compile step — `:core:data` never needs a compile-time
+  dependency on `:widget` at all. This is standard Hilt multi-module
+  binding aggregation, valid because (per the DI section above)
+  `:widget` is a normal library module, not a dynamic feature module.
+
 This rides the sync worker's existing periodic schedule
 (`syncDataWorkManager.setupPeriodicSync()` in `DroidconApp`) — no new
 WorkManager job, no new battery cost, no "conference days" concept
 needed for v1.
-
-Note: `:core:data` does not currently depend on `:widget`, and adding
-that dependency edge needs checking against the module graph during
-implementation (data modules are typically lower in the dependency
-chain than feature-ish modules). If a direct dependency would invert
-the graph, the fallback is broadcasting a local intent/signal that
-`:widget` listens for instead of `:core:data` depending on `:widget`
-directly — this choice is left to the implementation plan to resolve
-once the real dependency graph is in front of us.
 
 ## Error handling / edge states
 
@@ -212,12 +233,20 @@ once the real dependency graph is in front of us.
 
 ## Testing
 
-- A Robolectric/composition test for `WidgetContent` covering the three
-  states (current / next / empty), using the existing `core:testing`
-  fakes for `SessionsRepo` — following the same test-fake pattern already
-  used by feature modules.
-- No attempt to test the receiver or AppWidget-host integration itself
-  (requires an emulator/device and isn't worth automating for v1).
+- `WidgetContent` takes plain data (`Session?`, `Session?`, `DpSize`,
+  an `Intent`), not a repo — so its test needs fake `Session` values,
+  not a fake `SessionsRepo`. Covered with the official Glance unit-test
+  API (`androidx.glance:glance-testing` + `glance-appwidget-testing`,
+  both `1.2.0`): `runGlanceAppWidgetUnitTest { provideComposable { ... };
+  onNode(hasTestTag(...)).assertHasText(...) }`, one test per state
+  (current / next / empty) plus the three `DpSize` breakpoints.
+  `WidgetContent` reads `LocalContext.current` for strings, so the test
+  needs `setContext()` with a Robolectric-provided context.
+- No attempt to test the receiver, the Hilt wiring, or AppWidget-host
+  integration itself (requires an emulator/device and isn't worth
+  automating for v1) — and no new test added for the `SyncDataWorker` →
+  `WidgetRefresher` call, consistent with `SyncDataWorker` having no
+  existing tests of its own today.
 - Manual verification (see Acceptance below) substitutes for host-level
   integration testing.
 
@@ -234,12 +263,21 @@ once the real dependency graph is in front of us.
 4. Confirm the widget updates after a sync completes (trigger a manual
    sync and observe the widget content change without reopening the app).
 
-## Open question carried into the implementation plan
+## Resolved during planning
 
-Whether `:core:data` can depend on `:widget` directly for the
-`updateAll()` call, or whether that violates the module dependency
-graph and needs the local-broadcast fallback described above. Resolve
-by inspecting the actual module graph (e.g.
-`./gradlew :core:data:dependencies` or reading existing
-`build.gradle.kts` dependency directions) during planning, before
-writing the refresh-trigger step.
+- The `:core:data` → `:widget` dependency direction question (above) is
+  resolved: `WidgetRefresher` interface inversion, no broadcast needed.
+- The widget's tap target cannot reference `MainActivity` by class
+  (circular module dependency, since `:app` depends on `:widget`) —
+  resolved via `packageManager.getLaunchIntentForPackage()` at runtime
+  instead of a compile-time class reference (see "UI content" above).
+- Glance needs `androidx.compose.runtime`/`graphics`/`unit`, not the
+  full Jetpack Compose UI toolkit — `:widget` applies the Kotlin
+  Compose-compiler plugin directly and sets `buildFeatures.compose = true`
+  itself, rather than applying this repo's `droidconke.android.library.compose`
+  convention plugin, which pulls in the full Compose BOM/Material3/UI
+  bundle that Glance doesn't use and the widget module doesn't need.
+- Pinned dependency versions (checked against Google's Maven metadata,
+  2026-08-26): `androidx.glance:glance-appwidget`, `glance-material3`,
+  `glance-testing`, `glance-appwidget-testing` all at `1.2.0` (latest
+  stable; `1.3.0-alpha02` exists but is pre-release).
