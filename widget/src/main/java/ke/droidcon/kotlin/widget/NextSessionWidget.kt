@@ -16,6 +16,9 @@
 package ke.droidcon.kotlin.widget
 
 import android.content.Context
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
@@ -24,8 +27,12 @@ import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
+import com.android254.domain.repos.SessionsRepo
+import kotlin.time.Clock
 
-class NextSessionWidget : GlanceAppWidget() {
+class NextSessionWidget(
+    private val sessionsRepo: SessionsRepo,
+) : GlanceAppWidget() {
     override val sizeMode =
         SizeMode.Responsive(
             setOf(SmallWidget, MediumWidget, LargeWidget),
@@ -36,12 +43,17 @@ class NextSessionWidget : GlanceAppWidget() {
         id: GlanceId,
     ) {
         provideContent {
+            val now = Clock.System.now().toEpochMilliseconds()
+            val current by sessionsRepo.fetchCurrentSessions(now).collectAsState(emptyList())
+            val next by sessionsRepo.fetchUpNextSessions(now).collectAsState(emptyList())
+            val launchIntent = remember { context.packageManager.getLaunchIntentForPackage(context.packageName) }
+
             GlanceTheme {
                 WidgetContent(
-                    current = null,
-                    next = null,
+                    current = current.firstOrNull(),
+                    next = next.firstOrNull(),
                     size = LocalSize.current,
-                    launchIntent = null,
+                    launchIntent = launchIntent,
                 )
             }
         }

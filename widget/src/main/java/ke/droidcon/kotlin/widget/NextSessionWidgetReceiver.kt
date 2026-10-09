@@ -17,7 +17,14 @@ package ke.droidcon.kotlin.widget
 
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import com.android254.domain.repos.SessionsRepo
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NextSessionWidgetReceiver : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = NextSessionWidget()
+    @Inject lateinit var sessionsRepo: SessionsRepo
+
+    override val glanceAppWidget: GlanceAppWidget
+        get() = NextSessionWidget(sessionsRepo)
 }
