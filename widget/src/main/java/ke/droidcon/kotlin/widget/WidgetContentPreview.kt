@@ -23,10 +23,10 @@ import androidx.glance.preview.Preview
 import com.android254.domain.models.Session
 
 /**
- * Studio-only previews for [WidgetContent]'s three states, rendered at this widget's three
- * [DpSize] breakpoints (see `NextSessionWidget`'s `SmallWidget`/`MediumWidget`/`LargeWidget`).
- * Each preview reads [LocalSize] the same way `NextSessionWidget.provideGlance` does, so the
- * size each `@Preview(widthDp, heightDp)` sets is what [WidgetContent] actually renders with.
+ * Studio-only previews for [WidgetContent]'s states, rendered at this widget's three [DpSize]
+ * breakpoints (see `NextSessionWidget`'s `SmallWidget`/`MediumWidget`/`LargeWidget`). Each
+ * preview reads [LocalSize] the same way `NextSessionWidget.provideGlance` does, so the size
+ * each `@Preview(widthDp, heightDp)` sets is what [WidgetContent] actually renders with.
  *
  * Kept in the codebase on purpose, for fast iteration in Android Studio when touching
  * [WidgetContent] — this is a deliberate deviation from the plan's Task 5 Step 1, which
@@ -65,8 +65,8 @@ private fun previewSession(
 private fun WidgetContentHappeningNowPreview() {
     GlanceTheme {
         WidgetContent(
-            current = previewSession(title = "Kotlin for busy engineers", rooms = "Hall A"),
-            next = previewSession(title = "Should not show"),
+            current = listOf(previewSession(title = "Kotlin for busy engineers", rooms = "Hall A")),
+            next = listOf(previewSession(title = "Should not show")),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -81,8 +81,29 @@ private fun WidgetContentHappeningNowPreview() {
 private fun WidgetContentUpNextPreview() {
     GlanceTheme {
         WidgetContent(
-            current = null,
-            next = previewSession(title = "Scaling droidcon KE", rooms = "Hall B", startTime = "2:00 PM"),
+            current = emptyList(),
+            next = listOf(previewSession(title = "Scaling droidcon KE", rooms = "Hall B", startTime = "2:00 PM")),
+            size = LocalSize.current,
+            launchIntent = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 140, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+private fun WidgetContentConcurrentSessionsPreview() {
+    GlanceTheme {
+        WidgetContent(
+            current =
+                listOf(
+                    previewSession(title = "Kotlin for busy engineers", rooms = "Track 1"),
+                    previewSession(title = "Scaling droidcon KE", rooms = "Track 2"),
+                    previewSession(title = "Lightning talks", rooms = "Track 3"),
+                ),
+            next = emptyList(),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -97,8 +118,8 @@ private fun WidgetContentUpNextPreview() {
 private fun WidgetContentEmptyPreview() {
     GlanceTheme {
         WidgetContent(
-            current = null,
-            next = null,
+            current = emptyList(),
+            next = emptyList(),
             size = LocalSize.current,
             launchIntent = null,
         )

@@ -52,8 +52,8 @@ class NextSessionWidget(
 
             GlanceTheme {
                 WidgetContent(
-                    current = current.firstOrNull(),
-                    next = next.firstOrNull(),
+                    current = current,
+                    next = next,
                     size = LocalSize.current,
                     launchIntent = launchIntent,
                 )
