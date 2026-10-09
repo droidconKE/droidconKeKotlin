@@ -55,20 +55,21 @@ import com.android254.domain.models.Session
  */
 private val LargeBreakpointMinHeight = 150.dp
 
-/** How far an "up next" row is indented when it's shown indented. Only applied when there are
- * no live sessions at all - see [WidgetContent]. */
+/** How far an "up next" row is indented when it's shown alongside a live session - see
+ * [WidgetContent]. */
 private val UpNextIndent = 20.dp
 
 private enum class SessionKind { CURRENT, UP_NEXT }
 
 /**
  * Renders the widget as a single scrollable list: every currently-running session first (each
- * with its own venue-accent rail and "LIVE" pill), followed by every upcoming session. When at
- * least one session is live, the upcoming ones are indented and run slightly smaller to read as
- * secondary; with nothing live, upcoming sessions ARE the primary content, so they stay flush
- * and full-size. Nothing is hidden behind a count anymore - if more sessions exist than fit the
- * widget's height, the list scrolls natively. Falls back to a plain empty-state message when
- * there is nothing to show.
+ * with its own venue-accent rail and "LIVE" pill), followed by every upcoming session. When a
+ * live session is also shown, the upcoming ones are indented and run at a smaller type scale, so
+ * "live" and "up next" read as visually distinct within the same list. With nothing live, the
+ * upcoming sessions are the only content and stand on their own, so they stay flush and
+ * full-size - there's nothing to visually distinguish them from. Nothing is hidden behind a
+ * count anymore - if more sessions exist than fit the widget's height, the list scrolls
+ * natively. Falls back to a plain empty-state message when there is nothing to show.
  */
 @Composable
 fun WidgetContent(
@@ -90,9 +91,10 @@ fun WidgetContent(
                 EmptyStateContent()
             }
         } else {
-            // Up-next rows are indented (and run smaller) only when there's no live session -
-            // when something is live, up-next stays flush and full-size.
-            val indentUpNext = current.isEmpty()
+            // Up-next rows are indented (and run smaller) only when a live session is also
+            // shown, so live/up-next read as visually distinct. Up-next alone stays flush and
+            // full-size, since there's nothing to distinguish it from.
+            val indentUpNext = current.isNotEmpty()
             LazyColumn(modifier = GlanceModifier.fillMaxSize().padding(12.dp)) {
                 items(current, itemId = { sessionItemId(SessionKind.CURRENT, it) }) { session ->
                     SessionRow(
