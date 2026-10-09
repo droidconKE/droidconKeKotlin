@@ -55,20 +55,6 @@ class LocalSessionsDataSourceImpl
                 .fetchSessionsWithFilters(SimpleSQLiteQuery(query))
                 .flowOn(localSourceIoDispatcher)
 
-        override suspend fun updateBookmarkedStatus(
-            id: String,
-            isBookmarked: Boolean,
-        ) {
-            withContext(localSourceIoDispatcher) {
-                sessionDao.updateBookmarkedStatus(id = id, isBookmarked = isBookmarked)
-            }
-        }
-
-        override suspend fun getBookmarkStatus(id: String): Boolean =
-            withContext(localSourceIoDispatcher) {
-                sessionDao.getBookmarkStatus(id = id)
-            }
-
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchCurrentSessions(currentTime)
 
         override fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchUpNextSessions(currentTime)

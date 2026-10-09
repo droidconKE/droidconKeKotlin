@@ -16,10 +16,13 @@
 package com.android254.data.repos
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android254.domain.models.SessionFilter
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
+import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
@@ -30,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -51,6 +55,24 @@ class SessionsManagerTest {
             coVerify(atLeast = 1) {
                 mockLocalSessionsDataSource.getCachedSessions()
             }
+        }
+
+    @Test
+    fun `bookmarks match sessions by remote id`() =
+        runTest {
+            val session = sessionEntity.copy(speakers = "[]")
+            val bookmarkDao = mockk<BookmarkDao>()
+            every { bookmarkDao.getBookmarkIds() } returns flowOf(listOf(BookmarkEntity(session.remote_id)))
+            every { mockLocalSessionsDataSource.getCachedSessions() } returns flowOf(listOf(session))
+            every { mockLocalSessionsDataSource.fetchSessionWithFilters(any()) } returns flowOf(listOf(session))
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, bookmarkDao, ioDispatcher)
+
+            val all = manager.fetchSessions().first().single()
+            val starred = manager.fetchFilteredSessions(SessionFilter(bookmarked = true)).first().single()
+
+            assertEquals(session.remote_id, all.id)
+            assert(all.isBookmarked)
+            assertEquals(session.remote_id, starred.id)
         }
 
     @Test
