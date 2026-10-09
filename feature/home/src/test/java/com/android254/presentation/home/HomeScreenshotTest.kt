@@ -31,10 +31,16 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
     /** Home is a single column everywhere; what changes is where that column stops. */
     @Test
     fun `home across form factors`() = captureFormFactors("form_factors/home") { Home() }
+
+    @Test
+    fun `home during a session`() = captureScreen("screens/home_live") { Home(liveIndex = 1, nextIndex = 2) }
 }
 
 @Composable
-private fun Home() {
+private fun Home(
+    liveIndex: Int? = null,
+    nextIndex: Int? = null,
+) {
     HomeScreen(
         viewState =
             HomeState(
@@ -43,5 +49,7 @@ private fun Home() {
                 isSyncing = false,
             ),
         isSyncing = false,
+        liveSession = liveIndex?.let(fakeSessions::get),
+        nextSession = nextIndex?.let(fakeSessions::get),
     )
 }

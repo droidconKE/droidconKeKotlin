@@ -332,8 +332,25 @@ style:
     active: true
     values: 'FIXME:,STOPSHIP:'
   ForbiddenImport:
-    active: false
-    imports: ''
+    active: true
+    excludes: ['**/com/droidconke/chai/colors/**', '**/com/droidconke/chai/atoms/**']
+    imports:
+      - value: 'com.droidconke.chai.atoms.ChaiBlue*'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiGreen*'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiGrey*'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiWhite'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiBlack'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiInk'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiError*'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
+      - value: 'com.droidconke.chai.atoms.ChaiOnError*'
+        reason: 'Read MaterialTheme.colorScheme or MaterialTheme.chaiColorsPalette; the palette lives in chai/colors only.'
   ForbiddenVoid:
     active: true
     ignoreOverridden: false

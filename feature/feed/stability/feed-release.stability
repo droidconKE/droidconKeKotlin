@@ -5,13 +5,20 @@
 //   ./gradlew :feed:stabilityDump
 
 @Composable
-public fun com.android254.presentation.feed.view.FeedComponent(feed: com.android254.presentation.models.FeedUI, modifier: androidx.compose.ui.Modifier, onClickItem: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.feed.view.FeedComponent(feed: com.android254.presentation.models.FeedUI, modifier: androidx.compose.ui.Modifier, onShare: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - feed: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - onClickItem: STABLE (function type)
+    - onShare: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.feed.view.FeedEmptyState(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.feed.view.FeedLoadingComponent(modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -29,27 +36,11 @@ public fun com.android254.presentation.feed.view.FeedRoute(feedViewModel: com.an
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.feed.view.FeedScreen(feedUIState: com.android254.presentation.feed.view.FeedUIState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.feed.view.FeedScreen(feedUIState: com.android254.presentation.feed.view.FeedUIState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, onShare: kotlin.Function1<com.android254.presentation.models.FeedUI, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - feedUIState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
-
-@Composable
-public fun com.android254.presentation.feed.view.FeedShareSection(modifier: androidx.compose.ui.Modifier, onCancelClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - modifier: STABLE (marked @Stable or @Immutable)
-    - onCancelClicked: STABLE (function type)
-
-@Composable
-public fun com.android254.presentation.feed.view.PlatformButton(platform: kotlin.String, icon: kotlin.Int, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - platform: STABLE (String is immutable)
-    - icon: STABLE (primitive type)
-    - modifier: STABLE (marked @Stable or @Immutable)
+    - onShare: STABLE (function type)
 

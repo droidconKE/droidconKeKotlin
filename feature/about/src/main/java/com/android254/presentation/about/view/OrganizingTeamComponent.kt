@@ -23,8 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,15 +33,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.components.HeadshotRingWidth
+import com.android254.presentation.common.components.rememberSpeakerAvatarShape
 import com.android254.presentation.models.OrganizingTeamMember
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.components.ChaiBodySmall
-import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -59,6 +59,7 @@ fun OrganizingTeamComponent(
                 ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        val avatarShape = rememberSpeakerAvatarShape()
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(teamMember.image).build(),
             placeholder = painterResource(ChaiR.drawable.droidcon_icon),
@@ -66,27 +67,33 @@ fun OrganizingTeamComponent(
             contentScale = ContentScale.Crop,
             modifier =
                 Modifier
-                    .size(99.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(2.dp, ChaiTeal, RoundedCornerShape(12.dp)),
+                    .size(84.dp)
+                    .clip(avatarShape)
+                    .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
         )
 
-        Spacer(Modifier.height(6.dp))
+        Spacer(Modifier.height(10.dp))
 
-        ChaiBodySmall(
+        Text(
             modifier = Modifier.fillMaxWidth(),
-            bodyText = teamMember.name,
-            textColor = MaterialTheme.colorScheme.onSurface,
+            text = teamMember.name,
+            style = MaterialTheme.typography.titleSmallEmphasized,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
         )
 
         Spacer(Modifier.height(2.dp))
 
-        ChaiTextLabelLarge(
+        Text(
             modifier = Modifier.fillMaxWidth(),
-            bodyText = teamMember.desc,
-            textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            text = teamMember.desc,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

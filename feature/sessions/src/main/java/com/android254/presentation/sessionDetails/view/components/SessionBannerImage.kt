@@ -19,6 +19,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,7 +32,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.models.SessionDetailsPresentationModel
-import com.droidconke.chai.atoms.ChaiTeal90
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
@@ -58,7 +58,7 @@ fun SessionBannerImage(
                 .fillMaxWidth()
                 .aspectRatio(16f / 9f)
                 .sessionSharedImage(sessionDetails.id, RoundedCornerShape(10.dp))
-                .border(1.dp, ChaiTeal90, RoundedCornerShape(10.dp))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
                 .testTag(TestTag.IMAGE_BANNER),
     )
 }

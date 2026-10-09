@@ -18,7 +18,6 @@ package com.android254.presentation.common.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -42,8 +41,8 @@ import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.ChaiTeal
 import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
@@ -66,7 +65,7 @@ fun DroidconAppBarWithFeedbackButton(
     ) {
         if (showLogo) {
             Image(
-                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
+                painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
             )
         }
@@ -84,9 +83,9 @@ fun FeedbackButton(
     Row(
         modifier =
             modifier
-                .clip(RoundedCornerShape(10.dp))
+                .clip(CircleShape)
                 .background(
-                    color = ChaiTeal.copy(alpha = 0.21f),
+                    color = MaterialTheme.colorScheme.secondaryContainer,
                 ).clickable(onClick = onButtonClick)
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -95,18 +94,18 @@ fun FeedbackButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_feedback_emoji),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
         )
 
         ChaiBodyXSmall(
             modifier = Modifier,
             bodyText = stringResource(id = R.string.feedback),
-            textColor = MaterialTheme.colorScheme.onSurface,
+            textColor = MaterialTheme.colorScheme.onSecondaryContainer,
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_send_icon),
             contentDescription = null,
-            tint = ChaiTeal,
+            tint = MaterialTheme.colorScheme.onSecondaryContainer,
         )
     }
 }

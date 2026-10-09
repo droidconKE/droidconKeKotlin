@@ -67,6 +67,7 @@ import com.android254.presentation.common.navigation.droidconEntryProvider
 import com.android254.presentation.common.navigation.droidconNavigationSuiteColors
 import com.android254.presentation.common.navigation.navigationSuiteTypeFor
 import com.android254.presentation.common.navigation.rememberNavigationState
+import com.android254.presentation.common.navigation.shouldShowLiveSessionsRail
 import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
@@ -172,7 +173,12 @@ fun MainScreen(
             hasLiveSessions = liveSessions.isNotEmpty(),
         )
     val showLiveSessionsRail =
-        showNavigation && !isMultiPaneWindow && liveSessions.isNotEmpty()
+        shouldShowLiveSessionsRail(
+            route = currentRoute,
+            isMultiPaneWindow = isMultiPaneWindow,
+            liveSessionCount = liveSessions.size,
+            liveNowCount = sessionsState.current.size,
+        )
 
     NavigationSuiteScaffold(
         modifier =
@@ -191,7 +197,7 @@ fun MainScreen(
         containerColor = MaterialTheme.colorScheme.background,
         state = navigationSuiteState,
         primaryActionContent = {
-            if (navigationSuiteType == NavigationSuiteType.NavigationDrawer) {
+            if (navigationSuiteType == NavigationSuiteType.WideNavigationRailExpanded) {
                 DroidconDrawerHeader()
             }
         },

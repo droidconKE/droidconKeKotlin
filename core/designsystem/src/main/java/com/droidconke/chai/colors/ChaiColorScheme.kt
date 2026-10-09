@@ -18,75 +18,97 @@ package com.droidconke.chai.colors
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.ui.graphics.compositeOver
 import com.droidconke.chai.atoms.ChaiBlack
-import com.droidconke.chai.atoms.ChaiBlue
-import com.droidconke.chai.atoms.ChaiCoal
-import com.droidconke.chai.atoms.ChaiDarkGrey
-import com.droidconke.chai.atoms.ChaiGrey
-import com.droidconke.chai.atoms.ChaiGrey90
-import com.droidconke.chai.atoms.ChaiLightGrey
-import com.droidconke.chai.atoms.ChaiLightGrey90
-import com.droidconke.chai.atoms.ChaiRed
-import com.droidconke.chai.atoms.ChaiSmokeyGrey
-import com.droidconke.chai.atoms.ChaiSubtleGrey
-import com.droidconke.chai.atoms.ChaiTeal
-import com.droidconke.chai.atoms.ChaiTeal90
+import com.droidconke.chai.atoms.ChaiBlue100
+import com.droidconke.chai.atoms.ChaiBlue200
+import com.droidconke.chai.atoms.ChaiBlue300
+import com.droidconke.chai.atoms.ChaiBlue700
+import com.droidconke.chai.atoms.ChaiBlue800
+import com.droidconke.chai.atoms.ChaiBlue900
+import com.droidconke.chai.atoms.ChaiErrorDark
+import com.droidconke.chai.atoms.ChaiErrorLight
+import com.droidconke.chai.atoms.ChaiGreen300
+import com.droidconke.chai.atoms.ChaiGreen500
+import com.droidconke.chai.atoms.ChaiGreen800
+import com.droidconke.chai.atoms.ChaiGrey100
+import com.droidconke.chai.atoms.ChaiGrey150
+import com.droidconke.chai.atoms.ChaiGrey200
+import com.droidconke.chai.atoms.ChaiGrey400
+import com.droidconke.chai.atoms.ChaiGrey500
+import com.droidconke.chai.atoms.ChaiGrey600
+import com.droidconke.chai.atoms.ChaiGrey700
+import com.droidconke.chai.atoms.ChaiGrey800
+import com.droidconke.chai.atoms.ChaiGrey900
+import com.droidconke.chai.atoms.ChaiInk
+import com.droidconke.chai.atoms.ChaiOnErrorDark
 import com.droidconke.chai.atoms.ChaiWhite
 
+// Neon is never text on a light surface (1.36:1 on white): in light it is a container with ink on it.
 internal val ChaiLightColorScheme: ColorScheme =
     lightColorScheme(
-        primary = ChaiBlue,
+        primary = ChaiBlue700,
         onPrimary = ChaiWhite,
-        primaryContainer = ChaiLightGrey90,
-        onPrimaryContainer = ChaiBlue,
-        secondary = ChaiRed,
+        primaryContainer = ChaiBlue100,
+        onPrimaryContainer = ChaiBlue900,
+        inversePrimary = ChaiBlue300,
+        secondary = ChaiGreen800,
         onSecondary = ChaiWhite,
-        secondaryContainer = ChaiRed.copy(alpha = CONTAINER_TINT).compositeOver(ChaiWhite),
-        onSecondaryContainer = ChaiCoal,
-        tertiary = ChaiTeal,
-        onTertiary = ChaiCoal,
+        secondaryContainer = ChaiGreen500,
+        onSecondaryContainer = ChaiInk,
+        tertiary = ChaiBlue900,
+        onTertiary = ChaiWhite,
+        tertiaryContainer = ChaiBlue200,
+        onTertiaryContainer = ChaiBlue900,
         background = ChaiWhite,
-        onBackground = ChaiGrey90,
+        onBackground = ChaiInk,
         surface = ChaiWhite,
-        onSurface = ChaiGrey90,
-        onSurfaceVariant = ChaiSmokeyGrey,
+        onSurface = ChaiInk,
+        surfaceVariant = ChaiGrey100,
+        onSurfaceVariant = ChaiGrey600,
         surfaceContainerLowest = ChaiWhite,
         surfaceContainerLow = ChaiWhite,
-        surfaceContainer = ChaiLightGrey,
-        surfaceContainerHigh = ChaiLightGrey,
-        surfaceContainerHighest = ChaiGrey.copy(alpha = SURFACE_TINT).compositeOver(ChaiWhite),
-        outline = ChaiGrey,
-        outlineVariant = ChaiLightGrey,
-        error = ChaiRed,
+        surfaceContainer = ChaiGrey100,
+        surfaceContainerHigh = ChaiGrey150,
+        surfaceContainerHighest = ChaiGrey200,
+        inverseSurface = ChaiInk,
+        inverseOnSurface = ChaiWhite,
+        outline = ChaiGrey500,
+        outlineVariant = ChaiGrey200,
+        error = ChaiErrorLight,
         onError = ChaiWhite,
     )
 
+// Blue text on black is 3.7:1, so dark mode leads with green, as droidcon.co.ke does.
 internal val ChaiDarkColorScheme: ColorScheme =
     darkColorScheme(
-        primary = ChaiTeal90,
-        onPrimary = ChaiCoal,
-        primaryContainer = ChaiSubtleGrey,
-        onPrimaryContainer = ChaiTeal90,
-        secondary = ChaiRed,
-        onSecondary = ChaiCoal,
-        tertiary = ChaiTeal90,
-        onTertiary = ChaiCoal,
-        background = ChaiGrey90,
+        primary = ChaiGreen500,
+        onPrimary = ChaiInk,
+        primaryContainer = ChaiBlue800,
+        onPrimaryContainer = ChaiWhite,
+        inversePrimary = ChaiBlue700,
+        secondary = ChaiGreen300,
+        onSecondary = ChaiInk,
+        secondaryContainer = ChaiGreen500,
+        onSecondaryContainer = ChaiInk,
+        tertiary = ChaiBlue300,
+        onTertiary = ChaiBlue900,
+        tertiaryContainer = ChaiBlue900,
+        onTertiaryContainer = ChaiBlue100,
+        background = ChaiBlack,
         onBackground = ChaiWhite,
-        surface = ChaiGrey90,
+        surface = ChaiBlack,
         onSurface = ChaiWhite,
-        onSurfaceVariant = ChaiGrey,
+        surfaceVariant = ChaiGrey900,
+        onSurfaceVariant = ChaiGrey400,
         surfaceContainerLowest = ChaiBlack,
-        surfaceContainerLow = ChaiSubtleGrey,
-        surfaceContainer = ChaiSubtleGrey,
-        surfaceContainerHigh = ChaiDarkGrey,
-        surfaceContainerHighest = ChaiSmokeyGrey,
-        outline = ChaiSmokeyGrey,
-        outlineVariant = ChaiSubtleGrey,
-        error = ChaiRed,
-        onError = ChaiCoal,
+        surfaceContainerLow = ChaiGrey900,
+        surfaceContainer = ChaiGrey900,
+        surfaceContainerHigh = ChaiInk,
+        surfaceContainerHighest = ChaiGrey800,
+        inverseSurface = ChaiGrey100,
+        inverseOnSurface = ChaiInk,
+        outline = ChaiGrey700,
+        outlineVariant = ChaiGrey800,
+        error = ChaiErrorDark,
+        onError = ChaiOnErrorDark,
     )
-
-private const val CONTAINER_TINT = 0.12f
-private const val SURFACE_TINT = 0.24f

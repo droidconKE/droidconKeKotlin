@@ -16,14 +16,9 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,27 +34,15 @@ fun SessionTag(
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onSurface,
     backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest,
-    isNowTag: Boolean = false,
-    dotColor: Color = Color.Unspecified,
 ) {
     Row(
         modifier =
             modifier
-                .clip(RoundedCornerShape(4.dp))
+                .clip(CircleShape)
                 .background(backgroundColor)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .padding(horizontal = 10.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (isNowTag) {
-            Box(
-                modifier =
-                    Modifier
-                        .size(6.dp)
-                        .clip(CircleShape)
-                        .background(dotColor),
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-        }
         ChaiBodyXSmallBold(
             bodyText = tagText.uppercase(),
             textColor = textColor,

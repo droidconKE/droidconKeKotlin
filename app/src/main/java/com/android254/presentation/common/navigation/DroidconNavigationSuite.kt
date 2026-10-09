@@ -16,12 +16,12 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationItemColors
+import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.android254.presentation.common.adaptive.DroidconWindowSize
 import com.droidconke.chai.components.ChaiTextLabelSmall
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
 /** [showsDrawer] is the same value the app bars use, so the logo cannot end up in neither. */
@@ -43,24 +44,23 @@ fun navigationSuiteTypeFor(
     showsDrawer: Boolean,
 ): NavigationSuiteType =
     when {
-        windowSize == DroidconWindowSize.Compact -> NavigationSuiteType.NavigationBar
-        showsDrawer -> NavigationSuiteType.NavigationDrawer
-        else -> NavigationSuiteType.NavigationRail
+        windowSize == DroidconWindowSize.Compact -> NavigationSuiteType.ShortNavigationBarCompact
+        showsDrawer -> NavigationSuiteType.WideNavigationRailExpanded
+        else -> NavigationSuiteType.WideNavigationRailCollapsed
     }
 
-/** The chai palette, for whichever navigation component the window ends up with. */
 @Composable
 fun droidconNavigationSuiteColors(): NavigationSuiteColors {
     val container = MaterialTheme.colorScheme.surfaceContainerLowest
     return NavigationSuiteDefaults.colors(
-        navigationBarContainerColor = container,
         shortNavigationBarContainerColor = container,
+        wideNavigationRailColors = WideNavigationRailDefaults.colors(containerColor = container),
+        navigationBarContainerColor = container,
         navigationRailContainerColor = container,
         navigationDrawerContainerColor = container,
     )
 }
 
-/** The type decides whether an item draws as a bar item, a rail item or a drawer row. */
 @Composable
 fun DroidconNavigationItems(
     currentTopLevelRoute: NavKey,
@@ -94,11 +94,9 @@ fun DroidconNavigationItems(
             },
             colors =
                 NavigationItemColors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     selectedTextColor = MaterialTheme.colorScheme.secondary,
-                    selectedIndicatorColor =
-                        MaterialTheme.colorScheme.primary
-                            .copy(alpha = 0.15f),
+                    selectedIndicatorColor = MaterialTheme.colorScheme.secondaryContainer,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurface,
                     disabledIconColor = MaterialTheme.colorScheme.onSurface,
@@ -108,7 +106,6 @@ fun DroidconNavigationItems(
     }
 }
 
-/** The drawer's header, in the primary-action slot, which only the drawer draws. */
 @Composable
 fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
     Row(
@@ -118,7 +115,7 @@ fun DroidconDrawerHeader(modifier: Modifier = Modifier) {
             painter =
                 painterResource(
                     id =
-                        if (isSystemInDarkTheme()) {
+                        if (MaterialTheme.isDarkTheme) {
                             R.drawable.droidcon_logo_dark
                         } else {
                             R.drawable.droidcon_logo

@@ -15,36 +15,25 @@
  */
 package com.android254.presentation.common.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.android254.presentation.models.SponsorPresentationModel
-import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
-import ke.droidcon.kotlin.chai.R as ChaiR
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -52,59 +41,33 @@ fun SponsorsCard(
     sponsors: ImmutableList<SponsorPresentationModel>,
     modifier: Modifier = Modifier,
 ) {
-    Card {
-        Column(
-            modifier =
-                modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceContainer,
-                        shape = RoundedCornerShape(10.dp),
-                    ).padding(horizontal = 30.dp, vertical = 10.dp)
-                    .testTag("sponsors_section"),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            ChaiSubTitle(
+    Column(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .testTag("sponsors_section"),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = stringResource(id = R.string.sponsors_title),
+            style = MaterialTheme.typography.headlineSmallEmphasized,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.semantics { heading() },
+        )
+        val (platinum, others) = sponsors.partition { it.sponsorType.equals("platinum", ignoreCase = true) }
+        val isDark = MaterialTheme.isDarkTheme
+        platinum.forEach { sponsor ->
+            LogoTile(
+                logos = sponsor.logosFor(isDark),
+                name = sponsor.name,
+                logoHeight = 56.dp,
                 modifier = Modifier.fillMaxWidth(),
-                titleText = stringResource(id = R.string.sponsors_title),
-                titleColor = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
             )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            FlowRow(
-                modifier = Modifier.padding(top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                horizontalArrangement = Arrangement.Start,
-                maxItemsInEachRow = 3,
-            ) {
-                sponsors.forEach { sponsor ->
-                    val customModifier =
-                        if (sponsor.sponsorType.equals("platinum", ignoreCase = true)) {
-                            Modifier
-                                .fillMaxWidth()
-                                .height(70.dp)
-                        } else {
-                            Modifier
-                                .weight(0.5f)
-                                .height(50.dp)
-                        }
-                    val logo = if (isSystemInDarkTheme()) sponsor.logo.replace(".png", "-dark.png") else sponsor.logo
-                    AsyncImage(
-                        modifier = customModifier,
-                        model =
-                            ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(logo)
-                                .crossfade(true)
-                                .build(),
-                        contentScale = ContentScale.Fit,
-                        placeholder = painterResource(ChaiR.drawable.ic_google_logo_icon),
-                        contentDescription = stringResource(id = R.string.logo),
-                    )
-                }
-            }
+        }
+        AdaptiveEvenGrid(items = others.toImmutableList(), minColumns = 2, minCellWidth = 240.dp) { sponsor, cellModifier ->
+            LogoTile(logos = sponsor.logosFor(isDark), name = sponsor.name, modifier = cellModifier)
         }
     }
 }
+
+private fun SponsorPresentationModel.logosFor(isDark: Boolean) = if (isDark) persistentListOf(logo.replace(".png", "-dark.png"), logo) else persistentListOf(logo)

@@ -51,6 +51,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.android254.presentation.common.components.LiveBadge
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
@@ -147,23 +148,22 @@ fun CurrentSessionComponent(
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    Box(
-                        modifier =
-                            Modifier
-                                .clip(RoundedCornerShape(6.dp))
-                                .background(
-                                    venueAccent.copy(alpha = if (isNow) 0.15f * alpha else 0.15f),
-                                ).padding(horizontal = 10.dp, vertical = 4.dp),
-                    ) {
-                        ChaiBodySmallBold(
-                            bodyText =
-                                if (isNow) {
-                                    stringResource(R.string.now).uppercase()
-                                } else {
-                                    stringResource(R.string.up_next).uppercase()
-                                },
-                            textColor = venueAccent,
-                        )
+                    if (isNow) {
+                        LiveBadge()
+                    } else {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(
+                                        venueAccent.copy(alpha = 0.15f),
+                                    ).padding(horizontal = 10.dp, vertical = 4.dp),
+                        ) {
+                            ChaiBodySmallBold(
+                                bodyText = stringResource(R.string.up_next).uppercase(),
+                                textColor = venueAccent,
+                            )
+                        }
                     }
                 }
                 val speakerInfo = session.speakers.joinToString(", ") { it.name }

@@ -21,9 +21,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-/**
- * Configure Compose-specific options
- */
 internal fun Project.configureAndroidCompose(
     commonExtension: CommonExtension,
 ) {
@@ -42,6 +39,8 @@ internal fun Project.configureAndroidCompose(
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
             freeCompilerArgs.addAll(buildComposeMetricsParameters())
+            optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
+            optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
         }
     }
 }
