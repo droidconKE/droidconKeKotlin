@@ -112,7 +112,11 @@ private fun StatusAndSessionContent(
             modifier = GlanceModifier.semantics { testTag = "sessionTitle" },
             maxLines = 2,
         )
-        Text(text = detailText)
+        Text(
+            text = detailText,
+            modifier = GlanceModifier.semantics { testTag = "sessionDetail" },
+            maxLines = 1,
+        )
     }
 }
 
