@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.data.work
+package ke.droidcon.kotlin.datasource.local
 
-object WorkConstants {
-    const val NOTIFICATION_CHANNEL = "notification_channel"
-    const val SYNC_DATA_WORKER_NAME = "sync_data"
-    const val PERIODIC_SYNC_DATA_WORKER_NAME = "sync_data_periodic"
-    const val SYNC_NOTIFICATION_ID = 1
-}
+import androidx.room.withTransaction
+import javax.inject.Inject
+
+class SyncTransaction
+    @Inject
+    constructor(
+        private val database: Database,
+    ) {
+        suspend operator fun <R> invoke(block: suspend () -> R): R = database.withTransaction(block)
+    }

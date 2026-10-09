@@ -16,6 +16,7 @@
 package com.android254.data.repos
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android254.domain.sync.Synchronizer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -48,7 +49,7 @@ class FeedManagerTest {
             coEvery { mockLocalFeedDataSource.deleteByTitles(any()) } returns Unit
 
             val manager = FeedManager(mockLocalFeedDataSource, mockRemoteFeedDataSource, testDispatcher)
-            val result = manager.syncWith(mockk())
+            val result = manager.syncWith(object : Synchronizer {})
 
             assert(result)
             coVerify { mockLocalFeedDataSource.deleteByTitles(listOf("Feed 2")) }

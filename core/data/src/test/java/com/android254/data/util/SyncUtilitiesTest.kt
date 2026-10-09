@@ -69,4 +69,64 @@ class SyncUtilitiesTest {
             coVerify(exactly = 0) { deleter(any()) }
             coVerify { upserter(remoteItems) }
         }
+
+    @Test
+    fun `an empty remote list leaves local data alone when asked to`() =
+        runTest {
+            val upserter = mockk<suspend (List<String>) -> Unit>(relaxed = true)
+            val deleter = mockk<suspend (List<String>) -> Unit>(relaxed = true)
+
+            val result =
+                synchronizer.sync(
+                    remoteItemFetcher = { emptyList() },
+                    localIdFetcher = { listOf("item1") },
+                    localItemUpserter = upserter,
+                    localItemDeleter = deleter,
+                    remoteToLocalIdSelector = { it },
+                    keepLocalWhenRemoteIsEmpty = true,
+                )
+
+            assertThat(result.isSuccess, `is`(true))
+            coVerify(exactly = 0) { deleter(any()) }
+            coVerify(exactly = 0) { upserter(any()) }
+        }
+
+    @Test
+    fun `an empty remote list deletes local data by default`() =
+        runTest {
+            val deleter = mockk<suspend (List<String>) -> Unit>(relaxed = true)
+
+            synchronizer.sync(
+                remoteItemFetcher = { emptyList<String>() },
+                localIdFetcher = { listOf("item1") },
+                localItemUpserter = {},
+                localItemDeleter = deleter,
+                remoteToLocalIdSelector = { it },
+            )
+
+            coVerify { deleter(listOf("item1")) }
+        }
+
+    @Test
+    fun `local writes run inside one transaction and the fetch runs outside it`() =
+        runTest {
+            val events = mutableListOf<String>()
+            val transactional =
+                object : Synchronizer {
+                    override suspend fun <R> inTransaction(block: suspend () -> R): R {
+                        events += "begin"
+                        return block().also { events += "commit" }
+                    }
+                }
+
+            transactional.sync(
+                remoteItemFetcher = { listOf("item1").also { events += "fetch" } },
+                localIdFetcher = { listOf("item2").also { events += "read" } },
+                localItemUpserter = { events += "upsert" },
+                localItemDeleter = { events += "delete" },
+                remoteToLocalIdSelector = { it },
+            )
+
+            assertThat(events, `is`(listOf("fetch", "begin", "read", "delete", "upsert", "commit")))
+        }
 }

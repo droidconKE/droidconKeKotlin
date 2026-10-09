@@ -177,8 +177,15 @@ The five run concurrently under `awaitAll` and the result is `.all { it }` — o
 retries the whole job. That is deliberate: a half-synced database, where the sessions are
 current but the speakers they reference are not, is worse than a slightly stale one.
 
-The worker posts a foreground notification while it runs, so the sync survives the app being
-backgrounded mid-refresh.
+Each repository fetches first, then deletes the rows the API no longer returns and upserts the
+rest inside one Room transaction (`Synchronizer.inTransaction`, backed by `SyncTransaction`), so
+observers see one change per table and a crash cannot leave a table half-written. The network
+call stays outside the transaction. An empty sessions response is treated as a fault: the cached
+schedule is kept and a warning is logged.
+
+`isSyncing` is true while either the one-time job (`sync_data`) or the daily job
+(`sync_data_periodic`) is running. `startSync()` is expedited, so the worker posts a foreground
+notification while it runs on API 30 and below.
 
 ---
 
