@@ -21,6 +21,7 @@ import androidx.glance.LocalSize
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import com.android254.domain.models.Session
+import com.android254.domain.models.Speaker
 
 /**
  * Studio-only previews for [WidgetContent]'s states, rendered at this widget's three [DpSize]
@@ -36,10 +37,12 @@ private fun previewSession(
     title: String,
     rooms: String = "Hall A",
     startTime: String = "10:00 AM",
+    endTime: String = "",
+    speakers: List<Speaker> = emptyList(),
 ) = Session(
     id = "preview",
     endDateTime = "",
-    endTime = "",
+    endTime = endTime,
     isBookmarked = false,
     isKeynote = false,
     isServiceSession = false,
@@ -47,7 +50,7 @@ private fun previewSession(
     startDateTime = "",
     startTime = startTime,
     rooms = rooms,
-    speakers = emptyList(),
+    speakers = speakers,
     remoteId = "preview",
     description = "",
     sessionFormat = "",
@@ -104,6 +107,76 @@ private fun WidgetContentConcurrentSessionsPreview() {
                     previewSession(title = "Lightning talks", rooms = "Track 3"),
                 ),
             next = emptyList(),
+            size = LocalSize.current,
+            launchIntent = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+private fun WidgetContentHappeningNowWithSpeakerLargePreview() {
+    GlanceTheme {
+        WidgetContent(
+            current =
+                listOf(
+                    previewSession(
+                        title = "Building Resilient Systems",
+                        rooms = "Opal",
+                        endTime = "11:30 AM",
+                        speakers = listOf(Speaker(name = "Ada Lovelace")),
+                    ),
+                ),
+            next = emptyList(),
+            size = LocalSize.current,
+            launchIntent = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 140, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+private fun WidgetContentUpNextOpalRoomPreview() {
+    GlanceTheme {
+        WidgetContent(
+            current = emptyList(),
+            next =
+                listOf(
+                    previewSession(
+                        title = "The Future of Kotlin",
+                        rooms = "Opal",
+                        startTime = "2:00 PM",
+                        speakers = listOf(Speaker(name = "Grace Hopper")),
+                    ),
+                ),
+            size = LocalSize.current,
+            launchIntent = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 140, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+private fun WidgetContentUpNextSapphireRoomPreview() {
+    GlanceTheme {
+        WidgetContent(
+            current = emptyList(),
+            next =
+                listOf(
+                    previewSession(
+                        title = "Designing for Delight",
+                        rooms = "Sapphire",
+                        startTime = "3:30 PM",
+                        speakers = listOf(Speaker(name = "Margaret Hamilton")),
+                    ),
+                ),
             size = LocalSize.current,
             launchIntent = null,
         )

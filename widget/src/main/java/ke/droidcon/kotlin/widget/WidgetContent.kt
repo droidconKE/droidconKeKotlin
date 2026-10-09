@@ -18,6 +18,7 @@ package ke.droidcon.kotlin.widget
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
@@ -46,17 +47,17 @@ import androidx.glance.unit.ColorProvider
 import com.android254.domain.models.Session
 
 /**
+ * The large breakpoint (250x200dp) is the only one tall enough for a two-line title plus a
+ * richer, speaker-inclusive detail line; small/medium (both 100dp tall) stay compact.
+ */
+private val LargeBreakpointMinHeight = 150.dp
+
+/**
  * Renders the widget's three states: one or more sessions running now, one or more sessions
  * coming up next, or nothing scheduled. When more than one session qualifies for a state, the
  * first is shown in full and the rest are surfaced as an "+N more" count rather than silently
  * dropped, since conference tracks run in parallel.
- *
- * [size] is not read yet: this task's states don't branch on it. It's part of the public
- * signature now because `NextSessionWidget.provideGlance`, the test suite and the previews
- * below already pass their breakpoint through, so a later size-aware layout change doesn't need
- * a signature change.
  */
-@Suppress("UnusedParameter")
 @Composable
 fun WidgetContent(
     current: List<Session>,
@@ -80,25 +81,68 @@ fun WidgetContent(
 
     Column(modifier = rootModifier) {
         when {
-            current.isNotEmpty() -> HappeningNowContent(current.first(), extraCount = current.size - 1)
-            next.isNotEmpty() -> UpNextContent(next.first(), extraCount = next.size - 1)
+            current.isNotEmpty() -> HappeningNowContent(current.first(), extraCount = current.size - 1, size = size)
+            next.isNotEmpty() -> UpNextContent(next.first(), extraCount = next.size - 1, size = size)
             else -> EmptyStateContent()
         }
     }
 }
 
+/** A session's room accent, mirroring the app's `venueAccentColor`. Room names change yearly,
+ * so an unknown room falls back to the neutral role rather than a fixed hue. */
+internal enum class VenueAccent { SECONDARY, TERTIARY, NEUTRAL }
+
+internal fun venueAccent(rooms: String): VenueAccent {
+    val primaryRoom =
+        rooms
+            .split(',')
+            .firstOrNull()
+            ?.trim()
+            .orEmpty()
+    return when {
+        primaryRoom.equals("Opal", ignoreCase = true) -> VenueAccent.SECONDARY
+        primaryRoom.equals("Sapphire", ignoreCase = true) -> VenueAccent.TERTIARY
+        else -> VenueAccent.NEUTRAL
+    }
+}
+
+@Composable
+private fun VenueAccent.toColorProvider(): ColorProvider =
+    when (this) {
+        VenueAccent.SECONDARY -> GlanceTheme.colors.secondary
+        VenueAccent.TERTIARY -> GlanceTheme.colors.tertiary
+        VenueAccent.NEUTRAL -> GlanceTheme.colors.onSurfaceVariant
+    }
+
+private fun speakerNames(session: Session): String = session.speakers.joinToString(", ") { it.name }
+
 @Composable
 private fun HappeningNowContent(
     session: Session,
     extraCount: Int,
+    size: DpSize,
 ) {
+    val isLarge = size.height >= LargeBreakpointMinHeight
+    val speakers = speakerNames(session)
+    val detailText =
+        if (isLarge && speakers.isNotEmpty()) {
+            "$speakers · ${session.rooms} · ends ${session.endTime}"
+        } else {
+            session.rooms
+        }
     StatusAndSessionContent(
         statusText = LocalContext.current.getString(R.string.widget_happening_now),
-        containerColor = GlanceTheme.colors.secondaryContainer,
-        contentColor = GlanceTheme.colors.onSecondaryContainer,
-        showDot = true,
+        pillStyle =
+            PillStyle(
+                containerColor = GlanceTheme.colors.secondaryContainer,
+                contentColor = GlanceTheme.colors.onSecondaryContainer,
+                dotColor = GlanceTheme.colors.onSecondaryContainer,
+            ),
         session = session,
-        detailText = session.rooms,
+        detailText = detailText,
+        detailColor = venueAccent(session.rooms).toColorProvider(),
+        detailMaxLines = if (isLarge) 2 else 1,
+        titleFontSize = if (isLarge) 18.sp else 15.sp,
         extraCount = extraCount,
         extraCountLabelRes = R.string.widget_more_live,
     )
@@ -108,27 +152,49 @@ private fun HappeningNowContent(
 private fun UpNextContent(
     session: Session,
     extraCount: Int,
+    size: DpSize,
 ) {
+    val isLarge = size.height >= LargeBreakpointMinHeight
+    val speakers = speakerNames(session)
+    val detailText =
+        if (isLarge && speakers.isNotEmpty()) {
+            "$speakers · ${session.rooms} · ${session.startTime}"
+        } else {
+            "${session.startTime} · ${session.rooms}"
+        }
     StatusAndSessionContent(
         statusText = LocalContext.current.getString(R.string.widget_up_next),
-        containerColor = GlanceTheme.colors.primaryContainer,
-        contentColor = GlanceTheme.colors.onPrimaryContainer,
-        showDot = false,
+        pillStyle =
+            PillStyle(
+                containerColor = GlanceTheme.colors.primaryContainer,
+                contentColor = GlanceTheme.colors.onPrimaryContainer,
+                dotColor = venueAccent(session.rooms).toColorProvider(),
+            ),
         session = session,
-        detailText = "${session.startTime} · ${session.rooms}",
+        detailText = detailText,
+        detailColor = venueAccent(session.rooms).toColorProvider(),
+        detailMaxLines = if (isLarge) 2 else 1,
+        titleFontSize = if (isLarge) 18.sp else 15.sp,
         extraCount = extraCount,
         extraCountLabelRes = R.string.widget_more_next,
     )
 }
 
+private data class PillStyle(
+    val containerColor: ColorProvider,
+    val contentColor: ColorProvider,
+    val dotColor: ColorProvider,
+)
+
 @Composable
 private fun StatusAndSessionContent(
     statusText: String,
-    containerColor: ColorProvider,
-    contentColor: ColorProvider,
-    showDot: Boolean,
+    pillStyle: PillStyle,
     session: Session,
     detailText: String,
+    detailColor: ColorProvider,
+    detailMaxLines: Int,
+    titleFontSize: TextUnit,
     extraCount: Int,
     extraCountLabelRes: Int,
 ) {
@@ -136,9 +202,9 @@ private fun StatusAndSessionContent(
         Row(verticalAlignment = Alignment.CenterVertically) {
             StatusPill(
                 text = statusText,
-                containerColor = containerColor,
-                contentColor = contentColor,
-                showDot = showDot,
+                containerColor = pillStyle.containerColor,
+                contentColor = pillStyle.contentColor,
+                dotColor = pillStyle.dotColor,
                 textModifier = GlanceModifier.semantics { testTag = "statusLabel" },
             )
             if (extraCount > 0) {
@@ -154,14 +220,14 @@ private fun StatusAndSessionContent(
         Text(
             text = session.title,
             modifier = GlanceModifier.semantics { testTag = "sessionTitle" },
-            style = TextStyle(fontWeight = FontWeight.Bold),
+            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = titleFontSize),
             maxLines = 2,
         )
         Text(
             text = detailText,
             modifier = GlanceModifier.semantics { testTag = "sessionDetail" },
-            style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant),
-            maxLines = 1,
+            style = TextStyle(color = detailColor),
+            maxLines = detailMaxLines,
         )
     }
 }
@@ -171,7 +237,7 @@ private fun StatusPill(
     text: String,
     containerColor: ColorProvider,
     contentColor: ColorProvider,
-    showDot: Boolean,
+    dotColor: ColorProvider,
     textModifier: GlanceModifier = GlanceModifier,
 ) {
     Row(
@@ -182,10 +248,8 @@ private fun StatusPill(
                 .padding(horizontal = 8.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (showDot) {
-            Box(modifier = GlanceModifier.size(6.dp).cornerRadius(3.dp).background(contentColor)) {}
-            Spacer(modifier = GlanceModifier.width(4.dp))
-        }
+        Box(modifier = GlanceModifier.size(6.dp).cornerRadius(3.dp).background(dotColor)) {}
+        Spacer(modifier = GlanceModifier.width(4.dp))
         Text(
             text = text.uppercase(),
             modifier = textModifier,

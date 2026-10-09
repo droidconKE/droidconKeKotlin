@@ -25,6 +25,7 @@ import androidx.glance.testing.unit.assertHasText
 import androidx.glance.testing.unit.hasTestTag
 import androidx.test.core.app.ApplicationProvider
 import com.android254.domain.models.Session
+import com.android254.domain.models.Speaker
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -48,10 +49,12 @@ class WidgetContentTest {
         title: String = "Test Session",
         rooms: String = "Hall A",
         startTime: String = "10:00 AM",
+        endTime: String = "",
+        speakers: List<Speaker> = emptyList(),
     ) = Session(
         id = "1",
         endDateTime = "",
-        endTime = "",
+        endTime = endTime,
         isBookmarked = false,
         isKeynote = false,
         isServiceSession = false,
@@ -59,7 +62,7 @@ class WidgetContentTest {
         startDateTime = "",
         startTime = startTime,
         rooms = rooms,
-        speakers = emptyList(),
+        speakers = speakers,
         remoteId = "1",
         description = "",
         sessionFormat = "",
@@ -68,6 +71,8 @@ class WidgetContentTest {
         title = title,
         eventDay = "",
     )
+
+    private fun fakeSpeaker(name: String) = Speaker(name = name)
 
     @Test
     fun widgetContent_currentSessionPresent_showsLiveNotUpNext() =
@@ -186,5 +191,88 @@ class WidgetContentTest {
             }
             onNode(hasTestTag("sessionTitle")).assertHasText("Workshop")
             onNode(hasTestTag("extraSessionsLabel")).assertHasText("+2 more")
+        }
+
+    @Test
+    fun widgetContent_largeBreakpointCurrentSessionWithSpeaker_detailIncludesSpeakerAndEndTime() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current =
+                        listOf(
+                            fakeSession(
+                                title = "Keynote",
+                                rooms = "Hall A",
+                                endTime = "11:30 AM",
+                                speakers = listOf(fakeSpeaker("Ada Lovelace")),
+                            ),
+                        ),
+                    next = emptyList(),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionDetail")).assertHasText("Ada Lovelace · Hall A · ends 11:30 AM")
+        }
+
+    @Test
+    fun widgetContent_largeBreakpointNextSessionWithSpeaker_detailIncludesSpeakerAndStartTime() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = emptyList(),
+                    next =
+                        listOf(
+                            fakeSession(
+                                title = "Workshop",
+                                rooms = "Hall B",
+                                startTime = "2:00 PM",
+                                speakers = listOf(fakeSpeaker("Grace Hopper")),
+                            ),
+                        ),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionDetail")).assertHasText("Grace Hopper · Hall B · 2:00 PM")
+        }
+
+    @Test
+    fun widgetContent_largeBreakpointNoSpeaker_detailFallsBackToCompactText() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = listOf(fakeSession(title = "Keynote", rooms = "Hall A")),
+                    next = emptyList(),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionDetail")).assertHasText("Hall A")
+        }
+
+    @Test
+    fun widgetContent_smallBreakpointWithSpeaker_detailStaysCompact() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current =
+                        listOf(
+                            fakeSession(
+                                title = "Keynote",
+                                rooms = "Hall A",
+                                speakers = listOf(fakeSpeaker("Ada Lovelace")),
+                            ),
+                        ),
+                    next = emptyList(),
+                    size = DpSize(140.dp, 100.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionDetail")).assertHasText("Hall A")
         }
 }
