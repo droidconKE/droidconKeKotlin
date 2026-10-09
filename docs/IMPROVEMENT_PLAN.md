@@ -8,12 +8,12 @@
 
 ---
 
-## Next up — the feed 404 (§3.10 item 1), then §14
+## Next up — §14
 
 The sync follow-ups that needed no backend work have landed: duplicates are gone (schema 6),
-each table syncs in one transaction, an empty sessions response keeps the cached schedule, and
-`isSyncing` covers the daily job. Checking that on a device showed the feed endpoint answering
-404 for the configured event, which fails every sync. That is §3.10 item 1.
+each table syncs in one transaction, an empty sessions response keeps the cached schedule,
+`isSyncing` covers the daily job, and a feed 404 (the API's answer for an event with no posts)
+no longer fails every sync. What is left in §3.10 is small or needs the backend.
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
 system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
@@ -257,24 +257,19 @@ Compared with `android/nowinandroid` (`a49ed25`, 2026-09-22), our sync now match
 API allows: server-keyed tables, `@Upsert`, one transaction per table, and one expedited request
 builder. What is left, in order:
 
-1. **The feed endpoint returns 404, so every sync fails.** `GET /events/droidconke-2025-898/feeds`
-   answers `404 {"message":"requested item not found"}` (seen 2026-10-09). The other four lists
-   sync, but the worker treats one failure as the whole job failing and retries with backoff
-   for ever. Ask the backend whether the event has a feed; until it does, treat a 404 from feed
-   as an empty list rather than a failure.
-2. **The sync notification channel is loud and badly named.** `DroidconApp` creates it with
+1. **The sync notification channel is loud and badly named.** `DroidconApp` creates it with
    `IMPORTANCE_HIGH` and the raw id `sync_data` as its user-visible name. On API 30 and below an
    expedited sync posts a heads-up. Importance cannot be lowered for existing installs, so this
    needs a new channel id at `IMPORTANCE_LOW` with a string-resource name, and the old channel
    deleted.
-3. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
+2. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
    worker when content changes. Ours syncs on start and every 24 hours, so a room change on
    conference day can take a day to arrive. A topic message that calls `startSync()` fixes that.
-4. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
+3. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
    (`getTopicChangeList(after = version)`) and fetches only what changed. The droidcon API returns
    full lists and has no change-list endpoint, so this does not port. If the backend adds `ETag`
    or an `updated_since` parameter, adopt it then.
-5. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver`. `SyncDataWorker` has
+4. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver`. `SyncDataWorker` has
    no test; the sync helper and `isSyncing` do.
 
 ## 4. Phase 1 — Adaptive follow-ups
@@ -4197,7 +4192,7 @@ struck row has landed.
 | --- | --- | --- | --- |
 | ~~**1**~~ | ~~Fix duplicated sessions after sync~~ — **done** | — | Synced tables are keyed on what sync matches on (schema 6). |
 | ~~**2**~~ | ~~Sync follow-ups that need no backend~~ — **done** | — | Transactions, empty-response guard, `isSyncing`, one request builder, stable notification. |
-| **2a** | Feed 404 fails every sync | §3.10 #1 | Every sync retries for ever until it is handled. |
+| ~~**2a**~~ | ~~Feed 404 fails every sync~~ — **done** | — | The API answers 404 for an event with no feed posts; `FeedApi` reads it as an empty list. |
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
 | **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. Previously struck as done; it never landed. |
 | ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |

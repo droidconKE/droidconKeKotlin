@@ -20,6 +20,7 @@ import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondOk
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
@@ -142,5 +143,33 @@ class FeedApiTest {
                     ),
                 ),
             )
+        }
+
+    @Test
+    fun `a 404 means the event has no feed posts`() =
+        runTest {
+            val httpClient =
+                HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(
+                    MockEngine {
+                        respond(
+                            content = """{"message":"requested item not found"}""",
+                            status = HttpStatusCode.NotFound,
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    },
+                )
+
+            assertThat(FeedApi(httpClient).fetchFeed(), `is`(DataResult.Success(emptyList())))
+        }
+
+    @Test
+    fun `other client errors still fail`() =
+        runTest {
+            val httpClient =
+                HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest).create(
+                    MockEngine { respond(content = "", status = HttpStatusCode.Forbidden) },
+                )
+
+            assertThat(FeedApi(httpClient).fetchFeed() is DataResult.Error, `is`(true))
         }
 }

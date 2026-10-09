@@ -17,7 +17,9 @@ package ke.droidcon.kotlin.datasource.remote.feed
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.request.get
+import io.ktor.http.HttpStatusCode
 import ke.droidcon.kotlin.datasource.remote.feed.model.FeedDTO
 import ke.droidcon.kotlin.datasource.remote.utils.dataResultSafeApiCall
 import ke.droidcon.kotlin.datasource.remote.utils.pagination.PaginatedResponse
@@ -34,13 +36,19 @@ class FeedApi
             size: Int = 100,
         ) = dataResultSafeApiCall {
             val response: PaginatedResponse<List<FeedDTO>> =
-                client
-                    .get("${provideEventBaseUrl()}/feeds") {
-                        url {
-                            parameters.append("page", page.toString())
-                            parameters.append("per_page", size.toString())
-                        }
-                    }.body()
+                try {
+                    client
+                        .get("${provideEventBaseUrl()}/feeds") {
+                            url {
+                                parameters.append("page", page.toString())
+                                parameters.append("per_page", size.toString())
+                            }
+                        }.body()
+                } catch (e: ClientRequestException) {
+                    // The API answers 404, not an empty page, when an event has no feed posts.
+                    if (e.response.status == HttpStatusCode.NotFound) return@dataResultSafeApiCall emptyList()
+                    throw e
+                }
 
             return@dataResultSafeApiCall response.data
         }
