@@ -17,7 +17,10 @@ package ke.droidcon.kotlin.widget
 
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.glance.EmittableWithText
 import androidx.glance.appwidget.testing.unit.runGlanceAppWidgetUnitTest
+import androidx.glance.testing.GlanceNodeMatcher
+import androidx.glance.testing.unit.MappedNode
 import androidx.glance.testing.unit.assertHasText
 import androidx.glance.testing.unit.hasTestTag
 import androidx.test.core.app.ApplicationProvider
@@ -30,6 +33,17 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class WidgetContentTest {
+    // glance-testing has no public assertHasMaxLines helper; its own hasText()/hasTextEqualTo()
+    // matchers (UnitTestFilters.kt) reach into the same RestrictTo(LIBRARY_GROUP) Emittable type
+    // to read node state, so this mirrors that pattern to check the one property those helpers
+    // don't expose.
+    @Suppress("RestrictedApi")
+    private val hasMaxLinesOfOne =
+        GlanceNodeMatcher<MappedNode>("maxLines == 1") { node ->
+            val emittable = node.value.emittable
+            emittable is EmittableWithText && emittable.maxLines == 1
+        }
+
     private fun fakeSession(
         title: String = "Test Session",
         rooms: String = "Hall A",
@@ -95,5 +109,24 @@ class WidgetContentTest {
                 WidgetContent(current = null, next = null, size = DpSize(140.dp, 100.dp), launchIntent = null)
             }
             onNode(hasTestTag("emptyState")).assertExists()
+        }
+
+    @Test
+    fun widgetContent_longRoomName_boundsDetailLineToOneLine() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current =
+                        fakeSession(
+                            title = "Keynote",
+                            rooms = "A very long room name that would otherwise wrap across several lines",
+                        ),
+                    next = null,
+                    size = DpSize(140.dp, 100.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionDetail")).assert(hasMaxLinesOfOne)
         }
 }
