@@ -22,10 +22,10 @@ public fun com.android254.presentation.feed.view.FeedLoadingComponent(modifier: 
 
 @Composable
 public fun com.android254.presentation.feed.view.FeedRoute(feedViewModel: com.android254.presentation.feed.FeedViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - feedViewModel: RUNTIME (requires runtime check)
+    - feedViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable
@@ -33,7 +33,7 @@ internal fun com.android254.presentation.feed.view.FeedScreen(feedUIState: com.a
   skippable: true
   restartable: true
   params:
-    - feedUIState: STABLE (class with no mutable properties)
+    - feedUIState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable

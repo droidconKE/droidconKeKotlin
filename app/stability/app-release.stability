@@ -6,12 +6,12 @@
 
 @Composable
 public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
-    - authViewModel: STABLE (class with no mutable properties)
+    - authViewModel: UNSTABLE (has mutable properties or unstable members)
 
 @Composable
 public fun com.android254.presentation.common.livesessions.HappeningNowPane(sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -24,7 +24,7 @@ public fun com.android254.presentation.common.livesessions.HappeningNowPane(sess
 
 @Composable
 public fun com.android254.presentation.common.livesessions.HappeningNowRoute(onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, viewModel: com.android254.presentation.activity.MainViewModel): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - onSessionClick: STABLE (function type)
@@ -55,7 +55,7 @@ public fun com.android254.presentation.common.navigation.DroidconDrawerHeader(mo
 
 @Composable
 public fun com.android254.presentation.common.navigation.DroidconNavigationItems(currentTopLevelRoute: androidx.navigation3.runtime.NavKey, navigationSuiteType: androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType, onNavigate: kotlin.Function1<com.android254.presentation.common.navigation.Screens, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - currentTopLevelRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
@@ -64,7 +64,7 @@ public fun com.android254.presentation.common.navigation.DroidconNavigationItems
 
 @Composable
 public fun com.android254.presentation.common.navigation.Navigation(navController: com.android254.presentation.common.navigation.NavigationController, navigationState: com.android254.presentation.common.navigation.NavigationState, modifier: androidx.compose.ui.Modifier, onActionClicked: kotlin.Function0<kotlin.Unit>, supportingRoute: androidx.navigation3.runtime.NavKey?, onBack: kotlin.Function0<kotlin.Unit>, sceneStrategies: kotlinx.collections.immutable.ImmutableList<androidx.navigation3.scene.SceneStrategy<androidx.navigation3.runtime.NavKey>>?, entryProvider: kotlin.Function1<androidx.navigation3.runtime.NavKey, androidx.navigation3.runtime.NavEntry<androidx.navigation3.runtime.NavKey>>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - navController: UNSTABLE (has mutable properties or unstable members)
@@ -102,6 +102,6 @@ private fun com.android254.presentation.common.navigation.sessionModel(key: com.
   skippable: false
   restartable: false
   params:
-    - key: STABLE (class with no mutable properties)
-    - viewModel: STABLE (class with no mutable properties)
+    - key: STABLE (marked @Stable or @Immutable)
+    - viewModel: UNSTABLE (has mutable properties or unstable members)
 
