@@ -27,6 +27,7 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
 import com.android254.domain.sync.Synchronizer
+import com.android254.domain.widget.WidgetRefresher
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
@@ -53,6 +54,7 @@ class SyncDataWorker
         private val feedRepo: FeedRepo,
         private val remoteFeatureToggle: RemoteFeatureToggle,
         private val syncTransaction: SyncTransaction,
+        private val widgetRefresher: WidgetRefresher,
     ) : CoroutineWorker(appContext, workerParameters),
         Synchronizer {
         override suspend fun getForegroundInfo(): ForegroundInfo =
@@ -80,6 +82,7 @@ class SyncDataWorker
                     ).all { it }
 
                 if (syncedSuccessfully) {
+                    widgetRefresher.refresh()
                     Result.success()
                 } else {
                     Result.retry()
