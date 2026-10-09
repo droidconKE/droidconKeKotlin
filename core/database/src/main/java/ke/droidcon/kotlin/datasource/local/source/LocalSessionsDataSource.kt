@@ -27,13 +27,6 @@ interface LocalSessionsDataSource {
 
     fun fetchSessionWithFilters(query: String): Flow<List<SessionEntity>>
 
-    suspend fun updateBookmarkedStatus(
-        id: String,
-        isBookmarked: Boolean,
-    )
-
-    suspend fun getBookmarkStatus(id: String): Boolean
-
     suspend fun saveCachedSessions(sessions: List<SessionEntity>)
 
     suspend fun getRemoteIds(): List<String>

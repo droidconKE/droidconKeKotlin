@@ -195,7 +195,7 @@ Room 2.8, six entities and their DAOs:
 | `FeedEntity`      | `FeedDao`        | `title`     |                                              |
 | `BookmarkEntity`  | `BookmarkDao`    | `sessionId` | **User-owned data. Never destructively migrated.** Holds the session's `remote_id`. |
 
-`BaseDao` holds the shared upsert/update/delete surface.
+`BaseDao` holds the shared upsert and delete surface.
 
 Three rules here have already been paid for:
 

@@ -36,15 +36,6 @@ interface SessionDao : BaseDao<SessionEntity> {
     @RawQuery(observedEntities = [SessionEntity::class])
     fun fetchSessionsWithFilters(query: SupportSQLiteQuery): Flow<List<SessionEntity>>
 
-    @Query("UPDATE sessions SET isBookmarked = :isBookmarked WHERE remote_id = :id")
-    suspend fun updateBookmarkedStatus(
-        id: String,
-        isBookmarked: Boolean,
-    )
-
-    @Query("SELECT isBookmarked FROM sessions WHERE remote_id = :id")
-    suspend fun getBookmarkStatus(id: String): Boolean
-
     @Query("SELECT * FROM sessions WHERE startTimestamp <= :currentTime AND :currentTime < endTimeStamp ORDER BY startTimestamp ASC")
     fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>>
 

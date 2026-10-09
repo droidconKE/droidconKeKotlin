@@ -16,8 +16,6 @@
 package ke.droidcon.kotlin.datasource.local.dao
 
 import androidx.room.Delete
-import androidx.room.OnConflictStrategy.Companion.REPLACE
-import androidx.room.Update
 import androidx.room.Upsert
 
 /**
@@ -36,12 +34,6 @@ interface BaseDao<T> {
 
     @Upsert
     suspend fun upsert(items: List<T>)
-
-    @Update(onConflict = REPLACE)
-    suspend fun update(item: T): Int
-
-    @Update(onConflict = REPLACE)
-    suspend fun update(items: List<T>): Int
 
     @Delete
     suspend fun delete(item: T)
