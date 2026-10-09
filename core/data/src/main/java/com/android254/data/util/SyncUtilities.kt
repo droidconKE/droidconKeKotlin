@@ -45,6 +45,9 @@ class SyncException(
  * [localItemUpserter] Upserts the items into the local database.
  * [localItemDeleter] Deletes local items by their IDs.
  * [remoteToLocalIdSelector] Selects the ID from a remote item to match against local IDs.
+ * [keepLocalWhenRemoteIsEmpty] Treats an empty remote list as a fault and leaves local data alone.
+ *
+ * The fetch runs first; the deletes and upserts then run in one [Synchronizer.inTransaction].
  */
 suspend fun <Remote, LocalId> Synchronizer.sync(
     remoteItemFetcher: suspend () -> List<Remote>,
@@ -52,18 +55,24 @@ suspend fun <Remote, LocalId> Synchronizer.sync(
     localItemUpserter: suspend (List<Remote>) -> Unit,
     localItemDeleter: suspend (List<LocalId>) -> Unit,
     remoteToLocalIdSelector: (Remote) -> LocalId,
+    keepLocalWhenRemoteIsEmpty: Boolean = false,
 ): Result<Boolean> =
     suspendRunCatching {
         val remoteItems = remoteItemFetcher()
-        val localIds = localIdFetcher()
-
-        val remoteIds = remoteItems.map(remoteToLocalIdSelector).toSet()
-        val orphanedIds = localIds.filterNot { it in remoteIds }
-
-        if (orphanedIds.isNotEmpty()) {
-            localItemDeleter(orphanedIds)
+        if (remoteItems.isEmpty() && keepLocalWhenRemoteIsEmpty) {
+            Timber.w("Sync fetched no items; keeping the local copy")
+            return@suspendRunCatching true
         }
 
-        localItemUpserter(remoteItems)
+        inTransaction {
+            val remoteIds = remoteItems.map(remoteToLocalIdSelector).toSet()
+            val orphanedIds = localIdFetcher().filterNot { it in remoteIds }
+
+            if (orphanedIds.isNotEmpty()) {
+                localItemDeleter(orphanedIds)
+            }
+
+            localItemUpserter(remoteItems)
+        }
         true
     }

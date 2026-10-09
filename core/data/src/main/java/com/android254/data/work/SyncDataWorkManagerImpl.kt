@@ -15,21 +15,22 @@
  */
 package com.android254.data.work
 
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.map
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.android254.data.work.WorkConstants.PERIODIC_SYNC_DATA_WORKER_NAME
 import com.android254.data.work.WorkConstants.SYNC_DATA_WORKER_NAME
 import com.android254.domain.work.SyncDataWorkManager
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -39,15 +40,17 @@ class SyncDataWorkManagerImpl
         private val workManager: WorkManager,
     ) : SyncDataWorkManager {
         override val isSyncing: Flow<Boolean> =
-            workManager
-                .getWorkInfosForUniqueWorkLiveData(SYNC_DATA_WORKER_NAME)
-                .map(List<WorkInfo>::anyRunning)
-                .asFlow()
+            combine(
+                workManager.getWorkInfosForUniqueWorkFlow(SYNC_DATA_WORKER_NAME),
+                workManager.getWorkInfosForUniqueWorkFlow(PERIODIC_SYNC_DATA_WORKER_NAME),
+            ) { oneTime, periodic -> oneTime.anyRunning || periodic.anyRunning }
+                .distinctUntilChanged()
                 .conflate()
 
         override fun startSync() {
             val syncDataRequest =
                 OneTimeWorkRequestBuilder<SyncDataWorker>()
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                     .setConstraints(
                         Constraints
                             .Builder()
@@ -67,7 +70,7 @@ class SyncDataWorkManagerImpl
                             .build(),
                     ).build()
             workManager.enqueueUniquePeriodicWork(
-                SYNC_DATA_WORKER_NAME + "_periodic",
+                PERIODIC_SYNC_DATA_WORKER_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 syncDataRequest,
             )

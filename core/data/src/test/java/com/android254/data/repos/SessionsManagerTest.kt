@@ -17,6 +17,7 @@ package com.android254.data.repos
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android254.domain.models.SessionFilter
+import com.android254.domain.sync.Synchronizer
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -76,6 +77,18 @@ class SessionsManagerTest {
         }
 
     @Test
+    fun `an empty sessions response keeps the cached schedule`() =
+        runTest {
+            coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(emptyList())
+            coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1")
+
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher)
+
+            assert(manager.syncWith(object : Synchronizer {}))
+            coVerify(exactly = 0) { mockLocalSessionsDataSource.deleteByRemoteIds(any()) }
+        }
+
+    @Test
     fun `test syncWith reconciles data`() =
         runTest {
             val remoteSession = mockk<SessionDTO>(relaxed = true)
@@ -88,7 +101,7 @@ class SessionsManagerTest {
             coEvery { mockLocalSessionsDataSource.deleteByRemoteIds(any()) } returns Unit
 
             val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher)
-            val result = manager.syncWith(mockk())
+            val result = manager.syncWith(object : Synchronizer {})
 
             assert(result)
             coVerify { mockLocalSessionsDataSource.deleteByRemoteIds(listOf("remote_id_2")) }

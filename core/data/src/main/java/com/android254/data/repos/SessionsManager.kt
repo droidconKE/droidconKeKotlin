@@ -168,6 +168,7 @@ class SessionsManager
                         localSessionsDataSource.deleteByRemoteIds(ids)
                     },
                     remoteToLocalIdSelector = { it.id },
+                    keepLocalWhenRemoteIsEmpty = true,
                 ).isSuccess
 
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>> =

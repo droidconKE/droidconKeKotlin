@@ -31,12 +31,13 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.data.R
+import ke.droidcon.kotlin.datasource.local.SyncTransaction
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import kotlin.random.Random
+import ke.droidcon.kotlin.core.common.R as CommonR
 
 @HiltWorker
 class SyncDataWorker
@@ -51,17 +52,20 @@ class SyncDataWorker
         private val organizersRepo: OrganizersRepo,
         private val feedRepo: FeedRepo,
         private val remoteFeatureToggle: RemoteFeatureToggle,
+        private val syncTransaction: SyncTransaction,
     ) : CoroutineWorker(appContext, workerParameters),
         Synchronizer {
         override suspend fun getForegroundInfo(): ForegroundInfo =
             ForegroundInfo(
-                Random.nextInt(),
+                WorkConstants.SYNC_NOTIFICATION_ID,
                 NotificationCompat
                     .Builder(appContext, WorkConstants.NOTIFICATION_CHANNEL)
-                    .setSmallIcon(androidx.core.R.drawable.notification_bg_low)
+                    .setSmallIcon(CommonR.drawable.ic_notification)
                     .setContentTitle(appContext.getString(R.string.sync_notification_message))
                     .build(),
             )
+
+        override suspend fun <R> inTransaction(block: suspend () -> R): R = syncTransaction(block)
 
         override suspend fun doWork(): Result =
             withContext(ioDispatcher) {

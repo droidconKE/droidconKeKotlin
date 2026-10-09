@@ -8,11 +8,12 @@
 
 ---
 
-## Next up — sync follow-ups (§3.10), then §14
+## Next up — the feed 404 (§3.10 item 1), then §14
 
-Duplicated rows after sync are fixed (schema 6: synced tables are keyed on what sync matches
-on, and DAOs upsert). Comparing our sync with Now in Android turned up the smaller follow-ups
-in §3.10; items 1–4 are a day's work together and need nothing from the backend.
+The sync follow-ups that needed no backend work have landed: duplicates are gone (schema 6),
+each table syncs in one transaction, an empty sessions response keeps the cached schedule, and
+`isSyncing` covers the daily job. Checking that on a device showed the feed endpoint answering
+404 for the configured event, which fails every sync. That is §3.10 item 1.
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
 system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
@@ -250,37 +251,31 @@ would only assert the build script.
 
 ---
 
-### 3.10 Sync follow-ups — what Now in Android does that we don't
+### 3.10 Sync follow-ups
 
-Checked against `android/nowinandroid` (`a49ed25`, 2026-09-22). Our sync already follows its
-shape: `Synchronizer`/`Syncable`, a Hilt `CoroutineWorker`, unique work with `KEEP`, and the
-repositories run in parallel under `awaitAll`. Its storage model, server-id primary keys and
-`@Upsert`, is what schema 6 adopted. What is left, in order:
+Compared with `android/nowinandroid` (`a49ed25`, 2026-09-22), our sync now matches it where the
+API allows: server-keyed tables, `@Upsert`, one transaction per table, and one expedited request
+builder. What is left, in order:
 
-1. **`isSyncing` misses the daily sync.** `SyncDataWorkManagerImpl.isSyncing` watches
-   `SYNC_DATA_WORKER_NAME`, but the periodic job is enqueued as `SYNC_DATA_WORKER_NAME + "_periodic"`,
-   so the UI never sees it run. Watch both, and use `getWorkInfosForUniqueWorkFlow` instead of
-   `LiveData.asFlow()`, as `WorkManagerSyncManager` does.
-2. **One request builder.** `WorkInitializer` and `SyncDataWorkManagerImpl.startSync()` build the
-   one-time request separately, and only the first is expedited. NiA has one
-   `SyncWorker.startUpSyncWork()`.
-3. **A stable foreground notification.** `getForegroundInfo()` uses `Random.nextInt()` for the id
-   and `notification_bg_low` for the icon. NiA uses a constant id and the app's notification icon.
-4. **Write each table in one transaction.** Deleting missing rows and upserting the rest are two
-   calls, so observers see two emissions and a crash between them leaves the table short until
-   the next sync. Wrap them in `withTransaction`.
-5. **Decide what an empty list means.** A full-snapshot sync deletes every row when the API
-   answers `200 []`. For sessions that is almost certainly a backend fault, not a cancelled
-   conference; skip the delete for an empty sessions list and log it. Feed can be empty.
-6. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
+1. **The feed endpoint returns 404, so every sync fails.** `GET /events/droidconke-2025-898/feeds`
+   answers `404 {"message":"requested item not found"}` (seen 2026-10-09). The other four lists
+   sync, but the worker treats one failure as the whole job failing and retries with backoff
+   for ever. Ask the backend whether the event has a feed; until it does, treat a 404 from feed
+   as an empty list rather than a failure.
+2. **The sync notification channel is loud and badly named.** `DroidconApp` creates it with
+   `IMPORTANCE_HIGH` and the raw id `sync_data` as its user-visible name. On API 30 and below an
+   expedited sync posts a heads-up. Importance cannot be lowered for existing installs, so this
+   needs a new channel id at `IMPORTANCE_LOW` with a string-resource name, and the old channel
+   deleted.
+3. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
    worker when content changes. Ours syncs on start and every 24 hours, so a room change on
    conference day can take a day to arrive. A topic message that calls `startSync()` fixes that.
-7. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
+4. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
    (`getTopicChangeList(after = version)`) and fetches only what changed. The droidcon API returns
    full lists and has no change-list endpoint, so this does not port. If the backend adds `ETag`
    or an `updated_since` parameter, adopt it then.
-8. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver` and each repository
-   with a `TestSynchronizer`. We test repositories with mocks; `SyncDataWorker` has no test.
+5. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver`. `SyncDataWorker` has
+   no test; the sync helper and `isSyncing` do.
 
 ## 4. Phase 1 — Adaptive follow-ups
 
@@ -4201,7 +4196,8 @@ struck row has landed.
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
 | ~~**1**~~ | ~~Fix duplicated sessions after sync~~ — **done** | — | Synced tables are keyed on what sync matches on (schema 6). |
-| **2** | Sync follow-ups 1–5 | §3.10 | Small, no backend work, and the sync code is fresh in mind. |
+| ~~**2**~~ | ~~Sync follow-ups that need no backend~~ — **done** | — | Transactions, empty-response guard, `isSyncing`, one request builder, stable notification. |
+| **2a** | Feed 404 fails every sync | §3.10 #1 | Every sync retries for ever until it is handled. |
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
 | **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. Previously struck as done; it never landed. |
 | ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |

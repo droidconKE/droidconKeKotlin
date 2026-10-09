@@ -32,6 +32,9 @@ interface Syncable {
  * source for a [Syncable].
  */
 interface Synchronizer {
+    /** Runs [block] so its local writes land together. Implementations backed by a database open a transaction. */
+    suspend fun <R> inTransaction(block: suspend () -> R): R = block()
+
     /**
      * Syntactic sugar to call [Syncable.syncWith] while omitting the synchronizer argument
      */
