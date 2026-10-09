@@ -38,6 +38,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import ke.droidcon.kotlin.core.common.R as CommonR
 
 @HiltWorker
@@ -82,7 +83,8 @@ class SyncDataWorker
                     ).all { it }
 
                 if (syncedSuccessfully) {
-                    widgetRefresher.refresh()
+                    runCatching { widgetRefresher.refresh() }
+                        .onFailure { Timber.e(it, "widget refresh failed") }
                     Result.success()
                 } else {
                     Result.retry()

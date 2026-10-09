@@ -43,9 +43,11 @@ class NextSessionWidget(
         id: GlanceId,
     ) {
         provideContent {
-            val now = Clock.System.now().toEpochMilliseconds()
-            val current by sessionsRepo.fetchCurrentSessions(now).collectAsState(emptyList())
-            val next by sessionsRepo.fetchUpNextSessions(now).collectAsState(emptyList())
+            val now = remember { Clock.System.now().toEpochMilliseconds() }
+            val currentSessionsFlow = remember(now) { sessionsRepo.fetchCurrentSessions(now) }
+            val upNextSessionsFlow = remember(now) { sessionsRepo.fetchUpNextSessions(now) }
+            val current by currentSessionsFlow.collectAsState(emptyList())
+            val next by upNextSessionsFlow.collectAsState(emptyList())
             val launchIntent = remember { context.packageManager.getLaunchIntentForPackage(context.packageName) }
 
             GlanceTheme {
