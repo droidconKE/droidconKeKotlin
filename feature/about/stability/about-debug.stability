@@ -14,10 +14,10 @@ public fun com.android254.presentation.about.view.AboutDroidconSection(droidconD
 
 @Composable
 public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com.android254.presentation.about.view.AboutViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - aboutViewModel: RUNTIME (requires runtime check)
+    - aboutViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable
@@ -25,7 +25,7 @@ internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.and
   skippable: true
   restartable: true
   params:
-    - uiState: STABLE (class with no mutable properties)
+    - uiState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable

@@ -14,7 +14,7 @@ private fun com.android254.presentation.home.components.HeroLabel(text: kotlin.S
 
 @Composable
 public fun com.android254.presentation.home.components.HomeBannerSection(homeState: com.android254.presentation.home.viewstate.HomeState): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - homeState: UNSTABLE (has mutable properties or unstable members)
@@ -137,10 +137,10 @@ public fun com.android254.presentation.home.components.HomeToolbarComponent(isSi
 
 @Composable
 public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - homeViewModel: RUNTIME (requires runtime check)
+    - homeViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToSpeakers: STABLE (function type)
     - navigateToSpeaker: STABLE (function type)
     - navigateToFeedbackScreen: STABLE (function type)
@@ -152,7 +152,7 @@ public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.
 
 @Composable
 internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - viewState: UNSTABLE (has mutable properties or unstable members)

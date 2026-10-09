@@ -53,7 +53,7 @@ public fun com.android254.presentation.common.components.AdaptiveEvenGrid(items:
   skippable: true
   restartable: true
   params:
-    - items: STABLE (known stable type)
+    - items: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - minColumns: STABLE (primitive type)
     - minCellWidth: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -89,10 +89,10 @@ public fun com.android254.presentation.common.components.BookmarkButton(isBookma
 
 @Composable
 public fun com.android254.presentation.common.components.ConnectedToggleGroup(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.ConnectedToggleGroup>, selected: T of com.android254.presentation.common.components.ConnectedToggleGroup?, onSelect: kotlin.Function1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, itemContent: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - items: STABLE (known stable type)
+    - items: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - selected: RUNTIME (requires runtime check)
     - onSelect: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -101,7 +101,7 @@ public fun com.android254.presentation.common.components.ConnectedToggleGroup(it
 
 @Composable
 public fun com.android254.presentation.common.components.DetailPanePlaceholder(message: kotlin.String, icon: androidx.compose.ui.graphics.painter.Painter, modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - message: STABLE (String is immutable)
@@ -152,7 +152,7 @@ public fun com.android254.presentation.common.components.DroidconAppBarWithFilte
 
 @Composable
 public fun com.android254.presentation.common.components.EmptyStatePanel(icon: androidx.compose.ui.graphics.painter.Painter, message: kotlin.String, modifier: androidx.compose.ui.Modifier, badgeColor: androidx.compose.ui.graphics.Color, iconColor: androidx.compose.ui.graphics.Color): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
     - icon: UNKNOWN (interface or non-final class; concrete implementation unknown)
@@ -166,7 +166,7 @@ public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx
   skippable: true
   restartable: true
   params:
-    - items: STABLE (known stable type)
+    - items: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - columns: STABLE (primitive type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - spacing: STABLE (marked @Stable or @Immutable)
@@ -367,7 +367,7 @@ public fun com.android254.presentation.common.navigation.rememberNavigationState
   restartable: false
   params:
     - startRoute: UNKNOWN (interface or non-final class; concrete implementation unknown)
-    - topLevelRoutes: STABLE (known stable type)
+    - topLevelRoutes: UNKNOWN (interface or non-final class; concrete implementation unknown)
 
 @Composable
 public fun com.android254.presentation.common.navigation.sessionSharedImage(sessionId: kotlin.String, shape: androidx.compose.ui.graphics.Shape): androidx.compose.ui.Modifier
@@ -443,12 +443,12 @@ private fun com.android254.presentation.common.stepper.IconBox(icon: androidx.co
 
 @Composable
 public fun com.android254.presentation.common.stepper.VerticalStepItem(step: com.android254.presentation.common.stepper.VerticalStep<T of com.android254.presentation.common.stepper.VerticalStepItem>, modifier: androidx.compose.ui.Modifier, nextStep: com.android254.presentation.common.stepper.VerticalStep<*>?, isFirst: kotlin.Boolean, isLast: kotlin.Boolean, bottomSpacing: androidx.compose.ui.unit.Dp, content: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<T of com.android254.presentation.common.stepper.VerticalStepItem, kotlin.Unit>): kotlin.Unit
-  skippable: false
+  skippable: true
   restartable: true
   params:
-    - step: RUNTIME (requires runtime check)
+    - step: UNSTABLE (has mutable properties or unstable members)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - nextStep: RUNTIME (requires runtime check)
+    - nextStep: UNSTABLE (has mutable properties or unstable members)
     - isFirst: STABLE (primitive type)
     - isLast: STABLE (primitive type)
     - bottomSpacing: STABLE (marked @Stable or @Immutable)
