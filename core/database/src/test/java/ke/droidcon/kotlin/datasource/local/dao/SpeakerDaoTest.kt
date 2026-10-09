@@ -59,7 +59,7 @@ class SpeakerDaoTest {
     fun `test speakerDao fetches all speakers`() =
         runTest {
             val speaker = createSpeaker(id = 1, name = "Speaker 1")
-            speakerDao.insert(speaker)
+            speakerDao.upsert(speaker)
             val result = speakerDao.fetchSpeakers().first()
             assertThat(result.size, `is`(1))
             assertThat(result[0].name, `is`("Speaker 1"))
@@ -68,8 +68,8 @@ class SpeakerDaoTest {
     @Test
     fun `test getNames returns all names`() =
         runTest {
-            speakerDao.insert(createSpeaker(id = 1, name = "Name 1"))
-            speakerDao.insert(createSpeaker(id = 2, name = "Name 2"))
+            speakerDao.upsert(createSpeaker(id = 1, name = "Name 1"))
+            speakerDao.upsert(createSpeaker(id = 2, name = "Name 2"))
 
             val result = speakerDao.getNames()
             assertThat(result.size, `is`(2))
@@ -79,8 +79,8 @@ class SpeakerDaoTest {
     @Test
     fun `test deleteByNames deletes specified speakers`() =
         runTest {
-            speakerDao.insert(createSpeaker(id = 1, name = "Name 1"))
-            speakerDao.insert(createSpeaker(id = 2, name = "Name 2"))
+            speakerDao.upsert(createSpeaker(id = 1, name = "Name 1"))
+            speakerDao.upsert(createSpeaker(id = 2, name = "Name 2"))
 
             speakerDao.deleteByNames(listOf("Name 1"))
 
@@ -89,11 +89,19 @@ class SpeakerDaoTest {
             assertThat(result[0].name, `is`("Name 2"))
         }
 
+    @Test
+    fun `speakers without a twitter handle do not replace each other`() =
+        runTest {
+            speakerDao.upsert(createSpeaker(id = 1, name = "Name 1").copy(twitter = ""))
+            speakerDao.upsert(createSpeaker(id = 2, name = "Name 2").copy(twitter = ""))
+
+            assertThat(speakerDao.getNames().sorted(), `is`(listOf("Name 1", "Name 2")))
+        }
+
     private fun createSpeaker(
         id: Int,
         name: String,
     ) = SpeakerEntity(
-        id = id,
         name = name,
         tagline = "Tagline",
         bio = "Bio",

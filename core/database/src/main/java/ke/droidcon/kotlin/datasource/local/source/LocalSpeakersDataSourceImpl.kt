@@ -35,7 +35,7 @@ class LocalSpeakersDataSourceImpl
                 .fetchSpeakers()
                 .flowOn(localSourceIoDispatcher)
 
-        override suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>) = speakerDao.insert(items = speakers)
+        override suspend fun saveCachedSpeakers(speakers: List<SpeakerEntity>) = speakerDao.upsert(items = speakers)
 
         override fun getCachedSpeakerByName(speakerName: String) = speakerDao.getSpeakerByName(speakerName).flowOn(localSourceIoDispatcher)
 

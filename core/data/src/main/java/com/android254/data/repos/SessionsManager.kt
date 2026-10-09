@@ -59,7 +59,7 @@ class SessionsManager
                             isBookmarked =
                                 bookmarks
                                     .map { it.sessionId }
-                                    .contains(session.id.toString()),
+                                    .contains(session.remote_id),
                         )
                     }
             }.flowOn(ioDispatcher)
@@ -112,13 +112,13 @@ class SessionsManager
                     sessions
                         .map { session ->
                             session.toDomainModel().copy(
-                                isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
+                                isBookmarked = bookmarks.map { it.sessionId }.contains(session.remote_id),
                             )
                         }.filter { it.isBookmarked }
                 } else {
                     sessions.map { session ->
                         session.toDomainModel().copy(
-                            isBookmarked = bookmarks.map { it.sessionId }.contains(session.id.toString()),
+                            isBookmarked = bookmarks.map { it.sessionId }.contains(session.remote_id),
                         )
                     }
                 }
@@ -138,7 +138,7 @@ class SessionsManager
 
         override suspend fun bookmarkSession(id: String) {
             withContext(ioDispatcher) {
-                bookmarkDao.insert(BookmarkEntity(id))
+                bookmarkDao.upsert(BookmarkEntity(id))
             }
         }
 

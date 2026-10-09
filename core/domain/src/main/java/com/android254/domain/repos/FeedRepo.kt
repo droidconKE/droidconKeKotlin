@@ -23,7 +23,5 @@ import kotlinx.coroutines.flow.Flow
 interface FeedRepo : Syncable {
     fun fetchFeed(): Flow<List<Feed>>
 
-    fun fetchFeedById(id: Int): Flow<Feed?>
-
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean
 }

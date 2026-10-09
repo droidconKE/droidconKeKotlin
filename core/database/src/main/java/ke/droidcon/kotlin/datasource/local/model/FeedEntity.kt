@@ -20,8 +20,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "feed")
 data class FeedEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    @PrimaryKey
     val title: String,
     val body: String,
     val topic: String,

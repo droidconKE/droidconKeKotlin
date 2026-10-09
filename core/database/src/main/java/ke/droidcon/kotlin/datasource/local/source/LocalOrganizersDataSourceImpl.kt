@@ -43,7 +43,7 @@ class LocalOrganizersDataSourceImpl
 
         override suspend fun insertOrganizers(organizers: List<OrganizerEntity>) {
             withContext(localSourceIoDispatcher) {
-                organizersDao.insert(items = organizers)
+                organizersDao.upsert(items = organizers)
             }
         }
 

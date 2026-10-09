@@ -21,7 +21,6 @@ import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 
 fun SpeakerDTO.toEntity() =
     SpeakerEntity(
-        id = 0,
         name = name,
         tagline = tagline,
         bio = bio,

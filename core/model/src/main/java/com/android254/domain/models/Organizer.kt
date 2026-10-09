@@ -16,7 +16,6 @@
 package com.android254.domain.models
 
 data class Organizer(
-    val id: Int,
     val name: String,
     val tagline: String,
     val link: String,

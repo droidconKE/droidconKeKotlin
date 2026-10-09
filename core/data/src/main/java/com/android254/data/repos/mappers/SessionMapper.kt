@@ -29,7 +29,7 @@ import java.time.format.DateTimeFormatter
 
 fun SessionEntity.toDomainModel() =
     Session(
-        id = this.id.toString(),
+        id = this.remote_id,
         description = this.description,
         title = this.title,
         sessionFormat = this.sessionFormat,
@@ -51,7 +51,6 @@ fun SessionEntity.toDomainModel() =
 
 fun SessionDTO.toEntity(): SessionEntity =
     SessionEntity(
-        id = 0,
         description = description.orEmpty(),
         title = title,
         sessionFormat = sessionFormat,

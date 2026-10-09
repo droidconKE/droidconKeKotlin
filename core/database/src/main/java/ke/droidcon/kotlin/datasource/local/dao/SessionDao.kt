@@ -30,7 +30,7 @@ interface SessionDao : BaseDao<SessionEntity> {
     @Query("DELETE FROM sessions")
     suspend fun clearSessions()
 
-    @Query("SELECT * FROM sessions WHERE id = :id")
+    @Query("SELECT * FROM sessions WHERE remote_id = :id")
     fun getSessionById(id: String): Flow<SessionEntity?>
 
     @RawQuery(observedEntities = [SessionEntity::class])

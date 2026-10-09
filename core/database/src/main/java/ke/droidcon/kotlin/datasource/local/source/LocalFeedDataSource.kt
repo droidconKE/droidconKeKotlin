@@ -23,8 +23,6 @@ interface LocalFeedDataSource {
 
     fun fetchFeed(): Flow<List<FeedEntity>>
 
-    fun getFeedById(feedId: Int): Flow<FeedEntity?>
-
     suspend fun deleteAllFeed()
 
     suspend fun getTitles(): List<String>

@@ -16,13 +16,11 @@
 package ke.droidcon.kotlin.datasource.local.model
 
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "speakers", indices = [Index(value = ["twitter"], unique = true)])
+@Entity(tableName = "speakers")
 data class SpeakerEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val name: String,
+    @PrimaryKey val name: String,
     val tagline: String,
     val bio: String,
     val avatar: String,

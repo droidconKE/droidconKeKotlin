@@ -25,9 +25,6 @@ interface FeedDao : BaseDao<FeedEntity> {
     @Query("SELECT * FROM feed")
     fun fetchFeed(): Flow<List<FeedEntity>>
 
-    @Query("SELECT * FROM feed WHERE id =:id")
-    fun fetchFeedById(id: Int): Flow<FeedEntity?>
-
     @Query("DELETE FROM feed")
     suspend fun deleteAllFeed()
 

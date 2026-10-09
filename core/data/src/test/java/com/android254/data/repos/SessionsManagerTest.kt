@@ -76,7 +76,6 @@ class SessionsManagerTest {
 
 val sessionEntity =
     SessionEntity(
-        id = 1,
         remote_id = "1234567890",
         description = "This is a keynote session about the future of technology.",
         sessionFormat = "Keynote",

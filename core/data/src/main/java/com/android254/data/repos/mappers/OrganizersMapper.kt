@@ -21,7 +21,6 @@ import ke.droidcon.kotlin.datasource.remote.organizers.model.OrganizerDTO
 
 fun OrganizerDTO.toEntity() =
     OrganizerEntity(
-        id = 0,
         name = name.orEmpty(),
         tagline = tagline.orEmpty(),
         link = link.orEmpty(),
@@ -35,7 +34,6 @@ fun OrganizerDTO.toEntity() =
 
 fun OrganizerEntity.toDomain() =
     Organizer(
-        id = id,
         name = name,
         tagline = tagline,
         link = link,

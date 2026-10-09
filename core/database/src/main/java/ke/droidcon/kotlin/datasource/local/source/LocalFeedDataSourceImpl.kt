@@ -36,18 +36,13 @@ class LocalFeedDataSourceImpl
 
         override suspend fun insertFeed(feedItems: List<FeedEntity>) {
             withContext(ioDispatcher) {
-                feedDao.insert(items = feedItems)
+                feedDao.upsert(items = feedItems)
             }
         }
 
         override fun fetchFeed() =
             feedDao
                 .fetchFeed()
-                .flowOn(ioDispatcher)
-
-        override fun getFeedById(feedId: Int) =
-            feedDao
-                .fetchFeedById(feedId)
                 .flowOn(ioDispatcher)
 
         override suspend fun getTitles(): List<String> =
