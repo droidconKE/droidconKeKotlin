@@ -181,7 +181,8 @@ Each repository fetches first, then deletes the rows the API no longer returns a
 rest inside one Room transaction (`Synchronizer.inTransaction`, backed by `SyncTransaction`), so
 observers see one change per table and a crash cannot leave a table half-written. The network
 call stays outside the transaction. An empty sessions response is treated as a fault: the cached
-schedule is kept and a warning is logged.
+schedule is kept and a warning is logged. The feed endpoint answers 404 when an event has no
+posts; `FeedApi` reads that as an empty list rather than a failed sync.
 
 `isSyncing` is true while either the one-time job (`sync_data`) or the daily job
 (`sync_data_periodic`) is running. `startSync()` is expedited, so the worker posts a foreground
