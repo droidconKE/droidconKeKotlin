@@ -20,8 +20,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "organizers")
 class OrganizerEntity(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    @PrimaryKey
     val name: String,
     val tagline: String,
     val link: String,

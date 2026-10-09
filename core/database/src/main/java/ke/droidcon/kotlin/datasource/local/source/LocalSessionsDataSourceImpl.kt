@@ -38,7 +38,7 @@ class LocalSessionsDataSourceImpl
 
         override suspend fun saveCachedSessions(sessions: List<SessionEntity>) {
             withContext(localSourceIoDispatcher) {
-                sessionDao.insert(items = sessions)
+                sessionDao.upsert(items = sessions)
             }
         }
 

@@ -20,8 +20,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "sessions")
 data class SessionEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val remote_id: String,
+    @PrimaryKey val remote_id: String,
     val description: String,
     val sessionFormat: String,
     val sessionLevel: String,

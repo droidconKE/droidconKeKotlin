@@ -43,7 +43,7 @@ class LocalSponsorsDataSourceImpl
 
         override suspend fun saveCachedSponsors(sponsors: List<SponsorEntity>) {
             withContext(localSourceIoDispatcher) {
-                sponsorsDao.insert(items = sponsors)
+                sponsorsDao.upsert(items = sponsors)
             }
         }
 

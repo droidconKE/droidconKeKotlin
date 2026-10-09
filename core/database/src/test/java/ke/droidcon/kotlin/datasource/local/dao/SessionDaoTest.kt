@@ -61,7 +61,7 @@ class SessionDaoTest {
     fun `test sessionDao fetches all sessions`() =
         runTest {
             val session = createSession(id = 1, title = "Title", startTimestamp = 0L, endTimestamp = 1000L)
-            sessionDao.insert(session)
+            sessionDao.upsert(session)
             val result = sessionDao.fetchSessions().first()
             assertThat(result.size, `is`(1))
             assertThat(result[0].title, `is`("Title"))
@@ -78,9 +78,9 @@ class SessionDaoTest {
             // Future session: 3000 to 3500 (Future at 1500)
             val futureSession = createSession(id = 3, title = "Future Session", startTimestamp = 3000L, endTimestamp = 3500L)
 
-            sessionDao.insert(longSession)
-            sessionDao.insert(shortSession)
-            sessionDao.insert(futureSession)
+            sessionDao.upsert(longSession)
+            sessionDao.upsert(shortSession)
+            sessionDao.upsert(futureSession)
 
             val result = sessionDao.fetchCurrentSessions(currentTime).first()
             assertThat(result.size, `is`(1))
@@ -94,8 +94,8 @@ class SessionDaoTest {
             val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 1000L, endTimestamp = 2000L)
             val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 1200L, endTimestamp = 1800L)
 
-            sessionDao.insert(session1)
-            sessionDao.insert(session2)
+            sessionDao.upsert(session1)
+            sessionDao.upsert(session2)
 
             val result = sessionDao.fetchCurrentSessions(currentTime).first()
             assertThat(result.size, `is`(2))
@@ -109,9 +109,9 @@ class SessionDaoTest {
             val nextSession1 = createSession(id = 2, title = "Next 1", startTimestamp = 2000L, endTimestamp = 3000L)
             val nextSession2 = createSession(id = 3, title = "Next 2", startTimestamp = 3000L, endTimestamp = 4000L)
 
-            sessionDao.insert(pastSession)
-            sessionDao.insert(nextSession1)
-            sessionDao.insert(nextSession2)
+            sessionDao.upsert(pastSession)
+            sessionDao.upsert(nextSession1)
+            sessionDao.upsert(nextSession2)
 
             val result = sessionDao.fetchUpNextSessions(currentTime).first()
             assertThat(result.size, `is`(2))
@@ -124,7 +124,7 @@ class SessionDaoTest {
         runTest {
             val currentTime = 0L
             (1..10).forEach { i ->
-                sessionDao.insert(
+                sessionDao.upsert(
                     createSession(
                         id = i,
                         title = "Session $i",
@@ -143,8 +143,8 @@ class SessionDaoTest {
         runTest {
             val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 0L, endTimestamp = 1000L)
             val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 0L, endTimestamp = 1000L)
-            sessionDao.insert(session1)
-            sessionDao.insert(session2)
+            sessionDao.upsert(session1)
+            sessionDao.upsert(session2)
 
             val result = sessionDao.getRemoteIds()
             assertThat(result.size, `is`(2))
@@ -156,8 +156,8 @@ class SessionDaoTest {
         runTest {
             val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 0L, endTimestamp = 1000L)
             val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 0L, endTimestamp = 1000L)
-            sessionDao.insert(session1)
-            sessionDao.insert(session2)
+            sessionDao.upsert(session1)
+            sessionDao.upsert(session2)
 
             sessionDao.deleteByRemoteIds(listOf("1"))
 
@@ -166,13 +166,32 @@ class SessionDaoTest {
             assertThat(result[0].remote_id, `is`("2"))
         }
 
+    @Test
+    fun `upserting the same sessions again updates them in place`() =
+        runTest {
+            val sessions = (1..3).map { createSession(id = it, title = "Session $it", startTimestamp = 0, endTimestamp = 1) }
+            sessionDao.upsert(sessions)
+            sessionDao.upsert(sessions.map { it.copy(title = "${it.title} (moved)") })
+
+            val result = sessionDao.fetchSessions().first()
+            assertThat(result.size, `is`(3))
+            assertThat(result.all { it.title.endsWith("(moved)") }, `is`(true))
+        }
+
+    @Test
+    fun `getSessionById looks sessions up by remote id`() =
+        runTest {
+            sessionDao.upsert(createSession(id = 7, title = "Seven", startTimestamp = 0, endTimestamp = 1))
+
+            assertThat(sessionDao.getSessionById("7").first()?.title, `is`("Seven"))
+        }
+
     private fun createSession(
         id: Int,
         title: String,
         startTimestamp: Long,
         endTimestamp: Long,
     ) = SessionEntity(
-        id = id,
         remote_id = id.toString(),
         description = "Description",
         sessionFormat = "Format",

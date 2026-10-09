@@ -173,7 +173,7 @@ sequenceDiagram
     Work->>Repo: sync() for sessions, speakers,<br/>sponsors, organisers, feed
     Repo->>Ktor: fetch
     Ktor-->>Repo: DTOs
-    Repo->>Room: replace
+    Repo->>Room: upsert
     Room-->>UI: Flow re-emits, UI updates
 ```
 
