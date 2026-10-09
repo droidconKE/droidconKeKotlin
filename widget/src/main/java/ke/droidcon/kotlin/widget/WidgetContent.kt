@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
@@ -33,7 +35,9 @@ import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
@@ -48,7 +52,8 @@ import com.android254.domain.models.Session
 
 /**
  * The large breakpoint (250x200dp) is the only one tall enough for a two-line title plus a
- * richer, speaker-inclusive detail line; small/medium (both 100dp tall) stay compact.
+ * richer, speaker-inclusive detail line (and a corner flourish); small/medium (both 100dp tall)
+ * stay compact.
  */
 private val LargeBreakpointMinHeight = 150.dp
 
@@ -65,6 +70,7 @@ fun WidgetContent(
     size: DpSize,
     launchIntent: Intent?,
 ) {
+    val isLarge = size.height >= LargeBreakpointMinHeight
     val rootModifier =
         GlanceModifier
             .fillMaxSize()
@@ -79,11 +85,38 @@ fun WidgetContent(
                 }
             }
 
-    Column(modifier = rootModifier) {
-        when {
-            current.isNotEmpty() -> HappeningNowContent(current.first(), extraCount = current.size - 1, size = size)
-            next.isNotEmpty() -> UpNextContent(next.first(), extraCount = next.size - 1, size = size)
-            else -> EmptyStateContent()
+    Box(modifier = rootModifier) {
+        if (isLarge) {
+            CornerFlourish()
+        }
+        Column {
+            when {
+                current.isNotEmpty() -> HappeningNowContent(current.first(), extraCount = current.size - 1, size = size)
+                next.isNotEmpty() -> UpNextContent(next.first(), extraCount = next.size - 1, size = size)
+                else -> EmptyStateContent()
+            }
+        }
+    }
+}
+
+/**
+ * A small decorative flourish pinned to the bottom-right corner, behind the real content.
+ * Glance's `Box` shares one `contentAlignment` across all its children, so pinning just this
+ * layer to a corner (while the content layer stays top-start) uses the standard
+ * weighted-spacer push instead: a [Column] and [Row], each with a `defaultWeight()` spacer
+ * before the image, land it bottom-right without disturbing the sibling content layer.
+ */
+@Composable
+private fun CornerFlourish() {
+    Column(modifier = GlanceModifier.fillMaxHeight()) {
+        Spacer(modifier = GlanceModifier.defaultWeight())
+        Row(modifier = GlanceModifier.fillMaxWidth()) {
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            Image(
+                provider = ImageProvider(R.drawable.ic_widget_confetti),
+                contentDescription = null,
+                modifier = GlanceModifier.size(40.dp).semantics { testTag = "cornerFlourish" },
+            )
         }
     }
 }
@@ -186,6 +219,11 @@ private data class PillStyle(
     val dotColor: ColorProvider,
 )
 
+/** Fully-rounded pill/chip corner radius. Oversized on purpose — Android clamps a corner radius
+ * bigger than half an element's own size, which is the standard trick for a guaranteed stadium
+ * shape regardless of the pill's exact content-driven height. */
+private val PillCornerRadius = 50.dp
+
 @Composable
 private fun StatusAndSessionContent(
     statusText: String,
@@ -198,37 +236,57 @@ private fun StatusAndSessionContent(
     extraCount: Int,
     extraCountLabelRes: Int,
 ) {
-    Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            StatusPill(
-                text = statusText,
-                containerColor = pillStyle.containerColor,
-                contentColor = pillStyle.contentColor,
-                dotColor = pillStyle.dotColor,
-                textModifier = GlanceModifier.semantics { testTag = "statusLabel" },
-            )
-            if (extraCount > 0) {
-                Spacer(modifier = GlanceModifier.width(6.dp))
-                Text(
-                    text = LocalContext.current.getString(extraCountLabelRes, extraCount),
-                    modifier = GlanceModifier.semantics { testTag = "extraSessionsLabel" },
-                    style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 11.sp),
+    Row {
+        // Venue-accent rail: a thin stadium-capped stripe tying the card to its room's color.
+        Box(
+            modifier =
+                GlanceModifier
+                    .fillMaxHeight()
+                    .width(3.dp)
+                    .cornerRadius(PillCornerRadius)
+                    .background(detailColor),
+        ) {}
+        Spacer(modifier = GlanceModifier.width(8.dp))
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                StatusPill(
+                    text = statusText,
+                    containerColor = pillStyle.containerColor,
+                    contentColor = pillStyle.contentColor,
+                    dotColor = pillStyle.dotColor,
+                    textModifier = GlanceModifier.semantics { testTag = "statusLabel" },
                 )
+                if (extraCount > 0) {
+                    Spacer(modifier = GlanceModifier.width(6.dp))
+                    Row(
+                        modifier =
+                            GlanceModifier
+                                .cornerRadius(PillCornerRadius)
+                                .background(GlanceTheme.colors.surfaceVariant)
+                                .padding(horizontal = 6.dp, vertical = 2.dp),
+                    ) {
+                        Text(
+                            text = LocalContext.current.getString(extraCountLabelRes, extraCount),
+                            modifier = GlanceModifier.semantics { testTag = "extraSessionsLabel" },
+                            style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 11.sp),
+                        )
+                    }
+                }
             }
+            Spacer(modifier = GlanceModifier.height(6.dp))
+            Text(
+                text = session.title,
+                modifier = GlanceModifier.semantics { testTag = "sessionTitle" },
+                style = TextStyle(fontWeight = FontWeight.Bold, fontSize = titleFontSize),
+                maxLines = 2,
+            )
+            Text(
+                text = detailText,
+                modifier = GlanceModifier.semantics { testTag = "sessionDetail" },
+                style = TextStyle(color = detailColor),
+                maxLines = detailMaxLines,
+            )
         }
-        Spacer(modifier = GlanceModifier.height(6.dp))
-        Text(
-            text = session.title,
-            modifier = GlanceModifier.semantics { testTag = "sessionTitle" },
-            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = titleFontSize),
-            maxLines = 2,
-        )
-        Text(
-            text = detailText,
-            modifier = GlanceModifier.semantics { testTag = "sessionDetail" },
-            style = TextStyle(color = detailColor),
-            maxLines = detailMaxLines,
-        )
     }
 }
 
@@ -243,7 +301,7 @@ private fun StatusPill(
     Row(
         modifier =
             GlanceModifier
-                .cornerRadius(10.dp)
+                .cornerRadius(PillCornerRadius)
                 .background(containerColor)
                 .padding(horizontal = 8.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,

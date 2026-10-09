@@ -275,4 +275,34 @@ class WidgetContentTest {
             }
             onNode(hasTestTag("sessionDetail")).assertHasText("Hall A")
         }
+
+    @Test
+    fun widgetContent_largeBreakpoint_showsCornerFlourish() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = listOf(fakeSession(title = "Keynote")),
+                    next = emptyList(),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("cornerFlourish")).assertExists()
+        }
+
+    @Test
+    fun widgetContent_smallBreakpoint_hasNoCornerFlourish() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = listOf(fakeSession(title = "Keynote")),
+                    next = emptyList(),
+                    size = DpSize(140.dp, 100.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("cornerFlourish")).assertDoesNotExist()
+        }
 }
