@@ -18,17 +18,16 @@ package ke.droidcon.kotlin.widget
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.lazy.LazyColumn
+import androidx.glance.appwidget.lazy.items
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -52,16 +51,24 @@ import com.android254.domain.models.Session
 
 /**
  * The large breakpoint (250x200dp) is the only one tall enough for a two-line title plus a
- * richer, speaker-inclusive detail line (and a corner flourish); small/medium (both 100dp tall)
- * stay compact.
+ * richer, speaker-inclusive detail line; small/medium (both 100dp tall) stay compact.
  */
 private val LargeBreakpointMinHeight = 150.dp
 
+/** How far an "up next" row is indented when it's shown indented. Only applied when there are
+ * no live sessions at all - see [WidgetContent]. */
+private val UpNextIndent = 20.dp
+
+private enum class SessionKind { CURRENT, UP_NEXT }
+
 /**
- * Renders the widget's three states: one or more sessions running now, one or more sessions
- * coming up next, or nothing scheduled. When more than one session qualifies for a state, the
- * first is shown in full and the rest are surfaced as an "+N more" count rather than silently
- * dropped, since conference tracks run in parallel.
+ * Renders the widget as a single scrollable list: every currently-running session first (each
+ * with its own venue-accent rail and "LIVE" pill), followed by every upcoming session. When at
+ * least one session is live, the upcoming ones are indented and run slightly smaller to read as
+ * secondary; with nothing live, upcoming sessions ARE the primary content, so they stay flush
+ * and full-size. Nothing is hidden behind a count anymore - if more sessions exist than fit the
+ * widget's height, the list scrolls natively. Falls back to a plain empty-state message when
+ * there is nothing to show.
  */
 @Composable
 fun WidgetContent(
@@ -76,50 +83,44 @@ fun WidgetContent(
             .fillMaxSize()
             .cornerRadius(16.dp)
             .background(GlanceTheme.colors.widgetBackground)
-            .padding(12.dp)
-            .let { modifier ->
-                if (launchIntent != null) {
-                    modifier.clickable(actionStartActivity(launchIntent))
-                } else {
-                    modifier
-                }
-            }
 
     Box(modifier = rootModifier) {
-        if (isLarge) {
-            CornerFlourish()
-        }
-        Column {
-            when {
-                current.isNotEmpty() -> HappeningNowContent(current.first(), extraCount = current.size - 1, size = size)
-                next.isNotEmpty() -> UpNextContent(next.first(), extraCount = next.size - 1, size = size)
-                else -> EmptyStateContent()
+        if (current.isEmpty() && next.isEmpty()) {
+            Column(modifier = GlanceModifier.padding(12.dp)) {
+                EmptyStateContent()
+            }
+        } else {
+            // Up-next rows are indented (and run smaller) only when there's no live session -
+            // when something is live, up-next stays flush and full-size.
+            val indentUpNext = current.isEmpty()
+            LazyColumn(modifier = GlanceModifier.fillMaxSize().padding(12.dp)) {
+                items(current, itemId = { sessionItemId(SessionKind.CURRENT, it) }) { session ->
+                    SessionRow(
+                        session = session,
+                        kind = SessionKind.CURRENT,
+                        isLarge = isLarge,
+                        isIndented = false,
+                        launchIntent = launchIntent,
+                    )
+                }
+                items(next, itemId = { sessionItemId(SessionKind.UP_NEXT, it) }) { session ->
+                    SessionRow(
+                        session = session,
+                        kind = SessionKind.UP_NEXT,
+                        isLarge = isLarge,
+                        isIndented = indentUpNext,
+                        launchIntent = launchIntent,
+                    )
+                }
             }
         }
     }
 }
 
-/**
- * A small decorative flourish pinned to the bottom-right corner, behind the real content.
- * Glance's `Box` shares one `contentAlignment` across all its children, so pinning just this
- * layer to a corner (while the content layer stays top-start) uses the standard
- * weighted-spacer push instead: a [Column] and [Row], each with a `defaultWeight()` spacer
- * before the image, land it bottom-right without disturbing the sibling content layer.
- */
-@Composable
-private fun CornerFlourish() {
-    Column(modifier = GlanceModifier.fillMaxHeight()) {
-        Spacer(modifier = GlanceModifier.defaultWeight())
-        Row(modifier = GlanceModifier.fillMaxWidth()) {
-            Spacer(modifier = GlanceModifier.defaultWeight())
-            Image(
-                provider = ImageProvider(R.drawable.ic_widget_confetti),
-                contentDescription = null,
-                modifier = GlanceModifier.size(40.dp).semantics { testTag = "cornerFlourish" },
-            )
-        }
-    }
-}
+private fun sessionItemId(
+    kind: SessionKind,
+    session: Session,
+): Long = (kind.name + session.id).hashCode().toLong()
 
 /** A session's room accent, mirroring the app's `venueAccentColor`. Room names change yearly,
  * so an unknown room falls back to the neutral role rather than a fixed hue. */
@@ -149,68 +150,17 @@ private fun VenueAccent.toColorProvider(): ColorProvider =
 
 private fun speakerNames(session: Session): String = session.speakers.joinToString(", ") { it.name }
 
-@Composable
-private fun HappeningNowContent(
+private fun sessionDetailText(
     session: Session,
-    extraCount: Int,
-    size: DpSize,
-) {
-    val isLarge = size.height >= LargeBreakpointMinHeight
+    kind: SessionKind,
+    isLarge: Boolean,
+): String {
     val speakers = speakerNames(session)
-    val detailText =
-        if (isLarge && speakers.isNotEmpty()) {
-            "$speakers · ${session.rooms} · ends ${session.endTime}"
-        } else {
-            session.rooms
-        }
-    StatusAndSessionContent(
-        statusText = LocalContext.current.getString(R.string.widget_happening_now),
-        pillStyle =
-            PillStyle(
-                containerColor = GlanceTheme.colors.secondaryContainer,
-                contentColor = GlanceTheme.colors.onSecondaryContainer,
-                dotColor = GlanceTheme.colors.onSecondaryContainer,
-            ),
-        session = session,
-        detailText = detailText,
-        detailColor = venueAccent(session.rooms).toColorProvider(),
-        detailMaxLines = if (isLarge) 2 else 1,
-        titleFontSize = if (isLarge) 18.sp else 15.sp,
-        extraCount = extraCount,
-        extraCountLabelRes = R.string.widget_more_live,
-    )
-}
-
-@Composable
-private fun UpNextContent(
-    session: Session,
-    extraCount: Int,
-    size: DpSize,
-) {
-    val isLarge = size.height >= LargeBreakpointMinHeight
-    val speakers = speakerNames(session)
-    val detailText =
-        if (isLarge && speakers.isNotEmpty()) {
-            "$speakers · ${session.rooms} · ${session.startTime}"
-        } else {
-            "${session.startTime} · ${session.rooms}"
-        }
-    StatusAndSessionContent(
-        statusText = LocalContext.current.getString(R.string.widget_up_next),
-        pillStyle =
-            PillStyle(
-                containerColor = GlanceTheme.colors.primaryContainer,
-                contentColor = GlanceTheme.colors.onPrimaryContainer,
-                dotColor = venueAccent(session.rooms).toColorProvider(),
-            ),
-        session = session,
-        detailText = detailText,
-        detailColor = venueAccent(session.rooms).toColorProvider(),
-        detailMaxLines = if (isLarge) 2 else 1,
-        titleFontSize = if (isLarge) 18.sp else 15.sp,
-        extraCount = extraCount,
-        extraCountLabelRes = R.string.widget_more_next,
-    )
+    if (!isLarge || speakers.isEmpty()) {
+        return if (kind == SessionKind.CURRENT) session.rooms else "${session.startTime} · ${session.rooms}"
+    }
+    val trailingDetail = if (kind == SessionKind.CURRENT) "ends ${session.endTime}" else session.startTime
+    return "$speakers · ${session.rooms} · $trailingDetail"
 }
 
 private data class PillStyle(
@@ -219,25 +169,67 @@ private data class PillStyle(
     val dotColor: ColorProvider,
 )
 
+@Composable
+private fun pillStyleFor(
+    kind: SessionKind,
+    session: Session,
+): PillStyle =
+    when (kind) {
+        SessionKind.CURRENT ->
+            PillStyle(
+                containerColor = GlanceTheme.colors.secondaryContainer,
+                contentColor = GlanceTheme.colors.onSecondaryContainer,
+                dotColor = GlanceTheme.colors.onSecondaryContainer,
+            )
+        SessionKind.UP_NEXT ->
+            PillStyle(
+                containerColor = GlanceTheme.colors.primaryContainer,
+                contentColor = GlanceTheme.colors.onPrimaryContainer,
+                dotColor = venueAccent(session.rooms).toColorProvider(),
+            )
+    }
+
 /** Fully-rounded pill/chip corner radius. Oversized on purpose — Android clamps a corner radius
  * bigger than half an element's own size, which is the standard trick for a guaranteed stadium
  * shape regardless of the pill's exact content-driven height. */
 private val PillCornerRadius = 50.dp
 
 @Composable
-private fun StatusAndSessionContent(
-    statusText: String,
-    pillStyle: PillStyle,
+private fun SessionRow(
     session: Session,
-    detailText: String,
-    detailColor: ColorProvider,
-    detailMaxLines: Int,
-    titleFontSize: TextUnit,
-    extraCount: Int,
-    extraCountLabelRes: Int,
+    kind: SessionKind,
+    isLarge: Boolean,
+    isIndented: Boolean,
+    launchIntent: Intent?,
 ) {
-    Row {
-        // Venue-accent rail: a thin stadium-capped stripe tying the card to its room's color.
+    val detailText = sessionDetailText(session, kind, isLarge)
+    val pillStyle = pillStyleFor(kind, session)
+    val statusTextRes =
+        if (kind == SessionKind.CURRENT) R.string.widget_happening_now else R.string.widget_up_next
+    val detailColor = venueAccent(session.rooms).toColorProvider()
+    val titleFontSize =
+        when {
+            isIndented && isLarge -> 16.sp
+            isIndented -> 13.sp
+            isLarge -> 18.sp
+            else -> 15.sp
+        }
+    val detailFontSize = if (isIndented) 11.sp else 13.sp
+
+    val rowModifier =
+        GlanceModifier
+            .fillMaxWidth()
+            .padding(start = if (isIndented) UpNextIndent else 0.dp, bottom = 10.dp)
+            .let { modifier ->
+                if (launchIntent != null) {
+                    modifier.clickable(actionStartActivity(launchIntent))
+                } else {
+                    modifier
+                }
+            }
+
+    Row(modifier = rowModifier) {
+        // Venue-accent rail, sized to just this row - not the whole widget.
         Box(
             modifier =
                 GlanceModifier
@@ -248,31 +240,13 @@ private fun StatusAndSessionContent(
         ) {}
         Spacer(modifier = GlanceModifier.width(8.dp))
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                StatusPill(
-                    text = statusText,
-                    containerColor = pillStyle.containerColor,
-                    contentColor = pillStyle.contentColor,
-                    dotColor = pillStyle.dotColor,
-                    textModifier = GlanceModifier.semantics { testTag = "statusLabel" },
-                )
-                if (extraCount > 0) {
-                    Spacer(modifier = GlanceModifier.width(6.dp))
-                    Row(
-                        modifier =
-                            GlanceModifier
-                                .cornerRadius(PillCornerRadius)
-                                .background(GlanceTheme.colors.surfaceVariant)
-                                .padding(horizontal = 6.dp, vertical = 2.dp),
-                    ) {
-                        Text(
-                            text = LocalContext.current.getString(extraCountLabelRes, extraCount),
-                            modifier = GlanceModifier.semantics { testTag = "extraSessionsLabel" },
-                            style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 11.sp),
-                        )
-                    }
-                }
-            }
+            StatusPill(
+                text = LocalContext.current.getString(statusTextRes),
+                containerColor = pillStyle.containerColor,
+                contentColor = pillStyle.contentColor,
+                dotColor = pillStyle.dotColor,
+                textModifier = GlanceModifier.semantics { testTag = "statusLabel" },
+            )
             Spacer(modifier = GlanceModifier.height(6.dp))
             Text(
                 text = session.title,
@@ -283,8 +257,8 @@ private fun StatusAndSessionContent(
             Text(
                 text = detailText,
                 modifier = GlanceModifier.semantics { testTag = "sessionDetail" },
-                style = TextStyle(color = detailColor),
-                maxLines = detailMaxLines,
+                style = TextStyle(color = detailColor, fontSize = detailFontSize),
+                maxLines = if (isLarge) 2 else 1,
             )
         }
     }

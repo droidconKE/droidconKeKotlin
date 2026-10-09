@@ -69,7 +69,7 @@ private fun WidgetContentHappeningNowPreview() {
     GlanceTheme {
         WidgetContent(
             current = listOf(previewSession(title = "Kotlin for busy engineers", rooms = "Hall A")),
-            next = listOf(previewSession(title = "Should not show")),
+            next = listOf(previewSession(title = "Also shown, indented below")),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -107,6 +107,26 @@ private fun WidgetContentConcurrentSessionsPreview() {
                     previewSession(title = "Lightning talks", rooms = "Track 3"),
                 ),
             next = emptyList(),
+            size = LocalSize.current,
+            launchIntent = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalGlancePreviewApi::class)
+@Preview(widthDp = 140, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 100)
+@Preview(widthDp = 250, heightDp = 200)
+@Composable
+private fun WidgetContentCurrentAndNextCombinedPreview() {
+    GlanceTheme {
+        WidgetContent(
+            current = listOf(previewSession(title = "State Management Deep Dive", rooms = "Track 1")),
+            next =
+                listOf(
+                    previewSession(title = "Testing at Scale", rooms = "Track 2", startTime = "2:15 PM"),
+                    previewSession(title = "Jetpack Compose Tips", rooms = "Track 3", startTime = "2:45 PM"),
+                ),
             size = LocalSize.current,
             launchIntent = null,
         )

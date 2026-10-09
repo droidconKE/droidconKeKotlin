@@ -3,6 +3,4 @@
     <string name="widget_happening_now">Live</string>
     <string name="widget_up_next">Up next</string>
     <string name="widget_no_sessions">Nothing scheduled right now</string>
-    <string name="widget_more_live">+%1$d more live</string>
-    <string name="widget_more_next">+%1$d more</string>
 </resources>
