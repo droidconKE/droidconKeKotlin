@@ -70,18 +70,18 @@ class WidgetContentTest {
     )
 
     @Test
-    fun widgetContent_currentSessionPresent_showsHappeningNowNotUpNext() =
+    fun widgetContent_currentSessionPresent_showsLiveNotUpNext() =
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = fakeSession(title = "Keynote"),
-                    next = fakeSession(title = "Should not show"),
+                    current = listOf(fakeSession(title = "Keynote")),
+                    next = listOf(fakeSession(title = "Should not show")),
                     size = DpSize(140.dp, 100.dp),
                     launchIntent = null,
                 )
             }
-            onNode(hasTestTag("statusLabel")).assertHasText("Happening now")
+            onNode(hasTestTag("statusLabel")).assertHasText("LIVE")
             onNode(hasTestTag("sessionTitle")).assertHasText("Keynote")
         }
 
@@ -91,13 +91,13 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = null,
-                    next = fakeSession(title = "Workshop"),
+                    current = emptyList(),
+                    next = listOf(fakeSession(title = "Workshop")),
                     size = DpSize(250.dp, 100.dp),
                     launchIntent = null,
                 )
             }
-            onNode(hasTestTag("statusLabel")).assertHasText("Up next")
+            onNode(hasTestTag("statusLabel")).assertHasText("UP NEXT")
             onNode(hasTestTag("sessionTitle")).assertHasText("Workshop")
         }
 
@@ -106,7 +106,7 @@ class WidgetContentTest {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
-                WidgetContent(current = null, next = null, size = DpSize(140.dp, 100.dp), launchIntent = null)
+                WidgetContent(current = emptyList(), next = emptyList(), size = DpSize(140.dp, 100.dp), launchIntent = null)
             }
             onNode(hasTestTag("emptyState")).assertExists()
         }
@@ -118,15 +118,73 @@ class WidgetContentTest {
             provideComposable {
                 WidgetContent(
                     current =
-                        fakeSession(
-                            title = "Keynote",
-                            rooms = "A very long room name that would otherwise wrap across several lines",
+                        listOf(
+                            fakeSession(
+                                title = "Keynote",
+                                rooms = "A very long room name that would otherwise wrap across several lines",
+                            ),
                         ),
-                    next = null,
+                    next = emptyList(),
                     size = DpSize(140.dp, 100.dp),
                     launchIntent = null,
                 )
             }
             onNode(hasTestTag("sessionDetail")).assert(hasMaxLinesOfOne)
+        }
+
+    @Test
+    fun widgetContent_multipleCurrentSessions_showsExtraCountNotSecondTitle() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current =
+                        listOf(
+                            fakeSession(title = "Keynote"),
+                            fakeSession(title = "Parallel track talk"),
+                        ),
+                    next = emptyList(),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionTitle")).assertHasText("Keynote")
+            onNode(hasTestTag("extraSessionsLabel")).assertHasText("+1 more live")
+        }
+
+    @Test
+    fun widgetContent_singleCurrentSession_showsNoExtraCount() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = listOf(fakeSession(title = "Keynote")),
+                    next = emptyList(),
+                    size = DpSize(140.dp, 100.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("extraSessionsLabel")).assertDoesNotExist()
+        }
+
+    @Test
+    fun widgetContent_multipleNextSessions_showsExtraCount() =
+        runGlanceAppWidgetUnitTest {
+            setContext(ApplicationProvider.getApplicationContext())
+            provideComposable {
+                WidgetContent(
+                    current = emptyList(),
+                    next =
+                        listOf(
+                            fakeSession(title = "Workshop"),
+                            fakeSession(title = "Panel"),
+                            fakeSession(title = "Lightning talks"),
+                        ),
+                    size = DpSize(250.dp, 200.dp),
+                    launchIntent = null,
+                )
+            }
+            onNode(hasTestTag("sessionTitle")).assertHasText("Workshop")
+            onNode(hasTestTag("extraSessionsLabel")).assertHasText("+2 more")
         }
 }
