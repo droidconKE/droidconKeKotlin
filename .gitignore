@@ -31,3 +31,6 @@ build-logic/convention/build
 # Build output that was previously committed.
 fastlane/report.xml
 fastlane/Preview.html
+
+# Superpowers skill working files (plans, specs, walkthroughs) are local notes, not repo content.
+docs/superpowers/
