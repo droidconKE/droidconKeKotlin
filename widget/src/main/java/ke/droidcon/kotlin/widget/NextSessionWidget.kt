@@ -19,20 +19,31 @@ import android.content.Context
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
-import androidx.glance.LocalContext
+import androidx.glance.GlanceTheme
+import androidx.glance.LocalSize
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
-import androidx.glance.text.Text
 
 class NextSessionWidget : GlanceAppWidget() {
-    override val sizeMode = SizeMode.Responsive(
-        setOf(SmallWidget, MediumWidget, LargeWidget),
-    )
+    override val sizeMode =
+        SizeMode.Responsive(
+            setOf(SmallWidget, MediumWidget, LargeWidget),
+        )
 
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
+    override suspend fun provideGlance(
+        context: Context,
+        id: GlanceId,
+    ) {
         provideContent {
-            Text(LocalContext.current.getString(R.string.widget_placeholder_text))
+            GlanceTheme {
+                WidgetContent(
+                    current = null,
+                    next = null,
+                    size = LocalSize.current,
+                    launchIntent = null,
+                )
+            }
         }
     }
 

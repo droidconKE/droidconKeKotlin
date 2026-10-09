@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_placeholder_text">Next session widget</string>
+    <string name="widget_happening_now">Happening now</string>
+    <string name="widget_up_next">Up next</string>
+    <string name="widget_no_sessions">Nothing scheduled right now</string>
 </resources>
