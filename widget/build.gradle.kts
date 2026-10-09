@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
     implementation(libs.glance.preview)
+    debugImplementation(libs.glance.appwidget.preview)
 
     testImplementation(libs.glance.testing)
     testImplementation(libs.glance.appwidget.testing)

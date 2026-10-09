@@ -152,6 +152,7 @@ glance-material3 = { module = "androidx.glance:glance-material3", version.ref = 
 glance-testing = { module = "androidx.glance:glance-testing", version.ref = "glance" }
 glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "glance" }
 glance-preview = { module = "androidx.glance:glance-preview", version.ref = "glance" }
+glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "glance" }
 
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "collectionsImmutable" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
