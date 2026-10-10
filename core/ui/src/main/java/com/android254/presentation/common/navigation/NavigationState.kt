@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -116,6 +117,7 @@ fun NavigationState.toEntries(
             val decorators =
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+                    rememberViewModelStoreNavEntryDecorator<NavKey>(),
                 )
             rememberDecoratedNavEntries(
                 backStack = stack,
@@ -127,7 +129,11 @@ fun NavigationState.toEntries(
     val supportingEntries =
         rememberDecoratedNavEntries(
             backStack = listOfNotNull(supportingRoute),
-            entryDecorators = listOf(rememberSaveableStateHolderNavEntryDecorator<NavKey>()),
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+                    rememberViewModelStoreNavEntryDecorator<NavKey>(),
+                ),
             entryProvider = entryProvider,
         )
 
