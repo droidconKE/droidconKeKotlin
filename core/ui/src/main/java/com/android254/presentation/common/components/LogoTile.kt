@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +45,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import com.droidconke.chai.atoms.ChaiGrey100
+import com.droidconke.chai.atoms.ChaiGrey900
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -56,11 +59,20 @@ fun LogoTile(
     var attempt by remember(logos) { mutableIntStateOf(0) }
     val logo = logos.getOrNull(attempt)
     val failed = logo == null
+    var logoIsLight by remember(logo) { mutableStateOf<Boolean?>(null) }
+    val background =
+        when (logoIsLight) {
+            // A light logo needs a dark backing and vice versa; fixed tones so the pairing
+            // holds regardless of whether the app itself is in light or dark theme.
+            true -> ChaiGrey900
+            false -> ChaiGrey100
+            null -> MaterialTheme.colorScheme.surfaceContainer
+        }
     Box(
         modifier =
             modifier
                 .clip(MaterialTheme.shapes.largeIncreased)
-                .background(MaterialTheme.colorScheme.surfaceContainer)
+                .background(background)
                 .padding(horizontal = 16.dp, vertical = 16.dp),
         contentAlignment = Alignment.Center,
     ) {
@@ -81,10 +93,14 @@ fun LogoTile(
                         .data(logo)
                         .apply { if (logo.orEmpty().endsWith("svg")) decoderFactory(SvgDecoder.Factory()) }
                         .crossfade(true)
+                        // Contrast sampling draws the decoded bitmap into a software canvas,
+                        // which hardware bitmaps don't support.
+                        .allowHardware(false)
                         .build(),
                 contentScale = ContentScale.Fit,
                 contentDescription = name.ifBlank { null },
                 onError = { attempt++ },
+                onSuccess = { state -> logoIsLight = state.result.drawable.isPerceivedLight() },
             )
         }
     }
