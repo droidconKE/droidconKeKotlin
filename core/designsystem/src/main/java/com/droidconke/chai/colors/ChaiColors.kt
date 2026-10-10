@@ -20,6 +20,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlue700
 import com.droidconke.chai.atoms.ChaiGreen500
+import com.droidconke.chai.atoms.ChaiGrey100
+import com.droidconke.chai.atoms.ChaiGrey900
 import com.droidconke.chai.atoms.ChaiWhite
 
 /** Colours no Material role holds in both themes. Read `MaterialTheme.colorScheme` first. */
@@ -30,6 +32,10 @@ data class ChaiColors(
     val heroContentColor: Color,
     /** White on the blue panel, for anything smaller than display type. */
     val heroOnContainerColor: Color,
+    /** Fixed light backing for content (e.g. a dark logo) that must read against either theme. */
+    val contrastLightSurface: Color,
+    /** Fixed dark backing for content (e.g. a light logo) that must read against either theme. */
+    val contrastDarkSurface: Color,
 )
 
 val LocalChaiColorsPalette =
@@ -42,6 +48,8 @@ private val ChaiBrandColors =
         heroContainerColor = ChaiBlue700,
         heroContentColor = ChaiGreen500,
         heroOnContainerColor = ChaiWhite,
+        contrastLightSurface = ChaiGrey100,
+        contrastDarkSurface = ChaiGrey900,
     )
 
 val ChaiLightColorPalette = ChaiBrandColors
