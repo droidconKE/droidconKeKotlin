@@ -48,6 +48,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.android254.domain.models.Session
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * The large breakpoint (250x200dp) is the only one tall enough for a two-line title plus a
@@ -73,8 +74,8 @@ private enum class SessionKind { CURRENT, UP_NEXT }
  */
 @Composable
 fun WidgetContent(
-    current: List<Session>,
-    next: List<Session>,
+    current: ImmutableList<Session>,
+    next: ImmutableList<Session>,
     size: DpSize,
     launchIntent: Intent?,
 ) {

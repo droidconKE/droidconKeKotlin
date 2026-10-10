@@ -26,6 +26,7 @@ import androidx.glance.testing.unit.hasTestTag
 import androidx.test.core.app.ApplicationProvider
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -81,8 +82,8 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = listOf(fakeSession(title = "Keynote")),
-                    next = emptyList(),
+                    current = persistentListOf(fakeSession(title = "Keynote")),
+                    next = persistentListOf(),
                     size = DpSize(140.dp, 100.dp),
                     launchIntent = null,
                 )
@@ -97,8 +98,8 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = emptyList(),
-                    next = listOf(fakeSession(title = "Workshop")),
+                    current = persistentListOf(),
+                    next = persistentListOf(fakeSession(title = "Workshop")),
                     size = DpSize(250.dp, 100.dp),
                     launchIntent = null,
                 )
@@ -112,7 +113,7 @@ class WidgetContentTest {
         runGlanceAppWidgetUnitTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
-                WidgetContent(current = emptyList(), next = emptyList(), size = DpSize(140.dp, 100.dp), launchIntent = null)
+                WidgetContent(current = persistentListOf(), next = persistentListOf(), size = DpSize(140.dp, 100.dp), launchIntent = null)
             }
             onNode(hasTestTag("emptyState")).assertExists()
         }
@@ -124,13 +125,13 @@ class WidgetContentTest {
             provideComposable {
                 WidgetContent(
                     current =
-                        listOf(
+                        persistentListOf(
                             fakeSession(
                                 title = "Keynote",
                                 rooms = "A very long room name that would otherwise wrap across several lines",
                             ),
                         ),
-                    next = emptyList(),
+                    next = persistentListOf(),
                     size = DpSize(140.dp, 100.dp),
                     launchIntent = null,
                 )
@@ -144,8 +145,8 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = listOf(fakeSession(id = "c1", title = "Keynote")),
-                    next = listOf(fakeSession(id = "n1", title = "Workshop")),
+                    current = persistentListOf(fakeSession(id = "c1", title = "Keynote")),
+                    next = persistentListOf(fakeSession(id = "n1", title = "Workshop")),
                     size = DpSize(250.dp, 200.dp),
                     launchIntent = null,
                 )
@@ -164,11 +165,11 @@ class WidgetContentTest {
             provideComposable {
                 WidgetContent(
                     current =
-                        listOf(
+                        persistentListOf(
                             fakeSession(id = "c1", title = "Keynote"),
                             fakeSession(id = "c2", title = "Parallel track talk"),
                         ),
-                    next = emptyList(),
+                    next = persistentListOf(),
                     size = DpSize(250.dp, 200.dp),
                     launchIntent = null,
                 )
@@ -184,9 +185,9 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = emptyList(),
+                    current = persistentListOf(),
                     next =
-                        listOf(
+                        persistentListOf(
                             fakeSession(id = "n1", title = "Workshop"),
                             fakeSession(id = "n2", title = "Panel"),
                             fakeSession(id = "n3", title = "Lightning talks"),
@@ -208,7 +209,7 @@ class WidgetContentTest {
             provideComposable {
                 WidgetContent(
                     current =
-                        listOf(
+                        persistentListOf(
                             fakeSession(
                                 title = "Keynote",
                                 rooms = "Hall A",
@@ -216,7 +217,7 @@ class WidgetContentTest {
                                 speakers = listOf(fakeSpeaker("Ada Lovelace")),
                             ),
                         ),
-                    next = emptyList(),
+                    next = persistentListOf(),
                     size = DpSize(250.dp, 200.dp),
                     launchIntent = null,
                 )
@@ -230,9 +231,9 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = emptyList(),
+                    current = persistentListOf(),
                     next =
-                        listOf(
+                        persistentListOf(
                             fakeSession(
                                 title = "Workshop",
                                 rooms = "Hall B",
@@ -253,8 +254,8 @@ class WidgetContentTest {
             setContext(ApplicationProvider.getApplicationContext())
             provideComposable {
                 WidgetContent(
-                    current = listOf(fakeSession(title = "Keynote", rooms = "Hall A")),
-                    next = emptyList(),
+                    current = persistentListOf(fakeSession(title = "Keynote", rooms = "Hall A")),
+                    next = persistentListOf(),
                     size = DpSize(250.dp, 200.dp),
                     launchIntent = null,
                 )
@@ -269,14 +270,14 @@ class WidgetContentTest {
             provideComposable {
                 WidgetContent(
                     current =
-                        listOf(
+                        persistentListOf(
                             fakeSession(
                                 title = "Keynote",
                                 rooms = "Hall A",
                                 speakers = listOf(fakeSpeaker("Ada Lovelace")),
                             ),
                         ),
-                    next = emptyList(),
+                    next = persistentListOf(),
                     size = DpSize(140.dp, 100.dp),
                     launchIntent = null,
                 )

@@ -28,6 +28,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import com.android254.domain.repos.SessionsRepo
+import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Clock
 
 class NextSessionWidget(
@@ -52,8 +53,8 @@ class NextSessionWidget(
 
             GlanceTheme {
                 WidgetContent(
-                    current = current,
-                    next = next,
+                    current = current.toImmutableList(),
+                    next = next.toImmutableList(),
                     size = LocalSize.current,
                     launchIntent = launchIntent,
                 )

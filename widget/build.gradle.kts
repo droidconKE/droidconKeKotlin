@@ -30,6 +30,7 @@ android {
 dependencies {
     implementation(projects.core.domain)
 
+    implementation(libs.kotlinx.collections.immutable)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
     implementation(libs.glance.preview)

@@ -22,6 +22,7 @@ import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
+import kotlinx.collections.immutable.persistentListOf
 
 /**
  * Studio-only previews for [WidgetContent]'s states, rendered at this widget's three [DpSize]
@@ -68,8 +69,8 @@ private fun previewSession(
 private fun WidgetContentHappeningNowPreview() {
     GlanceTheme {
         WidgetContent(
-            current = listOf(previewSession(title = "Kotlin for busy engineers", rooms = "Hall A")),
-            next = listOf(previewSession(title = "Also shown, indented below")),
+            current = persistentListOf(previewSession(title = "Kotlin for busy engineers", rooms = "Hall A")),
+            next = persistentListOf(previewSession(title = "Also shown, indented below")),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -84,8 +85,8 @@ private fun WidgetContentHappeningNowPreview() {
 private fun WidgetContentUpNextPreview() {
     GlanceTheme {
         WidgetContent(
-            current = emptyList(),
-            next = listOf(previewSession(title = "Scaling droidcon KE", rooms = "Hall B", startTime = "2:00 PM")),
+            current = persistentListOf(),
+            next = persistentListOf(previewSession(title = "Scaling droidcon KE", rooms = "Hall B", startTime = "2:00 PM")),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -101,12 +102,12 @@ private fun WidgetContentConcurrentSessionsPreview() {
     GlanceTheme {
         WidgetContent(
             current =
-                listOf(
+                persistentListOf(
                     previewSession(title = "Kotlin for busy engineers", rooms = "Track 1"),
                     previewSession(title = "Scaling droidcon KE", rooms = "Track 2"),
                     previewSession(title = "Lightning talks", rooms = "Track 3"),
                 ),
-            next = emptyList(),
+            next = persistentListOf(),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -121,9 +122,9 @@ private fun WidgetContentConcurrentSessionsPreview() {
 private fun WidgetContentCurrentAndNextCombinedPreview() {
     GlanceTheme {
         WidgetContent(
-            current = listOf(previewSession(title = "State Management Deep Dive", rooms = "Track 1")),
+            current = persistentListOf(previewSession(title = "State Management Deep Dive", rooms = "Track 1")),
             next =
-                listOf(
+                persistentListOf(
                     previewSession(title = "Testing at Scale", rooms = "Track 2", startTime = "2:15 PM"),
                     previewSession(title = "Jetpack Compose Tips", rooms = "Track 3", startTime = "2:45 PM"),
                 ),
@@ -140,7 +141,7 @@ private fun WidgetContentHappeningNowWithSpeakerLargePreview() {
     GlanceTheme {
         WidgetContent(
             current =
-                listOf(
+                persistentListOf(
                     previewSession(
                         title = "Building Resilient Systems",
                         rooms = "Opal",
@@ -148,7 +149,7 @@ private fun WidgetContentHappeningNowWithSpeakerLargePreview() {
                         speakers = listOf(Speaker(name = "Ada Lovelace")),
                     ),
                 ),
-            next = emptyList(),
+            next = persistentListOf(),
             size = LocalSize.current,
             launchIntent = null,
         )
@@ -163,9 +164,9 @@ private fun WidgetContentHappeningNowWithSpeakerLargePreview() {
 private fun WidgetContentUpNextOpalRoomPreview() {
     GlanceTheme {
         WidgetContent(
-            current = emptyList(),
+            current = persistentListOf(),
             next =
-                listOf(
+                persistentListOf(
                     previewSession(
                         title = "The Future of Kotlin",
                         rooms = "Opal",
@@ -187,9 +188,9 @@ private fun WidgetContentUpNextOpalRoomPreview() {
 private fun WidgetContentUpNextSapphireRoomPreview() {
     GlanceTheme {
         WidgetContent(
-            current = emptyList(),
+            current = persistentListOf(),
             next =
-                listOf(
+                persistentListOf(
                     previewSession(
                         title = "Designing for Delight",
                         rooms = "Sapphire",
@@ -211,8 +212,8 @@ private fun WidgetContentUpNextSapphireRoomPreview() {
 private fun WidgetContentEmptyPreview() {
     GlanceTheme {
         WidgetContent(
-            current = emptyList(),
-            next = emptyList(),
+            current = persistentListOf(),
+            next = persistentListOf(),
             size = LocalSize.current,
             launchIntent = null,
         )
