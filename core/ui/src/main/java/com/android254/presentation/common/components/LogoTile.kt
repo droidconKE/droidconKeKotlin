@@ -45,8 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import com.droidconke.chai.atoms.ChaiGrey100
-import com.droidconke.chai.atoms.ChaiGrey900
+import com.droidconke.chai.chaiColorsPalette
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -60,12 +59,13 @@ fun LogoTile(
     val logo = logos.getOrNull(attempt)
     val failed = logo == null
     var logoIsLight by remember(logo) { mutableStateOf<Boolean?>(null) }
+    val chaiColors = MaterialTheme.chaiColorsPalette
     val background =
         when (logoIsLight) {
             // A light logo needs a dark backing and vice versa; fixed tones so the pairing
             // holds regardless of whether the app itself is in light or dark theme.
-            true -> ChaiGrey900
-            false -> ChaiGrey100
+            true -> chaiColors.contrastDarkSurface
+            false -> chaiColors.contrastLightSurface
             null -> MaterialTheme.colorScheme.surfaceContainer
         }
     Box(
