@@ -19,6 +19,7 @@ Run these before opening a PR. CI runs the same set.
 ./gradlew assembleDebug                       # build
 ./gradlew testDebugUnitTest                   # JVM + Robolectric tests
 ./gradlew verifyRoborazziDebug                # screenshot goldens
+./gradlew :app:bundleRelease && config/size/check-app-size.sh   # download size, needs bundletool
 ```
 
 Startup is measured, not asserted. See [`docs/performance.md`](docs/performance.md) — it also
@@ -145,8 +146,8 @@ comes back out of `:app` later. `:feature:speakers` is the worked example; follo
    `droidconEntryProvider` can still reach the routes.
 4. Expect two classes of breakage: `internal` no longer crosses the boundary, and Kotlin will
    not smart-cast a public property declared in another module.
-5. `./gradlew stabilityDump` — a new Compose module needs its own stability baseline. That is
-   the one kind of baseline this repo keeps, because it records API shape rather than hiding a
+5. `./gradlew stabilityDump` — a new Compose module needs its own stability baseline. Like the
+   download-size baseline in `config/size/`, it records a measurement rather than hiding a
    violation. Commit both the debug and release files; both are tracked and both are checked.
 6. Any test double two features now share moves to `core:testing`, whose `src/main` is the
    fakes themselves — consumers take it as `testImplementation(projects.core.testing)`.
@@ -357,7 +358,9 @@ hand-written springs.
   an unfolded Pixel Fold is 841 dp wide — and check the content width, not only the window: the
   navigation component sits between them.
 - Anything visual: add `@FormFactorPreviews` and record `captureFormFactors` goldens.
-- No new dependency without a reason in the PR description.
+- No new dependency without a reason in the PR description. If the download size grows past
+  CI's 1 % allowance on purpose, run `config/size/check-app-size.sh --update` and say why.
+- New icons go in `ChaiIcons`, copied from the Material Icons source; there is no icon artifact.
 - Verified on a device if you touched date handling, Room, or anything on the sync path.
 
 ---

@@ -383,8 +383,9 @@ tokens for the brand-blue hero panel, the one colour no role holds in both theme
 only when no role fits. A detekt `ForbiddenImport` rule fails the build on a palette import
 outside `chai/colors` and `chai/atoms`.
 
-Shapes are Material 3 Expressive's scale (4 to 48 dp). Typography is Montserrat, including
-ExtraBold for the Emphasized display and headline roles. The website's display face, Rauschen B,
+Shapes are Material 3 Expressive's scale (4 to 48 dp). Typography is Montserrat, one variable
+font file whose `wght` axis supplies every weight, including ExtraBold for the Emphasized display
+and headline roles. Icons are `ChaiIcons`, copied from Material Icons; there is no icon artifact. The website's display face, Rauschen B,
 isn't bundled: its web licence doesn't cover embedding in an APK, the file is a `.woff2`, and
 it has one weight. Swapping it in later is a change to the one `FontFamily` in `ChaiTypography`.
 
