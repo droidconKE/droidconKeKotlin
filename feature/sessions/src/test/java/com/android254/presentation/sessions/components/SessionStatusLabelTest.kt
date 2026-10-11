@@ -140,4 +140,19 @@ class SessionStatusLabelTest {
 
         composeTestRule.onAllNodesWithText("LIVE").assertCountEquals(live.roomList.size)
     }
+
+    @Test
+    fun `a past agenda cell says it has ended`() {
+        val past = session.copy(sessionStatus = SessionStatus.Past)
+        composeTestRule.setContent {
+            ChaiTheme {
+                AgendaGrid(
+                    sessionsByTime = persistentMapOf("${past.startTime} ${past.amOrPm}" to persistentListOf(past)),
+                    navigateToSessionDetails = {},
+                )
+            }
+        }
+
+        composeTestRule.onAllNodesWithText("ENDED").assertCountEquals(past.roomList.size)
+    }
 }

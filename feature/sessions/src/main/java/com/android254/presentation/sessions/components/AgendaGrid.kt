@@ -43,7 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.components.LiveBadge
+import com.android254.presentation.common.components.SessionStatusLabel
 import com.android254.presentation.common.components.SessionTag
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
@@ -186,6 +186,7 @@ private fun AgendaCell(
 
     val accent = venueAccentColor(session.venue)
     val isOngoing = session.sessionStatus == SessionStatus.Ongoing
+    val hasStatusLabel = session.sessionStatus != SessionStatus.Upcoming
     Column(
         modifier =
             cell
@@ -207,9 +208,9 @@ private fun AgendaCell(
         ChaiBodyMediumBold(
             bodyText = session.title,
             textColor = MaterialTheme.colorScheme.primary,
-            maxLines = if (isOngoing) 2 else 3,
+            maxLines = if (hasStatusLabel) 2 else 3,
         )
-        if (session.format.isNotBlank() || isOngoing) {
+        if (session.format.isNotBlank() || hasStatusLabel) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -217,9 +218,7 @@ private fun AgendaCell(
                 if (session.format.isNotBlank()) {
                     SessionTag(tagText = session.format)
                 }
-                if (isOngoing) {
-                    LiveBadge()
-                }
+                SessionStatusLabel(status = session.sessionStatus)
             }
         }
         session.speakers.firstOrNull()?.let { speaker ->
