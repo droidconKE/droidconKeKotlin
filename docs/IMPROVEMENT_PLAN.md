@@ -16,8 +16,8 @@ each table syncs in one transaction, an empty sessions response keeps the cached
 no longer fails every sync. What is left in §3.10 is small or needs the backend.
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
-system") describes the result. §14 is next. It depends on nothing, and the role-by-role contrast
-it starts from is in `docs/architecture.md`.
+system") describes the result. §14 is next. Its contrast audit landed on 2026-10-11 as a test, which
+darkened light `onSurfaceVariant` and both themes' `outline`; what is left is the on-device checks.
 
 §14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
 Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
@@ -4041,101 +4041,16 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **TalkBack** | Every screen navigable; every action reachable; no unlabelled controls; reading order logical |
 | **Font scale** | Legible and unclipped at 200%; no fixed-height text containers |
 | **Display size** | Largest display size setting doesn't break layouts |
-| **Contrast** | 4.5:1 for body text, 3:1 for large text — **audit every role pair**; the tightest today is `onSurfaceVariant` on `surfaceContainer` at 4.54:1 in light, and neon on the hero blue (4.1:1) is display-size only |
+| **Contrast** | 4.5:1 for body text, 3:1 for large text — done: `ChaiColorContrastTest` guards every role pair; neon on the hero blue (4.1:1) is display-size only |
 | **Touch targets** | 48×48 dp minimum; audit every `IconButton` and the bottom nav items |
 | **Colour independence** | Session status (live/upcoming/past) must not be conveyed by colour alone — add an icon or text |
 | **Reduced motion** | Continuous animations respect the setting (§5.4, §12) |
 | **Switch Access / keyboard** | Full traversal without touch |
 | **Screen reader + two-pane** | Pane changes announced on tablet (§4.4) |
 
-The contrast audit is the one most likely to find real problems. Write it as a test so it can't regress:
-
-```kotlin
-// chai/src/test/kotlin/.../ColorContrastTest.kt
-
-/**
- * WCAG AA contrast for every text-on-background pair Chai defines.
- *
- * Colour-contrast failures are invisible to people with normal vision and
- * completely blocking for people without it. A test is the only reliable guard.
- */
-class ColorContrastTest {
-
-    private data class Pair(val name: String, val foreground: Color, val background: Color, val isLargeText: Boolean = false)
-
-    /**
-     * The M3 role pairs. After §3.5 these are the ones that matter, because the
-     * on/background relationship is part of the type — which is exactly why the
-     * bridge makes this test possible to write exhaustively.
-     */
-    private fun schemePairs(scheme: ColorScheme, label: String) = listOf(
-        Pair("$label on-background", scheme.onBackground, scheme.background),
-        Pair("$label on-surface", scheme.onSurface, scheme.surface),
-        Pair("$label on-surface-variant", scheme.onSurfaceVariant, scheme.surface),
-        Pair("$label on-surface-on-container", scheme.onSurface, scheme.surfaceContainer),
-        Pair("$label on-surface-on-container-high", scheme.onSurface, scheme.surfaceContainerHigh),
-        Pair("$label on-primary", scheme.onPrimary, scheme.primary),
-        Pair("$label on-primary-container", scheme.onPrimaryContainer, scheme.primaryContainer),
-        Pair("$label on-secondary", scheme.onSecondary, scheme.secondary),
-        Pair("$label on-tertiary", scheme.onTertiary, scheme.tertiary),
-        Pair("$label on-error", scheme.onError, scheme.error),
-        Pair("$label primary-on-background", scheme.primary, scheme.background),
-        // Outlines are non-text UI: WCAG asks 3:1, same as large text.
-        Pair("$label outline-on-surface", scheme.outline, scheme.surface, isLargeText = true),
-    )
-
-    /** The surviving brand component tokens, which have no structural pairing. */
-    private fun componentPairs(
-        chai: ChaiColors,
-        scheme: ColorScheme,
-        label: String,
-    ) = listOf(
-        Pair("$label nav-active-label", chai.activeBottomNavTextColor, scheme.surfaceContainer),
-        Pair("$label day-chip-active", chai.eventDaySelectorActiveTextColor, chai.eventDaySelectorActiveSurfaceColor),
-        Pair("$label day-chip-inactive", chai.eventDaySelectorInactiveTextColor, chai.eventDaySelectorInactiveSurfaceColor),
-        Pair("$label link-on-background", chai.linkTextColor, scheme.background),
-        Pair("$label live-indicator", chai.liveIndicatorColor, scheme.surface, isLargeText = true),
-    )
-
-    @Test
-    fun lightScheme_meetsWcagAa() = assertAllPairsPass(
-        schemePairs(ChaiLightColorScheme, "light") +
-            componentPairs(ChaiLightComponentColors, ChaiLightColorScheme, "light"),
-    )
-
-    @Test
-    fun darkScheme_meetsWcagAa() = assertAllPairsPass(
-        schemePairs(ChaiDarkColorScheme, "dark") +
-            componentPairs(ChaiDarkComponentColors, ChaiDarkColorScheme, "dark"),
-    )
-
-    private fun assertAllPairsPass(pairs: List<Pair>) {
-        val failures = pairs.mapNotNull { pair ->
-            val ratio = contrastRatio(pair.foreground, pair.background)
-            val required = if (pair.isLargeText) 3.0 else 4.5
-            if (ratio < required) "${pair.name}: %.2f:1 (needs %.1f:1)".format(ratio, required) else null
-        }
-        assertThat(failures).isEmpty()
-    }
-
-    /** WCAG 2.1 relative luminance and contrast ratio. */
-    private fun contrastRatio(a: Color, b: Color): Double {
-        val la = relativeLuminance(a)
-        val lb = relativeLuminance(b)
-        return (maxOf(la, lb) + 0.05) / (minOf(la, lb) + 0.05)
-    }
-
-    private fun relativeLuminance(color: Color): Double {
-        fun channel(c: Float): Double {
-            val v = c.toDouble()
-            return if (v <= 0.03928) v / 12.92 else ((v + 0.055) / 1.055).pow(2.4)
-        }
-        return 0.2126 * channel(color.red) + 0.7152 * channel(color.green) + 0.0722 * channel(color.blue)
-    }
-}
-```
-
-> Expect this test to **fail on first run**. That's the point — it's finding real problems. Fix the palette, don't relax the threshold.
+The contrast audit has landed as `ChaiColorContrastTest` (see `docs/architecture.md`, "Design
+system"). The rest of the table needs a person with a device: TalkBack, font and display size,
+touch targets, colour independence, reduced motion, Switch Access, and two-pane announcements.
 
 ---
 
@@ -4390,3 +4305,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | --- | --- |
 | 2026-10-05 | Pruned to pending work only. Deleted the landed-work notes at the top, §1.1–1.4, §3.3, §3.4, §3.7, §3.8, most of §4, §9.1–9.2, §16.0 and the struck roadmap rows; git keeps them. Durable facts moved to `docs/architecture.md`, `docs/performance.md`, `AGENTS.md` and `README.md`. §16.1 #5 is no longer struck: the Compose stability configuration (§3.1) never landed. |
 | 2026-10-05 | Recorded the 2026 rebrand and Expressive components: §3.5 and the landed-work block move to `docs/architecture.md`, §5.2 lists only what is left, §5.1 and §5.3 note the Now/Next hero, and §12 is decided on a Compose Canvas cube after reviewing the website's Spline scene. |
+| 2026-10-11 | §14 contrast audit landed as `ChaiColorContrastTest`. It found light `onSurfaceVariant` and both themes' `outline` below AA on the higher container tones; the palette was darkened rather than the threshold relaxed. Removed the §14 test template. |

@@ -36,7 +36,6 @@ import com.droidconke.chai.atoms.ChaiGrey200
 import com.droidconke.chai.atoms.ChaiGrey400
 import com.droidconke.chai.atoms.ChaiGrey500
 import com.droidconke.chai.atoms.ChaiGrey600
-import com.droidconke.chai.atoms.ChaiGrey700
 import com.droidconke.chai.atoms.ChaiGrey800
 import com.droidconke.chai.atoms.ChaiGrey900
 import com.droidconke.chai.atoms.ChaiInk
@@ -107,7 +106,7 @@ internal val ChaiDarkColorScheme: ColorScheme =
         surfaceContainerHighest = ChaiGrey800,
         inverseSurface = ChaiGrey100,
         inverseOnSurface = ChaiInk,
-        outline = ChaiGrey700,
+        outline = ChaiGrey500,
         outlineVariant = ChaiGrey800,
         error = ChaiErrorDark,
         onError = ChaiOnErrorDark,

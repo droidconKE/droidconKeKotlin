@@ -357,21 +357,23 @@ and any other room is neutral grey, never `primary`, because dark `primary` is g
 (`SessionAccents.kt`).
 
 Contrast for the pairs the app draws, from the shipped scheme. WCAG AA needs 4.5:1 for text and
-3:1 for borders, icons and display-size text. This is where the accessibility audit (plan §14)
-starts.
+3:1 for borders, icons and display-size text. `ChaiColorContrastTest` checks every role pair in
+both themes — each text role and `outline` on every surface tone, each `on*` role on its container,
+and the hero tokens — so a palette change that drops below AA fails the build. Fix the palette,
+not the threshold.
 
 | Pair | Theme | Colours | Ratio | Needs |
 |---|---|---|---|---|
 | `primary` text on screen | Light | `#0055FF` on `#FFFFFF` | 5.6:1 | 4.5:1 |
 | `secondary` (green) text | Light | `#06752A` on `#FFFFFF` | 5.9:1 | 4.5:1 |
 | Ink on neon (selected states) | Both | `#20201E` on `#00FF4F` | 12.0:1 | 4.5:1 |
-| `onSurfaceVariant` on `surfaceContainer` | Light | `#707070` on `#F5F5F5` | 4.5:1 | 4.5:1 |
-| `outline` on `surfaceContainer` | Light | `#8A8A8A` on `#F5F5F5` | 3.2:1 | 3:1 |
+| `onSurfaceVariant` on `surfaceContainerHighest` | Light | `#666666` on `#E5E7EB` | 4.6:1 | 4.5:1 |
+| `outline` on `surfaceContainerHighest` | Light | `#808080` on `#E5E7EB` | 3.2:1 | 3:1 |
 | Neon display type on the hero | Both | `#00FF4F` on `#0055FF` | 4.1:1 | 3:1 |
 | White text on the hero | Both | `#FFFFFF` on `#0055FF` | 5.6:1 | 4.5:1 |
 | `primary` text on screen | Dark | `#00FF4F` on `#000000` | 15.4:1 | 4.5:1 |
 | `onSurfaceVariant` on a card | Dark | `#A3A3A3` on `#191D1D` | 6.7:1 | 4.5:1 |
-| `outline` on a card | Dark | `#6B6B6B` on `#191D1D` | 3.2:1 | 3:1 |
+| `outline` on `surfaceContainerHighest` | Dark | `#808080` on `#2B2B29` | 3.6:1 | 3:1 |
 | `tertiary` (Sapphire) text | Dark | `#83C6FF` on `#000000` | 11.5:1 | 4.5:1 |
 | Neon as text (not allowed) | Light | `#00FF4F` on `#FFFFFF` | 1.4:1 | 4.5:1 |
 | Blue as text (not allowed) | Dark | `#0055FF` on `#000000` | 3.7:1 | 4.5:1 |
