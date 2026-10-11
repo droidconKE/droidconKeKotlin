@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.common.components
 
-import android.provider.Settings
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -32,11 +31,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ke.droidcon.kotlin.core.ui.R
@@ -44,15 +41,12 @@ import ke.droidcon.kotlin.core.ui.R
 private const val PULSE_MILLIS = 1_000
 private const val PULSE_MIN_ALPHA = 0.35f
 
-/** With animations off an infinite transition snaps to its end value, so hold full opacity. */
+/** With animations off an infinite transition skips to its end value, so the pulse ends opaque. */
 @Composable
 fun LiveBadge(modifier: Modifier = Modifier) {
-    val resolver = LocalContext.current.contentResolver
-    val animationsOff =
-        remember(resolver) { Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f }
     val pulse by rememberInfiniteTransition(label = "live-pulse").animateFloat(
-        initialValue = 1f,
-        targetValue = if (animationsOff) 1f else PULSE_MIN_ALPHA,
+        initialValue = PULSE_MIN_ALPHA,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(tween(PULSE_MILLIS), RepeatMode.Reverse),
         label = "live-pulse-alpha",
     )
