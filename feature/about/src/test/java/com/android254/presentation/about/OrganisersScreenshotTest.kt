@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.about.view.OrganizingTeamSection
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.OrganizedBySection
+import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.toImmutableList
@@ -46,7 +47,7 @@ class OrganisersScreenshotTest : ChaiScreenshotTest() {
                 )
                 Spacer(Modifier.height(40.dp))
                 OrganizedBySection(
-                    organizationLogos = List(6) { index -> "https://example.com/logo-$index.png" }.toImmutableList(),
+                    organizers = List(6) { index -> OrganizerLogo(name = "Organiser ${index + 1}", logo = "https://example.com/logo-$index.png") }.toImmutableList(),
                     modifier = Modifier.padding(horizontal = 20.dp),
                 )
             }

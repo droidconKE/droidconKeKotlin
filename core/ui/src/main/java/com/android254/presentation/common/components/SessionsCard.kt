@@ -45,9 +45,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android254.presentation.common.adaptive.clickablePointer
@@ -60,6 +60,7 @@ import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.components.ChaiBodySmall
 import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
+import ke.droidcon.kotlin.core.ui.R
 
 /** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
 private fun cardBorder(
@@ -84,12 +85,6 @@ fun SessionsCard(
 ) {
     val venueAccent = venueAccentColor(session.venue)
 
-    val alpha =
-        when (session.sessionStatus) {
-            SessionStatus.Past -> 0.5f
-            SessionStatus.Ongoing -> 1f
-            SessionStatus.Upcoming -> 1f
-        }
     val transition = rememberInfiniteTransition(label = "ongoing_border")
 
     val animatedBorderAlpha by transition.animateFloat(
@@ -124,8 +119,7 @@ fun SessionsCard(
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .clickablePointer()
-                .alpha(alpha),
+                .clickablePointer(),
         shape = RoundedCornerShape(8.dp),
         interactionSource = interactionSource,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
@@ -142,7 +136,7 @@ fun SessionsCard(
                 .padding(16.dp),
         ) {
             SessionTitleComponent(session, onBookmark)
-            if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus == SessionStatus.Ongoing) {
+            if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus != SessionStatus.Upcoming) {
                 Spacer(modifier = Modifier.height(12.dp))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -152,9 +146,10 @@ fun SessionsCard(
                 if (session.level.isNotBlank()) {
                     SessionTag(tagText = session.level)
                 }
-                if (session.sessionStatus == SessionStatus.Ongoing) {
-                    LiveBadge(modifier = Modifier.align(Alignment.CenterVertically))
-                }
+                SessionStatusLabel(
+                    status = session.sessionStatus,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
             }
 
             if (session.speakers.isNotEmpty()) {
@@ -188,6 +183,18 @@ fun SessionsCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun SessionStatusLabel(
+    status: SessionStatus,
+    modifier: Modifier = Modifier,
+) {
+    when (status) {
+        SessionStatus.Ongoing -> LiveBadge(modifier = modifier)
+        SessionStatus.Past -> SessionTag(tagText = stringResource(R.string.session_ended), modifier = modifier)
+        SessionStatus.Upcoming -> Unit
     }
 }
 

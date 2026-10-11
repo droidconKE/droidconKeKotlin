@@ -211,6 +211,17 @@ public fun com.android254.presentation.common.components.FullscreenDialog(onDism
     - content: STABLE (composable function type)
 
 @Composable
+private fun com.android254.presentation.common.components.LayoutIcon(selected: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>, icon: kotlin.Int, contentDescription: kotlin.String, tint: androidx.compose.ui.graphics.Color): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - selected: STABLE (primitive type)
+    - onClick: STABLE (function type)
+    - icon: STABLE (primitive type)
+    - contentDescription: STABLE (String is immutable)
+    - tint: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.common.components.LayoutIconButtons(isListActive: kotlin.Boolean, onListIconClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, onAgendaIconClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -252,11 +263,11 @@ public fun com.android254.presentation.common.components.LogoTile(logos: kotlinx
     - logoHeight: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.OrganizedBySection(organizationLogos: kotlinx.collections.immutable.ImmutableList<kotlin.String>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.common.components.OrganizedBySection(organizers: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.OrganizerLogo>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
-    - organizationLogos: STABLE (known stable type)
+    - organizers: STABLE (known stable type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
@@ -265,6 +276,14 @@ public fun com.android254.presentation.common.components.SessionPresenterCompone
   restartable: true
   params:
     - speaker: STABLE (class with no mutable properties)
+
+@Composable
+public fun com.android254.presentation.common.components.SessionStatusLabel(status: com.android254.presentation.models.SessionStatus, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - status: STABLE (class with no mutable properties)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.common.components.SessionTag(tagText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, backgroundColor: androidx.compose.ui.graphics.Color): kotlin.Unit

@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
+import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
@@ -38,7 +39,7 @@ sealed interface AboutScreenUiState {
 
     data class Success(
         val teamMembers: ImmutableList<OrganizingTeamMember>,
-        val stakeHoldersLogos: List<String>,
+        val stakeHoldersLogos: List<OrganizerLogo>,
     ) : AboutScreenUiState
 
     data class Error(
@@ -65,7 +66,7 @@ class AboutViewModel
                                 image = it.photo,
                             )
                         }
-                    val stakeholders = organizers.filterNot { it.type == "individual" }.map { it.photo }
+                    val stakeholders = organizers.filterNot { it.type == "individual" }.map { OrganizerLogo(name = it.name, logo = it.photo) }
                     AboutScreenUiState.Success(teamMembers = team.toImmutableList(), stakeHoldersLogos = stakeholders)
                 }.onStart { emit(AboutScreenUiState.Loading) }
                 .catch { emit(AboutScreenUiState.Error(message = "An unexpected error occurred")) }

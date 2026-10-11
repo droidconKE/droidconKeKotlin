@@ -238,6 +238,7 @@ fun SessionListComponent(
                     SessionsCardWithBannerImage(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
+                        onBookmark = { onEvent(SessionsIntentHandler.BookmarkSession(it)) },
                     )
                 }
             }

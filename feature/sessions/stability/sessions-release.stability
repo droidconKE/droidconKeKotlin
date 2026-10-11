@@ -203,14 +203,14 @@ public fun com.android254.presentation.sessions.components.SessionLoadingCompone
     - contentPadding: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionsCardWithBannerImage(session: com.android254.presentation.models.SessionPresentationModel, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.sessions.view.SessionsViewModel): kotlin.Unit
+public fun com.android254.presentation.sessions.components.SessionsCardWithBannerImage(session: com.android254.presentation.models.SessionPresentationModel, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onBookmark: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - session: STABLE (class with no mutable properties)
     - navigateToSessionDetails: STABLE (function type)
+    - onBookmark: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - viewModel: UNSTABLE (has mutable properties or unstable members)
 
 @Composable
 public fun com.android254.presentation.sessions.components.SessionsErrorComponent(errorMessage: kotlin.String, modifier: androidx.compose.ui.Modifier, retry: kotlin.Function0<kotlin.Unit>): kotlin.Unit

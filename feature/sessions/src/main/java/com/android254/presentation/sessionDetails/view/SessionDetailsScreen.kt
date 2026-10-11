@@ -49,6 +49,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,6 +74,7 @@ import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun SessionDetailsRoute(
@@ -98,8 +102,9 @@ internal fun SessionDetailsScreen(
     showTopBar: Boolean = true,
     isTabletop: Boolean = rememberIsTabletopPosture(),
 ) {
+    val paneTitle = (uiState as? SessionDetailsUiState.Success)?.data?.title ?: stringResource(R.string.session_details_label)
     // The scrim draws over the content, so stack it here rather than rely on the caller.
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().semantics { this.paneTitle = paneTitle }) {
         Scaffold(
             // As a pane the bar repeats the title and offers a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick) },

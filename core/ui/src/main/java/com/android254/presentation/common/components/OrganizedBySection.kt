@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.models.OrganizerLogo
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -35,7 +36,7 @@ import kotlinx.collections.immutable.persistentListOf
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OrganizedBySection(
-    organizationLogos: ImmutableList<String>,
+    organizers: ImmutableList<OrganizerLogo>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -51,8 +52,8 @@ fun OrganizedBySection(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.semantics { heading() },
         )
-        AdaptiveEvenGrid(items = organizationLogos, minColumns = 3, minCellWidth = 160.dp) { logo, cellModifier ->
-            LogoTile(logos = persistentListOf(logo), name = "", modifier = cellModifier)
+        AdaptiveEvenGrid(items = organizers, minColumns = 3, minCellWidth = 160.dp) { organizer, cellModifier ->
+            LogoTile(logos = persistentListOf(organizer.logo), name = organizer.name, modifier = cellModifier)
         }
     }
 }

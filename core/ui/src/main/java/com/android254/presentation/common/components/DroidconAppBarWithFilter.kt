@@ -15,27 +15,38 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -61,25 +72,27 @@ fun DroidconAppBarWithFilter(
             modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(windowInsets)
-                .height(64.dp)
-                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
+                .heightIn(min = 64.dp)
+                .padding(horizontal = 20.dp)
                 .testTag("droidcon_topBar_with_Filter"),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showLogo) {
             Image(
                 painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
+                modifier = Modifier.weight(1f, fill = false),
             )
+        } else {
+            Spacer(modifier = Modifier)
         }
-        Spacer(modifier = Modifier.weight(1f))
 
         LayoutIconButtons(
             isListActive = isListActive,
             onListIconClick = onListIconClick,
             onAgendaIconClick = onAgendaIconClick,
         )
-        Spacer(modifier = Modifier.weight(1f))
 
         FilterButton(
             isActive = isFilterActive,
@@ -99,33 +112,52 @@ fun LayoutIconButtons(
     val agendaIconColor = if (!isListActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
-        modifier = modifier,
+        modifier = modifier.selectableGroup(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            modifier =
-                Modifier
-                    .clickable(
-                        onClick = onListIconClick,
-                    ),
-            painter = painterResource(id = R.drawable.ic_listalt),
-            contentDescription = null,
+        LayoutIcon(
+            selected = isListActive,
+            onClick = onListIconClick,
+            icon = R.drawable.ic_listalt,
+            contentDescription = stringResource(id = R.string.list_layout),
             tint = listIconColor,
         )
 
-        Spacer(modifier = Modifier.width(35.dp))
+        Spacer(modifier = Modifier.width(11.dp))
 
-        Icon(
-            modifier =
-                Modifier
-                    .clickable(
-                        onClick = onAgendaIconClick,
-                    ),
-            painter = painterResource(id = R.drawable.ic_view_agenda),
-            contentDescription = null,
+        LayoutIcon(
+            selected = !isListActive,
+            onClick = onAgendaIconClick,
+            icon = R.drawable.ic_view_agenda,
+            contentDescription = stringResource(id = R.string.agenda_layout),
             tint = agendaIconColor,
         )
+    }
+}
+
+@Composable
+private fun LayoutIcon(
+    selected: Boolean,
+    onClick: () -> Unit,
+    @DrawableRes icon: Int,
+    contentDescription: String,
+    tint: Color,
+) {
+    Box(
+        modifier =
+            Modifier
+                .minimumInteractiveComponentSize()
+                .selectable(
+                    selected = selected,
+                    interactionSource = null,
+                    indication = ripple(bounded = false, radius = 24.dp),
+                    role = Role.RadioButton,
+                    onClick = onClick,
+                ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
     }
 }
 
@@ -136,14 +168,14 @@ fun FilterButton(
     onButtonClick: () -> Unit,
 ) {
     val stateColors = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+    val activeState = stringResource(id = R.string.filter_applied)
 
     Row(
         modifier =
             modifier
-                .clickable(
-                    enabled = isActive,
-                    onClick = onButtonClick,
-                ),
+                .minimumInteractiveComponentSize()
+                .clickable(role = Role.Button, onClick = onButtonClick)
+                .semantics { if (isActive) stateDescription = activeState },
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {

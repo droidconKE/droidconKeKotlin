@@ -37,6 +37,9 @@
     <string name="home_banner_call_for_speakers_apply_to_speak_label">Apply to be a speaker</string>
     <string name="view_all_label">View all</string>
     <string name="top_bar_filter">Filter</string>
+    <string name="filter_applied">Filters applied</string>
+    <string name="list_layout">List view</string>
+    <string name="agenda_layout">Agenda view</string>
     <string name="sponsors_title">Sponsors</string>
     <string name="title_filter_level">Level</string>
     <string name="title_filter_session_type">Session type</string>
@@ -67,6 +70,7 @@
     <string name="my_sessions_off">Showing all sessions</string>
     <string name="up_next">Up next</string>
     <string name="live_badge">Live</string>
+    <string name="session_ended">Ended</string>
     <string name="open_session">open session</string>
     <string name="hero_live_room_until">%1$s · until %2$s</string>
     <string name="hero_up_next">Next at %1$s · %2$s</string>
