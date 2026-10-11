@@ -52,8 +52,8 @@ import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.icons.ChaiIcons
-import ke.droidcon.kotlin.chai.R as ChaiR
 import ke.droidcon.kotlin.core.ui.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun FeedRoute(

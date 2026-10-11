@@ -39,8 +39,8 @@ import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
 import com.droidconke.chai.icons.ChaiIcons
-import ke.droidcon.kotlin.chai.R as ChaiR
 import ke.droidcon.kotlin.core.ui.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 /** Scene strategies read the pane metadata, so nothing here branches on window size. */
 @Composable

@@ -70,9 +70,9 @@ import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.icons.ChaiIcons
-import ke.droidcon.kotlin.chai.R as ChaiR
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
+import ke.droidcon.kotlin.chai.R as ChaiR
 
 private val SpeakerColumnMinWidth = 320.dp
 
