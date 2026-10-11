@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.components.LiveBadge
 import com.android254.presentation.common.components.SessionTag
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
@@ -184,15 +185,16 @@ private fun AgendaCell(
     }
 
     val accent = venueAccentColor(session.venue)
+    val isOngoing = session.sessionStatus == SessionStatus.Ongoing
     Column(
         modifier =
             cell
                 .clip(RoundedCornerShape(8.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
                 .border(
-                    width = if (session.sessionStatus == SessionStatus.Ongoing) 1.5.dp else 1.dp,
+                    width = if (isOngoing) 1.5.dp else 1.dp,
                     color =
-                        if (session.sessionStatus == SessionStatus.Ongoing) {
+                        if (isOngoing) {
                             accent
                         } else {
                             MaterialTheme.colorScheme.outlineVariant
@@ -205,10 +207,20 @@ private fun AgendaCell(
         ChaiBodyMediumBold(
             bodyText = session.title,
             textColor = MaterialTheme.colorScheme.primary,
-            maxLines = 3,
+            maxLines = if (isOngoing) 2 else 3,
         )
-        if (session.format.isNotBlank()) {
-            SessionTag(tagText = session.format)
+        if (session.format.isNotBlank() || isOngoing) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (session.format.isNotBlank()) {
+                    SessionTag(tagText = session.format)
+                }
+                if (isOngoing) {
+                    LiveBadge()
+                }
+            }
         }
         session.speakers.firstOrNull()?.let { speaker ->
             ChaiBodyXSmall(

@@ -17,7 +17,8 @@ no longer fails every sync. What is left in §3.10 is small or needs the backend
 
 The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
 system") describes the result. §14 is next. Its contrast audit landed on 2026-10-11 as a test, which
-darkened light `onSurfaceVariant` and both themes' `outline`; what is left is the on-device checks.
+darkened light `onSurfaceVariant` and both themes' `outline`, and session status stopped relying on
+colour. What is left is touch targets, one reduced-motion gap, and the on-device checks.
 
 §14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
 Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
@@ -4043,14 +4044,16 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **Display size** | Largest display size setting doesn't break layouts |
 | **Contrast** | Neon on the hero blue (4.1:1) stays display-size only |
 | **Touch targets** | 48×48 dp minimum; audit every `IconButton` and the bottom nav items |
-| **Colour independence** | Session status (live/upcoming/past) must not be conveyed by colour alone — add an icon or text |
 | **Reduced motion** | Continuous animations respect the setting (§5.4, §12) |
 | **Switch Access / keyboard** | Full traversal without touch |
 | **Screen reader + two-pane** | Pane changes announced on tablet (§4.4) |
 
 The contrast audit has landed as `ChaiColorContrastTest` (see `docs/architecture.md`, "Design
-system"). Colour independence and the touch-target audit are code changes; TalkBack, display
-size, reduced motion, Switch Access and the two-pane announcements need a device.
+system"). Session status no longer relies on colour: past cards say "Ended" rather than dimming
+to 50 %, which also failed contrast, and live agenda cells carry the Live badge. The touch-target
+audit is a code change, and so is reduced motion for `SessionsCard`'s live border, which pulses
+whatever the animator scale; TalkBack, display size, Switch Access and the two-pane announcements
+need a device.
 
 ---
 
@@ -4306,3 +4309,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | 2026-10-05 | Pruned to pending work only. Deleted the landed-work notes at the top, §1.1–1.4, §3.3, §3.4, §3.7, §3.8, most of §4, §9.1–9.2, §16.0 and the struck roadmap rows; git keeps them. Durable facts moved to `docs/architecture.md`, `docs/performance.md`, `AGENTS.md` and `README.md`. §16.1 #5 is no longer struck: the Compose stability configuration (§3.1) never landed. |
 | 2026-10-05 | Recorded the 2026 rebrand and Expressive components: §3.5 and the landed-work block move to `docs/architecture.md`, §5.2 lists only what is left, §5.1 and §5.3 note the Now/Next hero, and §12 is decided on a Compose Canvas cube after reviewing the website's Spline scene. |
 | 2026-10-11 | §14 contrast audit landed as `ChaiColorContrastTest`. It found light `onSurfaceVariant` and both themes' `outline` below AA on the higher container tones; the palette was darkened rather than the threshold relaxed. Removed the §14 test template. |
+| 2026-10-11 | §14 colour independence landed: past session cards show an "Ended" tag instead of 50 % alpha, and ongoing agenda cells show the Live badge. Dropped the row from the §14 table and named the live border's reduced-motion gap. |

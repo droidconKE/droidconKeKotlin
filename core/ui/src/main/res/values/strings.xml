@@ -67,6 +67,7 @@
     <string name="my_sessions_off">Showing all sessions</string>
     <string name="up_next">Up next</string>
     <string name="live_badge">Live</string>
+    <string name="session_ended">Ended</string>
     <string name="open_session">open session</string>
     <string name="hero_live_room_until">%1$s · until %2$s</string>
     <string name="hero_up_next">Next at %1$s · %2$s</string>
