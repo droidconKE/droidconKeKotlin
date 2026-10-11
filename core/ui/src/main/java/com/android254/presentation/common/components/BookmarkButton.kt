@@ -25,9 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +52,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 
 private const val STARRED_SCALE = 1.25f
@@ -120,7 +118,7 @@ fun BookmarkButton(
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = if (isBookmarked) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                imageVector = if (isBookmarked) ChaiIcons.StarRounded else ChaiIcons.StarOutlineRounded,
                 contentDescription = null,
                 tint = if (isBookmarked) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(size * 0.55f),

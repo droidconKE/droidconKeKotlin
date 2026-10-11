@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -53,8 +51,9 @@ import com.android254.presentation.common.insets.plus
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
-import ke.droidcon.kotlin.core.ui.R
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.chai.R as ChaiR
+import ke.droidcon.kotlin.core.ui.R
 
 @Composable
 fun FeedRoute(
@@ -111,7 +110,7 @@ internal fun FeedScreen(
                         contentAlignment = Alignment.Center,
                     ) {
                         EmptyStatePanel(
-                            icon = rememberVectorPainter(Icons.Rounded.Error),
+                            icon = rememberVectorPainter(ChaiIcons.ErrorRounded),
                             message = feedUIState.message,
                             badgeColor = MaterialTheme.colorScheme.errorContainer,
                             iconColor = MaterialTheme.colorScheme.onErrorContainer,

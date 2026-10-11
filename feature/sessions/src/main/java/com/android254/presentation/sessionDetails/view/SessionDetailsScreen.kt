@@ -35,8 +35,6 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Reply
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -74,6 +72,7 @@ import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 
@@ -121,7 +120,7 @@ internal fun SessionDetailsScreen(
                 ) {
                     Icon(
                         modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                        imageVector = Icons.AutoMirrored.Filled.Reply,
+                        imageVector = ChaiIcons.Reply,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                     )

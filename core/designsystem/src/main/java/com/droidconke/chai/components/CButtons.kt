@@ -18,8 +18,6 @@ package com.droidconke.chai.components
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.icons.ChaiIcons
 import com.droidconke.chai.utils.ChaiShapes
 import com.droidconke.chai.utils.SeparatorSpace
 
@@ -183,7 +182,7 @@ private fun CPrimaryOutlinedButtonLightPreview() {
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Outlined.Save,
+            icon = ChaiIcons.SaveOutlined,
         )
     }
 }
@@ -196,7 +195,7 @@ private fun CPrimaryOutlinedButtonDarktPreview() {
             onClick = { },
             title = PREVIEW_OUTLINE_BUTTON_TITLE,
             modifier = Modifier.fillMaxWidth(),
-            icon = Icons.Outlined.Save,
+            icon = ChaiIcons.SaveOutlined,
         )
     }
 }

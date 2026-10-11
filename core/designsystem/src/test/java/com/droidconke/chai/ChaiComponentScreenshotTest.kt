@@ -22,8 +22,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,6 +42,7 @@ import com.droidconke.chai.components.ChaiTextLabelLarge
 import com.droidconke.chai.components.ChaiTextLabelMedium
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import com.droidconke.chai.components.ChaiTitle
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import org.junit.Test
 
@@ -81,7 +80,7 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
                 COutlinedPrimaryButton(
                     onClick = {},
                     title = "Twitter",
-                    icon = Icons.Outlined.Save,
+                    icon = ChaiIcons.SaveOutlined,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

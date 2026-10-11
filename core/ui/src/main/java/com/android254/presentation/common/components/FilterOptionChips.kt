@@ -17,8 +17,6 @@ package com.android254.presentation.common.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -28,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionsFilterOption
+import com.droidconke.chai.icons.ChaiIcons
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -50,7 +49,7 @@ fun FilterOptionChips(
                 label = { Text(text = option.label, style = MaterialTheme.typography.labelMedium) },
                 leadingIcon =
                     if (selected) {
-                        { Icon(Icons.Rounded.Check, contentDescription = null) }
+                        { Icon(ChaiIcons.CheckRounded, contentDescription = null) }
                     } else {
                         null
                     },
