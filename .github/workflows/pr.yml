@@ -158,7 +158,17 @@ jobs:
       # assembleRelease is the only task that exercises R8, so a keep-rule or shrinking
       # regression surfaces here rather than in the release lane after merge.
       - name: Assemble debug and release
-        run: ./gradlew assembleDebug assembleRelease
+        run: ./gradlew assembleDebug assembleRelease :app:bundleRelease
+
+      - name: Check download size against the baseline
+        env:
+          BUNDLETOOL_VERSION: '1.18.3'
+          BUNDLETOOL_SHA256: 'a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29'
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/bundletool.jar" \
+            "https://github.com/google/bundletool/releases/download/$BUNDLETOOL_VERSION/bundletool-all-$BUNDLETOOL_VERSION.jar"
+          echo "$BUNDLETOOL_SHA256  $RUNNER_TEMP/bundletool.jar" | sha256sum -c -
+          BUNDLETOOL_JAR="$RUNNER_TEMP/bundletool.jar" config/size/check-app-size.sh
 
   instrumentation-tests:
     name: Instrumentation (${{ matrix.device }})
