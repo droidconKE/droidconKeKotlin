@@ -127,7 +127,6 @@ dependencies {
     implementation(libs.bundles.navigation3)
     implementation(libs.bundles.coil)
     implementation(libs.compose.activity)
-    implementation(libs.compose.constraintlayout)
     implementation(libs.compose.lifecycle.runtime)
 
     implementation(platform(libs.firebase.bom))

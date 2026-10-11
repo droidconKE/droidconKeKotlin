@@ -43,7 +43,6 @@ coil = "2.7.0"
 activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
-constraintlayout = "1.1.2"
 credentials = "1.6.0"
 googleid = "1.2.1"
 datastore = "1.2.1"
@@ -110,7 +109,6 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-preview-customview = { module = "androidx.customview:customview", version.ref = "preview_customview"}
 compose-preview-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "poolingcontainer"}
-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayout"}
 compose-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
