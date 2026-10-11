@@ -23,8 +23,7 @@ with system animations off. An emulator pass fixed what it found; what is left i
 with no action, two layouts at 200 % font, and a person listening with TalkBack and Switch Access.
 
 §14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
-Compose stability config (§3.1), the size wins (§9.4), the phase-aware home and schedule
-conflicts (§5.3), then the 3D cube (§12).
+size wins (§9.4), the phase-aware home and schedule conflicts (§5.3), then the 3D cube (§12).
 
 ---
 
@@ -100,55 +99,7 @@ The module split is done; [`docs/architecture.md`](architecture.md#modules) has 
 
 ## 3. Phase 0 — Foundations
 
-Most of Phase 0 has landed: the build configuration, the bug fixes (§3.3), edge-to-edge (§3.4), Credential Manager (§3.7) and AGP 9 (§3.8). Those subsections are deleted and their numbers are not reused. What is left is below.
-
-### 3.1 Compose compiler configuration
-
-The Compose compiler plugin's own extension is not configured. `AndroidCompose.kt` still drives
-metrics through `freeCompilerArgs` strings, which is the pre-plugin way of doing it and gives no
-stability configuration at all:
-
-```kotlin
-extensions.configure<ComposeCompilerGradlePluginExtension> {
-    // Compose compiler metrics on demand: -PenableComposeCompilerMetrics=true
-    fun Provider<String>.onlyIfTrue() = flatMap { provider { it.takeIf(String::toBoolean) } }
-    fun Provider<*>.relativeToRootProject(dir: String) = map {
-        isolated.rootProject.projectDirectory.dir("build").dir(projectDir.toRelativeString(rootDir))
-    }.map { it.dir(dir) }
-
-    project.providers.gradleProperty("enableComposeCompilerMetrics").onlyIfTrue()
-        .relativeToRootProject("compose-metrics")
-        .let(metricsDestination::set)
-
-    project.providers.gradleProperty("enableComposeCompilerReports").onlyIfTrue()
-        .relativeToRootProject("compose-reports")
-        .let(reportsDestination::set)
-
-    // Treat presentation models as stable without annotating them everywhere.
-    stabilityConfigurationFiles.add(
-        isolated.rootProject.projectDirectory.file("compose_compiler_config.conf")
-    )
-}
-```
-
-`compose_compiler_config.conf` at the repo root:
-
-```
-# Types the Compose compiler should treat as stable.
-kotlinx.collections.immutable.ImmutableList
-kotlinx.collections.immutable.ImmutableSet
-kotlin.time.Instant
-kotlinx.datetime.LocalDateTime
-com.android254.domain.models.*
-```
-
-This is the cheapest available fix for the 20 `ComposeUnstableCollections` findings and a chunk
-of the 47 non-skippable composables recorded in `docs/static-analysis.md` — the stability file
-moves the needle without touching a call site. The committed `.stability` baselines make the
-before/after measurable.
-
-**Definition of done:** `stabilityDump` shows fewer non-skippable composables than the committed
-baseline, and the diff is reviewed rather than rubber-stamped.
+Most of Phase 0 has landed: the build configuration, the Compose compiler configuration (§3.1), the bug fixes (§3.3), edge-to-edge (§3.4), Credential Manager (§3.7) and AGP 9 (§3.8). Those subsections are deleted and their numbers are not reused. What is left is below.
 
 ### 3.2 Version catalog additions for later phases
 
@@ -2987,9 +2938,9 @@ use is necessary, and measure the removal.
 ./gradlew assembleRelease -PenableComposeCompilerReports=true
 ```
 
-Then read each module's `build/compose-reports/*-composables.txt` for `skippable=false` /
-`restartable=false`. The cheapest fix for most offenders is the stability configuration file in
-§3.1. Also hoist lambdas captured in lazy item content to stable references, so items skip.
+Then read each module's `build/compose-reports/*-classes.txt` for unstable classes that reach a
+composable; `docs/static-analysis.md` ("Compose stability") explains which ones matter. Also hoist
+lambdas captured in lazy item content to stable references, so items skip.
 
 **Coil configuration.** Currently default. Sessions and speakers screens load many remote images:
 
@@ -4138,7 +4089,7 @@ struck row has landed.
 | ~~**2**~~ | ~~Sync follow-ups that need no backend~~ — **done** | — | Transactions, empty-response guard, `isSyncing`, one request builder, stable notification. |
 | ~~**2a**~~ | ~~Feed 404 fails every sync~~ — **done** | — | The API answers 404 for an event with no feed posts; `FeedApi` reads it as an empty list. |
 | ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
-| **5** | Compose compiler stability config | §3.1 | The cheapest fix for the 20 unstable-collection findings and a chunk of the 47 non-skippable composables. No call sites change. Previously struck as done; it never landed. |
+| ~~**5**~~ | ~~Compose compiler stability config~~ — **done 2026-10-12** | — | Metrics on the plugin extension; no config file, because nothing real belonged in it. |
 | ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |
 | **8** | Accessibility audit (Swahili dropped 2026-10-04) | §14 | Independent of the above; can run in parallel by a separate owner. |
 | **9** | Real size wins: `material-icons-extended`, fonts, `constraintlayout-compose` | §9.4 | Measurable against a recorded number. Unlike dead catalog entries, R8 cannot strip these. |
@@ -4189,7 +4140,7 @@ The natural split for a small contributor pool, chosen so people don't collide:
 
 | Track | Owns | Sections |
 | --- | --- | --- |
-| **Foundations** | Build, CI, perf, testing infra | §3.1–3.2, §9, §10.4, §15 |
+| **Foundations** | Build, CI, perf, testing infra | §3.2, §9, §10.4, §15 |
 | **Design system** | `chai`, theme, motion, a11y | §3.5, §5, §10.2, §14 |
 | **Adaptive** | Navigation, layouts, large screen | §4, §11.8 |
 | **AI** | `:core:ai` and its features | §6 |
@@ -4258,7 +4209,6 @@ Quick reference for where the pending changes land.
 
 | Change | File | Section |
 | --- | --- | --- |
-| Stability config | `compose_compiler_config.conf` (new), `build-logic/.../AndroidCompose.kt` | §3.1 |
 | Event slug from Remote Config | `core/network/.../remote/Constants.kt`, `RemoteConfigConfig.kt`, `UrlProvider.kt` | §3.6 |
 
 ### Consolidations
@@ -4338,3 +4288,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | 2026-10-11 | §14 colour independence landed: list cards, banner-image cards (which showed no status) and agenda cells all say "Live" or "Ended"; past cards no longer dim to 50 % alpha. Dropped the row from the §14 table and named the live border's reduced-motion gap. |
 | 2026-10-11 | §14 touch targets and reduced motion closed. The sessions app bar's list and agenda icons became labelled, selectable 48 dp targets, and its filter button, disabled whenever no filter was applied, is always enabled. Infinite transitions already stop with animations off, so the live border was never a gap; `LiveBadge` dropped its settings read. Dropped both rows from the §14 table. |
 | 2026-10-11 | §14 emulator pass: fixed the sessions app bar at large display and font sizes, unlabelled organiser logos, missing detail pane titles, a mislabelled X button and wrapped agenda tags. Display size row closed; TalkBack, font scale and two-pane rows narrowed to what is left; added the dead session share button. |
+| 2026-10-12 | §3.1 landed and its section is deleted. Strong skipping already makes every `Unit` composable skippable, the 20 unstable-collection findings were gone, and no type belonged in a stability file, so the work became: metrics on the Compose plugin extension and `SessionDetailsPresentationModel.speakers` as an `ImmutableList`. Refreshed `docs/static-analysis.md`. |
