@@ -115,29 +115,26 @@ projects end up with baselines.
 From `:app`'s lint run, which has `checkDependencies = true` and therefore sees the whole
 module graph.
 
-**0 errors. 144 warnings. 18 informational.**
+**0 errors. 13 warnings. 29 informational.**
 
 | Rule | Count | What clearing it involves |
 |------|-------|---------------------------|
-| `ComposeModifierMissing` | 48 | Add `modifier: Modifier = Modifier` and apply it to the root layout |
-| `ComposePreviewPublic` | 42 | Make `@Preview` composables private. Mechanical, no call sites |
-| `ComposeParameterOrder` | 34 | Reorder to required, then modifier, then defaulted. Touches call sites |
-| `ComposeUnstableCollections` | 20 | `List` → `ImmutableList`, or mark the holder `@Immutable` |
+| `ComposeModifierMissing` | 5 | Add `modifier: Modifier = Modifier` and apply it to the root layout |
+| `UnusedResources` | 4 | Delete the resource, or use it |
+| `UnusedAttribute` | 2 | Attributes ignored below `minSdk`; harmless, or gate them by API level |
+| `MissingFirebaseInstanceTokenRefresh` | 1 | Handle `onNewToken` in the messaging service |
+| `UseKtx` | 1 | Use the KTX extension lint suggests |
 
-`ComposePreviewPublic` is the cheapest of these by a distance — previews have no call sites,
-so it is 42 edits and no cascade. `ComposeParameterOrder` is the most expensive, because
-every reorder touches everything that calls the composable positionally. Note that clearing
-`ComposeModifierMissing` adds to `ComposeParameterOrder` unless the new parameter is placed
-correctly on the way in.
+Cleared rules are promoted to `error` in `config/lint/lint.xml` so they stay at zero, among them
+`ComposePreviewPublic`, `ComposeUnstableCollections`, `ComposeModifierWithoutDefault` and
+`ComposeViewModelInjection`. `ComposeParameterOrder`
+is at zero but still a warning.
 
-Six rules have been cleared and promoted to `error`, so they stay at zero:
-`ComposeModifierWithoutDefault`, `ComposeModifierReused`, `ComposeMultipleContentEmitters`,
-`ComposeViewModelInjection`, `ComposePreviewNaming` and `ComposeRedundantComposable`.
-
-The 18 informational findings are `IconLocation` (photographic assets in `drawable/` rather
-than a density bucket), `VectorRaster` (full-bleed background vectors larger than the
-200×200 the rule wants from icons), and the Gradle dependency-freshness checks, which are
-Dependabot's job and `./gradlew dependencyUpdates`'s, not lint's.
+The informational findings are `IconLocation` (photographic assets in `drawable/` rather than a
+density bucket), `VectorRaster` (full-bleed background vectors larger than the 200×200 the rule
+wants from icons), `ComposeNonRestartableComposable` and `ComposeReadOnlyComposable` hints, and
+the Gradle dependency-freshness checks, which are Dependabot's job and
+`./gradlew dependencyUpdates`'s, not lint's.
 
 ---
 
@@ -147,19 +144,39 @@ The skydoves plugin dumps every composable's skippability into a checked-in `.st
 file. `stabilityCheck` diffs the current build against it and fails when something that used
 to be skippable stops being.
 
-| Module | Composables | Skippable | Not skippable | Unstable params |
-|--------|-------------|-----------|---------------|-----------------|
-| `chai` | 26 | 24 | 2 | 0 |
-| `app` + `feature:*` | 101 | 54 | 47 | 6 |
+| Module | Composables | Not skippable | Unstable or unknown params |
+|--------|-------------|---------------|----------------------------|
+| `core:designsystem` (chai) | 27 | 3 | 0 |
+| `core:ui` | 54 | 20 | 11 |
+| `app` | 12 | 5 | 10 |
+| `feature:*` | 79 | 3 | 17 |
 
-`chai` is in good shape, which is what you want from a design system — its components are on
-the hot path of every screen. The feature modules have room to move, and the 20
-`ComposeUnstableCollections` findings above are a large part of the same story.
+Strong skipping is on by default, so every composable that returns `Unit` is skippable. The 31
+that are not all return a value (`chaiColorsPalette()`, `rememberLiveSessions()`, the entry
+provider), and Compose never skips those. Skippability is therefore not the number to watch.
+
+An unstable or unknown parameter still matters: strong skipping compares it by instance rather
+than by `equals`, so an equal but new value recomposes. Most of the 38 are harmless. They are
+ViewModels and the navigation controller, which keep one instance, or sealed UI states and
+`NavKey`s, whose implementations the compiler checks at runtime. The stability plugin also
+reports a class from another module as unstable when the compiler resolves it as stable at
+runtime, which is why `HomeState` and `SessionsUiState` appear.
+
+There is no stability configuration file. Every type it could list is either already known
+stable (`ImmutableList`, `ImmutableSet`), not a composable parameter anywhere, or genuinely
+unstable (`Painter`). Fix a real instability in the type instead, as
+`SessionDetailsPresentationModel.speakers` was by becoming an `ImmutableList`.
+
+Compiler metrics and reports are written on demand, per module, under `build/`:
+
+```bash
+./gradlew assembleRelease -PenableComposeCompilerMetrics=true -PenableComposeCompilerReports=true
+```
 
 When a change to stability is deliberate:
 
 ```bash
-./gradlew debugStabilityDump
+./gradlew stabilityDump
 git add '**/stability/*.stability'
 ```
 

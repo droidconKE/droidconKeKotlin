@@ -75,6 +75,7 @@ import com.android254.presentation.sessionDetails.view.components.TopBar
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import ke.droidcon.kotlin.core.ui.R
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun SessionDetailsRoute(
@@ -317,7 +318,7 @@ private fun SessionDetailsScreenPreview() {
                             sessionImageUrl = "",
                             timeSlot = "10:00 - 11:00 AM",
                             speakers =
-                                listOf(
+                                persistentListOf(
                                     SessionDetailsSpeakerPresentationModel(
                                         name = "Todd Jason",
                                         speakerImage = "",

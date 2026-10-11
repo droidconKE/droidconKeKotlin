@@ -15,6 +15,8 @@
  */
 package com.android254.presentation.models
 
+import kotlinx.collections.immutable.ImmutableList
+
 data class SessionDetailsPresentationModel(
     val id: String,
     val title: String,
@@ -28,7 +30,7 @@ data class SessionDetailsPresentationModel(
     val level: String,
     val sessionImageUrl: String?,
     val timeSlot: String,
-    val speakers: List<SessionDetailsSpeakerPresentationModel>,
+    val speakers: ImmutableList<SessionDetailsSpeakerPresentationModel>,
 )
 
 data class SessionDetailsSpeakerPresentationModel(
