@@ -91,7 +91,7 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
     )
 }
 
-fun List<Speaker>.toSessionDetailsSpeaker() =
+fun List<Speaker>.toSessionDetailsSpeaker(): ImmutableList<SessionDetailsSpeakerPresentationModel> =
     map { speaker ->
         SessionDetailsSpeakerPresentationModel(
             speakerImage = speaker.avatar,
@@ -102,7 +102,7 @@ fun List<Speaker>.toSessionDetailsSpeaker() =
                     .lastOrNull()
                     .toString(),
         )
-    }
+    }.toImmutableList()
 
 fun List<Speaker>.toSessionSpeaker(): ImmutableList<SessionSpeakersPresentationModel> =
     map { speaker ->

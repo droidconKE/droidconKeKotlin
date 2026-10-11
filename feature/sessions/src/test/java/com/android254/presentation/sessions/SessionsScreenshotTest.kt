@@ -106,7 +106,7 @@ private fun SessionDetails(showTopBar: Boolean = true) {
                         sessionImageUrl = "",
                         timeSlot = "10:00 - 11:00 AM",
                         speakers =
-                            listOf(
+                            persistentListOf(
                                 SessionDetailsSpeakerPresentationModel(
                                     name = "Todd Jason",
                                     speakerImage = "",

@@ -17,8 +17,12 @@ package com.android254
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureAndroidCompose(
@@ -38,33 +42,24 @@ internal fun Project.configureAndroidCompose(
 
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            freeCompilerArgs.addAll(buildComposeMetricsParameters())
             optIn.add("androidx.compose.material3.ExperimentalMaterial3Api")
             optIn.add("androidx.compose.material3.ExperimentalMaterial3ExpressiveApi")
         }
     }
+
+    pluginManager.withPlugin("org.jetbrains.kotlin.plugin.compose") {
+        extensions.configure<ComposeCompilerGradlePluginExtension> {
+            metricsDestination.set(buildDirWhenEnabled("enableComposeCompilerMetrics", "compose-metrics"))
+            reportsDestination.set(buildDirWhenEnabled("enableComposeCompilerReports", "compose-reports"))
+        }
+    }
 }
 
-private fun Project.buildComposeMetricsParameters(): List<String> {
-    val metricParameters = mutableListOf<String>()
-    val enableMetricsProvider = project.providers.gradleProperty("enableComposeCompilerMetrics")
-    val enableMetrics = (enableMetricsProvider.orNull == "true")
-    if (enableMetrics) {
-        val metricsFolder = project.layout.buildDirectory.dir("compose-metrics").get().asFile
-        metricParameters.add("-P")
-        metricParameters.add(
-            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" + metricsFolder.absolutePath
-        )
-    }
-
-    val enableReportsProvider = project.providers.gradleProperty("enableComposeCompilerReports")
-    val enableReports = (enableReportsProvider.orNull == "true")
-    if (enableReports) {
-        val reportsFolder = project.layout.buildDirectory.dir("compose-reports").get().asFile
-        metricParameters.add("-P")
-        metricParameters.add(
-            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" + reportsFolder.absolutePath
-        )
-    }
-    return metricParameters.toList()
-}
+private fun Project.buildDirWhenEnabled(
+    property: String,
+    dir: String,
+): Provider<Directory> =
+    providers
+        .gradleProperty(property)
+        .filter(String::toBoolean)
+        .flatMap { layout.buildDirectory.dir(dir) }

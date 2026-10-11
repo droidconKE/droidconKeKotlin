@@ -10,7 +10,7 @@ public fun com.android254.presentation.sessionDetails.view.Body(paddingValues: a
   restartable: true
   params:
     - paddingValues: STABLE (marked @Stable or @Immutable)
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -43,7 +43,7 @@ private fun com.android254.presentation.sessionDetails.view.TabletopBody(padding
   restartable: true
   params:
     - paddingValues: STABLE (marked @Stable or @Immutable)
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -62,7 +62,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionBan
   skippable: true
   restartable: true
   params:
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
@@ -78,7 +78,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionSpe
   skippable: true
   restartable: true
   params:
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
@@ -88,7 +88,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionTim
   skippable: true
   restartable: true
   params:
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
@@ -96,7 +96,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionTit
   skippable: true
   restartable: true
   params:
-    - sessionDetails: RUNTIME (requires runtime check)
+    - sessionDetails: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable

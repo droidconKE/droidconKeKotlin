@@ -24,6 +24,7 @@ import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.droidconke.chai.ChaiTheme
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -81,6 +82,6 @@ class TabletopPostureTest {
             level = "Beginner",
             sessionImageUrl = "",
             timeSlot = "10:00 - 11:00 AM",
-            speakers = emptyList(),
+            speakers = persistentListOf(),
         )
 }
