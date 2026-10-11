@@ -59,12 +59,15 @@ fun ChaiBodyXSmallBold(
     modifier: Modifier = Modifier,
     textColor: Color = Color.Unspecified,
     textAlign: TextAlign? = TextAlign.Start,
+    maxLines: Int = Int.MAX_VALUE,
 ) = Text(
     text = bodyText,
     modifier = modifier,
     color = textColor,
     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
     textAlign = textAlign,
+    maxLines = maxLines,
+    overflow = TextOverflow.Ellipsis,
 )
 
 @Composable

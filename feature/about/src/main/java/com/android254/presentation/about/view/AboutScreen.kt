@@ -53,6 +53,7 @@ import com.android254.presentation.common.components.AdaptiveEvenGrid
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -140,7 +141,7 @@ internal fun AboutScreen(
 
                     OrganizedBySection(
                         modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                        organizationLogos = stakeHolderLogos.toImmutableList(),
+                        organizers = stakeHolderLogos.toImmutableList(),
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
@@ -286,16 +287,7 @@ private fun AboutScreenPreview() {
                                 image = "",
                             ),
                         ),
-                    stakeHoldersLogos =
-                        persistentListOf(
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "",
-                        ),
+                    stakeHoldersLogos = List(7) { OrganizerLogo(name = "Organiser ${it + 1}", logo = "") },
                 ),
         )
     }

@@ -57,6 +57,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -116,8 +117,9 @@ internal fun SpeakerDetailsScreen(
     onBookmark: (String) -> Unit = {},
     showTopBar: Boolean = true,
 ) {
+    val paneTitle = (uiState as? SpeakerDetailsScreenUiState.Success)?.speaker?.name ?: stringResource(R.string.speaker_details_label)
     // The scrim draws over the content, so stack it here rather than rely on the caller.
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().semantics { this.paneTitle = paneTitle }) {
         Scaffold(
             // As a pane the bar repeats the name and offers a back arrow out of a visible list.
             topBar = {
@@ -328,7 +330,7 @@ private fun TwitterHandleRow(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_twitter),
-                contentDescription = stringResource(id = R.string.share),
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
             )
             ChaiBodyMedium(

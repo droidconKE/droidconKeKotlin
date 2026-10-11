@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -71,25 +72,27 @@ fun DroidconAppBarWithFilter(
             modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(windowInsets)
-                .height(64.dp)
-                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
+                .heightIn(min = 64.dp)
+                .padding(horizontal = 20.dp)
                 .testTag("droidcon_topBar_with_Filter"),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showLogo) {
             Image(
                 painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
+                modifier = Modifier.weight(1f, fill = false),
             )
+        } else {
+            Spacer(modifier = Modifier)
         }
-        Spacer(modifier = Modifier.weight(1f))
 
         LayoutIconButtons(
             isListActive = isListActive,
             onListIconClick = onListIconClick,
             onAgendaIconClick = onAgendaIconClick,
         )
-        Spacer(modifier = Modifier.weight(1f))
 
         FilterButton(
             isActive = isFilterActive,

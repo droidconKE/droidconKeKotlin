@@ -216,7 +216,7 @@ private fun AgendaCell(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (session.format.isNotBlank()) {
-                    SessionTag(tagText = session.format)
+                    SessionTag(tagText = session.format, modifier = Modifier.weight(1f, fill = false))
                 }
                 SessionStatusLabel(status = session.sessionStatus)
             }

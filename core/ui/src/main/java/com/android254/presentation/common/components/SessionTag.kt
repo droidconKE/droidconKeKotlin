@@ -46,6 +46,7 @@ fun SessionTag(
         ChaiBodyXSmallBold(
             bodyText = tagText.uppercase(),
             textColor = textColor,
+            maxLines = 1,
         )
     }
 }
