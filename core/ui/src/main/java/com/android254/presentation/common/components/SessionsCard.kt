@@ -186,7 +186,6 @@ fun SessionsCard(
     }
 }
 
-/** Status in words, so it never rests on colour alone. Upcoming draws nothing. */
 @Composable
 fun SessionStatusLabel(
     status: SessionStatus,
