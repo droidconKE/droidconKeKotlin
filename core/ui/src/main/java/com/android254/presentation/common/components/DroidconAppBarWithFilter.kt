@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,7 +41,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -119,7 +119,7 @@ fun LayoutIconButtons(
         LayoutIcon(
             selected = isListActive,
             onClick = onListIconClick,
-            painter = painterResource(id = R.drawable.ic_listalt),
+            icon = R.drawable.ic_listalt,
             contentDescription = stringResource(id = R.string.list_layout),
             tint = listIconColor,
         )
@@ -129,7 +129,7 @@ fun LayoutIconButtons(
         LayoutIcon(
             selected = !isListActive,
             onClick = onAgendaIconClick,
-            painter = painterResource(id = R.drawable.ic_view_agenda),
+            icon = R.drawable.ic_view_agenda,
             contentDescription = stringResource(id = R.string.agenda_layout),
             tint = agendaIconColor,
         )
@@ -140,7 +140,7 @@ fun LayoutIconButtons(
 private fun LayoutIcon(
     selected: Boolean,
     onClick: () -> Unit,
-    painter: Painter,
+    @DrawableRes icon: Int,
     contentDescription: String,
     tint: Color,
 ) {
@@ -157,7 +157,7 @@ private fun LayoutIcon(
                 ),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painter = painter, contentDescription = contentDescription, tint = tint)
+        Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
     }
 }
 

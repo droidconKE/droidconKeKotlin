@@ -153,7 +153,7 @@ public fun com.droidconke.chai.components.ChaiBodyXSmall(bodyText: kotlin.String
     - maxLines: STABLE (primitive type)
 
 @Composable
-public fun com.droidconke.chai.components.ChaiBodyXSmallBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?): kotlin.Unit
+public fun com.droidconke.chai.components.ChaiBodyXSmallBold(bodyText: kotlin.String, modifier: androidx.compose.ui.Modifier, textColor: androidx.compose.ui.graphics.Color, textAlign: androidx.compose.ui.text.style.TextAlign?, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -161,6 +161,7 @@ public fun com.droidconke.chai.components.ChaiBodyXSmallBold(bodyText: kotlin.St
     - modifier: STABLE (marked @Stable or @Immutable)
     - textColor: STABLE (marked @Stable or @Immutable)
     - textAlign: STABLE (known stable type)
+    - maxLines: STABLE (primitive type)
 
 @Composable
 public fun com.droidconke.chai.components.ChaiPullToRefreshBox(isRefreshing: kotlin.Boolean, onRefresh: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, state: androidx.compose.material3.pulltorefresh.PullToRefreshState, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.BoxScope, kotlin.Unit>): kotlin.Unit
