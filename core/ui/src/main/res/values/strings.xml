@@ -37,6 +37,9 @@
     <string name="home_banner_call_for_speakers_apply_to_speak_label">Apply to be a speaker</string>
     <string name="view_all_label">View all</string>
     <string name="top_bar_filter">Filter</string>
+    <string name="filter_applied">Filters applied</string>
+    <string name="list_layout">List view</string>
+    <string name="agenda_layout">Agenda view</string>
     <string name="sponsors_title">Sponsors</string>
     <string name="title_filter_level">Level</string>
     <string name="title_filter_session_type">Session type</string>
