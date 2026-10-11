@@ -19,6 +19,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -26,14 +27,22 @@ import ke.droidcon.kotlin.chai.R
 
 private val Montserrat =
     FontFamily(
-        Font(R.font.montserrat_thin, FontWeight.Thin),
-        Font(R.font.montserrat_extra_light, FontWeight.ExtraLight),
-        Font(R.font.montserrat_light, FontWeight.Light),
-        Font(R.font.montserrat_regular, FontWeight.Normal),
-        Font(R.font.montserrat_medium, FontWeight.Medium),
-        Font(R.font.montserrat_semi_bold, FontWeight.SemiBold),
-        Font(R.font.montserrat_bold, FontWeight.Bold),
-        Font(R.font.montserrat_extra_bold, FontWeight.ExtraBold),
+        listOf(
+            FontWeight.Thin,
+            FontWeight.ExtraLight,
+            FontWeight.Light,
+            FontWeight.Normal,
+            FontWeight.Medium,
+            FontWeight.SemiBold,
+            FontWeight.Bold,
+            FontWeight.ExtraBold,
+        ).map { weight ->
+            Font(
+                R.font.montserrat_variable,
+                weight = weight,
+                variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)),
+            )
+        },
     )
 
 // Sizes are chai's own, so the display and headline ramp keeps Material's.
