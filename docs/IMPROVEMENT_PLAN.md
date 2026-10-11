@@ -4041,7 +4041,7 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **TalkBack** | Every screen navigable; every action reachable; no unlabelled controls; reading order logical |
 | **Font scale** | Legible and unclipped at 200%; no fixed-height text containers |
 | **Display size** | Largest display size setting doesn't break layouts |
-| **Contrast** | 4.5:1 for body text, 3:1 for large text — done: `ChaiColorContrastTest` guards every role pair; neon on the hero blue (4.1:1) is display-size only |
+| **Contrast** | Neon on the hero blue (4.1:1) stays display-size only |
 | **Touch targets** | 48×48 dp minimum; audit every `IconButton` and the bottom nav items |
 | **Colour independence** | Session status (live/upcoming/past) must not be conveyed by colour alone — add an icon or text |
 | **Reduced motion** | Continuous animations respect the setting (§5.4, §12) |
@@ -4049,8 +4049,8 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **Screen reader + two-pane** | Pane changes announced on tablet (§4.4) |
 
 The contrast audit has landed as `ChaiColorContrastTest` (see `docs/architecture.md`, "Design
-system"). The rest of the table needs a person with a device: TalkBack, font and display size,
-touch targets, colour independence, reduced motion, Switch Access, and two-pane announcements.
+system"). Colour independence and the touch-target audit are code changes; TalkBack, display
+size, reduced motion, Switch Access and the two-pane announcements need a device.
 
 ---
 
