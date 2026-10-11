@@ -32,7 +32,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,29 +40,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.components.BookmarkButton
+import com.android254.presentation.common.components.SessionStatusLabel
 import com.android254.presentation.common.components.TimeAndVenueComponent
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
-import com.android254.presentation.sessions.view.SessionsViewModel
+import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.components.ChaiBodySmallBold
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.launch
 
 @Composable
 fun SessionsCardWithBannerImage(
     session: SessionPresentationModel,
     navigateToSessionDetails: (sessionId: String) -> Unit,
+    onBookmark: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SessionsViewModel = hiltViewModel(),
 ) {
-    val scope = rememberCoroutineScope()
     Card(
         modifier =
             modifier
@@ -108,17 +105,13 @@ fun SessionsCardWithBannerImage(
                 bodyText = session.title,
                 textColor = MaterialTheme.colorScheme.onSurface,
             )
+            if (session.sessionStatus != SessionStatus.Upcoming) {
+                Spacer(Modifier.height(8.dp))
+                SessionStatusLabel(status = session.sessionStatus)
+            }
             Spacer(Modifier.height(16.dp))
             SpeakerDetailsAndLikeButtonComponent(
-                onBookmarkClicked = {
-                    scope.launch {
-                        if (session.isStarred) {
-                            viewModel.unBookmarkSession(session.id)
-                        } else {
-                            viewModel.bookmarkSession(session.id)
-                        }
-                    }
-                },
+                onBookmarkClicked = { onBookmark(session.id) },
                 isSessionStarred = session.isStarred,
                 speakers = session.speakers,
             )

@@ -18,12 +18,15 @@ package com.android254.presentation.sessions.components
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,6 +75,55 @@ class SessionStatusLabelTest {
 
         composeTestRule.onAllNodesWithText("LIVE").assertCountEquals(0)
         composeTestRule.onAllNodesWithText("ENDED").assertCountEquals(0)
+    }
+
+    private fun showBannerCard(
+        status: SessionStatus,
+        onBookmark: (String) -> Unit = {},
+    ) {
+        composeTestRule.setContent {
+            ChaiTheme {
+                SessionsCardWithBannerImage(
+                    session = session.copy(sessionStatus = status),
+                    navigateToSessionDetails = {},
+                    onBookmark = onBookmark,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `a past banner card says it has ended`() {
+        showBannerCard(SessionStatus.Past)
+
+        composeTestRule.onAllNodesWithText("ENDED").assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("LIVE").assertCountEquals(0)
+    }
+
+    @Test
+    fun `an ongoing banner card says it is live`() {
+        showBannerCard(SessionStatus.Ongoing)
+
+        composeTestRule.onAllNodesWithText("LIVE").assertCountEquals(1)
+        composeTestRule.onAllNodesWithText("ENDED").assertCountEquals(0)
+    }
+
+    @Test
+    fun `an upcoming banner card carries no status label`() {
+        showBannerCard(SessionStatus.Upcoming)
+
+        composeTestRule.onAllNodesWithText("LIVE").assertCountEquals(0)
+        composeTestRule.onAllNodesWithText("ENDED").assertCountEquals(0)
+    }
+
+    @Test
+    fun `starring from a banner card reports the session`() {
+        val starred = mutableListOf<String>()
+        showBannerCard(SessionStatus.Upcoming, onBookmark = { starred += it })
+
+        composeTestRule.onNodeWithContentDescription("Star session").performClick()
+
+        assertEquals(listOf(session.id), starred)
     }
 
     @Test

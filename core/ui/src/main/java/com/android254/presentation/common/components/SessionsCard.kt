@@ -146,11 +146,10 @@ fun SessionsCard(
                 if (session.level.isNotBlank()) {
                     SessionTag(tagText = session.level)
                 }
-                when (session.sessionStatus) {
-                    SessionStatus.Ongoing -> LiveBadge(modifier = Modifier.align(Alignment.CenterVertically))
-                    SessionStatus.Past -> SessionTag(tagText = stringResource(R.string.session_ended))
-                    SessionStatus.Upcoming -> Unit
-                }
+                SessionStatusLabel(
+                    status = session.sessionStatus,
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                )
             }
 
             if (session.speakers.isNotEmpty()) {
@@ -184,6 +183,19 @@ fun SessionsCard(
                 )
             }
         }
+    }
+}
+
+/** Status in words, so it never rests on colour alone. Upcoming draws nothing. */
+@Composable
+fun SessionStatusLabel(
+    status: SessionStatus,
+    modifier: Modifier = Modifier,
+) {
+    when (status) {
+        SessionStatus.Ongoing -> LiveBadge(modifier = modifier)
+        SessionStatus.Past -> SessionTag(tagText = stringResource(R.string.session_ended), modifier = modifier)
+        SessionStatus.Upcoming -> Unit
     }
 }
 

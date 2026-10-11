@@ -4049,8 +4049,9 @@ Beyond §5.6's semantics work, the things that need explicit verification:
 | **Screen reader + two-pane** | Pane changes announced on tablet (§4.4) |
 
 The contrast audit has landed as `ChaiColorContrastTest` (see `docs/architecture.md`, "Design
-system"). Session status no longer relies on colour: past cards say "Ended" rather than dimming
-to 50 %, which also failed contrast, and live agenda cells carry the Live badge. The touch-target
+system"). Session status no longer relies on colour: past cards in both layouts say "Ended"
+rather than dimming to 50 %, which also failed contrast, and the banner layout and live agenda
+cells carry the Live badge. The touch-target
 audit is a code change, and so is reduced motion for `SessionsCard`'s live border, which pulses
 whatever the animator scale; TalkBack, display size, Switch Access and the two-pane announcements
 need a device.
@@ -4309,4 +4310,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | 2026-10-05 | Pruned to pending work only. Deleted the landed-work notes at the top, §1.1–1.4, §3.3, §3.4, §3.7, §3.8, most of §4, §9.1–9.2, §16.0 and the struck roadmap rows; git keeps them. Durable facts moved to `docs/architecture.md`, `docs/performance.md`, `AGENTS.md` and `README.md`. §16.1 #5 is no longer struck: the Compose stability configuration (§3.1) never landed. |
 | 2026-10-05 | Recorded the 2026 rebrand and Expressive components: §3.5 and the landed-work block move to `docs/architecture.md`, §5.2 lists only what is left, §5.1 and §5.3 note the Now/Next hero, and §12 is decided on a Compose Canvas cube after reviewing the website's Spline scene. |
 | 2026-10-11 | §14 contrast audit landed as `ChaiColorContrastTest`. It found light `onSurfaceVariant` and both themes' `outline` below AA on the higher container tones; the palette was darkened rather than the threshold relaxed. Removed the §14 test template. |
-| 2026-10-11 | §14 colour independence landed: past session cards show an "Ended" tag instead of 50 % alpha, and ongoing agenda cells show the Live badge. Dropped the row from the §14 table and named the live border's reduced-motion gap. |
+| 2026-10-11 | §14 colour independence landed: past session cards show an "Ended" tag instead of 50 % alpha, and the banner-image card (which showed no status) and ongoing agenda cells show the Live badge. Dropped the row from the §14 table and named the live border's reduced-motion gap. |
