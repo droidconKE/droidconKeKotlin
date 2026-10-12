@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessions.view
 
-import com.android254.domain.models.Session
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
@@ -27,6 +26,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import ke.droidcon.kotlin.core.testing.FakeSyncWorkManager
+import ke.droidcon.kotlin.core.testing.testSession
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -239,26 +239,5 @@ class SessionsViewModelTest {
         eventDay: String,
         start: String,
         end: String,
-    ) = Session(
-        id = id,
-        endDateTime = "",
-        endTime = "",
-        isBookmarked = true,
-        isKeynote = false,
-        isServiceSession = false,
-        sessionImage = null,
-        startDateTime = "",
-        startTime = "",
-        rooms = "",
-        speakers = emptyList(),
-        remoteId = id,
-        description = "",
-        sessionFormat = "",
-        sessionLevel = "",
-        slug = "",
-        title = id,
-        eventDay = eventDay,
-        startInstant = Instant.parse(start),
-        endInstant = Instant.parse(end),
-    )
+    ) = testSession(id, Instant.parse(start), Instant.parse(end), starred = true, eventDay = eventDay)
 }

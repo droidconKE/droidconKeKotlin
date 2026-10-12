@@ -27,6 +27,7 @@ import com.android254.presentation.models.speakersDummyData
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.LocalDate
 import org.junit.Test
 
 class HomeScreenshotTest : ChaiScreenshotTest() {
@@ -45,7 +46,7 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
         captureScreen("screens/home_before") {
             Home(
                 hero = HomeHero.Countdown(daysUntil = 12),
-                agenda = HomeAgenda(AgendaDay.On("Friday 6 November"), persistentListOf()),
+                agenda = HomeAgenda(AgendaDay.On(LocalDate(2026, 11, 6)), persistentListOf()),
             )
         }
 

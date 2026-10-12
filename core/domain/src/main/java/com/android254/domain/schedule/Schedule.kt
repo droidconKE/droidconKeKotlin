@@ -41,7 +41,10 @@ fun List<Session>.conferencePhase(
     }
 }
 
-/** The day whose plan matters next: today until its last session ends, then the next event day. */
+/**
+ * The day whose plan matters next: today until its last session ends, then the next event day.
+ * Never earlier than today, so a session running past midnight does not pull the agenda back.
+ */
 fun List<Session>.agendaDay(
     now: Instant,
     zone: TimeZone,
@@ -50,6 +53,7 @@ fun List<Session>.agendaDay(
         .filter { it.end > now }
         .minOfOrNull { it.start }
         ?.dateIn(zone)
+        ?.let { maxOf(it, now.dateIn(zone)) }
 
 fun List<Session>.starredOn(
     day: LocalDate,

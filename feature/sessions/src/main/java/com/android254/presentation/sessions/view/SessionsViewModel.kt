@@ -112,7 +112,7 @@ class SessionsViewModel
                         clashes =
                             sessionsInformation.sessions
                                 .scheduleConflicts()
-                                .filter { it.first.eventDay == _selectedEventDay.value.value }
+                                .filter { _selectedEventDay.value.value in setOf(it.first.eventDay, it.second.eventDay) }
                                 .map { SessionClash(it.first.title, it.second.title) }
                                 .toImmutableList(),
                     )

@@ -17,16 +17,19 @@ package com.android254.presentation.home.viewmodel
 
 import com.android254.domain.models.Home
 import com.android254.domain.repos.HomeRepo
+import com.android254.presentation.home.viewstate.HomeHero
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import ke.droidcon.kotlin.core.testing.FakeSyncWorkManager
+import ke.droidcon.kotlin.core.testing.testSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
@@ -38,6 +41,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Test
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
@@ -83,5 +87,30 @@ class HomeViewModelTest {
             advanceUntilIdle()
 
             coVerify { syncDataWorkManagerMock.startSync() }
+        }
+
+    @Test
+    fun `the hero counts down as the clock ticks over midnight, with no new data`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+            var now = Instant.parse("2026-11-04T23:59:30+03:00")
+            val clock =
+                object : Clock {
+                    override fun now() = now
+                }
+            val keynote = testSession("keynote", Instant.parse("2026-11-06T09:00:00+03:00"), Instant.parse("2026-11-06T10:00:00+03:00"))
+            coEvery { homeRepo.fetchHomeDetails() } returns flowOf(Home(sessions = listOf(keynote)))
+
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, TimeZone.of("Africa/Nairobi"), testDispatcher)
+            val job = launch { viewModel.viewState.collect() }
+            runCurrent()
+            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 2) as HomeHero))
+
+            now = Instant.parse("2026-11-05T00:00:31+03:00")
+            advanceTimeBy(60_001)
+            runCurrent()
+            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 1) as HomeHero))
+            job.cancel()
         }
 }

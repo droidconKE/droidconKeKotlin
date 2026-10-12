@@ -83,6 +83,14 @@ public fun com.android254.presentation.home.components.HomeSectionHeaderComponen
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+public fun com.android254.presentation.home.components.HomeSectionTitle(text: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.home.components.HomeSessionContent(session: com.android254.presentation.models.SessionPresentationModel, onSessionClick: kotlin.Function1<@[ParameterName(name = \, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
