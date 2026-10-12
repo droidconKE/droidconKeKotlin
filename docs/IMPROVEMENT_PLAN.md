@@ -8,13 +8,12 @@
 
 ---
 
-## Next up — §14, then §5.3
+## Next up — §14, then §12
 
 What is left of the accessibility audit (§14) is a listening pass by a person: TalkBack, Switch
 Access and a keyboard, on a phone and in two panes. It can run alongside anything else.
 
-The next engineering item is the phase-aware home and schedule conflicts (§5.3), then the 3D cube
-(§12).
+The next engineering item is the 3D cube (§12).
 
 ---
 
@@ -51,7 +50,7 @@ The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the piec
 
 ### 1.5 Findings — architecture
 
-**A5 — Domain models carry transport types.** `Session.startDateTime: String`, `endDateTime: String`, `startTime: String`, `endTime: String` — four string fields where two `Instant`s belong. Parsing is spread across the data-layer `SessionMapper`, `SessionsManager`, the presentation `SessionMapper` in `core:ui`, `DateAndTimeUtils` and `SessionsViewModel`. Timezone handling is implicit.
+**A5 — Domain models carry transport types.** `Session` now carries `startInstant` and `endInstant`, read from the timestamps Room already stores, and the schedule logic in `core/domain` uses them. The four string fields (`startDateTime`, `endDateTime`, `startTime`, `endTime`) are still there, and the presentation `SessionMapper` in `core:ui`, `DateAndTimeUtils`, `SessionsManager` and the event-day filter still parse or compare them. Move those to the instants, then drop the strings.
 
 **A6 — No end-to-end tests.** The only instrumented test is `SessionMapperInstrumentedTest`. Nothing launches the app and walks a user journey. (§10.3)
 
@@ -258,8 +257,8 @@ Not more animation. The conference apps people remember are the ones that answer
 
 Everything in this phase serves one of those four. Anything that doesn't is decoration, and decoration is what makes conference apps feel like brochures.
 
-Home's Now/Next hero answers question 1. Questions 2 to 4 are open: conflicts (§5.3), speaker
-cross-links, and the ticket (§7).
+Home's Now/Next hero answers question 1, and home's agenda and the sessions screen's clash
+banner answer question 2. Questions 3 and 4 are open: speaker cross-links, and the ticket (§7).
 
 ### 5.2 Material 3 Expressive — what is left
 
@@ -271,103 +270,22 @@ cross-links, and the ticket (§7).
 - **The material3 pin.** Remove the `version.ref` once a BOM manages a stable 1.5.0 (see
   `AGENTS.md`).
 
-### 5.3 The home screen, rethought
+### 5.3 The home screen — what is left
 
-Home is a hero (Now/Next while a session is live, a welcome otherwise), then sessions, speakers and sponsors. It's a directory. During the conference it should be a **dashboard**.
+Home changes with the conference: a countdown before it, today's or the next day's starred
+sessions with clashes named, and a thank-you with a feedback link after it.
+`docs/architecture.md` ("Presentation") describes how. What it does not do yet, each waiting on
+another piece:
 
-Proposed structure, with content that changes by conference phase:
+| Phase | Missing | Waits on |
+| --- | --- | --- |
+| Before | Ticket status | §7 |
+| During | The live feed | A decision on how much feed belongs on home |
+| During, off hours | A "rate today's sessions" prompt | §11.5 |
+| After | Personal recap, recordings, "what you missed" | §6.11, and question 6 in §17.2 |
 
-```kotlin
-sealed interface ConferencePhase {
-    data class BeforeEvent(val daysUntil: Int) : ConferencePhase
-    data class DuringEvent(val day: Int, val isSessionHours: Boolean) : ConferencePhase
-    data object AfterEvent : ConferencePhase
-}
-```
-
-| Phase | Home screen leads with |
-| --- | --- |
-| **Before** | Countdown, "build your agenda" CTA, speaker highlights, ticket status |
-| **During, session hours** | **Now / Next card** (biggest element on screen), then *your* starred day, then live feed |
-| **During, off hours** | Tomorrow's starred sessions, "rate today's sessions" prompt, social feed |
-| **After** | Personal recap (§6.11), session recordings, "what you missed", feedback prompt |
-
-```kotlin
-@Composable
-fun HomeScreen(viewState: HomeViewState, /* … */) {
-    LazyColumn(
-        contentPadding = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom).asPaddingValues(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        when (val phase = viewState.conferencePhase) {
-            is ConferencePhase.DuringEvent -> {
-                // The single most important element in the app during the conference.
-                item(key = "now-next") {
-                    NowAndNextCard(
-                        current = viewState.currentSession,
-                        next = viewState.nextSession,
-                        onSessionClick = onSessionClicked,
-                        onDirectionsClick = onDirectionsClicked,
-                    )
-                }
-                item(key = "my-day") {
-                    MyDayTimeline(
-                        sessions = viewState.myStarredSessionsToday,
-                        conflicts = viewState.scheduleConflicts,
-                        onSessionClick = onSessionClicked,
-                    )
-                }
-            }
-            is ConferencePhase.BeforeEvent -> {
-                item(key = "countdown") { CountdownHero(daysUntil = phase.daysUntil) }
-                item(key = "build-agenda") { BuildYourAgendaCta(starredCount = viewState.starredCount) }
-            }
-            ConferencePhase.AfterEvent -> {
-                item(key = "recap") { PersonalRecapCard(recap = viewState.recap) }
-            }
-        }
-
-        item(key = "speakers") { HomeSpeakersSection(/* … */) }
-        item(key = "sponsors") { SponsorsSection(/* … */) }
-    }
-}
-```
-
-**Schedule-conflict detection** is a small change with outsized value — nobody else's conference app does it well:
-
-```kotlin
-// domain/src/main/java/com/android254/domain/usecase/DetectScheduleConflictsUseCase.kt
-
-class DetectScheduleConflictsUseCase @Inject constructor(
-    private val sessionsRepo: SessionsRepo,
-) {
-    /**
-     * Two starred sessions conflict when their time ranges overlap by more than
-     * [minOverlap]. A 1-minute overlap from back-to-back rounding isn't a conflict.
-     */
-    operator fun invoke(minOverlap: Duration = 5.minutes): Flow<List<ScheduleConflict>> =
-        sessionsRepo.fetchSessions()
-            .map { sessions -> sessions.filter { it.isBookmarked } }
-            .map { starred ->
-                starred
-                    .sortedBy { it.startInstant }
-                    .zipWithNext()
-                    .mapNotNull { (a, b) ->
-                        val overlap = minOf(a.endInstant, b.endInstant) - b.startInstant
-                        if (overlap >= minOverlap) ScheduleConflict(a, b, overlap) else null
-                    }
-            }
-            .distinctUntilChanged()
-}
-
-data class ScheduleConflict(
-    val first: Session,
-    val second: Session,
-    val overlap: Duration,
-)
-```
-
-Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.7): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
+The clash banner on the sessions screen shows while clashes exist and cannot be dismissed.
+Dismissing it needs the dismissed pairs stored, so an unstarred and re-starred pair warns again.
 
 ### 5.5 Session notes
 
@@ -1134,7 +1052,7 @@ data class AgendaSummary(
     val overview: String,
     /** The 3–5 themes their picks cluster around, most represented first. */
     val themes: List<String>,
-    /** Human-readable clash warnings, from DetectScheduleConflictsUseCase. */
+    /** Human-readable clash warnings, from `scheduleConflicts()` in `core/domain`. */
     val conflicts: List<ConflictNote>,
     /** Sessions they haven't starred that fit their themes. Max 3. */
     val suggestions: List<Suggestion>,
@@ -3702,8 +3620,7 @@ Ranked. Higher items are either prerequisites for lower ones, or buy more per un
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
 | **1** | Accessibility listening pass | §14 | Needs a person, not a contributor slot; can run in parallel with anything. |
-| **2** | Phase-aware home and schedule conflicts | §5.3 | Answers question 2 of §5.1, and the hero already has the slot. |
-| **3** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
+| **2** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
 
 Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
