@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,15 +38,19 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconWindowSize
+import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
 import com.android254.presentation.common.components.LiveBadge
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.hero.CubeHero
 import ke.droidcon.kotlin.core.ui.R
 
 internal const val LARGE_FONT_SCALE = 1.5f
+private val HeroCubeHeight = 200.dp
 private const val HERO_MAX_LINES = 5
 
 @Composable
@@ -56,16 +61,10 @@ fun HomeHeaderSectionComponent(
     nextSession: SessionPresentationModel? = null,
     onSessionClick: (String) -> Unit = {},
     onFeedbackClick: () -> Unit = {},
+    showCube: Boolean = false,
+    animateCube: Boolean = true,
 ) {
-    val palette = MaterialTheme.chaiColorsPalette
     val featured = liveSession
-    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
-    val displayStyle =
-        if (featured != null && !largeFont) {
-            MaterialTheme.typography.headlineMediumEmphasized
-        } else {
-            MaterialTheme.typography.titleLargeEmphasized
-        }
     val action: (() -> Unit)? =
         when {
             featured != null -> ({ onSessionClick(featured.id) })
@@ -73,13 +72,13 @@ fun HomeHeaderSectionComponent(
             else -> null
         }
     val actionLabel = if (featured != null) stringResource(R.string.open_session) else stringResource(R.string.hero_thank_you_action)
-    Column(
+    Row(
         modifier =
             modifier
                 .testTag("home_header")
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.extraLarge)
-                .background(palette.heroContainerColor)
+                .background(MaterialTheme.chaiColorsPalette.heroContainerColor)
                 .then(
                     if (action != null) {
                         Modifier.clickable(onClickLabel = actionLabel, role = Role.Button, onClick = action)
@@ -87,8 +86,35 @@ fun HomeHeaderSectionComponent(
                         Modifier
                     },
                 ).padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
+        HeroText(hero, liveSession, nextSession, Modifier.weight(1f))
+        if (showCube && rememberDroidconWindowSize() != DroidconWindowSize.Compact) {
+            CubeHero(
+                animate = animateCube,
+                modifier = Modifier.weight(1f).height(HeroCubeHeight).testTag("cube_hero"),
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeroText(
+    hero: HomeHero,
+    liveSession: SessionPresentationModel?,
+    nextSession: SessionPresentationModel?,
+    modifier: Modifier = Modifier,
+) {
+    val palette = MaterialTheme.chaiColorsPalette
+    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
+    val displayStyle =
+        if (liveSession != null && !largeFont) {
+            MaterialTheme.typography.headlineMediumEmphasized
+        } else {
+            MaterialTheme.typography.titleLargeEmphasized
+        }
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         if (liveSession != null) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 LiveBadge()
@@ -96,10 +122,10 @@ fun HomeHeaderSectionComponent(
             }
         }
         Text(
-            text = featured?.title ?: hero.title(),
+            text = liveSession?.title ?: hero.title(),
             style = displayStyle,
             color = palette.heroContentColor,
-            maxLines = if (featured != null) HERO_MAX_LINES else Int.MAX_VALUE,
+            maxLines = if (liveSession != null) HERO_MAX_LINES else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.semantics { heading() },
         )

@@ -33,6 +33,7 @@ data class HomeState(
     val isSyncing: Boolean = true,
     val hero: HomeHero = HomeHero.Welcome,
     val agenda: HomeAgenda? = null,
+    val showCube: Boolean = false,
 )
 
 /** What the hero says when no session is live. */

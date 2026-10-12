@@ -58,6 +58,7 @@ import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
+import com.droidconke.chai.hero.CubeHero
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -80,6 +81,7 @@ fun AboutRoute(
 internal fun AboutScreen(
     uiState: AboutScreenUiState,
     navigateToFeedbackScreen: () -> Unit = {},
+    animateCube: Boolean = true,
 ) {
     Scaffold(
         topBar = {
@@ -123,6 +125,17 @@ internal fun AboutScreen(
                         .verticalScroll(rememberScrollState())
                         .testTag("about_screen"),
                 ) {
+                    if (uiState.showCube) {
+                        CubeHero(
+                            animate = animateCube,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(CubeHeight)
+                                    .padding(vertical = 16.dp)
+                                    .testTag("cube_hero"),
+                        )
+                    }
                     AboutDroidconSection(
                         droidconDesc = stringResource(id = R.string.about_droidcon),
                     )
@@ -298,3 +311,5 @@ private const val TEAM_IMAGE_ASPECT_RATIO = 824f / 470f
 private val TeamGridGap = 16.dp
 private val TeamCellMinWidth = 104.dp
 private const val MIN_TEAM_COLUMNS = 3
+
+private val CubeHeight = 240.dp

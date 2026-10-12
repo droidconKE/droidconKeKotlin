@@ -83,10 +83,12 @@ private fun Home(
                 isSyncing = false,
                 hero = hero,
                 agenda = agenda,
+                showCube = true,
             ),
         isSyncing = false,
         liveSession = liveIndex?.let(fakeSessions::get),
         nextSession = nextIndex?.let(fakeSessions::get),
+        animateCube = false,
     )
 }
 

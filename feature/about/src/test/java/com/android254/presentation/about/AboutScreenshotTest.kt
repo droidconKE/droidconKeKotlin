@@ -62,6 +62,8 @@ private fun About() {
                         ),
                     ),
                 stakeHoldersLogos = emptyList(),
+                showCube = true,
             ),
+        animateCube = false,
     )
 }

@@ -17,6 +17,7 @@ package com.android254.presentation.about.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.models.Organizer
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.presentation.models.OrganizerLogo
@@ -40,6 +41,7 @@ sealed interface AboutScreenUiState {
     data class Success(
         val teamMembers: ImmutableList<OrganizingTeamMember>,
         val stakeHoldersLogos: List<OrganizerLogo>,
+        val showCube: Boolean = false,
     ) : AboutScreenUiState
 
     data class Error(
@@ -52,6 +54,7 @@ class AboutViewModel
     @Inject
     constructor(
         private val organizersRepo: OrganizersRepo,
+        private val featureFlags: FeatureFlags,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         val uiState =
@@ -67,7 +70,11 @@ class AboutViewModel
                             )
                         }
                     val stakeholders = organizers.filterNot { it.type == "individual" }.map { OrganizerLogo(name = it.name, logo = it.photo) }
-                    AboutScreenUiState.Success(teamMembers = team.toImmutableList(), stakeHoldersLogos = stakeholders)
+                    AboutScreenUiState.Success(
+                        teamMembers = team.toImmutableList(),
+                        stakeHoldersLogos = stakeholders,
+                        showCube = featureFlags.isCubeHeroEnabled,
+                    )
                 }.onStart { emit(AboutScreenUiState.Loading) }
                 .catch { emit(AboutScreenUiState.Error(message = "An unexpected error occurred")) }
                 .flowOn(ioDispatcher)
