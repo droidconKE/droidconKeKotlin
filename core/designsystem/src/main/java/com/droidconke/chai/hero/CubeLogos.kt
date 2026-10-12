@@ -15,42 +15,90 @@
  */
 package com.droidconke.chai.hero
 
+import androidx.compose.ui.graphics.Color
+import com.droidconke.chai.colors.CubeAiInk
+import com.droidconke.chai.colors.CubeDroidconInk
+import com.droidconke.chai.colors.CubeDroidconWordInk
+import com.droidconke.chai.colors.CubeFlutterInk
+import com.droidconke.chai.colors.CubeFlutterShadeInk
+import com.droidconke.chai.colors.CubeKotlinInk
+import com.droidconke.chai.colors.CubeReactInk
+import com.droidconke.chai.colors.CubeSwiftInk
+
+/** A horizontal run of one ink across a sticker, in logo pixels: [row], from [start] until [end]. */
+internal class LogoRun(
+    val color: Color,
+    val row: Int,
+    val start: Int,
+    val end: Int,
+)
+
 /**
  * The pixel logo on each face, [SIZE] pixels square, so each sticker carries a [TILE]-pixel ninth.
- * `#` is the face's main ink and `o` its second; see `cubeLogoInk`.
+ * In the grids, `#` is a face's main ink and `o` its second.
  */
-object CubeLogos {
+internal object CubeLogos {
     const val SIZE = 18
     const val TILE = SIZE / 3
 
-    /** 0 for bare tile, 1 or 2 for an ink, at [column] and [row] of [face]'s logo. */
-    fun ink(
+    /** The runs to paint on the sticker showing [tileColumn] and [tileRow] of [face]'s logo. */
+    fun runs(
         face: CubeFace,
-        column: Int,
-        row: Int,
-    ): Int = inks[face]?.get(row * SIZE + column) ?: 0
+        tileColumn: Int,
+        tileRow: Int,
+    ): List<LogoRun> = tiles[face.ordinal * TILES + tileRow * 3 + tileColumn]
 
-    private val inks: Map<CubeFace, IntArray> =
+    private const val TILES = 9
+
+    private val logos: Map<CubeFace, Logo> =
         mapOf(
-            CubeFace.Front to DROIDCON,
-            CubeFace.Right to FLUTTER,
-            CubeFace.Up to REACT,
-            CubeFace.Back to KOTLIN,
-            CubeFace.Left to SWIFT,
-            CubeFace.Down to AI,
-        ).mapValues { (_, rows) -> parse(rows) }
+            CubeFace.Right to Logo(FLUTTER, CubeFlutterInk, CubeFlutterShadeInk),
+            CubeFace.Left to Logo(SWIFT, CubeSwiftInk),
+            CubeFace.Up to Logo(REACT, CubeReactInk),
+            CubeFace.Down to Logo(AI, CubeAiInk),
+            CubeFace.Front to Logo(DROIDCON, CubeDroidconInk, CubeDroidconWordInk),
+            CubeFace.Back to Logo(KOTLIN, CubeKotlinInk),
+        )
 
-    private fun parse(rows: String): IntArray {
-        val lines = rows.trimIndent().lines()
-        require(lines.size == SIZE && lines.all { it.length == SIZE }) { "Logos are $SIZE pixels square" }
-        return IntArray(SIZE * SIZE) { i ->
-            when (lines[i / SIZE][i % SIZE]) {
-                '#' -> 1
-                'o' -> 2
-                else -> 0
-            }
+    private val tiles: List<List<LogoRun>> =
+        CubeFace.entries.flatMap { face ->
+            val logo = logos[face]
+            List(TILES) { tile -> if (logo == null) emptyList() else tileRuns(logo, tile % 3, tile / 3) }
         }
+
+    private fun tileRuns(
+        logo: Logo,
+        tileColumn: Int,
+        tileRow: Int,
+    ): List<LogoRun> {
+        val lines = logo.rows.trimIndent().lines()
+        require(lines.size == SIZE && lines.all { it.length == SIZE }) { "Logos are $SIZE pixels square" }
+
+        fun inkAt(
+            column: Int,
+            row: Int,
+        ) = lines[tileRow * TILE + row][tileColumn * TILE + column]
+        return buildList {
+            for (row in 0 until TILE) {
+                var column = 0
+                while (column < TILE) {
+                    val ink = inkAt(column, row)
+                    val start = column
+                    while (column < TILE && inkAt(column, row) == ink) column++
+                    when (ink) {
+                        '#' -> add(LogoRun(logo.ink, row, start, column))
+                        'o' -> add(LogoRun(logo.secondInk, row, start, column))
+                    }
+                }
+            }
+        }.sortedBy { it.color != logo.ink }
     }
+
+    private class Logo(
+        val rows: String,
+        val ink: Color,
+        val secondInk: Color = ink,
+    )
 }
 
 private const val DROIDCON =

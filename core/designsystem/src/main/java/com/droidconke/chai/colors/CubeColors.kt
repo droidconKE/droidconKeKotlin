@@ -26,22 +26,16 @@ import com.droidconke.chai.atoms.ChaiPink500
 import com.droidconke.chai.atoms.ChaiPurple400
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.atoms.ChaiYellow400
-import com.droidconke.chai.hero.CubeFace
 
-/** Fixed in both themes: neon logos on black tiles, as on the conference site. */
-fun cubeLogoInk(
-    face: CubeFace,
-    ink: Int,
-): Color =
-    when (face) {
-        CubeFace.Front -> if (ink == 1) ChaiGreen500 else ChaiWhite
-        CubeFace.Right -> if (ink == 1) ChaiCyan400 else ChaiBlue700
-        CubeFace.Up -> ChaiYellow400
-        CubeFace.Back -> ChaiGreen500
-        CubeFace.Left -> ChaiPink500
-        CubeFace.Down -> ChaiPurple400
-        CubeFace.Inner -> ChaiBlack
-    }
+// The cube hero's logos: neon on black tiles, as on the conference site, the same in both themes.
+val CubeDroidconInk: Color = ChaiGreen500
+val CubeDroidconWordInk: Color = ChaiWhite
+val CubeFlutterInk: Color = ChaiCyan400
+val CubeFlutterShadeInk: Color = ChaiBlue700
+val CubeReactInk: Color = ChaiYellow400
+val CubeKotlinInk: Color = ChaiGreen500
+val CubeSwiftInk: Color = ChaiPink500
+val CubeAiInk: Color = ChaiPurple400
 
 val CubeTileColor: Color = ChaiBlack
 

@@ -16,7 +16,7 @@
 package com.droidconke.chai.hero
 
 /** A whole-number vector: cubelet positions and orientations stay on the grid between turns. */
-data class Vec3(
+internal data class Vec3(
     val x: Int,
     val y: Int,
     val z: Int,
@@ -48,10 +48,10 @@ data class Vec3(
     }
 }
 
-enum class Axis { X, Y, Z }
+internal enum class Axis { X, Y, Z }
 
 /** One outer layer turned a quarter, clockwise as seen from outside that face. */
-data class CubeMove(
+internal data class CubeMove(
     val axis: Axis,
     val layer: Int,
     val clockwise: Boolean,
@@ -75,10 +75,10 @@ data class CubeMove(
     }
 }
 
-fun List<CubeMove>.inverse(): List<CubeMove> = reversed().map(CubeMove::inverse)
+internal fun List<CubeMove>.inverse(): List<CubeMove> = reversed().map(CubeMove::inverse)
 
 /** [right] and [up] are where the cubelet's own x and y axes point now. */
-data class Cubelet(
+internal data class Cubelet(
     val home: Vec3,
     val position: Vec3 = home,
     val right: Vec3 = Vec3.UnitX,
@@ -94,7 +94,7 @@ data class Cubelet(
         )
 }
 
-data class CubeState(
+internal data class CubeState(
     val cubelets: List<Cubelet>,
 ) {
     val isSolved: Boolean
@@ -115,7 +115,7 @@ data class CubeState(
 }
 
 /** Twelve quarter turns, played from the scrambled cube to the solved one. */
-val SignatureSolve: List<CubeMove> =
+internal val SignatureSolve: List<CubeMove> =
     with(CubeMove) {
         listOf(R, U, R.inverse(), U.inverse(), F, R, F.inverse(), L, D, B.inverse(), U, L.inverse())
     }

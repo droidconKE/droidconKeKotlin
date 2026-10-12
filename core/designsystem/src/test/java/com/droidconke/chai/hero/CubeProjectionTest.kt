@@ -85,11 +85,28 @@ class CubeProjectionTest {
     }
 
     @Test
+    fun `a turning layer facing away is painted before the rest of the cube`() {
+        val quads = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(CubeMove.L, 45f))
+        val lastTurning = quads.indexOfLast { it.face == CubeFace.Front && it.tileColumn == 0 }
+        val firstStill = quads.indexOfFirst { it.face == CubeFace.Front && it.tileColumn > 0 }
+
+        assertTrue(lastTurning < firstStill)
+    }
+
+    @Test
+    fun `at rest the hidden faces between cubelets are not drawn`() {
+        val faces = solved.apply(SignatureSolve).visibleQuads(RestingPose.YAW, RestingPose.PITCH).map { it.face }
+
+        assertEquals(27, faces.size)
+        assertTrue(CubeFace.Inner !in faces)
+    }
+
+    @Test
     fun `a full quarter turn drawn mid-animation matches the committed move`() {
         val animated = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(CubeMove.R, 90f))
         val committed = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH)
 
-        assertEquals(committed.map { it.face }.sorted(), animated.map { it.face }.sorted())
+        assertEquals(committed.map { it.face }.sorted(), animated.map { it.face }.filter { it != CubeFace.Inner }.sorted())
     }
 
     private companion object {

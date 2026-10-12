@@ -40,7 +40,6 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.droidconke.chai.colors.CubeBodyLitColor
 import com.droidconke.chai.colors.CubeBodyShadowColor
 import com.droidconke.chai.colors.CubeTileColor
-import com.droidconke.chai.colors.cubeLogoInk
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -67,7 +66,11 @@ fun CubeHero(
     }
     val turnSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     LaunchedEffect(animate && resumed && visible) {
-        if (animate && resumed && visible) motion.run(turnSpec)
+        if (animate && resumed && visible) {
+            motion.run(turnSpec)
+        } else if (!animate) {
+            motion.rest()
+        }
     }
     val path = remember { Path() }
     Canvas(
@@ -115,15 +118,16 @@ internal class CubeMotion {
         }
 
     private suspend fun tumble() {
-        var last = withFrameNanos { it }
+        var last = NO_FRAME
         while (true) {
             if (animationsOff()) {
+                rest()
+                last = NO_FRAME
                 delay(ANIMATIONS_OFF_POLL_MILLIS)
-                last = withFrameNanos { it }
                 continue
             }
             withFrameNanos { now ->
-                seconds = (seconds + (now - last) / NANOS_PER_SECOND) % TUMBLE_SECONDS
+                if (last != NO_FRAME) seconds = (seconds + (now - last) / NANOS_PER_SECOND) % TUMBLE_SECONDS
                 last = now
                 yaw = FULL_TURN * seconds / TUMBLE_SECONDS
                 pitch = PITCH_SWING * sin(2 * PI.toFloat() * PITCH_SWINGS * seconds / TUMBLE_SECONDS)
@@ -131,7 +135,7 @@ internal class CubeMotion {
         }
     }
 
-    private fun rest() {
+    fun rest() {
         state = CubeState.solved()
         turn = null
         yaw = 0f
@@ -157,46 +161,19 @@ private fun DrawScope.drawFace(
     path.rewind()
     path.addCell(quad, origin, scale, BEVEL, BEVEL, 1f - BEVEL, 1f - BEVEL)
     drawPath(path, CubeTileColor)
-    if (quad.face == CubeFace.Inner) return
-    for (ink in 1..2) {
-        path.rewind()
-        if (path.addLogoTile(quad, origin, scale, ink)) drawPath(path, cubeLogoInk(quad.face, ink))
-    }
-}
-
-/** Adds the [ink] pixels of [quad]'s logo tile, a row run at a time; false if there are none. */
-private fun Path.addLogoTile(
-    quad: Quad,
-    origin: Offset,
-    scale: Float,
-    ink: Int,
-): Boolean {
-    val size = CubeLogos.TILE
-    val step = (1f - 2 * BEVEL) / size
-
-    fun inkAt(
-        column: Int,
-        row: Int,
-    ) = CubeLogos.ink(quad.face, quad.tileColumn * size + column, quad.tileRow * size + row)
-    var any = false
-    for (row in 0 until size) {
-        var column = 0
-        while (column < size) {
-            val start = column
-            while (column < size && inkAt(column, row) == ink) column++
-            if (column > start) {
-                addCell(quad, origin, scale, BEVEL + start * step, BEVEL + row * step, BEVEL + column * step, BEVEL + (row + 1) * step)
-                any = true
-            } else {
-                column++
-            }
+    val runs = CubeLogos.runs(quad.face, quad.tileColumn, quad.tileRow)
+    val step = (1f - 2 * BEVEL) / CubeLogos.TILE
+    path.rewind()
+    runs.forEachIndexed { i, run ->
+        path.addCell(quad, origin, scale, BEVEL + run.start * step, BEVEL + run.row * step, BEVEL + run.end * step, BEVEL + (run.row + 1) * step)
+        if (i == runs.lastIndex || runs[i + 1].color != run.color) {
+            drawPath(path, run.color)
+            path.rewind()
         }
     }
-    return any
 }
 
 /** Adds the part of [quad] between (u0, v0) and (u1, v1), measured from its top left corner. */
-@Suppress("LongParameterList")
 private fun Path.addCell(
     quad: Quad,
     origin: Offset,
@@ -206,30 +183,33 @@ private fun Path.addCell(
     u1: Float,
     v1: Float,
 ) {
-    val xs = quad.xs
-    val ys = quad.ys
-
-    fun x(
-        u: Float,
-        v: Float,
-    ) = origin.x + (xs[0] + u * (xs[1] - xs[0]) + v * (xs[3] - xs[0])) * scale
-
-    fun y(
-        u: Float,
-        v: Float,
-    ) = origin.y + (ys[0] + u * (ys[1] - ys[0]) + v * (ys[3] - ys[0])) * scale
-    moveTo(x(u0, v0), y(u0, v0))
-    lineTo(x(u1, v0), y(u1, v0))
-    lineTo(x(u1, v1), y(u1, v1))
-    lineTo(x(u0, v1), y(u0, v1))
+    moveTo(quad.screenX(origin, scale, u0, v0), quad.screenY(origin, scale, u0, v0))
+    lineTo(quad.screenX(origin, scale, u1, v0), quad.screenY(origin, scale, u1, v0))
+    lineTo(quad.screenX(origin, scale, u1, v1), quad.screenY(origin, scale, u1, v1))
+    lineTo(quad.screenX(origin, scale, u0, v1), quad.screenY(origin, scale, u0, v1))
     close()
 }
+
+private fun Quad.screenX(
+    origin: Offset,
+    scale: Float,
+    u: Float,
+    v: Float,
+) = origin.x + (xs[0] + u * (xs[1] - xs[0]) + v * (xs[3] - xs[0])) * scale
+
+private fun Quad.screenY(
+    origin: Offset,
+    scale: Float,
+    u: Float,
+    v: Float,
+) = origin.y + (ys[0] + u * (ys[1] - ys[0]) + v * (ys[3] - ys[0])) * scale
 
 private const val QUARTER = 90f
 private const val FULL_TURN = 360f
 private const val HOLD_MILLIS = 6_000L
 private const val ANIMATIONS_OFF_POLL_MILLIS = 1_000L
 private const val NANOS_PER_SECOND = 1_000_000_000f
+private const val NO_FRAME = -1L
 private const val TUMBLE_SECONDS = 30f
 private const val PITCH_SWINGS = 2
 private const val PITCH_SWING = 35f

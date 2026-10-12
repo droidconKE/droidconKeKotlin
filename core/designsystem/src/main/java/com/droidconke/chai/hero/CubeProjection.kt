@@ -19,16 +19,16 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /** The three-quarter view the cube rests at: front, right and top faces showing. */
-object RestingPose {
+internal object RestingPose {
     const val YAW = -35f
     const val PITCH = 25f
 }
 
 /** Which face of the solved cube a sticker belongs to, or [Inner] for the body between cubelets. */
-enum class CubeFace { Right, Left, Up, Down, Front, Back, Inner }
+internal enum class CubeFace { Right, Left, Up, Down, Front, Back, Inner }
 
 /** A layer part-way through [move], [degrees] from where it started. */
-data class Turn(
+internal data class Turn(
     val move: CubeMove,
     val degrees: Float,
 )
@@ -38,7 +38,7 @@ data class Turn(
  * clockwise from the top left of its logo tile, which is [tileColumn] and [tileRow] of [face]'s
  * logo. [light] runs from 0, edge-on, to 1, facing the viewer.
  */
-class Quad(
+internal class Quad(
     val face: CubeFace,
     val tileColumn: Int,
     val tileRow: Int,
@@ -53,7 +53,7 @@ class Quad(
  * then pitching it towards the viewer. A turning layer is painted as one block, before or after
  * the rest of the cube depending on which side of it faces the viewer.
  */
-fun CubeState.visibleQuads(
+internal fun CubeState.visibleQuads(
     yawDegrees: Float,
     pitchDegrees: Float,
     turn: Turn? = null,
@@ -67,12 +67,18 @@ fun CubeState.visibleQuads(
         val into = if (isTurning) moving else still
         val m = if (isTurning) turned!! else view
         val forward = cubelet.forward
-        LocalFaces.forEach { local -> cubelet.quad(local, m, forward)?.let(into::add) }
+        LocalFaces.forEach { local -> cubelet.quad(local, m, forward, withInner = turn != null)?.let(into::add) }
     }
     still.sortBy { it.depth }
     if (turn == null) return still
     moving.sortBy { it.depth }
-    val layerFacesViewer = view[2, turn.move.axis.ordinal] * turn.move.layer > 0f
+    val axisTowardsViewer =
+        when (turn.move.axis) {
+            Axis.X -> view[2, 0]
+            Axis.Y -> view[2, 1]
+            Axis.Z -> view[2, 2]
+        }
+    val layerFacesViewer = axisTowardsViewer * turn.move.layer > 0f
     return if (layerFacesViewer) still + moving else moving + still
 }
 
@@ -148,32 +154,32 @@ private const val VISIBLE_GUESS = 96
 private val CornerRight = intArrayOf(-1, 1, 1, -1)
 private val CornerUp = intArrayOf(1, 1, -1, -1)
 
+/**
+ * [withInner] keeps the faces between cubelets, which only show while a layer turns: at rest the
+ * cube is solid, so every one of them is hidden.
+ */
 private fun Cubelet.quad(
     local: LocalFace,
     m: Matrix,
     f: Vec3,
+    withInner: Boolean,
 ): Quad? {
-    // Cubelet frame to world: right, up and forward are the columns.
-    fun wx(v: Vec3) = (right.x * v.x + up.x * v.y + f.x * v.z).toFloat()
-
-    fun wy(v: Vec3) = (right.y * v.x + up.y * v.y + f.y * v.z).toFloat()
-
-    fun wz(v: Vec3) = (right.z * v.x + up.z * v.y + f.z * v.z).toFloat()
-
-    val nx = wx(local.normal)
-    val ny = wy(local.normal)
-    val nz = wz(local.normal)
+    val isSticker = local.normal.dot(home) == 1
+    if (!isSticker && !withInner) return null
+    val nx = worldX(local.normal, f)
+    val ny = worldY(local.normal, f)
+    val nz = worldZ(local.normal, f)
     val light = m.z(nx, ny, nz)
     if (light <= 0f) return null
     val cx = position.x + nx * HALF
     val cy = position.y + ny * HALF
     val cz = position.z + nz * HALF
-    val rx = wx(local.right) * HALF
-    val ry = wy(local.right) * HALF
-    val rz = wz(local.right) * HALF
-    val ux = wx(local.up) * HALF
-    val uy = wy(local.up) * HALF
-    val uz = wz(local.up) * HALF
+    val rx = worldX(local.right, f) * HALF
+    val ry = worldY(local.right, f) * HALF
+    val rz = worldZ(local.right, f) * HALF
+    val ux = worldX(local.up, f) * HALF
+    val uy = worldY(local.up, f) * HALF
+    val uz = worldZ(local.up, f) * HALF
     val xs = FloatArray(4)
     val ys = FloatArray(4)
     for (i in 0 until 4) {
@@ -183,7 +189,6 @@ private fun Cubelet.quad(
         xs[i] = m.x(px, py, pz)
         ys[i] = -m.y(px, py, pz)
     }
-    val isSticker = local.normal.dot(home) == 1
     return Quad(
         face = if (isSticker) local.face else CubeFace.Inner,
         tileColumn = local.right.dot(home) + 1,
@@ -196,3 +201,19 @@ private fun Cubelet.quad(
 }
 
 private fun Vec3.dot(o: Vec3) = x * o.x + y * o.y + z * o.z
+
+// From the cubelet's frame to the world's: right, up and forward ([f]) are the columns.
+private fun Cubelet.worldX(
+    v: Vec3,
+    f: Vec3,
+) = (right.x * v.x + up.x * v.y + f.x * v.z).toFloat()
+
+private fun Cubelet.worldY(
+    v: Vec3,
+    f: Vec3,
+) = (right.y * v.x + up.y * v.y + f.y * v.z).toFloat()
+
+private fun Cubelet.worldZ(
+    v: Vec3,
+    f: Vec3,
+) = (right.z * v.x + up.z * v.y + f.z * v.z).toFloat()

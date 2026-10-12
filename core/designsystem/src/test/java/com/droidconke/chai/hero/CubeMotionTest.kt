@@ -65,6 +65,39 @@ class CubeMotionTest {
         }
 
     @Test
+    fun `turning animations off mid-run brings the cube back to rest`() =
+        runTest {
+            val motion = CubeMotion()
+            val scale = SwitchableMotion()
+            backgroundScope.launch(FakeFrameClock(testScheduler) + scale) { motion.run(turn) }
+            advanceTimeBy(6_500)
+            assertFalse(motion.state.isSolved)
+
+            scale.scaleFactor = 0f
+            advanceTimeBy(2_000)
+
+            assertTrue(motion.state.isSolved)
+            assertNull(motion.turn)
+            assertEquals(0f, motion.yaw)
+            assertEquals(0f, motion.pitch)
+        }
+
+    @Test
+    fun `rest returns a moving cube to its solved resting pose`() =
+        runTest {
+            val motion = CubeMotion()
+            val job = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run(turn) }
+            advanceTimeBy(6_500)
+            job.cancel()
+
+            motion.rest()
+
+            assertTrue(motion.state.isSolved)
+            assertEquals(0f, motion.yaw)
+            assertEquals(0f, motion.pitch)
+        }
+
+    @Test
     fun `cancelled mid-turn, the cube is left whole and carries on when run again`() =
         runTest {
             val motion = CubeMotion()
@@ -90,6 +123,10 @@ class CubeMotionTest {
             delay(FRAME_MILLIS)
             return onFrame(scheduler.currentTime * NANOS_PER_MILLI)
         }
+    }
+
+    private class SwitchableMotion : MotionDurationScale {
+        override var scaleFactor = 1f
     }
 
     private object NoMotion : MotionDurationScale {

@@ -124,7 +124,7 @@ class HomeViewModelTest {
 
             for (enabled in listOf(true, false)) {
                 val flags = FakeFeatureFlags(isCubeHeroEnabled = enabled)
-                val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, Clock.System, flags, TimeZone.UTC, testDispatcher)
+                val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, mockk(relaxed = true), flags, TimeZone.UTC, testDispatcher)
                 val job = launch { viewModel.viewState.collect() }
                 runCurrent()
 

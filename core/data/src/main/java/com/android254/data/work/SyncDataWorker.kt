@@ -72,7 +72,8 @@ class SyncDataWorker
 
         override suspend fun doWork(): Result =
             withContext(ioDispatcher) {
-                remoteFeatureToggle.syncNowIfEmpty()
+                runCatching { remoteFeatureToggle.syncNowIfEmpty() }
+                    .onFailure { Timber.w(it, "Feature toggle fetch failed; syncing with cached config") }
                 val syncedSuccessfully =
                     awaitAll(
                         async { sessionsRepo.sync() },
