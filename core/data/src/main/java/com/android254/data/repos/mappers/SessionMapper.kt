@@ -26,6 +26,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import kotlin.time.Instant
 
 fun SessionEntity.toDomainModel() =
     Session(
@@ -47,6 +48,8 @@ fun SessionEntity.toDomainModel() =
         speakers = Json.decodeFromString<List<SpeakerDTO>>(speakers).map { it.toDomain() },
         remoteId = this.remote_id,
         eventDay = this.startTimestamp.toEventDay(),
+        startInstant = Instant.fromEpochMilliseconds(startTimestamp),
+        endInstant = Instant.fromEpochMilliseconds(endTimeStamp),
     )
 
 fun SessionDTO.toEntity(): SessionEntity =
