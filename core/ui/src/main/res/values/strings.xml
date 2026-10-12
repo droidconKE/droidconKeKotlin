@@ -107,5 +107,9 @@
     <string name="agenda_browse_sessions">Browse sessions</string>
     <string name="agenda_clashes_with">Clashes with %1$s</string>
     <string name="clash_banner_title">Some of your sessions overlap</string>
+    <plurals name="clash_banner_more">
+        <item quantity="one">and %d more</item>
+        <item quantity="other">and %d more</item>
+    </plurals>
     <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
 </resources>

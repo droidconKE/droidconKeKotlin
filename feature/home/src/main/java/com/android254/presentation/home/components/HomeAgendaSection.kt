@@ -24,9 +24,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,8 +45,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.components.LiveBadge
+import com.android254.presentation.common.components.SessionStatusLabel
 import com.android254.presentation.home.viewstate.AgendaDay
 import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
@@ -84,11 +86,13 @@ fun HomeAgendaSection(
         if (agenda.items.isEmpty()) {
             EmptyAgenda(onBrowseSessions)
         } else {
+            val tileWidth = rememberTimeTileWidth()
             Column(verticalArrangement = Arrangement.spacedBy(AgendaGap)) {
                 agenda.items.forEachIndexed { index, item ->
                     AgendaRow(
                         item = item,
                         shape = segmentShape(index, agenda.items.size),
+                        tileWidth = tileWidth,
                         onClick = { onSessionClick(item.session.id) },
                     )
                 }
@@ -113,7 +117,14 @@ private fun EmptyAgenda(onBrowseSessions: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            FilledTonalButton(onClick = onBrowseSessions) {
+            FilledTonalButton(
+                onClick = onBrowseSessions,
+                colors =
+                    ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+            ) {
                 Text(stringResource(R.string.agenda_browse_sessions))
             }
         }
@@ -124,6 +135,7 @@ private fun EmptyAgenda(onBrowseSessions: () -> Unit) {
 private fun AgendaRow(
     item: AgendaItem,
     shape: Shape,
+    tileWidth: Dp,
     onClick: () -> Unit,
 ) {
     val session = item.session
@@ -149,7 +161,7 @@ private fun AgendaRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TimeTile(time = session.startTime, period = session.amOrPm, isLive = isLive)
+                TimeTile(time = session.startTime, period = session.amOrPm, isLive = isLive, minWidth = tileWidth)
                 AgendaDetails(item, Modifier.weight(1f))
             }
         }
@@ -178,7 +190,7 @@ private fun AgendaDetails(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            if (session.sessionStatus == SessionStatus.Ongoing) LiveBadge()
+            SessionStatusLabel(session.sessionStatus)
             Text(
                 text = session.venue,
                 style = MaterialTheme.typography.labelMedium,
@@ -209,37 +221,43 @@ private fun TimePill(
     )
 }
 
-/** Every tile is as wide as the widest time, so titles line up; only the live one is neon. */
 @Composable
 private fun TimeTile(
     time: String,
     period: String,
     isLive: Boolean,
+    minWidth: Dp,
 ) {
-    val style = MaterialTheme.typography.titleMediumEmphasized
-    val measurer = rememberTextMeasurer()
-    val density = LocalDensity.current
-    val width =
-        remember(style, density) {
-            with(density) {
-                measurer
-                    .measure(WIDEST_TIME, style)
-                    .size.width
-                    .toDp()
-            } + 16.dp
-        }
     val container = if (isLive) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
     val content = if (isLive) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
     Column(
         modifier =
             Modifier
-                .width(width)
+                .widthIn(min = minWidth, max = minWidth * 2)
                 .background(container, MaterialTheme.shapes.medium)
-                .padding(vertical = 10.dp),
+                .padding(horizontal = 8.dp, vertical = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = time, style = style, color = content, maxLines = 1)
-        Text(text = period, style = MaterialTheme.typography.labelSmall, color = content, maxLines = 1)
+        Text(text = time, style = MaterialTheme.typography.titleMediumEmphasized, color = content, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        if (period.isNotBlank()) {
+            Text(text = period, style = MaterialTheme.typography.labelSmall, color = content, maxLines = 1)
+        }
+    }
+}
+
+/** Tiles are at least as wide as the widest time, so titles line up. */
+@Composable
+private fun rememberTimeTileWidth(): Dp {
+    val style = MaterialTheme.typography.titleMediumEmphasized
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    return remember(style, density) {
+        with(density) {
+            measurer
+                .measure(WIDEST_TIME, style)
+                .size.width
+                .toDp()
+        } + 16.dp
     }
 }
 
@@ -298,4 +316,3 @@ private fun AgendaDay.label(): String =
 
 private val AgendaGap = 2.dp
 private const val WIDEST_TIME = "00:00"
-private const val LARGE_FONT_SCALE = 1.5f

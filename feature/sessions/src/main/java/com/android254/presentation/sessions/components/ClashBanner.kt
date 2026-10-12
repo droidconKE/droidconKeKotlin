@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -75,11 +76,18 @@ fun ClashBanner(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = stringResource(R.string.clash_banner_title),
-                    style = MaterialTheme.typography.titleSmallEmphasized,
+                    style = MaterialTheme.typography.titleMediumEmphasized,
                 )
-                clashes.forEach { clash ->
+                clashes.take(SHOWN_CLASHES).forEach { clash ->
                     Text(
                         text = stringResource(R.string.clash_banner_pair, clash.first, clash.second),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                if (clashes.size > SHOWN_CLASHES) {
+                    val more = clashes.size - SHOWN_CLASHES
+                    Text(
+                        text = pluralStringResource(R.plurals.clash_banner_more, more, more),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
@@ -87,3 +95,6 @@ fun ClashBanner(
         }
     }
 }
+
+/** The list below must keep its room; the sessions screen above it does not scroll. */
+private const val SHOWN_CLASHES = 2

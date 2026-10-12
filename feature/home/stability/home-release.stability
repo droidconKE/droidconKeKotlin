@@ -13,12 +13,13 @@ private fun com.android254.presentation.home.components.AgendaDetails(item: com.
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.home.components.AgendaRow(item: com.android254.presentation.home.viewstate.AgendaItem, shape: androidx.compose.ui.graphics.Shape, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.home.components.AgendaRow(item: com.android254.presentation.home.viewstate.AgendaItem, shape: androidx.compose.ui.graphics.Shape, tileWidth: androidx.compose.ui.unit.Dp, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - item: STABLE (class with no mutable properties)
     - shape: STABLE (marked @Stable or @Immutable)
+    - tileWidth: STABLE (marked @Stable or @Immutable)
     - onClick: STABLE (function type)
 
 @Composable
@@ -204,16 +205,23 @@ private fun com.android254.presentation.home.components.TimePill(time: kotlin.St
     - isLive: STABLE (primitive type)
 
 @Composable
-private fun com.android254.presentation.home.components.TimeTile(time: kotlin.String, period: kotlin.String, isLive: kotlin.Boolean): kotlin.Unit
+private fun com.android254.presentation.home.components.TimeTile(time: kotlin.String, period: kotlin.String, isLive: kotlin.Boolean, minWidth: androidx.compose.ui.unit.Dp): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - time: STABLE (String is immutable)
     - period: STABLE (String is immutable)
     - isLive: STABLE (primitive type)
+    - minWidth: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.home.components.label(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+private fun com.android254.presentation.home.components.rememberTimeTileWidth(): androidx.compose.ui.unit.Dp
   skippable: false
   restartable: false
   params:
