@@ -85,6 +85,7 @@ of them need lives in `core:ui`, and `app` is the only module allowed to see the
 | `core:network`       | library, hilt, firebase, jacoco                    | Ktor client, DTOs, Remote Config                |
 | `core:screenshot`    | library, compose                                   | Roborazzi harness. Test-only                    |
 | `core:testing`       | library                                            | Shared test doubles. Test-only                  |
+| `widget`             | library, compose, hilt                             | Glance "what's on now" widget. Sync refreshes it |
 | `benchmarks`         | com.android.test                                   | Macrobenchmark + profile generation. Not shipped |
 | `build-logic`        | —                                                  | The convention plugins the above apply          |
 
@@ -290,6 +291,12 @@ becomes the screen.
 It appears and disappears with the window rather than with a navigation event, and `goBack()`
 never sees it.
 
+Session and speaker images and titles are shared elements between list and detail. `Navigation`
+wraps `NavDisplay` in a `SharedTransitionLayout` and provides it as `LocalSharedTransitionScope`;
+cards and detail screens use the modifiers in `SharedElementModifiers.kt` (`sessionSharedImage`,
+`speakerSharedName` and so on), which do nothing outside that layout, so previews and tests need
+no scope.
+
 ---
 
 ## Presentation
@@ -403,8 +410,30 @@ the name), `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (ad
 Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
 `HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.
 
-The Expressive APIs are only public in material3 1.5.0-alpha29, which the version catalog pins
-over the BOM — see `AGENTS.md`.
+The Expressive APIs are not public in a stable material3, so the version catalog pins a 1.5.0
+pre-release over the BOM — see `AGENTS.md`.
+
+## Accessibility
+
+What the app relies on, so a change does not undo it:
+
+- **Contrast** is a test, `ChaiColorContrastTest`, described above.
+- **Status is words, not colour.** Session cards and agenda cells say "Live" or "Ended". Past
+  sessions do not dim, because dimmed text fails contrast.
+- **Touch targets are 48 dp.** Material 3 gives every `IconButton`, toggle button and navigation
+  item one, and Compose expands any smaller clickable's hit area. A custom control takes
+  `minimumInteractiveComponentSize()`.
+- **Labels.** An icon next to its own text is decorative (`contentDescription = null`). An icon on
+  its own is labelled with what it does ("Share session", not "Share icon"). Toggles set
+  `stateDescription`, and section titles are `heading()`.
+- **Detail panes set `paneTitle`**, so TalkBack announces a session or speaker opening beside the
+  list.
+- **Reduced motion.** With "Remove animations" on, Compose snaps every infinite transition to its
+  end value and stops it. So a continuous animation (the live badge and border, the pulse, the
+  shimmer) must end on a value that reads well at rest; `LiveBadge` ends opaque.
+- **Large fonts.** Screenshot tests render every screen at 200 %. Text that varies in length takes
+  `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero drops to a smaller role
+  above 1.5×, and home's session cards widen with the font scale so titles wrap between words.
 
 ---
 

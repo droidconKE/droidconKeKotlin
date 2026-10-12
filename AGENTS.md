@@ -197,13 +197,12 @@ implementing `NavKey`; there is no `NavHost` or route strings. The keys are in
 `core/ui/.../common/navigation/`; the `NavDisplay` and scene strategies are in
 `app/.../common/navigation/`.
 
-**material3 is pinned to an alpha, over the BOM.** `MaterialExpressiveTheme`, `MotionScheme` and
-the `*Emphasized` type roles are `internal` in the stable 1.4.0, so `libs.versions.toml` gives
+**material3 is pinned to a pre-release, over the BOM.** `MaterialExpressiveTheme`, `MotionScheme`
+and the `*Emphasized` type roles are `internal` in the stable 1.4.0, so `libs.versions.toml` gives
 `material3` (and `material3-adaptive-navigation-suite`, same group) a `version.ref` of
-1.5.0-alpha29. That lifts `ui`, `runtime`, `foundation` and `animation` to 1.13.0-alpha01
-transitively, so the whole Compose stack is on alphas. When Dependabot bumps it, re-record
-goldens and re-check that `Scaffold` still excludes consumed insets, which the inset contract
-relies on. Drop the `version.ref` once a BOM manages a stable 1.5.0.
+1.5.0-beta01. The rest of Compose is on the BOM's stable 1.12. When Dependabot bumps the pin,
+re-record goldens and re-check that `Scaffold` still excludes consumed insets, which the inset
+contract relies on. Drop the `version.ref` once a BOM manages a stable 1.5.0.
 
 ---
 
