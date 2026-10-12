@@ -1,29 +1,20 @@
 # droidconKE Android — Modernization & Product Plan
 
-> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-05
+> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-12
 > **Repo:** `droidconKeKotlin`
 > **Scope:** What is left to build — the design system, adaptive follow-ups, intelligent (AI) experiences, ticketing, notifications, performance, testing, new product surfaces, and store presence.
 >
-> Finished work is not recorded here. How the app works today is in [`docs/architecture.md`](architecture.md), [`docs/performance.md`](performance.md) and [`AGENTS.md`](../AGENTS.md). The history is in git.
+> Finished work is not recorded here: when an item lands, delete it, and move anything a contributor needs to know into [`docs/architecture.md`](architecture.md), [`docs/performance.md`](performance.md) or [`AGENTS.md`](../AGENTS.md). The history is in git.
 
 ---
 
-## Next up — §14
+## Next up — §14, then §5.3
 
-The sync follow-ups that needed no backend work have landed: duplicates are gone (schema 6),
-each table syncs in one transaction, an empty sessions response keeps the cached schedule,
-`isSyncing` covers the daily job, and a feed 404 (the API's answer for an event with no posts)
-no longer fails every sync. What is left in §3.10 is small or needs the backend.
+What is left of the accessibility audit (§14) is a listening pass by a person: TalkBack, Switch
+Access and a keyboard, on a phone and in two panes. It can run alongside anything else.
 
-The 2026 rebrand and Material 3 Expressive landed on 2026-10-05; `docs/architecture.md` ("Design
-system") describes the result. §14 is next. Its contrast audit landed on 2026-10-11 as a test, which
-darkened light `onSurfaceVariant` and both themes' `outline`, and session status stopped relying on
-colour. The app bar's controls are labelled 48 dp targets, and continuous animations already stop
-with system animations off. An emulator pass fixed what it found; what is left is a share button
-with no action, two layouts at 200 % font, and a person listening with TalkBack and Switch Access.
-
-§14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
-phase-aware home and schedule conflicts (§5.3), then the 3D cube (§12).
+The next engineering item is the phase-aware home and schedule conflicts (§5.3), then the 3D cube
+(§12).
 
 ---
 
@@ -56,7 +47,7 @@ Dependency versions below reflect what was current when each section was written
 
 ## 1. Where the codebase stands today
 
-The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the pieces fit is in [`docs/architecture.md`](architecture.md). This section lists only the findings from the original audit that are still open. Every correctness bug it found (B1–B16) is fixed or withdrawn; the fixes that still lack a regression test are in §3.9.
+The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the pieces fit is in [`docs/architecture.md`](architecture.md). These are the findings from the original audit that are still open. Fixed defects that still lack a regression test are in §3.9.
 
 ### 1.5 Findings — architecture
 
@@ -68,7 +59,7 @@ The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the piec
 
 ### 1.6 Findings — build & developer experience
 
-**D5 — CI and release gaps.** CI runs on every PR, including Android Lint and screenshot verification. Still missing: a dependency-review job (§15.1). The release workflow also pushes straight to the production track with `status: completed` — no internal track, no staged rollout, no gate. (§13.2)
+**D5 — CI and release gaps.** CI has no dependency-review job (§15.1). The release workflow also pushes straight to the production track with `status: completed` — no internal track, no staged rollout, no gate. (§13.2)
 
 ### 1.7 Findings — security & hygiene
 
@@ -78,7 +69,7 @@ The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the piec
 
 ## 2. Modules still to come
 
-The module split is done; [`docs/architecture.md`](architecture.md#modules) has the layout. These modules are planned and do not exist yet. Each arrives with the phase that needs it — an empty shell created ahead of the work is scaffolding nobody maintains.
+[`docs/architecture.md`](architecture.md#modules) has the current layout. These modules are planned and do not exist yet. Each arrives with the phase that needs it — an empty shell created ahead of the work is scaffolding nobody maintains.
 
 | Module | For | Section |
 | --- | --- | --- |
@@ -91,15 +82,12 @@ The module split is done; [`docs/architecture.md`](architecture.md#modules) has 
 | `:feature:jobboard` | Job board | §11.1 |
 | `:feature:networking` | Connections | §11.2 |
 | `:feature:challenge` | Code challenges | §11.3 |
-| `:widget` | Glance "what's on now" widget | §11.7 |
-
-`:core:datastore` is not planned. The preferences code is two files inside `:core:data`, and splitting them out would be symmetry for its own sake.
 
 ---
 
 ## 3. Phase 0 — Foundations
 
-Most of Phase 0 has landed: the build configuration, the Compose compiler configuration (§3.1), the bug fixes (§3.3), edge-to-edge (§3.4), Credential Manager (§3.7) and AGP 9 (§3.8). Those subsections are deleted and their numbers are not reused. What is left is below.
+What is left of the foundations. Numbers of deleted subsections are not reused.
 
 ### 3.2 Version catalog additions for later phases
 
@@ -127,9 +115,6 @@ mediapipe-tasks-genai = { module = "com.google.mediapipe:tasks-genai", version.r
 litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 localagents-fc = { module = "com.google.ai.edge.localagents:localagents-fc", version.ref = "localagents-fc" }
 
-# Widget (§11.7)
-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 
 # 3D (§12)
 filament-android = { module = "com.google.android.filament:filament-android", version.ref = "filament" }
@@ -140,18 +125,9 @@ filament-gltfio = { module = "com.google.android.filament:gltfio-android", versi
 camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-compose"]
 ```
 
-### 3.5 chai and Material 3 — done
-
-The token restructure landed on 2026-10-04 and the 2026 rebrand on 2026-10-05.
-`docs/architecture.md` ("Design system") describes the result: Material roles first, three
-`ChaiColors` tokens for the brand-blue hero panel, and a detekt rule against raw palette imports
-outside `chai/colors`. One item moves to §14: a test that checks contrast for every role pair
-the app draws.
-
 ### 3.6 One year, one name
 
-The year names are gone from the project, class and theme names. Two things still tie the app to
-one conference year.
+Two things tie the app to one conference year.
 
 **The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2025-898"` lives in
 `core/network/.../remote/Constants.kt`. Move it into Remote Config, so a new conference year does
@@ -190,8 +166,7 @@ users their bookmarks, for a cosmetic gain.
 
 ### 3.9 Phase 0 — what is left
 
-Every B finding from the original audit is fixed in code. Four of the fixes are not held by a
-test, so nothing stops them coming back:
+Four fixed defects have no test, so nothing stops them coming back:
 
 | Finding | What a test would assert |
 | --- | --- |
@@ -200,16 +175,13 @@ test, so nothing stops them coming back:
 | B7 — the splash screen waited on a network call | The splash releases on cached data, never on Remote Config. Needs a startup test |
 | B10 — mutable state and resource IDs in navigation keys | Every `NavKey` is immutable and holds no resource ID. A reflection test over the implementations would close it |
 
-B6 and B10 protect user data, so do those first. B3 and B4 were build-configuration fixes; a test
-would only assert the build script.
+B6 and B10 protect user data, so do those first.
 
 ---
 
 ### 3.10 Sync follow-ups
 
-Compared with `android/nowinandroid` (`a49ed25`, 2026-09-22), our sync now matches it where the
-API allows: server-keyed tables, `@Upsert`, one transaction per table, and one expedited request
-builder. What is left, in order:
+Measured against `android/nowinandroid` (`a49ed25`, 2026-09-22). In order:
 
 1. **The sync notification channel is loud and badly named.** `DroidconApp` creates it with
    `IMPORTANCE_HIGH` and the raw id `sync_data` as its user-visible name. On API 30 and below an
@@ -228,9 +200,8 @@ builder. What is left, in order:
 
 ## 4. Phase 1 — Adaptive follow-ups
 
-Adaptive and large-screen support has landed. How it works — the navigation suite, the Navigation 3
-scenes and their guards, the measured pane directive — is in
-[`docs/architecture.md`](architecture.md#navigation). Three small items were left out of it.
+How adaptive layouts work is in [`docs/architecture.md`](architecture.md#navigation). Two small
+items are left.
 
 ### 4.4 List-detail: a selected state for the list pane
 
@@ -268,15 +239,13 @@ widens; it could also take a supporting pane for the organising team at expanded
 
 ### 4.6 Keyboard and mouse: a context menu
 
-Session and speaker cards take the hand cursor, a session card lifts on hover, and
-`Modifier.clickable` already handles Enter and Space. Still missing: a right-click context menu on
-a session card — bookmark, share, add to calendar.
+A right-click context menu on a session card: bookmark, share, add to calendar.
 
 ---
 
 ## 5. Phase 2 — Design system 2.0 and world-class UX
 
-**No remaining dependencies: §3.5 landed. Parallelisable across contributors.**
+**No dependencies. Parallelisable across contributors.**
 
 ### 5.1 What "world class" actually means here
 
@@ -289,26 +258,11 @@ Not more animation. The conference apps people remember are the ones that answer
 
 Everything in this phase serves one of those four. Anything that doesn't is decoration, and decoration is what makes conference apps feel like brochures.
 
-**Question 1 is answered (2026-10-05).** While a session is live, Home's hero shows it, its room
-and end time, and what's next. With nothing live it welcomes, because up-next has no upper
-bound and could be weeks away. On a phone the live-sessions rail is hidden on Home only when a
-single session is live, the case the hero covers; parallel live sessions keep the rail. Questions 2 to 4 are
-still open: conflicts (§5.3), speaker cross-links, and the ticket (§7).
+Home's Now/Next hero answers question 1. Questions 2 to 4 are open: conflicts (§5.3), speaker
+cross-links, and the ticket (§7).
 
-### 5.2 Adopt M3 Expressive — mostly done
+### 5.2 Material 3 Expressive — what is left
 
-Landed on 2026-10-05, on material3 1.5.0-alpha29:
-- the theme, Emphasized type and the Expressive corner scale;
-- connected `ToggleButton` groups (`ButtonGroupDefaults` shapes) for the day selector and feedback rating, shared as `ConnectedToggleGroup`;
-- the bookmark shape morph and cookie-shaped speaker avatars;
-- `FilterChip` filters, the M3 switch and `LiveBadge`;
-- the short navigation bar and wide navigation rail;
-- the pull-to-refresh `LoadingIndicator`.
-- a polish pass: one Share button on feed posts (the system share sheet), a plain sign-in
-  dialog, sponsor and organiser logo tiles with grids that add columns on wider windows, and a
-  filter bottom sheet.
-
-Still open:
 - **Loading consolidation.** The per-screen skeletons, `LoadingBox` and `AnimatedShimmerEffect`
   remain. Consolidate to one skeleton primitive for content-shaped loading, and use
   `LoadingIndicator` for full-screen and indeterminate loads.
@@ -319,10 +273,7 @@ Still open:
 
 ### 5.3 The home screen, rethought
 
-> **Status 2026-10-05:** the Now/Next card landed as home's hero. The phase model below (before,
-> during and after the event) and `DetectScheduleConflictsUseCase` are still open.
-
-Current home: header → (commented-out banner) → sessions section → speakers section → sponsors. It's a directory. During the conference it should be a **dashboard**.
+Home is a hero (Now/Next while a session is live, a welcome otherwise), then sessions, speakers and sponsors. It's a directory. During the conference it should be a **dashboard**.
 
 Proposed structure, with content that changes by conference phase:
 
@@ -418,87 +369,6 @@ data class ScheduleConflict(
 
 Surface it as a dismissible banner on the sessions screen and in the AI summary (§6.7): *"Heads up — 'Compose Multiplatform in Production' and 'Scaling Kotlin Backends' overlap by 35 minutes."*
 
-### 5.4 Motion that carries meaning
-
-The app already has directional navigation transitions (`NavigationAnimation.kt`, `horizontalSlideIn` / `zoomInTransition`) — good instinct, keep it. Add:
-
-**Shared element transitions** for session and speaker cards → detail. This is *the* transition that makes an app feel native, and Compose supports it in stable now:
-
-```kotlin
-// In the NavDisplay wrapper
-SharedTransitionLayout {
-    NavDisplay(
-        entries = navigationState.toEntries(entryProvider),
-        transitionSpec = { transitionSpec },
-    ) { /* … */ }
-}
-```
-
-```kotlin
-// SessionCard, in the list
-Image(
-    // `sessionImage`, not `sessionImageUrl` — SessionPresentationModel declares
-    // `val sessionImage: String = ""` (non-null, empty when absent).
-    painter = rememberAsyncImagePainter(session.sessionImage),
-    contentDescription = null,
-    modifier = Modifier.sharedElement(
-        rememberSharedContentState(key = "session-image-${session.id}"),
-        animatedVisibilityScope = animatedVisibilityScope,
-    ),
-)
-Text(
-    text = session.title,
-    modifier = Modifier.sharedBounds(
-        rememberSharedContentState(key = "session-title-${session.id}"),
-        animatedVisibilityScope = animatedVisibilityScope,
-    ),
-)
-```
-
-Threading `SharedTransitionScope` and `AnimatedVisibilityScope` through Navigation 3 entries needs a small `CompositionLocal`:
-
-```kotlin
-val LocalSharedTransitionScope = compositionLocalOf<SharedTransitionScope> {
-    error("Not in a SharedTransitionLayout")
-}
-val LocalNavAnimatedVisibilityScope = compositionLocalOf<AnimatedVisibilityScope> {
-    error("Not in a NavEntry animation scope")
-}
-```
-
-**Live-session pulse.** The one place a subtle continuous animation earns its keep — an ongoing session should feel alive:
-
-```kotlin
-@Composable
-fun LiveIndicator(modifier: Modifier = Modifier) {
-    val transition = rememberInfiniteTransition(label = "live-pulse")
-    val alpha by transition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(1200, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "live-alpha",
-    )
-
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        Box(
-            Modifier
-                .size(8.dp)
-                .graphicsLayer { this.alpha = alpha }
-                .background(MaterialTheme.colorScheme.error, CircleShape),
-        )
-        Spacer(Modifier.width(6.dp))
-        Text(stringResource(R.string.session_live_now), style = MaterialTheme.typography.labelSmall)
-    }
-}
-```
-
-> **Respect the accessibility setting.** Wrap continuous animation in a check so users who disable animations aren't subjected to it:
-> ```kotlin
-> val animationsEnabled = LocalAccessibilityManager.current?.let { true } ?: true
-> // Better: read Settings.Global.ANIMATOR_DURATION_SCALE via a small provider
-> ```
-> Compose respects `ANIMATOR_DURATION_SCALE` for `animate*AsState` but **not** for `rememberInfiniteTransition`. Gate it explicitly.
-
 ### 5.5 Session notes
 
 Requested feature, and a natural fit — attendees take notes and currently switch to Keep, losing the session context.
@@ -569,51 +439,16 @@ fun SessionNotesSheet(
 private val AUTOSAVE_DEBOUNCE = 800.milliseconds
 ```
 
-### 5.6 Accessibility as a first-class requirement
+### 5.6 Accessibility — what is left
 
-Currently: `contentDescription = destination.title` on nav icons that sit next to a text label (TalkBack reads the label twice), no `stateDescription` on any toggle, no `heading()` semantics, no `testTag` discipline, and no verification at large font scales.
+The conventions the app follows are in [`docs/architecture.md`](architecture.md#accessibility).
+Two pieces are missing:
 
-A conference for developers, in a country with a strong accessibility community, running an app that fails TalkBack is a bad look. Concretely:
-
-```kotlin
-// 1. Decorative icons get null, not a duplicate of adjacent text
-Icon(painter = …, contentDescription = null)
-
-// 2. Toggles announce state, not just label
-Modifier.semantics {
-    stateDescription = if (isBookmarked) starred else notStarred
-    role = Role.Switch
-}
-
-// 3. Section headers are headings, so TalkBack users can jump between them
-Text(
-    text = stringResource(R.string.sessions_title),
-    style = MaterialTheme.typography.headlineSmall,
-    modifier = Modifier.semantics { heading() },
-)
-
-// 4. Merge card contents into one focusable node — not 7 separate stops
-Card(Modifier.semantics(mergeDescendants = true) {
-    contentDescription = buildString {
-        append(session.title); append(", ")
-        append(session.speakerName); append(", ")
-        append(session.timeRange); append(", ")
-        append(session.room)
-        if (session.isLive) append(", live now")
-    }
-}) { /* … */ }
-
-// 5. Live regions for content that changes without user action
-Modifier.semantics { liveRegion = LiveRegionMode.Polite }   // on the Now/Next card
-
-// 6. Minimum touch targets — audit every IconButton
-Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-```
-
-And an automated gate, so it doesn't rot:
+- **A live region on the Now/Next hero**, so TalkBack announces a change of session without the
+  user moving focus: `Modifier.semantics { liveRegion = LiveRegionMode.Polite }`.
+- **An automated gate**, so it doesn't rot:
 
 ```kotlin
-// presentation/src/androidTest/.../AccessibilityTest.kt
 @Test
 fun sessionsScreen_hasNoAccessibilityViolations() {
     composeTestRule.enableAccessibilityChecks()
@@ -626,10 +461,9 @@ fun sessionsScreen_hasNoAccessibilityViolations() {
 - [ ] Zero hardcoded `Color` literals inside composables (lint rule to enforce)
 - [ ] Zero hardcoded animation durations or springs in feature code — motion comes from `MaterialTheme.motionScheme`
 - [ ] Loading states consolidated from 9 implementations to 2
-- [ ] Shared element transitions on session and speaker cards
 - [ ] Notes ship, offline, no auth
 - [ ] Full TalkBack pass on every screen, recorded as a checklist in the PR
-- [ ] Renders correctly at 200% font scale and in RTL (`ar` pseudo-locale)
+- [ ] Renders correctly in RTL (`ar` pseudo-locale)
 
 ---
 
@@ -2458,7 +2292,7 @@ See §11.2 for the connections surface this feeds.
 
 ### 8.1 Current state
 
-`MessagingService` receives FCM; `DroidconNotificationManager` posts. There are no channels, no local reminders, no user preferences, and the permission prompt fires on first launch with a rationale that is written to Timber instead of shown to the user.
+`MessagingService` receives FCM; `DroidconNotificationManager` posts to one catch-all channel, "All". There are no per-category channels, no local reminders, no user preferences, and the permission prompt fires on first launch with a rationale that is written to Timber instead of shown to the user.
 
 The result: users deny the permission on launch (because they have no idea what they'd be getting) and then never get session reminders — which is the one notification a conference app genuinely needs.
 
@@ -2821,14 +2655,13 @@ fun NotificationSettingsScreen(viewModel: NotificationSettingsViewModel = hiltVi
 
 ## 9. Phase 6 — Performance, R8, and app size
 
-The benchmark module, the baseline and startup profiles, an R8 health check and a −28 % APK pass
-have landed. Numbers, method and the open questions are in [`docs/performance.md`](performance.md).
-What is left is below.
+Current numbers, method and the open questions are in [`docs/performance.md`](performance.md),
+including the app size history. CI fails a pull request that grows the download size by more than
+1 %.
 
 ### 9.3 R8 configuration
 
-R8 is healthy: full mode, resource shrinking inside R8, and keep rules in
-`app/src/main/keepRules/` (see [`docs/performance.md`](performance.md#r8)). Three things remain:
+The current setup is in [`docs/performance.md`](performance.md#r8). Three things remain:
 
 - **Move release to the `optimization {}` block** once `androidx.baselineprofile` understands it.
   Today the new block breaks baseline profile generation.
@@ -2838,29 +2671,7 @@ R8 is healthy: full mode, resource shrinking inside R8, and keep rules in
 - **Measure partial shrinking** (`android.r8.partialShrinking`, experimental), which skips library
   code. The win is build time, not APK size.
 
-### 9.4 App size
-
-CI checks the Pixel-class download size on every pull request (`config/size/check-app-size.sh`)
-and fails on growth above 1 %. `docs/performance.md` ("App size") records how each change was
-measured. The tracked baseline:
-
-| Date | Version | Download size (Pixel-class) | Install size | Notes |
-| --- | --- | --- | --- | --- |
-| 2026-09-03 | 1.0.0 (vc 1) | 5,205,416 B — 4.96 MiB | 8,553,954 B — 8.16 MiB | End of Phase 0. Includes §3.7 swapping `play-services-auth` for `androidx.credentials` + `googleid` |
-| 2026-10-12 | main before the size pass | 4,678,844 B — 4.46 MiB | 8,708,023 B — 8.30 MiB | After the APK pass, the rebrand and Expressive |
-| 2026-10-12 | size pass | 4,334,173 B — 4.13 MiB | 8,305,630 B — 7.92 MiB | Icons into `ChaiIcons`, one variable font, no ConstraintLayout |
-
 ### 9.5 Runtime performance
-
-**Compose stability.** With Kotlin 2.x, strong skipping is on by default, but unstable parameters still break skipping. Run:
-
-```bash
-./gradlew assembleRelease -PenableComposeCompilerReports=true
-```
-
-Then read each module's `build/compose-reports/*-classes.txt` for unstable classes that reach a
-composable; `docs/static-analysis.md` ("Compose stability") explains which ones matter. Also hoist
-lambdas captured in lazy item content to stable references, so items skip.
 
 **Coil configuration.** Currently default. Sessions and speakers screens load many remote images:
 
@@ -2905,22 +2716,19 @@ traced("ticket_render") { generateQrBitmap(...) }
 ```
 
 **Definition of done:**
-- [ ] Compose stability report clean, or each remaining unstable type justified
 - [ ] Coil memory and disk caches configured
 - [ ] A decision on Firebase Performance Monitoring, with custom traces if it stays
-- [x] Each §9.4 size win measured against a recorded number
 - [ ] Time to full display under 2 seconds on a low-end device — 2.7 s on the CS50C today, with the profile, and network-bound
 
 ---
 
 ## 10. Phase 7 — Testing
 
-**Depends on: nothing.** What this phase needed from Phase 0 has landed.
+**Depends on: nothing.**
 
 ### 10.1 Where the gaps are
 
-Screenshot tests (Roborazzi: light, dark and 200 % font at phone size, plus four form factors),
-Room migration tests and a shared `:core:testing` module are in place. The gaps:
+The gaps:
 
 - **No end-to-end tests.** The only instrumented test is `SessionMapperInstrumentedTest`.
 - **No accessibility assertions.**
@@ -2929,8 +2737,7 @@ Room migration tests and a shared `:core:testing` module are in place. The gaps:
 
 ### 10.2 Screenshot coverage gaps
 
-The Roborazzi harness lives in `:core:screenshot`; [`AGENTS.md`](../AGENTS.md#commands) has the
-record and verify commands. Two gaps:
+Two gaps:
 
 - **The fake data is all happy path.** `FakeSessions` in `core/ui/.../common/fakedata/` has no edge
   cases. Add deliberate ones — 200-character titles, eight speakers, missing images, empty
@@ -3092,8 +2899,7 @@ class MainDispatcherRule(
 }
 ```
 
-`Clock` is injected — `TimeModule` in `:core:common` provides it. One default argument still
-reaches for the system clock: `getTimeDifference(nowMillis = System.currentTimeMillis())` in
+One default argument still reaches for the system clock: `getTimeDifference(nowMillis = System.currentTimeMillis())` in
 `DateAndTimeUtils`. Pass the time in, and add a `TestClock` to `:core:testing`:
 
 ```kotlin
@@ -3417,86 +3223,15 @@ Full indoor positioning is overkill. What works:
 
 No backend, no beacons, no ML. All it needs is one SVG from the organisers. **The best value-to-effort ratio of anything in §11.**
 
-### 11.7 Glance widget: what's on now
+### 11.7 Widget and Wear OS follow-ups
 
-A conference app's ideal surface is the home screen: glance, know where to be, done.
+The `:widget` module's "what's on now" widget refreshes after every sync, and also every 30
+minutes all year through `updatePeriodMillis` in `next_session_widget_info.xml`. Outside
+conference days that wakes the device for nothing. Drop the fixed period and schedule refreshes
+only on conference days.
 
-```kotlin
-// widget/src/main/kotlin/.../NextSessionWidget.kt
-
-class NextSessionWidget : GlanceAppWidget() {
-
-    override val sizeMode = SizeMode.Responsive(
-        setOf(SmallWidget, MediumWidget, LargeWidget),
-    )
-
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val entryPoint = EntryPointAccessors.fromApplication<WidgetEntryPoint>(context)
-        val repo = entryPoint.sessionsRepo()
-
-        provideContent {
-            val now = Clock.System.now().toEpochMilliseconds()
-            val current by repo.fetchCurrentSessions(now).collectAsState(emptyList())
-            val next by repo.fetchUpNextSessions(now).collectAsState(emptyList())
-
-            GlanceTheme {
-                WidgetContent(
-                    current = current.firstOrNull(),
-                    next = next.firstOrNull(),
-                    size = LocalSize.current,
-                )
-            }
-        }
-    }
-
-    private companion object {
-        val SmallWidget = DpSize(140.dp, 100.dp)    // next session title only
-        val MediumWidget = DpSize(250.dp, 100.dp)   // + room and time
-        val LargeWidget = DpSize(250.dp, 200.dp)    // + the next three
-    }
-}
-```
-
-```kotlin
-@Composable
-private fun WidgetContent(current: Session?, next: Session?, size: DpSize) {
-    Column(
-        GlanceModifier
-            .fillMaxSize()
-            .background(GlanceTheme.colors.widgetBackground)
-            .padding(12.dp)
-            .clickable(actionStartActivity<MainActivity>()),
-    ) {
-        when {
-            current != null -> {
-                Text(
-                    LocalContext.current.getString(R.string.widget_happening_now),
-                    style = TextStyle(fontSize = 11.sp, color = GlanceTheme.colors.error),
-                )
-                Text(current.title, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold), maxLines = 2)
-                Text(current.rooms, style = TextStyle(fontSize = 12.sp))
-            }
-            next != null -> {
-                Text(
-                    LocalContext.current.getString(R.string.widget_up_next),
-                    style = TextStyle(fontSize = 11.sp, color = GlanceTheme.colors.primary),
-                )
-                Text(next.title, style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold), maxLines = 2)
-                Text("${next.startTime} · ${next.rooms}", style = TextStyle(fontSize = 12.sp))
-            }
-            else -> Text(LocalContext.current.getString(R.string.widget_no_sessions))
-        }
-    }
-}
-```
-
-Update it from the sync worker and on a periodic 15-minute cadence during conference days only — a widget that polls year-round is a battery complaint:
-
-```kotlin
-NextSessionWidget().updateAll(context)
-```
-
-Consider also a **Wear OS tile** with the same content. Small effort, disproportionate delight, and a good talk.
+Consider also a **Wear OS tile** with the same content. Small effort, disproportionate delight,
+and a good talk.
 
 ### 11.8 Deep links and App Links
 
@@ -3567,7 +3302,7 @@ object DeepLinkResolver {
 }
 ```
 
-And make sharing produce those links. `FeedShareSection` exists for the feed; session and speaker cards need share actions using `https://droidcon.co.ke/sessions/{slug}`, so a shared link works for people without the app *and* deep-links for people with it.
+Then make sharing produce those links. A shared session is plain text today, because droidcon.co.ke has no per-session or per-speaker pages: `/sessions` redirects to the home page. Once the website has `/sessions/{slug}` pages, add the link to the shared text, so it works for people without the app *and* deep-links for people with it.
 
 ---
 
@@ -3901,56 +3636,19 @@ val updateType = if (featureToggle.forceUpdate) AppUpdateType.IMMEDIATE else App
 
 ## 14. Accessibility
 
-**Swahili was dropped on 2026-10-04.** The app is built for a global audience, not only for
-attendees in Kenya, so it ships in English and this section is the accessibility audit alone.
-Nothing blocks it: the navigation labels that used to be hardcoded Kotlin strings are
-`@StringRes` values on `TopLevelDestination`, which is also what TalkBack reads.
+The app ships in English for a global audience, so this is the accessibility audit alone. The
+conventions it established are in [`docs/architecture.md`](architecture.md#accessibility).
 
-### 14.1 Accessibility checklist
+### 14.1 The listening pass
 
-Beyond §5.6's semantics work, the things that need explicit verification:
+What is left needs a person. adb cannot drive TalkBack gestures or Switch Access, but an emulator
+is enough for a person to do it.
 
 | Area | Check |
 | --- | --- |
 | **TalkBack** | Listen to every screen: reading order, announcements, nothing read twice |
-| **Session share button** | Labelled and wired up, or removed. Today it has no label and `onClick = {}` |
-| **Font scale** | At 200 %, home session cards break titles mid-word ("Registra / tion") and the welcome hero truncates |
-| **Contrast** | Neon on the hero blue (4.1:1) stays display-size only |
 | **Switch Access / keyboard** | Full traversal without touch |
-| **Screen reader + two-pane** | Listen that the new pane titles are announced on tablet (§4.4) |
-
-The contrast audit has landed as `ChaiColorContrastTest` (see `docs/architecture.md`, "Design
-system"). Session status no longer relies on colour: every session card and agenda cell says
-"Live" or "Ended" in words. Past cards no longer dim to 50 %, which also failed contrast.
-
-Every `IconButton`, toggle button and navigation item gets a 48 dp target from Material 3. The
-only custom targets were in the sessions app bar: the list and agenda icons were unlabelled 24 dp
-icons and are now labelled, selectable 48 dp targets. The filter button was disabled until a
-filter was applied, so the filter sheet only opened once the starred-sessions switch was on; it is
-always enabled now, and
-TalkBack says "Filters applied" when one is. Compose's own touch-bounds expansion already gives
-any smaller clickable a 48 dp hit area.
-
-Compose skips an infinite transition to its end value and stops when the animator duration scale
-is 0, which is what "Remove animations" sets. Every continuous animation (the live border and
-badge, the current-session pulse, the shimmer, the stepper ping) therefore holds still with
-animations off. `LiveBadge` relies on this by ending its pulse opaque. A new continuous animation
-must end on a value that reads well at rest. The cube (§12) still needs its own static pose.
-
-An emulator pass on 2026-10-11 (Pixel-sized API 36 image with Play services) walked every screen's
-accessibility tree, the largest display size, 200 % font and a 2560×1600 tablet. It fixed:
-
-- the sessions app bar, which clipped "Filter" at the largest display size and at 200 % font. The
-  bar now grows with its content and the logo shrinks first;
-- organiser logos on About, which had no labels because only the photo URL reached the screen;
-- detail panes, which set no pane title, so TalkBack said nothing when a session or speaker opened
-  beside the list;
-- the X button on speaker details, whose icon was labelled "Share";
-- tags in narrow agenda cells, which wrapped "Ended" mid-word. Tags stay on one line and the format
-  tag gives way.
-
-adb cannot drive TalkBack gestures or Switch Access, so listening needs a person; the emulator is
-enough for that.
+| **Screen reader + two-pane** | On a tablet, the pane titles are announced when a session or speaker opens beside the list |
 
 ---
 
@@ -3999,21 +3697,13 @@ if (!syncedSuccessfully) {
 
 ### 16.1 Priority order — what to do next
 
-Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work. A
-struck row has landed.
+Ranked. Higher items are either prerequisites for lower ones, or buy more per unit of work.
 
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
-| ~~**1**~~ | ~~Fix duplicated sessions after sync~~ — **done** | — | Synced tables are keyed on what sync matches on (schema 6). |
-| ~~**2**~~ | ~~Sync follow-ups that need no backend~~ — **done** | — | Transactions, empty-response guard, `isSyncing`, one request builder, stable notification. |
-| ~~**2a**~~ | ~~Feed 404 fails every sync~~ — **done** | — | The API answers 404 for an event with no feed posts; `FeedApi` reads it as an empty list. |
-| ~~**3**~~ | ~~Roborazzi screenshot suite~~ — **done** | §10.2 | The only mechanism that makes design-system work reviewable. Build it before §5, not after. |
-| ~~**5**~~ | ~~Compose compiler stability config~~ — **done 2026-10-12** | — | Metrics on the plugin extension; no config file, because nothing real belonged in it. |
-| ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |
-| **8** | Accessibility audit (Swahili dropped 2026-10-04) | §14 | Independent of the above; can run in parallel by a separate owner. |
-| ~~**9**~~ | ~~Real size wins: `material-icons-extended`, fonts, `constraintlayout-compose`~~ — **done 2026-10-12** | — | −7.4 % download, and CI now gates the size. |
-| **10** | Phase-aware home and schedule conflicts | §5.3 | Answers question 2 of §5.1, and the hero already has the slot. |
-| **11** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
+| **1** | Accessibility listening pass | §14 | Needs a person, not a contributor slot; can run in parallel with anything. |
+| **2** | Phase-aware home and schedule conflicts | §5.3 | Answers question 2 of §5.1, and the hero already has the slot. |
+| **3** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
 
 Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
@@ -4023,18 +3713,15 @@ The AI section is still deliberately last. It is the most interesting part of th
 
 Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippable when it completes. Move to the next when the previous one's milestone is met — not on a date.
 
-Stage 1, making the codebase safe to change, is complete.
-
 **Stage 2 — Make it a 2026 app**
-- ~~§3.5 → §5 design system: token restructure, rebrand, then M3 Expressive~~ — **landed 2026-10-05**
-- §14 accessibility audit
-- **Milestone:** contrast test green
+- §14 accessibility listening pass
+- **Milestone:** TalkBack and Switch Access walk every screen with nothing to fix
 
 **Stage 3 — Make it worth installing**
 - §6 intelligent experiences, every flag default-off
 - §7 ticketing + QR — **the backend conversation must have started during Stage 2**
 - §8 notifications
-- §5.5 notes · §11.4a calendar export · §11.6 venue map · §11.7 widget
+- §5.5 notes · §11.4a calendar export · §11.6 venue map
 - **Milestone:** the app does things no other conference app does, all behind flags that have been tested in the off position
 
 **Stage 4 — Ship it**
@@ -4060,10 +3747,10 @@ The natural split for a small contributor pool, chosen so people don't collide:
 | Track | Owns | Sections |
 | --- | --- | --- |
 | **Foundations** | Build, CI, perf, testing infra | §3.2, §9, §10.4, §15 |
-| **Design system** | `chai`, theme, motion, a11y | §3.5, §5, §10.2, §14 |
+| **Design system** | `chai`, theme, motion, a11y | §5, §10.2, §14 |
 | **Adaptive** | Navigation, layouts, large screen | §4, §11.8 |
 | **AI** | `:core:ai` and its features | §6 |
-| **Conference ops** | Ticketing, notifications, widget, map | §7, §8, §11.6–11.7 |
+| **Conference ops** | Ticketing, notifications, widget, map | §7, §8, §11.6, §11.7 |
 
 Cross-track dependencies to watch:
 - AI (§6) needs `:core:testing` to test its router.
@@ -4089,7 +3776,7 @@ Non-negotiable for every PR in every phase:
 
 | Risk | Likelihood | Impact | Mitigation |
 | --- | --- | --- | --- |
-| **Half-migrated state.** Volunteer capacity evaporates mid-phase, leaving two design systems and three navigation patterns coexisting. | **High** | **High** | Every phase must be independently completable and shippable. Never start Phase N+1 with Phase N half-done. Prefer deprecated shims (§3.5) over big-bang rewrites. |
+| **Half-migrated state.** Volunteer capacity evaporates mid-phase, leaving two design systems and three navigation patterns coexisting. | **High** | **High** | Every phase must be independently completable and shippable. Never start Phase N+1 with Phase N half-done. Prefer deprecated shims over big-bang rewrites. |
 | **AI cost blowout.** A retry bug or a bot burns the Gemini quota during the conference. | Medium | High | App Check enforced (§6.5), client quota guard (§6.12), Remote Config kill switch, budget alerts in GCP. Test the kill switch before the conference. |
 | **Gate failure on day 1.** Ticketing ships untested at scale and the queue backs up. | Medium | **Severe** | Offline-first by design (§7.2). Rehearse with real staff a week out. Keep the paper/email fallback for year one — do not make the app the only path. |
 | **Model hallucination in a user-visible place.** The agenda summary invents a session. | Medium | Medium | Structured output constrained to provided ids, deterministic path always shown alongside (§6.7), thumbs-down monitoring with a 25% kill threshold. |
@@ -4140,7 +3827,6 @@ core/ui/.../common/components/{LoadingBox,AnimatedShimmerEffect}.kt  # one loadi
 
 ```
 core/ai/                      §6.2
-widget/                       §11.7
 feature/ticket/               §7
 ```
 
@@ -4194,18 +3880,3 @@ The apps and docs this plan draws on, and what specifically to take from each.
 - [Material 3 Expressive](https://m3.material.io/) and [Compose Material 3](https://developer.android.com/develop/ui/compose/designsystems/material3)
 - [Roborazzi](https://github.com/takahirom/roborazzi)
 - [Compose accessibility](https://developer.android.com/develop/ui/compose/accessibility)
-
----
-
-## Changelog
-
-| Date | Change |
-| --- | --- |
-| 2026-10-05 | Pruned to pending work only. Deleted the landed-work notes at the top, §1.1–1.4, §3.3, §3.4, §3.7, §3.8, most of §4, §9.1–9.2, §16.0 and the struck roadmap rows; git keeps them. Durable facts moved to `docs/architecture.md`, `docs/performance.md`, `AGENTS.md` and `README.md`. §16.1 #5 is no longer struck: the Compose stability configuration (§3.1) never landed. |
-| 2026-10-05 | Recorded the 2026 rebrand and Expressive components: §3.5 and the landed-work block move to `docs/architecture.md`, §5.2 lists only what is left, §5.1 and §5.3 note the Now/Next hero, and §12 is decided on a Compose Canvas cube after reviewing the website's Spline scene. |
-| 2026-10-11 | §14 contrast audit landed as `ChaiColorContrastTest`. It found light `onSurfaceVariant` and both themes' `outline` below AA on the higher container tones; the palette was darkened rather than the threshold relaxed. Removed the §14 test template. |
-| 2026-10-11 | §14 colour independence landed: list cards, banner-image cards (which showed no status) and agenda cells all say "Live" or "Ended"; past cards no longer dim to 50 % alpha. Dropped the row from the §14 table and named the live border's reduced-motion gap. |
-| 2026-10-11 | §14 touch targets and reduced motion closed. The sessions app bar's list and agenda icons became labelled, selectable 48 dp targets, and its filter button, disabled whenever no filter was applied, is always enabled. Infinite transitions already stop with animations off, so the live border was never a gap; `LiveBadge` dropped its settings read. Dropped both rows from the §14 table. |
-| 2026-10-11 | §14 emulator pass: fixed the sessions app bar at large display and font sizes, unlabelled organiser logos, missing detail pane titles, a mislabelled X button and wrapped agenda tags. Display size row closed; TalkBack, font scale and two-pane rows narrowed to what is left; added the dead session share button. |
-| 2026-10-12 | §3.1 landed and its section is deleted. Strong skipping already makes every `Unit` composable skippable, the 20 unstable-collection findings were gone, and no type belonged in a stability file, so the work became: metrics on the Compose plugin extension and `SessionDetailsPresentationModel.speakers` as an `ImmutableList`. Refreshed `docs/static-analysis.md`. |
-| 2026-10-12 | §9.4 size wins landed: icons into `ChaiIcons`, one variable Montserrat, no ConstraintLayout; −344,671 B Pixel-class download (−7.4 %). Added the CI size gate (§15.1). §9.4 is now the tracked baseline only. |

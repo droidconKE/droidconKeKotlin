@@ -212,7 +212,7 @@ puts startup classes in the primary dex and everything else behind it:
 
 The primary dex is loaded first at launch, so a smaller one means fewer page faults before
 the app draws. Total dex grew ~385 KB, the cost of splitting — a fair trade for startup
-locality, but worth revisiting if APK size becomes the binding constraint (§9.4).
+locality, but worth revisiting if APK size becomes the binding constraint (see "App size").
 
 ## Jank on the sessions list
 
@@ -387,6 +387,17 @@ Download size is Pixel-class (`config/size/pixel.json`: arm64-v8a, `en`, 420 dpi
 
 CI's Build job now checks the download size against `config/size/download-size.txt` and fails
 on growth above 1 %. Run `config/size/check-app-size.sh --update` after an intended increase.
+
+### Size over time
+
+Pixel-class download and install size at each milestone. Add a row when a change moves the
+baseline.
+
+| Date | Build | Download | Install | Notes |
+| --- | --- | --- | --- | --- |
+| 2026-09-03 | 1.0.0 (vc 1) | 5,205,416 B — 4.96 MiB | 8,553,954 B — 8.16 MiB | End of Phase 0, with Credential Manager replacing `play-services-auth` |
+| 2026-10-12 | main before the size pass | 4,678,844 B — 4.46 MiB | 8,708,023 B — 8.30 MiB | After the APK pass, the rebrand and Expressive |
+| 2026-10-12 | size pass | 4,334,173 B — 4.13 MiB | 8,305,630 B — 7.92 MiB | Icons into `ChaiIcons`, one variable font, no ConstraintLayout |
 
 ## Still open
 

@@ -89,7 +89,7 @@ fun HomeHeaderSectionComponent(
             text = featured?.title ?: stringResource(id = R.string.home_header_welcome_label),
             style = displayStyle,
             color = palette.heroContentColor,
-            maxLines = HERO_MAX_LINES,
+            maxLines = if (featured != null) HERO_MAX_LINES else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.semantics { heading() },
         )
