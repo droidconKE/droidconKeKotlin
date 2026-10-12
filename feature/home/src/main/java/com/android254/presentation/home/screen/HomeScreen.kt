@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.home.components.HomeAgendaSection
 import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
@@ -129,12 +130,23 @@ internal fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 HomeHeaderSectionComponent(
+                    hero = viewState.hero,
                     liveSession = liveSession,
                     nextSession = nextSession,
                     onSessionClick = onSessionClicked,
+                    onFeedbackClick = navigateToFeedbackScreen,
                 )
                 HomeBannerSection(viewState)
                 HomeSpacer()
+
+                viewState.agenda?.let { agenda ->
+                    HomeAgendaSection(
+                        agenda = agenda,
+                        onSessionClick = onSessionClicked,
+                        onBrowseSessions = navigateToSessionScreen,
+                    )
+                    HomeSpacer()
+                }
 
                 AnimatedContent(
                     targetState = showSessionsSkeleton,

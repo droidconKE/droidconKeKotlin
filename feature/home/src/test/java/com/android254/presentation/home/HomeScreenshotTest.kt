@@ -18,9 +18,14 @@ package com.android254.presentation.home
 import androidx.compose.runtime.Composable
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.screen.HomeScreen
+import com.android254.presentation.home.viewstate.AgendaDay
+import com.android254.presentation.home.viewstate.AgendaItem
+import com.android254.presentation.home.viewstate.HomeAgenda
+import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.speakersDummyData
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import org.junit.Test
 
@@ -34,12 +39,45 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
 
     @Test
     fun `home during a session`() = captureScreen("screens/home_live") { Home(liveIndex = 1, nextIndex = 2) }
+
+    @Test
+    fun `home before the event, nothing starred`() =
+        captureScreen("screens/home_before") {
+            Home(
+                hero = HomeHero.Countdown(daysUntil = 12),
+                agenda = HomeAgenda(AgendaDay.On("Friday 6 November"), persistentListOf()),
+            )
+        }
+
+    @Test
+    fun `home during the event, with a clash`() =
+        captureScreen("screens/home_agenda") {
+            Home(
+                liveIndex = 4,
+                nextIndex = 6,
+                hero = HomeHero.Welcome,
+                agenda =
+                    HomeAgenda(
+                        AgendaDay.Today,
+                        persistentListOf(
+                            AgendaItem(fakeSessions[4], persistentListOf(fakeSessions[1].title)),
+                            AgendaItem(fakeSessions[1].copy(id = "today-1"), persistentListOf(fakeSessions[4].title)),
+                            AgendaItem(fakeSessions[6], persistentListOf()),
+                        ),
+                    ),
+            )
+        }
+
+    @Test
+    fun `home after the event`() = captureScreen("screens/home_after") { Home(hero = HomeHero.ThankYou) }
 }
 
 @Composable
 private fun Home(
     liveIndex: Int? = null,
     nextIndex: Int? = null,
+    hero: HomeHero = HomeHero.Welcome,
+    agenda: HomeAgenda? = null,
 ) {
     HomeScreen(
         viewState =
@@ -47,6 +85,8 @@ private fun Home(
                 speakers = speakersDummyData.toImmutableList(),
                 sessions = fakeSessions,
                 isSyncing = false,
+                hero = hero,
+                agenda = agenda,
             ),
         isSyncing = false,
         liveSession = liveIndex?.let(fakeSessions::get),

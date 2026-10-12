@@ -29,4 +29,37 @@ data class HomeState(
     val organizerLogos: ImmutableList<String> = persistentListOf(),
     val sessions: ImmutableList<SessionPresentationModel> = persistentListOf(),
     val isSyncing: Boolean = true,
+    val hero: HomeHero = HomeHero.Welcome,
+    val agenda: HomeAgenda? = null,
+)
+
+/** What the hero says when no session is live. */
+sealed interface HomeHero {
+    data object Welcome : HomeHero
+
+    data class Countdown(
+        val daysUntil: Int,
+    ) : HomeHero
+
+    data object ThankYou : HomeHero
+}
+
+data class HomeAgenda(
+    val day: AgendaDay,
+    val items: ImmutableList<AgendaItem>,
+)
+
+sealed interface AgendaDay {
+    data object Today : AgendaDay
+
+    data object Tomorrow : AgendaDay
+
+    data class On(
+        val date: String,
+    ) : AgendaDay
+}
+
+data class AgendaItem(
+    val session: SessionPresentationModel,
+    val clashesWith: ImmutableList<String>,
 )
