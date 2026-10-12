@@ -5,6 +5,7 @@
     <string name="sign_in">Sign in</string>
     <string name="google_sign_in_failed">Google sign in failed.</string>
     <string name="share">Share</string>
+    <string name="share_session">Share session</string>
     <string name="default_web_client_id">275140757840-t551kcoa9hj4j1kq9cgmk3m067jl2imq.apps.googleusercontent.com</string>
     <string name="feedback_type_message_label">Type message here</string>
     <string name="feedback_event_label">How is/was the event</string>

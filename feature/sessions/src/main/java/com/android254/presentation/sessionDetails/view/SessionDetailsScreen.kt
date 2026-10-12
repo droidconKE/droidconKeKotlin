@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessionDetails.view
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.paneTitle
@@ -84,14 +86,36 @@ fun SessionDetailsRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
     SessionDetailsScreen(
         uiState = uiState,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick,
         showTopBar = showTopBar,
+        onShare = { session -> context.startActivity(shareIntent(session)) },
     )
 }
+
+private fun shareIntent(session: SessionDetailsPresentationModel): Intent {
+    val send =
+        Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, session.title)
+            putExtra(Intent.EXTRA_TEXT, session.shareText())
+        }
+    return Intent.createChooser(send, null)
+}
+
+internal fun SessionDetailsPresentationModel.shareText(): String =
+    listOf(
+        title,
+        listOf(timeSlot, venue).filter(String::isNotBlank).joinToString(" · "),
+        speakers.joinToString(", ") { it.name },
+        DROIDCON_WEBSITE,
+    ).filter(String::isNotBlank).joinToString("\n")
+
+private const val DROIDCON_WEBSITE = "https://droidcon.co.ke"
 
 @Composable
 internal fun SessionDetailsScreen(
@@ -101,6 +125,7 @@ internal fun SessionDetailsScreen(
     onNavigationIconClick: () -> Unit,
     showTopBar: Boolean = true,
     isTabletop: Boolean = rememberIsTabletopPosture(),
+    onShare: (SessionDetailsPresentationModel) -> Unit = {},
 ) {
     val paneTitle = (uiState as? SessionDetailsUiState.Success)?.data?.title ?: stringResource(R.string.session_details_label)
     // The scrim draws over the content, so stack it here rather than rely on the caller.
@@ -109,21 +134,23 @@ internal fun SessionDetailsScreen(
             // As a pane the bar repeats the title and offers a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {},
-                    modifier =
-                        Modifier
-                            .size(44.dp)
-                            .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = CircleShape,
-                ) {
-                    Icon(
-                        modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                        imageVector = ChaiIcons.Reply,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                    )
+                if (uiState is SessionDetailsUiState.Success) {
+                    FloatingActionButton(
+                        onClick = { onShare(uiState.data) },
+                        modifier =
+                            Modifier
+                                .size(44.dp)
+                                .testTag(TestTag.FLOATING_ACTION_BUTTON),
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = CircleShape,
+                    ) {
+                        Icon(
+                            modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
+                            imageVector = ChaiIcons.Reply,
+                            contentDescription = stringResource(R.string.share_session),
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        )
+                    }
                 }
             },
             contentWindowInsets = DroidconWindowInsets.screenContent,
