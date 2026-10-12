@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
@@ -37,6 +38,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LiveBadge
+import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
@@ -49,12 +51,13 @@ private const val HERO_MAX_LINES = 5
 @Composable
 fun HomeHeaderSectionComponent(
     modifier: Modifier = Modifier,
+    hero: HomeHero = HomeHero.Welcome,
     liveSession: SessionPresentationModel? = null,
     nextSession: SessionPresentationModel? = null,
     onSessionClick: (String) -> Unit = {},
+    onFeedbackClick: () -> Unit = {},
 ) {
     val palette = MaterialTheme.chaiColorsPalette
-    val openLabel = stringResource(R.string.open_session)
     val featured = liveSession
     val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
     val displayStyle =
@@ -63,6 +66,13 @@ fun HomeHeaderSectionComponent(
         } else {
             MaterialTheme.typography.titleLargeEmphasized
         }
+    val action: (() -> Unit)? =
+        when {
+            featured != null -> ({ onSessionClick(featured.id) })
+            hero == HomeHero.ThankYou -> onFeedbackClick
+            else -> null
+        }
+    val actionLabel = if (featured != null) stringResource(R.string.open_session) else stringResource(R.string.hero_thank_you_action)
     Column(
         modifier =
             modifier
@@ -71,8 +81,8 @@ fun HomeHeaderSectionComponent(
                 .clip(MaterialTheme.shapes.extraLarge)
                 .background(palette.heroContainerColor)
                 .then(
-                    if (featured != null) {
-                        Modifier.clickable(onClickLabel = openLabel, role = Role.Button) { onSessionClick(featured.id) }
+                    if (action != null) {
+                        Modifier.clickable(onClickLabel = actionLabel, role = Role.Button, onClick = action)
                     } else {
                         Modifier
                     },
@@ -86,18 +96,44 @@ fun HomeHeaderSectionComponent(
             }
         }
         Text(
-            text = featured?.title ?: stringResource(id = R.string.home_header_welcome_label),
+            text = featured?.title ?: hero.title(),
             style = displayStyle,
             color = palette.heroContentColor,
             maxLines = if (featured != null) HERO_MAX_LINES else Int.MAX_VALUE,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.semantics { heading() },
         )
-        if (liveSession != null && nextSession != null) {
-            HeroLabel(stringResource(R.string.hero_up_next, "${nextSession.startTime} ${nextSession.amOrPm}", nextSession.title), maxLines = 1)
-        }
+        HeroSubtitle(hero = hero, liveSession = liveSession, nextSession = nextSession)
     }
 }
+
+@Composable
+private fun HeroSubtitle(
+    hero: HomeHero,
+    liveSession: SessionPresentationModel?,
+    nextSession: SessionPresentationModel?,
+) {
+    when {
+        liveSession != null && nextSession != null ->
+            HeroLabel(stringResource(R.string.hero_up_next, "${nextSession.startTime} ${nextSession.amOrPm}", nextSession.title), maxLines = 1)
+        liveSession != null -> Unit
+        hero is HomeHero.Countdown -> HeroLabel(stringResource(R.string.hero_countdown_label))
+        hero == HomeHero.ThankYou -> HeroLabel(stringResource(R.string.hero_thank_you_action))
+    }
+}
+
+@Composable
+private fun HomeHero.title(): String =
+    when (this) {
+        HomeHero.Welcome -> stringResource(R.string.home_header_welcome_label)
+        HomeHero.ThankYou -> stringResource(R.string.hero_thank_you)
+        is HomeHero.Countdown ->
+            if (daysUntil == 0) {
+                stringResource(R.string.hero_starts_today)
+            } else {
+                pluralStringResource(R.plurals.hero_days_to_go, daysUntil, daysUntil)
+            }
+    }
 
 @Composable
 private fun HeroLabel(

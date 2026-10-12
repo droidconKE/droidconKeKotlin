@@ -5,12 +5,39 @@
 //   ./gradlew :home:stabilityDump
 
 @Composable
+private fun com.android254.presentation.home.components.AgendaRow(item: com.android254.presentation.home.viewstate.AgendaItem, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - item: STABLE (class with no mutable properties)
+    - onClick: STABLE (function type)
+
+@Composable
 private fun com.android254.presentation.home.components.HeroLabel(text: kotlin.String, maxLines: kotlin.Int): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - text: STABLE (String is immutable)
     - maxLines: STABLE (primitive type)
+
+@Composable
+private fun com.android254.presentation.home.components.HeroSubtitle(hero: com.android254.presentation.home.viewstate.HomeHero, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - hero: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - liveSession: STABLE (class with no mutable properties)
+    - nextSession: STABLE (class with no mutable properties)
+
+@Composable
+public fun com.android254.presentation.home.components.HomeAgendaSection(agenda: com.android254.presentation.home.viewstate.HomeAgenda, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, onBrowseSessions: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - agenda: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - onSessionClick: STABLE (function type)
+    - onBrowseSessions: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.home.components.HomeBannerSection(homeState: com.android254.presentation.home.viewstate.HomeState): kotlin.Unit
@@ -34,14 +61,16 @@ public fun com.android254.presentation.home.components.HomeEventPoster(modifier:
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.home.components.HomeHeaderSectionComponent(modifier: androidx.compose.ui.Modifier, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.home.components.HomeHeaderSectionComponent(modifier: androidx.compose.ui.Modifier, hero: com.android254.presentation.home.viewstate.HomeHero, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, onFeedbackClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+    - hero: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - liveSession: STABLE (class with no mutable properties)
     - nextSession: STABLE (class with no mutable properties)
     - onSessionClick: STABLE (function type)
+    - onFeedbackClick: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.home.components.HomeSectionHeaderComponent(sectionLabel: kotlin.String, sectionSize: kotlin.Int, onViewAllClicked: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -134,6 +163,18 @@ public fun com.android254.presentation.home.components.HomeToolbarComponent(isSi
     - isSignedIn: STABLE (primitive type)
     - navigateToFeedbackScreen: STABLE (function type)
     - onActionClicked: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.home.components.label(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+private fun com.android254.presentation.home.components.title(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
 
 @Composable
 public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, liveSession: com.android254.presentation.models.SessionPresentationModel?, nextSession: com.android254.presentation.models.SessionPresentationModel?): kotlin.Unit

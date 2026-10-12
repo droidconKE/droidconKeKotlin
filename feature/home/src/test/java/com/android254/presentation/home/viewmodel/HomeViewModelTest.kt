@@ -29,8 +29,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.TimeZone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
@@ -57,10 +59,10 @@ class HomeViewModelTest {
             val home = Home()
             coEvery { homeRepo.fetchHomeDetails() } returns flowOf(home)
 
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, TimeZone.UTC, testDispatcher)
 
             val job = launch { viewModel.viewState.collect() }
-            advanceUntilIdle()
+            runCurrent()
 
             assertThat(viewModel.viewState.value.isSyncing, `is`(true)) // FakeSyncWorkManager emits true
             coVerify { homeRepo.fetchHomeDetails() }
@@ -75,7 +77,7 @@ class HomeViewModelTest {
             val clock = mockk<Clock>(relaxed = true)
 
             val syncDataWorkManagerMock = mockk<FakeSyncWorkManager>(relaxed = true)
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, TimeZone.UTC, testDispatcher)
 
             viewModel.startRefresh()
             advanceUntilIdle()

@@ -20,6 +20,7 @@ import com.android254.domain.models.HomeBanner
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
+import kotlinx.datetime.TimeZone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -68,7 +69,7 @@ class DomainToPresentationMappersTest {
                 sessions = sessions,
             )
 
-        val homeState = home.toHomeState(isSyncing = false, now = Clock.System.now())
+        val homeState = home.toHomeState(isSyncing = false, now = Clock.System.now(), zone = TimeZone.UTC)
 
         assertThat(homeState.banner, `is`(home.banner))
         assertThat(homeState.speakers.size, `is`(1))

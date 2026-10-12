@@ -15,14 +15,31 @@
  */
 package com.android254.presentation.home.mappers
 
+import com.android254.domain.models.ConferencePhase
 import com.android254.domain.models.Home
+import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
+import com.android254.domain.schedule.agendaDay
+import com.android254.domain.schedule.conferencePhase
+import com.android254.domain.schedule.scheduleConflicts
+import com.android254.domain.schedule.starredOn
+import com.android254.presentation.home.viewstate.AgendaDay
+import com.android254.presentation.home.viewstate.AgendaItem
+import com.android254.presentation.home.viewstate.HomeAgenda
+import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlin.time.Instant
 
 fun List<Speaker>.toSpeakersPresentation(): List<SpeakerUI> =
@@ -47,6 +64,7 @@ fun Sponsors.toPresentation() =
 fun Home.toHomeState(
     isSyncing: Boolean,
     now: Instant,
+    zone: TimeZone,
 ) = HomeState(
     banner = banner,
     speakers = speakers.toSpeakersPresentation().toImmutableList(),
@@ -54,4 +72,46 @@ fun Home.toHomeState(
     organizerLogos = organizerLogos.toImmutableList(),
     sessions = sessions.map { it.toPresentationModel(now) }.toImmutableList(),
     isSyncing = isSyncing,
+    hero =
+        when (val phase = sessions.conferencePhase(now, zone)) {
+            is ConferencePhase.BeforeEvent -> HomeHero.Countdown(phase.daysUntil)
+            ConferencePhase.AfterEvent -> HomeHero.ThankYou
+            ConferencePhase.DuringEvent, null -> HomeHero.Welcome
+        },
+    agenda = sessions.agenda(now, zone),
 )
+
+private fun List<Session>.agenda(
+    now: Instant,
+    zone: TimeZone,
+): HomeAgenda? {
+    val day = agendaDay(now, zone) ?: return null
+    val today = now.toLocalDateTime(zone).date
+    val conflicts = scheduleConflicts()
+    return HomeAgenda(
+        day =
+            when (day) {
+                today -> AgendaDay.Today
+                today.plus(1, DateTimeUnit.DAY) -> AgendaDay.Tomorrow
+                else -> AgendaDay.On(day.toJavaLocalDate().format(AGENDA_DATE))
+            },
+        items =
+            starredOn(day, zone)
+                .map { session ->
+                    AgendaItem(
+                        session = session.toPresentationModel(now),
+                        clashesWith =
+                            conflicts
+                                .mapNotNull { conflict ->
+                                    when (session.id) {
+                                        conflict.first.id -> conflict.second.title
+                                        conflict.second.id -> conflict.first.title
+                                        else -> null
+                                    }
+                                }.toImmutableList(),
+                    )
+                }.toImmutableList(),
+    )
+}
+
+private val AGENDA_DATE = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.getDefault())

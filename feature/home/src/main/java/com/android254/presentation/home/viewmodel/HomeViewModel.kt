@@ -22,14 +22,18 @@ import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.home.mappers.toHomeState
 import com.android254.presentation.home.viewstate.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.core.common.di.ConferenceTimeZone
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -40,6 +44,7 @@ class HomeViewModel
         homeRepo: HomeRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
+        @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         val isSyncing =
@@ -55,8 +60,9 @@ class HomeViewModel
             combine(
                 homeRepo.fetchHomeDetails(),
                 isSyncing,
-            ) { home, syncing ->
-                home.toHomeState(isSyncing = syncing, clock.now())
+                minuteTicks(),
+            ) { home, syncing, now ->
+                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone)
             }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
@@ -64,9 +70,21 @@ class HomeViewModel
                     initialValue = HomeState(),
                 )
 
+        private fun minuteTicks() =
+            flow {
+                while (true) {
+                    emit(clock.now())
+                    delay(TICK_INTERVAL_MS)
+                }
+            }
+
         fun startRefresh() {
             viewModelScope.launch {
                 syncDataWorkManager.startSync()
             }
+        }
+
+        private companion object {
+            const val TICK_INTERVAL_MS = 60_000L
         }
     }
