@@ -23,11 +23,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-/**
- * The current time now and then every [interval], for state that changes with the clock rather
- * than with data. It never completes, so a test collecting it must advance time with
- * `advanceTimeBy` and `runCurrent`; `advanceUntilIdle` never returns.
- */
+/** Never completes: tests advance it with `advanceTimeBy` and `runCurrent`, not `advanceUntilIdle`. */
 fun Clock.ticks(interval: Duration = 1.minutes): Flow<Instant> =
     flow {
         while (true) {
