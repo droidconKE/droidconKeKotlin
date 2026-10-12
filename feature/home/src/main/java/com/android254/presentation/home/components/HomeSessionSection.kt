@@ -22,26 +22,27 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
-import com.droidconke.chai.components.ChaiBodySmallBold
-import com.droidconke.chai.components.ChaiTextLabelLarge
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 
@@ -81,11 +82,9 @@ fun HomeSessionContent(
     onSessionClick: (sessionId: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val fontScale = LocalDensity.current.fontScale
     Card(
-        modifier =
-            modifier
-                .width(140.dp)
-                .wrapContentHeight(),
+        modifier = modifier.width(SessionCardWidth * fontScale.coerceAtLeast(1f)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = { onSessionClick(session.id) },
     ) {
@@ -108,22 +107,28 @@ fun HomeSessionContent(
             modifier =
                 Modifier
                     .padding(12.dp)
-                    .fillMaxWidth()
-                    .height(80.dp),
-            verticalArrangement = Arrangement.SpaceBetween,
+                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            ChaiBodySmallBold(
+            Text(
+                text = session.title,
                 modifier = Modifier.sessionSharedTitle(session.id),
-                bodyText = session.title,
-                textColor = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+                minLines = 2,
                 maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.height(4.dp))
-
-            ChaiTextLabelLarge(
-                bodyText = "@ ${session.startTime} | ${session.venue} ",
-                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            Text(
+                text = "@ ${session.startTime} | ${session.venue}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
+
+// Grows with the font scale so a title wraps at word breaks rather than mid-word.
+private val SessionCardWidth = 140.dp
