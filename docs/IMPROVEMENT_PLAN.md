@@ -8,12 +8,13 @@
 
 ---
 
-## Next up — §14, then §12
+## Next up — §14, then §8
 
 What is left of the accessibility audit (§14) is a listening pass by a person: TalkBack, Switch
 Access and a keyboard, on a phone and in two panes. It can run alongside anything else.
 
-The next engineering item is the 3D cube (§12).
+The next engineering item is notifications (§8): channels, local session reminders and a
+preferences screen need no backend. Ticketing (§7) waits on the backend question in §17.2.
 
 ---
 
@@ -115,10 +116,6 @@ litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 localagents-fc = { module = "com.google.ai.edge.localagents:localagents-fc", version.ref = "localagents-fc" }
 
 
-# 3D (§12)
-filament-android = { module = "com.google.android.filament:filament-android", version.ref = "filament" }
-filament-utils = { module = "com.google.android.filament:filament-utils-android", version.ref = "filament" }
-filament-gltfio = { module = "com.google.android.filament:gltfio-android", version.ref = "filament" }
 
 [bundles]
 camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-compose"]
@@ -3224,68 +3221,16 @@ Then make sharing produce those links. A shared session is plain text today, bec
 
 ---
 
-## 12. Phase 9 — 3D cube hero
+## 12. Phase 9 — 3D cube hero — what is left
 
-**No dependencies. Decided 2026-10-05: draw it with Compose Canvas, not a 3D engine.**
+The cube is built: `docs/architecture.md` ("Design system") describes it. Two parts of the plan
+are not done:
 
-### 12.1 What and why
-
-A 3D Rubik's cube with faces carrying the conference identity, solving itself on screen. It has
-no functional purpose. Its purpose is that developers screenshot it and post it, and it says
-"this app was made by people who care."
-
-### 12.2 What the website does, and why the app doesn't copy it
-
-droidcon.co.ke's hero (`components/home/Banner.tsx` in droidconKE2022Web) is a Spline scene: 27
-cubies, a choreographed solve authored to run once over 30 seconds, then replayed every 30
-seconds in alternating directions. It is skipped for reduced-motion users and where WebGL is
-missing, and its replay pauses off screen.
-
-The app does not embed it:
-- the scene is downloaded from `prod.spline.design` at runtime, so it needs a network
-  connection, fails offline, and sends a request to a third party on every view;
-- the scene file is opaque, so a pull request cannot review a change to it;
-- a native 3D runtime costs megabytes per ABI, needs a fallback where GLES is missing, and very
-  few contributors could maintain it.
-
-### 12.3 The build: Compose Canvas
-
-A cube is 27 axis-aligned cubelets. With back faces culled, at most three faces of each are
-visible, so every frame is a few hundred projected quads, which `Canvas` draws easily on every
-supported device. No dependencies.
-
-- **Faces** use the brand palette: blue 700, neon green 500, ink, white, blue 300 and green 300.
-  The centre cubelet of the neon face carries the "con" mark from the wordmark.
-- **Motion** follows the website: a scripted 12-move solve in standard notation, each quarter
-  turn on `MaterialTheme.motionScheme.defaultSpatialSpec()`, then a slow idle yaw. It replays
-  every 30 seconds, alternating direction, as the website does.
-- **Placement:** at the top of the About screen at every window size, and in the trailing half of
-  Home's hero panel on medium and wider windows. Never on a phone's Home, which needs the space
-  for now and next.
-- **Structure:** a pure `CubeState` (positions and orientations) with `apply(move)`, kept apart
-  from the renderer, so the maths is tested without a device.
-
-```kotlin
-// core/designsystem/.../chai/hero/CubeHero.kt
-@Composable
-fun CubeHero(modifier: Modifier = Modifier, moves: List<CubeMove> = SignatureSolve)
-
-data class CubeState(val cubelets: List<Cubelet>) {
-    fun apply(move: CubeMove): CubeState
-}
-```
-
-**Non-negotiables:**
-- Pause when off screen or when the app is not resumed (`LifecycleResumeEffect` plus visibility).
-- Respect reduced motion: show the solved cube at a three-quarter angle, with no animation.
-- `hideFromAccessibility()`, because it is decoration.
-- Never on the startup path. About is never the start destination, and Home only draws it after
-  first content.
-- A Remote Config kill switch, `cube_hero_enabled`, in case it costs battery in the field.
-
-**Tests:** unit tests on `CubeState` (any move applied four times is the identity; a scramble
-followed by its inverse is solved), a Roborazzi golden of the static pose with the clock paused,
-and a macrobenchmark on About showing p90 frame time under 16 ms.
+- **The "con" mark** on the centre cubelet of the neon face. Faces are drawn orthographically, so
+  each is an affine image of a square, and the wordmark's vector can be drawn into it with
+  `withTransform`.
+- **A frame-time benchmark.** A macrobenchmark on About asserting p90 frame time under 16 ms. It
+  needs a device, so it belongs with the other benchmarks in `docs/performance.md`.
 
 ## 13. Phase 10 — Play Store presence
 
@@ -3620,9 +3565,9 @@ Ranked. Higher items are either prerequisites for lower ones, or buy more per un
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
 | **1** | Accessibility listening pass | §14 | Needs a person, not a contributor slot; can run in parallel with anything. |
-| **2** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
+| **2** | Notifications: channels, local reminders, preferences | §8 | Reminders are the one notification a conference app needs, and none of it waits on the backend. |
 
-Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
+Then the other product surfaces — ticketing (§7), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
 The AI section is still deliberately last. It is the most interesting part of this document and it should be built on a codebase that has screenshot tests and a measured startup time, otherwise it becomes the thing blamed when something unrelated regresses.
 
@@ -3671,7 +3616,6 @@ The natural split for a small contributor pool, chosen so people don't collide:
 
 Cross-track dependencies to watch:
 - AI (§6) needs `:core:testing` to test its router.
-- The cube (§12) needs nothing, but lands after §14 so its reduced-motion path is audited with the rest.
 
 ### 16.4 Definition of done, per PR
 
