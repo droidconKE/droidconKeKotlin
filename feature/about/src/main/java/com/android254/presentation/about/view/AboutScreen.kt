@@ -56,9 +56,10 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.hero.CubeHero
+import com.droidconke.chai.hero.CubeHeroBanner
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -125,15 +126,21 @@ internal fun AboutScreen(
                         .verticalScroll(rememberScrollState())
                         .testTag("about_screen"),
                 ) {
-                    if (uiState.showCube) {
-                        CubeHero(
-                            animate = animateCube,
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(CubeHeight)
-                                    .padding(vertical = 16.dp)
-                                    .testTag("cube_hero"),
+                    CubeHeroBanner(
+                        showCube = uiState.showCube,
+                        animateCube = animateCube,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.about_banner_title),
+                            style = MaterialTheme.typography.headlineMediumEmphasized,
+                            color = MaterialTheme.chaiColorsPalette.heroContentColor,
+                            modifier = Modifier.semantics { heading() },
+                        )
+                        Text(
+                            text = stringResource(R.string.about_banner_subtitle),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
                         )
                     }
                     AboutDroidconSection(
@@ -311,5 +318,3 @@ private const val TEAM_IMAGE_ASPECT_RATIO = 824f / 470f
 private val TeamGridGap = 16.dp
 private val TeamCellMinWidth = 104.dp
 private const val MIN_TEAM_COLUMNS = 3
-
-private val CubeHeight = 240.dp

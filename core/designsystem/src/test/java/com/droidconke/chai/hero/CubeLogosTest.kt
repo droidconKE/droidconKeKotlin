@@ -24,11 +24,11 @@ class CubeLogosTest {
     private val tiles = (0..2).flatMap { row -> (0..2).map { column -> column to row } }
 
     @Test
-    fun `every outer face carries a logo and the inside carries none`() {
+    fun `every outer face but the wordmark one carries pixels, and the inside none`() {
         CubeFace.entries.forEach { face ->
             val pixels = tiles.sumOf { (column, row) -> CubeLogos.runs(face, column, row).sumOf { it.end - it.start } }
 
-            assertEquals(face.name, face != CubeFace.Inner, pixels > 0)
+            assertEquals(face.name, face !in setOf(CubeFace.Inner, CubeFace.Front), pixels > 0)
         }
     }
 

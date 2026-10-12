@@ -18,6 +18,8 @@
     <string name="organized_by">Organizers</string>
     <string name="logo">Logo</string>
     <string name="about_droidcon_image">droidcon Image</string>
+    <string name="about_banner_title">Beyond Stacks</string>
+    <string name="about_banner_subtitle">Africa\'s largest mobile developer conference</string>
     <string name="feedback">Feedback</string>
     <string name="cancel">Cancel</string>
     <string name="head_shot">Speaker headshot</string>

@@ -48,9 +48,11 @@ class CubeProjectionTest {
             stickers.forEach { quad ->
                 assertTrue("$face reads left to right", quad.xs[1] > quad.xs[0])
                 assertTrue("$face reads top to bottom", quad.ys[3] > quad.ys[0])
-                assertEquals("$face column ${quad.tileColumn}", quad.tileColumn - 1f, quad.xs.average().toFloat(), EPSILON)
-                assertEquals("$face row ${quad.tileRow}", quad.tileRow - 1f, quad.ys.average().toFloat(), EPSILON)
             }
+            val byColumn = stickers.sortedBy { it.xs.average() }.map { it.tileColumn }
+            val byRow = stickers.sortedBy { it.ys.average() }.map { it.tileRow }
+            assertEquals("$face columns run left to right", byColumn.sorted(), byColumn)
+            assertEquals("$face rows run top to bottom", byRow.sorted(), byRow)
         }
     }
 
@@ -107,9 +109,5 @@ class CubeProjectionTest {
         val committed = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH)
 
         assertEquals(committed.map { it.face }.sorted(), animated.map { it.face }.filter { it != CubeFace.Inner }.sorted())
-    }
-
-    private companion object {
-        const val EPSILON = 1e-4f
     }
 }

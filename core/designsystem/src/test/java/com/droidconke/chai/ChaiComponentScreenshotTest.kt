@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ import com.droidconke.chai.components.ChaiTextLabelMedium
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import com.droidconke.chai.components.ChaiTitle
 import com.droidconke.chai.hero.CubeHero
+import com.droidconke.chai.hero.CubeHeroBanner
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import org.junit.Test
@@ -53,6 +56,20 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
     fun `cube hero at rest`() =
         captureComponent("chai/cube_hero") {
             Padded { CubeHero(modifier = Modifier.size(240.dp), animate = false) }
+        }
+
+    @Test
+    fun `cube hero banner at rest`() =
+        captureComponent("chai/cube_hero_banner") {
+            Padded {
+                CubeHeroBanner(animateCube = false) {
+                    Text(
+                        text = "Welcome to the largest Android Focussed Developer community in Africa",
+                        style = MaterialTheme.typography.titleLargeEmphasized,
+                        color = MaterialTheme.chaiColorsPalette.heroContentColor,
+                    )
+                }
+            }
         }
 
     @Test

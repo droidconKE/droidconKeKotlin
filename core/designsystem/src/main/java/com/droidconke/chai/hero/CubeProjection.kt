@@ -18,11 +18,15 @@ package com.droidconke.chai.hero
 import kotlin.math.cos
 import kotlin.math.sin
 
-/** The three-quarter view the cube rests at: front, right and top faces showing. */
+/** The three-quarter view the cube rests at, rolled a little: front, right and top faces showing. */
 internal object RestingPose {
     const val YAW = -35f
     const val PITCH = 25f
+    const val ROLL = -12f
 }
+
+/** How far the camera is from the cube's centre, in cubelets: near enough to foreshorten it. */
+internal const val CAMERA_DISTANCE = 9f
 
 /** Which face of the solved cube a sticker belongs to, or [Inner] for the body between cubelets. */
 internal enum class CubeFace { Right, Left, Up, Down, Front, Back, Inner }
@@ -34,9 +38,9 @@ internal data class Turn(
 )
 
 /**
- * One visible face, projected orthographically. [xs] and [ys] are its corners in cube units,
- * clockwise from the top left of its logo tile, which is [tileColumn] and [tileRow] of [face]'s
- * logo. [light] runs from 0, edge-on, to 1, facing the viewer.
+ * One visible face, in perspective. [xs] and [ys] are its corners in cube units, clockwise from the
+ * top left of its logo tile, which is [tileColumn] and [tileRow] of [face]'s logo. [light] runs
+ * from 0, edge-on, to 1, facing the viewer, and [tiltX] and [tiltY] are where its normal leans.
  */
 internal class Quad(
     val face: CubeFace,
@@ -46,19 +50,22 @@ internal class Quad(
     val ys: FloatArray,
     val depth: Float,
     val light: Float,
+    val tiltX: Float,
+    val tiltY: Float,
 )
 
 /**
- * The faces a viewer sees, in painting order, after yawing the cube about its vertical axis and
- * then pitching it towards the viewer. A turning layer is painted as one block, before or after
+ * The faces a viewer sees, in painting order, after yawing the cube about its vertical axis,
+ * pitching it towards the viewer and rolling it about the line of sight. A turning layer is painted as one block, before or after
  * the rest of the cube depending on which side of it faces the viewer.
  */
 internal fun CubeState.visibleQuads(
     yawDegrees: Float,
     pitchDegrees: Float,
     turn: Turn? = null,
+    rollDegrees: Float = 0f,
 ): List<Quad> {
-    val view = rotation(Axis.X, pitchDegrees) * rotation(Axis.Y, yawDegrees)
+    val view = rotation(Axis.Z, rollDegrees) * rotation(Axis.X, pitchDegrees) * rotation(Axis.Y, yawDegrees)
     val turned = turn?.let { view * rotation(it.move.axis, it.move.sign * it.degrees) }
     val still = ArrayList<Quad>(VISIBLE_GUESS)
     val moving = ArrayList<Quad>(VISIBLE_GUESS)
@@ -169,11 +176,15 @@ private fun Cubelet.quad(
     val nx = worldX(local.normal, f)
     val ny = worldY(local.normal, f)
     val nz = worldZ(local.normal, f)
-    val light = m.z(nx, ny, nz)
-    if (light <= 0f) return null
     val cx = position.x + nx * HALF
     val cy = position.y + ny * HALF
     val cz = position.z + nz * HALF
+    val light = m.z(nx, ny, nz)
+    val tiltX = m.x(nx, ny, nz)
+    val tiltY = m.y(nx, ny, nz)
+    val depth = m.z(cx, cy, cz)
+    val towardsCamera = -tiltX * m.x(cx, cy, cz) - tiltY * m.y(cx, cy, cz) + light * (CAMERA_DISTANCE - depth)
+    if (towardsCamera <= 0f) return null
     val rx = worldX(local.right, f) * HALF
     val ry = worldY(local.right, f) * HALF
     val rz = worldZ(local.right, f) * HALF
@@ -186,8 +197,9 @@ private fun Cubelet.quad(
         val px = cx + rx * CornerRight[i] + ux * CornerUp[i]
         val py = cy + ry * CornerRight[i] + uy * CornerUp[i]
         val pz = cz + rz * CornerRight[i] + uz * CornerUp[i]
-        xs[i] = m.x(px, py, pz)
-        ys[i] = -m.y(px, py, pz)
+        val perspective = CAMERA_DISTANCE / (CAMERA_DISTANCE - m.z(px, py, pz))
+        xs[i] = m.x(px, py, pz) * perspective
+        ys[i] = -m.y(px, py, pz) * perspective
     }
     return Quad(
         face = if (isSticker) local.face else CubeFace.Inner,
@@ -195,8 +207,10 @@ private fun Cubelet.quad(
         tileRow = 1 - local.up.dot(home),
         xs = xs,
         ys = ys,
-        depth = m.z(cx, cy, cz),
-        light = light,
+        depth = depth,
+        light = light.coerceAtLeast(0f),
+        tiltX = tiltX,
+        tiltY = tiltY,
     )
 }
 

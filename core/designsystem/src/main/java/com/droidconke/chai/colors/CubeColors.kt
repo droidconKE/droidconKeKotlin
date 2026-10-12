@@ -17,28 +17,30 @@ package com.droidconke.chai.colors
 
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlack
-import com.droidconke.chai.atoms.ChaiBlue700
 import com.droidconke.chai.atoms.ChaiCyan400
 import com.droidconke.chai.atoms.ChaiGreen500
-import com.droidconke.chai.atoms.ChaiGrey600
-import com.droidconke.chai.atoms.ChaiGrey900
+import com.droidconke.chai.atoms.ChaiGrey200
+import com.droidconke.chai.atoms.ChaiNavy700
+import com.droidconke.chai.atoms.ChaiNavy900
 import com.droidconke.chai.atoms.ChaiPink500
 import com.droidconke.chai.atoms.ChaiPurple400
 import com.droidconke.chai.atoms.ChaiWhite
 import com.droidconke.chai.atoms.ChaiYellow400
 
-// The cube hero's logos: neon on black tiles, as on the conference site, the same in both themes.
-val CubeDroidconInk: Color = ChaiGreen500
-val CubeDroidconWordInk: Color = ChaiWhite
+// The cube hero, as on the conference site: neon logos on glossy black, the same in both themes.
+val CubeWordInk: Color = ChaiWhite
+val CubeMarkInk: Color = ChaiGreen500
 val CubeFlutterInk: Color = ChaiCyan400
-val CubeFlutterShadeInk: Color = ChaiBlue700
 val CubeReactInk: Color = ChaiYellow400
 val CubeKotlinInk: Color = ChaiGreen500
 val CubeSwiftInk: Color = ChaiPink500
 val CubeAiInk: Color = ChaiPurple400
 
-val CubeTileColor: Color = ChaiBlack
+/** The gaps between cubelets. */
+val CubeGapColor: Color = ChaiBlack
 
-/** The body between tiles, lit when it faces the viewer and in shadow when edge-on. */
-val CubeBodyLitColor: Color = ChaiGrey600
-val CubeBodyShadowColor: Color = ChaiGrey900
+/** A tile in shadow and facing the light; the sheen and edge catch the light on top. */
+val CubeTileShadowColor: Color = ChaiNavy900
+val CubeTileLitColor: Color = ChaiNavy700
+val CubeSheenColor: Color = ChaiWhite
+val CubeEdgeColor: Color = ChaiGrey200

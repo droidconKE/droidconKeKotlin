@@ -33,6 +33,9 @@ val ChaiPink500 = Color(0xFFFF57E9)
 val ChaiPurple400 = Color(0xFFA66BFF)
 val ChaiYellow400 = Color(0xFFFFD21F)
 
+val ChaiNavy700 = Color(0xFF26343F)
+val ChaiNavy900 = Color(0xFF0B1117)
+
 val ChaiWhite = Color(0xFFFFFFFF)
 val ChaiBlack = Color(0xFF000000)
 val ChaiInk = Color(0xFF20201E)
