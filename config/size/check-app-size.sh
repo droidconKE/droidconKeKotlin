@@ -18,6 +18,7 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 bundletool build-apks --bundle="$AAB" --output="$WORK/app.apks" --mode=default >/dev/null
 size=$(bundletool get-size total --apks="$WORK/app.apks" --device-spec="$SPEC" | tail -1 | cut -d, -f2 | tr -d '[:space:]')
+[[ "$size" =~ ^[0-9]+$ ]] || { echo "Could not read a download size from bundletool's output: '$size'"; exit 1; }
 
 if [[ "${1:-}" == "--update" ]]; then
   echo "$size" > "$BASELINE"
@@ -26,6 +27,7 @@ if [[ "${1:-}" == "--update" ]]; then
 fi
 
 baseline=$(tr -d '[:space:]' < "$BASELINE")
+[[ "$baseline" =~ ^[0-9]+$ ]] || { echo "$BASELINE does not hold a byte count: '$baseline'"; exit 1; }
 delta=$((size - baseline))
 limit=$((baseline * TOLERANCE_PERCENT / 100))
 report="Download size (Pixel-class): $size bytes, baseline $baseline, delta $delta bytes (limit +$limit)."
