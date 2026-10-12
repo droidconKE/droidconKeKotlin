@@ -44,4 +44,6 @@ class RemoteFeatureToggle(
     }
 
     fun getString(key: String): String = remoteConfig.getString(key)
+
+    fun getBoolean(key: String): Boolean = remoteConfig.getBoolean(key)
 }

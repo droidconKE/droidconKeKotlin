@@ -5,4 +5,8 @@
         <key>API_KEY</key>
         <value>default-key-value</value>
     </entry>
+    <entry>
+        <key>cube_hero_enabled</key>
+        <value>true</value>
+    </entry>
 </defaultsMap>
