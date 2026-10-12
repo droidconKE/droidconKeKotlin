@@ -15,14 +15,21 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -31,6 +38,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.sessions.models.SessionClash
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 
@@ -42,26 +50,39 @@ fun ClashBanner(
     Surface(
         color = MaterialTheme.colorScheme.errorContainer,
         contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        shape = MaterialTheme.shapes.large,
+        shape = MaterialTheme.shapes.extraLarge,
         modifier =
             modifier
                 .fillMaxWidth()
                 .testTag("clash_banner")
                 .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
     ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = stringResource(R.string.clash_banner_title),
-                style = MaterialTheme.typography.titleSmall,
-            )
-            clashes.forEach { clash ->
-                Text(
-                    text = stringResource(R.string.clash_banner_pair, clash.first, clash.second),
-                    style = MaterialTheme.typography.bodySmall,
+            Box(
+                modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.error, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ChaiIcons.ErrorRounded,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError,
+                    modifier = Modifier.size(22.dp),
                 )
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = stringResource(R.string.clash_banner_title),
+                    style = MaterialTheme.typography.titleSmallEmphasized,
+                )
+                clashes.forEach { clash ->
+                    Text(
+                        text = stringResource(R.string.clash_banner_pair, clash.first, clash.second),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }

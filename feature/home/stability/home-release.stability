@@ -5,12 +5,35 @@
 //   ./gradlew :home:stabilityDump
 
 @Composable
-private fun com.android254.presentation.home.components.AgendaRow(item: com.android254.presentation.home.viewstate.AgendaItem, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.home.components.AgendaDetails(item: com.android254.presentation.home.viewstate.AgendaItem, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - item: STABLE (class with no mutable properties)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.components.AgendaRow(item: com.android254.presentation.home.viewstate.AgendaItem, shape: androidx.compose.ui.graphics.Shape, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - item: STABLE (class with no mutable properties)
+    - shape: STABLE (marked @Stable or @Immutable)
     - onClick: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.home.components.ClashTag(title: kotlin.String): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - title: STABLE (String is immutable)
+
+@Composable
+private fun com.android254.presentation.home.components.EmptyAgenda(onBrowseSessions: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onBrowseSessions: STABLE (function type)
 
 @Composable
 private fun com.android254.presentation.home.components.HeroLabel(text: kotlin.String, maxLines: kotlin.Int): kotlin.Unit
@@ -173,10 +196,35 @@ public fun com.android254.presentation.home.components.HomeToolbarComponent(isSi
     - onActionClicked: STABLE (function type)
 
 @Composable
+private fun com.android254.presentation.home.components.TimePill(time: kotlin.String, isLive: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - time: STABLE (String is immutable)
+    - isLive: STABLE (primitive type)
+
+@Composable
+private fun com.android254.presentation.home.components.TimeTile(time: kotlin.String, period: kotlin.String, isLive: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - time: STABLE (String is immutable)
+    - period: STABLE (String is immutable)
+    - isLive: STABLE (primitive type)
+
+@Composable
 private fun com.android254.presentation.home.components.label(): kotlin.String
   skippable: false
   restartable: false
   params:
+
+@Composable
+private fun com.android254.presentation.home.components.segmentShape(index: kotlin.Int, count: kotlin.Int): androidx.compose.ui.graphics.Shape
+  skippable: false
+  restartable: false
+  params:
+    - index: STABLE (primitive type)
+    - count: STABLE (primitive type)
 
 @Composable
 private fun com.android254.presentation.home.components.title(): kotlin.String
