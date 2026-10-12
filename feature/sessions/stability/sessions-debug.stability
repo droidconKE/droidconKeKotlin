@@ -136,6 +136,14 @@ public fun com.android254.presentation.sessions.components.AgendaGrid(sessionsBy
     - contentPadding: STABLE (marked @Stable or @Immutable)
 
 @Composable
+public fun com.android254.presentation.sessions.components.ClashBanner(clashes: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.sessions.models.SessionClash>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - clashes: STABLE (known stable type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.sessions.components.CurrentSessionComponent(session: com.android254.presentation.models.SessionPresentationModel, modifier: androidx.compose.ui.Modifier, onClicked: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true

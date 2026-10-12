@@ -32,4 +32,10 @@ data class SessionsUiState(
     val availableFilters: ImmutableList<SessionsFilterOption> = persistentListOf(),
     val showMySessionsOnly: Boolean = false,
     val isFilterActive: Boolean = false,
+    val clashes: ImmutableList<SessionClash> = persistentListOf(),
+)
+
+data class SessionClash(
+    val first: String,
+    val second: String,
 )
