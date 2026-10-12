@@ -15,16 +15,21 @@
  */
 package com.android254.presentation.sessionDetails.view
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.core.content.IntentCompat
+import androidx.test.core.app.ApplicationProvider
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.droidconke.chai.ChaiTheme
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -44,9 +49,21 @@ class SessionShareTest {
         var shared: SessionDetailsPresentationModel? = null
         show(SessionDetailsUiState.Success(data = session)) { shared = it }
 
-        composeTestRule.onNodeWithContentDescription("Share session").assertHasClickAction().performClick()
+        composeTestRule.onNodeWithContentDescription(shareLabel).assertHasClickAction().performClick()
 
         assertEquals(session, shared)
+    }
+
+    @Test
+    fun `the share sheet gets the session as plain text`() {
+        val chooser = shareIntent(session)
+        val send = IntentCompat.getParcelableExtra(chooser, Intent.EXTRA_INTENT, Intent::class.java)!!
+
+        assertEquals(Intent.ACTION_CHOOSER, chooser.action)
+        assertEquals(Intent.ACTION_SEND, send.action)
+        assertEquals("text/plain", send.type)
+        assertEquals(session.title, send.getStringExtra(Intent.EXTRA_SUBJECT))
+        assertEquals(session.shareText(), send.getStringExtra(Intent.EXTRA_TEXT))
     }
 
     @Test
@@ -70,6 +87,9 @@ class SessionShareTest {
 
         assertEquals("Compose at scale\n10:00 - 11:00 AM\nhttps://droidcon.co.ke", bare.shareText())
     }
+
+    private val shareLabel =
+        ApplicationProvider.getApplicationContext<Context>().getString(R.string.share_session)
 
     private fun show(
         uiState: SessionDetailsUiState,

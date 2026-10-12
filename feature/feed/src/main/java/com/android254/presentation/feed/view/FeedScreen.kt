@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.feed.view
 
-import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,6 +47,7 @@ import com.android254.presentation.common.components.DroidconAppBarWithFeedbackB
 import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.plus
+import com.android254.presentation.common.share.shareTextIntent
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
@@ -70,16 +70,11 @@ fun FeedRoute(
     )
 }
 
-private fun shareIntent(feed: FeedUI): Intent {
-    val text = listOf(feed.title, feed.body, feed.url).filter(String::isNotBlank).joinToString("\n\n")
-    val send =
-        Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, feed.title)
-            putExtra(Intent.EXTRA_TEXT, text)
-        }
-    return Intent.createChooser(send, null)
-}
+private fun shareIntent(feed: FeedUI) =
+    shareTextIntent(
+        subject = feed.title,
+        text = listOf(feed.title, feed.body, feed.url).filter(String::isNotBlank).joinToString("\n\n"),
+    )
 
 @Composable
 internal fun FeedScreen(
