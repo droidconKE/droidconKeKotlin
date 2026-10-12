@@ -15,6 +15,8 @@
  */
 package com.android254.domain.models
 
+import kotlin.time.Instant
+
 data class Session(
     val id: String,
     val endDateTime: String,
@@ -34,6 +36,8 @@ data class Session(
     val slug: String,
     val title: String,
     val eventDay: String,
+    val startInstant: Instant? = null,
+    val endInstant: Instant? = null,
 ) {
     /** [rooms] arrives comma-joined from the API; filters compare against the parts. */
     val roomList: List<String>
