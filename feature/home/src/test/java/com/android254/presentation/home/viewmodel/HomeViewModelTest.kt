@@ -114,4 +114,22 @@ class HomeViewModelTest {
             assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 1) as HomeHero))
             job.cancel()
         }
+
+    @Test
+    fun `the cube follows its remote switch`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+            coEvery { homeRepo.fetchHomeDetails() } returns flowOf(Home())
+
+            for (enabled in listOf(true, false)) {
+                val flags = FakeFeatureFlags(isCubeHeroEnabled = enabled)
+                val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, Clock.System, flags, TimeZone.UTC, testDispatcher)
+                val job = launch { viewModel.viewState.collect() }
+                runCurrent()
+
+                assertThat(viewModel.viewState.value.showCube, `is`(enabled))
+                job.cancel()
+            }
+        }
 }

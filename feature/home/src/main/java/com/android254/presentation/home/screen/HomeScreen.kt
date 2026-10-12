@@ -136,7 +136,7 @@ internal fun HomeScreen(
                     nextSession = nextSession,
                     onSessionClick = onSessionClicked,
                     onFeedbackClick = navigateToFeedbackScreen,
-                    showCube = viewState.showCube && !showSessionsSkeleton,
+                    showCube = viewState.showCube,
                     animateCube = animateCube,
                 )
                 HomeBannerSection(viewState)
