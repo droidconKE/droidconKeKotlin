@@ -444,6 +444,7 @@ What the app relies on, so a change does not undo it:
 - **Large fonts.** Screenshot tests render every screen at 200 %. Text that varies in length takes
   `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero drops to a smaller role
   above 1.5×, and home's session cards widen with the font scale so titles wrap between words.
+  Above 1.5× the agenda puts each session's time above its title instead of beside it.
 
 ---
 
