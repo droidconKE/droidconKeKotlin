@@ -26,7 +26,7 @@ public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(v
     - showTopBar: STABLE (primitive type)
 
 @Composable
-internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -36,6 +36,7 @@ internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScree
     - onNavigationIconClick: STABLE (function type)
     - showTopBar: STABLE (primitive type)
     - isTabletop: STABLE (primitive type)
+    - onShare: STABLE (function type)
 
 @Composable
 private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
