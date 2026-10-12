@@ -15,14 +15,10 @@
  */
 package com.android254.presentation.models
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.CoPresent
-import androidx.compose.material.icons.filled.Coffee
-import androidx.compose.material.icons.filled.MicExternalOn
 import androidx.compose.ui.graphics.Color
 import com.android254.presentation.common.stepper.Intensity
 import com.android254.presentation.common.stepper.VerticalStep
+import com.droidconke.chai.icons.ChaiIcons
 import kotlinx.collections.immutable.ImmutableList
 
 data class SessionPresentationModel(
@@ -57,11 +53,11 @@ data class SessionPresentationModel(
 
     val icon =
         when {
-            isWorkshop -> Icons.Default.Build
-            isKeynote -> Icons.Default.MicExternalOn
-            isTalk || isSession -> Icons.Default.CoPresent
-            isServiceSession -> Icons.Default.Coffee
-            else -> Icons.Default.CoPresent
+            isWorkshop -> ChaiIcons.Build
+            isKeynote -> ChaiIcons.MicExternalOn
+            isTalk || isSession -> ChaiIcons.CoPresent
+            isServiceSession -> ChaiIcons.Coffee
+            else -> ChaiIcons.CoPresent
         }
 
     /** Takes [accent] rather than deriving it, so the colour can come from the theme. */

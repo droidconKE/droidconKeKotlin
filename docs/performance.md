@@ -359,6 +359,35 @@ release classpath because its plugin adds it to every variant; its consumer rule
 small classes, the instrumentation itself is debug-only by the plugin's default, and the few KB
 were accepted.
 
+### 2026-10-12: icons, fonts and ConstraintLayout
+
+Download size is Pixel-class (`config/size/pixel.json`: arm64-v8a, `en`, 420 dpi, API 34), from
+`bundletool get-size total`; install size is the extracted split APKs for the same spec.
+
+| Step | Download | Install | Change in download |
+|---|---|---|---|
+| Before | 4,678,844 | 8,708,023 | |
+| `material-icons-extended` → `ChaiIcons` | 4,678,489 | 8,707,803 | −355 B |
+| Eight static Montserrat files → one variable font | 4,400,986 | 8,428,737 | −277,503 B (−5.9 %) |
+| `constraintlayout-compose` dropped | 4,334,173 | 8,305,630 | −66,813 B (−1.5 %) |
+| **Total** | | | **−344,671 B (−7.4 %)** |
+
+- **Icons.** R8 already stripped the unused icons, so bytes barely move. The artifact went
+  because it is frozen at 1.7.8 and every Compose module compiled against all 5,000 icons. The
+  16 icons in use are copied into `ChaiIcons` from the Material Icons source. The screenshot
+  goldens did not change. `material-icons-core` went too: it is frozen as well, and Material 3
+  no longer pulls it in.
+- **Fonts.** Montserrat's official variable font (wght 100–900, version 9.000), subset to the 552
+  code points the static files carried, minus the soft hyphen, which it lacks. `ChaiTypography`
+  maps each weight to a `wght` variation; `minSdk` 26 supports variations everywhere. The glyphs
+  are a newer revision, so text anti-aliasing moved in 106 goldens; layout and line breaks did
+  not. The OFL licence is in `core/designsystem/OFL.txt`.
+- **ConstraintLayout** placed one image over one name. A `Column` does that, and dropping the
+  library removed more than its layout code from the dex.
+
+CI's Build job now checks the download size against `config/size/download-size.txt` and fails
+on growth above 1 %. Run `config/size/check-app-size.sh --update` after an intended increase.
+
 ## Still open
 
 - ~~The generator journey is launch-only~~ — **fixed.** The cause was not the build variant

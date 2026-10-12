@@ -24,7 +24,6 @@ android {
 
 dependencies {
     implementation(libs.compose.activity)
-    implementation(libs.compose.constraintlayout)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.test.mockk)

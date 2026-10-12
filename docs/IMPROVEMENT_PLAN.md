@@ -23,7 +23,7 @@ with system animations off. An emulator pass fixed what it found; what is left i
 with no action, two layouts at 200 % font, and a person listening with TalkBack and Switch Access.
 
 §14 can run alongside the rest by a separate owner (§16.1 #8). In ranked order the others are the
-size wins (§9.4), the phase-aware home and schedule conflicts (§5.3), then the 3D cube (§12).
+phase-aware home and schedule conflicts (§5.3), then the 3D cube (§12).
 
 ---
 
@@ -68,7 +68,7 @@ The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the piec
 
 ### 1.6 Findings — build & developer experience
 
-**D5 — CI and release gaps.** CI runs on every PR, including Android Lint and screenshot verification. Still missing: a dependency-review job and an APK-size diff, which needs a size-diff action (§15.1). The release workflow also pushes straight to the production track with `status: completed` — no internal track, no staged rollout, no gate. (§13.2)
+**D5 — CI and release gaps.** CI runs on every PR, including Android Lint and screenshot verification. Still missing: a dependency-review job (§15.1). The release workflow also pushes straight to the production track with `status: completed` — no internal track, no staged rollout, no gate. (§13.2)
 
 ### 1.7 Findings — security & hygiene
 
@@ -2840,95 +2840,15 @@ R8 is healthy: full mode, resource shrinking inside R8, and keep rules in
 
 ### 9.4 App size
 
-The release APK is 4.62 MB after the 2026-09-11 pass
-([`docs/performance.md`](performance.md#app-size)). Measure each change below against a fresh
-number rather than assuming a win:
-
-```bash
-./gradlew :app:bundleRelease
-# Then, per-device-config download size:
-bundletool build-apks --bundle=app/build/outputs/bundle/release/app-release.aab \
-  --output=app.apks --mode=default
-bundletool get-size total --apks=app.apks --dimensions=SDK,ABI,SCREEN_DENSITY
-```
-
-"Pixel-class" means this fixed device spec, so numbers stay comparable run to run:
-
-```json
-{ "supportedAbis": ["arm64-v8a"], "supportedLocales": ["en"],
-  "screenDensity": 420, "sdkVersion": 34 }
-```
-
-```bash
-bundletool get-size total --apks=app.apks --device-spec=pixel.json   # download
-bundletool extract-apks --apks=app.apks --device-spec=pixel.json \
-  --output-dir=out && du -cb out/*.apk                               # install
-```
-
-Write the number here as a **tracked baseline**:
+CI checks the Pixel-class download size on every pull request (`config/size/check-app-size.sh`)
+and fails on growth above 1 %. `docs/performance.md` ("App size") records how each change was
+measured. The tracked baseline:
 
 | Date | Version | Download size (Pixel-class) | Install size | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-09-03 | 1.0.0 (vc 1) | 5,205,416 B — 4.96 MiB | 8,553,954 B — 8.16 MiB | End of Phase 0. Includes §3.7 swapping `play-services-auth` for `androidx.credentials` + `googleid` |
-
-That row predates the APK pass, so record a fresh one before the first change.
-
-R8 already strips unused code, so deleting an unused dependency barely moves the number. The wins
-left are the ones R8 cannot prove are unused. In order of return on effort:
-
-**1. Drop `material-icons-extended`.** It's in the global `compose` bundle, so *every* Compose module pulls it. R8 does shrink unused icons, but the build-time cost is significant (thousands of generated classes to process) and the risk of an accidental full-keep is real.
-
-The stronger argument, found during review: it's a **frozen artifact**. Google stopped publishing it, so it stays on 1.7.x while the rest of Compose moves on. Depending on a frozen artifact for the app's entire icon set is a slow-moving liability regardless of bytes.
-
-**One blocker to clear first:** `SessionPresentationModel` uses `Icons.Default.CoPresent` and `Icons.Default.MicExternalOn`, both extended-only. Vector those two into `ChaiIcons` before removing the dependency, or the build breaks. (`Icons.Default.Build` and `Icons.Default.Coffee` are in `material-icons-core` and are fine.)
-
-Replace with `material-icons-core` plus a curated set:
-
-```kotlin
-// core/designsystem/src/main/java/com/droidconke/chai/icons/ChaiIcons.kt
-
-/**
- * The app's icon set. Adding an icon here is a deliberate act, which keeps the
- * set small and visually consistent — and avoids depending on the 5,000-icon
- * material-icons-extended artifact for the dozen icons we actually use.
- */
-object ChaiIcons {
-    val StarFilled: ImageVector get() = Icons.Filled.Star
-    val StarOutline: ImageVector get() = Icons.Outlined.StarOutline
-    val Share: ImageVector get() = Icons.Filled.Share
-    val Filter: ImageVector get() = filterVector          // local, hand-authored
-    val Sparkle: ImageVector get() = sparkleVector
-    val Cloud: ImageVector get() = cloudVector
-    val Smartphone: ImageVector get() = smartphoneVector
-    // …
-}
-```
-
-**2. Fonts.** Seven static Montserrat files ship, already subset to Latin. A single variable font, or downloadable fonts, replaces them:
-
-```kotlin
-// Downloadable fonts — zero bytes in the APK, cached by Play services.
-private val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs,
-)
-
-private val Montserrat = FontFamily(
-    Font(GoogleFont("Montserrat"), provider, FontWeight.Light),
-    Font(GoogleFont("Montserrat"), provider, FontWeight.Normal),
-    Font(GoogleFont("Montserrat"), provider, FontWeight.Medium),
-    Font(GoogleFont("Montserrat"), provider, FontWeight.SemiBold),
-    Font(GoogleFont("Montserrat"), provider, FontWeight.Bold),
-)
-```
-
-> **Trade-off, stated plainly:** downloadable fonts add a first-launch fetch and a fallback-font flash on devices without Play services. For a conference app whose users are on Play-enabled Android phones, the size win is worth it — but if the brand cares about a pixel-perfect first frame, bundle **one variable font file** instead. Either beats five static files.
-
-**3. Remove `constraintlayout-compose`.** `app` and `feature:home` still use it. Check whether each
-use is necessary, and measure the removal.
-
-**4. Add a CI size gate,** so size regressions are caught in review rather than at release (§15.1).
+| 2026-10-12 | main before the size pass | 4,678,844 B — 4.46 MiB | 8,708,023 B — 8.30 MiB | After the APK pass, the rebrand and Expressive |
+| 2026-10-12 | size pass | 4,334,173 B — 4.13 MiB | 8,305,630 B — 7.92 MiB | Icons into `ChaiIcons`, one variable font, no ConstraintLayout |
 
 ### 9.5 Runtime performance
 
@@ -2988,7 +2908,7 @@ traced("ticket_render") { generateQrBitmap(...) }
 - [ ] Compose stability report clean, or each remaining unstable type justified
 - [ ] Coil memory and disk caches configured
 - [ ] A decision on Firebase Performance Monitoring, with custom traces if it stays
-- [ ] Each §9.4 size win measured against a recorded number
+- [x] Each §9.4 size win measured against a recorded number
 - [ ] Time to full display under 2 seconds on a low-end device — 2.7 s on the CS50C today, with the profile, and network-bound
 
 ---
@@ -4041,7 +3961,6 @@ Dependabot opens weekly grouped updates. What is left:
 
 ### 15.1 CI gaps
 
-- **An APK-size gate.** It needs a `.github/actions/apk-size-diff` action (§9.4).
 - **A dependency-review job.**
 
 ### 15.3 Contributor experience
@@ -4092,7 +4011,7 @@ struck row has landed.
 | ~~**5**~~ | ~~Compose compiler stability config~~ — **done 2026-10-12** | — | Metrics on the plugin extension; no config file, because nothing real belonged in it. |
 | ~~**6**~~ | ~~Design-system token restructure, then M3 Expressive~~ — **done 2026-10-05**, with the 2026 rebrand, on a pinned material3 alpha | §3.5 → §5 | The single biggest visible change available. What is left is listed in §5.2. |
 | **8** | Accessibility audit (Swahili dropped 2026-10-04) | §14 | Independent of the above; can run in parallel by a separate owner. |
-| **9** | Real size wins: `material-icons-extended`, fonts, `constraintlayout-compose` | §9.4 | Measurable against a recorded number. Unlike dead catalog entries, R8 cannot strip these. |
+| ~~**9**~~ | ~~Real size wins: `material-icons-extended`, fonts, `constraintlayout-compose`~~ — **done 2026-10-12** | — | −7.4 % download, and CI now gates the size. |
 | **10** | Phase-aware home and schedule conflicts | §5.3 | Answers question 2 of §5.1, and the hero already has the slot. |
 | **11** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
 
@@ -4289,3 +4208,4 @@ The apps and docs this plan draws on, and what specifically to take from each.
 | 2026-10-11 | §14 touch targets and reduced motion closed. The sessions app bar's list and agenda icons became labelled, selectable 48 dp targets, and its filter button, disabled whenever no filter was applied, is always enabled. Infinite transitions already stop with animations off, so the live border was never a gap; `LiveBadge` dropped its settings read. Dropped both rows from the §14 table. |
 | 2026-10-11 | §14 emulator pass: fixed the sessions app bar at large display and font sizes, unlabelled organiser logos, missing detail pane titles, a mislabelled X button and wrapped agenda tags. Display size row closed; TalkBack, font scale and two-pane rows narrowed to what is left; added the dead session share button. |
 | 2026-10-12 | §3.1 landed and its section is deleted. Strong skipping already makes every `Unit` composable skippable, the 20 unstable-collection findings were gone, and no type belonged in a stability file, so the work became: metrics on the Compose plugin extension and `SessionDetailsPresentationModel.speakers` as an `ImmutableList`. Refreshed `docs/static-analysis.md`. |
+| 2026-10-12 | §9.4 size wins landed: icons into `ChaiIcons`, one variable Montserrat, no ConstraintLayout; −344,671 B Pixel-class download (−7.4 %). Added the CI size gate (§15.1). §9.4 is now the tracked baseline only. |

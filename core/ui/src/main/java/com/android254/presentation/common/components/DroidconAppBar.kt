@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.icons.ChaiIcons
 import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
@@ -72,7 +71,7 @@ fun DroidconAppBar(
             modifier = Modifier.testTag("sign_in_action"),
         ) {
             Icon(
-                imageVector = Icons.Outlined.AccountCircle,
+                imageVector = ChaiIcons.AccountCircleOutlined,
                 contentDescription = stringResource(id = R.string.sign_in),
                 tint = MaterialTheme.colorScheme.onBackground,
             )

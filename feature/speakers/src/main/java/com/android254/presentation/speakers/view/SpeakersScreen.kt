@@ -28,9 +28,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -72,6 +69,7 @@ import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -159,7 +157,7 @@ internal fun SpeakersScreen(
                         if (searchQuery.isNotEmpty()) {
                             IconButton(onClick = { onSearchQueryChanged("") }) {
                                 Icon(
-                                    imageVector = Icons.Default.Clear,
+                                    imageVector = ChaiIcons.Clear,
                                     contentDescription = stringResource(R.string.clear_search_icon_description),
                                     tint = MaterialTheme.colorScheme.onSurface,
                                 )
@@ -168,7 +166,7 @@ internal fun SpeakersScreen(
                     } else {
                         IconButton(onClick = { isSearchActive = true }) {
                             Icon(
-                                imageVector = Icons.Default.Search,
+                                imageVector = ChaiIcons.Search,
                                 contentDescription = stringResource(R.string.search_speakers_icon_description),
                                 tint = MaterialTheme.colorScheme.onSurface,
                             )

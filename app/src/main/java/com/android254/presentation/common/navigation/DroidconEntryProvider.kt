@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.common.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.RecordVoiceOver
 import androidx.compose.material3.adaptive.navigation3.LocalListDetailSceneScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +38,7 @@ import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
@@ -111,7 +110,7 @@ fun droidconEntryProvider(
                     listPaneMetadata(DroidconPaneScene.Speakers) {
                         DetailPanePlaceholder(
                             message = stringResource(R.string.select_a_speaker),
-                            icon = rememberVectorPainter(Icons.Outlined.RecordVoiceOver),
+                            icon = rememberVectorPainter(ChaiIcons.RecordVoiceOverOutlined),
                         )
                     },
             ) {

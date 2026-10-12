@@ -43,7 +43,6 @@ coil = "2.7.0"
 activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
-constraintlayout = "1.1.2"
 credentials = "1.6.0"
 googleid = "1.2.1"
 datastore = "1.2.1"
@@ -102,7 +101,6 @@ compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:ada
 compose-material3-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout" }
 compose-material3-adaptive-navigation3 = { module = "androidx.compose.material3.adaptive:adaptive-navigation3" }
 compose-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
-compose-materialIcons = { module = "androidx.compose.material:material-icons-extended" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-util = { module = "androidx.compose.ui:ui-util" }
 compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4" }
@@ -111,7 +109,6 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-preview-customview = { module = "androidx.customview:customview", version.ref = "preview_customview"}
 compose-preview-customview-poolingcontainer = { module = "androidx.customview:customview-poolingcontainer", version.ref = "poolingcontainer"}
-compose-constraintlayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayout"}
 compose-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle"}
 desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -199,7 +196,7 @@ androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 [bundles]
 # Applied to every Compose module, chai included — keep feature deps per-module.
-compose = ["compose-material3", "compose-materialIcons", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-preview-customview", "compose-preview-customview-poolingcontainer"]
+compose = ["compose-material3", "compose-ui", "compose-ui-util", "compose-ui-tooling", "compose-ui-tooling-preview", "compose-preview-customview", "compose-preview-customview-poolingcontainer"]
 coil = ["coil-compose", "coil-svg"]
 adaptive = ["compose-material3-adaptive", "compose-material3-adaptive-layout"]
 navigation3 = ["androidx-navigation3-runtime", "androidx-navigation3-ui", "androidx-lifecycle-viewmodel-navigation3"]
