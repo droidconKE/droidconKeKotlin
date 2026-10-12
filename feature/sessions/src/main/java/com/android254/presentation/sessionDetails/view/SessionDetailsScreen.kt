@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessionDetails.view
 
-import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -60,6 +59,7 @@ import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarProtection
+import com.android254.presentation.common.share.shareTextIntent
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
@@ -97,15 +97,7 @@ fun SessionDetailsRoute(
     )
 }
 
-private fun shareIntent(session: SessionDetailsPresentationModel): Intent {
-    val send =
-        Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, session.title)
-            putExtra(Intent.EXTRA_TEXT, session.shareText())
-        }
-    return Intent.createChooser(send, null)
-}
+internal fun shareIntent(session: SessionDetailsPresentationModel) = shareTextIntent(subject = session.title, text = session.shareText())
 
 internal fun SessionDetailsPresentationModel.shareText(): String =
     listOf(
