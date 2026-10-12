@@ -41,10 +41,7 @@ fun List<Session>.conferencePhase(
     }
 }
 
-/**
- * The day whose plan matters next: today until its last session ends, then the next event day.
- * Never earlier than today, so a session running past midnight does not pull the agenda back.
- */
+/** Today until its last session ends, then the next event day; never before today. */
 fun List<Session>.agendaDay(
     now: Instant,
     zone: TimeZone,
@@ -62,10 +59,7 @@ fun List<Session>.starredOn(
     filter { it.isBookmarked && it.startInstant?.dateIn(zone) == day }
         .sortedBy { it.startInstant }
 
-/**
- * Every pair of starred sessions that overlap by at least [minOverlap], not only neighbours:
- * a three-hour workshop can clash with several talks.
- */
+/** Every overlapping starred pair, not only neighbours: a long workshop can clash with several talks. */
 fun List<Session>.scheduleConflicts(minOverlap: Duration = 5.minutes): List<ScheduleConflict> {
     val starred = timed().filter { it.session.isBookmarked }.sortedBy { it.start }
     return starred.flatMapIndexed { index, a ->

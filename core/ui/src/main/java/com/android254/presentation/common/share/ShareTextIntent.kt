@@ -17,7 +17,6 @@ package com.android254.presentation.common.share
 
 import android.content.Intent
 
-/** The system share sheet for plain text. */
 fun shareTextIntent(
     subject: String,
     text: String,

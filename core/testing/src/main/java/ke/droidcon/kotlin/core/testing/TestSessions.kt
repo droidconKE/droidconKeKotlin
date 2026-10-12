@@ -18,7 +18,6 @@ package ke.droidcon.kotlin.core.testing
 import com.android254.domain.models.Session
 import kotlin.time.Instant
 
-/** A session with only the fields a schedule test cares about; everything else is blank. */
 fun testSession(
     id: String,
     start: Instant? = null,
