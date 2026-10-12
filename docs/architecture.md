@@ -312,8 +312,8 @@ starred sessions overlapping by five minutes or more). Days are counted in the c
 zone, which Hilt provides as `@ConferenceTimeZone`. `HomeViewModel` ticks once a minute, so the
 hero and the agenda move on without new data. Before the event the hero counts down; after it, it
 thanks people and opens feedback; while a session is live it shows Now and Next. With nothing
-synced yet there is no phase, and the hero welcomes. The sessions screen shows the selected day's
-clashes above "My sessions".
+synced yet there is no phase, and the hero welcomes. With the "My sessions" switch on, the
+sessions screen lists the selected day's clashes above the sessions.
 
 The rules that matter:
 
