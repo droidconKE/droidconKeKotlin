@@ -231,6 +231,14 @@ public fun com.droidconke.chai.components.ChaiTitle(titleText: kotlin.String, mo
     - titleColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
+public fun com.droidconke.chai.hero.CubeHero(modifier: androidx.compose.ui.Modifier, animate: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - animate: STABLE (primitive type)
+
+@Composable
 public fun com.droidconke.chai.isDarkTheme(): kotlin.Boolean
   skippable: false
   restartable: false

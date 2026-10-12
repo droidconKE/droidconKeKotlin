@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(libs.android.coreKtx)
     implementation(libs.lifecycle.runtimeKtx)
+    implementation(libs.compose.lifecycle.runtime)
     implementation(libs.timber)
 
     androidTestImplementation(libs.android.test.junit4)
