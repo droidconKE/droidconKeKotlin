@@ -33,102 +33,166 @@ data class Turn(
     val degrees: Float,
 )
 
-/** One visible face, projected orthographically: [xs] and [ys] are its four corners in cube units. */
+/**
+ * One visible face, projected orthographically. [xs] and [ys] are its corners in cube units,
+ * clockwise from the top left of its logo tile, which is [tileColumn] and [tileRow] of [face]'s
+ * logo. [light] runs from 0, edge-on, to 1, facing the viewer.
+ */
 class Quad(
     val face: CubeFace,
+    val tileColumn: Int,
+    val tileRow: Int,
     val xs: FloatArray,
     val ys: FloatArray,
     val depth: Float,
+    val light: Float,
 )
 
-private class Point(
-    val x: Float,
-    val y: Float,
-    val z: Float,
-) {
-    operator fun plus(o: Point) = Point(x + o.x, y + o.y, z + o.z)
-
-    operator fun times(s: Float) = Point(x * s, y * s, z * s)
-
-    fun rotated(
-        axis: Axis,
-        radians: Float,
-    ): Point {
-        val c = cos(radians)
-        val s = sin(radians)
-        return when (axis) {
-            Axis.X -> Point(x, y * c - z * s, y * s + z * c)
-            Axis.Y -> Point(x * c + z * s, y, -x * s + z * c)
-            Axis.Z -> Point(x * c - y * s, x * s + y * c, z)
-        }
-    }
-}
-
-private fun Vec3.toPoint() = Point(x.toFloat(), y.toFloat(), z.toFloat())
-
 /**
- * The faces a viewer sees, back to front, after yawing the cube about its vertical axis and then
- * pitching it towards the viewer. Faces pointing away are culled; the rest are painted in order.
+ * The faces a viewer sees, in painting order, after yawing the cube about its vertical axis and
+ * then pitching it towards the viewer. A turning layer is painted as one block, before or after
+ * the rest of the cube depending on which side of it faces the viewer.
  */
 fun CubeState.visibleQuads(
     yawDegrees: Float,
     pitchDegrees: Float,
     turn: Turn? = null,
 ): List<Quad> {
-    val yaw = Math.toRadians(yawDegrees.toDouble()).toFloat()
-    val pitch = Math.toRadians(pitchDegrees.toDouble()).toFloat()
-
-    fun view(
-        p: Point,
-        turning: Boolean,
-    ): Point {
-        val turned = if (turning && turn != null) p.rotated(turn.move.axis, turn.move.sign * Math.toRadians(turn.degrees.toDouble()).toFloat()) else p
-        return turned.rotated(Axis.Y, yaw).rotated(Axis.X, pitch)
+    val view = rotation(Axis.X, pitchDegrees) * rotation(Axis.Y, yawDegrees)
+    val turned = turn?.let { view * rotation(it.move.axis, it.move.sign * it.degrees) }
+    val still = ArrayList<Quad>(VISIBLE_GUESS)
+    val moving = ArrayList<Quad>(VISIBLE_GUESS)
+    for (cubelet in cubelets) {
+        val isTurning = turn != null && cubelet.position[turn.move.axis] == turn.move.layer
+        val into = if (isTurning) moving else still
+        val m = if (isTurning) turned!! else view
+        val forward = cubelet.forward
+        LocalFaces.forEach { local -> cubelet.quad(local, m, forward)?.let(into::add) }
     }
-    return cubelets
-        .flatMap { cubelet ->
-            val turning = turn != null && cubelet.position[turn.move.axis] == turn.move.layer
-            LocalFaces.mapNotNull { local -> cubelet.quad(local, turning, ::view) }
-        }.sortedBy { it.depth }
+    still.sortBy { it.depth }
+    if (turn == null) return still
+    moving.sortBy { it.depth }
+    val layerFacesViewer = view[2, turn.move.axis.ordinal] * turn.move.layer > 0f
+    return if (layerFacesViewer) still + moving else moving + still
 }
 
+/** A row-major 3×3 rotation. */
+private class Matrix(
+    val m: FloatArray,
+) {
+    operator fun get(
+        row: Int,
+        column: Int,
+    ) = m[row * 3 + column]
+
+    operator fun times(o: Matrix) = Matrix(FloatArray(9) { i -> (0 until 3).sumOf { k -> (this[i / 3, k] * o[k, i % 3]).toDouble() }.toFloat() })
+
+    fun x(
+        x: Float,
+        y: Float,
+        z: Float,
+    ) = m[0] * x + m[1] * y + m[2] * z
+
+    fun y(
+        x: Float,
+        y: Float,
+        z: Float,
+    ) = m[3] * x + m[4] * y + m[5] * z
+
+    fun z(
+        x: Float,
+        y: Float,
+        z: Float,
+    ) = m[6] * x + m[7] * y + m[8] * z
+}
+
+/** Anticlockwise about [axis], seen from its positive end. */
+private fun rotation(
+    axis: Axis,
+    degrees: Float,
+): Matrix {
+    val r = Math.toRadians(degrees.toDouble())
+    val c = cos(r).toFloat()
+    val s = sin(r).toFloat()
+    return Matrix(
+        when (axis) {
+            Axis.X -> floatArrayOf(1f, 0f, 0f, 0f, c, -s, 0f, s, c)
+            Axis.Y -> floatArrayOf(c, 0f, s, 0f, 1f, 0f, -s, 0f, c)
+            Axis.Z -> floatArrayOf(c, -s, 0f, s, c, 0f, 0f, 0f, 1f)
+        },
+    )
+}
+
+/** A face in the cubelet's own frame, with [right] and [up] the way its logo reads from outside. */
 private class LocalFace(
     val normal: Vec3,
-    val tangentA: Vec3,
-    val tangentB: Vec3,
+    val right: Vec3,
+    val up: Vec3,
     val face: CubeFace,
 )
 
 private val LocalFaces =
     listOf(
-        LocalFace(Vec3(1, 0, 0), Vec3.UnitY, Vec3.UnitZ, CubeFace.Right),
-        LocalFace(Vec3(-1, 0, 0), Vec3.UnitY, Vec3.UnitZ, CubeFace.Left),
-        LocalFace(Vec3(0, 1, 0), Vec3.UnitX, Vec3.UnitZ, CubeFace.Up),
+        LocalFace(Vec3(1, 0, 0), Vec3(0, 0, -1), Vec3.UnitY, CubeFace.Right),
+        LocalFace(Vec3(-1, 0, 0), Vec3.UnitZ, Vec3.UnitY, CubeFace.Left),
+        LocalFace(Vec3(0, 1, 0), Vec3.UnitX, Vec3(0, 0, -1), CubeFace.Up),
         LocalFace(Vec3(0, -1, 0), Vec3.UnitX, Vec3.UnitZ, CubeFace.Down),
         LocalFace(Vec3(0, 0, 1), Vec3.UnitX, Vec3.UnitY, CubeFace.Front),
-        LocalFace(Vec3(0, 0, -1), Vec3.UnitX, Vec3.UnitY, CubeFace.Back),
+        LocalFace(Vec3(0, 0, -1), Vec3(-1, 0, 0), Vec3.UnitY, CubeFace.Back),
     )
 
 private const val HALF = 0.5f
+private const val VISIBLE_GUESS = 96
 
-private fun Cubelet.toWorld(local: Vec3): Point = (right.toPoint() * local.x.toFloat()) + (up.toPoint() * local.y.toFloat()) + (forward.toPoint() * local.z.toFloat())
+/** Unit corners of a face, clockwise from top left, as (right, up) multiples of [HALF]. */
+private val CornerRight = intArrayOf(-1, 1, 1, -1)
+private val CornerUp = intArrayOf(1, 1, -1, -1)
 
 private fun Cubelet.quad(
     local: LocalFace,
-    turning: Boolean,
-    view: (Point, Boolean) -> Point,
+    m: Matrix,
+    f: Vec3,
 ): Quad? {
-    val normal = view(toWorld(local.normal), turning)
-    if (normal.z <= 0f) return null
-    val centre = position.toPoint() + (toWorld(local.normal) * HALF)
-    val a = toWorld(local.tangentA) * HALF
-    val b = toWorld(local.tangentB) * HALF
-    val corners = listOf(centre + a + b, centre + a + (b * -1f), centre + (a * -1f) + (b * -1f), centre + (a * -1f) + b).map { view(it, turning) }
-    val isSticker = local.normal.x * home.x + local.normal.y * home.y + local.normal.z * home.z == 1
+    // Cubelet frame to world: right, up and forward are the columns.
+    fun wx(v: Vec3) = (right.x * v.x + up.x * v.y + f.x * v.z).toFloat()
+
+    fun wy(v: Vec3) = (right.y * v.x + up.y * v.y + f.y * v.z).toFloat()
+
+    fun wz(v: Vec3) = (right.z * v.x + up.z * v.y + f.z * v.z).toFloat()
+
+    val nx = wx(local.normal)
+    val ny = wy(local.normal)
+    val nz = wz(local.normal)
+    val light = m.z(nx, ny, nz)
+    if (light <= 0f) return null
+    val cx = position.x + nx * HALF
+    val cy = position.y + ny * HALF
+    val cz = position.z + nz * HALF
+    val rx = wx(local.right) * HALF
+    val ry = wy(local.right) * HALF
+    val rz = wz(local.right) * HALF
+    val ux = wx(local.up) * HALF
+    val uy = wy(local.up) * HALF
+    val uz = wz(local.up) * HALF
+    val xs = FloatArray(4)
+    val ys = FloatArray(4)
+    for (i in 0 until 4) {
+        val px = cx + rx * CornerRight[i] + ux * CornerUp[i]
+        val py = cy + ry * CornerRight[i] + uy * CornerUp[i]
+        val pz = cz + rz * CornerRight[i] + uz * CornerUp[i]
+        xs[i] = m.x(px, py, pz)
+        ys[i] = -m.y(px, py, pz)
+    }
+    val isSticker = local.normal.dot(home) == 1
     return Quad(
         face = if (isSticker) local.face else CubeFace.Inner,
-        xs = FloatArray(4) { corners[it].x },
-        ys = FloatArray(4) { -corners[it].y },
-        depth = view(centre, turning).z,
+        tileColumn = local.right.dot(home) + 1,
+        tileRow = 1 - local.up.dot(home),
+        xs = xs,
+        ys = ys,
+        depth = m.z(cx, cy, cz),
+        light = light,
     )
 }
+
+private fun Vec3.dot(o: Vec3) = x * o.x + y * o.y + z * o.z

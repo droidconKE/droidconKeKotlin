@@ -16,24 +16,53 @@
 package com.droidconke.chai.hero
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CubeProjectionTest {
     private val solved = CubeState.solved()
+    private val allTiles = (0..2).flatMap { row -> (0..2).map { column -> column to row } }.toSet()
 
     @Test
     fun `the three-quarter pose shows nine stickers on each of three faces`() {
         val stickers = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH).filter { it.face != CubeFace.Inner }
 
-        assertEquals(27, stickers.size)
-        assertEquals(setOf(CubeFace.Front, CubeFace.Right, CubeFace.Up), stickers.map { it.face }.toSet())
+        assertEquals(mapOf(CubeFace.Front to 9, CubeFace.Right to 9, CubeFace.Up to 9), stickers.groupingBy { it.face }.eachCount())
     }
 
     @Test
-    fun `faces are painted back to front`() {
-        val depths = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH).map { it.depth }
+    fun `seen head on, every face shows its whole logo the right way round`() {
+        val headOn =
+            mapOf(
+                CubeFace.Front to (0f to 0f),
+                CubeFace.Right to (-90f to 0f),
+                CubeFace.Back to (180f to 0f),
+                CubeFace.Left to (90f to 0f),
+                CubeFace.Up to (0f to 90f),
+                CubeFace.Down to (0f to -90f),
+            )
+        headOn.forEach { (face, pose) ->
+            val stickers = solved.visibleQuads(pose.first, pose.second).filter { it.face == face }
 
-        assertEquals(depths.sorted(), depths)
+            assertEquals(face.name, allTiles, stickers.map { it.tileColumn to it.tileRow }.toSet())
+            stickers.forEach { quad ->
+                assertTrue("$face reads left to right", quad.xs[1] > quad.xs[0])
+                assertTrue("$face reads top to bottom", quad.ys[3] > quad.ys[0])
+                assertEquals("$face column ${quad.tileColumn}", quad.tileColumn - 1f, quad.xs.average().toFloat(), EPSILON)
+                assertEquals("$face row ${quad.tileRow}", quad.tileRow - 1f, quad.ys.average().toFloat(), EPSILON)
+            }
+        }
+    }
+
+    @Test
+    fun `a turn carries logo tiles onto the next face`() {
+        val stickers = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH).filter { it.face != CubeFace.Inner }
+
+        assertEquals(
+            mapOf(CubeFace.Front to 9, CubeFace.Right to 9, CubeFace.Up to 6, CubeFace.Down to 3),
+            stickers.groupingBy { it.face }.eachCount(),
+        )
+        assertEquals(allTiles, stickers.filter { it.face == CubeFace.Front }.map { it.tileColumn to it.tileRow }.toSet())
     }
 
     @Test
@@ -47,10 +76,23 @@ class CubeProjectionTest {
     }
 
     @Test
+    fun `a turning layer facing the viewer is painted over the rest of the cube`() {
+        val quads = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(CubeMove.R, 45f))
+        val lastStill = quads.indexOfLast { it.face == CubeFace.Front && it.tileColumn < 2 }
+        val firstTurning = quads.indexOfFirst { it.face == CubeFace.Right }
+
+        assertTrue(lastStill < firstTurning)
+    }
+
+    @Test
     fun `a full quarter turn drawn mid-animation matches the committed move`() {
         val animated = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(CubeMove.R, 90f))
         val committed = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH)
 
         assertEquals(committed.map { it.face }.sorted(), animated.map { it.face }.sorted())
+    }
+
+    private companion object {
+        const val EPSILON = 1e-4f
     }
 }

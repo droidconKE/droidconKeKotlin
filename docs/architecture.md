@@ -174,6 +174,11 @@ sequenceDiagram
     end
 ```
 
+`syncNowIfEmpty()` waits for Remote Config only until its first successful fetch, because the API
+key has no usable default. After that it refreshes in the background, so a changed switch such as
+`cube_hero_enabled` reaches the app on its next start. The defaults in `remote_config_defaults.xml`
+apply until then.
+
 The five run concurrently under `awaitAll` and the result is `.all { it }` — one failure
 retries the whole job. That is deliberate: a half-synced database, where the sessions are
 current but the speakers they reference are not, is worse than a slightly stale one.
@@ -417,13 +422,17 @@ Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-coo
 `rememberSpeakerAvatarShape()`, `LogoTile` (partner logos, falling back to the next URL and then
 the name), `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (adds columns as the window widens). Button labels are sentence case.
 
-The cube hero (`chai/hero`) is a Rubik's cube drawn on a `Canvas`: a pure `CubeState` of 27
-cubelets turned by `CubeMove`s, and an orthographic projection that culls back faces and paints
-the rest back to front, both unit tested. It solves itself with `SignatureSolve` on the theme's
-spatial spring, turns slowly, and plays the reverse 30 seconds later. It sits at the top of About
-and in the trailing half of Home's hero on medium and wider windows, once content has loaded. It
-is decoration, so it is hidden from accessibility, and `cube_hero_enabled` in Remote Config turns
-it off. Its face colours are in `chai/colors/CubeColors.kt`, the same in both themes.
+The cube hero (`chai/hero`) is a Rubik's cube drawn on a `Canvas`, after the conference site's:
+black cubelets with a pixel logo on each face (droidcon, Flutter, React, Kotlin, Swift and AI,
+in `CubeLogos`). Each sticker carries the ninth of its face's logo that it started with, so a turn
+breaks the logos up and the solve puts them back. It is a pure `CubeState` of 27 cubelets turned by
+`CubeMove`s, and an orthographic projection that culls back faces and paints the rest back to front,
+a turning layer as one block. `CubeMotion` holds the logos for six seconds, scrambles and solves
+with `SignatureSolve` on the theme's spatial spring, and tumbles the whole cube on the frame clock
+throughout. All three are unit tested. It sits at the top of About and in the trailing half of
+Home's hero on medium and wider windows. It is decoration, so it is hidden from accessibility, and
+`cube_hero_enabled` in Remote Config turns it off. Its colours are in `chai/colors/CubeColors.kt`,
+the same in both themes.
 
 Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
 `HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.
@@ -449,8 +458,8 @@ What the app relies on, so a change does not undo it:
 - **Reduced motion.** With "Remove animations" on, Compose snaps every infinite transition to its
   end value and stops it. So a continuous animation (the live badge and border, the pulse, the
   shimmer) must end on a value that reads well at rest; `LiveBadge` ends opaque.
-  The cube does not animate at all with animations off, off screen or when the app is not
-  resumed: it rests solved at a three-quarter angle.
+  The cube does not animate with animations off, even if they are turned off while it is on
+  screen: it rests solved at a three-quarter angle. Off screen or with the app not resumed, it pauses.
 - **Large fonts.** Screenshot tests render every screen at 200 %. Text that varies in length takes
   `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero drops to a smaller role
   above 1.5×, and home's session cards widen with the font scale so titles wrap between words.

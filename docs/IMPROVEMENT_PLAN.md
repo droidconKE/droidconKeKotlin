@@ -3223,12 +3223,9 @@ Then make sharing produce those links. A shared session is plain text today, bec
 
 ## 12. Phase 9 — 3D cube hero — what is left
 
-The cube is built: `docs/architecture.md` ("Design system") describes it. Two parts of the plan
-are not done:
+The cube is built: `docs/architecture.md` ("Design system") describes it. One part of the plan
+is not done:
 
-- **The "con" mark** on the centre cubelet of the neon face. Faces are drawn orthographically, so
-  each is an affine image of a square, and the wordmark's vector can be drawn into it with
-  `withTransform`.
 - **A frame-time benchmark.** A macrobenchmark on About asserting p90 frame time under 16 ms. It
   needs a device, so it belongs with the other benchmarks in `docs/performance.md`.
 
@@ -3645,7 +3642,7 @@ Non-negotiable for every PR in every phase:
 | **Gemma model download over mobile data.** A user pays for 500 MB by accident. | Medium | High | Unmetered-only default, explicit size in the UI, opt-in with a confirmation, cancellable (§6.4). |
 | **Backend isn't ready** for signed tickets, jobs, or bookings. | **High** | Medium | Start the backend conversation during Stage 2, not Stage 3. Every backend-dependent feature has a documented degraded v0. |
 | **Editorial features ship empty.** Job board with no jobs; challenges with no challenges. | High | Medium | Do not build without a named owner who has committed to content (§11.0). |
-| **Cube battery drain** in the field. | Low | Medium | Pause off screen, reduced-motion static pose, and the `cube_hero_enabled` Remote Config switch (§12.3). |
+| **Cube battery drain** in the field. | Low | Medium | Pause off screen, reduced-motion static pose, and the `cube_hero_enabled` Remote Config switch, which reaches installs on their next start. |
 
 ### 17.2 Open questions — need answers from outside engineering
 

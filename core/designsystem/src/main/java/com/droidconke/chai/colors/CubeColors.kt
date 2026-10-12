@@ -16,25 +16,35 @@
 package com.droidconke.chai.colors
 
 import androidx.compose.ui.graphics.Color
-import com.droidconke.chai.atoms.ChaiBlue300
+import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiBlue700
-import com.droidconke.chai.atoms.ChaiGreen300
+import com.droidconke.chai.atoms.ChaiCyan400
 import com.droidconke.chai.atoms.ChaiGreen500
-import com.droidconke.chai.atoms.ChaiGrey800
-import com.droidconke.chai.atoms.ChaiInk
+import com.droidconke.chai.atoms.ChaiGrey600
+import com.droidconke.chai.atoms.ChaiGrey900
+import com.droidconke.chai.atoms.ChaiPink500
+import com.droidconke.chai.atoms.ChaiPurple400
 import com.droidconke.chai.atoms.ChaiWhite
+import com.droidconke.chai.atoms.ChaiYellow400
 import com.droidconke.chai.hero.CubeFace
 
-/** Fixed in both themes; the right face is the light blue so it stands out on the blue hero. */
-fun cubeFaceColor(face: CubeFace): Color =
+/** Fixed in both themes: neon logos on black tiles, as on the conference site. */
+fun cubeLogoInk(
+    face: CubeFace,
+    ink: Int,
+): Color =
     when (face) {
-        CubeFace.Front -> ChaiGreen500
-        CubeFace.Right -> ChaiBlue300
-        CubeFace.Up -> ChaiWhite
-        CubeFace.Left -> ChaiGreen300
-        CubeFace.Back -> ChaiBlue700
-        CubeFace.Down -> ChaiInk
-        CubeFace.Inner -> ChaiGrey800
+        CubeFace.Front -> if (ink == 1) ChaiGreen500 else ChaiWhite
+        CubeFace.Right -> if (ink == 1) ChaiCyan400 else ChaiBlue700
+        CubeFace.Up -> ChaiYellow400
+        CubeFace.Back -> ChaiGreen500
+        CubeFace.Left -> ChaiPink500
+        CubeFace.Down -> ChaiPurple400
+        CubeFace.Inner -> ChaiBlack
     }
 
-val CubeBodyColor: Color = ChaiGrey800
+val CubeTileColor: Color = ChaiBlack
+
+/** The body between tiles, lit when it faces the viewer and in shadow when edge-on. */
+val CubeBodyLitColor: Color = ChaiGrey600
+val CubeBodyShadowColor: Color = ChaiGrey900

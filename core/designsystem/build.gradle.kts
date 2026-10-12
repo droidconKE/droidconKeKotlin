@@ -50,4 +50,5 @@ dependencies {
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.test.robolectric)
+    testImplementation(libs.kotlin.coroutines.test)
 }
