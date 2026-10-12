@@ -23,10 +23,10 @@ import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.time.ticks
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -78,16 +77,9 @@ class MainViewModel
             }
         }
 
-        private val ticker =
-            flow {
-                while (true) {
-                    emit(clock.now())
-                    delay(TICK_INTERVAL_MS)
-                }
-            }
-
         val sessionState: StateFlow<SessionUIState> =
-            ticker
+            clock
+                .ticks()
                 .flatMapLatest { now ->
                     val currentTime = now.toEpochMilliseconds()
                     combine(
@@ -115,6 +107,5 @@ class MainViewModel
         private companion object {
             /** Past this, show the UI with loading skeletons rather than an inert splash. */
             const val INITIALISATION_TIMEOUT_MS = 700L
-            const val TICK_INTERVAL_MS = 60_000L
         }
     }
