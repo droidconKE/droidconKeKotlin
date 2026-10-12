@@ -39,6 +39,9 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
     fun `home across form factors`() = captureFormFactors("form_factors/home") { Home() }
 
     @Test
+    fun `home agenda across form factors`() = captureFormFactors("form_factors/home_agenda") { Home(liveIndex = 4, nextIndex = 6, agenda = clashingAgenda) }
+
+    @Test
     fun `home during a session`() = captureScreen("screens/home_live") { Home(liveIndex = 1, nextIndex = 2) }
 
     @Test
@@ -57,15 +60,7 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
                 liveIndex = 4,
                 nextIndex = 6,
                 hero = HomeHero.Welcome,
-                agenda =
-                    HomeAgenda(
-                        AgendaDay.Today,
-                        persistentListOf(
-                            AgendaItem(fakeSessions[4], persistentListOf(fakeSessions[1].title)),
-                            AgendaItem(fakeSessions[1].copy(id = "today-1"), persistentListOf(fakeSessions[4].title)),
-                            AgendaItem(fakeSessions[6], persistentListOf()),
-                        ),
-                    ),
+                agenda = clashingAgenda,
             )
         }
 
@@ -94,3 +89,13 @@ private fun Home(
         nextSession = nextIndex?.let(fakeSessions::get),
     )
 }
+
+private val clashingAgenda =
+    HomeAgenda(
+        AgendaDay.Today,
+        persistentListOf(
+            AgendaItem(fakeSessions[4], persistentListOf(fakeSessions[1].title)),
+            AgendaItem(fakeSessions[1].copy(id = "today-1"), persistentListOf(fakeSessions[4].title)),
+            AgendaItem(fakeSessions[6], persistentListOf()),
+        ),
+    )
