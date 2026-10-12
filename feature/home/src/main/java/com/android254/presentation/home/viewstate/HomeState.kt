@@ -15,12 +15,14 @@
  */
 package com.android254.presentation.home.viewstate
 
+import androidx.compose.runtime.Immutable
 import com.android254.domain.models.HomeBanner
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.datetime.LocalDate
 
 data class HomeState(
     val banner: HomeBanner = HomeBanner.None,
@@ -54,8 +56,9 @@ sealed interface AgendaDay {
 
     data object Tomorrow : AgendaDay
 
+    @Immutable
     data class On(
-        val date: String,
+        val date: LocalDate,
     ) : AgendaDay
 }
 

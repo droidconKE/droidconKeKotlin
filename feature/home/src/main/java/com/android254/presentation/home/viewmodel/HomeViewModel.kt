@@ -24,12 +24,11 @@ import com.android254.presentation.home.viewstate.HomeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.ConferenceTimeZone
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
+import ke.droidcon.kotlin.core.common.time.ticks
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -60,7 +59,7 @@ class HomeViewModel
             combine(
                 homeRepo.fetchHomeDetails(),
                 isSyncing,
-                minuteTicks(),
+                clock.ticks(),
             ) { home, syncing, now ->
                 home.toHomeState(isSyncing = syncing, now, conferenceTimeZone)
             }.flowOn(ioDispatcher)
@@ -70,21 +69,9 @@ class HomeViewModel
                     initialValue = HomeState(),
                 )
 
-        private fun minuteTicks() =
-            flow {
-                while (true) {
-                    emit(clock.now())
-                    delay(TICK_INTERVAL_MS)
-                }
-            }
-
         fun startRefresh() {
             viewModelScope.launch {
                 syncDataWorkManager.startSync()
             }
-        }
-
-        private companion object {
-            const val TICK_INTERVAL_MS = 60_000L
         }
     }

@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.home.components
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,19 +26,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.home.viewstate.AgendaDay
 import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
 import ke.droidcon.kotlin.core.ui.R
+import kotlinx.datetime.toJavaLocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HomeAgendaSection(
@@ -55,12 +58,7 @@ fun HomeAgendaSection(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(
-                text = stringResource(R.string.agenda_title),
-                style = MaterialTheme.typography.headlineSmallEmphasized,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f, fill = false).semantics { heading() },
-            )
+            HomeSectionTitle(stringResource(R.string.agenda_title), Modifier.weight(1f, fill = false))
             Text(
                 text = agenda.day.label(),
                 style = MaterialTheme.typography.titleSmall,
@@ -132,5 +130,11 @@ private fun AgendaDay.label(): String =
     when (this) {
         AgendaDay.Today -> stringResource(R.string.agenda_today)
         AgendaDay.Tomorrow -> stringResource(R.string.agenda_tomorrow)
-        is AgendaDay.On -> date
+        is AgendaDay.On -> {
+            val locale = Locale.current.platformLocale
+            remember(date, locale) {
+                val pattern = DateFormat.getBestDateTimePattern(locale, "EEEEdMMMM")
+                date.toJavaLocalDate().format(DateTimeFormatter.ofPattern(pattern, locale))
+            }
+        }
     }

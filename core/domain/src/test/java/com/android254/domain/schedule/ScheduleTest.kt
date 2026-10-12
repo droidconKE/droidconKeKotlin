@@ -18,6 +18,7 @@ package com.android254.domain.schedule
 import com.android254.domain.models.ConferencePhase
 import com.android254.domain.models.ScheduleConflict
 import com.android254.domain.models.Session
+import ke.droidcon.kotlin.core.testing.testSession
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
@@ -63,6 +64,13 @@ class ScheduleTest {
         assertEquals(LocalDate(2026, 11, 6), schedule.agendaDay(at("2026-11-06T11:30"), nairobi))
         assertEquals(LocalDate(2026, 11, 7), schedule.agendaDay(at("2026-11-06T12:01"), nairobi))
         assertNull(schedule.agendaDay(at("2026-11-07T12:00"), nairobi))
+    }
+
+    @Test
+    fun `a session running past midnight does not pull the agenda back to yesterday`() {
+        val lateNight = schedule + session("hackathon", "2026-11-06T22:00", "2026-11-07T02:00")
+
+        assertEquals(LocalDate(2026, 11, 7), lateNight.agendaDay(at("2026-11-07T00:30"), nairobi))
     }
 
     @Test
@@ -131,26 +139,5 @@ class ScheduleTest {
         start: String?,
         end: String?,
         starred: Boolean = false,
-    ) = Session(
-        id = id,
-        endDateTime = "",
-        endTime = "",
-        isBookmarked = starred,
-        isKeynote = false,
-        isServiceSession = false,
-        sessionImage = null,
-        startDateTime = "",
-        startTime = "",
-        rooms = "",
-        speakers = emptyList(),
-        remoteId = id,
-        description = "",
-        sessionFormat = "",
-        sessionLevel = "",
-        slug = "",
-        title = id,
-        eventDay = "",
-        startInstant = start?.let(::at),
-        endInstant = end?.let(::at),
-    )
+    ) = testSession(id, start?.let(::at), end?.let(::at), starred)
 }

@@ -29,5 +29,7 @@ dependencies {
     api(projects.core.model)
 
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlin.coroutines.datetime)
+    api(libs.kotlin.coroutines.datetime)
+
+    testImplementation(projects.core.testing)
 }

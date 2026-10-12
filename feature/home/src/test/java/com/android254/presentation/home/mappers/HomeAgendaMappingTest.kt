@@ -16,15 +16,14 @@
 package com.android254.presentation.home.mappers
 
 import com.android254.domain.models.Home
-import com.android254.domain.models.Session
 import com.android254.presentation.home.viewstate.AgendaDay
 import com.android254.presentation.home.viewstate.HomeHero
+import ke.droidcon.kotlin.core.testing.testSession
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import kotlin.time.Instant
 
 class HomeAgendaMappingTest {
@@ -41,7 +40,7 @@ class HomeAgendaMappingTest {
 
         assertEquals(HomeHero.Countdown(daysUntil = 12), state.hero)
         assertEquals(listOf("keynote", "compose", "kotlin"), state.agenda?.items?.map { it.session.id })
-        assertEquals(AgendaDay.On(LocalDate.of(2026, 11, 6).format(DateTimeFormatter.ofPattern("EEEE d MMMM"))), state.agenda?.day)
+        assertEquals(AgendaDay.On(LocalDate(2026, 11, 6)), state.agenda?.day)
     }
 
     @Test
@@ -85,26 +84,5 @@ class HomeAgendaMappingTest {
         start: String,
         end: String,
         starred: Boolean = false,
-    ) = Session(
-        id = id,
-        endDateTime = "",
-        endTime = "",
-        isBookmarked = starred,
-        isKeynote = false,
-        isServiceSession = false,
-        sessionImage = null,
-        startDateTime = "",
-        startTime = "",
-        rooms = "",
-        speakers = emptyList(),
-        remoteId = id,
-        description = "",
-        sessionFormat = "",
-        sessionLevel = "",
-        slug = "",
-        title = id,
-        eventDay = "",
-        startInstant = at(start),
-        endInstant = at(end),
-    )
+    ) = testSession(id, at(start), at(end), starred)
 }

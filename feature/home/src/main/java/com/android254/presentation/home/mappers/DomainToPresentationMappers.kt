@@ -29,6 +29,7 @@ import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import com.android254.presentation.sessions.mappers.toPresentationModel
@@ -36,10 +37,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
-import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toLocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlin.time.Instant
 
 fun List<Speaker>.toSpeakersPresentation(): List<SpeakerUI> =
@@ -65,25 +63,30 @@ fun Home.toHomeState(
     isSyncing: Boolean,
     now: Instant,
     zone: TimeZone,
-) = HomeState(
-    banner = banner,
-    speakers = speakers.toSpeakersPresentation().toImmutableList(),
-    sponsors = sponsors.map { it.toPresentation() }.toImmutableList(),
-    organizerLogos = organizerLogos.toImmutableList(),
-    sessions = sessions.map { it.toPresentationModel(now) }.toImmutableList(),
-    isSyncing = isSyncing,
-    hero =
-        when (val phase = sessions.conferencePhase(now, zone)) {
-            is ConferencePhase.BeforeEvent -> HomeHero.Countdown(phase.daysUntil)
-            ConferencePhase.AfterEvent -> HomeHero.ThankYou
-            ConferencePhase.DuringEvent, null -> HomeHero.Welcome
-        },
-    agenda = sessions.agenda(now, zone),
-)
+): HomeState {
+    val mapped = sessions.map { it.toPresentationModel(now) }
+    val presented = sessions.zip(mapped).associate { (session, model) -> session.id to model }
+    return HomeState(
+        banner = banner,
+        speakers = speakers.toSpeakersPresentation().toImmutableList(),
+        sponsors = sponsors.map { it.toPresentation() }.toImmutableList(),
+        organizerLogos = organizerLogos.toImmutableList(),
+        sessions = mapped.toImmutableList(),
+        isSyncing = isSyncing,
+        hero =
+            when (val phase = sessions.conferencePhase(now, zone)) {
+                is ConferencePhase.BeforeEvent -> HomeHero.Countdown(phase.daysUntil)
+                ConferencePhase.AfterEvent -> HomeHero.ThankYou
+                ConferencePhase.DuringEvent, null -> HomeHero.Welcome
+            },
+        agenda = sessions.agenda(now, zone, presented),
+    )
+}
 
 private fun List<Session>.agenda(
     now: Instant,
     zone: TimeZone,
+    presented: Map<String, SessionPresentationModel>,
 ): HomeAgenda? {
     val day = agendaDay(now, zone) ?: return null
     val today = now.toLocalDateTime(zone).date
@@ -93,13 +96,13 @@ private fun List<Session>.agenda(
             when (day) {
                 today -> AgendaDay.Today
                 today.plus(1, DateTimeUnit.DAY) -> AgendaDay.Tomorrow
-                else -> AgendaDay.On(day.toJavaLocalDate().format(AGENDA_DATE))
+                else -> AgendaDay.On(day)
             },
         items =
             starredOn(day, zone)
                 .map { session ->
                     AgendaItem(
-                        session = session.toPresentationModel(now),
+                        session = presented.getValue(session.id),
                         clashesWith =
                             conflicts
                                 .mapNotNull { conflict ->
@@ -113,5 +116,3 @@ private fun List<Session>.agenda(
                 }.toImmutableList(),
     )
 }
-
-private val AGENDA_DATE = DateTimeFormatter.ofPattern("EEEE d MMMM", Locale.getDefault())

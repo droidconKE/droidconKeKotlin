@@ -41,6 +41,19 @@ import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
 
 @Composable
+fun HomeSectionTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.headlineSmallEmphasized,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier.semantics { heading() },
+    )
+}
+
+@Composable
 fun HomeSectionHeaderComponent(
     sectionLabel: String,
     sectionSize: Int,
@@ -55,12 +68,7 @@ fun HomeSectionHeaderComponent(
                 .padding(vertical = 16.dp)
                 .testTag("sectionHeader"),
     ) {
-        Text(
-            text = sectionLabel,
-            style = MaterialTheme.typography.headlineSmallEmphasized,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.semantics { heading() },
-        )
+        HomeSectionTitle(sectionLabel)
         Spacer(modifier = Modifier.weight(1f))
         Button(
             onClick = onViewAllClicked,

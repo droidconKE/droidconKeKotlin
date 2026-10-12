@@ -47,7 +47,7 @@ fun ClashBanner(
             modifier
                 .fillMaxWidth()
                 .testTag("clash_banner")
-                .semantics { liveRegion = LiveRegionMode.Polite },
+                .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
