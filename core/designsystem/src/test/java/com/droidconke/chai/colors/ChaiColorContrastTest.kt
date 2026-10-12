@@ -76,6 +76,7 @@ class ChaiColorContrastTest {
                     ContrastPair("onTertiary on tertiary", onTertiary, tertiary, TEXT),
                     ContrastPair("onTertiaryContainer on tertiaryContainer", onTertiaryContainer, tertiaryContainer, TEXT),
                     ContrastPair("onError on error", onError, error, TEXT),
+                    ContrastPair("onErrorContainer on errorContainer", onErrorContainer, errorContainer, TEXT),
                     ContrastPair("inverseOnSurface on inverseSurface", inverseOnSurface, inverseSurface, TEXT),
                     ContrastPair("inversePrimary on inverseSurface", inversePrimary, inverseSurface, TEXT),
                     ContrastPair("heroOnContainer on heroContainer", chai.heroOnContainerColor, chai.heroContainerColor, TEXT),

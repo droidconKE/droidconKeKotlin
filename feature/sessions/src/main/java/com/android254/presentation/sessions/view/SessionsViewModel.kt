@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.schedule.scheduleConflicts
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
@@ -26,6 +27,7 @@ import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessions.mappers.toPresentationModel
+import com.android254.presentation.sessions.models.SessionClash
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -107,6 +109,12 @@ class SessionsViewModel
                         availableFilters = buildFilterOptions(sessionsInformation.sessions).toImmutableList(),
                         showMySessionsOnly = filterState.isBookmarked,
                         isFilterActive = filterState.isActive,
+                        clashes =
+                            sessionsInformation.sessions
+                                .scheduleConflicts()
+                                .filter { it.first.eventDay == _selectedEventDay.value.value }
+                                .map { SessionClash(it.first.title, it.second.title) }
+                                .toImmutableList(),
                     )
                 }
             }.flowOn(ioDispatcher)

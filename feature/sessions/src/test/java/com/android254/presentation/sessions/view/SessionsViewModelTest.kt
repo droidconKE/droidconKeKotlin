@@ -15,16 +15,19 @@
  */
 package com.android254.presentation.sessions.view
 
+import com.android254.domain.models.Session
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
+import com.android254.presentation.sessions.models.SessionClash
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import ke.droidcon.kotlin.core.testing.FakeSyncWorkManager
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -209,4 +212,53 @@ class SessionsViewModelTest {
             )
             assertThat(viewModel.selectedFilterOptions.value.size, `is`(2))
         }
+
+    @Test
+    fun `reports clashes between starred sessions on the selected day only`() =
+        runTest {
+            val sessions =
+                listOf(
+                    starred("a", "06", "2026-11-06T09:00:00+03:00", "2026-11-06T10:00:00+03:00"),
+                    starred("b", "06", "2026-11-06T09:30:00+03:00", "2026-11-06T10:30:00+03:00"),
+                    starred("c", "07", "2026-11-07T09:00:00+03:00", "2026-11-07T10:00:00+03:00"),
+                    starred("d", "07", "2026-11-07T09:30:00+03:00", "2026-11-07T10:30:00+03:00"),
+                )
+            coEvery { sessionsRepo.fetchSessionsInformation() } returns
+                flowOf(SessionsInformationDomainModel(sessions = sessions, eventDays = listOf("06", "07")))
+
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val job = launch { viewModel.sessionsUiState.collect() }
+            advanceUntilIdle()
+
+            assertThat(viewModel.sessionsUiState.value.clashes, `is`(persistentListOf(SessionClash("a", "b"))))
+            job.cancel()
+        }
+
+    private fun starred(
+        id: String,
+        eventDay: String,
+        start: String,
+        end: String,
+    ) = Session(
+        id = id,
+        endDateTime = "",
+        endTime = "",
+        isBookmarked = true,
+        isKeynote = false,
+        isServiceSession = false,
+        sessionImage = null,
+        startDateTime = "",
+        startTime = "",
+        rooms = "",
+        speakers = emptyList(),
+        remoteId = id,
+        description = "",
+        sessionFormat = "",
+        sessionLevel = "",
+        slug = "",
+        title = id,
+        eventDay = eventDay,
+        startInstant = Instant.parse(start),
+        endInstant = Instant.parse(end),
+    )
 }

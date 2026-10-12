@@ -26,9 +26,11 @@ import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.SessionDetailsScreen
+import com.android254.presentation.sessions.models.SessionClash
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionsScreen
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
@@ -37,6 +39,15 @@ import org.junit.Test
 class SessionsScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun sessions() = captureScreen("screens/sessions") { Sessions() }
+
+    @Test
+    fun `my sessions with a clash`() =
+        captureScreen("screens/sessions_clash") {
+            Sessions(
+                showMySessionsOnly = true,
+                clashes = persistentListOf(SessionClash(fakeSessions[4].title, fakeSessions[1].title)),
+            )
+        }
 
     /** The column count and the gutter cap, at every size the app has to be right on. */
     @Test
@@ -68,13 +79,18 @@ class SessionsScreenshotTest : ChaiScreenshotTest() {
 }
 
 @Composable
-private fun Sessions() {
+private fun Sessions(
+    showMySessionsOnly: Boolean = false,
+    clashes: ImmutableList<SessionClash> = persistentListOf(),
+) {
     SessionsScreen(
         sessionsUiState =
             SessionsUiState(
                 sessions = persistentMapOf("09:00 AM" to fakeSessions),
                 sessionStatus = ResultStatus.Success,
                 eventDays = persistentListOf(EventDate("5", day = 1), EventDate("6", day = 2), EventDate("7", day = 3)),
+                showMySessionsOnly = showMySessionsOnly,
+                clashes = clashes,
             ),
         selectedEventDate = EventDate("5", day = 1),
         isRefreshing = false,

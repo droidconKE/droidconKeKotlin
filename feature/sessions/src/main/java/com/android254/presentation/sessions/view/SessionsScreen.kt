@@ -56,6 +56,7 @@ import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterOption
+import com.android254.presentation.sessions.components.ClashBanner
 import com.android254.presentation.sessions.components.EventDaySelector
 import com.android254.presentation.sessions.components.MySessionsSwitch
 import com.android254.presentation.sessions.components.SessionsFilterPanel
@@ -179,6 +180,12 @@ fun SessionsScreen(
                             onEvent(SessionsIntentHandler.ClearSelectedFilterList)
                         }
                     },
+                )
+            }
+            if (showMySessions && sessionsUiState.clashes.isNotEmpty()) {
+                ClashBanner(
+                    clashes = sessionsUiState.clashes,
+                    modifier = Modifier.padding(start = startGutter, end = endGutter, bottom = 12.dp),
                 )
             }
             SessionsStateComponent(
