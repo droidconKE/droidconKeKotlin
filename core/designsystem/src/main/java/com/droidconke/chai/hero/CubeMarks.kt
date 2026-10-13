@@ -15,9 +15,12 @@
  */
 package com.droidconke.chai.hero
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.vector.PathParser
 import kotlin.math.min
 
@@ -28,29 +31,37 @@ internal class CubeMarkArt(
     val layers: List<Pair<Color, String>>,
 )
 
-/** One ink of a mark, and its bounds in face units, where a face is three tiles square. */
+/**
+ * One ink of a mark in face units, where a face is three tiles square: its [bounds], and the piece
+ * on each sticker, already cut to the sticker's rounded shape, by `tileRow * 3 + tileColumn`.
+ */
 internal class MarkLayer(
     val color: Color,
-    val path: Path,
     val bounds: Rect,
+    val pieces: List<Path?>,
 )
 
 /**
- * [art] fitted into the middle [FIT_WIDTH] × [FIT_HEIGHT] of a face and centred, at [units] face
- * units per SVG unit. Wordmarks fill the width and symbols the height.
+ * [art] fitted into the middle [FIT_WIDTH] × [FIT_HEIGHT] of a face and centred. Wordmarks fill the
+ * width and symbols the height. The pieces are cut once, so drawing a sticker never clips.
  */
 internal class CubeMark(
-    art: CubeMarkArt,
+    private val art: CubeMarkArt,
 ) {
-    val units: Float = min(FIT_WIDTH / art.width, FIT_HEIGHT / art.height)
-    val left: Float = (FACE - art.width * units) / 2
-    val top: Float = (FACE - art.height * units) / 2
-
-    val layers: List<MarkLayer> by lazy {
+    val layers: List<MarkLayer> by lazy(LazyThreadSafetyMode.NONE) {
+        val units = min(FIT_WIDTH / art.width, FIT_HEIGHT / art.height)
+        val fit =
+            Matrix().apply {
+                translate((FACE - art.width * units) / 2, (FACE - art.height * units) / 2)
+                scale(units, units)
+            }
         art.layers.map { (color, data) ->
-            val path = PathParser().parsePathString(data).toPath()
-            val box = path.getBounds()
-            MarkLayer(color, path, Rect(left + box.left * units, top + box.top * units, left + box.right * units, top + box.bottom * units))
+            val path = PathParser().parsePathString(data).toPath().apply { transform(fit) }
+            val pieces =
+                List(TILES) { tile ->
+                    Path().takeIf { it.op(path, sticker(tile % 3, tile / 3), PathOperation.Intersect) && !it.isEmpty }
+                }
+            MarkLayer(color, path.getBounds(), pieces)
         }
     }
 
@@ -58,8 +69,30 @@ internal class CubeMark(
         const val FACE = 3f
         const val FIT_WIDTH = 2.4f
         const val FIT_HEIGHT = 2.2f
+        private const val TILES = 9
     }
 }
+
+/** The sticker at [column] and [row] of a face, in face units, as the cube draws it. */
+private fun sticker(
+    column: Int,
+    row: Int,
+): Path =
+    Path().apply {
+        val lo = BEVEL
+        val hi = 1f - BEVEL
+        moveTo(lo + CORNER, lo)
+        lineTo(hi - CORNER, lo)
+        quadraticTo(hi, lo, hi, lo + CORNER)
+        lineTo(hi, hi - CORNER)
+        quadraticTo(hi, hi, hi - CORNER, hi)
+        lineTo(lo + CORNER, hi)
+        quadraticTo(lo, hi, lo, hi - CORNER)
+        lineTo(lo, lo + CORNER)
+        quadraticTo(lo, lo, lo + CORNER, lo)
+        close()
+        translate(Offset(column.toFloat(), row.toFloat()))
+    }
 
 /** What each face of the cube carries: the droidcon wordmark in front and the stacks around it. */
 internal object CubeMarks {

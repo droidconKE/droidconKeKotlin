@@ -3,38 +3,49 @@
 
 Run from the repo root after replacing an SVG:
     python3 core/designsystem/art/cube/generate.py
+CI reruns it and fails if CubeArt.kt no longer matches the SVGs.
 """
 
+import datetime
 import pathlib
 import re
 import xml.etree.ElementTree as ET
 
 HERE = pathlib.Path(__file__).parent
-OUT = HERE.parent.parent / "src/main/java/com/droidconke/chai/hero/CubeArt.kt"
+ROOT = HERE.parents[3]
+OUT = ROOT / "core/designsystem/src/main/java/com/droidconke/chai/hero/CubeArt.kt"
+LICENCE = ROOT / "spotless/copyright.kt"
 SVG = "{http://www.w3.org/2000/svg}"
 
 ART = ["DroidCon", "FlutterCon", "React", "Swift", "AI", "Kotlin"]
+SHAPES = {"path", "polygon", "rect"}
+CONTAINERS = {"svg", "g", "defs", "style"}
+SAME = 0.02
 
-INKS = {
-    "#fff": "CubeWhiteInk",
-    "#00f757": "CubeGreenInk",
-    "#008bfe": "CubeBlueInk",
-    "#ffd600": "CubeYellowInk",
-    "#ff2d6b": "CubePinkInk",
-    "#8a38f5": "CubePurpleInk",
-}
+
+def fail(message):
+    raise SystemExit(f"generate.py: {message}")
 
 
 def num(value):
     return f"{float(value):.2f}".rstrip("0").rstrip(".")
 
 
+def argb(hex_colour, name):
+    digits = hex_colour.lstrip("#").lower()
+    if len(digits) == 3:
+        digits = "".join(c * 2 for c in digits)
+    if not re.fullmatch(r"[0-9a-f]{6}", digits):
+        fail(f"{name}.svg: unsupported fill {hex_colour}")
+    return "0xFF" + digits.upper()
+
+
 def rect_paths(rects):
-    """Merges cells into horizontal runs, then stacks equal runs on consecutive rows."""
+    """Merges cells into horizontal runs of one height, then stacks equal runs on consecutive rows."""
     rows = {}
-    for x, y, w, h in sorted(rects, key=lambda r: (r[1], r[0])):
-        runs = rows.setdefault(y, [])
-        if runs and abs(runs[-1][1] - x) < 0.02:
+    for x, y, w, h in sorted(rects, key=lambda r: (round(r[1], 2), r[0])):
+        runs = rows.setdefault(round(y, 2), [])
+        if runs and abs(runs[-1][1] - x) < SAME and abs(runs[-1][2] - h) < SAME:
             runs[-1][1] = x + w
         else:
             runs.append([x, x + w, h])
@@ -42,7 +53,7 @@ def rect_paths(rects):
     for y in sorted(rows):
         for x0, x1, h in rows[y]:
             below = next(
-                (b for b in blocks if abs(b[0] - x0) < 0.02 and abs(b[1] - x1) < 0.02 and abs(b[3] - y) < 0.02),
+                (b for b in blocks if abs(b[0] - x0) < SAME and abs(b[1] - x1) < SAME and abs(b[3] - y) < SAME),
                 None,
             )
             if below:
@@ -53,21 +64,32 @@ def rect_paths(rects):
 
 
 def layers(name):
+    """The SVG's viewBox size and, per ink in document order, its shapes as path data."""
     root = ET.parse(HERE / f"{name}.svg").getroot()
     styles = "".join(s.text or "" for s in root.iter(f"{SVG}style"))
-    fills = dict(re.findall(r"\.(cls-\d+)\s*\{\s*fill:\s*(#[0-9a-f]+);", styles))
+    fills = dict(re.findall(r"\.(cls-\d+)\s*\{\s*fill:\s*(#[0-9a-fA-F]+);", styles))
     width, height = (float(v) for v in root.get("viewBox").split()[2:])
     paths, rects = {}, {}
     for element in root.iter():
-        ink = INKS[fills[element.get("class")]] if element.get("class") else None
         tag = element.tag.removeprefix(SVG)
+        if element.get("transform"):
+            fail(f"{name}.svg: <{tag}> has a transform")
+        if tag in CONTAINERS:
+            continue
+        if tag not in SHAPES:
+            fail(f"{name}.svg: unsupported <{tag}>")
+        if element.get("class") not in fills:
+            fail(f"{name}.svg: <{tag}> has no fill class from the stylesheet")
+        ink = argb(fills[element.get("class")], name)
         if tag == "path":
             paths.setdefault(ink, []).append(element.get("d"))
         elif tag == "polygon":
-            points = element.get("points").split()
-            pairs = [f"{points[i]},{points[i + 1]}" for i in range(0, len(points), 2)]
+            coords = re.split(r"[\s,]+", element.get("points").strip())
+            pairs = [f"{coords[i]},{coords[i + 1]}" for i in range(0, len(coords), 2)]
             paths.setdefault(ink, []).append("M" + "L".join(pairs) + "Z")
-        elif tag == "rect":
+        else:
+            if element.get("rx") or element.get("ry"):
+                fail(f"{name}.svg: rounded <rect>")
             box = tuple(float(element.get(k, 0)) for k in ("x", "y", "width", "height"))
             rects.setdefault(ink, []).append(box)
     for ink, boxes in rects.items():
@@ -75,36 +97,40 @@ def layers(name):
     return width, height, paths
 
 
+def header():
+    year = re.search(r"Copyright (\d{4})", OUT.read_text()) if OUT.exists() else None
+    stamp = year.group(1) if year else str(datetime.date.today().year)
+    return LICENCE.read_text().replace("$YEAR", stamp).rstrip()
+
+
 def kotlin():
-    inks = sorted({ink for name in ART for ink in layers(name)[2]})
     lines = [
-        HEADER,
+        header(),
         "package com.droidconke.chai.hero",
         "",
-        *(f"import com.droidconke.chai.colors.{ink}" for ink in inks),
+        "import androidx.compose.ui.graphics.Color",
         "",
         "// Generated by core/designsystem/art/cube/generate.py from the designers' SVGs. Do not edit.",
         "internal object CubeArt {",
     ]
     for name in ART:
         width, height, paths = layers(name)
-        lines.append(f"    val {name.upper()} =")
-        lines.append(f"        CubeMarkArt(")
-        lines.append(f"            width = {num(width)}f,")
-        lines.append(f"            height = {num(height)}f,")
-        lines.append(f"            layers =")
-        lines.append(f"                listOf(")
-        for ink, data in paths.items():
-            joined = "".join(data)
-            lines.append(f'                    {ink} to "{joined}",')
-        lines.append(f"                ),")
-        lines.append(f"        )")
-        lines.append("")
+        lines += [
+            f"    val {name.upper()} =",
+            "        CubeMarkArt(",
+            f"            width = {num(width)}f,",
+            f"            height = {num(height)}f,",
+            "            layers =",
+            "                listOf(",
+            *(f'                    Color({ink}) to "{"".join(data)}",' for ink, data in paths.items()),
+            "                ),",
+            "        )",
+            "",
+        ]
     lines[-1] = "}"
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines)
 
 
-HEADER = (HERE.parent.parent / "src/main/java/com/droidconke/chai/hero/CubeHero.kt").read_text().split("package")[0].rstrip()
-
-OUT.write_text(kotlin())
-print(f"wrote {OUT}")
+if __name__ == "__main__":
+    OUT.write_text(kotlin())
+    print(f"wrote {OUT.relative_to(ROOT)}")

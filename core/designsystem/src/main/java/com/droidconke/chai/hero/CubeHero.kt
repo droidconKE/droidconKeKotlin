@@ -38,12 +38,13 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.onVisibilityChanged
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.util.fastAll
+import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.droidconke.chai.colors.CubeEdgeColor
 import com.droidconke.chai.colors.CubeGapColor
@@ -243,51 +244,32 @@ private class CubePainter {
         drawPath(tile, CubeEdgeColor.copy(alpha = EDGE_ALPHA + EDGE_SHINE_ALPHA * shine), style = edge)
     }
 
-    /** The part of [mark] on this tile, clipped to the sticker so the logo breaks at the gaps. */
+    /** This sticker's pieces of [mark], so the mark breaks at the gaps. */
     private fun DrawScope.drawMark(
         quad: Quad,
         origin: Offset,
         scale: Float,
         mark: CubeMark,
     ) {
-        fun MarkLayer.onTile() =
-            bounds.right > quad.tileColumn &&
-                bounds.left < quad.tileColumn + 1 &&
-                bounds.bottom > quad.tileRow &&
-                bounds.top < quad.tileRow + 1
-        if (mark.layers.none { it.onTile() }) return
-        clipPath(tile) {
-            mark.layers.forEach { if (it.onTile()) drawLogoPath(quad, origin, scale, it.path, mark.left, mark.top, mark.units, it.color) }
-        }
-    }
-
-    /** Draws [logo], placed at ([left], [top]) in face units and [units] face units per point. */
-    private fun DrawScope.drawLogoPath(
-        quad: Quad,
-        origin: Offset,
-        scale: Float,
-        logo: Path,
-        left: Float,
-        top: Float,
-        units: Float,
-        color: Color,
-    ) {
+        val tile = quad.tileRow * 3 + quad.tileColumn
+        val layers = mark.layers
+        if (layers.fastAll { it.pieces[tile] == null }) return
         val ox = quad.screenX(origin, scale, 0f, 0f)
         val oy = quad.screenY(origin, scale, 0f, 0f)
         val ax = quad.screenX(origin, scale, 1f, 0f) - ox
         val ay = quad.screenY(origin, scale, 1f, 0f) - oy
         val bx = quad.screenX(origin, scale, 0f, 1f) - ox
         val by = quad.screenY(origin, scale, 0f, 1f) - oy
-        val u = left - quad.tileColumn
-        val v = top - quad.tileRow
         matrix.reset()
-        matrix.values[Matrix.ScaleX] = units * ax
-        matrix.values[Matrix.SkewY] = units * ay
-        matrix.values[Matrix.SkewX] = units * bx
-        matrix.values[Matrix.ScaleY] = units * by
-        matrix.values[Matrix.TranslateX] = ox + u * ax + v * bx
-        matrix.values[Matrix.TranslateY] = oy + u * ay + v * by
-        withTransform({ transform(matrix) }) { drawPath(logo, color) }
+        matrix.values[Matrix.ScaleX] = ax
+        matrix.values[Matrix.SkewY] = ay
+        matrix.values[Matrix.SkewX] = bx
+        matrix.values[Matrix.ScaleY] = by
+        matrix.values[Matrix.TranslateX] = ox - quad.tileColumn * ax - quad.tileRow * bx
+        matrix.values[Matrix.TranslateY] = oy - quad.tileColumn * ay - quad.tileRow * by
+        withTransform({ transform(matrix) }) {
+            layers.fastForEach { layer -> layer.pieces[tile]?.let { drawPath(it, layer.color) } }
+        }
     }
 }
 
@@ -377,8 +359,8 @@ private const val POP_DAMPING = 0.4f
 private const val ANIMATIONS_OFF_POLL_MILLIS = 1_000L
 private const val VISIBLE_FRACTION = 0.1f
 
-private const val BEVEL = 0.045f
-private const val CORNER = 0.14f
+internal const val BEVEL = 0.045f
+internal const val CORNER = 0.14f
 private const val EDGE_WIDTH = 0.012f
 private const val EDGE_ALPHA = 0.18f
 private const val EDGE_SHINE_ALPHA = 0.6f
@@ -387,8 +369,6 @@ private const val SHINE_POWER = 4f
 private const val LIGHT_X = -0.45f
 private const val LIGHT_Y = 0.65f
 private const val LIGHT_Z = 0.6f
-
-// The front face's wordmark, in face units: three tiles across.
 
 /** The canvas, across, for each unit of the cube's resting width: room for it to move and click. */
 internal const val CANVAS_PER_CUBE = MOVING_REACH * POP_SCALE / RESTING_REACH

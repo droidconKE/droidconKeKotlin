@@ -44,7 +44,7 @@ internal data class Turn(
 
 /**
  * One visible face, in perspective. [xs] and [ys] are its corners in cube units, clockwise from the
- * top left of its logo tile, which is [tileColumn] and [tileRow] of [face]'s logo. [light] runs
+ * top left of its sticker, which is [tileColumn] and [tileRow] of [face]'s mark. [light] runs
  * from 0, edge-on, to 1, facing the viewer, and [tiltX] and [tiltY] are where its normal leans.
  */
 internal class Quad(

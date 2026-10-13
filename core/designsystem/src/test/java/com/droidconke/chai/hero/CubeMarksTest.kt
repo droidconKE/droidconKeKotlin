@@ -15,9 +15,7 @@
  */
 package com.droidconke.chai.hero
 
-import com.droidconke.chai.colors.CubeBlueInk
-import com.droidconke.chai.colors.CubeGreenInk
-import com.droidconke.chai.colors.CubeWhiteInk
+import androidx.compose.ui.graphics.Color
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -26,6 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.math.abs
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [34])
@@ -39,37 +38,64 @@ class CubeMarksTest {
     }
 
     @Test
-    fun `each mark sits inside its fit box, centred on the face`() {
-        val margin = (CubeMark.FACE - CubeMark.FIT_WIDTH) / 2 - TOLERANCE
+    fun `each mark fits its box, centred on the face, and fills it along one side`() {
+        val across = (CubeMark.FACE - CubeMark.FIT_WIDTH) / 2 - TOLERANCE
+        val down = (CubeMark.FACE - CubeMark.FIT_HEIGHT) / 2 - TOLERANCE
+        outer.forEach { face ->
+            val layers = CubeMarks.of(face)!!.layers
+            val left = layers.minOf { it.bounds.left }
+            val right = layers.maxOf { it.bounds.right }
+            val top = layers.minOf { it.bounds.top }
+            val bottom = layers.maxOf { it.bounds.bottom }
+
+            assertTrue("$face across", left >= across && right <= CubeMark.FACE - across)
+            assertTrue("$face down", top >= down && bottom <= CubeMark.FACE - down)
+            assertEquals("$face centred across", left, CubeMark.FACE - right, CENTRING)
+            assertEquals("$face centred down", top, CubeMark.FACE - bottom, CENTRING)
+            assertTrue("$face filled", right - left > CubeMark.FIT_WIDTH * FILLED || bottom - top > CubeMark.FIT_HEIGHT * FILLED)
+        }
+    }
+
+    @Test
+    fun `each face carries the designers' inks`() {
+        val inks =
+            mapOf(
+                CubeFace.Front to listOf(WHITE, GREEN),
+                CubeFace.Right to listOf(WHITE, BLUE),
+                CubeFace.Up to listOf(YELLOW),
+                CubeFace.Left to listOf(PINK),
+                CubeFace.Down to listOf(PURPLE),
+                CubeFace.Back to listOf(GREEN),
+            )
+        inks.forEach { (face, colours) -> assertEquals("$face", colours.map { Color(it) }, CubeMarks.of(face)!!.layers.map { it.color }) }
+    }
+
+    @Test
+    fun `each piece stays on its own sticker, and every ink lands on one`() {
         outer.forEach { face ->
             CubeMarks.of(face)!!.layers.forEach { layer ->
-                with(layer.bounds) {
-                    assertTrue("$face $this", left >= margin && right <= CubeMark.FACE - margin)
-                    assertTrue("$face $this", top >= margin && bottom <= CubeMark.FACE - margin)
-                    assertTrue("$face $this", width > 0 && height > 0)
+                assertTrue("$face ${layer.color}", layer.pieces.any { it != null })
+                layer.pieces.forEachIndexed { tile, piece ->
+                    val box = piece?.getBounds() ?: return@forEachIndexed
+                    val column = tile % 3
+                    val row = tile / 3
+                    assertTrue("$face $tile $box", box.left >= column + BEVEL - TOLERANCE && box.right <= column + 1 - BEVEL + TOLERANCE)
+                    assertTrue("$face $tile $box", box.top >= row + BEVEL - TOLERANCE && box.bottom <= row + 1 - BEVEL + TOLERANCE)
+                    assertTrue("$face $tile $box", abs(box.width) > 0 && abs(box.height) > 0)
                 }
             }
         }
     }
 
-    @Test
-    fun `each mark fills its fit box along one side`() {
-        outer.forEach { face ->
-            val layers = CubeMarks.of(face)!!.layers
-            val width = layers.maxOf { it.bounds.right } - layers.minOf { it.bounds.left }
-            val height = layers.maxOf { it.bounds.bottom } - layers.minOf { it.bounds.top }
-            assertTrue("$face $width x $height", width > CubeMark.FIT_WIDTH * FILLED || height > CubeMark.FIT_HEIGHT * FILLED)
-        }
-    }
-
-    @Test
-    fun `the wordmarks keep both of their inks`() {
-        assertEquals(listOf(CubeWhiteInk, CubeGreenInk), CubeMarks.of(CubeFace.Front)!!.layers.map { it.color })
-        assertEquals(listOf(CubeWhiteInk, CubeBlueInk), CubeMarks.of(CubeFace.Right)!!.layers.map { it.color })
-    }
-
     private companion object {
         const val TOLERANCE = 0.01f
+        const val CENTRING = 0.05f
         const val FILLED = 0.95f
+        const val WHITE = 0xFFFFFFFF
+        const val GREEN = 0xFF00F757
+        const val BLUE = 0xFF008BFE
+        const val YELLOW = 0xFFFFD600
+        const val PINK = 0xFFFF2D6B
+        const val PURPLE = 0xFF8A38F5
     }
 }

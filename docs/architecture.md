@@ -424,11 +424,12 @@ the name), `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (ad
 
 The cube hero (`chai/hero`) is a Rubik's cube drawn on a `Canvas`, after the conference site's:
 glossy black cubelets in perspective, with a mark on each face: the droidcon and FlutterCon
-wordmarks, and pixel logos for React, Kotlin, Swift and AI. The marks are the designers' SVGs in
-`core/designsystem/art/cube`; `generate.py` there turns them into `CubeArt`, path data per ink, so
-rerun it after replacing one. `CubeMarks` fits each mark into the middle of its face, and each
-sticker draws the part of its face's mark that it started with, clipped to the sticker. A turn
-breaks the marks up and the solve puts them back.
+wordmarks, pixel logos for React, Kotlin and Swift, and the AI mark. The marks are the designers'
+SVGs in `core/designsystem/art/cube`; `generate.py` there turns them into `CubeArt`, path data and
+ink per layer, and CI fails if the two drift, so rerun it after replacing an SVG. `CubeMarks` fits
+each mark into the middle of its face and cuts it once into each sticker's rounded shape; each
+sticker draws the pieces of the mark it started with. A turn breaks the marks up and the solve puts
+them back.
 It is a pure `CubeState` of 27 cubelets turned by `CubeMove`s, and a projection that culls faces
 turned from the camera and paints the rest back to front, a turning layer as one block.
 `CubeMotion` plays it as the conference video does, one face at a time, in `Showcase` order
