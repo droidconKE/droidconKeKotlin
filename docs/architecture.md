@@ -176,8 +176,10 @@ sequenceDiagram
 
 `syncNowIfEmpty()` waits for Remote Config only until its first successful fetch, because the API
 key has no usable default. After that it refreshes in the background, so a changed switch such as
-`cube_hero_enabled` reaches the app on its next start. The defaults in `remote_config_defaults.xml`
-apply until then.
+`cube_hero_enabled` reaches the app within a minute, when Home's state next recomputes, or on the
+next start. The defaults in `remote_config_defaults.xml` apply until then; they load on a background
+thread, so `FeatureFlags` reads are `suspend` and wait for them (`RemoteFeatureToggle.awaitDefaults`),
+which keeps a cold start from reading a switch as off and growing the hero a moment later.
 
 The five run concurrently under `awaitAll` and the result is `.all { it }` — one failure
 retries the whole job. That is deliberate: a half-synced database, where the sessions are

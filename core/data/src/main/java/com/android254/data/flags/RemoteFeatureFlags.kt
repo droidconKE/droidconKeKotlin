@@ -24,8 +24,10 @@ class RemoteFeatureFlags
     constructor(
         private val remoteFeatureToggle: RemoteFeatureToggle,
     ) : FeatureFlags {
-        override val isCubeHeroEnabled: Boolean
-            get() = remoteFeatureToggle.getBoolean(CUBE_HERO_ENABLED)
+        override suspend fun isCubeHeroEnabled(): Boolean {
+            remoteFeatureToggle.awaitDefaults()
+            return remoteFeatureToggle.getBoolean(CUBE_HERO_ENABLED)
+        }
 
         private companion object {
             const val CUBE_HERO_ENABLED = "cube_hero_enabled"

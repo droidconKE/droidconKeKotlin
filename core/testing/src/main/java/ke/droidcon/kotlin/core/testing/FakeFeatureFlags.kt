@@ -18,5 +18,7 @@ package ke.droidcon.kotlin.core.testing
 import com.android254.domain.flags.FeatureFlags
 
 class FakeFeatureFlags(
-    override var isCubeHeroEnabled: Boolean = true,
-) : FeatureFlags
+    var cubeHero: Boolean = true,
+) : FeatureFlags {
+    override suspend fun isCubeHeroEnabled() = cubeHero
+}

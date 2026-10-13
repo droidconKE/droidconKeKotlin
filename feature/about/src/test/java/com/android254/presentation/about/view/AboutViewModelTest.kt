@@ -44,7 +44,7 @@ class AboutViewModelTest {
             Dispatchers.setMain(dispatcher)
 
             listOf(true, false).forEach { enabled ->
-                val viewModel = AboutViewModel(organizersRepo, FakeFeatureFlags(isCubeHeroEnabled = enabled), dispatcher)
+                val viewModel = AboutViewModel(organizersRepo, FakeFeatureFlags(cubeHero = enabled), dispatcher)
                 val success = viewModel.uiState.filterIsInstance<AboutScreenUiState.Success>().first()
 
                 assertEquals(enabled, success.showCube)

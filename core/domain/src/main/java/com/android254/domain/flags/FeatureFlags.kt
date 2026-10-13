@@ -15,7 +15,10 @@
  */
 package com.android254.domain.flags
 
-/** Remote switches for features that might need turning off in the field without a release. */
+/**
+ * Remote switches for features that might need turning off in the field without a release. Reads
+ * wait for the local defaults, so a cold start never sees a switch as off before they apply.
+ */
 interface FeatureFlags {
-    val isCubeHeroEnabled: Boolean
+    suspend fun isCubeHeroEnabled(): Boolean
 }

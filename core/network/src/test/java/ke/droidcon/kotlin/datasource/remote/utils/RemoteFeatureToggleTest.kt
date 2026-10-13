@@ -21,17 +21,23 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigInfo
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.concurrent.Executor
 
 class RemoteFeatureToggleTest {
     @Test
     fun `test successful api-key fetch`() {
         val remoteConfig: FirebaseRemoteConfig =
             mockk {
+                every { setDefaultsAsync(any<Int>()) } returns completedTask(null)
                 every { getString(any()) } returns "default_api_key"
             }
         val remoteFeatureToggle = RemoteFeatureToggle(remoteConfig = remoteConfig)
@@ -77,6 +83,38 @@ class RemoteFeatureToggleTest {
             verify(exactly = 2) { remoteConfig.fetchAndActivate() }
         }
 
+    @Test
+    fun `a switch is not read until the defaults have applied`() =
+        runTest {
+            val applied = slot<OnCompleteListener<Void>>()
+            val defaults: Task<Void> =
+                mockk(relaxed = true) {
+                    every { isComplete } returns false
+                    every { addOnCompleteListener(any<Executor>(), capture(applied)) } answers { this@mockk }
+                }
+            val remoteConfig: FirebaseRemoteConfig =
+                mockk {
+                    every { setDefaultsAsync(any<Int>()) } returns defaults
+                    every { getBoolean("cube_hero_enabled") } returns true
+                }
+            val toggle = RemoteFeatureToggle(remoteConfig)
+            var read: Boolean? = null
+            launch {
+                toggle.awaitDefaults()
+                read = toggle.getBoolean("cube_hero_enabled")
+            }
+
+            runCurrent()
+            assertEquals(null, read)
+
+            every { defaults.isComplete } returns true
+            every { defaults.isCanceled } returns false
+            every { defaults.exception } returns null
+            applied.captured.onComplete(defaults)
+            runCurrent()
+            assertEquals(true, read)
+        }
+
     private fun remoteConfigFetchedAt(
         millis: Long,
         fetch: Task<Boolean>,
@@ -84,6 +122,7 @@ class RemoteFeatureToggleTest {
         val info = mockk<FirebaseRemoteConfigInfo> { every { fetchTimeMillis } returns millis }
         val initialised = completedTask(info)
         return mockk {
+            every { setDefaultsAsync(any<Int>()) } returns completedTask(null)
             every { ensureInitialized() } returns initialised
             every { fetchAndActivate() } returns fetch
             every { this@mockk.info } returns info

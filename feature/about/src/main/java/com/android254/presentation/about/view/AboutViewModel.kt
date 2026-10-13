@@ -73,7 +73,7 @@ class AboutViewModel
                     AboutScreenUiState.Success(
                         teamMembers = team.toImmutableList(),
                         stakeHoldersLogos = stakeholders,
-                        showCube = featureFlags.isCubeHeroEnabled,
+                        showCube = featureFlags.isCubeHeroEnabled(),
                     )
                 }.onStart { emit(AboutScreenUiState.Loading) }
                 .catch { emit(AboutScreenUiState.Error(message = "An unexpected error occurred")) }

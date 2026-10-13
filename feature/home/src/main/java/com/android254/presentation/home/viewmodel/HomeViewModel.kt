@@ -63,7 +63,7 @@ class HomeViewModel
                 isSyncing,
                 clock.ticks(),
             ) { home, syncing, now ->
-                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled)
+                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled())
             }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,
