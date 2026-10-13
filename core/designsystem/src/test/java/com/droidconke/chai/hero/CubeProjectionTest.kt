@@ -19,6 +19,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.abs
+import kotlin.math.cos
 
 class CubeProjectionTest {
     private val solved = CubeState.solved()
@@ -74,17 +75,20 @@ class CubeProjectionTest {
     }
 
     @Test
-    fun `the cube stays within its reach at rest and in every pose it moves through`() {
-        val poses = Showcase.map(::presenting)
-        val resting = poses.maxOf { reach(it) }
+    fun `the cube stays within its reach at rest, leaning, and in every pose it travels through`() {
+        val resting = Poses.maxOf { reach(it) }
         var moving = 0f
-        poses.forEachIndexed { i, from ->
+        Poses.forEachIndexed { i, pose ->
+            (0..STEPS).forEach { step ->
+                val lean = (1 - cos(2 * Math.PI.toFloat() * step / STEPS)) / 2
+                moving = maxOf(moving, reach(pose + Orientation.euler(LEAN_YAW * lean, LEAN_PITCH * lean)))
+            }
             val next = (i + 1) % Showcase.size
             (0..STEPS).forEach { step ->
-                val pose = from.towards(poses[next], step / STEPS.toFloat())
-                moving = maxOf(moving, reach(pose))
+                val travelling = Travels[i].at(step / STEPS.toFloat())
+                moving = maxOf(moving, reach(travelling))
                 scrambleTowards(Showcase[next]).forEach { move ->
-                    (0..90 step 15).forEach { degrees -> moving = maxOf(moving, reach(pose, Turn(move, degrees.toFloat()))) }
+                    (0..90 step 15).forEach { degrees -> moving = maxOf(moving, reach(travelling, Turn(move, degrees.toFloat()))) }
                 }
             }
         }
@@ -131,6 +135,21 @@ class CubeProjectionTest {
     }
 
     @Test
+    fun `while a layer turns, only the faces along the cut are drawn between cubelets`() {
+        Showcase.forEach { face ->
+            scrambleTowards(face).forEach { move ->
+                (15..75 step 30).forEach { degrees ->
+                    val quads = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(move, degrees.toFloat()))
+                    val inner = quads.count { it.face == CubeFace.Inner }
+
+                    assertTrue("$move at $degrees: $inner inner faces", inner in 1..9)
+                    assertTrue("$move at $degrees: ${quads.size} quads", quads.size <= MOST_QUADS)
+                }
+            }
+        }
+    }
+
+    @Test
     fun `a turning layer facing the viewer is painted over the rest of the cube`() {
         val quads = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, Turn(CubeMove.R, 45f))
         val lastStill = quads.indexOfLast { it.face == CubeFace.Front && it.tileColumn < 2 }
@@ -147,6 +166,25 @@ class CubeProjectionTest {
 
         assertTrue(lastTurning < firstStill)
     }
+
+    @Test
+    fun `a layer whose axis barely leans to the viewer is still behind the cut, so it is painted first`() {
+        // Yawed 1.5 degrees, the right layer's axis leans towards the camera by sin 1.5, under the
+        // half cubelet over nine that puts the camera on its side of the cut. At 5 degrees it is over.
+        val barely = solved.visibleQuads(-1.5f, 0f, Turn(CubeMove.R, 45f))
+        val clearly = solved.visibleQuads(-5f, 0f, Turn(CubeMove.R, 45f))
+
+        assertTrue(barely.lastTurningFront() < barely.firstStillFront())
+        assertTrue(clearly.firstTurningFront() > clearly.lastStillFront())
+    }
+
+    private fun List<Quad>.lastTurningFront() = indexOfLast { it.face == CubeFace.Front && it.tileColumn == 2 }
+
+    private fun List<Quad>.firstTurningFront() = indexOfFirst { it.face == CubeFace.Front && it.tileColumn == 2 }
+
+    private fun List<Quad>.firstStillFront() = indexOfFirst { it.face == CubeFace.Front && it.tileColumn < 2 }
+
+    private fun List<Quad>.lastStillFront() = indexOfLast { it.face == CubeFace.Front && it.tileColumn < 2 }
 
     @Test
     fun `at rest the hidden faces between cubelets are not drawn`() {
@@ -168,5 +206,8 @@ class CubeProjectionTest {
         const val TOLERANCE = 1e-4f
         const val REACH_SLACK = 0.01f
         const val STEPS = 20
+
+        /** Twenty-seven stickers, nine sides the turning layer bares, nine faces along the cut. */
+        const val MOST_QUADS = 45
     }
 }

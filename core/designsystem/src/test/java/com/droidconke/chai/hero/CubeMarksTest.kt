@@ -32,6 +32,18 @@ class CubeMarksTest {
     private val outer = CubeFace.entries - CubeFace.Inner
 
     @Test
+    fun `a mark's pieces exist only once it is cut, and cutting all readies every face`() {
+        val mark = CubeMark(CubeArt.AI)
+        assertNull(mark.layersIfCut)
+
+        assertEquals(1, mark.layers.size)
+        assertNotNull(mark.layersIfCut)
+
+        CubeMarks.cutAllNow()
+        outer.forEach { assertNotNull(it.name, CubeMarks.of(it)!!.layersIfCut) }
+    }
+
+    @Test
     fun `every outer face carries a mark, and the inside none`() {
         outer.forEach { assertNotNull(it.name, CubeMarks.of(it)) }
         assertNull(CubeMarks.of(CubeFace.Inner))

@@ -38,6 +38,14 @@ class ChaiColorContrastTest {
     @Test
     fun `every dark role pair meets WCAG AA`() = assertAllPass(pairs(ChaiDarkColorScheme, ChaiDarkColorPalette))
 
+    /** The stage is the same black in both themes; its title is display type, which WCAG treats as large text. */
+    @Test
+    fun `the cube stage's text meets WCAG AA`() =
+        assertAllPass(
+            listOf(ContrastPair("stage text on stage", CubeStageTextColor, CubeStageColor, TEXT)) +
+                CubeStageTitleColors.mapIndexed { i, color -> ContrastPair("stage title stop $i on stage", color, CubeStageColor, NON_TEXT) },
+        )
+
     private fun pairs(
         scheme: ColorScheme,
         chai: ChaiColors,

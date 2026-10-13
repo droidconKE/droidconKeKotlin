@@ -42,8 +42,8 @@ import kotlin.math.roundToInt
 
 /**
  * The conference hero card: [content] leading and the cube turning at the end, a little past the
- * card's edge, at every width. The content never sits under the cube, and at large font sizes the
- * cube steps aside.
+ * card's edge, at every width. The bleed is kept small enough that the right face's wordmark stays
+ * whole. The content never sits under the cube, and at large font sizes the cube steps aside.
  */
 @Composable
 fun CubeHeroBanner(
@@ -107,5 +107,5 @@ private val MaxCubeSize = 206.dp
 private val CubeMargin = 8.dp
 private val TextGap = 8.dp
 private const val CUBE_SHARE = 0.42f
-private const val BLEED = 0.16f
+private const val BLEED = 0.08f
 private const val HALF = 0.5f

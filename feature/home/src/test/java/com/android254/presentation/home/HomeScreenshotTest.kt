@@ -32,21 +32,21 @@ import org.junit.Test
 
 class HomeScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun home() = captureScreen("screens/home", antialiasedPaths = true) { Home() }
+    fun home() = captureScreen("screens/home") { Home() }
 
     /** Home is a single column everywhere; what changes is where that column stops. */
     @Test
-    fun `home across form factors`() = captureFormFactors("form_factors/home", antialiasedPaths = true) { Home() }
+    fun `home across form factors`() = captureFormFactors("form_factors/home") { Home() }
 
     @Test
-    fun `home agenda across form factors`() = captureFormFactors("form_factors/home_agenda", antialiasedPaths = true) { Home(liveIndex = 4, nextIndex = 6, agenda = clashingAgenda) }
+    fun `home agenda across form factors`() = captureFormFactors("form_factors/home_agenda") { Home(liveIndex = 4, nextIndex = 6, agenda = clashingAgenda) }
 
     @Test
-    fun `home during a session`() = captureScreen("screens/home_live", antialiasedPaths = true) { Home(liveIndex = 1, nextIndex = 2) }
+    fun `home during a session`() = captureScreen("screens/home_live") { Home(liveIndex = 1, nextIndex = 2) }
 
     @Test
     fun `home before the event, nothing starred`() =
-        captureScreen("screens/home_before", antialiasedPaths = true) {
+        captureScreen("screens/home_before") {
             Home(
                 hero = HomeHero.Countdown(daysUntil = 12),
                 agenda = HomeAgenda(AgendaDay.On(LocalDate(2026, 11, 6)), persistentListOf()),
@@ -55,7 +55,7 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
 
     @Test
     fun `home during the event, with a clash`() =
-        captureScreen("screens/home_agenda", antialiasedPaths = true) {
+        captureScreen("screens/home_agenda") {
             Home(
                 liveIndex = 4,
                 nextIndex = 6,
@@ -65,7 +65,7 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
         }
 
     @Test
-    fun `home after the event`() = captureScreen("screens/home_after", antialiasedPaths = true) { Home(hero = HomeHero.ThankYou) }
+    fun `home after the event`() = captureScreen("screens/home_after") { Home(hero = HomeHero.ThankYou) }
 }
 
 @Composable

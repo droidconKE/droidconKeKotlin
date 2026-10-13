@@ -15,13 +15,22 @@
  */
 package com.droidconke.chai.hero
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -63,6 +72,30 @@ class CubeHeroPauseTest {
     }
 
     @Test
+    fun `the cube pauses while scrolled out of view and moves again when scrolled back`() {
+        rule.mainClock.autoAdvance = false
+        rule.setContent {
+            CompositionLocalProvider(LocalLifecycleOwner provides owner) {
+                Column(Modifier.size(VIEWPORT).verticalScroll(rememberScrollState())) {
+                    CubeHero(motion, Modifier.size(VIEWPORT))
+                    Spacer(Modifier.height(VIEWPORT * SCROLL_PAGES))
+                }
+            }
+        }
+        rule.mainClock.advanceTimeBy(1_000)
+        assertNotEquals(presenting(CubeFace.Front), motion.orientation)
+
+        settle { rule.onRoot().performTouchInput { swipeUp() } }
+        val paused = motion.orientation
+        rule.mainClock.advanceTimeBy(1_000)
+        assertEquals(paused, motion.orientation)
+
+        settle { rule.onRoot().performTouchInput { swipeDown() } }
+        rule.mainClock.advanceTimeBy(500)
+        assertNotEquals(paused, motion.orientation)
+    }
+
+    @Test
     fun `turning the cube off while paused still rests it`() {
         var animate by mutableStateOf(true)
         show { animate }
@@ -99,5 +132,7 @@ class CubeHeroPauseTest {
 
     private companion object {
         const val SETTLE_MILLIS = 100L
+        const val SCROLL_PAGES = 4
+        val VIEWPORT = 200.dp
     }
 }

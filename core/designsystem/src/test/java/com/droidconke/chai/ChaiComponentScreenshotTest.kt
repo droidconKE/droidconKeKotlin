@@ -56,13 +56,20 @@ import org.junit.Test
 class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun `cube hero at rest`() =
-        captureComponent("chai/cube_hero", antialiasedPaths = true) {
+        captureComponent("chai/cube_hero") {
             Padded { CubeHero(modifier = Modifier.size(240.dp), animate = false) }
+        }
+
+    /** Into the first scramble: a layer part-way round, the cut open behind it, the cube on its way to the next face. */
+    @Test
+    fun `cube hero mid-turn`() =
+        captureComponent("chai/cube_hero_turning", frameMillis = MID_TURN_MILLIS) {
+            Padded { CubeHero(modifier = Modifier.size(240.dp)) }
         }
 
     @Test
     fun `cube hero banner at rest`() =
-        captureComponent("chai/cube_hero_banner", antialiasedPaths = true) {
+        captureComponent("chai/cube_hero_banner") {
             Padded {
                 CubeHeroBanner(animateCube = false) {
                     Text(
@@ -76,7 +83,7 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
 
     @Test
     fun `cube hero stage at rest`() =
-        captureComponent("chai/cube_hero_stage", antialiasedPaths = true) {
+        captureComponent("chai/cube_hero_stage") {
             Padded {
                 CubeHeroStage(animateCube = false) {
                     Text(
@@ -186,3 +193,6 @@ private fun Padded(content: @Composable () -> Unit) {
         content()
     }
 }
+
+/** The hold, then 250 ms into the scramble: the first layer two thirds round. */
+private const val MID_TURN_MILLIS = 2_850L

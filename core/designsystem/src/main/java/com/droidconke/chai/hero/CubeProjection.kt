@@ -15,6 +15,7 @@
  */
 package com.droidconke.chai.hero
 
+import androidx.compose.ui.util.fastForEach
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -76,34 +77,38 @@ internal fun CubeState.visibleQuads(
 /**
  * The faces a viewer sees, in painting order, with the cube turned to [orientation]. A turning
  * layer is painted as one block, before or after the rest of the cube depending on which side of
- * it faces the viewer.
+ * the cut the camera is.
  */
 internal fun CubeState.visibleQuads(
     orientation: Orientation,
     turn: Turn? = null,
 ): List<Quad> {
     val view = Matrix(orientation.matrix())
-    val turned = turn?.let { view * rotation(it.move.axis, it.move.sign * it.degrees) }
     val still = ArrayList<Quad>(VISIBLE_GUESS)
-    val moving = if (turn != null) ArrayList<Quad>(VISIBLE_GUESS) else still
-    for (cubelet in cubelets) {
-        val isTurning = turn != null && cubelet.position[turn.move.axis] == turn.move.layer
-        val into = if (isTurning) moving else still
-        val m = if (isTurning) turned!! else view
-        val forward = cubelet.forward
-        LocalFaces.forEach { local -> cubelet.quad(local, m, forward, withInner = turn != null)?.let(into::add) }
+    if (turn == null) {
+        cubelets.fastForEach { it.addQuads(view, null, still) }
+        still.sortWith(ByDepth)
+        return still
+    }
+    val move = turn.move
+    val turned = view * rotation(move.axis, move.sign * turn.degrees)
+    val moving = ArrayList<Quad>(VISIBLE_GUESS)
+    cubelets.fastForEach { cubelet ->
+        val isTurning = cubelet.position[move.axis] == move.layer
+        cubelet.addQuads(if (isTurning) turned else view, move, if (isTurning) moving else still)
     }
     still.sortWith(ByDepth)
-    if (turn == null) return still
     moving.sortWith(ByDepth)
     val axisTowardsViewer =
-        when (turn.move.axis) {
+        when (move.axis) {
             Axis.X -> view[2, 0]
             Axis.Y -> view[2, 1]
             Axis.Z -> view[2, 2]
         }
-    val layerFacesViewer = axisTowardsViewer * turn.move.layer > 0f
-    return if (layerFacesViewer) still + moving else moving + still
+    // The cut sits half a cubelet along the axis; the camera is on the moving layer's side of it
+    // only once the axis leans towards the camera by more than that over the camera's distance.
+    val cameraOnMovingSide = axisTowardsViewer * move.layer * CAMERA_DISTANCE > HALF
+    return if (cameraOnMovingSide) still.apply { addAll(moving) } else moving.apply { addAll(still) }
 }
 
 /** A row-major 3×3 rotation. */
@@ -115,7 +120,15 @@ private class Matrix(
         column: Int,
     ) = m[row * 3 + column]
 
-    operator fun times(o: Matrix) = Matrix(FloatArray(9) { i -> (0 until 3).sumOf { k -> (this[i / 3, k] * o[k, i % 3]).toDouble() }.toFloat() })
+    operator fun times(o: Matrix): Matrix {
+        val r = FloatArray(9)
+        for (i in 0 until 3) {
+            for (j in 0 until 3) {
+                r[i * 3 + j] = this[i, 0] * o[0, j] + this[i, 1] * o[1, j] + this[i, 2] * o[2, j]
+            }
+        }
+        return Matrix(r)
+    }
 
     fun x(
         x: Float,
@@ -174,27 +187,37 @@ private val LocalFaces =
 private val ByDepth = Comparator<Quad> { a, b -> a.depth.compareTo(b.depth) }
 
 private const val HALF = 0.5f
-private const val VISIBLE_GUESS = 96
+
+/** Twenty-seven stickers, plus the sides a turning layer bares and the cut it opens. */
+private const val VISIBLE_GUESS = 48
 
 /** Unit corners of a face, clockwise from top left, as (right, up) multiples of [HALF]. */
 private val CornerRight = intArrayOf(-1, 1, 1, -1)
 private val CornerUp = intArrayOf(1, 1, -1, -1)
 
+private fun Cubelet.addQuads(
+    m: Matrix,
+    cut: CubeMove?,
+    into: MutableList<Quad>,
+) {
+    LocalFaces.fastForEach { local -> quad(local, m, cut)?.let(into::add) }
+}
+
 /**
- * [withInner] keeps the faces between cubelets, which only show while a layer turns: at rest the
- * cube is solid, so every one of them is hidden.
+ * The faces between cubelets only show along [cut], the layer that is turning: the face of a
+ * cubelet beside the cut that looks across it. At rest the cube is solid and every one is hidden.
  */
 private fun Cubelet.quad(
     local: LocalFace,
     m: Matrix,
-    f: Vec3,
-    withInner: Boolean,
+    cut: CubeMove?,
 ): Quad? {
     val isSticker = local.normal.dot(home) == 1
-    if (!isSticker && !withInner) return null
-    val nx = worldX(local.normal, f)
-    val ny = worldY(local.normal, f)
-    val nz = worldZ(local.normal, f)
+    val normal = world(local.normal)
+    if (!isSticker && (cut == null || 2 * position[cut.axis] + normal[cut.axis] != cut.layer)) return null
+    val nx = normal.x.toFloat()
+    val ny = normal.y.toFloat()
+    val nz = normal.z.toFloat()
     val cx = position.x + nx * HALF
     val cy = position.y + ny * HALF
     val cz = position.z + nz * HALF
@@ -204,12 +227,14 @@ private fun Cubelet.quad(
     val depth = m.z(cx, cy, cz)
     val towardsCamera = -tiltX * m.x(cx, cy, cz) - tiltY * m.y(cx, cy, cz) + light * (CAMERA_DISTANCE - depth)
     if (towardsCamera <= 0f) return null
-    val rx = worldX(local.right, f) * HALF
-    val ry = worldY(local.right, f) * HALF
-    val rz = worldZ(local.right, f) * HALF
-    val ux = worldX(local.up, f) * HALF
-    val uy = worldY(local.up, f) * HALF
-    val uz = worldZ(local.up, f) * HALF
+    val right = world(local.right)
+    val up = world(local.up)
+    val rx = right.x * HALF
+    val ry = right.y * HALF
+    val rz = right.z * HALF
+    val ux = up.x * HALF
+    val uy = up.y * HALF
+    val uz = up.z * HALF
     val xs = FloatArray(4)
     val ys = FloatArray(4)
     for (i in 0 until 4) {
@@ -235,18 +260,10 @@ private fun Cubelet.quad(
 
 private fun Vec3.dot(o: Vec3) = x * o.x + y * o.y + z * o.z
 
-// From the cubelet's frame to the world's: right, up and forward ([f]) are the columns.
-private fun Cubelet.worldX(
-    v: Vec3,
-    f: Vec3,
-) = (right.x * v.x + up.x * v.y + f.x * v.z).toFloat()
-
-private fun Cubelet.worldY(
-    v: Vec3,
-    f: Vec3,
-) = (right.y * v.x + up.y * v.y + f.y * v.z).toFloat()
-
-private fun Cubelet.worldZ(
-    v: Vec3,
-    f: Vec3,
-) = (right.z * v.x + up.z * v.y + f.z * v.z).toFloat()
+/** [v] from the cubelet's frame to the world's: right, up and forward are the columns. */
+private fun Cubelet.world(v: Vec3) =
+    Vec3(
+        right.x * v.x + up.x * v.y + forward.x * v.z,
+        right.y * v.x + up.y * v.y + forward.y * v.z,
+        right.z * v.x + up.z * v.y + forward.z * v.z,
+    )

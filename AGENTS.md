@@ -35,8 +35,9 @@ size (phone, foldable, tablet, desktop) from `ChaiScreenshotTest.captureFormFact
 overrides the *window* rather than the device so `currentWindowAdaptiveInfo` really sees it.
 Every image loads as a flat grey placeholder with no size, which `ContentScale.Fit` draws as
 nothing; a test of logos overrides `placeholderImage()` with `wideLogoImage()`.
-Goldens recorded on macOS must pass on Linux CI. Paths drawn on a `Canvas`, like the cube, anti-alias
-a few colour levels apart there, so their captures pass `antialiasedPaths = true`.
+Goldens recorded on macOS must pass on Linux CI. Paths drawn on a `Canvas` anti-alias a few colour
+levels apart there, so the harness compares loosely inside any node tagged `cube_hero` and exactly
+everywhere else; it finds the cube's bounds in the semantics tree at capture, so tests pass nothing.
 They are outside Gradle's tracked outputs, so after changing anything visual, record with
 `--rerun-tasks` — an up-to-date test task will otherwise leave stale images on disk:
 

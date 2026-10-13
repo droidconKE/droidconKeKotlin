@@ -26,11 +26,11 @@ import org.junit.Test
 
 class AboutScreenshotTest : ChaiScreenshotTest() {
     @Test
-    fun about() = captureScreen("screens/about", antialiasedPaths = true) { About() }
+    fun about() = captureScreen("screens/about") { About() }
 
     /** About is prose, so this is the capped measure doing its job. */
     @Test
-    fun `about across form factors`() = captureFormFactors("form_factors/about", antialiasedPaths = true) { About() }
+    fun `about across form factors`() = captureFormFactors("form_factors/about") { About() }
 
     /** The hero draws behind the status bar at every size. */
     @Test

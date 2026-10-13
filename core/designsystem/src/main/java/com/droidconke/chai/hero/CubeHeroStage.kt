@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -47,7 +48,9 @@ import kotlin.math.roundToInt
 
 /**
  * The cube's stage, as on the conference posters: a full-width black band with the cube turning
- * over [content], for the top of a screen. The cube steps aside at large font sizes.
+ * over [content], for the top of a screen. The cube is sized by the window, never more than
+ * [STAGE_HEIGHT_SHARE] of its height, so a short or landscape window still shows what follows.
+ * The cube steps aside at large font sizes.
  */
 @Composable
 fun CubeHeroStage(
@@ -63,7 +66,12 @@ fun CubeHeroStage(
                 .fillMaxWidth()
                 .background(CubeStageColor),
     ) {
-        val cubeSize = min(maxWidth * STAGE_CUBE_SHARE, MaxStageCubeSize)
+        val windowHeight =
+            with(LocalDensity.current) {
+                LocalWindowInfo.current.containerSize.height
+                    .toDp()
+            }
+        val cubeSize = min(min(maxWidth * STAGE_CUBE_SHARE, MaxStageCubeSize), windowHeight * STAGE_HEIGHT_SHARE)
         if (cube) {
             Box(
                 Modifier
@@ -105,5 +113,6 @@ private val MaxStageCubeSize = 280.dp
 private val StageTopPadding = 24.dp
 private val CubeGap = 12.dp
 private const val STAGE_CUBE_SHARE = 0.7f
+private const val STAGE_HEIGHT_SHARE = 0.38f
 private const val GLOW_REACH = 0.9f
 private const val GLOW_ALPHA = 0.45f

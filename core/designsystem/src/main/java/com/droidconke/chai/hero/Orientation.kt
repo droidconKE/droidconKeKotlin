@@ -36,6 +36,36 @@ internal data class Orientation(
             z = then.w * z + then.x * y - then.y * x + then.z * w,
         )
 
+    /** The same turn the other way round. For a half turn, that is the other way to the same place. */
+    fun inverse() = Orientation(w, -x, -y, -z)
+
+    /** The turn from this orientation to [to], the short way round, so that `this + turnTo(to)` is [to]. */
+    fun turnTo(to: Orientation): Orientation {
+        val turn = inverse() + to
+        return if (turn.w < 0f) Orientation(-turn.w, -turn.x, -turn.y, -turn.z) else turn
+    }
+
+    /** How far this turn goes, in degrees: 0 to 180 for a turn from [turnTo]. */
+    val degrees: Float
+        get() = Math.toDegrees(2.0 * acos(w.coerceIn(-1f, 1f))).toFloat()
+
+    /** A half turn's axis is a choice: it can go either way round to the same place. */
+    val isHalfTurn: Boolean
+        get() = degrees > HALF_TURN_DEGREES
+
+    /** Positive when this turn and [other] go round in the same sense. */
+    fun axisDot(other: Orientation) = x * other.x + y * other.y + z * other.z
+
+    /** [fraction] of this turn, about the same axis. */
+    fun scaled(fraction: Float): Orientation {
+        val half = acos(w.coerceIn(-1f, 1f))
+        val s = sin(half)
+        if (s < NO_TURN) return Identity
+        val scaledHalf = half * fraction
+        val k = sin(scaledHalf) / s
+        return Orientation(cos(scaledHalf), x * k, y * k, z * k)
+    }
+
     /** The row-major 3×3 rotation matrix. */
     fun matrix() =
         floatArrayOf(
@@ -50,34 +80,14 @@ internal data class Orientation(
             1 - 2 * (x * x + y * y),
         )
 
-    /** The shortest way round from this orientation to [to], [fraction] of the way. */
-    fun towards(
-        to: Orientation,
-        fraction: Float,
-    ): Orientation {
-        var dot = w * to.w + x * to.x + y * to.y + z * to.z
-        val sign = if (dot < 0f) -1f else 1f
-        dot *= sign
-        if (dot > NEARLY_SAME) {
-            return Orientation(
-                w + (sign * to.w - w) * fraction,
-                x + (sign * to.x - x) * fraction,
-                y + (sign * to.y - y) * fraction,
-                z + (sign * to.z - z) * fraction,
-            ).normalised()
-        }
-        val angle = acos(dot)
-        val from = sin((1 - fraction) * angle) / sin(angle)
-        val towards = sign * sin(fraction * angle) / sin(angle)
-        return Orientation(from * w + towards * to.w, from * x + towards * to.x, from * y + towards * to.y, from * z + towards * to.z)
-    }
-
     private fun normalised(): Orientation {
         val length = sqrt(w * w + x * x + y * y + z * z)
         return Orientation(w / length, x / length, y / length, z / length)
     }
 
     companion object {
+        val Identity = Orientation(1f, 0f, 0f, 0f)
+
         /** Anticlockwise about [axis], seen from its positive end. */
         fun about(
             axis: Axis,
@@ -133,4 +143,5 @@ internal data class Orientation(
     }
 }
 
-private const val NEARLY_SAME = 0.9995f
+private const val HALF_TURN_DEGREES = 179f
+private const val NO_TURN = 1e-6f

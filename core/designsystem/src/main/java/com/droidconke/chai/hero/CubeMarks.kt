@@ -15,6 +15,9 @@
  */
 package com.droidconke.chai.hero
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -22,6 +25,8 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.vector.PathParser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.math.min
 
 /** One of the designers' SVGs in `core/designsystem/art/cube`: its viewBox and its shapes per ink. */
@@ -43,23 +48,34 @@ internal class MarkLayer(
 
 /**
  * [art] fitted into the middle [FIT_WIDTH] × [FIT_HEIGHT] of a face and centred. Wordmarks fill the
- * width and symbols the height. The pieces are cut once, so drawing a sticker never clips.
+ * width and symbols the height. The pieces are cut once, so drawing a sticker never clips. Cutting
+ * means parsing the SVG and nine path intersections per ink, so it happens off the main thread
+ * ([CubeMarks.cutAll]); until then [layersIfCut] is null and the sticker draws bare.
  */
 internal class CubeMark(
     private val art: CubeMarkArt,
 ) {
-    val layers: List<MarkLayer> by lazy(LazyThreadSafetyMode.NONE) {
+    private var cut by mutableStateOf<List<MarkLayer>?>(null)
+
+    /** The pieces, once cut. Read in the draw phase, so the cube redraws the moment they land. */
+    val layersIfCut: List<MarkLayer>? get() = cut
+
+    /** The pieces, cut now on this thread if no one has yet. */
+    val layers: List<MarkLayer>
+        get() = cut ?: synchronized(this) { cut ?: build().also { cut = it } }
+
+    private fun build(): List<MarkLayer> {
         val units = min(FIT_WIDTH / art.width, FIT_HEIGHT / art.height)
         val fit =
             Matrix().apply {
                 translate((FACE - art.width * units) / 2, (FACE - art.height * units) / 2)
                 scale(units, units)
             }
-        art.layers.map { (color, data) ->
+        return art.layers.map { (color, data) ->
             val path = PathParser().parsePathString(data).toPath().apply { transform(fit) }
             val pieces =
                 List(TILES) { tile ->
-                    Path().takeIf { it.op(path, sticker(tile % 3, tile / 3), PathOperation.Intersect) && !it.isEmpty }
+                    Path().takeIf { it.op(path, stickerPath(tile % 3, tile / 3), PathOperation.Intersect) && !it.isEmpty }
                 }
             MarkLayer(color, path.getBounds(), pieces)
         }
@@ -74,7 +90,7 @@ internal class CubeMark(
 }
 
 /** The sticker at [column] and [row] of a face, in face units, as the cube draws it. */
-private fun sticker(
+internal fun stickerPath(
     column: Int,
     row: Int,
 ): Path =
@@ -107,4 +123,20 @@ internal object CubeMarks {
         )
 
     fun of(face: CubeFace): CubeMark? = marks[face]
+
+    /** Cuts every mark, off the main thread. */
+    suspend fun cutAll() = withContext(Dispatchers.Default) { cutAllNow() }
+
+    /** Cuts every mark on this thread. */
+    fun cutAllNow() = marks.values.forEach { it.layers }
 }
+
+/**
+ * Cuts the cube's marks now, on this thread. The cube cuts them in the background and draws them
+ * when they land, so a screenshot taken before that would show bare stickers; the screenshot harness
+ * calls this first.
+ */
+fun prepareCubeMarks() = CubeMarks.cutAllNow()
+
+internal const val BEVEL = 0.045f
+internal const val CORNER = 0.14f

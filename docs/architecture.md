@@ -431,19 +431,35 @@ SVGs in `core/designsystem/art/cube`; `generate.py` there turns them into `CubeA
 ink per layer, and CI fails if the two drift, so rerun it after replacing an SVG. `CubeMarks` fits
 each mark into the middle of its face and cuts it once into each sticker's rounded shape; each
 sticker draws the pieces of the mark it started with. A turn breaks the marks up and the solve puts
-them back.
+them back. Cutting is nine path intersections per ink, so it runs off the main thread when the cube
+first composes, and a sticker draws bare until its pieces land; the screenshot harness cuts them
+first, with `prepareCubeMarks()`, so a golden never races that.
 It is a pure `CubeState` of 27 cubelets turned by `CubeMove`s, and a projection that culls faces
-turned from the camera and paints the rest back to front, a turning layer as one block.
+turned from the camera and paints the rest back to front, a turning layer as one block. While a
+layer turns, only the faces along the cut are drawn between cubelets, and which block paints first
+is decided by which side of the cut the camera is on, not by the axis's sign: a layer whose axis
+barely leans to the viewer is still behind the cut. `CubePainter` draws each sticker as the unit
+square under the projective transform perspective gives its quad, so the cell, the rounded tile, the
+sheen and the mark's pieces come from paths and a brush built once and land exactly on the quad,
+with nothing allocated per sticker. The `Canvas` sits in its own `graphicsLayer`, so a frame of the
+cube re-records the cube and not the screen around it.
 `CubeMotion` plays it as the conference video does, one face at a time, in `Showcase` order
 (droidcon, FlutterCon, React, Kotlin, Swift, AI). It holds a face, twists three layers as it turns the
 whole cube to the next face (`scrambleTowards`), then plays them back so that logo comes together
 facing the viewer, with a small click on the last turn. The whole cube's pose is an `Orientation`
-(a quaternion), so it turns the shortest way between faces. All are unit tested. Home's hero uses
+(a quaternion) and each `Travel` between poses is the short way round. React to Kotlin is a half
+turn, which has two short ways; it goes on in the sense the cube was already turning, which
+`CubeMotionTest` pins. The scene is `rememberSaveable`, so the cube carries on from its face after
+a rotation or a tab switch, and cancelling the motion mid-scramble leaves it whole on that face.
+All are unit tested. Home's hero uses
 `CubeHeroBanner`: the content leading and the cube at the end, a little past the card's edge, at
-every width. About opens with `CubeHeroStage`, the posters' black stage as a full-width band, the cube over the
-content. Both drop the cube at large font sizes. The cube is
-decoration, so it is hidden from accessibility, and `cube_hero_enabled` in Remote Config turns it
-off. Its colours are in `chai/colors/CubeColors.kt`, the same in both themes.
+every width, with the bleed small enough that the right face's wordmark stays whole. Home rests the
+cube while a sync runs. About opens with `CubeHeroStage`, the posters' black stage as a full-width
+band, the cube over the content, sized by the window so a short or landscape window still shows what
+follows (`LocalWindowInfo`, which is the window, not the configuration). Both drop the cube at large
+font sizes. The cube is decoration, so it is hidden from accessibility, and `cube_hero_enabled` in
+Remote Config turns it off. Its colours are in `chai/colors/CubeColors.kt`, the same in both themes,
+and `ChaiColorContrastTest` covers the stage's text.
 
 Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
 `HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.

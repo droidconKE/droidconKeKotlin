@@ -16,6 +16,7 @@
 package com.droidconke.chai.hero
 
 import androidx.compose.runtime.MonotonicFrameClock
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.MotionDurationScale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.roundToInt
 
 class CubeMotionTest {
     @Test
@@ -65,6 +67,18 @@ class CubeMotionTest {
 
             assertEquals(Showcase + Showcase.first(), seen)
         }
+
+    @Test
+    fun `the travels between scenes are the designed turns, and the half turn keeps the cube's sense`() {
+        assertEquals(listOf(90, 120, 180, 90, 120, 90), Travels.map { it.turn.degrees.roundToInt() })
+        Travels.forEachIndexed { i, travel ->
+            val arrived = travel.at(1f).matrix()
+            Poses[(i + 1) % Poses.size].matrix().forEachIndexed { k, v -> assertEquals("travel $i", v, arrived[k], TOLERANCE) }
+        }
+        val halfTurn = Travels.single { it.turn.isHalfTurn }
+        val before = Travels[Travels.indexOf(halfTurn) - 1]
+        assertTrue("the half turn goes on the way the cube was turning", halfTurn.turn.axisDot(before.turn) > 0f)
+    }
 
     @Test
     fun `with animations off the cube rests solved, showing the front`() =
@@ -106,22 +120,42 @@ class CubeMotionTest {
         }
 
     @Test
-    fun `cancelled mid-turn, the cube is made whole and carries on when run again`() =
+    fun `cancelled mid-scramble, the cube is left whole on the face it was showing, and carries on from it`() =
         runTest {
             val motion = CubeMotion()
             val first = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
-            advanceTimeBy(3_000)
+            advanceTimeBy(3_200)
+            assertFalse(motion.state.isSolved)
             first.cancel()
             advanceTimeBy(1)
+
+            assertTrue(motion.state.isSolved)
             assertNull(motion.turn)
+            assertEquals(Poses[0], motion.orientation)
 
             backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
-            advanceTimeBy(1)
-            assertTrue(motion.state.isSolved)
             advanceTimeBy(3_500)
             assertFalse(motion.state.isSolved)
             advanceTimeBy(3_000)
             assertTrue(motion.state.isSolved)
+            assertEquals(CubeFace.Right, motion.facing())
+        }
+
+    @Test
+    fun `a new motion carries on from the scene the last one reached`() =
+        runTest {
+            val scene = mutableIntStateOf(0)
+            val first = CubeMotion(scene)
+            val job = backgroundScope.launch(FakeFrameClock(testScheduler)) { first.run() }
+            advanceTimeBy(12_000)
+            job.cancel()
+            advanceTimeBy(1)
+            assertEquals(2, scene.intValue)
+
+            val second = CubeMotion(scene)
+
+            assertEquals(Poses[2], second.orientation)
+            assertEquals(CubeFace.Up, second.facing())
         }
 
     private fun assertRestingSolved(motion: CubeMotion) {
@@ -160,5 +194,6 @@ class CubeMotionTest {
         const val NANOS_PER_MILLI = 1_000_000L
         const val SAMPLE_MILLIS = 250L
         const val MAX_SAMPLES = 1_000
+        const val TOLERANCE = 1e-4f
     }
 }
