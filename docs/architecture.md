@@ -435,7 +435,7 @@ whole cube to the next face (`scrambleTowards`), then plays them back so that lo
 facing the viewer, with a small click on the last turn. The whole cube's pose is an `Orientation`
 (a quaternion), so it turns the shortest way between faces. All are unit tested. Home's hero uses
 `CubeHeroBanner`: the content leading and the cube at the end, a little past the card's edge, at
-every width. About uses `CubeHeroStage`, the posters' black stage with the cube centred over the
+every width. About opens with `CubeHeroStage`, the posters' black stage as a full-width band, the cube over the
 content. Both drop the cube at large font sizes. The cube is
 decoration, so it is hidden from accessibility, and `cube_hero_enabled` in Remote Config turns it
 off. Its colours are in `chai/colors/CubeColors.kt`, the same in both themes.

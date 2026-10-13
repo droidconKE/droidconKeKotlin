@@ -132,7 +132,6 @@ internal fun AboutScreen(
                     CubeHeroStage(
                         showCube = uiState.showCube,
                         animateCube = animateCube,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.about_banner_title),

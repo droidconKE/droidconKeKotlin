@@ -16,7 +16,6 @@
 package com.droidconke.chai.hero
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,11 +26,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -44,13 +41,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.droidconke.chai.colors.CubeStageColor
-import com.droidconke.chai.colors.CubeStageEdgeColor
 import com.droidconke.chai.colors.CubeStageGlowColor
 import kotlin.math.roundToInt
 
 /**
- * The cube's stage, as on the conference posters: the cube turning on a dark card with [content]
- * centred below it. The cube steps aside at large font sizes.
+ * The cube's stage, as on the conference posters: a full-width black band with the cube turning
+ * over [content], for the top of a screen. The cube steps aside at large font sizes.
  */
 @Composable
 fun CubeHeroStage(
@@ -64,9 +60,7 @@ fun CubeHeroStage(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.extraLarge)
-                .background(CubeStageColor)
-                .border(1.dp, CubeStageEdgeColor, MaterialTheme.shapes.extraLarge),
+                .background(CubeStageColor),
     ) {
         val cubeSize = min(maxWidth * STAGE_CUBE_SHARE, MaxStageCubeSize)
         if (cube) {
