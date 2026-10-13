@@ -239,6 +239,15 @@ public fun com.droidconke.chai.hero.CubeHero(modifier: androidx.compose.ui.Modif
     - animate: STABLE (primitive type)
 
 @Composable
+internal fun com.droidconke.chai.hero.CubeHero(motion: com.droidconke.chai.hero.CubeMotion, modifier: androidx.compose.ui.Modifier, animate: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - motion: UNSTABLE (has mutable properties or unstable members)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - animate: STABLE (primitive type)
+
+@Composable
 public fun com.droidconke.chai.hero.CubeHeroBanner(modifier: androidx.compose.ui.Modifier, showCube: kotlin.Boolean, animateCube: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>?, onClickLabel: kotlin.String?, content: @[Composable] @[ExtensionFunctionType] androidx.compose.runtime.internal.ComposableFunction1<androidx.compose.foundation.layout.ColumnScope, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true

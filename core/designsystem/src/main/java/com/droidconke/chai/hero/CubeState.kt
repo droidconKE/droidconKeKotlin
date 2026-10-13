@@ -84,7 +84,7 @@ internal data class Cubelet(
     val right: Vec3 = Vec3.UnitX,
     val up: Vec3 = Vec3.UnitY,
 ) {
-    val forward: Vec3 get() = right cross up
+    val forward: Vec3 = right cross up
 
     fun turned(move: CubeMove) =
         copy(

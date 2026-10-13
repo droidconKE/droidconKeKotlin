@@ -78,8 +78,6 @@ internal data class Orientation(
     }
 
     companion object {
-        val Identity = Orientation(1f, 0f, 0f, 0f)
-
         /** Anticlockwise about [axis], seen from its positive end. */
         fun about(
             axis: Axis,

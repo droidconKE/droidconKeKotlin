@@ -36,11 +36,11 @@ import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.hero.CubeHeroBanner
 import ke.droidcon.kotlin.core.ui.R
 
-internal const val LARGE_FONT_SCALE = 1.5f
 private const val HERO_MAX_LINES = 5
 
 @Composable

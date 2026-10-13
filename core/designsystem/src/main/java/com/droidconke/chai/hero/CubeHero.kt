@@ -65,26 +65,33 @@ import kotlin.math.sqrt
 /**
  * The conference cube, showing its logos one face at a time, each breaking up as the cube twists
  * and coming back together as it solves. It rests solved at [RestingPose] when [animate] is false or
- * animations are off, and pauses off screen and while the app is not resumed. The cube reaches
- * across at most five eighths of the canvas, so every pose fits.
+ * animations are off, and pauses off screen and while the app is not resumed. At rest the cube
+ * spans [CANVAS_PER_CUBE] less than the canvas, so it fits in every pose it moves through.
  */
 @Composable
 fun CubeHero(
     modifier: Modifier = Modifier,
     animate: Boolean = true,
 ) {
-    val motion = remember { CubeMotion() }
+    CubeHero(remember { CubeMotion() }, modifier, animate)
+}
+
+@Composable
+internal fun CubeHero(
+    motion: CubeMotion,
+    modifier: Modifier = Modifier,
+    animate: Boolean = true,
+) {
     var resumed by remember { mutableStateOf(false) }
     var visible by remember { mutableStateOf(false) }
     LifecycleResumeEffect(Unit) {
         resumed = true
         onPauseOrDispose { resumed = false }
     }
-    LaunchedEffect(animate && resumed && visible) {
-        if (animate && resumed && visible) {
-            motion.run()
-        } else if (!animate) {
-            motion.rest()
+    LaunchedEffect(animate, resumed, visible) {
+        when {
+            !animate -> motion.rest()
+            resumed && visible -> motion.run()
         }
     }
     val painter = remember { CubePainter() }
@@ -95,7 +102,7 @@ fun CubeHero(
                 .semantics { hideFromAccessibility() },
     ) {
         val quads = motion.state.visibleQuads(motion.orientation, motion.turn)
-        val scale = size.minDimension / CUBE_EXTENT * motion.pop
+        val scale = size.minDimension / (2 * MOVING_REACH * POP_SCALE) * motion.pop
         quads.forEach { with(painter) { drawFace(it, center, scale) } }
     }
 }
@@ -211,11 +218,12 @@ private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
 private val ScrambleSpec = tween<Float>(SCRAMBLE_TURN_MILLIS, easing = CubicBezierEasing(0.6f, 0f, 0.3f, 1f))
 private val SolveSpec = tween<Float>(SOLVE_TURN_MILLIS, easing = EmphasizedEasing)
 
-/** Draws one face at a time, reusing its path and matrix between faces and frames. */
+/** Draws one face at a time, reusing its paths, matrix and edge stroke between faces and frames. */
 private class CubePainter {
     private val path = Path()
     private val tile = Path()
     private val matrix = Matrix()
+    private var edge = Stroke(width = 0f)
 
     fun DrawScope.drawFace(
         quad: Quad,
@@ -237,7 +245,8 @@ private class CubePainter {
             CubeFace.Front -> drawWordmark(quad, origin, scale)
             else -> drawPixels(quad, origin, scale)
         }
-        drawPath(tile, CubeEdgeColor.copy(alpha = EDGE_ALPHA + EDGE_SHINE_ALPHA * shine), style = Stroke(width = EDGE_WIDTH * scale))
+        if (edge.width != EDGE_WIDTH * scale) edge = Stroke(width = EDGE_WIDTH * scale)
+        drawPath(tile, CubeEdgeColor.copy(alpha = EDGE_ALPHA + EDGE_SHINE_ALPHA * shine), style = edge)
     }
 
     private fun DrawScope.drawPixels(
@@ -264,9 +273,13 @@ private class CubePainter {
         scale: Float,
     ) {
         clipPath(tile) {
-            drawLogoPath(quad, origin, scale, CubeWordmark.word, FACE_WORD_LEFT, FACE_WORD_TOP, FACE_WORD_WIDTH / CubeWordmark.WORD_WIDTH, CubeWordInk)
-            val markScale = FACE_MARK_WIDTH / CubeWordmark.MARK_WIDTH
-            drawLogoPath(quad, origin, scale, CubeWordmark.mark, FACE_MARK_LEFT - CubeWordmark.MARK_LEFT * markScale, FACE_MARK_TOP, markScale, CubeMarkInk)
+            if (quad.tileRow < 2) {
+                drawLogoPath(quad, origin, scale, CubeWordmark.word, FACE_WORD_LEFT, FACE_WORD_TOP, FACE_WORD_WIDTH / CubeWordmark.WORD_WIDTH, CubeWordInk)
+            }
+            if (quad.tileRow > 0) {
+                val markScale = FACE_MARK_WIDTH / CubeWordmark.MARK_WIDTH
+                drawLogoPath(quad, origin, scale, CubeWordmark.mark, FACE_MARK_LEFT - CubeWordmark.MARK_LEFT * markScale, FACE_MARK_TOP, markScale, CubeMarkInk)
+            }
         }
     }
 
@@ -380,7 +393,7 @@ private const val SOLVE_TURN_MILLIS = 520
 private const val TURN_GAP_MILLIS = 80L
 private const val LEAN_YAW = 10f
 private const val LEAN_PITCH = -5f
-private const val POP_SCALE = 1.04f
+internal const val POP_SCALE = 1.04f
 private const val POP_MILLIS = 90
 private const val POP_DAMPING = 0.4f
 private const val ANIMATIONS_OFF_POLL_MILLIS = 1_000L
@@ -405,5 +418,5 @@ private const val FACE_MARK_LEFT = 0.6f
 private const val FACE_MARK_TOP = 1.75f
 private const val FACE_MARK_WIDTH = 1.8f
 
-/** The perspective cube's widest reach, both ways, plus a margin. */
-private const val CUBE_EXTENT = 7.2f
+/** The canvas, across, for each unit of the cube's resting width: room for it to move and click. */
+internal const val CANVAS_PER_CUBE = MOVING_REACH * POP_SCALE / RESTING_REACH

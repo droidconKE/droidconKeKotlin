@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.chaiColorsPalette
 import kotlin.math.roundToInt
 
@@ -80,7 +81,7 @@ fun CubeHeroBanner(
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = if (cube) cubeSize + CubeMargin * 2 else 0.dp)
-                    .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = if (cube) cubeSize * (1 - BLEED) + CubeMargin else 20.dp),
+                    .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = if (cube) cubeSize * (1 - BLEED) + TextGap else 20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         ) {
             content()
@@ -101,13 +102,10 @@ private fun Modifier.atEnd(size: Dp) =
         }
     }
 
-private val MinCubeSize = 112.dp
-private val MaxCubeSize = 176.dp
-private val CubeMargin = 16.dp
-private const val CUBE_SHARE = 0.36f
-private const val BLEED = 0.1f
-
-/** CubeHero draws the cube, in any pose, across up to five eighths of its canvas. */
-internal const val CANVAS_PER_CUBE = 1.6f
+private val MinCubeSize = 132.dp
+private val MaxCubeSize = 206.dp
+private val CubeMargin = 8.dp
+private val TextGap = 8.dp
+private const val CUBE_SHARE = 0.42f
+private const val BLEED = 0.16f
 private const val HALF = 0.5f
-internal const val LARGE_FONT_SCALE = 1.5f

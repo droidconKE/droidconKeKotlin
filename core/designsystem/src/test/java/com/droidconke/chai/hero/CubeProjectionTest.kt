@@ -18,6 +18,7 @@ package com.droidconke.chai.hero
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
 
 class CubeProjectionTest {
     private val solved = CubeState.solved()
@@ -71,6 +72,31 @@ class CubeProjectionTest {
             }
         }
     }
+
+    @Test
+    fun `the cube stays within its reach at rest and in every pose it moves through`() {
+        val poses = Showcase.map(::presenting)
+        val resting = poses.maxOf { reach(it) }
+        var moving = 0f
+        poses.forEachIndexed { i, from ->
+            val next = (i + 1) % Showcase.size
+            (0..STEPS).forEach { step ->
+                val pose = from.towards(poses[next], step / STEPS.toFloat())
+                moving = maxOf(moving, reach(pose))
+                scrambleTowards(Showcase[next]).forEach { move ->
+                    (0..90 step 15).forEach { degrees -> moving = maxOf(moving, reach(pose, Turn(move, degrees.toFloat()))) }
+                }
+            }
+        }
+
+        assertEquals(RESTING_REACH, resting, REACH_SLACK)
+        assertTrue("moving reach $moving", moving <= MOVING_REACH)
+    }
+
+    private fun reach(
+        orientation: Orientation,
+        turn: Turn? = null,
+    ) = solved.visibleQuads(orientation, turn).maxOf { quad -> maxOf(quad.xs.maxOf(::abs), quad.ys.maxOf(::abs)) }
 
     @Test
     fun `the front face's pose is the resting view`() {
@@ -140,5 +166,7 @@ class CubeProjectionTest {
 
     private companion object {
         const val TOLERANCE = 1e-4f
+        const val REACH_SLACK = 0.01f
+        const val STEPS = 20
     }
 }

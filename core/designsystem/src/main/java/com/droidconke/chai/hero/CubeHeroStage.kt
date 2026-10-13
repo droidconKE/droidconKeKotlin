@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.colors.CubeStageColor
 import com.droidconke.chai.colors.CubeStageGlowColor
 import kotlin.math.roundToInt
@@ -100,9 +101,9 @@ private fun Modifier.centred(size: Dp) =
         layout(slot, slot) { placeable.placeRelative((slot - canvas) / 2, (slot - canvas) / 2) }
     }
 
-private val MaxStageCubeSize = 240.dp
+private val MaxStageCubeSize = 280.dp
 private val StageTopPadding = 24.dp
 private val CubeGap = 12.dp
-private const val STAGE_CUBE_SHARE = 0.6f
+private const val STAGE_CUBE_SHARE = 0.7f
 private const val GLOW_REACH = 0.9f
 private const val GLOW_ALPHA = 0.45f

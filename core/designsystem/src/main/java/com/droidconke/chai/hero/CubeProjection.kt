@@ -29,6 +29,10 @@ internal object RestingPose {
 /** How far the camera is from the cube's centre, in cubelets: near enough to foreshorten it. */
 internal const val CAMERA_DISTANCE = 9f
 
+/** How far the cube reaches from its centre on screen, in cubelets, at rest and in any pose it moves through. */
+internal const val RESTING_REACH = 2.64f
+internal const val MOVING_REACH = 2.72f
+
 /** Which face of the solved cube a sticker belongs to, or [Inner] for the body between cubelets. */
 internal enum class CubeFace { Right, Left, Up, Down, Front, Back, Inner }
 
@@ -81,7 +85,7 @@ internal fun CubeState.visibleQuads(
     val view = Matrix(orientation.matrix())
     val turned = turn?.let { view * rotation(it.move.axis, it.move.sign * it.degrees) }
     val still = ArrayList<Quad>(VISIBLE_GUESS)
-    val moving = ArrayList<Quad>(VISIBLE_GUESS)
+    val moving = if (turn != null) ArrayList<Quad>(VISIBLE_GUESS) else still
     for (cubelet in cubelets) {
         val isTurning = turn != null && cubelet.position[turn.move.axis] == turn.move.layer
         val into = if (isTurning) moving else still
@@ -89,9 +93,9 @@ internal fun CubeState.visibleQuads(
         val forward = cubelet.forward
         LocalFaces.forEach { local -> cubelet.quad(local, m, forward, withInner = turn != null)?.let(into::add) }
     }
-    still.sortBy { it.depth }
+    still.sortWith(ByDepth)
     if (turn == null) return still
-    moving.sortBy { it.depth }
+    moving.sortWith(ByDepth)
     val axisTowardsViewer =
         when (turn.move.axis) {
             Axis.X -> view[2, 0]
@@ -166,6 +170,8 @@ private val LocalFaces =
         LocalFace(Vec3(0, 0, 1), Vec3.UnitX, Vec3.UnitY, CubeFace.Front),
         LocalFace(Vec3(0, 0, -1), Vec3(-1, 0, 0), Vec3.UnitY, CubeFace.Back),
     )
+
+private val ByDepth = Comparator<Quad> { a, b -> a.depth.compareTo(b.depth) }
 
 private const val HALF = 0.5f
 private const val VISIBLE_GUESS = 96

@@ -55,14 +55,15 @@ class CubeMotionTest {
             backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
             val seen = mutableListOf<CubeFace>()
 
-            repeat(SCENE_SAMPLES) {
+            var samples = 0
+            while (seen.size <= Showcase.size && samples++ < MAX_SAMPLES) {
                 advanceTimeBy(SAMPLE_MILLIS)
                 if (motion.state.isSolved && motion.turn == null) {
                     motion.facing().takeIf { seen.lastOrNull() != it }?.let(seen::add)
                 }
             }
 
-            assertEquals(Showcase + Showcase.first(), seen.take(Showcase.size + 1))
+            assertEquals(Showcase + Showcase.first(), seen)
         }
 
     @Test
@@ -158,6 +159,6 @@ class CubeMotionTest {
         const val FRAME_MILLIS = 16L
         const val NANOS_PER_MILLI = 1_000_000L
         const val SAMPLE_MILLIS = 250L
-        const val SCENE_SAMPLES = 160
+        const val MAX_SAMPLES = 1_000
     }
 }
