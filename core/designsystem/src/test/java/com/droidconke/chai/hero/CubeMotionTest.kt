@@ -15,8 +15,6 @@
  */
 package com.droidconke.chai.hero
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.ui.MotionDurationScale
 import kotlinx.coroutines.delay
@@ -31,37 +29,51 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CubeMotionTest {
-    private val turn = tween<Float>(durationMillis = 100, easing = LinearEasing)
-
     @Test
-    fun `the logos hold, break up as the cube scrambles, then come back as it solves`() =
+    fun `each scene holds a logo, twists the cube as it turns to the next, then solves it facing the viewer`() =
         runTest {
             val motion = CubeMotion()
-            backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run(turn) }
+            backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
 
-            advanceTimeBy(5_900)
+            advanceTimeBy(2_000)
             assertTrue(motion.state.isSolved)
-            assertTrue(motion.yaw > 0f)
+            assertEquals(CubeFace.Front, motion.facing())
 
-            advanceTimeBy(600)
+            advanceTimeBy(1_500)
             assertFalse(motion.state.isSolved)
 
-            advanceTimeBy(5_000)
+            advanceTimeBy(3_000)
             assertTrue(motion.state.isSolved)
+            assertNull(motion.turn)
+            assertEquals(CubeFace.Right, motion.facing())
         }
 
     @Test
-    fun `with animations off the cube rests solved at the resting pose`() =
+    fun `the cube shows every logo in turn and comes back to the first`() =
         runTest {
             val motion = CubeMotion()
-            backgroundScope.launch(FakeFrameClock(testScheduler) + NoMotion) { motion.run(turn) }
+            backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
+            val seen = mutableListOf<CubeFace>()
+
+            repeat(SCENE_SAMPLES) {
+                advanceTimeBy(SAMPLE_MILLIS)
+                if (motion.state.isSolved && motion.turn == null) {
+                    motion.facing().takeIf { seen.lastOrNull() != it }?.let(seen::add)
+                }
+            }
+
+            assertEquals(Showcase + Showcase.first(), seen.take(Showcase.size + 1))
+        }
+
+    @Test
+    fun `with animations off the cube rests solved, showing the front`() =
+        runTest {
+            val motion = CubeMotion()
+            backgroundScope.launch(FakeFrameClock(testScheduler) + NoMotion) { motion.run() }
 
             advanceTimeBy(20_000)
 
-            assertTrue(motion.state.isSolved)
-            assertNull(motion.turn)
-            assertEquals(0f, motion.yaw)
-            assertEquals(0f, motion.pitch)
+            assertRestingSolved(motion)
         }
 
     @Test
@@ -69,52 +81,61 @@ class CubeMotionTest {
         runTest {
             val motion = CubeMotion()
             val scale = SwitchableMotion()
-            backgroundScope.launch(FakeFrameClock(testScheduler) + scale) { motion.run(turn) }
-            advanceTimeBy(6_500)
+            backgroundScope.launch(FakeFrameClock(testScheduler) + scale) { motion.run() }
+            advanceTimeBy(3_500)
             assertFalse(motion.state.isSolved)
 
             scale.scaleFactor = 0f
-            advanceTimeBy(2_000)
+            advanceTimeBy(8_000)
 
-            assertTrue(motion.state.isSolved)
-            assertNull(motion.turn)
-            assertEquals(0f, motion.yaw)
-            assertEquals(0f, motion.pitch)
+            assertRestingSolved(motion)
         }
 
     @Test
     fun `rest returns a moving cube to its solved resting pose`() =
         runTest {
             val motion = CubeMotion()
-            val job = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run(turn) }
-            advanceTimeBy(6_500)
+            val job = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
+            advanceTimeBy(3_500)
             job.cancel()
 
             motion.rest()
 
-            assertTrue(motion.state.isSolved)
-            assertEquals(0f, motion.yaw)
-            assertEquals(0f, motion.pitch)
+            assertRestingSolved(motion)
         }
 
     @Test
-    fun `cancelled mid-turn, the cube is left whole and carries on when run again`() =
+    fun `cancelled mid-turn, the cube is made whole and carries on when run again`() =
         runTest {
             val motion = CubeMotion()
-            val first = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run(turn) }
-            advanceTimeBy(6_050)
+            val first = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
+            advanceTimeBy(3_000)
             first.cancel()
             advanceTimeBy(1)
-
             assertNull(motion.turn)
-            assertTrue(motion.state.isSolved)
 
-            backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run(turn) }
-            advanceTimeBy(6_500)
+            backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.run() }
+            advanceTimeBy(1)
+            assertTrue(motion.state.isSolved)
+            advanceTimeBy(3_500)
             assertFalse(motion.state.isSolved)
-            advanceTimeBy(5_000)
+            advanceTimeBy(3_000)
             assertTrue(motion.state.isSolved)
         }
+
+    private fun assertRestingSolved(motion: CubeMotion) {
+        assertTrue(motion.state.isSolved)
+        assertNull(motion.turn)
+        assertEquals(presenting(CubeFace.Front), motion.orientation)
+    }
+
+    /** The face turned most towards the viewer. */
+    private fun CubeMotion.facing() =
+        state
+            .visibleQuads(orientation)
+            .groupBy { it.face }
+            .maxBy { (_, quads) -> quads.sumOf { it.light.toDouble() } }
+            .key
 
     private class FakeFrameClock(
         private val scheduler: TestCoroutineScheduler,
@@ -136,5 +157,7 @@ class CubeMotionTest {
     private companion object {
         const val FRAME_MILLIS = 16L
         const val NANOS_PER_MILLI = 1_000_000L
+        const val SAMPLE_MILLIS = 250L
+        const val SCENE_SAMPLES = 160
     }
 }

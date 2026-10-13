@@ -429,11 +429,14 @@ Flutter, React, Kotlin, Swift and AI (`CubeLogos`, 27 pixels square). Each stick
 of its face's logo that it started with, so a turn breaks the logos up and the solve puts them back.
 It is a pure `CubeState` of 27 cubelets turned by `CubeMove`s, and a projection that culls faces
 turned from the camera and paints the rest back to front, a turning layer as one block.
-`CubeMotion` holds the logos for six seconds, scrambles and solves with `SignatureSolve` on the
-theme's spatial spring, and tumbles the whole cube on the frame clock throughout. All are unit
-tested. Screens show it through `CubeHeroBanner`, the hero card with the cube in its bottom-end
-corner, bleeding off the edges as on the posters: under the content on narrow cards, beside it on
-wider ones, and gone at large font sizes. Home's hero and the top of About use it. The cube is
+`CubeMotion` plays it as the conference video does, one face at a time, in `Showcase` order
+(droidcon, Flutter, React, Kotlin, Swift, AI). It holds a face, twists three layers as it turns the
+whole cube to the next face (`scrambleTowards`), then plays them back so that logo comes together
+facing the viewer, with a small click on the last turn. The whole cube's pose is an `Orientation`
+(a quaternion), so it turns the shortest way between faces. All are unit tested. Home's hero uses
+`CubeHeroBanner`: the content leading and the cube at the end, a little past the card's edge, at
+every width. About uses `CubeHeroStage`, the posters' black stage with the cube centred over the
+content. Both drop the cube at large font sizes. The cube is
 decoration, so it is hidden from accessibility, and `cube_hero_enabled` in Remote Config turns it
 off. Its colours are in `chai/colors/CubeColors.kt`, the same in both themes.
 

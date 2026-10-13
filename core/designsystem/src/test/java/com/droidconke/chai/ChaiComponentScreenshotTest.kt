@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.droidconke.chai.colors.CubeStageTextColor
 import com.droidconke.chai.components.COutlinedPrimaryButton
 import com.droidconke.chai.components.CPrimaryButton
 import com.droidconke.chai.components.ChaiBodyLarge
@@ -47,6 +48,7 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 import com.droidconke.chai.components.ChaiTitle
 import com.droidconke.chai.hero.CubeHero
 import com.droidconke.chai.hero.CubeHeroBanner
+import com.droidconke.chai.hero.CubeHeroStage
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import org.junit.Test
@@ -67,6 +69,20 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
                         text = "Welcome to the largest Android Focussed Developer community in Africa",
                         style = MaterialTheme.typography.titleLargeEmphasized,
                         color = MaterialTheme.chaiColorsPalette.heroContentColor,
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun `cube hero stage at rest`() =
+        captureComponent("chai/cube_hero_stage") {
+            Padded {
+                CubeHeroStage(animateCube = false) {
+                    Text(
+                        text = "Beyond Stacks",
+                        style = MaterialTheme.typography.headlineMediumEmphasized,
+                        color = CubeStageTextColor,
                     )
                 }
             }

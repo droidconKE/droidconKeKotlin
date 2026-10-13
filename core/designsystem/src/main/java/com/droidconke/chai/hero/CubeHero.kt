@@ -16,17 +16,19 @@
 package com.droidconke.chai.hero
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.geometry.Offset
@@ -55,16 +57,16 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.PI
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.pow
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * The conference cube, tumbling, with a logo on each face that breaks up as it scrambles itself
- * and comes back as it solves. It rests solved at [RestingPose] when [animate] is false or
- * animations are off, and pauses off screen and while the app is not resumed. The cube fills
- * about half of the canvas, so every pose fits.
+ * The conference cube, showing its logos one face at a time, each breaking up as the cube twists
+ * and coming back together as it solves. It rests solved at [RestingPose] when [animate] is false or
+ * animations are off, and pauses off screen and while the app is not resumed. The cube reaches
+ * across at most five eighths of the canvas, so every pose fits.
  */
 @Composable
 fun CubeHero(
@@ -78,10 +80,9 @@ fun CubeHero(
         resumed = true
         onPauseOrDispose { resumed = false }
     }
-    val turnSpec = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
     LaunchedEffect(animate && resumed && visible) {
         if (animate && resumed && visible) {
-            motion.run(turnSpec)
+            motion.run()
         } else if (!animate) {
             motion.rest()
         }
@@ -93,85 +94,122 @@ fun CubeHero(
                 .onVisibilityChanged(minFractionVisible = VISIBLE_FRACTION) { visible = it }
                 .semantics { hideFromAccessibility() },
     ) {
-        val quads =
-            motion.state.visibleQuads(
-                yawDegrees = RestingPose.YAW + motion.yaw,
-                pitchDegrees = RestingPose.PITCH + motion.pitch,
-                turn = motion.turn,
-                rollDegrees = RestingPose.ROLL + motion.roll,
-            )
-        val scale = size.minDimension / CUBE_EXTENT
+        val quads = motion.state.visibleQuads(motion.orientation, motion.turn)
+        val scale = size.minDimension / CUBE_EXTENT * motion.pop
         quads.forEach { with(painter) { drawFace(it, center, scale) } }
     }
 }
 
-/** Scrambles, solves, then holds the logos still; [run] picks up where it was cancelled. */
+/**
+ * Shows each logo in turn, as the conference cube does: it holds a face, twists itself up as it
+ * turns to the next one, then solves so that logo comes together facing the viewer. [run] starts
+ * again from the face it was showing, whole, when it is cancelled.
+ */
 internal class CubeMotion {
     var state by mutableStateOf(CubeState.solved())
     var turn by mutableStateOf<Turn?>(null)
-    var yaw by mutableFloatStateOf(0f)
-    var pitch by mutableFloatStateOf(0f)
-    var roll by mutableFloatStateOf(0f)
-    private var next = 0
-    private var seconds = 0f
+    var orientation by mutableStateOf(Poses[0])
+    val pop: Float get() = popScale.value
+    private var scene = 0
     private val angle = Animatable(0f)
+    private val progress = Animatable(0f)
+    private val popScale = Animatable(1f)
 
-    suspend fun run(spec: FiniteAnimationSpec<Float>) =
-        coroutineScope {
-            launch { tumble() }
-            while (true) {
-                if (animationsOff()) {
-                    rest()
-                    delay(ANIMATIONS_OFF_POLL_MILLIS)
-                    continue
-                }
-                if (next == 0) delay(HOLD_MILLIS)
-                val move = Cycle[next]
-                angle.snapTo(0f)
-                try {
-                    angle.animateTo(QUARTER, spec) { turn = Turn(move, value) }
-                } finally {
-                    turn = null
-                }
-                state = state.apply(move)
-                next = (next + 1) % Cycle.size
-            }
-        }
-
-    private suspend fun tumble() {
-        var last = NO_FRAME
+    suspend fun run() {
+        settle()
         while (true) {
             if (animationsOff()) {
                 rest()
-                last = NO_FRAME
                 delay(ANIMATIONS_OFF_POLL_MILLIS)
                 continue
             }
-            withFrameNanos { now ->
-                if (last != NO_FRAME) seconds = (seconds + (now - last) / NANOS_PER_SECOND) % TUMBLE_SECONDS
-                last = now
-                val phase = 2 * PI.toFloat() * seconds / TUMBLE_SECONDS
-                yaw = FULL_TURN * seconds / TUMBLE_SECONDS
-                pitch = PITCH_SWING * sin(PITCH_SWINGS * phase)
-                roll = ROLL_SWING * sin(phase)
+            hold()
+            val next = (scene + 1) % Showcase.size
+            val scramble = scrambleTowards(Showcase[next])
+            coroutineScope {
+                launch { travel(Poses[scene], Poses[next]) }
+                playAll(scramble, ScrambleSpec)
             }
+            scene = next
+            playAll(scramble.inverse(), SolveSpec)
+            click()
         }
     }
 
-    fun rest() {
+    suspend fun rest() {
+        scene = 0
+        settle()
+    }
+
+    private suspend fun settle() {
         state = CubeState.solved()
         turn = null
-        yaw = 0f
-        pitch = 0f
-        roll = 0f
-        next = 0
-        seconds = 0f
+        orientation = Poses[scene]
+        popScale.snapTo(1f)
+    }
+
+    /** Leans the cube a little and back, so it never sits dead still. */
+    private suspend fun hold() {
+        val pose = Poses[scene]
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(HOLD_MILLIS, easing = LinearEasing)) {
+            val lean = (1 - cos(2 * PI.toFloat() * value)) / 2
+            orientation = pose + Orientation.euler(LEAN_YAW * lean, LEAN_PITCH * lean)
+        }
+    }
+
+    private suspend fun travel(
+        from: Orientation,
+        to: Orientation,
+    ) {
+        progress.snapTo(0f)
+        progress.animateTo(1f, tween(TRAVEL_MILLIS, easing = EmphasizedEasing)) { orientation = from.towards(to, value) }
+    }
+
+    private suspend fun playAll(
+        moves: List<CubeMove>,
+        spec: FiniteAnimationSpec<Float>,
+    ) {
+        moves.forEachIndexed { i, move ->
+            if (i > 0) delay(TURN_GAP_MILLIS)
+            angle.snapTo(0f)
+            try {
+                angle.animateTo(QUARTER, spec) { turn = Turn(move, value) }
+            } finally {
+                turn = null
+            }
+            state = state.apply(move)
+        }
+    }
+
+    /** The last layer clicks home: the cube swells a touch and springs back. */
+    private suspend fun click() {
+        popScale.animateTo(POP_SCALE, tween(POP_MILLIS))
+        popScale.animateTo(1f, spring(dampingRatio = POP_DAMPING, stiffness = Spring.StiffnessMediumLow))
     }
 
     private suspend fun animationsOff() = currentCoroutineContext()[MotionDurationScale]?.scaleFactor == 0f
 }
 
-private val Cycle = SignatureSolve.inverse() + SignatureSolve
+/** The order the faces are shown in; each is next to the one before, so the cube turns a quarter. */
+internal val Showcase = listOf(CubeFace.Front, CubeFace.Right, CubeFace.Up, CubeFace.Back, CubeFace.Left, CubeFace.Down)
+
+private val Poses = Showcase.map(::presenting)
+
+/** Three turns of layers across [face], so its logo arrives in pieces; played backwards, they solve it. */
+internal fun scrambleTowards(face: CubeFace): List<CubeMove> {
+    val (across, along) =
+        when (face) {
+            CubeFace.Right, CubeFace.Left -> Axis.Y to Axis.Z
+            CubeFace.Up, CubeFace.Down -> Axis.Z to Axis.X
+            else -> Axis.X to Axis.Y
+        }
+    return listOf(CubeMove(across, 1, clockwise = true), CubeMove(along, -1, clockwise = true), CubeMove(across, -1, clockwise = false))
+}
+
+private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+private val ScrambleSpec = tween<Float>(SCRAMBLE_TURN_MILLIS, easing = CubicBezierEasing(0.6f, 0f, 0.3f, 1f))
+private val SolveSpec = tween<Float>(SOLVE_TURN_MILLIS, easing = EmphasizedEasing)
 
 /** Draws one face at a time, reusing its path and matrix between faces and frames. */
 private class CubePainter {
@@ -335,15 +373,17 @@ private fun Quad.screenY(
 ) = origin.y + (ys[0] + u * (ys[1] - ys[0]) + v * (ys[3] - ys[0]) + u * v * (ys[2] - ys[1] - ys[3] + ys[0])) * scale
 
 private const val QUARTER = 90f
-private const val FULL_TURN = 360f
-private const val HOLD_MILLIS = 6_000L
+private const val HOLD_MILLIS = 2_600
+private const val TRAVEL_MILLIS = 1_300
+private const val SCRAMBLE_TURN_MILLIS = 380
+private const val SOLVE_TURN_MILLIS = 520
+private const val TURN_GAP_MILLIS = 80L
+private const val LEAN_YAW = 10f
+private const val LEAN_PITCH = -5f
+private const val POP_SCALE = 1.04f
+private const val POP_MILLIS = 90
+private const val POP_DAMPING = 0.4f
 private const val ANIMATIONS_OFF_POLL_MILLIS = 1_000L
-private const val NANOS_PER_SECOND = 1_000_000_000f
-private const val NO_FRAME = -1L
-private const val TUMBLE_SECONDS = 30f
-private const val PITCH_SWINGS = 2
-private const val PITCH_SWING = 35f
-private const val ROLL_SWING = 20f
 private const val VISIBLE_FRACTION = 0.1f
 
 private const val BEVEL = 0.045f

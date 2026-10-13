@@ -36,12 +36,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -56,10 +58,11 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.colors.CubeStageTextColor
+import com.droidconke.chai.colors.CubeStageTitleColors
 import com.droidconke.chai.components.ChaiBodyMedium
 import com.droidconke.chai.components.ChaiBodyMediumBold
-import com.droidconke.chai.hero.CubeHeroBanner
+import com.droidconke.chai.hero.CubeHeroStage
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -126,21 +129,22 @@ internal fun AboutScreen(
                         .verticalScroll(rememberScrollState())
                         .testTag("about_screen"),
                 ) {
-                    CubeHeroBanner(
+                    CubeHeroStage(
                         showCube = uiState.showCube,
                         animateCube = animateCube,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.about_banner_title),
-                            style = MaterialTheme.typography.headlineMediumEmphasized,
-                            color = MaterialTheme.chaiColorsPalette.heroContentColor,
+                            style = MaterialTheme.typography.headlineMediumEmphasized.copy(brush = Brush.horizontalGradient(CubeStageTitleColors)),
+                            textAlign = TextAlign.Center,
                             modifier = Modifier.semantics { heading() },
                         )
                         Text(
                             text = stringResource(R.string.about_banner_subtitle),
                             style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.chaiColorsPalette.heroOnContainerColor,
+                            color = CubeStageTextColor,
+                            textAlign = TextAlign.Center,
                         )
                     }
                     AboutDroidconSection(

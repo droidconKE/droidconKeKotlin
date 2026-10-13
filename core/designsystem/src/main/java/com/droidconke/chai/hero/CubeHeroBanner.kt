@@ -21,9 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -38,15 +36,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import com.droidconke.chai.chaiColorsPalette
 import kotlin.math.roundToInt
 
 /**
- * The conference hero card, as on the conference posters: [content] leading and the cube tumbling
- * in the bottom-end corner, bleeding off the card. On narrow cards the content takes the full width
- * and the cube sits below it; on wider ones they share the card side by side. The cube never sits
- * under the content, and at large font sizes it steps aside.
+ * The conference hero card: [content] leading and the cube turning at the end, a little past the
+ * card's edge, at every width. The content never sits under the cube, and at large font sizes the
+ * cube steps aside.
  */
 @Composable
 fun CubeHeroBanner(
@@ -72,54 +68,46 @@ fun CubeHeroBanner(
                     },
                 ),
     ) {
-        val stacked = maxWidth < SideBySideMinWidth
-        val cubeSize = if (stacked) min(maxWidth * STACKED_CUBE_SHARE, StackedCubeMaxSize) else SideCubeSize
+        val cubeSize = (maxWidth * CUBE_SHARE).coerceIn(MinCubeSize, MaxCubeSize)
         if (cube) {
             CubeHero(
                 animate = animateCube,
-                modifier = Modifier.matchParentSize().inCorner(cubeSize, bleed = if (stacked) STACKED_BLEED else SIDE_BLEED).testTag("cube_hero"),
+                modifier = Modifier.matchParentSize().atEnd(cubeSize).testTag("cube_hero"),
             )
         }
         Column(
             modifier =
                 Modifier
-                    .then(if (stacked || !cube) Modifier.fillMaxWidth() else Modifier.fillMaxWidth(SIDE_CONTENT_FRACTION))
-                    .heightIn(min = if (cube && !stacked) SideCubeSize * SIDE_ROOM else 0.dp)
-                    .padding(20.dp),
+                    .fillMaxWidth()
+                    .heightIn(min = if (cube) cubeSize + CubeMargin * 2 else 0.dp)
+                    .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = if (cube) cubeSize * (1 - BLEED) + CubeMargin else 20.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
         ) {
             content()
-            if (cube && stacked) Spacer(Modifier.height(cubeSize * STACKED_ROOM))
         }
     }
 }
 
-/**
- * Centres the cube, [size] across, in the bottom-end corner with [bleed] of it past the card's
- * edges. CubeHero draws the cube across about half its canvas, so the canvas is twice [size].
- */
-private fun Modifier.inCorner(
-    size: Dp,
-    bleed: Float,
-) = layout { measurable, constraints ->
-    val cube = size.toPx()
-    val canvas = (cube * 2).roundToInt()
-    val placeable = measurable.measure(Constraints.fixed(canvas, canvas))
-    val centreX = constraints.maxWidth - cube * (HALF - bleed)
-    val centreY = constraints.maxHeight - cube * (HALF - bleed)
-    layout(constraints.maxWidth, constraints.maxHeight) {
-        placeable.placeRelative((centreX - canvas / 2f).roundToInt(), (centreY - canvas / 2f).roundToInt())
+/** Centres the cube, [size] across, on the card's end edge with [BLEED] of it past the edge. */
+private fun Modifier.atEnd(size: Dp) =
+    layout { measurable, constraints ->
+        val cube = size.toPx()
+        val canvas = (cube * CANVAS_PER_CUBE).roundToInt()
+        val placeable = measurable.measure(Constraints.fixed(canvas, canvas))
+        val centreX = constraints.maxWidth - cube * (HALF - BLEED)
+        val centreY = constraints.maxHeight / 2f
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeable.placeRelative((centreX - canvas / 2f).roundToInt(), (centreY - canvas / 2f).roundToInt())
+        }
     }
-}
 
-private val SideBySideMinWidth = 480.dp
-private val SideCubeSize = 190.dp
-private val StackedCubeMaxSize = 220.dp
-private const val STACKED_CUBE_SHARE = 0.55f
-private const val STACKED_ROOM = 0.9f
-private const val STACKED_BLEED = 0.1f
-private const val SIDE_BLEED = 0.05f
-private const val SIDE_ROOM = 1.25f
-private const val SIDE_CONTENT_FRACTION = 0.6f
+private val MinCubeSize = 112.dp
+private val MaxCubeSize = 176.dp
+private val CubeMargin = 16.dp
+private const val CUBE_SHARE = 0.36f
+private const val BLEED = 0.1f
+
+/** CubeHero draws the cube, in any pose, across up to five eighths of its canvas. */
+internal const val CANVAS_PER_CUBE = 1.6f
 private const val HALF = 0.5f
-private const val LARGE_FONT_SCALE = 1.5f
+internal const val LARGE_FONT_SCALE = 1.5f

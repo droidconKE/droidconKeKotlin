@@ -23,6 +23,7 @@ internal object RestingPose {
     const val YAW = -35f
     const val PITCH = 25f
     const val ROLL = -12f
+    val View = Orientation.euler(YAW, PITCH, ROLL)
 }
 
 /** How far the camera is from the cube's centre, in cubelets: near enough to foreshorten it. */
@@ -54,18 +55,30 @@ internal class Quad(
     val tiltY: Float,
 )
 
-/**
- * The faces a viewer sees, in painting order, after yawing the cube about its vertical axis,
- * pitching it towards the viewer and rolling it about the line of sight. A turning layer is painted as one block, before or after
- * the rest of the cube depending on which side of it faces the viewer.
- */
+/** The view of the cube with [face] turned to the viewer, upright, then set at the resting angle. */
+internal fun presenting(face: CubeFace): Orientation {
+    val local = LocalFaces.first { it.face == face }
+    return Orientation.ofRows(local.right, local.up, local.normal) + RestingPose.View
+}
+
+/** The faces a viewer sees after yawing, pitching and rolling the cube; see the other overload. */
 internal fun CubeState.visibleQuads(
     yawDegrees: Float,
     pitchDegrees: Float,
     turn: Turn? = null,
     rollDegrees: Float = 0f,
+): List<Quad> = visibleQuads(Orientation.euler(yawDegrees, pitchDegrees, rollDegrees), turn)
+
+/**
+ * The faces a viewer sees, in painting order, with the cube turned to [orientation]. A turning
+ * layer is painted as one block, before or after the rest of the cube depending on which side of
+ * it faces the viewer.
+ */
+internal fun CubeState.visibleQuads(
+    orientation: Orientation,
+    turn: Turn? = null,
 ): List<Quad> {
-    val view = rotation(Axis.Z, rollDegrees) * rotation(Axis.X, pitchDegrees) * rotation(Axis.Y, yawDegrees)
+    val view = Matrix(orientation.matrix())
     val turned = turn?.let { view * rotation(it.move.axis, it.move.sign * it.degrees) }
     val still = ArrayList<Quad>(VISIBLE_GUESS)
     val moving = ArrayList<Quad>(VISIBLE_GUESS)

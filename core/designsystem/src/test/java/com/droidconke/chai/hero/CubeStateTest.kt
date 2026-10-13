@@ -50,11 +50,14 @@ class CubeStateTest {
     }
 
     @Test
-    fun `the scramble followed by the signature solve is solved`() {
-        val scrambled = solved.apply(SignatureSolve.inverse())
+    fun `each scene's scramble unsolves the cube, and its reverse solves it`() {
+        Showcase.forEach { face ->
+            val scramble = scrambleTowards(face)
+            val scrambled = solved.apply(scramble)
 
-        assertFalse(scrambled.isSolved)
-        assertTrue(scrambled.apply(SignatureSolve).isSolved)
+            assertFalse(face.name, scrambled.isSolved)
+            assertTrue(face.name, scrambled.apply(scramble.inverse()).isSolved)
+        }
     }
 
     @Test

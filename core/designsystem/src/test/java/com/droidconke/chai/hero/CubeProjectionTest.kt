@@ -57,6 +57,33 @@ class CubeProjectionTest {
     }
 
     @Test
+    fun `each showcase pose turns its face to the viewer, whole and upright`() {
+        Showcase.forEach { face ->
+            val quads = solved.visibleQuads(presenting(face))
+            val shown = quads.filter { it.face == face }
+            val brightest = quads.groupBy { it.face }.maxBy { (_, faceQuads) -> faceQuads.sumOf { it.light.toDouble() } }.key
+
+            assertEquals(face.name, face, brightest)
+            assertEquals(face.name, allTiles, shown.map { it.tileColumn to it.tileRow }.toSet())
+            shown.forEach { quad ->
+                assertTrue("$face reads left to right", quad.xs[1] > quad.xs[0])
+                assertTrue("$face reads top to bottom", quad.ys[3] > quad.ys[0])
+            }
+        }
+    }
+
+    @Test
+    fun `the front face's pose is the resting view`() {
+        val presented = solved.visibleQuads(presenting(CubeFace.Front))
+        val resting = solved.visibleQuads(RestingPose.YAW, RestingPose.PITCH, rollDegrees = RestingPose.ROLL)
+
+        presented.zip(resting).forEach { (a, b) ->
+            assertEquals(b.face, a.face)
+            (0 until 4).forEach { i -> assertEquals(b.xs[i], a.xs[i], TOLERANCE) }
+        }
+    }
+
+    @Test
     fun `a turn carries logo tiles onto the next face`() {
         val stickers = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH).filter { it.face != CubeFace.Inner }
 
@@ -97,7 +124,7 @@ class CubeProjectionTest {
 
     @Test
     fun `at rest the hidden faces between cubelets are not drawn`() {
-        val faces = solved.apply(SignatureSolve).visibleQuads(RestingPose.YAW, RestingPose.PITCH).map { it.face }
+        val faces = solved.apply(scrambleTowards(CubeFace.Up)).visibleQuads(RestingPose.YAW, RestingPose.PITCH).map { it.face }
 
         assertEquals(27, faces.size)
         assertTrue(CubeFace.Inner !in faces)
@@ -109,5 +136,9 @@ class CubeProjectionTest {
         val committed = solved.apply(CubeMove.R).visibleQuads(RestingPose.YAW, RestingPose.PITCH)
 
         assertEquals(committed.map { it.face }.sorted(), animated.map { it.face }.filter { it != CubeFace.Inner }.sorted())
+    }
+
+    private companion object {
+        const val TOLERANCE = 1e-4f
     }
 }

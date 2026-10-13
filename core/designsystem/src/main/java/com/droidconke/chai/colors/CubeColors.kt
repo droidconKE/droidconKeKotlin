@@ -17,6 +17,8 @@ package com.droidconke.chai.colors
 
 import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlack
+import com.droidconke.chai.atoms.ChaiBlue300
+import com.droidconke.chai.atoms.ChaiBlue700
 import com.droidconke.chai.atoms.ChaiCyan400
 import com.droidconke.chai.atoms.ChaiGreen500
 import com.droidconke.chai.atoms.ChaiGrey200
@@ -44,3 +46,11 @@ val CubeTileShadowColor: Color = ChaiNavy900
 val CubeTileLitColor: Color = ChaiNavy700
 val CubeSheenColor: Color = ChaiWhite
 val CubeEdgeColor: Color = ChaiGrey200
+
+/** The posters' black stage, lit faintly blue behind the cube; the same in both themes. */
+val CubeStageColor: Color = ChaiBlack
+val CubeStageGlowColor: Color = ChaiBlue700
+
+/** The stage's title runs from blue through purple to pink, as "Beyond Stacks" does on the posters. */
+val CubeStageTitleColors: List<Color> = listOf(ChaiBlue300, ChaiPurple400, ChaiPink500)
+val CubeStageTextColor: Color = ChaiGrey200

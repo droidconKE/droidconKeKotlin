@@ -113,9 +113,3 @@ internal data class CubeState(
             )
     }
 }
-
-/** Twelve quarter turns, played from the scrambled cube to the solved one. */
-internal val SignatureSolve: List<CubeMove> =
-    with(CubeMove) {
-        listOf(R, U, R.inverse(), U.inverse(), F, R, F.inverse(), L, D, B.inverse(), U, L.inverse())
-    }
