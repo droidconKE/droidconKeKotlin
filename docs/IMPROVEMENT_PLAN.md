@@ -3226,8 +3226,9 @@ Then make sharing produce those links. A shared session is plain text today, bec
 The cube is built: `docs/architecture.md` ("Design system") describes it. One part of the plan
 is not done:
 
-- **A frame-time benchmark.** A macrobenchmark on About asserting p90 frame time under 16 ms. It
-  needs a device, so it belongs with the other benchmarks in `docs/performance.md`.
+- **Device numbers for the frame-time benchmark.** `NavigationBenchmark` exists
+  (`docs/performance.md`, "Jank between tabs and on the cube"). Run it on a physical phone,
+  record the numbers there, and add a p90-under-16 ms assertion once a baseline is known.
 
 ## 13. Phase 10 — Play Store presence
 

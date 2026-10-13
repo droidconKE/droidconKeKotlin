@@ -230,6 +230,23 @@ median frame finishes 3.6 ms early, but from P90 up frames run over by 2.7–4.1
 P99 frame duration of 16.5 ms sits right on the 60 Hz budget. Scrolling is broadly smooth
 with the worst ~10% of frames missing. That is the baseline to improve against.
 
+## Jank between tabs and on the cube
+
+`NavigationBenchmark` measures frame timing in two journeys: `switchTabs` taps About, Feed,
+Sessions, About and Home in turn, and `cubeOnAbout` opens About and watches one scene of the
+cube hero. No device numbers are recorded yet; run it on a physical phone:
+
+```bash
+./gradlew :benchmarks:connectedBenchmarkReleaseAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=ke.droidcon.kotlin.benchmarks.NavigationBenchmark
+```
+
+Emulator numbers mean nothing here. An emulator that renders through SwiftShader draws every
+frame on the CPU, so frames take 70–90 ms whatever is on screen. What an emulator can check is
+when the cube draws: `dumpsys gfxinfo` counts frames over five idle seconds on the cube's
+screens, and none on another tab, with the cube scrolled away, or with the app in the
+background.
+
 ## UiAutomator and test tags
 
 `testTagsAsResourceId` is enabled once, on the root `Scaffold` in `:app`. Verified on device:
