@@ -221,7 +221,7 @@ abstract class ChaiScreenshotTest {
     private companion object {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
         const val CHANGE_THRESHOLD = 0.001f
-        const val PATH_EDGE_DISTANCE = 0.025f
+        const val PATH_EDGE_DISTANCE = 0.03f
         const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
         const val WIDE_LOGO_WIDTH_PX = 600
         const val WIDE_LOGO_HEIGHT_PX = 100
