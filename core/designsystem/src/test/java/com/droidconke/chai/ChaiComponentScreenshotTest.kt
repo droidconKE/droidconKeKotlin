@@ -56,13 +56,13 @@ import org.junit.Test
 class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
     @Test
     fun `cube hero at rest`() =
-        captureComponent("chai/cube_hero") {
+        captureComponent("chai/cube_hero", antialiasedPaths = true) {
             Padded { CubeHero(modifier = Modifier.size(240.dp), animate = false) }
         }
 
     @Test
     fun `cube hero banner at rest`() =
-        captureComponent("chai/cube_hero_banner") {
+        captureComponent("chai/cube_hero_banner", antialiasedPaths = true) {
             Padded {
                 CubeHeroBanner(animateCube = false) {
                     Text(
@@ -76,7 +76,7 @@ class ChaiComponentScreenshotTest : ChaiScreenshotTest() {
 
     @Test
     fun `cube hero stage at rest`() =
-        captureComponent("chai/cube_hero_stage") {
+        captureComponent("chai/cube_hero_stage", antialiasedPaths = true) {
             Padded {
                 CubeHeroStage(animateCube = false) {
                     Text(

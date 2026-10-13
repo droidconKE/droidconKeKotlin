@@ -45,6 +45,7 @@ import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.test.FakeImageLoaderEngine
 import com.droidconke.chai.ChaiTheme
+import com.dropbox.differ.SimpleImageComparator
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -89,17 +90,23 @@ abstract class ChaiScreenshotTest {
             setSize(WIDE_LOGO_WIDTH_PX, WIDE_LOGO_HEIGHT_PX)
         }
 
-    /** [frameMillis] pauses the clock and captures that far in, for content that never idles. */
+    /**
+     * [frameMillis] pauses the clock and captures that far in, for content that never idles.
+     * [antialiasedPaths] is for content drawn as paths on a `Canvas`, whose edges anti-alias a few
+     * colour levels apart between Linux CI and macOS.
+     */
     protected fun captureComponent(
         name: String,
         frameMillis: Long? = null,
+        antialiasedPaths: Boolean = false,
         content: @Composable () -> Unit,
-    ) = capture(name = name, fillWindow = false, frameMillis = frameMillis, content = content)
+    ) = capture(name, fillWindow = false, frameMillis, antialiasedPaths, content)
 
     protected fun captureScreen(
         name: String,
+        antialiasedPaths: Boolean = false,
         content: @Composable () -> Unit,
-    ) = capture(name = name, fillWindow = true, content = content)
+    ) = capture(name, fillWindow = true, antialiasedPaths = antialiasedPaths, content = content)
 
     /**
      * One golden per form factor, in light mode.
@@ -109,6 +116,7 @@ abstract class ChaiScreenshotTest {
      */
     protected fun captureFormFactors(
         name: String,
+        antialiasedPaths: Boolean = false,
         content: @Composable () -> Unit,
     ) {
         var formFactor by mutableStateOf(FormFactor.entries.first())
@@ -130,11 +138,7 @@ abstract class ChaiScreenshotTest {
             composeRule.waitForIdle()
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
-                roborazziOptions =
-                    RoborazziOptions(
-                        compareOptions =
-                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
-                    ),
+                roborazziOptions = options(antialiasedPaths),
             )
         }
     }
@@ -143,6 +147,7 @@ abstract class ChaiScreenshotTest {
         name: String,
         fillWindow: Boolean,
         frameMillis: Long? = null,
+        antialiasedPaths: Boolean = false,
         content: @Composable () -> Unit,
     ) {
         var variant by mutableStateOf(ScreenshotVariant.entries.first())
@@ -174,14 +179,23 @@ abstract class ChaiScreenshotTest {
             frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
-                roborazziOptions =
-                    RoborazziOptions(
-                        compareOptions =
-                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
-                    ),
+                roborazziOptions = options(antialiasedPaths),
             )
         }
     }
+
+    private fun options(antialiasedPaths: Boolean) =
+        RoborazziOptions(
+            compareOptions =
+                if (antialiasedPaths) {
+                    RoborazziOptions.CompareOptions(
+                        imageComparator = SimpleImageComparator(maxDistance = PATH_EDGE_DISTANCE),
+                        changeThreshold = CHANGE_THRESHOLD,
+                    )
+                } else {
+                    RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD)
+                },
+        )
 
     /** The four sizes the `FormFactorPreviews` annotation previews, as window sizes. */
     enum class FormFactor(
@@ -207,6 +221,7 @@ abstract class ChaiScreenshotTest {
     private companion object {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
         const val CHANGE_THRESHOLD = 0.001f
+        const val PATH_EDGE_DISTANCE = 0.025f
         const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
         const val WIDE_LOGO_WIDTH_PX = 600
         const val WIDE_LOGO_HEIGHT_PX = 100
