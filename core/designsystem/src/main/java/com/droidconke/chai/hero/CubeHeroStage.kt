@@ -16,6 +16,7 @@
 package com.droidconke.chai.hero
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.droidconke.chai.colors.CubeStageColor
+import com.droidconke.chai.colors.CubeStageEdgeColor
 import com.droidconke.chai.colors.CubeStageGlowColor
 import kotlin.math.roundToInt
 
@@ -63,7 +65,8 @@ fun CubeHeroStage(
             modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.extraLarge)
-                .background(CubeStageColor),
+                .background(CubeStageColor)
+                .border(1.dp, CubeStageEdgeColor, MaterialTheme.shapes.extraLarge),
     ) {
         val cubeSize = min(maxWidth * STAGE_CUBE_SHARE, MaxStageCubeSize)
         if (cube) {

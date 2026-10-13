@@ -51,6 +51,9 @@ val CubeEdgeColor: Color = ChaiGrey200
 val CubeStageColor: Color = ChaiBlack
 val CubeStageGlowColor: Color = ChaiBlue700
 
+/** A faint edge, so the stage keeps its shape on a black page. */
+val CubeStageEdgeColor: Color = ChaiGrey200.copy(alpha = 0.15f)
+
 /** The stage's title runs from blue through purple to pink, as "Beyond Stacks" does on the posters. */
 val CubeStageTitleColors: List<Color> = listOf(ChaiBlue300, ChaiPurple400, ChaiPink500)
 val CubeStageTextColor: Color = ChaiGrey200
