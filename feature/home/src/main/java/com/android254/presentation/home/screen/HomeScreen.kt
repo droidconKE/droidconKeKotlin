@@ -137,7 +137,7 @@ internal fun HomeScreen(
                     onSessionClick = onSessionClicked,
                     onFeedbackClick = navigateToFeedbackScreen,
                     showCube = viewState.showCube,
-                    animateCube = animateCube,
+                    animateCube = animateCube && !isSyncing,
                 )
                 HomeBannerSection(viewState)
                 HomeSpacer()
