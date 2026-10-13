@@ -47,11 +47,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.droidconke.chai.colors.CubeEdgeColor
 import com.droidconke.chai.colors.CubeGapColor
-import com.droidconke.chai.colors.CubeMarkInk
 import com.droidconke.chai.colors.CubeSheenColor
 import com.droidconke.chai.colors.CubeTileLitColor
 import com.droidconke.chai.colors.CubeTileShadowColor
-import com.droidconke.chai.colors.CubeWordInk
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -240,46 +238,26 @@ private class CubePainter {
         val topLeft = Offset(quad.screenX(origin, scale, 0f, 0f), quad.screenY(origin, scale, 0f, 0f))
         val bottomRight = Offset(quad.screenX(origin, scale, 1f, 1f), quad.screenY(origin, scale, 1f, 1f))
         drawPath(tile, Brush.linearGradient(listOf(CubeSheenColor.copy(alpha = SHEEN_ALPHA * shine), Color.Transparent), topLeft, bottomRight))
-        when (quad.face) {
-            CubeFace.Inner -> Unit
-            CubeFace.Front -> drawWordmark(quad, origin, scale)
-            else -> drawPixels(quad, origin, scale)
-        }
+        CubeMarks.of(quad.face)?.let { drawMark(quad, origin, scale, it) }
         if (edge.width != EDGE_WIDTH * scale) edge = Stroke(width = EDGE_WIDTH * scale)
         drawPath(tile, CubeEdgeColor.copy(alpha = EDGE_ALPHA + EDGE_SHINE_ALPHA * shine), style = edge)
     }
 
-    private fun DrawScope.drawPixels(
+    /** The part of [mark] on this tile, clipped to the sticker so the logo breaks at the gaps. */
+    private fun DrawScope.drawMark(
         quad: Quad,
         origin: Offset,
         scale: Float,
+        mark: CubeMark,
     ) {
-        val runs = CubeLogos.runs(quad.face, quad.tileColumn, quad.tileRow)
-        val step = (1f - 2 * BEVEL) / CubeLogos.TILE
-        path.rewind()
-        runs.forEachIndexed { i, run ->
-            path.addCell(quad, origin, scale, BEVEL + run.start * step, BEVEL + run.row * step, BEVEL + run.end * step, BEVEL + (run.row + 1) * step)
-            if (i == runs.lastIndex || runs[i + 1].color != run.color) {
-                drawPath(path, run.color)
-                path.rewind()
-            }
-        }
-    }
-
-    /** "droid" across the top two rows of the face and the "con" mark below, cut into ninths. */
-    private fun DrawScope.drawWordmark(
-        quad: Quad,
-        origin: Offset,
-        scale: Float,
-    ) {
+        fun MarkLayer.onTile() =
+            bounds.right > quad.tileColumn &&
+                bounds.left < quad.tileColumn + 1 &&
+                bounds.bottom > quad.tileRow &&
+                bounds.top < quad.tileRow + 1
+        if (mark.layers.none { it.onTile() }) return
         clipPath(tile) {
-            if (quad.tileRow < 2) {
-                drawLogoPath(quad, origin, scale, CubeWordmark.word, FACE_WORD_LEFT, FACE_WORD_TOP, FACE_WORD_WIDTH / CubeWordmark.WORD_WIDTH, CubeWordInk)
-            }
-            if (quad.tileRow > 0) {
-                val markScale = FACE_MARK_WIDTH / CubeWordmark.MARK_WIDTH
-                drawLogoPath(quad, origin, scale, CubeWordmark.mark, FACE_MARK_LEFT - CubeWordmark.MARK_LEFT * markScale, FACE_MARK_TOP, markScale, CubeMarkInk)
-            }
+            mark.layers.forEach { if (it.onTile()) drawLogoPath(quad, origin, scale, it.path, mark.left, mark.top, mark.units, it.color) }
         }
     }
 
@@ -411,12 +389,6 @@ private const val LIGHT_Y = 0.65f
 private const val LIGHT_Z = 0.6f
 
 // The front face's wordmark, in face units: three tiles across.
-private const val FACE_WORD_LEFT = 0.3f
-private const val FACE_WORD_TOP = 0.55f
-private const val FACE_WORD_WIDTH = 2.4f
-private const val FACE_MARK_LEFT = 0.6f
-private const val FACE_MARK_TOP = 1.75f
-private const val FACE_MARK_WIDTH = 1.8f
 
 /** The canvas, across, for each unit of the cube's resting width: room for it to move and click. */
 internal const val CANVAS_PER_CUBE = MOVING_REACH * POP_SCALE / RESTING_REACH

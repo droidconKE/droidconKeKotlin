@@ -423,14 +423,16 @@ Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-coo
 the name), `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (adds columns as the window widens). Button labels are sentence case.
 
 The cube hero (`chai/hero`) is a Rubik's cube drawn on a `Canvas`, after the conference site's:
-glossy black cubelets in perspective, with a logo on each face. The front face carries the droidcon
-wordmark (`CubeWordmark`, the path data of `droidcon_logo_dark`), and the others pixel logos for
-Flutter, React, Kotlin, Swift and AI (`CubeLogos`, 27 pixels square). Each sticker carries the ninth
-of its face's logo that it started with, so a turn breaks the logos up and the solve puts them back.
+glossy black cubelets in perspective, with a mark on each face: the droidcon and FlutterCon
+wordmarks, and pixel logos for React, Kotlin, Swift and AI. The marks are the designers' SVGs in
+`core/designsystem/art/cube`; `generate.py` there turns them into `CubeArt`, path data per ink, so
+rerun it after replacing one. `CubeMarks` fits each mark into the middle of its face, and each
+sticker draws the part of its face's mark that it started with, clipped to the sticker. A turn
+breaks the marks up and the solve puts them back.
 It is a pure `CubeState` of 27 cubelets turned by `CubeMove`s, and a projection that culls faces
 turned from the camera and paints the rest back to front, a turning layer as one block.
 `CubeMotion` plays it as the conference video does, one face at a time, in `Showcase` order
-(droidcon, Flutter, React, Kotlin, Swift, AI). It holds a face, twists three layers as it turns the
+(droidcon, FlutterCon, React, Kotlin, Swift, AI). It holds a face, twists three layers as it turns the
 whole cube to the next face (`scrambleTowards`), then plays them back so that logo comes together
 facing the viewer, with a small click on the last turn. The whole cube's pose is an `Orientation`
 (a quaternion), so it turns the shortest way between faces. All are unit tested. Home's hero uses

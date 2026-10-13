@@ -19,24 +19,20 @@ import androidx.compose.ui.graphics.Color
 import com.droidconke.chai.atoms.ChaiBlack
 import com.droidconke.chai.atoms.ChaiBlue300
 import com.droidconke.chai.atoms.ChaiBlue700
-import com.droidconke.chai.atoms.ChaiCyan400
-import com.droidconke.chai.atoms.ChaiGreen500
 import com.droidconke.chai.atoms.ChaiGrey200
 import com.droidconke.chai.atoms.ChaiNavy700
 import com.droidconke.chai.atoms.ChaiNavy900
 import com.droidconke.chai.atoms.ChaiPink500
 import com.droidconke.chai.atoms.ChaiPurple400
 import com.droidconke.chai.atoms.ChaiWhite
-import com.droidconke.chai.atoms.ChaiYellow400
 
-// The cube hero, as on the conference site: neon logos on glossy black, the same in both themes.
-val CubeWordInk: Color = ChaiWhite
-val CubeMarkInk: Color = ChaiGreen500
-val CubeFlutterInk: Color = ChaiCyan400
-val CubeReactInk: Color = ChaiYellow400
-val CubeKotlinInk: Color = ChaiGreen500
-val CubeSwiftInk: Color = ChaiPink500
-val CubeAiInk: Color = ChaiPurple400
+// The cube hero's marks, in the designers' exact inks: neon on glossy black, the same in both themes.
+val CubeWhiteInk: Color = ChaiWhite
+val CubeGreenInk: Color = Color(0xFF00F757)
+val CubeBlueInk: Color = Color(0xFF008BFE)
+val CubeYellowInk: Color = Color(0xFFFFD600)
+val CubePinkInk: Color = Color(0xFFFF2D6B)
+val CubePurpleInk: Color = Color(0xFF8A38F5)
 
 /** The gaps between cubelets. */
 val CubeGapColor: Color = ChaiBlack
