@@ -21,24 +21,25 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NotificationPreferencesTest {
-
     @Test
     fun isChannelEnabled_respectsMasterSwitch() {
-        val preferences = NotificationPreferences(
-            masterEnabled = false,
-            sessionRemindersEnabled = true,
-        )
+        val preferences =
+            NotificationPreferences(
+                masterEnabled = false,
+                sessionRemindersEnabled = true,
+            )
 
         assertFalse(preferences.isChannelEnabled(NotificationChannelSpec.SessionReminders))
     }
 
     @Test
     fun isChannelEnabled_respectsChannelToggle() {
-        val preferences = NotificationPreferences(
-            masterEnabled = true,
-            sessionRemindersEnabled = false,
-            announcementsEnabled = true,
-        )
+        val preferences =
+            NotificationPreferences(
+                masterEnabled = true,
+                sessionRemindersEnabled = false,
+                announcementsEnabled = true,
+            )
 
         assertFalse(preferences.isChannelEnabled(NotificationChannelSpec.SessionReminders))
         assertTrue(preferences.isChannelEnabled(NotificationChannelSpec.Announcements))

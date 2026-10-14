@@ -29,14 +29,13 @@ import java.io.OutputStream
 object NotificationPreferencesSerializer : Serializer<NotificationPreferences> {
     override val defaultValue: NotificationPreferences = NotificationPreferences()
 
-    override suspend fun readFrom(input: InputStream): NotificationPreferences {
-        return try {
+    override suspend fun readFrom(input: InputStream): NotificationPreferences =
+        try {
             val json = input.readBytes().decodeToString()
             Json.decodeFromString<NotificationPreferences>(json)
         } catch (e: Exception) {
             defaultValue
         }
-    }
 
     override suspend fun writeTo(
         t: NotificationPreferences,

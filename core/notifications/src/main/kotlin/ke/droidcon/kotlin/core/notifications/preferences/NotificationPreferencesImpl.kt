@@ -37,63 +37,68 @@ import javax.inject.Singleton
  * reactive updates via Flow.
  */
 @Singleton
-class NotificationPreferencesImpl @Inject constructor(@ApplicationContext context: Context) :
-    NotificationPreferencesStore {
-    private val dataStore: DataStore<NotificationPreferences> = DataStoreFactory.create(
-        serializer = NotificationPreferencesSerializer,
-        scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-        produceFile = {
-            context.filesDir.resolve("notification_preferences.json")
-        },
-        corruptionHandler = ReplaceFileCorruptionHandler { NotificationPreferences() },
-    )
+class NotificationPreferencesImpl
+    @Inject
+    constructor(
+        @ApplicationContext context: Context,
+    ) : NotificationPreferencesStore {
+        private val dataStore: DataStore<NotificationPreferences> =
+            DataStoreFactory.create(
+                serializer = NotificationPreferencesSerializer,
+                scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+                produceFile = {
+                    context.filesDir.resolve("notification_preferences.json")
+                },
+                corruptionHandler = ReplaceFileCorruptionHandler { NotificationPreferences() },
+            )
 
-    override val preferences: Flow<NotificationPreferences> = dataStore.data.catch { error ->
-        Timber.e(error, "Error reading notification preferences")
-        emit(NotificationPreferences())
-    }
+        override val preferences: Flow<NotificationPreferences> =
+            dataStore.data.catch { error ->
+                Timber.e(error, "Error reading notification preferences")
+                emit(NotificationPreferences())
+            }
 
-    override suspend fun setMasterEnabled(enabled: Boolean) {
-        updatePreferences { it.copy(masterEnabled = enabled) }
-    }
+        override suspend fun setMasterEnabled(enabled: Boolean) {
+            updatePreferences { it.copy(masterEnabled = enabled) }
+        }
 
-    override suspend fun setChannelEnabled(
-        channel: NotificationChannelSpec,
-        enabled: Boolean,
-    ) {
-        updatePreferences { prefs ->
-            when (channel) {
-                NotificationChannelSpec.SessionReminders ->
-                    prefs.copy(sessionRemindersEnabled = enabled)
+        override suspend fun setChannelEnabled(
+            channel: NotificationChannelSpec,
+            enabled: Boolean,
+        ) {
+            updatePreferences { prefs ->
+                when (channel) {
+                    NotificationChannelSpec.SessionReminders ->
+                        prefs.copy(sessionRemindersEnabled = enabled)
 
-                NotificationChannelSpec.ScheduleChanges ->
-                    prefs.copy(scheduleChangesEnabled = enabled)
+                    NotificationChannelSpec.ScheduleChanges ->
+                        prefs.copy(scheduleChangesEnabled = enabled)
 
-                NotificationChannelSpec.Announcements ->
-                    prefs.copy(announcementsEnabled = enabled)
+                    NotificationChannelSpec.Announcements ->
+                        prefs.copy(announcementsEnabled = enabled)
 
-                NotificationChannelSpec.SocialFeed ->
-                    prefs.copy(socialFeedEnabled = enabled)
+                    NotificationChannelSpec.SocialFeed ->
+                        prefs.copy(socialFeedEnabled = enabled)
 
-                NotificationChannelSpec.Milestones ->
-                    prefs.copy(milestonesEnabled = enabled)
+                    NotificationChannelSpec.Milestones ->
+                        prefs.copy(milestonesEnabled = enabled)
 
-                NotificationChannelSpec.Sync -> prefs.copy(syncEnabled = enabled)
+                    NotificationChannelSpec.Sync -> prefs.copy(syncEnabled = enabled)
+                }
+            }
+        }
+
+        override suspend fun setReminderLeadTime(minutes: Int) {
+            updatePreferences { it.copy(reminderLeadTimeMinutes = minutes) }
+        }
+
+        private suspend fun updatePreferences(
+            transform: suspend (NotificationPreferences) -> NotificationPreferences,
+        ) {
+            try {
+                dataStore.updateData { transform(it) }
+            } catch (e: Exception) {
+                Timber.e(e, "Error updating notification preferences")
             }
         }
     }
-
-    override suspend fun setReminderLeadTime(minutes: Int) {
-        updatePreferences { it.copy(reminderLeadTimeMinutes = minutes) }
-    }
-
-    private suspend fun updatePreferences(
-        transform: suspend (NotificationPreferences) -> NotificationPreferences,
-    ) {
-        try {
-            dataStore.updateData { transform(it) }
-        } catch (e: Exception) {
-            Timber.e(e, "Error updating notification preferences")
-        }
-    }
-}

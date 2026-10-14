@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification Channel Group -->
+    <string name="channel_group_conference">droidcon Kenya</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_session_reminders">Session Reminders</string>
+    <string name="channel_session_reminders_desc">Get a nudge 10 minutes before sessions you\'ve starred</string>
+    <string name="channel_schedule_changes">Schedule Changes</string>
+    <string name="channel_schedule_changes_desc">Room changes, delays, and cancellations</string>
+    <string name="channel_announcements">Announcements</string>
+    <string name="channel_announcements_desc">Important updates and venue announcements</string>
+    <string name="channel_social_feed">Social Feed</string>
+    <string name="channel_social_feed_desc">Posts from other attendees and organizers</string>
+    <string name="channel_milestones">Milestones</string>
+    <string name="channel_milestones_desc">Post-conference recap and next year\'s call for papers</string>
+    <string name="channel_sync">Sync Progress</string>
+    <string name="channel_sync_desc">Background data synchronization</string>
+</resources>

@@ -35,38 +35,38 @@ enum class NotificationChannelSpec(
 ) {
     SessionReminders(
         id = "session_reminders",
-        nameResId = 0, // Will be populated with CommonR.string.channel_session_reminders in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_session_reminders_description in Task 1.5
+        nameResId = R.string.channel_session_reminders,
+        descriptionResId = R.string.channel_session_reminders_desc,
         importance = NotificationManager.IMPORTANCE_HIGH,
     ),
     ScheduleChanges(
         id = "schedule_changes",
-        nameResId = 0, // Will be populated with CommonR.string.channel_schedule_changes in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_schedule_changes_description in Task 1.5
+        nameResId = R.string.channel_schedule_changes,
+        descriptionResId = R.string.channel_schedule_changes_desc,
         importance = NotificationManager.IMPORTANCE_HIGH,
     ),
     Announcements(
         id = "announcements",
-        nameResId = 0, // Will be populated with CommonR.string.channel_announcements in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_announcements_description in Task 1.5
+        nameResId = R.string.channel_announcements,
+        descriptionResId = R.string.channel_announcements_desc,
         importance = NotificationManager.IMPORTANCE_DEFAULT,
     ),
     SocialFeed(
         id = "social_feed",
-        nameResId = 0, // Will be populated with CommonR.string.channel_social_feed in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_social_feed_description in Task 1.5
+        nameResId = R.string.channel_social_feed,
+        descriptionResId = R.string.channel_social_feed_desc,
         importance = NotificationManager.IMPORTANCE_LOW,
     ),
     Milestones(
         id = "milestones",
-        nameResId = 0, // Will be populated with CommonR.string.channel_milestones in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_milestones_description in Task 1.5
+        nameResId = R.string.channel_milestones,
+        descriptionResId = R.string.channel_milestones_desc,
         importance = NotificationManager.IMPORTANCE_DEFAULT,
     ),
     Sync(
         id = "sync",
-        nameResId = 0, // Will be populated with CommonR.string.channel_sync in Task 1.5
-        descriptionResId = 0, // Will be populated with CommonR.string.channel_sync_description in Task 1.5
+        nameResId = R.string.channel_sync,
+        descriptionResId = R.string.channel_sync_desc,
         importance = NotificationManager.IMPORTANCE_MIN,
     ),
     ;
@@ -84,8 +84,9 @@ enum class NotificationChannelSpec(
          * @param context The Android application context
          */
         fun createAll(context: Context) {
-            val notificationManager = context.getSystemService<NotificationManager>()
-                ?: return
+            val notificationManager =
+                context.getSystemService<NotificationManager>()
+                    ?: return
 
             // Create the channel group
             val channelGroup = NotificationChannelGroup(CHANNEL_GROUP_ID, CHANNEL_GROUP_NAME)
@@ -100,22 +101,26 @@ enum class NotificationChannelSpec(
             }
         }
 
-        private fun getChannelName(context: Context, spec: NotificationChannelSpec): CharSequence {
-            return if (spec.nameResId != 0) {
+        private fun getChannelName(
+            context: Context,
+            spec: NotificationChannelSpec,
+        ): CharSequence =
+            if (spec.nameResId != 0) {
                 context.getString(spec.nameResId)
             } else {
                 // Fallback to the enum name until string resources are available (Task 1.5)
                 spec.name
             }
-        }
 
-        private fun getChannelDescription(context: Context, spec: NotificationChannelSpec): String {
-            return if (spec.descriptionResId != 0) {
+        private fun getChannelDescription(
+            context: Context,
+            spec: NotificationChannelSpec,
+        ): String =
+            if (spec.descriptionResId != 0) {
                 context.getString(spec.descriptionResId)
             } else {
                 // Fallback to empty string until string resources are available (Task 1.5)
                 ""
             }
-        }
     }
 }

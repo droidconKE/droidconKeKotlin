@@ -29,7 +29,6 @@ import javax.inject.Inject
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.junit.Assert
 
 /**
  * Instrumented tests for NotificationPreferencesStore using DataStore.
@@ -51,47 +50,51 @@ class NotificationPreferencesStoreTest {
     }
 
     @Test
-    fun preferences_defaultsAreCorrect() = runTest {
-        val prefs = store.preferences.first()
+    fun preferences_defaultsAreCorrect() =
+        runTest {
+            val prefs = store.preferences.first()
 
-        assertTrue(prefs.masterEnabled, "Master should be enabled by default")
-        assertTrue(prefs.sessionRemindersEnabled, "Session reminders should be enabled by default")
-        assertTrue(prefs.scheduleChangesEnabled, "Schedule changes should be enabled by default")
-        assertTrue(prefs.announcementsEnabled, "Announcements should be enabled by default")
-        assertTrue(prefs.socialFeedEnabled, "Social feed should be enabled by default")
-        assertTrue(prefs.milestonesEnabled, "Milestones should be enabled by default")
-        assertFalse(prefs.syncEnabled, "Sync should be disabled by default")
-        assertEquals(10, prefs.reminderLeadTimeMinutes, "Default reminder lead time should be 10 minutes")
-    }
-
-    @Test
-    fun setMasterEnabled_persistsAndEmits() = runTest {
-        store.setMasterEnabled(false)
-
-        val prefs = store.preferences.first()
-        assertFalse(prefs.masterEnabled, "Master enabled should be false after update")
-    }
+            assertTrue(prefs.masterEnabled, "Master should be enabled by default")
+            assertTrue(prefs.sessionRemindersEnabled, "Session reminders should be enabled by default")
+            assertTrue(prefs.scheduleChangesEnabled, "Schedule changes should be enabled by default")
+            assertTrue(prefs.announcementsEnabled, "Announcements should be enabled by default")
+            assertTrue(prefs.socialFeedEnabled, "Social feed should be enabled by default")
+            assertTrue(prefs.milestonesEnabled, "Milestones should be enabled by default")
+            assertFalse(prefs.syncEnabled, "Sync should be disabled by default")
+            assertEquals(10, prefs.reminderLeadTimeMinutes, "Default reminder lead time should be 10 minutes")
+        }
 
     @Test
-    fun setChannelEnabled_updatesSingleChannel() = runTest {
-        // Set SessionReminders to false while keeping others enabled
-        store.setChannelEnabled(NotificationChannelSpec.SessionReminders, false)
+    fun setMasterEnabled_persistsAndEmits() =
+        runTest {
+            store.setMasterEnabled(false)
 
-        val prefs = store.preferences.first()
-
-        assertFalse(prefs.sessionRemindersEnabled, "SessionReminders should be disabled")
-        assertTrue(prefs.scheduleChangesEnabled, "ScheduleChanges should remain enabled")
-        assertTrue(prefs.announcementsEnabled, "Announcements should remain enabled")
-        assertTrue(prefs.socialFeedEnabled, "SocialFeed should remain enabled")
-        assertTrue(prefs.milestonesEnabled, "Milestones should remain enabled")
-        assertFalse(prefs.syncEnabled, "Sync should remain disabled")
-    }
+            val prefs = store.preferences.first()
+            assertFalse(prefs.masterEnabled, "Master enabled should be false after update")
+        }
 
     @Test
-    fun setReminderLeadTime_persists() = runTest {
-        store.setReminderLeadTime(30)
+    fun setChannelEnabled_updatesSingleChannel() =
+        runTest {
+            // Set SessionReminders to false while keeping others enabled
+            store.setChannelEnabled(NotificationChannelSpec.SessionReminders, false)
 
-        val prefs = store.preferences.first()
-        assertEquals(30, prefs.reminderLeadTimeMinutes, "Reminder lead time should be 30 minutes after update")
-    }
+            val prefs = store.preferences.first()
+
+            assertFalse(prefs.sessionRemindersEnabled, "SessionReminders should be disabled")
+            assertTrue(prefs.scheduleChangesEnabled, "ScheduleChanges should remain enabled")
+            assertTrue(prefs.announcementsEnabled, "Announcements should remain enabled")
+            assertTrue(prefs.socialFeedEnabled, "SocialFeed should remain enabled")
+            assertTrue(prefs.milestonesEnabled, "Milestones should remain enabled")
+            assertFalse(prefs.syncEnabled, "Sync should remain disabled")
+        }
+
+    @Test
+    fun setReminderLeadTime_persists() =
+        runTest {
+            store.setReminderLeadTime(30)
+
+            val prefs = store.preferences.first()
+            assertEquals(30, prefs.reminderLeadTimeMinutes, "Reminder lead time should be 30 minutes after update")
+        }
 }

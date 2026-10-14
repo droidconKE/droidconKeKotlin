@@ -44,16 +44,16 @@ data class NotificationPreferences(
      * @param channel The notification channel to check
      * @return true if the channel should receive notifications, false otherwise
      */
-    fun isChannelEnabled(channel: NotificationChannelSpec): Boolean {
-        return masterEnabled && when (channel) {
-            NotificationChannelSpec.SessionReminders -> sessionRemindersEnabled
-            NotificationChannelSpec.ScheduleChanges -> scheduleChangesEnabled
-            NotificationChannelSpec.Announcements -> announcementsEnabled
-            NotificationChannelSpec.SocialFeed -> socialFeedEnabled
-            NotificationChannelSpec.Milestones -> milestonesEnabled
-            NotificationChannelSpec.Sync -> syncEnabled
-        }
-    }
+    fun isChannelEnabled(channel: NotificationChannelSpec): Boolean =
+        masterEnabled &&
+            when (channel) {
+                NotificationChannelSpec.SessionReminders -> sessionRemindersEnabled
+                NotificationChannelSpec.ScheduleChanges -> scheduleChangesEnabled
+                NotificationChannelSpec.Announcements -> announcementsEnabled
+                NotificationChannelSpec.SocialFeed -> socialFeedEnabled
+                NotificationChannelSpec.Milestones -> milestonesEnabled
+                NotificationChannelSpec.Sync -> syncEnabled
+            }
 }
 
 /**
@@ -61,7 +61,9 @@ data class NotificationPreferences(
  *
  * Specifies how many minutes before a session start a reminder should be sent.
  */
-enum class ReminderLeadTime(val minutes: Int) {
+enum class ReminderLeadTime(
+    val minutes: Int,
+) {
     Five(5),
     Ten(10),
     Fifteen(15),

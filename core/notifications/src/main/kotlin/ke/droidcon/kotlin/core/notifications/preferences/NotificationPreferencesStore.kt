@@ -45,7 +45,10 @@ interface NotificationPreferencesStore {
      * @param channel The channel to update
      * @param enabled true to enable this channel, false to disable it
      */
-    suspend fun setChannelEnabled(channel: NotificationChannelSpec, enabled: Boolean)
+    suspend fun setChannelEnabled(
+        channel: NotificationChannelSpec,
+        enabled: Boolean,
+    )
 
     /**
      * Updates the reminder lead time.
