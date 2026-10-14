@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.library.jacoco)
+    alias(libs.plugins.droidconke.android.hilt)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -30,10 +31,17 @@ dependencies {
 
     implementation(libs.androidx.core)
     implementation(libs.bundles.serialization)
+    implementation(libs.datastore)
+    implementation(libs.timber)
 
-    testImplementation(libs.datastore)
     testImplementation(libs.junit4)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.test.androidx.core)
     testImplementation(libs.test.robolectric)
+
+    androidTestImplementation(libs.android.hilt.testing)
+    androidTestImplementation(libs.test.androidx.core)
+    androidTestImplementation(libs.junit4)
+    androidTestImplementation(libs.kotlin.test)
+    androidTestImplementation(libs.kotlin.coroutines.test)
 }
