@@ -27,7 +27,11 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.domain)
 
+    implementation(libs.androidx.core)
+
     testImplementation(libs.datastore)
     testImplementation(libs.junit4)
     testImplementation(libs.kotlin.test)
+    testImplementation(libs.test.androidx.core)
+    testImplementation(libs.test.robolectric)
 }
