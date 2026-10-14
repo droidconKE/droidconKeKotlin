@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.library)
     alias(libs.plugins.droidconke.android.library.jacoco)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -28,6 +29,7 @@ dependencies {
     implementation(projects.core.domain)
 
     implementation(libs.androidx.core)
+    implementation(libs.bundles.serialization)
 
     testImplementation(libs.datastore)
     testImplementation(libs.junit4)
