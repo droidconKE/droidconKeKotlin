@@ -3223,12 +3223,75 @@ Then make sharing produce those links. A shared session is plain text today, bec
 
 ## 12. Phase 9 — 3D cube hero — what is left
 
-The cube is built: `docs/architecture.md` ("Design system") describes it. One part of the plan
-is not done:
+The cube is built: `docs/architecture.md` ("Design system") describes it. What remains is one
+measurement, one accessibility call, and the ideas below, which are not started.
 
-- **Device numbers for the frame-time benchmark.** `NavigationBenchmark` exists
-  (`docs/performance.md`, "Jank between tabs and on the cube"). Run it on a physical phone,
-  record the numbers there, and add a p90-under-16 ms assertion once a baseline is known.
+- **The cube misses the 60 Hz deadline on the Reno4.** `NavigationBenchmark`'s first numbers are
+  in `docs/performance.md` ("Jank between tabs and on the cube"): a frame of the cube takes 19 ms of
+  CPU at the median, 15 ms of it on the RenderThread rasterising ~130 anti-aliased path fills, and
+  the model and Compose cost under 4 ms. Fewer paths is the only lever left. The candidate: render
+  each face's nine stickers once into a bitmap (the painter already draws them in sticker units),
+  then draw each visible sticker as a textured quad under the same projective matrix, which the GPU
+  does natively; keep the per-frame tint and sheen as a colour filter and one alpha quad. That is
+  27–45 texture draws a frame instead of ~130 path fills. Measure with the same benchmark; a
+  p90-under-16 ms assertion goes in once it holds. Smaller wins to take on the way: skip the sheen
+  where `shine` rounds to zero, and the edge stroke on faces in shadow.
+- **A way to pause it.** The loop runs for ever by design. WCAG 2.2.2 asks for a way to pause,
+  stop or hide moving content that runs beside other content for more than five seconds; the OS
+  "Remove animations" switch does rest it, but a control in the app would be the full answer. The
+  natural one is 12.2's first item: once the About cube takes touch, a touch holds it.
+
+### 12.1 Where else the cube can go
+
+Ranked by value for effort. All reuse `CubeMotion`, `CubeState` and `CubePainter` as they are; none
+needs new art.
+
+1. **Sync in progress (S).** While `isSyncing`, Home's cube rests today. Instead, scramble it when a
+   sync starts and solve it when the sync lands: the cube becomes the progress indicator the
+   pull-to-refresh spinner duplicates. `CubeMotion` gains `scramble()` and `solve()` entry points;
+   `HomeScreen` drives them from `isSyncing`.
+2. **Empty and success states (S).** The sessions and bookmarks empty states, and the feedback
+   thank-you, show the cube resting (`animate = false`) in place of the static illustration. One
+   composable each, no new behaviour.
+3. **The widget (M).** `WidgetRefresher` already redraws the home-screen widget after a sync.
+   `CubePainter` can draw into a `Bitmap` off screen, so the widget can carry a still of the cube
+   showing the next session's track face. Glance takes a bitmap; nothing animates.
+4. **Live rail (M).** The "happening now" rail could carry a 48 dp cube that turns a face per live
+   session, each face in the session's venue colour. Needs the projection to accept a colour per
+   face, which `CubeMarks` already keys by face.
+
+### 12.2 Easter eggs and play
+
+The cube is a Rubik's cube; people will want to touch it. These build on each other in order.
+None goes on Home, where the hero card is one button that opens the live session; all go on About,
+whose stage is not clickable.
+
+1. **Drag to spin, tap to twist (M).** A horizontal drag on the stage spins the whole cube
+   (`orientation + Orientation.about(Y, dx)`); vertical drags stay with the scroll. A tap on a sticker
+   twists that layer a quarter. Hit-testing is point-in-quad over `visibleQuads`, which already
+   carries each sticker's face and tile, so the tapped sticker names its `CubeMove`. `CubeMotion`
+   gains an interactive mode that pauses the showcase while touched and resumes after five idle
+   seconds. This is also the pause control above. `CubeMotionTest` covers the mode changes; a
+   screenshot locks a spun pose.
+2. **Solve it (L).** Long-press the About cube to scramble it with ten random moves. Swiping across a
+   sticker turns its layer in the swipe's direction. `CubeState.isSolved` is the win; the click plays
+   and a "You solved the stacks" sheet shows the time. Best time lives in DataStore, shown as a badge
+   on About. Each `CubeMove` is one `Animatable` turn, so the model needs nothing new; the work is
+   the gesture-to-move mapping and the sheet. Gamification hook: a solve unlocks a sticker pack for the
+   share card (§5.5) or a hidden theme; keep the reward visual, not a leaderboard, which needs a backend.
+3. **The cube comes apart (M).** Long-press, or shake, and the 27 cubelets fly out along their home
+   vectors, spinning, then spring back and click into the solved cube. `CubeState` is untouched: an
+   `Explosion` holds a per-cubelet offset and spin that `visibleQuads` applies before projection, and
+   one `Animatable` from 0 to 1 drives all 27 with a spring on the way back. Each cubelet's hidden
+   faces draw while apart, which the cut-plane rule in the projection already allows per cubelet.
+   Make the explosion opt in through the same interactive mode, so it never fires from a scroll.
+4. **Conference streak (L, needs §7).** Fifty-four stickers, fifty-four slots. Every session attended
+   paints a sticker in its track colour, so by the end of day two the cube on About is the attendee's
+   own. Needs an attendance signal (check-in or a session's QR), which is ticketing's; until then,
+   bookmarks could paint it, which is honest only if the UI says "planned", not "attended".
+5. **A secret (S).** Five quick taps on Home's cube flip every mark to its pixel version for the
+   session, or swap the hero to the "Beyond Stacks" stage. Costs nothing; worth it only once 1
+   exists, since Home's card is a button and a tap already opens the live session.
 
 ## 13. Phase 10 — Play Store presence
 

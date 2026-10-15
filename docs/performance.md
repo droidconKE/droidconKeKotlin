@@ -234,12 +234,40 @@ with the worst ~10% of frames missing. That is the baseline to improve against.
 
 `NavigationBenchmark` measures frame timing in two journeys: `switchTabs` taps About, Feed,
 Sessions, About and Home in turn, and `cubeOnAbout` opens About and watches one scene of the
-cube hero. No device numbers are recorded yet; run it on a physical phone:
+cube hero. Like `ScrollBenchmark` it runs under `CompilationMode.Ignore()`: `Partial()` would
+measure the state a Play install reaches with the shipped profile, but it needs `cmd package
+compile`, which the Reno4 stubs (see "Two physical devices"), so the numbers are for the fresh
+install the benchmark makes, warmed by its own setup. Run it on a physical phone:
 
 ```bash
 ./gradlew :benchmarks:connectedBenchmarkReleaseAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.class=ke.droidcon.kotlin.benchmarks.NavigationBenchmark
 ```
+
+First numbers, Reno4 (API 31, 60 Hz), release build, 15 iterations each:
+
+| Journey | Metric | P50 | P90 | P95 | P99 |
+| --- | --- | --- | --- | --- | --- |
+| `switchTabs` | `frameDurationCpuMs` | 18.4 | 24.7 | 29.3 | 37.5 |
+| `switchTabs` | `frameOverrunMs` | +6.4 | +15.3 | +21.9 | +33.0 |
+| `cubeOnAbout`, ~437 frames per run | `frameDurationCpuMs` | 19.2 | 25.2 | 30.1 | 36.8 |
+| `cubeOnAbout` | `frameOverrunMs` | +9.3 | +16.9 | +24.2 | +31.2 |
+
+Against the scroll baseline on the same phone (P50 8.2 ms of CPU, 3.6 ms early), a frame of the
+cube costs about 11 ms more CPU at the median and finishes 9 ms past the 60 Hz deadline, so the
+cube plays at under 40 fps on this phone. The tab journey is no better, and it spends most of its
+frames on About.
+
+The run's Perfetto traces say where it goes (iterations 8 and 12, the last five seconds, medians):
+the UI thread's `Choreographer#doFrame` is 3–4 ms, of which Compose's `Record View#draw()` is
+under 1 ms, so the model and the draw recording are cheap. The RenderThread's `DrawFrame` is
+15 ms: 7 ms in Skia's `flush commands`, where the sticker paths are rasterised, and 5 ms blocked
+in `dequeueBuffer` behind the GPU, whose own completion averages 3–4 ms. An A/B of the painter
+before and after the projective rework, same phone, debug builds, 120 frames each from
+`dumpsys gfxinfo framestats`: the UI thread fell from 9.5 ms to 6.1 ms at the median and the
+draw-command flush was unchanged (9.8 ms against 9.1 ms), so the perspective transform costs
+nothing; the flush is the price of ~130 anti-aliased path fills a frame, whichever way they are
+mapped. Cutting that means drawing fewer paths, which `docs/IMPROVEMENT_PLAN.md` §12 takes up.
 
 Emulator numbers mean nothing here. An emulator that renders through SwiftShader draws every
 frame on the CPU, so frames take 70–90 ms whatever is on screen. What an emulator can check is
