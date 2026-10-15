@@ -41,6 +41,10 @@ class TimePeriodTest(
                 arrayOf("2022-01-23 21:21:05", "09:21", "pm"),
                 arrayOf("2003-01-23 10:56:44", "10:56", "am"),
                 arrayOf("1990-01-23 16:12:52", "04:12", "pm"),
+                // The API's ISO form with an offset, read as the venue's local time.
+                arrayOf("2025-11-05T08:00:00+03:00", "08:00", "am"),
+                arrayOf("2025-11-05T05:00:00Z", "08:00", "am"),
+                arrayOf("2025-11-07T16:20:00+03:00", "04:20", "pm"),
             )
     }
 

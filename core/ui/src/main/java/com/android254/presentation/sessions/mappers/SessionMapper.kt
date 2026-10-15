@@ -26,6 +26,8 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -122,14 +124,19 @@ fun getTimePeriod(time: String): FormattedTime {
 }
 
 /**
- * Parses an API session time, which arrives venue-local and without an offset.
+ * Parses an API session time as the venue's local time. The API has sent it two ways: venue-local
+ * with no offset, `2025-11-05 08:00:00`, and ISO-8601 with one, `2025-11-05T08:00:00+03:00`.
  *
  * Returns null rather than epoch zero on failure: the previous fallback made an
  * unparseable time render as a session in 1970.
  */
 private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
     try {
-        LocalDateTime.parse(this, API_DATE_TIME)
+        when (val parsed = API_DATE_TIME.parseBest(this, OffsetDateTime::from, LocalDateTime::from)) {
+            is OffsetDateTime -> parsed.atZoneSameInstant(CONFERENCE_ZONE).toLocalDateTime()
+            is LocalDateTime -> parsed
+            else -> null
+        }
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable session time: %s", this)
         null
@@ -146,9 +153,10 @@ data class FormattedTime(
     val period: String,
 )
 
-private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]HH:mm:ss[XXX]")
 private val CLOCK_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
 private val MERIDIEM: DateTimeFormatter = DateTimeFormatter.ofPattern("a", Locale.US)
 
-/** Session times are venue-local; the API sends them without an offset. */
+/** What a session time without an offset means. */
 private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
+private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")
