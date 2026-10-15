@@ -413,8 +413,10 @@ and headline roles. Icons are `ChaiIcons`, copied from Material Icons; there is 
 isn't bundled: its web licence doesn't cover embedding in an APK, the file is a `.woff2`, and
 it has one weight. Swapping it in later is a change to the one `FontFamily` in `ChaiTypography`.
 
-Home's hero title is display type, so above 1.5× font scale it drops to
-`headlineMediumEmphasized` and caps its lines rather than filling the screen.
+Home's hero card is a short title over a one-line label in every state, welcome included, at
+`titleLargeEmphasized`, the largest role that sits well beside the cube. A title that would run past
+three lines in the room it has, a long live session or any title at 200 % font scale, steps down to
+`titleMediumEmphasized`; it is measured before it draws, so it never settles after a first frame.
 
 `MaterialTheme.isDarkTheme` reads the theme's own background rather than the system setting, so a
 `ChaiTheme(darkTheme = true)` preview or screenshot picks the right logo.
@@ -488,8 +490,8 @@ What the app relies on, so a change does not undo it:
   The cube does not animate with animations off, even if they are turned off while it is on
   screen: it rests solved at a three-quarter angle. Off screen or with the app not resumed, it pauses.
 - **Large fonts.** Screenshot tests render every screen at 200 %. Text that varies in length takes
-  `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero drops to a smaller role
-  above 1.5×, and home's session cards widen with the font scale so titles wrap between words.
+  `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero title steps down a role
+  when its room cannot hold three lines, which at 200 % is most of the time; and home's session cards widen with the font scale so titles wrap between words.
   Above 1.5× the agenda puts each session's time above its title instead of beside it.
 
 ---

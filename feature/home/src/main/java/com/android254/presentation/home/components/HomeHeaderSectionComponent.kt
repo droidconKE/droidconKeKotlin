@@ -16,31 +16,36 @@
 package com.android254.presentation.home.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.LiveBadge
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.hero.CubeHeroBanner
 import ke.droidcon.kotlin.core.ui.R
 
+/** A title runs to this many lines at the hero role before it steps down one. */
+private const val HERO_TITLE_LINES = 3
 private const val HERO_MAX_LINES = 5
 
 @Composable
@@ -80,14 +85,6 @@ private fun HeroText(
     nextSession: SessionPresentationModel?,
     modifier: Modifier = Modifier,
 ) {
-    val palette = MaterialTheme.chaiColorsPalette
-    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
-    val displayStyle =
-        if (liveSession != null && !largeFont) {
-            MaterialTheme.typography.headlineMediumEmphasized
-        } else {
-            MaterialTheme.typography.titleLargeEmphasized
-        }
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         if (liveSession != null) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -95,15 +92,39 @@ private fun HeroText(
                 HeroLabel(stringResource(R.string.hero_live_room_until, liveSession.venue, liveSession.endTime))
             }
         }
+        HeroTitle(text = liveSession?.title ?: hero.title(), maxLines = if (liveSession != null) HERO_MAX_LINES else Int.MAX_VALUE)
+        HeroSubtitle(hero = hero, liveSession = liveSession, nextSession = nextSession)
+    }
+}
+
+/**
+ * Every hero state shares one title role, the largest that sits well beside the cube. A title that
+ * would run past [HERO_TITLE_LINES] lines in the room it has, at any font scale, steps down a role.
+ * It is measured first, so it never draws at one size and settles at another.
+ */
+@Composable
+private fun HeroTitle(
+    text: String,
+    maxLines: Int,
+) {
+    val large = MaterialTheme.typography.titleLargeEmphasized
+    val medium = MaterialTheme.typography.titleMediumEmphasized
+    val measurer = rememberTextMeasurer()
+    BoxWithConstraints {
+        val width = constraints.maxWidth
+        val bounded = constraints.hasBoundedWidth
+        val fits =
+            remember(text, large, width, bounded, measurer) {
+                !bounded || measurer.measure(AnnotatedString(text), large, constraints = Constraints(maxWidth = width)).lineCount <= HERO_TITLE_LINES
+            }
         Text(
-            text = liveSession?.title ?: hero.title(),
-            style = displayStyle,
-            color = palette.heroContentColor,
-            maxLines = if (liveSession != null) HERO_MAX_LINES else Int.MAX_VALUE,
+            text = text,
+            style = if (fits) large else medium,
+            color = MaterialTheme.chaiColorsPalette.heroContentColor,
+            maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.semantics { heading() },
         )
-        HeroSubtitle(hero = hero, liveSession = liveSession, nextSession = nextSession)
     }
 }
 
@@ -117,6 +138,7 @@ private fun HeroSubtitle(
         liveSession != null && nextSession != null ->
             HeroLabel(stringResource(R.string.hero_up_next, "${nextSession.startTime} ${nextSession.amOrPm}", nextSession.title), maxLines = 1)
         liveSession != null -> Unit
+        hero == HomeHero.Welcome -> HeroLabel(stringResource(R.string.home_header_welcome_subtitle))
         hero is HomeHero.Countdown -> HeroLabel(stringResource(R.string.hero_countdown_label))
         hero == HomeHero.ThankYou -> HeroLabel(stringResource(R.string.hero_thank_you_action))
     }

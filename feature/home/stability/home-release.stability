@@ -64,6 +64,14 @@ private fun com.android254.presentation.home.components.HeroText(hero: com.andro
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.home.components.HeroTitle(text: kotlin.String, maxLines: kotlin.Int): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - maxLines: STABLE (primitive type)
+
+@Composable
 public fun com.android254.presentation.home.components.HomeAgendaSection(agenda: com.android254.presentation.home.viewstate.HomeAgenda, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, onBrowseSessions: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

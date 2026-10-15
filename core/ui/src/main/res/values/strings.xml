@@ -33,7 +33,8 @@
     <string name="no_speakers_found_label">No speakers match your search</string>
     <string name="speaker_sessions_label">Sessions</string>
     <string name="speaker_no_sessions_label">No sessions listed for this speaker</string>
-    <string name="home_header_welcome_label">Welcome to the largest Android Focussed Developer community in Africa</string>
+    <string name="home_header_welcome_label">Welcome to droidcon Kenya</string>
+    <string name="home_header_welcome_subtitle">Africa\'s largest Android developer community</string>
     <string name="home_banner_event_poster_description">Event poster</string>
     <string name="home_banner_call_for_speakers_image_description">Call for speakers</string>
     <string name="home_banner_call_for_speakers_label">Call for speakers</string>
