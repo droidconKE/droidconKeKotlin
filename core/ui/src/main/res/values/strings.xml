@@ -128,4 +128,12 @@
     <string name="settings_lead_time_30min">30 minutes before</string>
     <string name="settings_request_permission">Enable Notifications</string>
     <string name="settings_permission_requested">Permission requested. Please check system settings.</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_session_reminders">Session Reminders</string>
+    <string name="channel_schedule_changes">Schedule Changes</string>
+    <string name="channel_announcements">Announcements</string>
+    <string name="channel_social_feed">Social Feed</string>
+    <string name="channel_milestones">Milestones</string>
+    <string name="channel_sync">Sync</string>
 </resources>

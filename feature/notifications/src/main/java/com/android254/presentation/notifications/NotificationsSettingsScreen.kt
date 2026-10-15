@@ -108,7 +108,7 @@ fun NotificationsSettingsScreen(
                     SwitchListItem(
                         checked = isEnabled,
                         onCheckedChange = { viewModel.setChannelEnabled(channel, it) },
-                        headline = { Text(channel.displayName) },
+                        headline = { Text(getChannelDisplayName(channel)) },
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -166,14 +166,14 @@ private fun getLeadTimeLabel(leadTime: ReminderLeadTime): String {
     }
 }
 
-// Extension for display name
-private val NotificationChannelSpec.displayName: String
-    @Composable
-    get() = when (this) {
-        NotificationChannelSpec.SessionReminders -> "Session Reminders"
-        NotificationChannelSpec.ScheduleChanges -> "Schedule Changes"
-        NotificationChannelSpec.Announcements -> "Announcements"
-        NotificationChannelSpec.SocialFeed -> "Social Feed"
-        NotificationChannelSpec.Milestones -> "Milestones"
-        NotificationChannelSpec.Sync -> "Sync"
+@Composable
+private fun getChannelDisplayName(channel: NotificationChannelSpec): String {
+    return when (channel) {
+        NotificationChannelSpec.SessionReminders -> stringResource(R.string.channel_session_reminders)
+        NotificationChannelSpec.ScheduleChanges -> stringResource(R.string.channel_schedule_changes)
+        NotificationChannelSpec.Announcements -> stringResource(R.string.channel_announcements)
+        NotificationChannelSpec.SocialFeed -> stringResource(R.string.channel_social_feed)
+        NotificationChannelSpec.Milestones -> stringResource(R.string.channel_milestones)
+        NotificationChannelSpec.Sync -> stringResource(R.string.channel_sync)
     }
+}
