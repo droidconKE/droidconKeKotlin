@@ -28,7 +28,8 @@ def fail(message):
 
 
 def num(value):
-    return f"{float(value):.2f}".rstrip("0").rstrip(".")
+    text = f"{float(value):.2f}".rstrip("0").rstrip(".")
+    return "0" if text == "-0" else text
 
 
 def argb(hex_colour, name):
@@ -74,6 +75,8 @@ def layers(name):
         tag = element.tag.removeprefix(SVG)
         if element.get("transform"):
             fail(f"{name}.svg: <{tag}> has a transform")
+        if element.get("fill-rule", "nonzero") != "nonzero":
+            fail(f"{name}.svg: <{tag}> uses {element.get('fill-rule')}; the cube fills paths nonzero")
         if tag in CONTAINERS:
             continue
         if tag not in SHAPES:
@@ -103,7 +106,15 @@ def header():
     return LICENCE.read_text().replace("$YEAR", stamp).rstrip()
 
 
+def check_art_is_complete():
+    unlisted = sorted(p.stem for p in HERE.glob("*.svg"))
+    unlisted = [name for name in unlisted if name not in ART]
+    if unlisted:
+        fail(f"{', '.join(unlisted)}.svg not in ART; add it to a face or remove it")
+
+
 def kotlin():
+    check_art_is_complete()
     lines = [
         header(),
         "package com.droidconke.chai.hero",
