@@ -23,6 +23,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -75,11 +76,20 @@ fun SessionDTO.toEntity(): SessionEntity =
         endTimeStamp = fromString(endDateTime),
     )
 
-fun fromString(offsetDateTime: String): Long =
-    LocalDateTime
-        .parse(offsetDateTime, API_DATE_TIME)
-        .toInstant(CONFERENCE_OFFSET)
-        .toEpochMilli()
+/**
+ * The API has sent session times two ways: venue-local with no offset, `2025-11-05 08:00:00`, and
+ * ISO-8601 with one, `2025-11-05T08:00:00+03:00`. An offset is the API's word on the instant; without
+ * one the time is Nairobi's.
+ */
+fun fromString(dateTime: String): Long {
+    val instant =
+        when (val parsed = API_DATE_TIME.parseBest(dateTime, OffsetDateTime::from, LocalDateTime::from)) {
+            is OffsetDateTime -> parsed.toInstant()
+            is LocalDateTime -> parsed.toInstant(CONFERENCE_OFFSET)
+            else -> error("Unreadable session time: $dateTime")
+        }
+    return instant.toEpochMilli()
+}
 
 /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
 private fun Long.toEventDay(): String =
@@ -90,8 +100,8 @@ private fun Long.toEventDay(): String =
         .toString()
         .padStart(2, '0')
 
-private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]HH:mm:ss[XXX]")
 
-/** Session times are venue-local; the API sends them without an offset. */
+/** What a session time without an offset means. */
 private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
 private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")
