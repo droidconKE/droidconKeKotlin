@@ -17,11 +17,11 @@ package com.android254.droidcon.app
 
 import android.app.Application
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.domain.repos.SessionsRepo
 import com.android254.droidcon.crashlytics.CrashlyticsTree
 import com.android254.presentation.notifications.SessionReminderScheduler
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
-import ke.droidcon.kotlin.core.domain.repository.SessionsRepository
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +39,7 @@ class DroidconApp : Application() {
     lateinit var syncDataWorkManager: SyncDataWorkManager
 
     @Inject
-    lateinit var sessionsRepository: SessionsRepository
+    lateinit var sessionsRepository: SessionsRepo
 
     @Inject
     lateinit var sessionReminderScheduler: SessionReminderScheduler

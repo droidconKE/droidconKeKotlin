@@ -18,10 +18,11 @@ package com.android254.presentation.notifications
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.android254.domain.repos.SessionsRepo
 import dagger.hilt.android.AndroidEntryPoint
-import ke.droidcon.kotlin.core.domain.repository.SessionsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -42,7 +43,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
     @Inject
-    lateinit var sessionsRepository: SessionsRepository
+    lateinit var sessionsRepo: SessionsRepo
 
     @Inject
     lateinit var sessionReminderScheduler: SessionReminderScheduler
@@ -61,8 +62,8 @@ class BootReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.Default).launch {
             try {
                 // Fetch all starred sessions
-                val sessions = sessionsRepository.fetchSessions()
-                val starred = sessions.filter { it.isBookmarked }
+                val allSessions = sessionsRepo.fetchSessions().first()
+                val starred = allSessions.filter { it.isBookmarked }
 
                 // Reschedule reminders
                 sessionReminderScheduler.rescheduleAll(starred)

@@ -19,8 +19,8 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.android254.domain.models.Session
 import dagger.hilt.android.scopes.ViewModelScoped
-import ke.droidcon.kotlin.core.domain.model.Session
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
@@ -82,9 +82,12 @@ class SessionReminderScheduler @Inject constructor(
         val now = clock.now()
 
         starredSessions
-            .filter { it.startInstant > now }  // Skip sessions that have already started
+            .mapNotNull { session ->
+                val startTime = session.startInstant ?: return@mapNotNull null
+                if (startTime > now) session else null
+            }
             .forEach { session ->
-                val fireAt = session.startInstant - leadTime
+                val fireAt = session.startInstant!!.minus(leadTime)
 
                 // Only schedule if the reminder time is still in the future
                 if (fireAt > now) {

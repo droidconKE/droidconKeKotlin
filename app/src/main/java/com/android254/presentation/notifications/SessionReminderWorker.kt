@@ -18,14 +18,14 @@ package com.android254.presentation.notifications
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.android254.presentation.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.HiltAndroidApp
+import ke.droidcon.kotlin.R
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import timber.log.Timber
 
@@ -41,10 +41,15 @@ class SessionReminderWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = try {
-        // Check if we have permission to post notifications
-        if (!appContext.canPostNotifications()) {
-            Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
-            return Result.success()
+        // Check if we have permission to post notifications (Android 13+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val hasPermission = appContext.checkSelfPermission(
+                android.Manifest.permission.POST_NOTIFICATIONS,
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+            if (!hasPermission) {
+                Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
+                return Result.success()
+            }
         }
 
         // Extract session details from input data
@@ -56,7 +61,7 @@ class SessionReminderWorker @AssistedInject constructor(
         val speakers = inputData.getString(KEY_SPEAKERS).orEmpty()
 
         // Create deep link to session detail screen
-        val deepLink = "droidconke://session/$sessionId".toUri()
+        val deepLink = Uri.parse("droidconke://session/$sessionId")
         val contentIntent = android.app.PendingIntent.getActivity(
             appContext,
             sessionId.hashCode(),
@@ -69,7 +74,7 @@ class SessionReminderWorker @AssistedInject constructor(
             appContext,
             NotificationChannelSpec.SessionReminders.id,
         )
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(appContext.getString(R.string.reminder_title, title))
             .setContentText(appContext.getString(R.string.reminder_body, room, speakers))
             .setStyle(
