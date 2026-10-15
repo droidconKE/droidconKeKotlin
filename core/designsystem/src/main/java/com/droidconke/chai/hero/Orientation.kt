@@ -36,7 +36,6 @@ internal data class Orientation(
             z = then.w * z + then.x * y - then.y * x + then.z * w,
         )
 
-    /** The same turn the other way round. For a half turn, that is the other way to the same place. */
     fun inverse() = Orientation(w, -x, -y, -z)
 
     /** The turn from this orientation to [to], the short way round, so that `this + turnTo(to)` is [to]. */
@@ -45,18 +44,14 @@ internal data class Orientation(
         return if (turn.w < 0f) Orientation(-turn.w, -turn.x, -turn.y, -turn.z) else turn
     }
 
-    /** How far this turn goes, in degrees: 0 to 180 for a turn from [turnTo]. */
     val degrees: Float
         get() = Math.toDegrees(2.0 * acos(w.coerceIn(-1f, 1f))).toFloat()
 
-    /** A half turn's axis is a choice: it can go either way round to the same place. */
     val isHalfTurn: Boolean
         get() = degrees > HALF_TURN_DEGREES
 
-    /** Positive when this turn and [other] go round in the same sense. */
     fun axisDot(other: Orientation) = x * other.x + y * other.y + z * other.z
 
-    /** [fraction] of this turn, about the same axis. */
     fun scaled(fraction: Float): Orientation {
         val half = acos(w.coerceIn(-1f, 1f))
         val s = sin(half)
@@ -66,7 +61,6 @@ internal data class Orientation(
         return Orientation(cos(scaledHalf), x * k, y * k, z * k)
     }
 
-    /** The row-major 3×3 rotation matrix. */
     fun matrix() =
         floatArrayOf(
             1 - 2 * (y * y + z * z),

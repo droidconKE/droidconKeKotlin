@@ -123,13 +123,7 @@ fun getTimePeriod(time: String): FormattedTime {
     )
 }
 
-/**
- * Parses an API session time as the venue's local time. The API has sent it two ways: venue-local
- * with no offset, `2025-11-05 08:00:00`, and ISO-8601 with one, `2025-11-05T08:00:00+03:00`.
- *
- * Returns null rather than epoch zero on failure: the previous fallback made an
- * unparseable time render as a session in 1970.
- */
+/** Venue-local time from either API form, or null rather than epoch zero when unreadable. */
 private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
     try {
         when (val parsed = API_DATE_TIME.parseBest(this, OffsetDateTime::from, LocalDateTime::from)) {
@@ -157,6 +151,5 @@ private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy
 private val CLOCK_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
 private val MERIDIEM: DateTimeFormatter = DateTimeFormatter.ofPattern("a", Locale.US)
 
-/** What a session time without an offset means. */
 private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
 private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")

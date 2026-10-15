@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -46,12 +45,7 @@ import com.droidconke.chai.colors.CubeStageColor
 import com.droidconke.chai.colors.CubeStageGlowColor
 import kotlin.math.roundToInt
 
-/**
- * The cube's stage, as on the conference posters: a full-width black band with the cube turning
- * over [content], for the top of a screen. The cube is sized by the window, never more than
- * [STAGE_HEIGHT_SHARE] of its height, so a short or landscape window still shows what follows.
- * The cube steps aside at large font sizes.
- */
+/** A full-width black stage with the cube over [content]. The cube is capped by the window's height and steps aside at large font sizes. */
 @Composable
 fun CubeHeroStage(
     modifier: Modifier = Modifier,
@@ -91,7 +85,7 @@ fun CubeHeroStage(
             if (cube) {
                 CubeHero(
                     animate = animateCube,
-                    modifier = Modifier.size(cubeSize).centred(cubeSize).testTag("cube_hero"),
+                    modifier = Modifier.size(cubeSize).centred(cubeSize),
                 )
                 Spacer(Modifier.height(CubeGap))
             }
@@ -100,7 +94,6 @@ fun CubeHeroStage(
     }
 }
 
-/** Takes [size] in the layout and draws the cube that size, on the larger canvas it needs. */
 private fun Modifier.centred(size: Dp) =
     layout { measurable, _ ->
         val slot = size.roundToPx()

@@ -84,12 +84,15 @@ fun rememberShowsNavigationDrawer(): Boolean {
     }
 }
 
-/** Wide only because it is short: under 480 dp tall, a phone in landscape rather than a large screen. */
+/** A phone in landscape: under 480 dp tall and under 1200 dp wide. A short window on a large screen keeps its rail. */
 @Composable
 fun rememberIsPhoneOnItsSide(): Boolean {
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
     return remember(adaptiveInfo) {
-        !adaptiveInfo.windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+        with(adaptiveInfo.windowSizeClass) {
+            !isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND) &&
+                !isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND)
+        }
     }
 }
 

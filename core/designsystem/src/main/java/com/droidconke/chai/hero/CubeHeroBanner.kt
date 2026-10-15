@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -40,11 +39,7 @@ import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.chaiColorsPalette
 import kotlin.math.roundToInt
 
-/**
- * The conference hero card: [content] leading and the cube turning at the end, a little past the
- * card's edge, at every width. The bleed is kept small enough that the right face's wordmark stays
- * whole. The content never sits under the cube, and at large font sizes the cube steps aside.
- */
+/** The hero card: [content] at the start and the cube at the end, past the card's edge. The cube steps aside at large font sizes. */
 @Composable
 fun CubeHeroBanner(
     modifier: Modifier = Modifier,
@@ -73,7 +68,7 @@ fun CubeHeroBanner(
         if (cube) {
             CubeHero(
                 animate = animateCube,
-                modifier = Modifier.matchParentSize().atEnd(cubeSize).testTag("cube_hero"),
+                modifier = Modifier.matchParentSize().atEnd(cubeSize),
             )
         }
         Column(
@@ -89,7 +84,6 @@ fun CubeHeroBanner(
     }
 }
 
-/** Centres the cube, [size] across, on the card's end edge with [BLEED] of it past the edge. */
 private fun Modifier.atEnd(size: Dp) =
     layout { measurable, constraints ->
         val cube = size.toPx()

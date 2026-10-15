@@ -97,11 +97,7 @@ private fun HeroText(
     }
 }
 
-/**
- * Every hero state shares one title role, the largest that sits well beside the cube. A title that
- * would run past [HERO_TITLE_LINES] lines in the room it has, at any font scale, steps down a role.
- * It is measured first, so it never draws at one size and settles at another.
- */
+/** One title role for every hero state, stepping down a role when the title would run past [HERO_TITLE_LINES] lines. */
 @Composable
 private fun HeroTitle(
     text: String,

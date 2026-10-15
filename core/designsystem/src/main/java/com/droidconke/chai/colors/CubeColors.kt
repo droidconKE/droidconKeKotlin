@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,22 +26,17 @@ import com.droidconke.chai.atoms.ChaiPink500
 import com.droidconke.chai.atoms.ChaiPurple400
 import com.droidconke.chai.atoms.ChaiWhite
 
-// The cube hero, as on the conference site: glossy black, the same in both themes. Its marks carry
-// the designers' own inks, in `CubeArt`.
+// The cube hero's colours, the same in both themes; its marks carry the designers' inks in `CubeArt`.
 
-/** The gaps between cubelets. */
 val CubeGapColor: Color = ChaiBlack
 
-/** A tile in shadow and facing the light; the sheen and edge catch the light on top. */
 val CubeTileShadowColor: Color = ChaiNavy900
 val CubeTileLitColor: Color = ChaiNavy700
 val CubeSheenColor: Color = ChaiWhite
 val CubeEdgeColor: Color = ChaiGrey200
 
-/** The posters' black stage, lit faintly blue behind the cube; the same in both themes. */
 val CubeStageColor: Color = ChaiBlack
 val CubeStageGlowColor: Color = ChaiBlue700
 
-/** The stage's title runs from blue through purple to pink, as "Beyond Stacks" does on the posters. */
 val CubeStageTitleColors: List<Color> = listOf(ChaiBlue300, ChaiPurple400, ChaiPink500)
 val CubeStageTextColor: Color = ChaiGrey200

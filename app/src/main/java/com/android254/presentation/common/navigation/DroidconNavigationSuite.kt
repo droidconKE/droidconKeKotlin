@@ -38,11 +38,7 @@ import com.droidconke.chai.components.ChaiTextLabelSmall
 import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
-/**
- * [showsDrawer] is the same value the app bars use, so the logo cannot end up in neither. A phone
- * on its side keeps the bottom bar: a rail belongs to large screens and foldables, not to a window
- * that is wide only because it is short.
- */
+/** [showsDrawer] matches the app bars, so the logo cannot end up in neither. A phone on its side keeps the bottom bar. */
 fun navigationSuiteTypeFor(
     windowSize: DroidconWindowSize,
     showsDrawer: Boolean,

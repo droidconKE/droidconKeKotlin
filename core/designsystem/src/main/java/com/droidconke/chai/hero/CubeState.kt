@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.droidconke.chai.hero
 
-/** A whole-number vector: cubelet positions and orientations stay on the grid between turns. */
 internal data class Vec3(
     val x: Int,
     val y: Int,
@@ -77,7 +76,6 @@ internal data class CubeMove(
 
 internal fun List<CubeMove>.inverse(): List<CubeMove> = reversed().map(CubeMove::inverse)
 
-/** [right] and [up] are where the cubelet's own x and y axes point now. */
 internal data class Cubelet(
     val home: Vec3,
     val position: Vec3 = home,

@@ -95,6 +95,8 @@ def layers(name):
                 fail(f"{name}.svg: rounded <rect>")
             box = tuple(float(element.get(k, 0)) for k in ("x", "y", "width", "height"))
             rects.setdefault(ink, []).append(box)
+    if rects and paths:
+        fail(f"{name}.svg: mixes <rect> with <path>/<polygon>; the generator cannot keep their paint order")
     for ink, boxes in rects.items():
         paths.setdefault(ink, []).extend(rect_paths(boxes))
     return width, height, paths

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
  */
 package com.android254.domain.flags
 
-/**
- * Remote switches for features that might need turning off in the field without a release. Reads
- * wait for the local defaults, so a cold start never sees a switch as off before they apply.
- */
+/** Remote switches for features that may need turning off without a release. */
 interface FeatureFlags {
     suspend fun isCubeHeroEnabled(): Boolean
 }

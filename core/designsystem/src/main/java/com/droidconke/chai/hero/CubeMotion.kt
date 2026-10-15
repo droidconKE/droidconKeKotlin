@@ -38,12 +38,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.cos
 
-/**
- * Shows each logo in turn, as the conference cube does: it holds a face, twists itself up as it
- * turns to the next one, then solves so that logo comes together facing the viewer. [scene] is the
- * face being shown; it is hoisted so the cube carries on from it after a configuration change.
- * When [run] is cancelled the cube is left whole, showing that face, and [run] starts again from it.
- */
+/** Holds a face, scrambles while turning to the next, then solves. Cancelled, it leaves the cube whole on its face. */
 @Stable
 internal class CubeMotion(
     private val sceneState: MutableIntState = mutableIntStateOf(0),
@@ -62,8 +57,7 @@ internal class CubeMotion(
             settle()
             while (true) {
                 if (animationsOff()) {
-                    rest()
-                    delay(ANIMATIONS_OFF_POLL_MILLIS)
+                    stayAtRest()
                     continue
                 }
                 hold()
@@ -82,6 +76,11 @@ internal class CubeMotion(
         }
     }
 
+    private suspend fun stayAtRest() {
+        if (state != Solved || turn != null || orientation != Poses[0]) rest()
+        delay(ANIMATIONS_OFF_POLL_MILLIS)
+    }
+
     suspend fun rest() {
         sceneState.intValue = 0
         settle()
@@ -94,7 +93,6 @@ internal class CubeMotion(
         popScale.snapTo(1f)
     }
 
-    /** Leans the cube a little and back, so it never sits dead still. */
     private suspend fun hold() {
         val pose = Poses[scene]
         progress.snapTo(0f)
@@ -125,7 +123,6 @@ internal class CubeMotion(
         }
     }
 
-    /** The last layer clicks home: the cube swells a touch and springs back. */
     private suspend fun click() {
         popScale.animateTo(POP_SCALE, tween(POP_MILLIS))
         popScale.animateTo(1f, spring(dampingRatio = POP_DAMPING, stiffness = Spring.StiffnessMediumLow))
@@ -139,7 +136,8 @@ internal val Showcase = listOf(CubeFace.Front, CubeFace.Right, CubeFace.Up, Cube
 
 internal val Poses = Showcase.map(::presenting)
 
-/** The whole cube's turn from one scene's pose to the next, [at] a fraction of the way. */
+private val Solved = CubeState.solved()
+
 internal class Travel(
     val from: Orientation,
     val turn: Orientation,
@@ -147,11 +145,7 @@ internal class Travel(
     fun at(fraction: Float): Orientation = from + turn.scaled(fraction)
 }
 
-/**
- * The travel into each scene's successor. Most are a quarter or a third of a turn, which have one
- * short way round. React to Kotlin is a half turn, which has two; it goes on in the sense the cube
- * was already turning, so the flip reads as one tumble rather than a change of mind.
- */
+/** Precomputed travels between poses. The one half turn continues the previous travel's sense. */
 internal val Travels: List<Travel> =
     buildList {
         var previous = Poses.last().turnTo(Poses.first())
@@ -164,7 +158,7 @@ internal val Travels: List<Travel> =
         }
     }
 
-/** Three turns of layers across [face], so its logo arrives in pieces; played backwards, they solve it. */
+/** Three layer turns across [face]; their inverse solves it. */
 internal fun scrambleTowards(face: CubeFace): List<CubeMove> {
     val (across, along) =
         when (face) {

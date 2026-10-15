@@ -37,12 +37,7 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-/**
- * Draws one sticker at a time. Each is the unit square mapped onto its quad by the projective
- * transform perspective gives it, so the cell, the rounded tile, the sheen and the mark's pieces are
- * all drawn from paths and a brush built once, in sticker units, and land exactly on the quad. Nothing
- * is allocated per sticker.
- */
+/** Draws each sticker as the unit square under its quad's projective transform, allocating nothing per sticker. */
 internal class CubePainter {
     private val cell = Path().apply { addRect(Rect(0f, 0f, 1f, 1f)) }
     private val tile = stickerPath(0, 0)
@@ -70,7 +65,6 @@ internal class CubePainter {
         canvas.restoreToCount(checkpoint)
     }
 
-    /** This sticker's pieces of its mark, so the mark breaks at the gaps. */
     private fun DrawScope.drawPieces(
         quad: Quad,
         layers: List<MarkLayer>,
@@ -85,10 +79,7 @@ internal class CubePainter {
     }
 }
 
-/**
- * The map of the unit square onto this quad on screen, as a row-major 3×3 matrix in [out], or false
- * for a quad too thin to draw. A square seen in perspective is exactly a projective image of it.
- */
+/** The unit square's projective map onto this quad, row-major in [out]; false for a degenerate quad. */
 private fun Quad.homography(
     origin: Offset,
     scale: Float,
@@ -124,7 +115,6 @@ private fun Quad.homography(
     return true
 }
 
-/** How brightly a face catches a light above and to the left of the viewer, from 0 to 1. */
 private fun Quad.shine(): Float {
     val h = LightX * tiltX + LightY * tiltY + LightZ * light
     return max(0f, h).pow(SHINE_POWER)
@@ -135,7 +125,6 @@ private val LightX = LIGHT_X / LightLength
 private val LightY = LIGHT_Y / LightLength
 private val LightZ = (LIGHT_Z + 1f) / LightLength
 
-/** Below this, a quad's corners are as good as collinear and it is not drawn. */
 private const val THIN = 1e-4f
 private const val EDGE_WIDTH = 0.012f
 private const val EDGE_ALPHA = 0.18f

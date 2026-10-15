@@ -76,11 +76,7 @@ fun SessionDTO.toEntity(): SessionEntity =
         endTimeStamp = fromString(endDateTime),
     )
 
-/**
- * The API has sent session times two ways: venue-local with no offset, `2025-11-05 08:00:00`, and
- * ISO-8601 with one, `2025-11-05T08:00:00+03:00`. An offset is the API's word on the instant; without
- * one the time is Nairobi's.
- */
+/** Reads the API's venue-local form or its ISO-8601 form with an offset. */
 fun fromString(dateTime: String): Long {
     val instant =
         when (val parsed = API_DATE_TIME.parseBest(dateTime, OffsetDateTime::from, LocalDateTime::from)) {
@@ -102,6 +98,5 @@ private fun Long.toEventDay(): String =
 
 private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]HH:mm:ss[XXX]")
 
-/** What a session time without an offset means. */
 private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
 private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")

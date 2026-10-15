@@ -26,10 +26,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-/**
- * The API writes times venue-local with no offset, `2025-11-05 08:00:00`, or ISO-8601 with one,
- * `2025-11-05T08:00:00+03:00`; either reads as the venue's local time.
- */
+/** Reads the API's venue-local form or its ISO-8601 form with an offset, as venue-local time. */
 internal class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)

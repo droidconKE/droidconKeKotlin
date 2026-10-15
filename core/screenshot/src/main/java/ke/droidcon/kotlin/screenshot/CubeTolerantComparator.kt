@@ -21,11 +21,7 @@ import com.dropbox.differ.ImageComparator
 import com.dropbox.differ.Mask
 import com.dropbox.differ.distance
 
-/**
- * Roborazzi's own comparison everywhere but inside [cube], the cube hero's bounds in pixels, where
- * anti-aliased path edges land a few colour levels apart between macOS and Linux CI. A pixel outside
- * every image counts as a difference, as Roborazzi's does.
- */
+/** Roborazzi's comparison, but looser inside [cube], whose path edges anti-alias differently on Linux CI. */
 internal class CubeTolerantComparator(
     private val cube: List<Rect>,
 ) : ImageComparator {

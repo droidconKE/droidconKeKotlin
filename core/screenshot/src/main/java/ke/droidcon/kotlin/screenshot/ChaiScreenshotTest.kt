@@ -47,6 +47,7 @@ import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.test.FakeImageLoaderEngine
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.hero.CUBE_HERO_TAG
 import com.droidconke.chai.hero.prepareCubeMarks
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziOptions
@@ -97,7 +98,7 @@ abstract class ChaiScreenshotTest {
             setSize(WIDE_LOGO_WIDTH_PX, WIDE_LOGO_HEIGHT_PX)
         }
 
-    /** [frameMillis] pauses the clock and captures that far in, for content that never idles. */
+    /** [frameMillis] pauses the clock and captures every variant that far in, for content that never idles. */
     protected fun captureComponent(
         name: String,
         frameMillis: Long? = null,
@@ -175,7 +176,7 @@ abstract class ChaiScreenshotTest {
         ScreenshotVariant.entries.forEach { entry ->
             variant = entry
             composeRule.waitForIdle()
-            frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
+            if (entry == ScreenshotVariant.entries.first()) frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
                 roborazziOptions = options(),
@@ -227,7 +228,7 @@ abstract class ChaiScreenshotTest {
 
     private companion object {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
-        const val CUBE_TAG = "cube_hero"
+        const val CUBE_TAG = CUBE_HERO_TAG
         const val CHANGE_THRESHOLD = 0.001f
         const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
         const val WIDE_LOGO_WIDTH_PX = 600

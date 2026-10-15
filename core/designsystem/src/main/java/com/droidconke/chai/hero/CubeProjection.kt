@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 DroidconKE
+ * Copyright 2026 DroidconKE
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import androidx.compose.ui.util.fastForEach
 import kotlin.math.cos
 import kotlin.math.sin
 
-/** The three-quarter view the cube rests at, rolled a little: front, right and top faces showing. */
 internal object RestingPose {
     const val YAW = -35f
     const val PITCH = 25f
@@ -27,27 +26,20 @@ internal object RestingPose {
     val View = Orientation.euler(YAW, PITCH, ROLL)
 }
 
-/** How far the camera is from the cube's centre, in cubelets: near enough to foreshorten it. */
 internal const val CAMERA_DISTANCE = 9f
 
-/** How far the cube reaches from its centre on screen, in cubelets, at rest and in any pose it moves through. */
+/** On-screen reach from the cube's centre, in cubelets. */
 internal const val RESTING_REACH = 2.64f
 internal const val MOVING_REACH = 2.72f
 
-/** Which face of the solved cube a sticker belongs to, or [Inner] for the body between cubelets. */
 internal enum class CubeFace { Right, Left, Up, Down, Front, Back, Inner }
 
-/** A layer part-way through [move], [degrees] from where it started. */
 internal data class Turn(
     val move: CubeMove,
     val degrees: Float,
 )
 
-/**
- * One visible face, in perspective. [xs] and [ys] are its corners in cube units, clockwise from the
- * top left of its sticker, which is [tileColumn] and [tileRow] of [face]'s mark. [light] runs
- * from 0, edge-on, to 1, facing the viewer, and [tiltX] and [tiltY] are where its normal leans.
- */
+/** A visible face in perspective: corners clockwise from its sticker's top left, [light] from 0 edge-on to 1 facing. */
 internal class Quad(
     val face: CubeFace,
     val tileColumn: Int,
@@ -60,13 +52,11 @@ internal class Quad(
     val tiltY: Float,
 )
 
-/** The view of the cube with [face] turned to the viewer, upright, then set at the resting angle. */
 internal fun presenting(face: CubeFace): Orientation {
     val local = LocalFaces.first { it.face == face }
     return Orientation.ofRows(local.right, local.up, local.normal) + RestingPose.View
 }
 
-/** The faces a viewer sees after yawing, pitching and rolling the cube; see the other overload. */
 internal fun CubeState.visibleQuads(
     yawDegrees: Float,
     pitchDegrees: Float,
@@ -74,11 +64,7 @@ internal fun CubeState.visibleQuads(
     rollDegrees: Float = 0f,
 ): List<Quad> = visibleQuads(Orientation.euler(yawDegrees, pitchDegrees, rollDegrees), turn)
 
-/**
- * The faces a viewer sees, in painting order, with the cube turned to [orientation]. A turning
- * layer is painted as one block, before or after the rest of the cube depending on which side of
- * the cut the camera is.
- */
+/** Visible faces in painting order; a turning layer is painted as one block. */
 internal fun CubeState.visibleQuads(
     orientation: Orientation,
     turn: Turn? = null,
@@ -105,13 +91,11 @@ internal fun CubeState.visibleQuads(
             Axis.Y -> view[2, 1]
             Axis.Z -> view[2, 2]
         }
-    // The cut sits half a cubelet along the axis; the camera is on the moving layer's side of it
-    // only once the axis leans towards the camera by more than that over the camera's distance.
+    // The camera is on the moving side only once it is past the cut, half a cubelet out.
     val cameraOnMovingSide = axisTowardsViewer * move.layer * CAMERA_DISTANCE > HALF
     return if (cameraOnMovingSide) still.apply { addAll(moving) } else moving.apply { addAll(still) }
 }
 
-/** A row-major 3×3 rotation. */
 private class Matrix(
     val m: FloatArray,
 ) {
@@ -166,7 +150,6 @@ private fun rotation(
     )
 }
 
-/** A face in the cubelet's own frame, with [right] and [up] the way its logo reads from outside. */
 private class LocalFace(
     val normal: Vec3,
     val right: Vec3,
@@ -188,10 +171,8 @@ private val ByDepth = Comparator<Quad> { a, b -> a.depth.compareTo(b.depth) }
 
 private const val HALF = 0.5f
 
-/** Twenty-seven stickers, plus the sides a turning layer bares and the cut it opens. */
 private const val VISIBLE_GUESS = 48
 
-/** Unit corners of a face, clockwise from top left, as (right, up) multiples of [HALF]. */
 private val CornerRight = intArrayOf(-1, 1, 1, -1)
 private val CornerUp = intArrayOf(1, 1, -1, -1)
 
@@ -203,10 +184,7 @@ private fun Cubelet.addQuads(
     LocalFaces.fastForEach { local -> quad(local, m, cut)?.let(into::add) }
 }
 
-/**
- * The faces between cubelets only show along [cut], the layer that is turning: the face of a
- * cubelet beside the cut that looks across it. At rest the cube is solid and every one is hidden.
- */
+/** Inner faces are drawn only along a turning layer's cut. */
 private fun Cubelet.quad(
     local: LocalFace,
     m: Matrix,
@@ -260,7 +238,6 @@ private fun Cubelet.quad(
 
 private fun Vec3.dot(o: Vec3) = x * o.x + y * o.y + z * o.z
 
-/** [v] from the cubelet's frame to the world's: right, up and forward are the columns. */
 private fun Cubelet.world(v: Vec3) =
     Vec3(
         right.x * v.x + up.x * v.y + forward.x * v.z,

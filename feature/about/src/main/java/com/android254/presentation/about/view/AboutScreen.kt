@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -129,13 +130,15 @@ internal fun AboutScreen(
                         .verticalScroll(rememberScrollState())
                         .testTag("about_screen"),
                 ) {
+                    val headline = MaterialTheme.typography.headlineMediumEmphasized
+                    val stageTitleStyle = remember(headline) { headline.copy(brush = Brush.horizontalGradient(CubeStageTitleColors)) }
                     CubeHeroStage(
                         showCube = uiState.showCube,
                         animateCube = animateCube,
                     ) {
                         Text(
                             text = stringResource(R.string.about_banner_title),
-                            style = MaterialTheme.typography.headlineMediumEmphasized.copy(brush = Brush.horizontalGradient(CubeStageTitleColors)),
+                            style = stageTitleStyle,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.semantics { heading() },
                         )

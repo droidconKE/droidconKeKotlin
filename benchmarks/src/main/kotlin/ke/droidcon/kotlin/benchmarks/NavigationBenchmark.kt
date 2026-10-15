@@ -67,7 +67,7 @@ class NavigationBenchmark {
         ) {
             device.requireObject(ABOUT, STARTUP_TIMEOUT_MS).click()
             device.requireObject("about_screen")
-            // One scene: a hold, the twist to the next face and the solve.
+            device.requireObject("cube_hero")
             Thread.sleep(CUBE_SCENE_MS)
         }
 

@@ -18,7 +18,9 @@ package ke.droidcon.kotlin.datasource.remote.utils
 import com.google.android.gms.tasks.Task
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import ke.droidcon.kotlin.datasource.remote.R
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 class RemoteFeatureToggle(
@@ -31,7 +33,13 @@ class RemoteFeatureToggle(
      * until they have, every switch reads as off and the API key as empty.
      */
     suspend fun awaitDefaults() {
-        runCatching { defaults.await() }.onFailure { Timber.w(it, "Remote Config defaults failed to apply") }
+        try {
+            withTimeoutOrNull(DEFAULTS_TIMEOUT_MILLIS) { defaults.await() } ?: Timber.w("Remote Config defaults still loading; reading without them")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Timber.w(e, "Remote Config defaults failed to apply")
+        }
     }
 
     fun sync() {
@@ -65,3 +73,5 @@ class RemoteFeatureToggle(
 
     fun getBoolean(key: String): Boolean = remoteConfig.getBoolean(key)
 }
+
+private const val DEFAULTS_TIMEOUT_MILLIS = 1_000L
