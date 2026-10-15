@@ -60,20 +60,20 @@ fun LogoTile(
     val logo = logos.getOrNull(attempt)
     val failed = logo == null
     var logoIsLight by remember(logo) { mutableStateOf<Boolean?>(null) }
+    var hasContrast by remember(logo) { mutableStateOf(true) }
     val chaiColors = MaterialTheme.chaiColorsPalette
-    val isInDarkMode = isSystemInDarkTheme()
+    val surfaceContainer = MaterialTheme.colorScheme.surfaceContainer
     val background =
-        if (isInDarkMode) {
+        if (!hasContrast) {
             when (logoIsLight) {
                 // A light logo needs a dark backing and vice versa; fixed tones so the pairing
                 // holds regardless of whether the app itself is in light or dark theme.
                 true -> chaiColors.contrastDarkSurface
                 false -> chaiColors.contrastLightSurface
-                null -> MaterialTheme.colorScheme.surfaceContainer
+                null -> surfaceContainer
             }
         } else {
-            // In light mode, always use the light surface
-            chaiColors.contrastLightSurface
+            surfaceContainer
         }
     Box(
         modifier =
@@ -107,7 +107,11 @@ fun LogoTile(
                 contentScale = ContentScale.Fit,
                 contentDescription = name.ifBlank { null },
                 onError = { attempt++ },
-                onSuccess = { state -> logoIsLight = state.result.drawable.isPerceivedLight() },
+                onSuccess = { state ->
+                    val drawable = state.result.drawable
+                    logoIsLight = drawable.isPerceivedLight()
+                    hasContrast = drawable.hasContrastAgainst(surfaceContainer)
+                },
             )
         }
     }
