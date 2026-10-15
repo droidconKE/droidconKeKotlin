@@ -174,6 +174,13 @@ sequenceDiagram
     end
 ```
 
+`syncNowIfEmpty()` waits for Remote Config only until its first successful fetch, because the API
+key has no usable default. After that it refreshes in the background, so a changed switch such as
+`cube_hero_enabled` reaches the app within a minute, when Home's state next recomputes, or on the
+next start. The defaults in `remote_config_defaults.xml` apply until then; they load on a background
+thread, so `FeatureFlags` reads are `suspend` and wait for them (`RemoteFeatureToggle.awaitDefaults`),
+which keeps a cold start from reading a switch as off and growing the hero a moment later.
+
 The five run concurrently under `awaitAll` and the result is `.all { it }` — one failure
 retries the whole job. That is deliberate: a half-synced database, where the sessions are
 current but the speakers they reference are not, is worse than a slightly stale one.
@@ -219,8 +226,9 @@ migration must fail loudly. Silently dropping the table takes an attendee's book
 sessions — their personal conference agenda — with it. New migrations go in
 `Database.ALL_MIGRATIONS`, and `DatabaseMigrationTest` fails if the fallback ever returns.
 
-**Session times are venue-local.** The API sends them without an offset and they mean
-`Africa/Nairobi`. Use `@ConferenceTimeZone` for absolute times and the device clock only for
+**Session times are venue-local.** The API has sent them two ways, `2025-11-05 08:00:00` with no
+offset, which means `Africa/Nairobi`, and ISO-8601 `2025-11-05T08:00:00+03:00`; the sessions
+mapper, the feed serializer and the presentation formatter all read both. Use `@ConferenceTimeZone` for absolute times and the device clock only for
 relative ones ("in 20 minutes"). There is no `SimpleDateFormat` in production code and there
 should not be — it is not thread-safe.
 
@@ -327,9 +335,11 @@ The rules that matter:
   on either. Single-pane content is capped at 840 dp and centred by
   `Modifier.readablePaneWidth()` — 20 dp gutters stretched across a 1600 dp window are not a
   layout. The navigation drawer needs a tall window as well as a wide one: a phone in landscape
-  (891 × 411 dp) is Expanded by width, and a drawer there would take a third of the screen, so it
-  gets a rail. App bars drop their logo only when the drawer is there to carry it — both read
-  `rememberShowsNavigationDrawer()`, so they cannot disagree.
+  (891 × 411 dp) is Expanded by width, and a drawer there would take a third of the screen. Nor
+  does it get a rail: under 480 dp tall it is a phone on its side (`rememberIsPhoneOnItsSide()`),
+  and it keeps the bottom bar, since a rail belongs to large screens and foldables, not to a window
+  that is wide only because it is short. App bars drop their logo only when the drawer is there to
+  carry it — both read `rememberShowsNavigationDrawer()`, so they cannot disagree.
 - **Insets are owned, not inherited.** Screens nest `Scaffold`s — the composition root has one
   for the navigation area, each screen has one for its top bar — and a nested `Scaffold` left
   on its defaults will either double-pad an inset or drop it. So the ownership is explicit: the
@@ -406,8 +416,10 @@ and headline roles. Icons are `ChaiIcons`, copied from Material Icons; there is 
 isn't bundled: its web licence doesn't cover embedding in an APK, the file is a `.woff2`, and
 it has one weight. Swapping it in later is a change to the one `FontFamily` in `ChaiTypography`.
 
-Home's hero title is display type, so above 1.5× font scale it drops to
-`headlineMediumEmphasized` and caps its lines rather than filling the screen.
+Home's hero card is a short title over a one-line label in every state, welcome included, at
+`titleLargeEmphasized`, the largest role that sits well beside the cube. A title that would run past
+three lines in the room it has, a long live session or any title at 200 % font scale, steps down to
+`titleMediumEmphasized`; it is measured before it draws, so it never settles after a first frame.
 
 `MaterialTheme.isDarkTheme` reads the theme's own background rather than the system setting, so a
 `ChaiTheme(darkTheme = true)` preview or screenshot picks the right logo.
@@ -416,6 +428,43 @@ Shared Expressive pieces live in `:core:ui`: `BookmarkButton` (the circle-to-coo
 `LiveBadge`, `EmptyStatePanel`, `FilterOptionChips`, `ConnectedToggleGroup`,
 `rememberSpeakerAvatarShape()`, `LogoTile` (partner logos, falling back to the next URL and then
 the name), `EvenGrid` (equal-width rows that line up) and `AdaptiveEvenGrid` (adds columns as the window widens). Button labels are sentence case.
+
+The cube hero (`chai/hero`) is a Rubik's cube drawn on a `Canvas`, after the conference site's:
+glossy black cubelets in perspective, with a mark on each face: the droidcon and FlutterCon
+wordmarks, pixel logos for React, Kotlin and Swift, and the AI mark. The marks are the designers'
+SVGs in `core/designsystem/art/cube`; `generate.py` there turns them into `CubeArt`, path data and
+ink per layer, and CI fails if the two drift, so rerun it after replacing an SVG. `CubeMarks` fits
+each mark into the middle of its face and cuts it once into each sticker's rounded shape; each
+sticker draws the pieces of the mark it started with. A turn breaks the marks up and the solve puts
+them back. Cutting is nine path intersections per ink, so it runs off the main thread when the cube
+first composes, and a sticker draws bare until its pieces land; the screenshot harness cuts them
+first, with `prepareCubeMarks()`, so a golden never races that.
+It is a pure `CubeState` of 27 cubelets turned by `CubeMove`s, and a projection that culls faces
+turned from the camera and paints the rest back to front, a turning layer as one block. While a
+layer turns, only the faces along the cut are drawn between cubelets, and which block paints first
+is decided by which side of the cut the camera is on, not by the axis's sign: a layer whose axis
+barely leans to the viewer is still behind the cut. `CubePainter` draws each sticker as the unit
+square under the projective transform perspective gives its quad, so the cell, the rounded tile, the
+sheen and the mark's pieces come from paths and a brush built once and land exactly on the quad,
+with nothing allocated per sticker. The `Canvas` sits in its own `graphicsLayer`, so a frame of the
+cube re-records the cube and not the screen around it.
+`CubeMotion` plays it as the conference video does, one face at a time, in `Showcase` order
+(droidcon, FlutterCon, React, Kotlin, Swift, AI). It holds a face, twists three layers as it turns the
+whole cube to the next face (`scrambleTowards`), then plays them back so that logo comes together
+facing the viewer, with a small click on the last turn. The whole cube's pose is an `Orientation`
+(a quaternion) and each `Travel` between poses is the short way round. React to Kotlin is a half
+turn, which has two short ways; it goes on in the sense the cube was already turning, which
+`CubeMotionTest` pins. The scene is `rememberSaveable`, so the cube carries on from its face after
+a rotation or a tab switch, and cancelling the motion mid-scramble leaves it whole on that face.
+All are unit tested. Home's hero uses
+`CubeHeroBanner`: the content leading and the cube at the end, a little past the card's edge, at
+every width, with the bleed small enough that the right face's wordmark stays whole. Home rests the
+cube while a sync runs. About opens with `CubeHeroStage`, the posters' black stage as a full-width
+band, the cube over the content, sized by the window so a short or landscape window still shows what
+follows (`LocalWindowInfo`, which is the window, not the configuration). Both drop the cube at large
+font sizes. The cube is decoration, so it is hidden from accessibility, and `cube_hero_enabled` in
+Remote Config turns it off. Its colours are in `chai/colors/CubeColors.kt`, the same in both themes,
+and `ChaiColorContrastTest` covers the stage's text.
 
 Every square headshot (home, the speakers list, organisers) takes `rememberSpeakerAvatarShape()` and a
 `HeadshotRingWidth` neon ring. Large photos on detail screens keep their rounded rectangles.
@@ -441,9 +490,11 @@ What the app relies on, so a change does not undo it:
 - **Reduced motion.** With "Remove animations" on, Compose snaps every infinite transition to its
   end value and stops it. So a continuous animation (the live badge and border, the pulse, the
   shimmer) must end on a value that reads well at rest; `LiveBadge` ends opaque.
+  The cube does not animate with animations off, even if they are turned off while it is on
+  screen: it rests solved at a three-quarter angle. Off screen or with the app not resumed, it pauses.
 - **Large fonts.** Screenshot tests render every screen at 200 %. Text that varies in length takes
-  `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero drops to a smaller role
-  above 1.5×, and home's session cards widen with the font scale so titles wrap between words.
+  `maxLines` with an ellipsis; fixed copy wraps in full. Home's hero title steps down a role
+  when its room cannot hold three lines, which at 200 % is most of the time; and home's session cards widen with the font scale so titles wrap between words.
   Above 1.5× the agenda puts each session's time above its title instead of beside it.
 
 ---

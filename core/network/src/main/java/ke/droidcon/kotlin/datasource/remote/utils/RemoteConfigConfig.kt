@@ -19,7 +19,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import ke.droidcon.kotlin.datasource.remote.BuildConfig
-import ke.droidcon.kotlin.datasource.remote.R
 import java.util.concurrent.TimeUnit
 
 object RemoteConfigConfig {
@@ -32,7 +31,6 @@ object RemoteConfigConfig {
 
     fun setup() =
         Firebase.remoteConfig.apply {
-            setDefaultsAsync(R.xml.remote_config_defaults)
             val configSettings =
                 remoteConfigSettings {
                     minimumFetchIntervalInSeconds = minimumFetchInterval

@@ -97,6 +97,7 @@ internal fun HomeScreen(
     onRefresh: () -> Unit = {},
     liveSession: SessionPresentationModel? = null,
     nextSession: SessionPresentationModel? = null,
+    animateCube: Boolean = true,
 ) {
     val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
     val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
@@ -135,6 +136,8 @@ internal fun HomeScreen(
                     nextSession = nextSession,
                     onSessionClick = onSessionClicked,
                     onFeedbackClick = navigateToFeedbackScreen,
+                    showCube = viewState.showCube,
+                    animateCube = animateCube && !isSyncing,
                 )
                 HomeBannerSection(viewState)
                 HomeSpacer()

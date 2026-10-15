@@ -84,6 +84,18 @@ fun rememberShowsNavigationDrawer(): Boolean {
     }
 }
 
+/** A phone in landscape: under 480 dp tall and under 1200 dp wide. A short window on a large screen keeps its rail. */
+@Composable
+fun rememberIsPhoneOnItsSide(): Boolean {
+    val adaptiveInfo = currentWindowAdaptiveInfoV2()
+    return remember(adaptiveInfo) {
+        with(adaptiveInfo.windowSizeClass) {
+            !isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND) &&
+                !isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND)
+        }
+    }
+}
+
 /** A bar drops its logo exactly when the drawer is there to take it, never merely when wide. */
 @Composable
 fun rememberShowsAppBarLogo(): Boolean = !rememberShowsNavigationDrawer()

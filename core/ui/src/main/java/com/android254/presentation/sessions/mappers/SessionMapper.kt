@@ -22,11 +22,12 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
+import ke.droidcon.kotlin.core.common.time.VenueZone
+import ke.droidcon.kotlin.core.common.time.parseApiDateTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -121,15 +122,10 @@ fun getTimePeriod(time: String): FormattedTime {
     )
 }
 
-/**
- * Parses an API session time, which arrives venue-local and without an offset.
- *
- * Returns null rather than epoch zero on failure: the previous fallback made an
- * unparseable time render as a session in 1970.
- */
+/** Venue-local time from either API form, or null rather than epoch zero when unreadable. */
 private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
     try {
-        LocalDateTime.parse(this, API_DATE_TIME)
+        parseApiDateTime(this).toLocalDateTime()
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable session time: %s", this)
         null
@@ -137,7 +133,8 @@ private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
 
 private fun String.toInstant(): Instant? =
     toLocalDateTimeOrNull()
-        ?.toInstant(CONFERENCE_OFFSET)
+        ?.atZone(VenueZone)
+        ?.toInstant()
         ?.toEpochMilli()
         ?.let(Instant::fromEpochMilliseconds)
 
@@ -146,9 +143,5 @@ data class FormattedTime(
     val period: String,
 )
 
-private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 private val CLOCK_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
 private val MERIDIEM: DateTimeFormatter = DateTimeFormatter.ofPattern("a", Locale.US)
-
-/** Session times are venue-local; the API sends them without an offset. */
-private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)

@@ -8,12 +8,13 @@
 
 ---
 
-## Next up — §14, then §12
+## Next up — §14, then §8
 
 What is left of the accessibility audit (§14) is a listening pass by a person: TalkBack, Switch
 Access and a keyboard, on a phone and in two panes. It can run alongside anything else.
 
-The next engineering item is the 3D cube (§12).
+The next engineering item is notifications (§8): channels, local session reminders and a
+preferences screen need no backend. Ticketing (§7) waits on the backend question in §17.2.
 
 ---
 
@@ -115,10 +116,6 @@ litert = { module = "com.google.ai.edge.litert:litert", version.ref = "litert" }
 localagents-fc = { module = "com.google.ai.edge.localagents:localagents-fc", version.ref = "localagents-fc" }
 
 
-# 3D (§12)
-filament-android = { module = "com.google.android.filament:filament-android", version.ref = "filament" }
-filament-utils = { module = "com.google.android.filament:filament-utils-android", version.ref = "filament" }
-filament-gltfio = { module = "com.google.android.filament:gltfio-android", version.ref = "filament" }
 
 [bundles]
 camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-compose"]
@@ -3224,68 +3221,77 @@ Then make sharing produce those links. A shared session is plain text today, bec
 
 ---
 
-## 12. Phase 9 — 3D cube hero
+## 12. Phase 9 — 3D cube hero — what is left
 
-**No dependencies. Decided 2026-10-05: draw it with Compose Canvas, not a 3D engine.**
+The cube is built: `docs/architecture.md` ("Design system") describes it. What remains is one
+measurement, one accessibility call, and the ideas below, which are not started.
 
-### 12.1 What and why
+- **The cube misses the 60 Hz deadline on the Reno4.** `NavigationBenchmark`'s first numbers are
+  in `docs/performance.md` ("Jank between tabs and on the cube"): a frame of the cube takes 19 ms of
+  CPU at the median, 15 ms of it on the RenderThread rasterising ~130 anti-aliased path fills, and
+  the model and Compose cost under 4 ms. Fewer paths is the only lever left. The candidate: render
+  each face's nine stickers once into a bitmap (the painter already draws them in sticker units),
+  then draw each visible sticker as a textured quad under the same projective matrix, which the GPU
+  does natively; keep the per-frame tint and sheen as a colour filter and one alpha quad. That is
+  27–45 texture draws a frame instead of ~130 path fills. Measure with the same benchmark; a
+  p90-under-16 ms assertion goes in once it holds. Smaller wins to take on the way: skip the sheen
+  where `shine` rounds to zero, and the edge stroke on faces in shadow.
+- **A way to pause it.** The loop runs for ever by design. WCAG 2.2.2 asks for a way to pause,
+  stop or hide moving content that runs beside other content for more than five seconds; the OS
+  "Remove animations" switch does rest it, but a control in the app would be the full answer. The
+  natural one is 12.2's first item: once the About cube takes touch, a touch holds it.
 
-A 3D Rubik's cube with faces carrying the conference identity, solving itself on screen. It has
-no functional purpose. Its purpose is that developers screenshot it and post it, and it says
-"this app was made by people who care."
+### 12.1 Where else the cube can go
 
-### 12.2 What the website does, and why the app doesn't copy it
+Ranked by value for effort. All reuse `CubeMotion`, `CubeState` and `CubePainter` as they are; none
+needs new art.
 
-droidcon.co.ke's hero (`components/home/Banner.tsx` in droidconKE2022Web) is a Spline scene: 27
-cubies, a choreographed solve authored to run once over 30 seconds, then replayed every 30
-seconds in alternating directions. It is skipped for reduced-motion users and where WebGL is
-missing, and its replay pauses off screen.
+1. **Sync in progress (S).** While `isSyncing`, Home's cube rests today. Instead, scramble it when a
+   sync starts and solve it when the sync lands: the cube becomes the progress indicator the
+   pull-to-refresh spinner duplicates. `CubeMotion` gains `scramble()` and `solve()` entry points;
+   `HomeScreen` drives them from `isSyncing`.
+2. **Empty and success states (S).** The sessions and bookmarks empty states, and the feedback
+   thank-you, show the cube resting (`animate = false`) in place of the static illustration. One
+   composable each, no new behaviour.
+3. **The widget (M).** `WidgetRefresher` already redraws the home-screen widget after a sync.
+   `CubePainter` can draw into a `Bitmap` off screen, so the widget can carry a still of the cube
+   showing the next session's track face. Glance takes a bitmap; nothing animates.
+4. **Live rail (M).** The "happening now" rail could carry a 48 dp cube that turns a face per live
+   session, each face in the session's venue colour. Needs the projection to accept a colour per
+   face, which `CubeMarks` already keys by face.
 
-The app does not embed it:
-- the scene is downloaded from `prod.spline.design` at runtime, so it needs a network
-  connection, fails offline, and sends a request to a third party on every view;
-- the scene file is opaque, so a pull request cannot review a change to it;
-- a native 3D runtime costs megabytes per ABI, needs a fallback where GLES is missing, and very
-  few contributors could maintain it.
+### 12.2 Easter eggs and play
 
-### 12.3 The build: Compose Canvas
+The cube is a Rubik's cube; people will want to touch it. These build on each other in order.
+None goes on Home, where the hero card is one button that opens the live session; all go on About,
+whose stage is not clickable.
 
-A cube is 27 axis-aligned cubelets. With back faces culled, at most three faces of each are
-visible, so every frame is a few hundred projected quads, which `Canvas` draws easily on every
-supported device. No dependencies.
-
-- **Faces** use the brand palette: blue 700, neon green 500, ink, white, blue 300 and green 300.
-  The centre cubelet of the neon face carries the "con" mark from the wordmark.
-- **Motion** follows the website: a scripted 12-move solve in standard notation, each quarter
-  turn on `MaterialTheme.motionScheme.defaultSpatialSpec()`, then a slow idle yaw. It replays
-  every 30 seconds, alternating direction, as the website does.
-- **Placement:** at the top of the About screen at every window size, and in the trailing half of
-  Home's hero panel on medium and wider windows. Never on a phone's Home, which needs the space
-  for now and next.
-- **Structure:** a pure `CubeState` (positions and orientations) with `apply(move)`, kept apart
-  from the renderer, so the maths is tested without a device.
-
-```kotlin
-// core/designsystem/.../chai/hero/CubeHero.kt
-@Composable
-fun CubeHero(modifier: Modifier = Modifier, moves: List<CubeMove> = SignatureSolve)
-
-data class CubeState(val cubelets: List<Cubelet>) {
-    fun apply(move: CubeMove): CubeState
-}
-```
-
-**Non-negotiables:**
-- Pause when off screen or when the app is not resumed (`LifecycleResumeEffect` plus visibility).
-- Respect reduced motion: show the solved cube at a three-quarter angle, with no animation.
-- `hideFromAccessibility()`, because it is decoration.
-- Never on the startup path. About is never the start destination, and Home only draws it after
-  first content.
-- A Remote Config kill switch, `cube_hero_enabled`, in case it costs battery in the field.
-
-**Tests:** unit tests on `CubeState` (any move applied four times is the identity; a scramble
-followed by its inverse is solved), a Roborazzi golden of the static pose with the clock paused,
-and a macrobenchmark on About showing p90 frame time under 16 ms.
+1. **Drag to spin, tap to twist (M).** A horizontal drag on the stage spins the whole cube
+   (`orientation + Orientation.about(Y, dx)`); vertical drags stay with the scroll. A tap on a sticker
+   twists that layer a quarter. Hit-testing is point-in-quad over `visibleQuads`, which already
+   carries each sticker's face and tile, so the tapped sticker names its `CubeMove`. `CubeMotion`
+   gains an interactive mode that pauses the showcase while touched and resumes after five idle
+   seconds. This is also the pause control above. `CubeMotionTest` covers the mode changes; a
+   screenshot locks a spun pose.
+2. **Solve it (L).** Long-press the About cube to scramble it with ten random moves. Swiping across a
+   sticker turns its layer in the swipe's direction. `CubeState.isSolved` is the win; the click plays
+   and a "You solved the stacks" sheet shows the time. Best time lives in DataStore, shown as a badge
+   on About. Each `CubeMove` is one `Animatable` turn, so the model needs nothing new; the work is
+   the gesture-to-move mapping and the sheet. Gamification hook: a solve unlocks a sticker pack for the
+   share card (§5.5) or a hidden theme; keep the reward visual, not a leaderboard, which needs a backend.
+3. **The cube comes apart (M).** Long-press, or shake, and the 27 cubelets fly out along their home
+   vectors, spinning, then spring back and click into the solved cube. `CubeState` is untouched: an
+   `Explosion` holds a per-cubelet offset and spin that `visibleQuads` applies before projection, and
+   one `Animatable` from 0 to 1 drives all 27 with a spring on the way back. Each cubelet's hidden
+   faces draw while apart, which the cut-plane rule in the projection already allows per cubelet.
+   Make the explosion opt in through the same interactive mode, so it never fires from a scroll.
+4. **Conference streak (L, needs §7).** Fifty-four stickers, fifty-four slots. Every session attended
+   paints a sticker in its track colour, so by the end of day two the cube on About is the attendee's
+   own. Needs an attendance signal (check-in or a session's QR), which is ticketing's; until then,
+   bookmarks could paint it, which is honest only if the UI says "planned", not "attended".
+5. **A secret (S).** Five quick taps on Home's cube flip every mark to its pixel version for the
+   session, or swap the hero to the "Beyond Stacks" stage. Costs nothing; worth it only once 1
+   exists, since Home's card is a button and a tap already opens the live session.
 
 ## 13. Phase 10 — Play Store presence
 
@@ -3620,9 +3626,9 @@ Ranked. Higher items are either prerequisites for lower ones, or buy more per un
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
 | **1** | Accessibility listening pass | §14 | Needs a person, not a contributor slot; can run in parallel with anything. |
-| **2** | 3D cube hero | §12 | Delight with no dependencies; build it once the app is accessible and fast. |
+| **2** | Notifications: channels, local reminders, preferences | §8 | Reminders are the one notification a conference app needs, and none of it waits on the backend. |
 
-Then the product surfaces — ticketing (§7), notifications (§8), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
+Then the other product surfaces — ticketing (§7), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
 The AI section is still deliberately last. It is the most interesting part of this document and it should be built on a codebase that has screenshot tests and a measured startup time, otherwise it becomes the thing blamed when something unrelated regresses.
 
@@ -3671,7 +3677,6 @@ The natural split for a small contributor pool, chosen so people don't collide:
 
 Cross-track dependencies to watch:
 - AI (§6) needs `:core:testing` to test its router.
-- The cube (§12) needs nothing, but lands after §14 so its reduced-motion path is audited with the rest.
 
 ### 16.4 Definition of done, per PR
 
@@ -3701,7 +3706,7 @@ Non-negotiable for every PR in every phase:
 | **Gemma model download over mobile data.** A user pays for 500 MB by accident. | Medium | High | Unmetered-only default, explicit size in the UI, opt-in with a confirmation, cancellable (§6.4). |
 | **Backend isn't ready** for signed tickets, jobs, or bookings. | **High** | Medium | Start the backend conversation during Stage 2, not Stage 3. Every backend-dependent feature has a documented degraded v0. |
 | **Editorial features ship empty.** Job board with no jobs; challenges with no challenges. | High | Medium | Do not build without a named owner who has committed to content (§11.0). |
-| **Cube battery drain** in the field. | Low | Medium | Pause off screen, reduced-motion static pose, and the `cube_hero_enabled` Remote Config switch (§12.3). |
+| **Cube battery drain** in the field. | Low | Medium | Pause off screen, reduced-motion static pose, and the `cube_hero_enabled` Remote Config switch, which reaches installs on their next start. |
 
 ### 17.2 Open questions — need answers from outside engineering
 

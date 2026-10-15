@@ -15,9 +15,7 @@
  */
 package com.android254.data.di
 
-import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.remoteConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +29,7 @@ import javax.inject.Singleton
 object RemoteConfigModule {
     @Provides
     @Singleton
-    fun provideRemoteFeatureToggle(): RemoteFeatureToggle = RemoteFeatureToggle(Firebase.remoteConfig)
+    fun provideRemoteFeatureToggle(remoteConfig: FirebaseRemoteConfig): RemoteFeatureToggle = RemoteFeatureToggle(remoteConfig)
 
     @Provides
     @Singleton

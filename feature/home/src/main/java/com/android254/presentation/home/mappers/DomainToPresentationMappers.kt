@@ -63,6 +63,7 @@ fun Home.toHomeState(
     isSyncing: Boolean,
     now: Instant,
     zone: TimeZone,
+    showCube: Boolean = false,
 ): HomeState {
     val mapped = sessions.map { it.toPresentationModel(now) }
     val presented = sessions.zip(mapped).associate { (session, model) -> session.id to model }
@@ -80,6 +81,7 @@ fun Home.toHomeState(
                 ConferencePhase.DuringEvent, null -> HomeHero.Welcome
             },
         agenda = sessions.agenda(now, zone, presented),
+        showCube = showCube,
     )
 }
 

@@ -52,6 +52,7 @@ import com.android254.presentation.home.viewstate.AgendaDay
 import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
 import com.android254.presentation.models.SessionStatus
+import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.colors.venueAccentColor
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R

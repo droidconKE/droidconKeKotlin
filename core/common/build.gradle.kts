@@ -26,10 +26,6 @@ android {
 dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlin.coroutines.datetime)
-}
 
-// Hilt gives this module a unit-test task, and Gradle 9 fails a test task that finds no tests.
-// There is nothing here to test: a qualifier and two dispatcher providers.
-tasks.withType<Test>().configureEach {
-    failOnNoDiscoveredTests = false
+    testImplementation(libs.bundles.test)
 }

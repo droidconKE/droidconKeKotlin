@@ -35,6 +35,9 @@ size (phone, foldable, tablet, desktop) from `ChaiScreenshotTest.captureFormFact
 overrides the *window* rather than the device so `currentWindowAdaptiveInfo` really sees it.
 Every image loads as a flat grey placeholder with no size, which `ContentScale.Fit` draws as
 nothing; a test of logos overrides `placeholderImage()` with `wideLogoImage()`.
+Goldens recorded on macOS must pass on Linux CI. Paths drawn on a `Canvas` anti-alias a few colour
+levels apart there, so the harness compares loosely inside any node tagged `cube_hero` and exactly
+everywhere else; it finds the cube's bounds in the semantics tree at capture, so tests pass nothing.
 They are outside Gradle's tracked outputs, so after changing anything visual, record with
 `--rerun-tasks` — an up-to-date test task will otherwise leave stale images on disk:
 
@@ -313,8 +316,11 @@ drift from what the API returns, and the mismatch is invisible: the chip highlig
 list goes empty. `SessionsFilterOptionsTest` asserts that no offered option matches zero
 sessions. Keep that test.
 
-**Session times are venue-local.** The API sends them without an offset and they mean
-`Africa/Nairobi`. Use `@ConferenceTimeZone` for absolute times; use the device clock only
+**Session times are venue-local.** The API has sent them two ways, `2025-11-05 08:00:00` with no
+offset, which means `Africa/Nairobi`, and ISO-8601 `2025-11-05T08:00:00+03:00`; the sessions
+mapper, the feed serializer and the presentation formatter all read both, and `SessionTimeParsingTest`
+pins it. A format the API has not sent before fails loudly, so look there first when a fresh install
+shows no sessions. Use `@ConferenceTimeZone` for absolute times; use the device clock only
 for relative ones ("in 20 minutes"). No `SimpleDateFormat` — it is not thread-safe and
 there are none left in production code.
 

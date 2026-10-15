@@ -15,13 +15,33 @@
  */
 package ke.droidcon.kotlin.datasource.remote.utils
 
+import com.google.android.gms.tasks.Task
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import ke.droidcon.kotlin.datasource.remote.R
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 
 class RemoteFeatureToggle(
     private val remoteConfig: FirebaseRemoteConfig,
 ) {
+    private val defaults: Task<Void> = remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+
+    /**
+     * Done once `remote_config_defaults.xml` applies. The defaults load on a background thread, and
+     * until they have, every switch reads as off and the API key as empty.
+     */
+    suspend fun awaitDefaults() {
+        try {
+            withTimeoutOrNull(DEFAULTS_TIMEOUT_MILLIS) { defaults.await() } ?: Timber.w("Remote Config defaults still loading; reading without them")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Timber.w(e, "Remote Config defaults failed to apply")
+        }
+    }
+
     fun sync() {
         remoteConfig
             .fetchAndActivate()
@@ -34,14 +54,24 @@ class RemoteFeatureToggle(
             }
     }
 
+    /**
+     * Waits for the first fetch, since the API key has no usable default, and returns true so the
+     * caller syncs with it. Once fetched, refreshes in the background so switches reach installs.
+     */
     suspend fun syncNowIfEmpty(): Boolean {
-        if (remoteConfig.all.isEmpty()) {
-            remoteConfig.ensureInitialized().await()
+        awaitDefaults()
+        remoteConfig.ensureInitialized().await()
+        if (remoteConfig.info.fetchTimeMillis <= 0L) {
             remoteConfig.fetchAndActivate().await()
             return true
         }
+        sync()
         return false
     }
 
     fun getString(key: String): String = remoteConfig.getString(key)
+
+    fun getBoolean(key: String): Boolean = remoteConfig.getBoolean(key)
 }
+
+private const val DEFAULTS_TIMEOUT_MILLIS = 1_000L

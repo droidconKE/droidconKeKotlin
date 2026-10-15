@@ -41,6 +41,8 @@ jobs:
 
       - name: spotless, ktlint, detekt
         run: ./gradlew spotlessCheck ktlintCheck detekt --continue
+      - name: Cube art matches the designers' SVGs
+        run: python3 core/designsystem/art/cube/generate.py && git diff --exit-code -- core/designsystem/src/main/java/com/droidconke/chai/hero/CubeArt.kt
 
       - name: Android Lint
         run: ./gradlew lint

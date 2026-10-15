@@ -21,6 +21,7 @@ import com.android254.presentation.home.viewstate.HomeHero
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import ke.droidcon.kotlin.core.testing.FakeFeatureFlags
 import ke.droidcon.kotlin.core.testing.FakeSyncWorkManager
 import ke.droidcon.kotlin.core.testing.testSession
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +64,7 @@ class HomeViewModelTest {
             val home = Home()
             coEvery { homeRepo.fetchHomeDetails() } returns flowOf(home)
 
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, TimeZone.UTC, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
 
             val job = launch { viewModel.viewState.collect() }
             runCurrent()
@@ -81,7 +82,7 @@ class HomeViewModelTest {
             val clock = mockk<Clock>(relaxed = true)
 
             val syncDataWorkManagerMock = mockk<FakeSyncWorkManager>(relaxed = true)
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, TimeZone.UTC, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
 
             viewModel.startRefresh()
             advanceUntilIdle()
@@ -102,7 +103,7 @@ class HomeViewModelTest {
             val keynote = testSession("keynote", Instant.parse("2026-11-06T09:00:00+03:00"), Instant.parse("2026-11-06T10:00:00+03:00"))
             coEvery { homeRepo.fetchHomeDetails() } returns flowOf(Home(sessions = listOf(keynote)))
 
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, TimeZone.of("Africa/Nairobi"), testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.of("Africa/Nairobi"), testDispatcher)
             val job = launch { viewModel.viewState.collect() }
             runCurrent()
             assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 2) as HomeHero))
@@ -112,5 +113,23 @@ class HomeViewModelTest {
             runCurrent()
             assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 1) as HomeHero))
             job.cancel()
+        }
+
+    @Test
+    fun `the cube follows its remote switch`() =
+        runTest {
+            val testDispatcher = UnconfinedTestDispatcher(testScheduler)
+            Dispatchers.setMain(testDispatcher)
+            coEvery { homeRepo.fetchHomeDetails() } returns flowOf(Home())
+
+            for (enabled in listOf(true, false)) {
+                val flags = FakeFeatureFlags(cubeHero = enabled)
+                val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, mockk(relaxed = true), flags, TimeZone.UTC, testDispatcher)
+                val job = launch { viewModel.viewState.collect() }
+                runCurrent()
+
+                assertThat(viewModel.viewState.value.showCube, `is`(enabled))
+                job.cancel()
+            }
         }
 }

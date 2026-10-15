@@ -15,6 +15,7 @@
  */
 package com.android254.data.di
 
+import com.android254.data.flags.RemoteFeatureFlags
 import com.android254.data.repos.AuthManager
 import com.android254.data.repos.FeedManager
 import com.android254.data.repos.HomeRepoImpl
@@ -22,6 +23,7 @@ import com.android254.data.repos.OrganizersManager
 import com.android254.data.repos.SessionsManager
 import com.android254.data.repos.SpeakersManager
 import com.android254.data.repos.SponsorsManager
+import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.repos.AuthRepo
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.HomeRepo
@@ -38,6 +40,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepoModule {
+    @Binds
+    @Singleton
+    abstract fun provideFeatureFlags(flags: RemoteFeatureFlags): FeatureFlags
+
     @Binds
     @Singleton
     abstract fun provideAuthRepo(repo: AuthManager): AuthRepo

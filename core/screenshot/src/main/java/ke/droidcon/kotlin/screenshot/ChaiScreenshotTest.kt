@@ -30,11 +30,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.DeviceConfigurationOverride
 import androidx.compose.ui.test.WindowSize
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
@@ -45,6 +47,8 @@ import coil.ImageLoader
 import coil.annotation.ExperimentalCoilApi
 import coil.test.FakeImageLoaderEngine
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.hero.CUBE_HERO_TAG
+import com.droidconke.chai.hero.prepareCubeMarks
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -80,6 +84,11 @@ abstract class ChaiScreenshotTest {
         )
     }
 
+    // The cube cuts its marks in the background and draws them when they land; cut them first, so a
+    // capture never races that.
+    @Before
+    fun cutCubeMarks() = prepareCubeMarks()
+
     /** Sizeless, so `ContentScale.Fit` draws nothing; logo tests use [wideLogoImage]. */
     protected open fun placeholderImage(): Drawable = ColorDrawable(PLACEHOLDER_IMAGE_COLOR)
 
@@ -89,17 +98,17 @@ abstract class ChaiScreenshotTest {
             setSize(WIDE_LOGO_WIDTH_PX, WIDE_LOGO_HEIGHT_PX)
         }
 
-    /** [frameMillis] pauses the clock and captures that far in, for content that never idles. */
+    /** [frameMillis] pauses the clock and captures every variant that far in, for content that never idles. */
     protected fun captureComponent(
         name: String,
         frameMillis: Long? = null,
         content: @Composable () -> Unit,
-    ) = capture(name = name, fillWindow = false, frameMillis = frameMillis, content = content)
+    ) = capture(name, fillWindow = false, frameMillis, content)
 
     protected fun captureScreen(
         name: String,
         content: @Composable () -> Unit,
-    ) = capture(name = name, fillWindow = true, content = content)
+    ) = capture(name, fillWindow = true, content = content)
 
     /**
      * One golden per form factor, in light mode.
@@ -130,11 +139,7 @@ abstract class ChaiScreenshotTest {
             composeRule.waitForIdle()
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
-                roborazziOptions =
-                    RoborazziOptions(
-                        compareOptions =
-                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
-                    ),
+                roborazziOptions = options(),
             )
         }
     }
@@ -171,16 +176,33 @@ abstract class ChaiScreenshotTest {
         ScreenshotVariant.entries.forEach { entry ->
             variant = entry
             composeRule.waitForIdle()
-            frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
+            if (entry == ScreenshotVariant.entries.first()) frameMillis?.let { composeRule.mainClock.advanceTimeBy(it) }
             composeRule.onNodeWithTag(CAPTURE_TAG).captureRoboImage(
                 filePath = "src/test/screenshots/$name/${entry.id}.png",
-                roborazziOptions =
-                    RoborazziOptions(
-                        compareOptions =
-                            RoborazziOptions.CompareOptions(changeThreshold = CHANGE_THRESHOLD),
-                    ),
+                roborazziOptions = options(),
             )
         }
+    }
+
+    /**
+     * Exact everywhere but inside the cube hero, whose anti-aliased path edges land a few colour
+     * levels apart between macOS and Linux CI. Its bounds come from the semantics tree at capture.
+     */
+    private fun options() =
+        RoborazziOptions(
+            compareOptions =
+                RoborazziOptions.CompareOptions(
+                    imageComparator = CubeTolerantComparator(cubeBounds()),
+                    changeThreshold = CHANGE_THRESHOLD,
+                ),
+        )
+
+    private fun cubeBounds(): List<Rect> {
+        val root = composeRule.onNodeWithTag(CAPTURE_TAG).fetchSemanticsNode().boundsInRoot
+        return composeRule
+            .onAllNodesWithTag(CUBE_TAG, useUnmergedTree = true)
+            .fetchSemanticsNodes()
+            .map { it.boundsInRoot.translate(-root.left, -root.top) }
     }
 
     /** The four sizes the `FormFactorPreviews` annotation previews, as window sizes. */
@@ -206,6 +228,7 @@ abstract class ChaiScreenshotTest {
 
     private companion object {
         const val CAPTURE_TAG = "chai_screenshot_capture_root"
+        const val CUBE_TAG = CUBE_HERO_TAG
         const val CHANGE_THRESHOLD = 0.001f
         const val PLACEHOLDER_IMAGE_COLOR = 0xFFBDBDBD.toInt()
         const val WIDE_LOGO_WIDTH_PX = 600

@@ -23,18 +23,24 @@ import org.junit.Test
 class NavigationSuiteTypeTest {
     @Test
     fun `a phone gets the short navigation bar whatever the drawer flag says`() {
-        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Compact, showsDrawer = false))
-        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Compact, showsDrawer = true))
+        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Compact, showsDrawer = false, phoneOnItsSide = false))
+        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Compact, showsDrawer = true, phoneOnItsSide = false))
+    }
+
+    @Test
+    fun `a phone on its side keeps the bottom bar however wide it is`() {
+        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Medium, showsDrawer = false, phoneOnItsSide = true))
+        assertEquals(NavigationSuiteType.ShortNavigationBarCompact, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = false, phoneOnItsSide = true))
     }
 
     @Test
     fun `a tall wide window gets the expanded rail, which is the type that draws the logo header`() {
-        assertEquals(NavigationSuiteType.WideNavigationRailExpanded, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = true))
+        assertEquals(NavigationSuiteType.WideNavigationRailExpanded, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = true, phoneOnItsSide = false))
     }
 
     @Test
     fun `other wider windows get the collapsed rail`() {
-        assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Medium, showsDrawer = false))
-        assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = false))
+        assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Medium, showsDrawer = false, phoneOnItsSide = false))
+        assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = false, phoneOnItsSide = false))
     }
 }

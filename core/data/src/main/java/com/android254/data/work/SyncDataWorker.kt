@@ -21,6 +21,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.android254.data.util.suspendRunCatching
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
@@ -72,7 +73,8 @@ class SyncDataWorker
 
         override suspend fun doWork(): Result =
             withContext(ioDispatcher) {
-                remoteFeatureToggle.syncNowIfEmpty()
+                suspendRunCatching { remoteFeatureToggle.syncNowIfEmpty() }
+                    .onFailure { Timber.w(it, "Feature toggle fetch failed; syncing with cached config") }
                 val syncedSuccessfully =
                     awaitAll(
                         async { sessionsRepo.sync() },

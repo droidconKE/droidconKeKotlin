@@ -21,12 +21,13 @@ public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com
     - navigateToFeedbackScreen: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
+    - animateCube: STABLE (primitive type)
 
 @Composable
 public fun com.android254.presentation.about.view.OrganizingTeamComponent(teamMember: com.android254.presentation.models.OrganizingTeamMember, modifier: androidx.compose.ui.Modifier, onClickMember: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
