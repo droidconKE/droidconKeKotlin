@@ -17,6 +17,8 @@ package com.android254.presentation.notifications
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -47,10 +49,8 @@ fun NotificationsSettingsScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_notifications_title)) },
                 navigationIcon = {
-                    androidx.compose.material.icons.Icons.Default.ArrowBack?.let {
-                        androidx.compose.material3.IconButton(onClick = onNavigateBack) {
-                            androidx.compose.material3.Icon(it, contentDescription = null)
-                        }
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
             )
