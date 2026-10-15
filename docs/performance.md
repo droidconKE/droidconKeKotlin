@@ -233,8 +233,8 @@ with the worst ~10% of frames missing. That is the baseline to improve against.
 ## Jank between tabs and on the cube
 
 `NavigationBenchmark` measures frame timing in two journeys: `switchTabs` taps About, Feed,
-Sessions, About and Home in turn, and `cubeOnAbout` opens About and watches one scene of the
-cube hero. Like `ScrollBenchmark` it runs under `CompilationMode.Ignore()`: `Partial()` would
+Sessions, About and Home in turn, and `cubeOnAbout` watches one scene of the cube hero, with Home's
+load and the move to About done in setup so only the cube is measured. Like `ScrollBenchmark` it runs under `CompilationMode.Ignore()`: `Partial()` would
 measure the state a Play install reaches with the shipped profile, but it needs `cmd package
 compile`, which the Reno4 stubs (see "Two physical devices"), so the numbers are for the fresh
 install the benchmark makes, warmed by its own setup. Run it on a physical phone:
@@ -250,7 +250,7 @@ First numbers, Reno4 (API 31, 60 Hz), release build, 15 iterations each:
 | --- | --- | --- | --- | --- | --- |
 | `switchTabs` | `frameDurationCpuMs` | 18.4 | 24.7 | 29.3 | 37.5 |
 | `switchTabs` | `frameOverrunMs` | +6.4 | +15.3 | +21.9 | +33.0 |
-| `cubeOnAbout`, ~437 frames per run | `frameDurationCpuMs` | 19.2 | 25.2 | 30.1 | 36.8 |
+| `cubeOnAbout`, ~437 frames per run, measured with the move to About included | `frameDurationCpuMs` | 19.2 | 25.2 | 30.1 | 36.8 |
 | `cubeOnAbout` | `frameOverrunMs` | +9.3 | +16.9 | +24.2 | +31.2 |
 
 Against the scroll baseline on the same phone (P50 8.2 ms of CPU, 3.6 ms early), a frame of the

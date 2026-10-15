@@ -22,13 +22,12 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
+import ke.droidcon.kotlin.core.common.time.VenueZone
+import ke.droidcon.kotlin.core.common.time.parseApiDateTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -126,11 +125,7 @@ fun getTimePeriod(time: String): FormattedTime {
 /** Venue-local time from either API form, or null rather than epoch zero when unreadable. */
 private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
     try {
-        when (val parsed = API_DATE_TIME.parseBest(this, OffsetDateTime::from, LocalDateTime::from)) {
-            is OffsetDateTime -> parsed.atZoneSameInstant(CONFERENCE_ZONE).toLocalDateTime()
-            is LocalDateTime -> parsed
-            else -> null
-        }
+        parseApiDateTime(this).toLocalDateTime()
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable session time: %s", this)
         null
@@ -138,7 +133,8 @@ private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
 
 private fun String.toInstant(): Instant? =
     toLocalDateTimeOrNull()
-        ?.toInstant(CONFERENCE_OFFSET)
+        ?.atZone(VenueZone)
+        ?.toInstant()
         ?.toEpochMilli()
         ?.let(Instant::fromEpochMilliseconds)
 
@@ -147,9 +143,5 @@ data class FormattedTime(
     val period: String,
 )
 
-private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]HH:mm:ss[XXX]")
 private val CLOCK_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm", Locale.US)
 private val MERIDIEM: DateTimeFormatter = DateTimeFormatter.ofPattern("a", Locale.US)
-
-private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
-private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")

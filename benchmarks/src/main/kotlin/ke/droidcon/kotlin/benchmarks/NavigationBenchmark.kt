@@ -63,11 +63,12 @@ class NavigationBenchmark {
                 grantNotificationPermission()
                 pressHome()
                 startActivityAndWait()
+                waitForHomeContent()
+                device.requireObject(ABOUT, STARTUP_TIMEOUT_MS).click()
+                device.requireObject("about_screen")
+                device.requireObject("cube_hero")
             },
         ) {
-            device.requireObject(ABOUT, STARTUP_TIMEOUT_MS).click()
-            device.requireObject("about_screen")
-            device.requireObject("cube_hero")
             Thread.sleep(CUBE_SCENE_MS)
         }
 

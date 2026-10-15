@@ -15,6 +15,7 @@
  */
 package ke.droidcon.kotlin.datasource.remote.feed.deserializer
 
+import ke.droidcon.kotlin.core.common.time.parseApiDateTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -22,8 +23,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 /** Reads the API's venue-local form or its ISO-8601 form with an offset, as venue-local time. */
@@ -32,7 +31,6 @@ internal class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
         PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
     private val formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")
-    private val reader = DateTimeFormatter.ofPattern("uuuu-MM-dd['T'][ ]HH:mm:ss[XXX]")
 
     override fun serialize(
         encoder: Encoder,
@@ -41,14 +39,5 @@ internal class LocalDateTimeSerializer : KSerializer<LocalDateTime> {
         encoder.encodeString(value.format(formatter))
     }
 
-    override fun deserialize(decoder: Decoder): LocalDateTime {
-        val text = decoder.decodeString()
-        return when (val parsed = reader.parseBest(text, OffsetDateTime::from, LocalDateTime::from)) {
-            is OffsetDateTime -> parsed.atZoneSameInstant(VENUE).toLocalDateTime()
-            is LocalDateTime -> parsed
-            else -> error("Unreadable feed time: $text")
-        }
-    }
+    override fun deserialize(decoder: Decoder): LocalDateTime = parseApiDateTime(decoder.decodeString()).toLocalDateTime()
 }
-
-private val VENUE: ZoneId = ZoneId.of("Africa/Nairobi")

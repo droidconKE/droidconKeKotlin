@@ -16,17 +16,14 @@
 package com.android254.data.repos.mappers
 
 import com.android254.domain.models.Session
+import ke.droidcon.kotlin.core.common.time.VenueZone
+import ke.droidcon.kotlin.core.common.time.parseApiDateTime
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
 import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import kotlin.time.Instant
 
 fun SessionEntity.toDomainModel() =
@@ -76,27 +73,13 @@ fun SessionDTO.toEntity(): SessionEntity =
         endTimeStamp = fromString(endDateTime),
     )
 
-/** Reads the API's venue-local form or its ISO-8601 form with an offset. */
-fun fromString(dateTime: String): Long {
-    val instant =
-        when (val parsed = API_DATE_TIME.parseBest(dateTime, OffsetDateTime::from, LocalDateTime::from)) {
-            is OffsetDateTime -> parsed.toInstant()
-            is LocalDateTime -> parsed.toInstant(CONFERENCE_OFFSET)
-            else -> error("Unreadable session time: $dateTime")
-        }
-    return instant.toEpochMilli()
-}
+fun fromString(dateTime: String): Long = parseApiDateTime(dateTime).toInstant().toEpochMilli()
 
 /** Day-of-month in the venue's timezone, zero-padded to match the API's format. */
 private fun Long.toEventDay(): String =
     java.time.Instant
         .ofEpochMilli(this)
-        .atZone(CONFERENCE_ZONE)
+        .atZone(VenueZone)
         .dayOfMonth
         .toString()
         .padStart(2, '0')
-
-private val API_DATE_TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd['T'][ ]HH:mm:ss[XXX]")
-
-private val CONFERENCE_OFFSET: ZoneOffset = ZoneOffset.ofHours(3)
-private val CONFERENCE_ZONE: ZoneId = ZoneId.of("Africa/Nairobi")

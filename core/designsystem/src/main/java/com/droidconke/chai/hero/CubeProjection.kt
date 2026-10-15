@@ -191,11 +191,11 @@ private fun Cubelet.quad(
     cut: CubeMove?,
 ): Quad? {
     val isSticker = local.normal.dot(home) == 1
-    val normal = world(local.normal)
-    if (!isSticker && (cut == null || 2 * position[cut.axis] + normal[cut.axis] != cut.layer)) return null
-    val nx = normal.x.toFloat()
-    val ny = normal.y.toFloat()
-    val nz = normal.z.toFloat()
+    if (!isSticker && (cut == null || 2 * position[cut.axis] + worldAlong(local.normal, cut.axis) != cut.layer)) return null
+    val n = local.normal
+    val nx = worldX(n).toFloat()
+    val ny = worldY(n).toFloat()
+    val nz = worldZ(n).toFloat()
     val cx = position.x + nx * HALF
     val cy = position.y + ny * HALF
     val cz = position.z + nz * HALF
@@ -205,14 +205,12 @@ private fun Cubelet.quad(
     val depth = m.z(cx, cy, cz)
     val towardsCamera = -tiltX * m.x(cx, cy, cz) - tiltY * m.y(cx, cy, cz) + light * (CAMERA_DISTANCE - depth)
     if (towardsCamera <= 0f) return null
-    val right = world(local.right)
-    val up = world(local.up)
-    val rx = right.x * HALF
-    val ry = right.y * HALF
-    val rz = right.z * HALF
-    val ux = up.x * HALF
-    val uy = up.y * HALF
-    val uz = up.z * HALF
+    val rx = worldX(local.right) * HALF
+    val ry = worldY(local.right) * HALF
+    val rz = worldZ(local.right) * HALF
+    val ux = worldX(local.up) * HALF
+    val uy = worldY(local.up) * HALF
+    val uz = worldZ(local.up) * HALF
     val xs = FloatArray(4)
     val ys = FloatArray(4)
     for (i in 0 until 4) {
@@ -238,9 +236,18 @@ private fun Cubelet.quad(
 
 private fun Vec3.dot(o: Vec3) = x * o.x + y * o.y + z * o.z
 
-private fun Cubelet.world(v: Vec3) =
-    Vec3(
-        right.x * v.x + up.x * v.y + forward.x * v.z,
-        right.y * v.x + up.y * v.y + forward.y * v.z,
-        right.z * v.x + up.z * v.y + forward.z * v.z,
-    )
+// [v] from the cubelet's frame to the world's, one component at a time so a frame allocates no vectors.
+private fun Cubelet.worldX(v: Vec3) = right.x * v.x + up.x * v.y + forward.x * v.z
+
+private fun Cubelet.worldY(v: Vec3) = right.y * v.x + up.y * v.y + forward.y * v.z
+
+private fun Cubelet.worldZ(v: Vec3) = right.z * v.x + up.z * v.y + forward.z * v.z
+
+private fun Cubelet.worldAlong(
+    v: Vec3,
+    axis: Axis,
+) = when (axis) {
+    Axis.X -> worldX(v)
+    Axis.Y -> worldY(v)
+    Axis.Z -> worldZ(v)
+}
