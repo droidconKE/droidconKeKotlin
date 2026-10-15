@@ -53,7 +53,7 @@ class HomeHeaderSectionComponentTest {
     fun `the welcome title keeps the hero role beside the cube`() {
         show()
 
-        assertEquals(large, fontSizeOf("Welcome to droidcon Kenya"))
+        assertEquals(large, fontSizeOf("Welcome to droidconKenya"))
     }
 
     @Test

@@ -33,7 +33,7 @@
     <string name="no_speakers_found_label">No speakers match your search</string>
     <string name="speaker_sessions_label">Sessions</string>
     <string name="speaker_no_sessions_label">No sessions listed for this speaker</string>
-    <string name="home_header_welcome_label">Welcome to droidcon Kenya</string>
+    <string name="home_header_welcome_label">Welcome to droidconKenya</string>
     <string name="home_header_welcome_subtitle">Africa\'s largest Android developer community</string>
     <string name="home_banner_event_poster_description">Event poster</string>
     <string name="home_banner_call_for_speakers_image_description">Call for speakers</string>
@@ -95,13 +95,13 @@
     <string name="filter_sheet_title">Filter sessions</string>
     <string name="filter_clear">Clear</string>
     <string name="filter_show_sessions">Show sessions</string>
-    <string name="hero_starts_today">droidcon Kenya starts today</string>
+    <string name="hero_starts_today">droidconKenya starts today</string>
     <plurals name="hero_days_to_go">
         <item quantity="one">%d day to go</item>
         <item quantity="other">%d days to go</item>
     </plurals>
     <string name="hero_countdown_label">Star the sessions you want and build your agenda</string>
-    <string name="hero_thank_you">Thanks for coming to droidcon Kenya</string>
+    <string name="hero_thank_you">Thanks for coming to droidconKenya</string>
     <string name="hero_thank_you_action">Tell us how it went</string>
     <string name="agenda_title">Your agenda</string>
     <string name="agenda_today">Today</string>
