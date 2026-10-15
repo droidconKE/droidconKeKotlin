@@ -105,6 +105,7 @@ dependencies {
     implementation(projects.feature.auth)
     implementation(projects.feature.feed)
     implementation(projects.feature.home)
+    implementation(projects.feature.notifications)
     implementation(projects.feature.sessions)
     implementation(projects.feature.speakers)
     implementation(projects.widget)
