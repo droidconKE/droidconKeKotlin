@@ -16,26 +16,22 @@
 package com.android254.presentation.notifications
 
 import androidx.work.WorkManager
-import ke.droidcon.kotlin.core.domain.model.Session
-import ke.droidcon.kotlin.core.domain.model.Speaker
+import com.android254.domain.models.Session
+import com.android254.domain.models.Speaker
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
-@RunWith(RobolectricTestRunner::class)
 class SessionReminderSchedulerTest {
     private lateinit var workManager: WorkManager
     private lateinit var preferencesStore: NotificationPreferencesStore
@@ -44,9 +40,9 @@ class SessionReminderSchedulerTest {
 
     @Before
     fun setUp() {
-        workManager = mock()
-        preferencesStore = mock()
-        clock = mock()
+        workManager = mockk(relaxed = true)
+        preferencesStore = mockk(relaxed = true)
+        clock = mockk(relaxed = true)
         scheduler = SessionReminderScheduler(workManager, preferencesStore, clock)
     }
 
@@ -59,6 +55,7 @@ class SessionReminderSchedulerTest {
     ): Session {
         val now = Instant.parse("2026-11-08T09:00:00Z")
         return Session(
+            id = id,
             remoteId = id,
             title = title,
             description = "Test session",
@@ -66,120 +63,106 @@ class SessionReminderSchedulerTest {
             endInstant = now + startOffset + 1.hours,
             rooms = room,
             speakers = speakers,
-            bookmarked = true,
+            isBookmarked = true,
+            endDateTime = "",
+            endTime = "",
+            isKeynote = false,
+            isServiceSession = false,
+            sessionImage = null,
+            startDateTime = "",
+            startTime = "",
+            sessionFormat = "",
+            sessionLevel = "",
+            slug = "",
+            eventDay = "",
         )
     }
 
     @Test
     fun rescheduleAll_cancelsExistingReminders() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(flowOf(NotificationPreferences()))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(NotificationPreferences())
 
         scheduler.rescheduleAll(emptyList())
 
-        verify(workManager).cancelAllWorkByTag("session_reminder")
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_respectsDisabledPreference() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(
-            flowOf(NotificationPreferences(sessionRemindersEnabled = false))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(
+            NotificationPreferences(sessionRemindersEnabled = false),
         )
 
         val session = createSession()
         scheduler.rescheduleAll(listOf(session))
 
-        // Should cancel existing but not schedule new ones
-        verify(workManager).cancelAllWorkByTag("session_reminder")
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_ignoresPastSessions() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(flowOf(NotificationPreferences()))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(NotificationPreferences())
 
-        val pastSession = createSession(startOffset = (-1).hours)  // Starts in the past
+        val pastSession = createSession(startOffset = (-1).hours)
         scheduler.rescheduleAll(listOf(pastSession))
 
-        // Should cancel but not enqueue anything
-        verify(workManager).cancelAllWorkByTag("session_reminder")
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_schedulesFutureSessionsWithLeadTime() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(
-            flowOf(NotificationPreferences(reminderLeadTimeMinutes = 10))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(
+            NotificationPreferences(reminderLeadTimeMinutes = 10),
         )
 
         val session = createSession(id = "session123", title = "Compose Workshop")
         scheduler.rescheduleAll(listOf(session))
 
-        verify(workManager).cancelAllWorkByTag("session_reminder")
-        // Note: We can't easily verify enqueueUniqueWork without a full WorkManager mock,
-        // but the lack of errors means it was called successfully
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_usesUniqueSessionIds() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(flowOf(NotificationPreferences()))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(NotificationPreferences())
 
         val session1 = createSession(id = "session1")
         val session2 = createSession(id = "session2", startOffset = 3.hours)
 
-        // First schedule
         scheduler.rescheduleAll(listOf(session1, session2))
-
-        // Should use unique IDs: reminder_session1, reminder_session2
-        // Re-scheduling should use REPLACE policy
         scheduler.rescheduleAll(listOf(session2))
 
-        verify(workManager).cancelAllWorkByTag("session_reminder")
-    }
-
-    @Test
-    fun rescheduleAll_respects LeadTime() = runTest {
-        val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(
-            flowOf(NotificationPreferences(reminderLeadTimeMinutes = 30))
-        )
-
-        val session = createSession(startOffset = 35.minutes)
-        // Session starts in 35 minutes, reminder at 30 min lead time means fire in 5 minutes
-        scheduler.rescheduleAll(listOf(session))
-
-        verify(workManager).cancelAllWorkByTag("session_reminder")
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_skipsRemindersWithPastFireTime() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(
-            flowOf(NotificationPreferences(reminderLeadTimeMinutes = 15))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(
+            NotificationPreferences(reminderLeadTimeMinutes = 15),
         )
 
-        // Session starts in 10 minutes, but 15 min lead time would fire in the past
         val session = createSession(startOffset = 10.minutes)
         scheduler.rescheduleAll(listOf(session))
 
-        verify(workManager).cancelAllWorkByTag("session_reminder")
-        // Should cancel but not enqueue (reminder time is in the past)
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 
     @Test
     fun rescheduleAll_multipleSessionsAllScheduled() = runTest {
         val now = Instant.parse("2026-11-08T09:00:00Z")
-        whenever(clock.now()).thenReturn(now)
-        whenever(preferencesStore.preferences).thenReturn(flowOf(NotificationPreferences()))
+        every { clock.now() } returns now
+        every { preferencesStore.preferences } returns flowOf(NotificationPreferences())
 
         val sessions = listOf(
             createSession(id = "s1", title = "Session 1"),
@@ -189,7 +172,6 @@ class SessionReminderSchedulerTest {
 
         scheduler.rescheduleAll(sessions)
 
-        verify(workManager).cancelAllWorkByTag("session_reminder")
-        // All three sessions should be enqueued (no errors = success)
+        verify { workManager.cancelAllWorkByTag("session_reminder") }
     }
 }

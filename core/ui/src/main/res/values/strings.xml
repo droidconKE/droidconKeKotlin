@@ -136,4 +136,9 @@
     <string name="channel_social_feed">Social Feed</string>
     <string name="channel_milestones">Milestones</string>
     <string name="channel_sync">Sync</string>
+
+    <!-- Session Reminder Notifications -->
+    <string name="reminder_title">%s starts soon</string>
+    <string name="reminder_body">In %s · Speakers: %s</string>
+    <string name="reminder_big_text">%s\n\nRoom: %s\nSpeakers: %s</string>
 </resources>

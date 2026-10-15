@@ -15,18 +15,37 @@
  */
 package com.android254.presentation.notifications
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android254.data.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.chai.R as ChaiR
+import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.ui.R
 
 enum class ReminderLeadTime(val minutes: Int) {
@@ -36,21 +55,45 @@ enum class ReminderLeadTime(val minutes: Int) {
     THIRTY(30),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsSettingsScreen(
-    viewModel: NotificationsSettingsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NotificationsSettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    NotificationsSettingsContent(
+        uiState = uiState,
+        onMasterEnabledChange = viewModel::setMasterEnabled,
+        onChannelEnabledChange = viewModel::setChannelEnabled,
+        onReminderLeadTimeChange = viewModel::setReminderLeadTime,
+        onNavigateBack = onNavigateBack,
+        modifier = modifier,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationsSettingsContent(
+    uiState: NotificationsUiState,
+    onMasterEnabledChange: (Boolean) -> Unit,
+    onChannelEnabledChange: (NotificationChannelSpec, Boolean) -> Unit,
+    onReminderLeadTimeChange: (Int) -> Unit,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings_notifications_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(
+                            painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                            contentDescription = stringResource(R.string.back_arrow_icon_description),
+                        )
                     }
                 },
             )
@@ -66,7 +109,7 @@ fun NotificationsSettingsScreen(
             item {
                 SwitchListItem(
                     checked = uiState.masterEnabled,
-                    onCheckedChange = { viewModel.setMasterEnabled(it) },
+                    onCheckedChange = onMasterEnabledChange,
                     headline = { Text(stringResource(R.string.settings_master_toggle)) },
                     supportingText = { Text(stringResource(R.string.settings_master_toggle_description)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -91,7 +134,7 @@ fun NotificationsSettingsScreen(
                     val isEnabled = uiState.channelStates[channel] ?: false
                     SwitchListItem(
                         checked = isEnabled,
-                        onCheckedChange = { viewModel.setChannelEnabled(channel, it) },
+                        onCheckedChange = { onChannelEnabledChange(channel, it) },
                         headline = { Text(getChannelDisplayName(channel)) },
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -120,7 +163,7 @@ fun NotificationsSettingsScreen(
                             ) {
                                 RadioButton(
                                     selected = uiState.reminderLeadTimeMinutes == leadTime.minutes,
-                                    onClick = { viewModel.setReminderLeadTime(leadTime.minutes) },
+                                    onClick = { onReminderLeadTimeChange(leadTime.minutes) },
                                 )
                                 Spacer(modifier = Modifier.padding(start = 8.dp))
                                 Text(
@@ -138,6 +181,29 @@ fun NotificationsSettingsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun SwitchListItem(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    headline: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    supportingText: (@Composable () -> Unit)? = null,
+    enabled: Boolean = true,
+) {
+    ListItem(
+        headlineContent = headline,
+        supportingContent = supportingText,
+        trailingContent = {
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                enabled = enabled,
+            )
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable

@@ -17,14 +17,14 @@ package com.android254.presentation.notifications
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.data.notifications.NotificationChannelSpec
-import com.android254.data.notifications.NotificationPreferences
-import com.android254.data.notifications.SessionReminderScheduler
-import com.android254.domain.repository.SessionsRepo
+import com.android254.domain.repos.SessionsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,12 +38,12 @@ data class NotificationsUiState(
 
 @HiltViewModel
 class NotificationsSettingsViewModel @Inject constructor(
-    private val preferencesStore: NotificationPreferences,
+    private val preferencesStore: NotificationPreferencesStore,
     private val sessionsRepo: SessionsRepo,
     private val sessionReminderScheduler: SessionReminderScheduler,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<NotificationsUiState>(NotificationsUiState())
+    private val _uiState = MutableStateFlow(NotificationsUiState())
     val uiState: StateFlow<NotificationsUiState> = _uiState.asStateFlow()
 
     init {
@@ -52,25 +52,25 @@ class NotificationsSettingsViewModel @Inject constructor(
 
     private fun loadPreferences() {
         viewModelScope.launch {
-            val masterEnabled = preferencesStore.sessionRemindersEnabled()
-            val leadTime = preferencesStore.reminderLeadTime()
-            val channelStates = NotificationChannelSpec.entries.associateWith { channel ->
-                preferencesStore.isChannelEnabled(channel)
-            }
+            preferencesStore.preferences.collect { prefs ->
+                val channelStates = NotificationChannelSpec.entries.associateWith { channel ->
+                    prefs.isChannelEnabled(channel)
+                }
 
-            _uiState.update {
-                it.copy(
-                    masterEnabled = masterEnabled,
-                    reminderLeadTimeMinutes = leadTime,
-                    channelStates = channelStates,
-                )
+                _uiState.update {
+                    it.copy(
+                        masterEnabled = prefs.masterEnabled,
+                        reminderLeadTimeMinutes = prefs.reminderLeadTimeMinutes,
+                        channelStates = channelStates,
+                    )
+                }
             }
         }
     }
 
     fun setMasterEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            preferencesStore.setSessionRemindersEnabled(enabled)
+            preferencesStore.setMasterEnabled(enabled)
             _uiState.update { it.copy(masterEnabled = enabled) }
 
             if (enabled) {
@@ -104,9 +104,8 @@ class NotificationsSettingsViewModel @Inject constructor(
     private suspend fun rescheduleReminders() {
         if (!_uiState.value.masterEnabled) return
 
-        val starredSessions = sessionsRepo.fetchSessions().collect { sessions ->
-            val starred = sessions.filter { it.isBookmarked }
-            sessionReminderScheduler.rescheduleAll(starred)
-        }
+        val sessions = sessionsRepo.fetchSessions().first()
+        val starred = sessions.filter { it.isBookmarked }
+        sessionReminderScheduler.rescheduleAll(starred)
     }
 }
