@@ -16,6 +16,7 @@
 package com.android254.presentation.common.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -60,13 +61,19 @@ fun LogoTile(
     val failed = logo == null
     var logoIsLight by remember(logo) { mutableStateOf<Boolean?>(null) }
     val chaiColors = MaterialTheme.chaiColorsPalette
+    val isInDarkMode = isSystemInDarkTheme()
     val background =
-        when (logoIsLight) {
-            // A light logo needs a dark backing and vice versa; fixed tones so the pairing
-            // holds regardless of whether the app itself is in light or dark theme.
-            true -> chaiColors.contrastDarkSurface
-            false -> chaiColors.contrastLightSurface
-            null -> MaterialTheme.colorScheme.surfaceContainer
+        if (isInDarkMode) {
+            when (logoIsLight) {
+                // A light logo needs a dark backing and vice versa; fixed tones so the pairing
+                // holds regardless of whether the app itself is in light or dark theme.
+                true -> chaiColors.contrastDarkSurface
+                false -> chaiColors.contrastLightSurface
+                null -> MaterialTheme.colorScheme.surfaceContainer
+            }
+        } else {
+            // In light mode, always use the light surface
+            chaiColors.contrastLightSurface
         }
     Box(
         modifier =
