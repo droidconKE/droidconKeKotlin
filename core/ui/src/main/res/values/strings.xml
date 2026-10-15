@@ -114,5 +114,18 @@
         <item quantity="one">and %d more</item>
         <item quantity="other">and %d more</item>
     </plurals>
-    <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
+    <string name="clash_banner_pair">&quot;%1$s&quot; and &quot;%2$s&quot;</string>
+
+    <!-- Notification Settings Screen -->
+    <string name="settings_notifications_title">Notification Settings</string>
+    <string name="settings_master_toggle">Enable Notifications</string>
+    <string name="settings_master_toggle_description">Control all notifications at once</string>
+    <string name="settings_notification_types">Notification Types</string>
+    <string name="settings_reminder_lead_time">Reminder Lead Time</string>
+    <string name="settings_lead_time_5min">5 minutes</string>
+    <string name="settings_lead_time_10min">10 minutes before</string>
+    <string name="settings_lead_time_15min">15 minutes before</string>
+    <string name="settings_lead_time_30min">30 minutes before</string>
+    <string name="settings_request_permission">Enable Notifications</string>
+    <string name="settings_permission_requested">Permission requested. Please check system settings.</string>
 </resources>
