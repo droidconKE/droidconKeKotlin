@@ -31,6 +31,12 @@ public fun com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow
   params:
 
 @Composable
+public fun com.android254.presentation.common.adaptive.rememberIsPhoneOnItsSide(): kotlin.Boolean
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 public fun com.android254.presentation.common.adaptive.rememberIsTabletopPosture(): kotlin.Boolean
   skippable: false
   restartable: false

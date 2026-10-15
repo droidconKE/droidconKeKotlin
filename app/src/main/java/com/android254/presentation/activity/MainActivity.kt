@@ -54,6 +54,7 @@ import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
 import com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow
+import com.android254.presentation.common.adaptive.rememberIsPhoneOnItsSide
 import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
 import com.android254.presentation.common.livesessions.LiveSessionsRail
 import com.android254.presentation.common.livesessions.rememberLiveSessions
@@ -152,7 +153,7 @@ fun MainScreen(
     val activity = LocalActivity.current
     val windowSize = rememberDroidconWindowSize()
     val isMultiPaneWindow = rememberIsMultiPaneWindow()
-    val navigationSuiteType = navigationSuiteTypeFor(windowSize, rememberShowsNavigationDrawer())
+    val navigationSuiteType = navigationSuiteTypeFor(windowSize, rememberShowsNavigationDrawer(), rememberIsPhoneOnItsSide())
 
     val currentRoute = navigationState.currentRoute
     val showNavigation = shouldShowNavigation(currentRoute, isMultiPaneWindow)

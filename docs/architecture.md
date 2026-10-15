@@ -334,9 +334,11 @@ The rules that matter:
   on either. Single-pane content is capped at 840 dp and centred by
   `Modifier.readablePaneWidth()` — 20 dp gutters stretched across a 1600 dp window are not a
   layout. The navigation drawer needs a tall window as well as a wide one: a phone in landscape
-  (891 × 411 dp) is Expanded by width, and a drawer there would take a third of the screen, so it
-  gets a rail. App bars drop their logo only when the drawer is there to carry it — both read
-  `rememberShowsNavigationDrawer()`, so they cannot disagree.
+  (891 × 411 dp) is Expanded by width, and a drawer there would take a third of the screen. Nor
+  does it get a rail: under 480 dp tall it is a phone on its side (`rememberIsPhoneOnItsSide()`),
+  and it keeps the bottom bar, since a rail belongs to large screens and foldables, not to a window
+  that is wide only because it is short. App bars drop their logo only when the drawer is there to
+  carry it — both read `rememberShowsNavigationDrawer()`, so they cannot disagree.
 - **Insets are owned, not inherited.** Screens nest `Scaffold`s — the composition root has one
   for the navigation area, each screen has one for its top bar — and a nested `Scaffold` left
   on its defaults will either double-pad an inset or drop it. So the ownership is explicit: the
