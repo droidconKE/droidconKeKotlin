@@ -226,8 +226,9 @@ migration must fail loudly. Silently dropping the table takes an attendee's book
 sessions — their personal conference agenda — with it. New migrations go in
 `Database.ALL_MIGRATIONS`, and `DatabaseMigrationTest` fails if the fallback ever returns.
 
-**Session times are venue-local.** The API sends them without an offset and they mean
-`Africa/Nairobi`. Use `@ConferenceTimeZone` for absolute times and the device clock only for
+**Session times are venue-local.** The API has sent them two ways, `2025-11-05 08:00:00` with no
+offset, which means `Africa/Nairobi`, and ISO-8601 `2025-11-05T08:00:00+03:00`; the sessions
+mapper, the feed serializer and the presentation formatter all read both. Use `@ConferenceTimeZone` for absolute times and the device clock only for
 relative ones ("in 20 minutes"). There is no `SimpleDateFormat` in production code and there
 should not be — it is not thread-safe.
 
