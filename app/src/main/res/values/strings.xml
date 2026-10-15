@@ -17,4 +17,9 @@
     <string name="channel_milestones_desc">Post-conference recap and next year\'s call for papers</string>
     <string name="channel_sync">Sync Progress</string>
     <string name="channel_sync_desc">Background data synchronization</string>
+
+    <!-- Session Reminder Notifications -->
+    <string name="reminder_title">%s starts soon</string>
+    <string name="reminder_body">In %s · Speakers: %s</string>
+    <string name="reminder_big_text">%s\n\nRoom: %s\nSpeakers: %s</string>
 </resources>
