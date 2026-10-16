@@ -34,7 +34,10 @@ class NotificationPreferencesStoreTest {
             setMasterEnabledSync(enabled)
         }
 
-        override suspend fun setChannelEnabled(channel: NotificationChannelSpec, enabled: Boolean) {
+        override suspend fun setChannelEnabled(
+            channel: NotificationChannelSpec,
+            enabled: Boolean,
+        ) {
             setChannelEnabledSync(channel, enabled)
         }
 
@@ -46,15 +49,19 @@ class NotificationPreferencesStoreTest {
             currentPreferences = currentPreferences.copy(masterEnabled = enabled)
         }
 
-        fun setChannelEnabledSync(channel: NotificationChannelSpec, enabled: Boolean) {
-            currentPreferences = when (channel) {
-                NotificationChannelSpec.SessionReminders -> currentPreferences.copy(sessionRemindersEnabled = enabled)
-                NotificationChannelSpec.ScheduleChanges -> currentPreferences.copy(scheduleChangesEnabled = enabled)
-                NotificationChannelSpec.Announcements -> currentPreferences.copy(announcementsEnabled = enabled)
-                NotificationChannelSpec.SocialFeed -> currentPreferences.copy(socialFeedEnabled = enabled)
-                NotificationChannelSpec.Milestones -> currentPreferences.copy(milestonesEnabled = enabled)
-                NotificationChannelSpec.Sync -> currentPreferences.copy(syncEnabled = enabled)
-            }
+        fun setChannelEnabledSync(
+            channel: NotificationChannelSpec,
+            enabled: Boolean,
+        ) {
+            currentPreferences =
+                when (channel) {
+                    NotificationChannelSpec.SessionReminders -> currentPreferences.copy(sessionRemindersEnabled = enabled)
+                    NotificationChannelSpec.ScheduleChanges -> currentPreferences.copy(scheduleChangesEnabled = enabled)
+                    NotificationChannelSpec.Announcements -> currentPreferences.copy(announcementsEnabled = enabled)
+                    NotificationChannelSpec.SocialFeed -> currentPreferences.copy(socialFeedEnabled = enabled)
+                    NotificationChannelSpec.Milestones -> currentPreferences.copy(milestonesEnabled = enabled)
+                    NotificationChannelSpec.Sync -> currentPreferences.copy(syncEnabled = enabled)
+                }
         }
 
         fun setReminderLeadTimeSync(minutes: Int) {
@@ -214,7 +221,7 @@ class NotificationPreferencesStoreTest {
         val prefs = store.getCurrentPreferences()
         assertFalse(
             prefs.isChannelEnabled(NotificationChannelSpec.SessionReminders),
-            "Channel should be disabled when master is off, regardless of channel toggle"
+            "Channel should be disabled when master is off, regardless of channel toggle",
         )
     }
 
@@ -227,7 +234,7 @@ class NotificationPreferencesStoreTest {
         val prefs = store.getCurrentPreferences()
         assertFalse(
             prefs.isChannelEnabled(NotificationChannelSpec.SessionReminders),
-            "Channel should be disabled when its toggle is off"
+            "Channel should be disabled when its toggle is off",
         )
     }
 
@@ -240,7 +247,7 @@ class NotificationPreferencesStoreTest {
         val prefs = store.getCurrentPreferences()
         assertTrue(
             prefs.isChannelEnabled(NotificationChannelSpec.SessionReminders),
-            "Channel should be enabled when both master and channel toggle are on"
+            "Channel should be enabled when both master and channel toggle are on",
         )
     }
 }
