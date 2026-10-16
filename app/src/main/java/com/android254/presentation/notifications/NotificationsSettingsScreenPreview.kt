@@ -22,7 +22,7 @@ import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 
 @Preview(device = "spec:width=411dp,height=891dp")
 @Composable
-private fun NotificationsSettingsScreen_Phone_Light() {
+private fun NotificationsSettingsPhonePreview() {
     ChaiTheme {
         NotificationsSettingsContent(
             uiState =
@@ -41,7 +41,7 @@ private fun NotificationsSettingsScreen_Phone_Light() {
 
 @Preview(device = "spec:width=1280dp,height=800dp")
 @Composable
-private fun NotificationsSettingsScreen_Tablet() {
+private fun NotificationsSettingsTabletPreview() {
     ChaiTheme {
         NotificationsSettingsContent(
             uiState =

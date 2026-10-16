@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,20 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.insets.DroidconWindowInsets
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.core.notifications.preferences.ReminderLeadTime
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
-
-enum class ReminderLeadTime(
-    val minutes: Int,
-) {
-    FIVE(5),
-    TEN(10),
-    FIFTEEN(15),
-    THIRTY(30),
-}
 
 @Composable
 fun NotificationsSettingsScreen(
@@ -100,12 +94,14 @@ fun NotificationsSettingsContent(
                 },
             )
         },
+        contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         LazyColumn(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(paddingValues),
+                    .padding(paddingValues)
+                    .consumeWindowInsets(paddingValues),
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -213,10 +209,10 @@ private fun SwitchListItem(
 @Composable
 private fun getLeadTimeLabel(leadTime: ReminderLeadTime): String =
     when (leadTime) {
-        ReminderLeadTime.FIVE -> stringResource(R.string.settings_lead_time_5min)
-        ReminderLeadTime.TEN -> stringResource(R.string.settings_lead_time_10min)
-        ReminderLeadTime.FIFTEEN -> stringResource(R.string.settings_lead_time_15min)
-        ReminderLeadTime.THIRTY -> stringResource(R.string.settings_lead_time_30min)
+        ReminderLeadTime.Five -> stringResource(R.string.settings_lead_time_5min)
+        ReminderLeadTime.Ten -> stringResource(R.string.settings_lead_time_10min)
+        ReminderLeadTime.Fifteen -> stringResource(R.string.settings_lead_time_15min)
+        ReminderLeadTime.Thirty -> stringResource(R.string.settings_lead_time_30min)
     }
 
 @Composable
