@@ -18,23 +18,18 @@ package com.android254.presentation.notifications
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MessagingService : FirebaseMessagingService() {
     @Inject
-    lateinit var notificationManager: DroidconNotificationManager
+    lateinit var handler: PushPayloadHandler
 
+    // FCM calls this off the main thread and may stop the service once it returns, so the
+    // payload is handled before returning rather than in a scope that could outlive the service.
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-
-        notificationManager.createNotificationChannel("All")
-
-        message.data["message"]?.let { notificationMessage ->
-            notificationManager.showNotification(
-                message = notificationMessage,
-                title = message.data["title"].toString(),
-            )
-        }
+        runBlocking { handler.dispatch(message.data) }
     }
 }
