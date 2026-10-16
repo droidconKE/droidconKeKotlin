@@ -74,7 +74,10 @@ private fun relativeLuminance(color: Color): Double {
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
 }
 
-private fun wcagContrastRatio(lum1: Double, lum2: Double): Double {
+private fun wcagContrastRatio(
+    lum1: Double,
+    lum2: Double,
+): Double {
     val lighter = maxOf(lum1, lum2)
     val darker = minOf(lum1, lum2)
     return (lighter + 0.05) / (darker + 0.05)
