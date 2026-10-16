@@ -50,18 +50,30 @@ const val PAYLOAD_KEY = "payload"
 
 /** Decodes the payload in an FCM message's [data] and handles it; drops what it cannot read. */
 suspend fun PushPayloadHandler.dispatch(data: Map<String, String>) {
-    val json =
-        data[PAYLOAD_KEY] ?: run {
-            Timber.w("FCM message has no '$PAYLOAD_KEY' field; dropped")
-            return
-        }
+    val json = data[PAYLOAD_KEY]
     val payload =
-        PushPayload.decodeOrNull(json) ?: run {
-            Timber.w("FCM payload is malformed or of an unknown type; dropped")
-            return
+        if (json != null) {
+            PushPayload.decodeOrNull(json) ?: run {
+                Timber.w("FCM payload is malformed or of an unknown type; dropped")
+                return
+            }
+        } else {
+            legacyAnnouncement(data) ?: run {
+                Timber.w("FCM message has neither '$PAYLOAD_KEY' nor '$LEGACY_MESSAGE_KEY'; dropped")
+                return
+            }
         }
     handle(payload)
 }
+
+private const val LEGACY_TITLE_KEY = "title"
+private const val LEGACY_MESSAGE_KEY = "message"
+
+// The format before typed payloads, kept so pushes still arrive while the backend moves over.
+private fun legacyAnnouncement(data: Map<String, String>): PushPayload.Announcement? =
+    data[LEGACY_MESSAGE_KEY]?.let { message ->
+        PushPayload.Announcement(title = data[LEGACY_TITLE_KEY].orEmpty(), body = message)
+    }
 
 /**
  * Posts each payload on its own channel, honouring the user's notification preferences.

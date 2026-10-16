@@ -39,9 +39,18 @@ class MessageDataDispatchTest {
         }
 
     @Test
-    fun `a message with no payload field is dropped`() =
+    fun `a message in the old title and message format is still shown as an announcement`() =
         runTest {
             handler.dispatch(mapOf("title" to "Old format", "message" to "hello"))
+
+            assertEquals(listOf(PushPayload.Announcement("Old format", "hello")), handled)
+        }
+
+    @Test
+    fun `a message with neither a payload nor a message is dropped`() =
+        runTest {
+            handler.dispatch(mapOf("title" to "No body"))
+            handler.dispatch(emptyMap())
 
             assertTrue(handled.isEmpty())
         }
