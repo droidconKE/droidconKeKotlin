@@ -16,6 +16,7 @@
 package com.android254.presentation.activity
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -58,12 +59,14 @@ import com.android254.presentation.common.adaptive.rememberIsPhoneOnItsSide
 import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
 import com.android254.presentation.common.livesessions.LiveSessionsRail
 import com.android254.presentation.common.livesessions.rememberLiveSessions
+import com.android254.presentation.common.navigation.DeepLinkEffect
 import com.android254.presentation.common.navigation.DroidconDrawerHeader
 import com.android254.presentation.common.navigation.DroidconNavigationItems
 import com.android254.presentation.common.navigation.Navigation
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
+import com.android254.presentation.common.navigation.deepLinkFrom
 import com.android254.presentation.common.navigation.droidconEntryProvider
 import com.android254.presentation.common.navigation.droidconNavigationSuiteColors
 import com.android254.presentation.common.navigation.navigationSuiteTypeFor
@@ -79,6 +82,9 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
+    /** A notification's destination, waiting for the navigation to open it. */
+    private var pendingDeepLink by mutableStateOf<Screens?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         enableEdgeToEdge()
@@ -90,14 +96,27 @@ class MainActivity : ComponentActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
 
+        // A restored activity already navigated to its link before it was destroyed.
+        if (savedInstanceState == null) pendingDeepLink = deepLinkFrom(intent)
+
         setContent {
             ChaiTheme {
-                MainScreen(viewModel = viewModel)
+                MainScreen(
+                    viewModel = viewModel,
+                    deepLink = pendingDeepLink,
+                    onDeepLinkHandled = { pendingDeepLink = null },
+                )
             }
         }
 
         // Should move to the first bookmark: a launch-time prompt with no context gets denied.
         askNotificationPermission()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        deepLinkFrom(intent)?.let { pendingDeepLink = it }
     }
 
     private val requestPermissionLauncher =
@@ -131,6 +150,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
+    deepLink: Screens? = null,
+    onDeepLinkHandled: () -> Unit = {},
 ) {
     val navigationState =
         rememberNavigationState(
@@ -138,6 +159,7 @@ fun MainScreen(
             topLevelRoutes = bottomNavigationSet,
         )
     val navController = remember { NavigationController(navigationState) }
+    DeepLinkEffect(deepLink = deepLink, navController = navController, onHandled = onDeepLinkHandled)
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
         mutableStateOf(false)
