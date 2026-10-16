@@ -25,11 +25,12 @@ import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 private fun NotificationsSettingsScreen_Phone_Light() {
     ChaiTheme {
         NotificationsSettingsContent(
-            uiState = NotificationsUiState(
-                masterEnabled = true,
-                channelStates = NotificationChannelSpec.entries.associateWith { true },
-                reminderLeadTimeMinutes = 10,
-            ),
+            uiState =
+                NotificationsUiState(
+                    masterEnabled = true,
+                    channelStates = NotificationChannelSpec.entries.associateWith { true },
+                    reminderLeadTimeMinutes = 10,
+                ),
             onMasterEnabledChange = {},
             onChannelEnabledChange = { _, _ -> },
             onReminderLeadTimeChange = {},
@@ -43,11 +44,12 @@ private fun NotificationsSettingsScreen_Phone_Light() {
 private fun NotificationsSettingsScreen_Tablet() {
     ChaiTheme {
         NotificationsSettingsContent(
-            uiState = NotificationsUiState(
-                masterEnabled = true,
-                channelStates = NotificationChannelSpec.entries.associateWith { true },
-                reminderLeadTimeMinutes = 10,
-            ),
+            uiState =
+                NotificationsUiState(
+                    masterEnabled = true,
+                    channelStates = NotificationChannelSpec.entries.associateWith { true },
+                    reminderLeadTimeMinutes = 10,
+                ),
             onMasterEnabledChange = {},
             onChannelEnabledChange = { _, _ -> },
             onReminderLeadTimeChange = {},

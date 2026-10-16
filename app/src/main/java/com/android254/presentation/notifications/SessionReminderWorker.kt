@@ -34,69 +34,76 @@ import timber.log.Timber
 /**
  * WorkManager worker that posts session reminder notifications.
  */
-class SessionReminderWorker @AssistedInject constructor(
-    @Assisted private val appContext: Context,
-    @Assisted private val params: WorkerParameters,
-) : CoroutineWorker(appContext, params) {
+class SessionReminderWorker
+    @AssistedInject
+    constructor(
+        @Assisted private val appContext: Context,
+        @Assisted private val params: WorkerParameters,
+    ) : CoroutineWorker(appContext, params) {
+        @SuppressLint("MissingPermission")
+        override suspend fun doWork(): Result =
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val hasPermission =
+                        appContext.checkSelfPermission(
+                            android.Manifest.permission.POST_NOTIFICATIONS,
+                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                    if (!hasPermission) {
+                        Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
+                        return Result.success()
+                    }
+                }
 
-    @SuppressLint("MissingPermission")
-    override suspend fun doWork(): Result = try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val hasPermission = appContext.checkSelfPermission(
-                android.Manifest.permission.POST_NOTIFICATIONS,
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-            if (!hasPermission) {
-                Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
-                return Result.success()
+                val sessionId =
+                    inputData.getString(KEY_SESSION_ID)
+                        ?: return Result.failure().also { Timber.e("Missing session ID") }
+                val title =
+                    inputData.getString(KEY_TITLE)
+                        ?: return Result.failure().also { Timber.e("Missing session title") }
+                val room = inputData.getString(KEY_ROOM).orEmpty()
+                val speakers = inputData.getString(KEY_SPEAKERS).orEmpty()
+
+                val deepLink = Uri.parse("droidconke://session/$sessionId")
+                val contentIntent =
+                    android.app.PendingIntent.getActivity(
+                        appContext,
+                        sessionId.hashCode(),
+                        Intent(Intent.ACTION_VIEW, deepLink).setPackage(appContext.packageName),
+                        android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT,
+                    )
+
+                val notification =
+                    NotificationCompat
+                        .Builder(
+                            appContext,
+                            NotificationChannelSpec.SessionReminders.id,
+                        ).setSmallIcon(android.R.drawable.ic_dialog_info)
+                        .setContentTitle(appContext.getString(R.string.reminder_title, title))
+                        .setContentText(appContext.getString(R.string.reminder_body, room, speakers))
+                        .setStyle(
+                            NotificationCompat.BigTextStyle().bigText(
+                                appContext.getString(R.string.reminder_big_text, title, room, speakers),
+                            ),
+                        ).setContentIntent(contentIntent)
+                        .setAutoCancel(true)
+                        .setCategory(NotificationCompat.CATEGORY_EVENT)
+                        .build()
+
+                NotificationManagerCompat
+                    .from(appContext)
+                    .notify(sessionId.hashCode(), notification)
+
+                Timber.d("Posted reminder notification for session $sessionId")
+                Result.success()
+            } catch (e: Exception) {
+                Timber.e(e, "Error posting session reminder")
+                Result.retry()
             }
+
+        companion object {
+            const val KEY_SESSION_ID = "session_id"
+            const val KEY_TITLE = "title"
+            const val KEY_ROOM = "room"
+            const val KEY_SPEAKERS = "speakers"
         }
-
-        val sessionId = inputData.getString(KEY_SESSION_ID)
-            ?: return Result.failure().also { Timber.e("Missing session ID") }
-        val title = inputData.getString(KEY_TITLE)
-            ?: return Result.failure().also { Timber.e("Missing session title") }
-        val room = inputData.getString(KEY_ROOM).orEmpty()
-        val speakers = inputData.getString(KEY_SPEAKERS).orEmpty()
-
-        val deepLink = Uri.parse("droidconke://session/$sessionId")
-        val contentIntent = android.app.PendingIntent.getActivity(
-            appContext,
-            sessionId.hashCode(),
-            Intent(Intent.ACTION_VIEW, deepLink).setPackage(appContext.packageName),
-            android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-
-        val notification = NotificationCompat.Builder(
-            appContext,
-            NotificationChannelSpec.SessionReminders.id,
-        )
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle(appContext.getString(R.string.reminder_title, title))
-            .setContentText(appContext.getString(R.string.reminder_body, room, speakers))
-            .setStyle(
-                NotificationCompat.BigTextStyle().bigText(
-                    appContext.getString(R.string.reminder_big_text, title, room, speakers),
-                ),
-            )
-            .setContentIntent(contentIntent)
-            .setAutoCancel(true)
-            .setCategory(NotificationCompat.CATEGORY_EVENT)
-            .build()
-
-        NotificationManagerCompat.from(appContext)
-            .notify(sessionId.hashCode(), notification)
-
-        Timber.d("Posted reminder notification for session $sessionId")
-        Result.success()
-    } catch (e: Exception) {
-        Timber.e(e, "Error posting session reminder")
-        Result.retry()
     }
-
-    companion object {
-        const val KEY_SESSION_ID = "session_id"
-        const val KEY_TITLE = "title"
-        const val KEY_ROOM = "room"
-        const val KEY_SPEAKERS = "speakers"
-    }
-}

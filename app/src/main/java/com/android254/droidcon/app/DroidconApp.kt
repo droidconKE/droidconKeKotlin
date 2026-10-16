@@ -16,8 +16,8 @@
 package com.android254.droidcon.app
 
 import android.app.Application
-import com.android254.domain.work.SyncDataWorkManager
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
 import com.android254.presentation.notifications.SessionReminderScheduler
 import dagger.hilt.android.HiltAndroidApp
@@ -54,13 +54,13 @@ class DroidconApp : Application() {
         syncDataWorkManager.startSync()
 
         // Reschedule reminders whenever starred sessions change
-        sessionsRepository.fetchSessions()
+        sessionsRepository
+            .fetchSessions()
             .map { sessions -> sessions.filter { it.isBookmarked } }
             .distinctUntilChanged()
             .onEach { starredSessions ->
                 sessionReminderScheduler.rescheduleAll(starredSessions)
-            }
-            .launchIn(CoroutineScope(Dispatchers.Default + Job()))
+            }.launchIn(CoroutineScope(Dispatchers.Default + Job()))
     }
 
     private fun initTimber() =

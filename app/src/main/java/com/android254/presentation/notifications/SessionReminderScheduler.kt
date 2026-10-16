@@ -33,65 +33,65 @@ import kotlin.time.toJavaDuration
  * Orchestrates WorkManager scheduling for session reminders.
  */
 @Singleton
-class SessionReminderScheduler @Inject constructor(
-    private val workManager: WorkManager,
-    private val preferencesStore: NotificationPreferencesStore,
-    private val clock: Clock,
-) {
-    suspend fun rescheduleAll(starredSessions: List<Session>) {
-        workManager.cancelAllWorkByTag(TAG_SESSION_REMINDER)
+class SessionReminderScheduler
+    @Inject
+    constructor(
+        private val workManager: WorkManager,
+        private val preferencesStore: NotificationPreferencesStore,
+        private val clock: Clock,
+    ) {
+        suspend fun rescheduleAll(starredSessions: List<Session>) {
+            workManager.cancelAllWorkByTag(TAG_SESSION_REMINDER)
 
-        val prefs = preferencesStore.preferences.first()
+            val prefs = preferencesStore.preferences.first()
 
-        if (!prefs.sessionRemindersEnabled) {
-            Timber.d("Session reminders disabled; not scheduling")
-            return
+            if (!prefs.sessionRemindersEnabled) {
+                Timber.d("Session reminders disabled; not scheduling")
+                return
+            }
+
+            val leadTime = prefs.reminderLeadTimeMinutes.minutes
+            val now = clock.now()
+
+            starredSessions
+                .mapNotNull { session ->
+                    val startTime = session.startInstant ?: return@mapNotNull null
+                    if (startTime > now) session else null
+                }.forEach { session ->
+                    val fireAt = session.startInstant!! - leadTime
+
+                    if (fireAt > now) {
+                        val delay = fireAt - now
+
+                        Timber.d(
+                            "Scheduling reminder for session ${session.remoteId} at $fireAt " +
+                                "(delay: $delay)",
+                        )
+
+                        workManager.enqueueUniqueWork(
+                            "reminder_${session.remoteId}",
+                            ExistingWorkPolicy.REPLACE,
+                            OneTimeWorkRequestBuilder<SessionReminderWorker>()
+                                .setInitialDelay(delay.toJavaDuration())
+                                .addTag(TAG_SESSION_REMINDER)
+                                .setInputData(
+                                    workDataOf(
+                                        SessionReminderWorker.KEY_SESSION_ID to session.remoteId,
+                                        SessionReminderWorker.KEY_TITLE to session.title,
+                                        SessionReminderWorker.KEY_ROOM to session.rooms,
+                                        SessionReminderWorker.KEY_SPEAKERS to session.speakers.joinToString { it.name },
+                                    ),
+                                ).build(),
+                        )
+                    } else {
+                        Timber.d("Reminder time for session ${session.remoteId} is in the past; skipping")
+                    }
+                }
+
+            Timber.d("Scheduled ${starredSessions.size} reminders")
         }
 
-        val leadTime = prefs.reminderLeadTimeMinutes.minutes
-        val now = clock.now()
-
-        starredSessions
-            .mapNotNull { session ->
-                val startTime = session.startInstant ?: return@mapNotNull null
-                if (startTime > now) session else null
-            }
-            .forEach { session ->
-                val fireAt = session.startInstant!! - leadTime
-
-                if (fireAt > now) {
-                    val delay = fireAt - now
-
-                    Timber.d(
-                        "Scheduling reminder for session ${session.remoteId} at $fireAt " +
-                            "(delay: $delay)",
-                    )
-
-                    workManager.enqueueUniqueWork(
-                        "reminder_${session.remoteId}",
-                        ExistingWorkPolicy.REPLACE,
-                        OneTimeWorkRequestBuilder<SessionReminderWorker>()
-                            .setInitialDelay(delay.toJavaDuration())
-                            .addTag(TAG_SESSION_REMINDER)
-                            .setInputData(
-                                workDataOf(
-                                    SessionReminderWorker.KEY_SESSION_ID to session.remoteId,
-                                    SessionReminderWorker.KEY_TITLE to session.title,
-                                    SessionReminderWorker.KEY_ROOM to session.rooms,
-                                    SessionReminderWorker.KEY_SPEAKERS to session.speakers.joinToString { it.name },
-                                ),
-                            )
-                            .build(),
-                    )
-                } else {
-                    Timber.d("Reminder time for session ${session.remoteId} is in the past; skipping")
-                }
-            }
-
-        Timber.d("Scheduled ${starredSessions.size} reminders")
+        companion object {
+            private const val TAG_SESSION_REMINDER = "session_reminder"
+        }
     }
-
-    companion object {
-        private const val TAG_SESSION_REMINDER = "session_reminder"
-    }
-}

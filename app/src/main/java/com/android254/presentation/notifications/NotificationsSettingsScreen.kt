@@ -44,11 +44,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ke.droidcon.kotlin.chai.R as ChaiR
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.ui.R
+import ke.droidcon.kotlin.chai.R as ChaiR
 
-enum class ReminderLeadTime(val minutes: Int) {
+enum class ReminderLeadTime(
+    val minutes: Int,
+) {
     FIVE(5),
     TEN(10),
     FIFTEEN(15),
@@ -100,9 +102,10 @@ fun NotificationsSettingsContent(
         },
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues),
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -156,9 +159,10 @@ fun NotificationsSettingsContent(
                     Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                         ReminderLeadTime.entries.forEach { leadTime ->
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 RadioButton(
@@ -207,18 +211,17 @@ private fun SwitchListItem(
 }
 
 @Composable
-private fun getLeadTimeLabel(leadTime: ReminderLeadTime): String {
-    return when (leadTime) {
+private fun getLeadTimeLabel(leadTime: ReminderLeadTime): String =
+    when (leadTime) {
         ReminderLeadTime.FIVE -> stringResource(R.string.settings_lead_time_5min)
         ReminderLeadTime.TEN -> stringResource(R.string.settings_lead_time_10min)
         ReminderLeadTime.FIFTEEN -> stringResource(R.string.settings_lead_time_15min)
         ReminderLeadTime.THIRTY -> stringResource(R.string.settings_lead_time_30min)
     }
-}
 
 @Composable
-private fun getChannelDisplayName(channel: NotificationChannelSpec): String {
-    return when (channel) {
+private fun getChannelDisplayName(channel: NotificationChannelSpec): String =
+    when (channel) {
         NotificationChannelSpec.SessionReminders -> stringResource(R.string.channel_session_reminders)
         NotificationChannelSpec.ScheduleChanges -> stringResource(R.string.channel_schedule_changes)
         NotificationChannelSpec.Announcements -> stringResource(R.string.channel_announcements)
@@ -226,4 +229,3 @@ private fun getChannelDisplayName(channel: NotificationChannelSpec): String {
         NotificationChannelSpec.Milestones -> stringResource(R.string.channel_milestones)
         NotificationChannelSpec.Sync -> stringResource(R.string.channel_sync)
     }
-}

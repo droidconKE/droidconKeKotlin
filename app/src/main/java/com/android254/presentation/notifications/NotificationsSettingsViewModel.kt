@@ -37,75 +37,81 @@ data class NotificationsUiState(
 )
 
 @HiltViewModel
-class NotificationsSettingsViewModel @Inject constructor(
-    private val preferencesStore: NotificationPreferencesStore,
-    private val sessionsRepo: SessionsRepo,
-    private val sessionReminderScheduler: SessionReminderScheduler,
-) : ViewModel() {
+class NotificationsSettingsViewModel
+    @Inject
+    constructor(
+        private val preferencesStore: NotificationPreferencesStore,
+        private val sessionsRepo: SessionsRepo,
+        private val sessionReminderScheduler: SessionReminderScheduler,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(NotificationsUiState())
+        val uiState: StateFlow<NotificationsUiState> = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(NotificationsUiState())
-    val uiState: StateFlow<NotificationsUiState> = _uiState.asStateFlow()
+        init {
+            loadPreferences()
+        }
 
-    init {
-        loadPreferences()
-    }
+        private fun loadPreferences() {
+            viewModelScope.launch {
+                preferencesStore.preferences.collect { prefs ->
+                    val channelStates =
+                        NotificationChannelSpec.entries.associateWith { channel ->
+                            prefs.isChannelEnabled(channel)
+                        }
 
-    private fun loadPreferences() {
-        viewModelScope.launch {
-            preferencesStore.preferences.collect { prefs ->
-                val channelStates = NotificationChannelSpec.entries.associateWith { channel ->
-                    prefs.isChannelEnabled(channel)
+                    _uiState.update {
+                        it.copy(
+                            masterEnabled = prefs.masterEnabled,
+                            reminderLeadTimeMinutes = prefs.reminderLeadTimeMinutes,
+                            channelStates = channelStates,
+                        )
+                    }
                 }
+            }
+        }
 
-                _uiState.update {
-                    it.copy(
-                        masterEnabled = prefs.masterEnabled,
-                        reminderLeadTimeMinutes = prefs.reminderLeadTimeMinutes,
-                        channelStates = channelStates,
+        fun setMasterEnabled(enabled: Boolean) {
+            viewModelScope.launch {
+                preferencesStore.setMasterEnabled(enabled)
+                _uiState.update { it.copy(masterEnabled = enabled) }
+
+                if (enabled) {
+                    rescheduleReminders()
+                }
+            }
+        }
+
+        fun setChannelEnabled(
+            channel: NotificationChannelSpec,
+            enabled: Boolean,
+        ) {
+            viewModelScope.launch {
+                preferencesStore.setChannelEnabled(channel, enabled)
+                _uiState.update { state ->
+                    state.copy(
+                        channelStates =
+                            state.channelStates.toMutableMap().apply {
+                                this[channel] = enabled
+                            },
                     )
                 }
             }
         }
-    }
 
-    fun setMasterEnabled(enabled: Boolean) {
-        viewModelScope.launch {
-            preferencesStore.setMasterEnabled(enabled)
-            _uiState.update { it.copy(masterEnabled = enabled) }
+        fun setReminderLeadTime(minutes: Int) {
+            viewModelScope.launch {
+                preferencesStore.setReminderLeadTime(minutes)
+                _uiState.update { it.copy(reminderLeadTimeMinutes = minutes) }
 
-            if (enabled) {
                 rescheduleReminders()
             }
         }
-    }
 
-    fun setChannelEnabled(channel: NotificationChannelSpec, enabled: Boolean) {
-        viewModelScope.launch {
-            preferencesStore.setChannelEnabled(channel, enabled)
-            _uiState.update { state ->
-                state.copy(
-                    channelStates = state.channelStates.toMutableMap().apply {
-                        this[channel] = enabled
-                    },
-                )
-            }
+        private suspend fun rescheduleReminders() {
+            if (!_uiState.value.masterEnabled) return
+
+            val sessions = sessionsRepo.fetchSessions().first()
+            val starred = sessions.filter { it.isBookmarked }
+            sessionReminderScheduler.rescheduleAll(starred)
         }
     }
-
-    fun setReminderLeadTime(minutes: Int) {
-        viewModelScope.launch {
-            preferencesStore.setReminderLeadTime(minutes)
-            _uiState.update { it.copy(reminderLeadTimeMinutes = minutes) }
-
-            rescheduleReminders()
-        }
-    }
-
-    private suspend fun rescheduleReminders() {
-        if (!_uiState.value.masterEnabled) return
-
-        val sessions = sessionsRepo.fetchSessions().first()
-        val starred = sessions.filter { it.isBookmarked }
-        sessionReminderScheduler.rescheduleAll(starred)
-    }
-}
