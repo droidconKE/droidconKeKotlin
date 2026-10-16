@@ -114,7 +114,7 @@
         <item quantity="one">and %d more</item>
         <item quantity="other">and %d more</item>
     </plurals>
-    <string name="clash_banner_pair">&quot;%1$s&quot; and &quot;%2$s&quot;</string>
+    <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
 
     <!-- Notification Settings Screen -->
     <string name="settings_notifications_title">Notification Settings</string>
