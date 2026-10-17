@@ -33,6 +33,8 @@ import com.android254.presentation.common.livesessions.HappeningNowRoute
 import com.android254.presentation.feed.view.FeedRoute
 import com.android254.presentation.feedback.view.FeedBackRoute
 import com.android254.presentation.home.screen.HomeRoute
+import com.android254.presentation.notifications.NotificationsSettingsScreen
+import com.android254.presentation.notifications.NotificationsSettingsViewModel
 import com.android254.presentation.sessionDetails.SessionDetailsViewModel
 import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
@@ -103,6 +105,7 @@ fun droidconEntryProvider(
             entry<Screens.About>(metadata = mainPaneMetadata()) {
                 AboutRoute(
                     navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
+                    navigateToNotificationsSettings = { navController.navigate(Screens.NotificationsSettings) },
                 )
             }
             entry<Screens.Speakers>(
@@ -126,6 +129,12 @@ fun droidconEntryProvider(
             entry<Screens.FeedBack> {
                 FeedBackRoute(
                     navigateBack = { navController.navigateUp() },
+                )
+            }
+            entry<Screens.NotificationsSettings> {
+                NotificationsSettingsScreen(
+                    viewModel = hiltViewModel<NotificationsSettingsViewModel>(),
+                    onNavigateBack = { navController.goBack() },
                 )
             }
             entry<Screens.SpeakerDetails>(

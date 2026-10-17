@@ -19,22 +19,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.presentation.notifications.NotificationPermission
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.core.common.time.ticks
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -50,6 +57,8 @@ class MainViewModel
         private val clock: Clock,
         private val remoteFeatureToggle: RemoteFeatureToggle,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val notificationPermission: NotificationPermission,
+        private val notificationPreferences: NotificationPreferencesStore,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _isInitialising = MutableStateFlow(true)
@@ -61,6 +70,19 @@ class MainViewModel
          * fetch and sync are fire-and-forget.
          */
         val isInitialising: StateFlow<Boolean> = _isInitialising.asStateFlow()
+
+        private val permissionRequests = Channel<Unit>(Channel.CONFLATED)
+
+        /**
+         * One-shot requests to show the system notification prompt.
+         *
+         * Emitted once, when the user stars a session while the app cannot post and has never
+         * asked from a star. Stars already present when the app starts never count, so the first
+         * launch after an update does not prompt.
+         */
+        val notificationPermissionRequests: Flow<Unit> = permissionRequests.receiveAsFlow()
+
+        private var permissionRequested = false
 
         init {
             viewModelScope.launch {
@@ -75,7 +97,33 @@ class MainViewModel
                     .onSuccess { shouldSync -> if (shouldSync) syncDataWorkManager.startSync() }
                     .onFailure { Timber.w(it, "Feature toggle fetch failed; using cached config") }
             }
+
+            viewModelScope.launch {
+                var previous: Int? = null
+                sessionsRepo
+                    .fetchSessions()
+                    .map { sessions -> sessions.count { it.isBookmarked } }
+                    .distinctUntilChanged()
+                    .collect { starred ->
+                        val starredOneMore = previous?.let { starred > it } ?: false
+                        previous = starred
+                        if (starredOneMore && shouldRequestPermission()) {
+                            permissionRequested = true
+                            permissionRequests.trySend(Unit)
+                        }
+                    }
+            }
         }
+
+        /** Call when the system prompt is about to open, so a later star never asks again. */
+        fun onNotificationPermissionPrompted() {
+            viewModelScope.launch { notificationPreferences.markPermissionPrompted() }
+        }
+
+        private suspend fun shouldRequestPermission(): Boolean =
+            !permissionRequested &&
+                notificationPermission.needsRuntimeRequest() &&
+                !notificationPreferences.preferences.first().permissionPrompted
 
         val sessionState: StateFlow<SessionUIState> =
             clock

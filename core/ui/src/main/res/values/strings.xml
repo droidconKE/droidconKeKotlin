@@ -115,4 +115,22 @@
         <item quantity="other">and %d more</item>
     </plurals>
     <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
+
+    <!-- Notification Settings Screen -->
+    <string name="settings_notifications_title">Notification Settings</string>
+    <string name="settings_master_toggle">Enable Notifications</string>
+    <string name="settings_master_toggle_description">Control all notifications at once</string>
+    <string name="settings_notification_types">Notification Types</string>
+    <string name="settings_reminder_lead_time">Reminder Lead Time</string>
+    <string name="settings_lead_time_5min">5 minutes before</string>
+    <string name="settings_lead_time_10min">10 minutes before</string>
+    <string name="settings_lead_time_15min">15 minutes before</string>
+    <string name="settings_lead_time_30min">30 minutes before</string>
+    <string name="settings_notifications_blocked">Notifications are off for droidcon Kenya</string>
+    <string name="settings_open_system_settings">Turn on in Settings</string>
+
+    <!-- Session Reminder Notifications -->
+    <string name="reminder_title">%s starts soon</string>
+    <string name="reminder_body">In %s · Speakers: %s</string>
+    <string name="reminder_big_text">%s\n\nRoom: %s\nSpeakers: %s</string>
 </resources>

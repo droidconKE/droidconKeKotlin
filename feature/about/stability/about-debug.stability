@@ -13,20 +13,22 @@ public fun com.android254.presentation.about.view.AboutDroidconSection(droidconD
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com.android254.presentation.about.view.AboutViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com.android254.presentation.about.view.AboutViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToNotificationsSettings: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - aboutViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToFeedbackScreen: STABLE (function type)
+    - navigateToNotificationsSettings: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToNotificationsSettings: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
+    - navigateToNotificationsSettings: STABLE (function type)
     - animateCube: STABLE (primitive type)
 
 @Composable

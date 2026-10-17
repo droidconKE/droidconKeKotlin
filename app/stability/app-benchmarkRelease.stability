@@ -5,13 +5,24 @@
 //   ./gradlew :app:stabilityDump
 
 @Composable
-public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
+public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel, deepLink: com.android254.presentation.common.navigation.Screens?, onDeepLinkHandled: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
     - authViewModel: UNSTABLE (has mutable properties or unstable members)
+    - deepLink: STABLE (marked @Stable or @Immutable)
+    - onDeepLinkHandled: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.activity.NotificationPermissionPrompt(requests: kotlinx.coroutines.flow.Flow<kotlin.Unit>, onPrompted: kotlin.Function0<kotlin.Unit>, launch: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - requests: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - onPrompted: STABLE (function type)
+    - launch: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.common.livesessions.HappeningNowPane(sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -45,6 +56,15 @@ public fun com.android254.presentation.common.livesessions.rememberLiveSessions(
   restartable: false
   params:
     - state: STABLE (class with no mutable properties)
+
+@Composable
+public fun com.android254.presentation.common.navigation.DeepLinkEffect(deepLink: com.android254.presentation.common.navigation.Screens?, navController: com.android254.presentation.common.navigation.NavigationController, onHandled: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - deepLink: STABLE (marked @Stable or @Immutable)
+    - navController: UNSTABLE (has mutable properties or unstable members)
+    - onHandled: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.common.navigation.DroidconDrawerHeader(modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -104,4 +124,60 @@ private fun com.android254.presentation.common.navigation.sessionModel(key: com.
   params:
     - key: STABLE (marked @Stable or @Immutable)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
+
+@Composable
+private fun com.android254.presentation.notifications.NotificationsBlockedBanner(onOpenSystemSettings: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onOpenSystemSettings: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.notifications.NotificationsSettingsContent(uiState: com.android254.presentation.notifications.NotificationsUiState, onMasterEnabledChange: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, onChannelEnabledChange: kotlin.Function2<ke.droidcon.kotlin.core.notifications.NotificationChannelSpec, kotlin.Boolean, kotlin.Unit>, onReminderLeadTimeChange: kotlin.Function1<kotlin.Int, kotlin.Unit>, onOpenSystemSettings: kotlin.Function0<kotlin.Unit>, onNavigateBack: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - uiState: RUNTIME (requires runtime check)
+    - onMasterEnabledChange: STABLE (function type)
+    - onChannelEnabledChange: STABLE (function type)
+    - onReminderLeadTimeChange: STABLE (function type)
+    - onOpenSystemSettings: STABLE (function type)
+    - onNavigateBack: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.notifications.NotificationsSettingsScreen(onNavigateBack: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.notifications.NotificationsSettingsViewModel): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onNavigateBack: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - viewModel: UNSTABLE (has mutable properties or unstable members)
+
+@Composable
+private fun com.android254.presentation.notifications.SwitchListItem(checked: kotlin.Boolean, onCheckedChange: kotlin.Function1<kotlin.Boolean, kotlin.Unit>, headline: @[Composable] androidx.compose.runtime.internal.ComposableFunction0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, supportingText: @[Composable] androidx.compose.runtime.internal.ComposableFunction0<kotlin.Unit>?, enabled: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - checked: STABLE (primitive type)
+    - onCheckedChange: STABLE (function type)
+    - headline: STABLE (composable function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - supportingText: STABLE (composable function type)
+    - enabled: STABLE (primitive type)
+
+@Composable
+private fun com.android254.presentation.notifications.getChannelDisplayName(channel: ke.droidcon.kotlin.core.notifications.NotificationChannelSpec): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+    - channel: STABLE (class with no mutable properties)
+
+@Composable
+private fun com.android254.presentation.notifications.getLeadTimeLabel(leadTime: ke.droidcon.kotlin.core.notifications.preferences.ReminderLeadTime): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+    - leadTime: STABLE (class with no mutable properties)
 

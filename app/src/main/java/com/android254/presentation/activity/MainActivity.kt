@@ -16,7 +16,7 @@
 package com.android254.presentation.activity
 
 import android.Manifest
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -41,15 +41,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
@@ -58,12 +60,14 @@ import com.android254.presentation.common.adaptive.rememberIsPhoneOnItsSide
 import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
 import com.android254.presentation.common.livesessions.LiveSessionsRail
 import com.android254.presentation.common.livesessions.rememberLiveSessions
+import com.android254.presentation.common.navigation.DeepLinkEffect
 import com.android254.presentation.common.navigation.DroidconDrawerHeader
 import com.android254.presentation.common.navigation.DroidconNavigationItems
 import com.android254.presentation.common.navigation.Navigation
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.Screens
 import com.android254.presentation.common.navigation.bottomNavigationSet
+import com.android254.presentation.common.navigation.deepLinkFrom
 import com.android254.presentation.common.navigation.droidconEntryProvider
 import com.android254.presentation.common.navigation.droidconNavigationSuiteColors
 import com.android254.presentation.common.navigation.navigationSuiteTypeFor
@@ -73,11 +77,15 @@ import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+
+    /** A notification's destination, waiting for the navigation to open it. */
+    private var pendingDeepLink by mutableStateOf<Screens?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -90,37 +98,68 @@ class MainActivity : ComponentActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
 
+        // A restored activity already navigated to its link before it was destroyed.
+        if (savedInstanceState == null) pendingDeepLink = deepLinkFrom(intent)
+
         setContent {
             ChaiTheme {
-                MainScreen(viewModel = viewModel)
+                MainScreen(
+                    viewModel = viewModel,
+                    deepLink = pendingDeepLink,
+                    onDeepLinkHandled = { pendingDeepLink = null },
+                )
+                NotificationPermissionPrompt(
+                    requests = viewModel.notificationPermissionRequests,
+                    onPrompted = viewModel::onNotificationPermissionPrompted,
+                    launch = ::launchNotificationPermissionRequest,
+                )
             }
         }
+    }
 
-        // Should move to the first bookmark: a launch-time prompt with no context gets denied.
-        askNotificationPermission()
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        deepLinkFrom(intent)?.let { pendingDeepLink = it }
     }
 
     private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission(),
         ) { isGranted: Boolean ->
-            if (isGranted) {
-                Timber.i("Permission Granted")
-            } else {
-                Timber.i("Permission Denied")
-            }
+            Timber.i("Notification permission %s", if (isGranted) "granted" else "denied")
         }
 
-    private fun askNotificationPermission() {
+    private fun launchNotificationPermissionRequest() {
+        // The view model only asks where the permission is a runtime one.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                Timber.i("Permission Granted")
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
-                Timber.i("Should Show Rationale")
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+}
+
+/**
+ * Opens the system notification prompt for each of [requests].
+ *
+ * [onPrompted] runs before [launch], so the prompt counts as asked even if the process dies
+ * while the dialog is up. Requests are only taken while the activity is started, so one that
+ * arrives in the background opens when the user returns rather than out of sight.
+ */
+@Composable
+fun NotificationPermissionPrompt(
+    requests: Flow<Unit>,
+    onPrompted: () -> Unit,
+    launch: () -> Unit,
+) {
+    val currentOnPrompted by rememberUpdatedState(onPrompted)
+    val currentLaunch by rememberUpdatedState(launch)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(requests, lifecycle) {
+        // A star can rise from a background sync; the one prompt waits for the user to be here.
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            requests.collect {
+                currentOnPrompted()
+                currentLaunch()
             }
         }
     }
@@ -131,6 +170,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
+    deepLink: Screens? = null,
+    onDeepLinkHandled: () -> Unit = {},
 ) {
     val navigationState =
         rememberNavigationState(
@@ -138,6 +179,7 @@ fun MainScreen(
             topLevelRoutes = bottomNavigationSet,
         )
     val navController = remember { NavigationController(navigationState) }
+    DeepLinkEffect(deepLink = deepLink, navController = navController, onHandled = onDeepLinkHandled)
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
         mutableStateOf(false)
