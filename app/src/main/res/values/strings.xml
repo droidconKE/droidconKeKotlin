@@ -1,43 +1,10 @@
 <resources>
     <string name="app_name">DroidconKe</string>
 
-    <!-- Notification Channel Group -->
-    <string name="channel_group_conference">droidcon Kenya</string>
-
-    <!-- Notification Channels -->
-    <string name="channel_session_reminders">Session Reminders</string>
-    <string name="channel_session_reminders_desc">Get a nudge 10 minutes before sessions you\'ve starred</string>
-    <string name="channel_schedule_changes">Schedule Changes</string>
-    <string name="channel_schedule_changes_desc">Room changes, delays, and cancellations</string>
-    <string name="channel_announcements">Announcements</string>
-    <string name="channel_announcements_desc">Important updates and venue announcements</string>
-    <string name="channel_social_feed">Social Feed</string>
-    <string name="channel_social_feed_desc">Posts from other attendees and organizers</string>
-    <string name="channel_milestones">Milestones</string>
-    <string name="channel_milestones_desc">Post-conference recap and next year\'s call for papers</string>
-    <string name="channel_sync">Sync Progress</string>
-    <string name="channel_sync_desc">Background data synchronization</string>
-
-    <!-- Session Reminder Notifications -->
-    <string name="reminder_title">%s starts soon</string>
-    <string name="reminder_body">In %s · Speakers: %s</string>
-    <string name="reminder_big_text">%s\n\nRoom: %s\nSpeakers: %s</string>
-
     <!-- Push Notifications -->
     <string name="push_room_changed">Room changed</string>
     <string name="push_time_changed">Time changed</string>
     <string name="push_session_cancelled">Session cancelled</string>
     <string name="push_speaker_changed">Speaker changed</string>
     <string name="push_feed_post_title">New post</string>
-
-    <!-- Notification Settings Screen -->
-    <string name="settings_notifications_title">Notification Settings</string>
-    <string name="settings_master_toggle">Enable Notifications</string>
-    <string name="settings_master_toggle_description">Control all notifications at once</string>
-    <string name="settings_notification_types">Notification Types</string>
-    <string name="settings_reminder_lead_time">Reminder Lead Time</string>
-    <string name="settings_lead_time_5min">5 minutes</string>
-    <string name="settings_lead_time_10min">10 minutes before</string>
-    <string name="settings_lead_time_15min">15 minutes before</string>
-    <string name="settings_lead_time_30min">30 minutes before</string>
 </resources>

@@ -73,7 +73,6 @@ enum class NotificationChannelSpec(
 
     companion object {
         private const val CHANNEL_GROUP_ID = "conference"
-        private const val CHANNEL_GROUP_NAME = "droidcon Kenya"
 
         /**
          * Creates all notification channels and their group in the NotificationManager.
@@ -89,7 +88,7 @@ enum class NotificationChannelSpec(
                     ?: return
 
             // Create the channel group
-            val channelGroup = NotificationChannelGroup(CHANNEL_GROUP_ID, CHANNEL_GROUP_NAME)
+            val channelGroup = NotificationChannelGroup(CHANNEL_GROUP_ID, context.getString(R.string.channel_group_conference))
             notificationManager.createNotificationChannelGroup(channelGroup)
 
             // Create all notification channels

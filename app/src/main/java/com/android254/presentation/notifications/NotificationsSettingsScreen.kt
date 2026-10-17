@@ -50,6 +50,7 @@ import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.notifications.preferences.ReminderLeadTime
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
+import ke.droidcon.kotlin.core.notifications.R as NotificationsR
 
 @Composable
 fun NotificationsSettingsScreen(
@@ -218,10 +219,10 @@ private fun getLeadTimeLabel(leadTime: ReminderLeadTime): String =
 @Composable
 private fun getChannelDisplayName(channel: NotificationChannelSpec): String =
     when (channel) {
-        NotificationChannelSpec.SessionReminders -> stringResource(R.string.channel_session_reminders)
-        NotificationChannelSpec.ScheduleChanges -> stringResource(R.string.channel_schedule_changes)
-        NotificationChannelSpec.Announcements -> stringResource(R.string.channel_announcements)
-        NotificationChannelSpec.SocialFeed -> stringResource(R.string.channel_social_feed)
-        NotificationChannelSpec.Milestones -> stringResource(R.string.channel_milestones)
-        NotificationChannelSpec.Sync -> stringResource(R.string.channel_sync)
+        NotificationChannelSpec.SessionReminders -> stringResource(NotificationsR.string.channel_session_reminders)
+        NotificationChannelSpec.ScheduleChanges -> stringResource(NotificationsR.string.channel_schedule_changes)
+        NotificationChannelSpec.Announcements -> stringResource(NotificationsR.string.channel_announcements)
+        NotificationChannelSpec.SocialFeed -> stringResource(NotificationsR.string.channel_social_feed)
+        NotificationChannelSpec.Milestones -> stringResource(NotificationsR.string.channel_milestones)
+        NotificationChannelSpec.Sync -> stringResource(NotificationsR.string.channel_sync)
     }
