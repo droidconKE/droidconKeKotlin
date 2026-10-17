@@ -19,7 +19,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
@@ -43,15 +42,10 @@ class SessionReminderWorker
         @SuppressLint("MissingPermission")
         override suspend fun doWork(): Result =
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val hasPermission =
-                        appContext.checkSelfPermission(
-                            android.Manifest.permission.POST_NOTIFICATIONS,
-                        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                    if (!hasPermission) {
-                        Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
-                        return Result.success()
-                    }
+                // Built here rather than injected: the worker is created by reflection, not by Hilt.
+                if (AndroidNotificationPermission(appContext).needsRuntimeRequest()) {
+                    Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
+                    return Result.success()
                 }
 
                 val sessionId =

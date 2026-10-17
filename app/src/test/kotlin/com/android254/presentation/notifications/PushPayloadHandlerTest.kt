@@ -53,7 +53,7 @@ class PushPayloadHandlerTest {
     private val preferences = MutableStateFlow(NotificationPreferences())
     private val preferencesStore = mockk<NotificationPreferencesStore> { every { preferences } returns this@PushPayloadHandlerTest.preferences }
     private val syncDataWorkManager = mockk<SyncDataWorkManager>(relaxed = true)
-    private val handler = PushPayloadHandlerImpl(context, preferencesStore, syncDataWorkManager)
+    private val handler = PushPayloadHandlerImpl(context, preferencesStore, syncDataWorkManager, AndroidNotificationPermission(context))
 
     @Before
     fun setUp() {

@@ -16,6 +16,7 @@
 package ke.droidcon.kotlin.core.notifications.preferences
 
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import kotlinx.serialization.json.Json
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -52,5 +53,12 @@ class NotificationPreferencesTest {
         assertTrue(preferences.sessionRemindersEnabled)
         assertFalse(preferences.syncEnabled)
         assertTrue(preferences.reminderLeadTimeMinutes == 10)
+    }
+
+    @Test
+    fun `preferences saved before phase 5 read as never prompted`() {
+        val old = """{"masterEnabled":true,"reminderLeadTimeMinutes":10}"""
+
+        assertFalse(Json.decodeFromString<NotificationPreferences>(old).permissionPrompted)
     }
 }

@@ -15,14 +15,11 @@
  */
 package com.android254.presentation.notifications
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.android254.domain.work.SyncDataWorkManager
@@ -87,6 +84,7 @@ class PushPayloadHandlerImpl
         @ApplicationContext private val context: Context,
         private val preferencesStore: NotificationPreferencesStore,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val notificationPermission: NotificationPermission,
     ) : PushPayloadHandler {
         override suspend fun handle(payload: PushPayload) {
             when (payload) {
@@ -147,7 +145,7 @@ class PushPayloadHandlerImpl
                 Timber.d("Push on ${channel.id} dropped: channel disabled")
                 return
             }
-            if (!canPostNotifications()) {
+            if (notificationPermission.needsRuntimeRequest()) {
                 Timber.d("Push on ${channel.id} dropped: POST_NOTIFICATIONS not granted")
                 return
             }
@@ -174,11 +172,6 @@ class PushPayloadHandlerImpl
 
             NotificationManagerCompat.from(context).notify(id, notification)
         }
-
-        private fun canPostNotifications(): Boolean =
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
 
         private fun viewIntent(deepLink: String): Intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink)).setPackage(context.packageName)
 

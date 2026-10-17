@@ -56,4 +56,7 @@ interface NotificationPreferencesStore {
      * @param minutes How many minutes before an event to send a reminder
      */
     suspend fun setReminderLeadTime(minutes: Int)
+
+    /** Records that the system notification prompt has been shown, so it is not shown again. */
+    suspend fun markPermissionPrompted()
 }

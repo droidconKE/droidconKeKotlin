@@ -35,6 +35,8 @@ data class NotificationPreferences(
     val milestonesEnabled: Boolean = true,
     val syncEnabled: Boolean = false,
     val reminderLeadTimeMinutes: Int = 10,
+    /** Whether the app has already shown the system notification prompt from a star. */
+    val permissionPrompted: Boolean = false,
 ) {
     /**
      * Checks if a notification channel is enabled.

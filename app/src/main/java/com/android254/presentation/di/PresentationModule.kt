@@ -15,6 +15,8 @@
  */
 package com.android254.presentation.di
 
+import com.android254.presentation.notifications.AndroidNotificationPermission
+import com.android254.presentation.notifications.NotificationPermission
 import com.android254.presentation.notifications.PushPayloadHandler
 import com.android254.presentation.notifications.PushPayloadHandlerImpl
 import dagger.Binds
@@ -27,4 +29,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class PresentationModule {
     @Binds
     abstract fun bindsPushPayloadHandler(impl: PushPayloadHandlerImpl): PushPayloadHandler
+
+    @Binds
+    abstract fun bindsNotificationPermission(impl: AndroidNotificationPermission): NotificationPermission
 }

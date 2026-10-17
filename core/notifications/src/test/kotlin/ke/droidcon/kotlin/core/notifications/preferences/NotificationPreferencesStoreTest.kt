@@ -45,6 +45,10 @@ class NotificationPreferencesStoreTest {
             setReminderLeadTimeSync(minutes)
         }
 
+        override suspend fun markPermissionPrompted() {
+            currentPreferences = currentPreferences.copy(permissionPrompted = true)
+        }
+
         fun setMasterEnabledSync(enabled: Boolean) {
             currentPreferences = currentPreferences.copy(masterEnabled = enabled)
         }

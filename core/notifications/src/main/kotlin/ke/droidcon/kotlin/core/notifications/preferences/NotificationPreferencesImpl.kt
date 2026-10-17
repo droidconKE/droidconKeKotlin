@@ -92,6 +92,10 @@ class NotificationPreferencesImpl
             updatePreferences { it.copy(reminderLeadTimeMinutes = minutes) }
         }
 
+        override suspend fun markPermissionPrompted() {
+            updatePreferences { it.copy(permissionPrompted = true) }
+        }
+
         private suspend fun updatePreferences(
             transform: suspend (NotificationPreferences) -> NotificationPreferences,
         ) {
