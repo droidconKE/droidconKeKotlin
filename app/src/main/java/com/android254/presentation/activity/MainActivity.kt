@@ -17,7 +17,6 @@ package com.android254.presentation.activity
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,12 +41,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -76,6 +74,7 @@ import com.android254.presentation.common.navigation.shouldShowNavigation
 import com.android254.presentation.common.navigation.shouldShowSupportingPane
 import com.droidconke.chai.ChaiTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -106,11 +105,13 @@ class MainActivity : ComponentActivity() {
                     deepLink = pendingDeepLink,
                     onDeepLinkHandled = { pendingDeepLink = null },
                 )
+                NotificationPermissionPrompt(
+                    requests = viewModel.notificationPermissionRequests,
+                    onPrompted = viewModel::onNotificationPermissionPrompted,
+                    launch = ::launchNotificationPermissionRequest,
+                )
             }
         }
-
-        // Should move to the first bookmark: a launch-time prompt with no context gets denied.
-        askNotificationPermission()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -123,24 +124,35 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(
             ActivityResultContracts.RequestPermission(),
         ) { isGranted: Boolean ->
-            if (isGranted) {
-                Timber.i("Permission Granted")
-            } else {
-                Timber.i("Permission Denied")
-            }
+            Timber.i("Notification permission %s", if (isGranted) "granted" else "denied")
         }
 
-    private fun askNotificationPermission() {
+    private fun launchNotificationPermissionRequest() {
+        // The view model only asks where the permission is a runtime one.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                Timber.i("Permission Granted")
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.POST_NOTIFICATIONS)) {
-                Timber.i("Should Show Rationale")
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+}
+
+/**
+ * Opens the system notification prompt for each of [requests].
+ *
+ * [onPrompted] runs before [launch], so the prompt counts as asked even if the process dies
+ * while the dialog is up.
+ */
+@Composable
+fun NotificationPermissionPrompt(
+    requests: Flow<Unit>,
+    onPrompted: () -> Unit,
+    launch: () -> Unit,
+) {
+    val currentOnPrompted by rememberUpdatedState(onPrompted)
+    val currentLaunch by rememberUpdatedState(launch)
+    LaunchedEffect(requests) {
+        requests.collect {
+            currentOnPrompted()
+            currentLaunch()
         }
     }
 }
