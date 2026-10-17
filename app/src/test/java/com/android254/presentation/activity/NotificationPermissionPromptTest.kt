@@ -15,8 +15,15 @@
  */
 package com.android254.presentation.activity
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Rule
@@ -53,6 +60,35 @@ class NotificationPermissionPromptTest {
         requests.tryEmit(Unit)
         composeTestRule.waitForIdle()
 
+        assertEquals(listOf("prompted", "launch"), calls)
+    }
+
+    @Test
+    fun `a request while the app is in the background waits until it is visible again`() {
+        val owner =
+            object : LifecycleOwner {
+                val registry = LifecycleRegistry(this).apply { currentState = Lifecycle.State.CREATED }
+                override val lifecycle: Lifecycle = registry
+            }
+        // Like MainViewModel's, so a request sent while nobody collects is kept, not dropped.
+        val channel = Channel<Unit>(Channel.CONFLATED)
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalLifecycleOwner provides owner) {
+                NotificationPermissionPrompt(
+                    requests = channel.receiveAsFlow(),
+                    onPrompted = { calls += "prompted" },
+                    launch = { calls += "launch" },
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        channel.trySend(Unit)
+        composeTestRule.waitForIdle()
+        assertEquals(emptyList<String>(), calls)
+
+        composeTestRule.runOnIdle { owner.registry.currentState = Lifecycle.State.STARTED }
+        composeTestRule.waitForIdle()
         assertEquals(listOf("prompted", "launch"), calls)
     }
 

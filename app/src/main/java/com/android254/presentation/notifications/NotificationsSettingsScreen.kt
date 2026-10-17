@@ -15,7 +15,10 @@
  */
 package com.android254.presentation.notifications
 
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -55,6 +58,7 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.notifications.preferences.ReminderLeadTime
 import ke.droidcon.kotlin.core.ui.R
+import timber.log.Timber
 import ke.droidcon.kotlin.chai.R as ChaiR
 import ke.droidcon.kotlin.core.notifications.R as NotificationsR
 
@@ -68,7 +72,7 @@ fun NotificationsSettingsScreen(
     val context = LocalContext.current
 
     // The user can allow notifications in system settings and come straight back here.
-    LifecycleResumeEffect(viewModel) {
+    LifecycleResumeEffect(Unit) {
         viewModel.refreshSystemState()
         onPauseOrDispose {}
     }
@@ -78,12 +82,7 @@ fun NotificationsSettingsScreen(
         onMasterEnabledChange = viewModel::setMasterEnabled,
         onChannelEnabledChange = viewModel::setChannelEnabled,
         onReminderLeadTimeChange = viewModel::setReminderLeadTime,
-        onOpenSystemSettings = {
-            context.startActivity(
-                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
-            )
-        },
+        onOpenSystemSettings = { openSystemNotificationSettings(context) },
         onNavigateBack = onNavigateBack,
         modifier = modifier,
     )
@@ -211,6 +210,26 @@ fun NotificationsSettingsContent(
             }
         }
     }
+}
+
+/** Opens the app's notification settings, or its details screen where a ROM has removed that. */
+internal fun openSystemNotificationSettings(context: Context) {
+    val notificationSettings =
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    val appDetails =
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))
+    val opened =
+        listOf(notificationSettings, appDetails).any { intent ->
+            try {
+                context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                true
+            } catch (e: ActivityNotFoundException) {
+                Timber.w(e, "No activity for ${intent.action}")
+                false
+            }
+        }
+    if (!opened) Timber.w("Could not open any system notification settings")
 }
 
 @Composable

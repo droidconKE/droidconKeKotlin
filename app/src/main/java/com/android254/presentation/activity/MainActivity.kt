@@ -48,7 +48,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.android254.presentation.auth.AuthViewModel
 import com.android254.presentation.auth.view.AuthDialog
 import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
@@ -139,7 +142,8 @@ class MainActivity : ComponentActivity() {
  * Opens the system notification prompt for each of [requests].
  *
  * [onPrompted] runs before [launch], so the prompt counts as asked even if the process dies
- * while the dialog is up.
+ * while the dialog is up. Requests are only taken while the activity is started, so one that
+ * arrives in the background opens when the user returns rather than out of sight.
  */
 @Composable
 fun NotificationPermissionPrompt(
@@ -149,10 +153,14 @@ fun NotificationPermissionPrompt(
 ) {
     val currentOnPrompted by rememberUpdatedState(onPrompted)
     val currentLaunch by rememberUpdatedState(launch)
-    LaunchedEffect(requests) {
-        requests.collect {
-            currentOnPrompted()
-            currentLaunch()
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(requests, lifecycle) {
+        // A star can rise from a background sync; the one prompt waits for the user to be here.
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            requests.collect {
+                currentOnPrompted()
+                currentLaunch()
+            }
         }
     }
 }
