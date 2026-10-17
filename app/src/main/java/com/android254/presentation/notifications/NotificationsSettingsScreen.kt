@@ -15,6 +15,8 @@
  */
 package com.android254.presentation.notifications
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,17 +35,21 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
@@ -59,12 +65,25 @@ fun NotificationsSettingsScreen(
     viewModel: NotificationsSettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // The user can allow notifications in system settings and come straight back here.
+    LifecycleResumeEffect(viewModel) {
+        viewModel.refreshSystemState()
+        onPauseOrDispose {}
+    }
 
     NotificationsSettingsContent(
         uiState = uiState,
         onMasterEnabledChange = viewModel::setMasterEnabled,
         onChannelEnabledChange = viewModel::setChannelEnabled,
         onReminderLeadTimeChange = viewModel::setReminderLeadTime,
+        onOpenSystemSettings = {
+            context.startActivity(
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                    .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName),
+            )
+        },
         onNavigateBack = onNavigateBack,
         modifier = modifier,
     )
@@ -77,6 +96,7 @@ fun NotificationsSettingsContent(
     onMasterEnabledChange: (Boolean) -> Unit,
     onChannelEnabledChange: (NotificationChannelSpec, Boolean) -> Unit,
     onReminderLeadTimeChange: (Int) -> Unit,
+    onOpenSystemSettings: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,6 +126,15 @@ fun NotificationsSettingsContent(
             contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+            if (uiState.notificationsBlocked) {
+                item {
+                    NotificationsBlockedBanner(
+                        onOpenSystemSettings = onOpenSystemSettings,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                }
+            }
+
             item {
                 SwitchListItem(
                     checked = uiState.masterEnabled,
@@ -185,6 +214,33 @@ fun NotificationsSettingsContent(
 }
 
 @Composable
+private fun NotificationsBlockedBanner(
+    onOpenSystemSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.errorContainer,
+        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        Column(modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 8.dp, bottom = 8.dp)) {
+            Text(
+                stringResource(R.string.settings_notifications_blocked),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(end = 8.dp),
+            )
+            TextButton(
+                onClick = onOpenSystemSettings,
+                modifier = Modifier.align(Alignment.End),
+            ) {
+                Text(stringResource(R.string.settings_open_system_settings))
+            }
+        }
+    }
+}
+
+@Composable
 private fun SwitchListItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -194,7 +250,7 @@ private fun SwitchListItem(
     enabled: Boolean = true,
 ) {
     ListItem(
-        headlineContent = headline,
+        modifier = modifier,
         supportingContent = supportingText,
         trailingContent = {
             Switch(
@@ -203,7 +259,7 @@ private fun SwitchListItem(
                 enabled = enabled,
             )
         },
-        modifier = modifier,
+        content = headline,
     )
 }
 

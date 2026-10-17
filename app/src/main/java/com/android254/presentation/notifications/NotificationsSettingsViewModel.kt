@@ -34,6 +34,8 @@ data class NotificationsUiState(
     val channelStates: Map<NotificationChannelSpec, Boolean> = emptyMap(),
     val reminderLeadTimeMinutes: Int = 10,
     val isLoading: Boolean = false,
+    /** The app may not post at all: permission denied, or switched off in system settings. */
+    val notificationsBlocked: Boolean = false,
 )
 
 @HiltViewModel
@@ -43,12 +45,19 @@ class NotificationsSettingsViewModel
         private val preferencesStore: NotificationPreferencesStore,
         private val sessionsRepo: SessionsRepo,
         private val sessionReminderScheduler: SessionReminderScheduler,
+        private val notificationPermission: NotificationPermission,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(NotificationsUiState())
         val uiState: StateFlow<NotificationsUiState> = _uiState.asStateFlow()
 
         init {
+            refreshSystemState()
             loadPreferences()
+        }
+
+        /** Re-reads whether the system lets the app post, e.g. on return from system settings. */
+        fun refreshSystemState() {
+            _uiState.update { it.copy(notificationsBlocked = !notificationPermission.areNotificationsEnabled()) }
         }
 
         private fun loadPreferences() {

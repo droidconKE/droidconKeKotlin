@@ -34,6 +34,7 @@ private fun NotificationsSettingsPhonePreview() {
             onMasterEnabledChange = {},
             onChannelEnabledChange = { _, _ -> },
             onReminderLeadTimeChange = {},
+            onOpenSystemSettings = {},
             onNavigateBack = {},
         )
     }
@@ -53,6 +54,28 @@ private fun NotificationsSettingsTabletPreview() {
             onMasterEnabledChange = {},
             onChannelEnabledChange = { _, _ -> },
             onReminderLeadTimeChange = {},
+            onOpenSystemSettings = {},
+            onNavigateBack = {},
+        )
+    }
+}
+
+@Preview(device = "spec:width=411dp,height=891dp")
+@Composable
+private fun NotificationsSettingsBlockedPreview() {
+    ChaiTheme {
+        NotificationsSettingsContent(
+            uiState =
+                NotificationsUiState(
+                    masterEnabled = true,
+                    channelStates = NotificationChannelSpec.entries.associateWith { true },
+                    reminderLeadTimeMinutes = 10,
+                    notificationsBlocked = true,
+                ),
+            onMasterEnabledChange = {},
+            onChannelEnabledChange = { _, _ -> },
+            onReminderLeadTimeChange = {},
+            onOpenSystemSettings = {},
             onNavigateBack = {},
         )
     }
