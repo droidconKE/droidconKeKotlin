@@ -15,11 +15,13 @@
  */
 package ke.droidcon.kotlin.core.notifications
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,6 +38,18 @@ class NotificationChannelSpecTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         notificationManager = context.getSystemService(NotificationManager::class.java)!!
+    }
+
+    @Test
+    fun `creating the channels removes the channel older versions created`() {
+        notificationManager.createNotificationChannel(
+            NotificationChannel("DROIDCON_CHANNEL_ID", "All", NotificationManager.IMPORTANCE_DEFAULT),
+        )
+
+        NotificationChannelSpec.createAll(context)
+
+        assertNull(notificationManager.getNotificationChannel("DROIDCON_CHANNEL_ID"))
+        assertEquals(6, notificationManager.notificationChannels.size)
     }
 
     @Test

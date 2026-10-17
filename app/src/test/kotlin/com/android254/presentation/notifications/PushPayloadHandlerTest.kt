@@ -70,6 +70,25 @@ class PushPayloadHandlerTest {
     private fun Notification.tapIntent() = shadowOf(contentIntent).savedIntent
 
     @Test
+    fun `a schedule change also starts a sync so reminders move with the session`() =
+        runTest {
+            handler.handle(PushPayload.ScheduleChange("s1", ChangeType.TimeChanged, "Now at 2 PM"))
+
+            verify(exactly = 1) { syncDataWorkManager.startSync() }
+        }
+
+    @Test
+    fun `a schedule change with its channel off still syncs`() =
+        runTest {
+            preferences.value = NotificationPreferences(scheduleChangesEnabled = false)
+
+            handler.handle(PushPayload.ScheduleChange("s1", ChangeType.Cancelled, "Cancelled"))
+
+            verify(exactly = 1) { syncDataWorkManager.startSync() }
+            assertTrue(posted().isEmpty())
+        }
+
+    @Test
     fun `a schedule change posts on the schedule changes channel and opens the session`() =
         runTest {
             handler.handle(PushPayload.ScheduleChange("s1", ChangeType.RoomChanged, "Moved to Room B"))

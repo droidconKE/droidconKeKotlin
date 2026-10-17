@@ -75,7 +75,8 @@ private fun legacyAnnouncement(data: Map<String, String>): PushPayload.Announcem
 /**
  * Posts each payload on its own channel, honouring the user's notification preferences.
  *
- * A sync request is not a notification, so it syncs whatever the preferences say.
+ * A sync request is not a notification, so it syncs whatever the preferences say. A schedule
+ * change syncs the same way, so the reminders of a moved session move too.
  */
 @Singleton
 class PushPayloadHandlerImpl
@@ -88,7 +89,9 @@ class PushPayloadHandlerImpl
     ) : PushPayloadHandler {
         override suspend fun handle(payload: PushPayload) {
             when (payload) {
-                is PushPayload.ScheduleChange ->
+                is PushPayload.ScheduleChange -> {
+                    // Whether or not the user sees it, reminders must move with the session.
+                    syncDataWorkManager.startSync()
                     post(
                         channel = NotificationChannelSpec.ScheduleChanges,
                         key = "schedule_change:${payload.sessionId}",
@@ -96,6 +99,7 @@ class PushPayloadHandlerImpl
                         text = payload.message,
                         tapIntent = viewIntent(DeepLinks.session(payload.sessionId)),
                     )
+                }
 
                 is PushPayload.Announcement ->
                     post(

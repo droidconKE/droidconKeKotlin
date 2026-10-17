@@ -74,11 +74,15 @@ enum class NotificationChannelSpec(
     companion object {
         private const val CHANNEL_GROUP_ID = "conference"
 
+        /** Channels earlier versions created; left behind, they still show in system settings. */
+        private val LEGACY_CHANNEL_IDS = listOf("DROIDCON_CHANNEL_ID")
+
         /**
          * Creates all notification channels and their group in the NotificationManager.
          *
          * This should be called during app initialization to set up the notification infrastructure.
-         * It creates a channel group and adds all six notification channels to it.
+         * It creates a channel group and adds all six notification channels to it, and deletes
+         * the channels older versions of the app created.
          *
          * @param context The Android application context
          */
@@ -86,6 +90,8 @@ enum class NotificationChannelSpec(
             val notificationManager =
                 context.getSystemService<NotificationManager>()
                     ?: return
+
+            LEGACY_CHANNEL_IDS.forEach(notificationManager::deleteNotificationChannel)
 
             // Create the channel group
             val channelGroup = NotificationChannelGroup(CHANNEL_GROUP_ID, context.getString(R.string.channel_group_conference))
