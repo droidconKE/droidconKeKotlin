@@ -91,7 +91,7 @@ class PushPayloadHandlerImpl
             when (payload) {
                 is PushPayload.ScheduleChange -> {
                     // Whether or not the user sees it, reminders must move with the session.
-                    syncDataWorkManager.startSync()
+                    syncDataWorkManager.startFreshSync()
                     post(
                         channel = NotificationChannelSpec.ScheduleChanges,
                         key = "schedule_change:${payload.sessionId}",
@@ -133,7 +133,7 @@ class PushPayloadHandlerImpl
                         tapIntent = launchIntent(),
                     )
 
-                PushPayload.SyncRequest -> syncDataWorkManager.startSync()
+                PushPayload.SyncRequest -> syncDataWorkManager.startFreshSync()
             }
         }
 

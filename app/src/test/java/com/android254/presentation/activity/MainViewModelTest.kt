@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.activity
 
+import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
@@ -26,8 +27,10 @@ import io.mockk.mockk
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
@@ -197,6 +200,24 @@ class MainViewModelTest {
 
             assertEquals(1, requests.size)
             coVerify(exactly = 1) { preferencesStore.markPermissionPrompted() }
+        }
+
+    @Test
+    fun `leaving the screen while the prompt is being recorded still records it`() =
+        runTest {
+            val saved = CompletableDeferred<Unit>()
+            coEvery { preferencesStore.markPermissionPrompted() } coAnswers {
+                saved.await()
+                preferences.value = preferences.value.copy(permissionPrompted = true)
+            }
+            val viewModel = viewModel()
+
+            viewModel.onNotificationPermissionPrompted()
+            viewModel.viewModelScope.cancel()
+            saved.complete(Unit)
+            runCurrent()
+
+            assertEquals(true, preferences.value.permissionPrompted)
         }
 
     @Test

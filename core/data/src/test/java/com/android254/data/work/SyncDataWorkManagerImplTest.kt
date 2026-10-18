@@ -15,12 +15,15 @@
  */
 package com.android254.data.work
 
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android254.data.work.WorkConstants.PERIODIC_SYNC_DATA_WORKER_NAME
 import com.android254.data.work.WorkConstants.SYNC_DATA_WORKER_NAME
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -30,7 +33,7 @@ import org.junit.Test
 import java.util.UUID
 
 class SyncDataWorkManagerImplTest {
-    private val workManager = mockk<WorkManager>()
+    private val workManager = mockk<WorkManager>(relaxed = true)
 
     private fun work(state: WorkInfo.State) = WorkInfo(UUID.randomUUID(), state, emptySet())
 
@@ -63,4 +66,24 @@ class SyncDataWorkManagerImplTest {
                 `is`(false),
             )
         }
+
+    @Test
+    fun `an ordinary sync folds into one already running`() {
+        every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns flowOf(emptyList())
+
+        SyncDataWorkManagerImpl(workManager).startSync()
+
+        verify { workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, any<OneTimeWorkRequest>()) }
+    }
+
+    @Test
+    fun `a fresh sync queues behind one already running`() {
+        every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns flowOf(emptyList())
+
+        SyncDataWorkManagerImpl(workManager).startFreshSync()
+
+        verify {
+            workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, any<OneTimeWorkRequest>())
+        }
+    }
 }

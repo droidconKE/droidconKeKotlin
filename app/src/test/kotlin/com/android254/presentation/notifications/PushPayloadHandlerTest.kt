@@ -74,7 +74,7 @@ class PushPayloadHandlerTest {
         runTest {
             handler.handle(PushPayload.ScheduleChange("s1", ChangeType.TimeChanged, "Now at 2 PM"))
 
-            verify(exactly = 1) { syncDataWorkManager.startSync() }
+            verify(exactly = 1) { syncDataWorkManager.startFreshSync() }
         }
 
     @Test
@@ -84,7 +84,7 @@ class PushPayloadHandlerTest {
 
             handler.handle(PushPayload.ScheduleChange("s1", ChangeType.Cancelled, "Cancelled"))
 
-            verify(exactly = 1) { syncDataWorkManager.startSync() }
+            verify(exactly = 1) { syncDataWorkManager.startFreshSync() }
             assertTrue(posted().isEmpty())
         }
 
@@ -182,7 +182,7 @@ class PushPayloadHandlerTest {
         runTest {
             handler.handle(PushPayload.SyncRequest)
 
-            verify(exactly = 1) { syncDataWorkManager.startSync() }
+            verify(exactly = 1) { syncDataWorkManager.startFreshSync() }
             assertTrue(posted().isEmpty())
         }
 
@@ -193,7 +193,7 @@ class PushPayloadHandlerTest {
 
             handler.handle(PushPayload.SyncRequest)
 
-            verify(exactly = 1) { syncDataWorkManager.startSync() }
+            verify(exactly = 1) { syncDataWorkManager.startFreshSync() }
         }
 
     @Test

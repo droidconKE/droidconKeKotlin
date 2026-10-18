@@ -131,6 +131,6 @@
 
     <!-- Session Reminder Notifications -->
     <string name="reminder_title">%s starts soon</string>
-    <string name="reminder_body">In %s · Speakers: %s</string>
-    <string name="reminder_big_text">%s\n\nRoom: %s\nSpeakers: %s</string>
+    <string name="reminder_body">In %1$s · Speakers: %2$s</string>
+    <string name="reminder_big_text">%1$s\n\nRoom: %2$s\nSpeakers: %3$s</string>
 </resources>

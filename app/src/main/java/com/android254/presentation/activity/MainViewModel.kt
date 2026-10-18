@@ -29,6 +29,7 @@ import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
@@ -117,7 +119,8 @@ class MainViewModel
 
         /** Call when the system prompt is about to open, so a later star never asks again. */
         fun onNotificationPermissionPrompted() {
-            viewModelScope.launch { notificationPreferences.markPermissionPrompted() }
+            // The dialog is already opening; leaving the screen must not drop the record of it.
+            viewModelScope.launch { withContext(NonCancellable) { notificationPreferences.markPermissionPrompted() } }
         }
 
         private suspend fun shouldRequestPermission(): Boolean =

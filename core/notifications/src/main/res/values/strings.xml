@@ -5,7 +5,7 @@
 
     <!-- Notification Channels -->
     <string name="channel_session_reminders">Session Reminders</string>
-    <string name="channel_session_reminders_desc">Get a nudge 10 minutes before sessions you\'ve starred</string>
+    <string name="channel_session_reminders_desc">Get a nudge before sessions you\'ve starred</string>
     <string name="channel_schedule_changes">Schedule Changes</string>
     <string name="channel_schedule_changes_desc">Room changes, delays, and cancellations</string>
     <string name="channel_announcements">Announcements</string>
