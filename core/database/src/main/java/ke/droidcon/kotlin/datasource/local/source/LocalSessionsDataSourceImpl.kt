@@ -64,6 +64,11 @@ class LocalSessionsDataSourceImpl
                 sessionDao.getRemoteIds()
             }
 
+        override suspend fun getAllCachedSessions(): List<SessionEntity> =
+            withContext(localSourceIoDispatcher) {
+                sessionDao.getAll()
+            }
+
         override suspend fun deleteByRemoteIds(ids: List<String>) {
             withContext(localSourceIoDispatcher) {
                 sessionDao.deleteByRemoteIds(ids)

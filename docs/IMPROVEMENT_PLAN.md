@@ -393,6 +393,13 @@ This is the section most likely to produce a demo that impresses at a talk and a
 
 And one product rule: **AI must answer a question the user actually has.** "Summarise this session description" is not a real need — the description is three paragraphs and they can read it. "Which of my 14 starred sessions should I actually go to, given they clash and I care about Compose?" *is* a real need, and it's not answerable without a model.
 
+**Where each feature surfaces.** AI that *arrives on a schedule* is an Updates moment: the
+morning summary of your starred sessions (§6.7) and the recap after the event (§6.11), each a card
+on the timeline that opens its full view. AI that is *a tool you reach for* lives where you reach for
+it: the assistant (§6.8) from a persistent entry on Home and Sessions, captions and translation
+(§6.10) and photo check-in (§6.9) on session details. Updates may announce a tool ("captions are on
+for this talk") but never hosts one, so the timeline stays a record of what happened.
+
 ### 6.2 The `:core:ai` abstraction
 
 Three inference backends with different availability, latency, cost, and capability. Features must not know which one served them.
@@ -1752,6 +1759,19 @@ Log the thumbs-down rate per feature to analytics. **If a feature's thumbs-down 
 - [ ] Cost projection recorded here: `expected DAU × calls/user × tokens/call × price/token`
 
 ---
+
+## 6A. Updates — what is left
+
+Updates replaced the organiser-only feed: one timeline of organiser posts and the schedule changes
+each sync records (see [`docs/architecture.md`](architecture.md#sync)). In order:
+
+1. **Pushes land on the timeline (needs #448).** Every typed push payload — schedule change,
+   announcement, feed post — also writes an Updates row, so a dismissed notification is not lost.
+2. **Speakers joining the line-up.** The speakers sync records a "new speaker" moment the way the
+   sessions sync records new talks; before the event that is most of the news.
+3. **"How was it?" after a starred session ends**, opening session feedback (§11.5).
+4. **The AI moments of §6** — the morning summary and the recap — as cards, behind their flags.
+5. **Unread state.** A dot on the Updates tab for rows newer than the last visit.
 
 ## 7. Phase 4 — Ticketing and QR
 

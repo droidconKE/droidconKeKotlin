@@ -18,17 +18,25 @@ package com.android254.presentation.feed.view
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android254.domain.models.Feed
+import com.android254.domain.models.ScheduleUpdate
 import com.android254.domain.repos.FeedRepo
+import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.repos.UpdatesRepo
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,12 +44,22 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLog
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
 class FeedScreenTest {
     private val repo = mockk<FeedRepo>()
+    private val updatesRepo = mockk<UpdatesRepo> { every { scheduleUpdates() } returns flowOf(emptyList()) }
+    private val sessionsRepo = mockk<SessionsRepo> { every { fetchSessions() } returns flowOf(emptyList()) }
+    private val clock =
+        object : Clock {
+            override fun now() = Instant.parse("2026-10-20T09:00:00+03:00")
+        }
     private val testDispatcher = UnconfinedTestDispatcher()
+
+    private fun viewModel() = FeedViewModel(repo, updatesRepo, sessionsRepo, clock, TimeZone.of("Africa/Nairobi"), testDispatcher)
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -68,7 +86,7 @@ class FeedScreenTest {
                 ),
             )
 
-        val viewModel = FeedViewModel(repo, testDispatcher)
+        val viewModel = viewModel()
         composeTestRule.setContent {
             ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)
@@ -88,7 +106,7 @@ class FeedScreenTest {
         var shared: FeedUI? = null
         composeTestRule.setContent {
             ChaiTheme {
-                FeedScreen(feedUIState = FeedUIState.Success(listOf(post)), onShare = { shared = it })
+                FeedScreen(feedUIState = FeedUIState.Success(persistentListOf(UpdateItem.Post(post, atMillis = null))), onShare = { shared = it })
             }
         }
 
@@ -106,7 +124,7 @@ class FeedScreenTest {
                 ),
             )
 
-        val viewModel = FeedViewModel(repo, testDispatcher)
+        val viewModel = viewModel()
         composeTestRule.setContent {
             ChaiTheme {
                 FeedRoute(feedViewModel = viewModel)
@@ -115,4 +133,33 @@ class FeedScreenTest {
 
         composeTestRule.onNodeWithTag("feeds_lazy_column").assertIsDisplayed()
     }
+
+    @Test
+    fun `a schedule change opens its session, and the schedule coming out opens sessions`() {
+        val moved = schedule(ScheduleUpdate.Kind.Moved, sessionId = "kotlin", title = "Kotlin Everywhere")
+        val out = schedule(ScheduleUpdate.Kind.ScheduleOut, sessionId = null, title = "", count = 20)
+        var opened: String? = null
+        var browsed = false
+        composeTestRule.setContent {
+            ChaiTheme {
+                FeedScreen(
+                    feedUIState = FeedUIState.Success(persistentListOf(moved, out)),
+                    onSessionClick = { opened = it },
+                    navigateToSessions = { browsed = true },
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Kotlin Everywhere").performClick()
+        composeTestRule.onNodeWithText("The schedule is out").performClick()
+        assertEquals("kotlin", opened)
+        assertTrue(browsed)
+    }
+
+    private fun schedule(
+        kind: ScheduleUpdate.Kind,
+        sessionId: String?,
+        title: String,
+        count: Int = 0,
+    ) = UpdateItem.Schedule(kind, sessionId, title, count, "Today", "Thu, 5 Nov · 10:15 AM", "Opal", isStarred = false, atMillis = 1)
 }

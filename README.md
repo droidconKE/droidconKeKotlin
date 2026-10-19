@@ -13,8 +13,9 @@
 [![Material 3](https://img.shields.io/badge/Material-3-757575?logo=materialdesign&logoColor=white)](https://m3.material.io)
 
 The official Android app for **droidcon Kenya**, the Android developer conference held in
-Nairobi. It carries the schedule, speakers, sponsors, organisers and event feed, works
-offline once it has synced, and lets attendees bookmark the sessions they plan to attend.
+Nairobi. It carries the schedule, speakers, sponsors and organisers, an Updates timeline of
+schedule changes and organiser news, works offline once it has synced, and lets attendees
+bookmark the sessions they plan to attend.
 
 The app is also the community's shared teaching codebase: a current, opinionated,
 multi-module Android project that people learn from and contribute to. Most of the

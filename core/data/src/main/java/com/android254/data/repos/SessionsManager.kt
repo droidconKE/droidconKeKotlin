@@ -26,7 +26,9 @@ import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.sync.Synchronizer
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
+import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
+import ke.droidcon.kotlin.datasource.local.model.UpdateEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
@@ -39,6 +41,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
+import kotlin.time.Clock
 import kotlin.time.Instant
 
 class SessionsManager
@@ -48,6 +51,8 @@ class SessionsManager
         private val remoteSessionsDataSource: RemoteSessionsDataSource,
         private val bookmarkDao: BookmarkDao,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+        private val updatesDao: UpdatesDao,
+        private val clock: Clock,
     ) : SessionsRepo {
         override fun fetchSessions(): Flow<List<Session>> {
             val bookmarksFlow = bookmarkDao.getBookmarkIds()
@@ -148,8 +153,9 @@ class SessionsManager
             }
         }
 
-        override suspend fun syncWith(synchronizer: Synchronizer): Boolean =
-            synchronizer
+        override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
+            val previous = localSessionsDataSource.getAllCachedSessions()
+            return synchronizer
                 .sync(
                     remoteItemFetcher = {
                         when (val response = remoteSessionsDataSource.getAllSessionsRemote()) {
@@ -160,9 +166,9 @@ class SessionsManager
                     },
                     localIdFetcher = { localSessionsDataSource.getRemoteIds() },
                     localItemUpserter = { remoteItems ->
-                        localSessionsDataSource.saveCachedSessions(
-                            sessions = remoteItems.map { it.toEntity() },
-                        )
+                        val incoming = remoteItems.map { it.toEntity() }
+                        localSessionsDataSource.saveCachedSessions(sessions = incoming)
+                        recordChanges(scheduleChanges(previous, incoming))
                     },
                     localItemDeleter = { ids ->
                         localSessionsDataSource.deleteByRemoteIds(ids)
@@ -170,6 +176,14 @@ class SessionsManager
                     remoteToLocalIdSelector = { it.id },
                     keepLocalWhenRemoteIsEmpty = true,
                 ).isSuccess
+        }
+
+        private suspend fun recordChanges(changes: List<ScheduleChange>) {
+            if (changes.isEmpty()) return
+            val at = clock.now().toEpochMilliseconds()
+            updatesDao.upsert(changes.map { UpdateEntity(kind = it.kind.name, sessionId = it.sessionId, title = it.title, count = it.count, createdAt = at) })
+            updatesDao.trim()
+        }
 
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<Session>> =
             combine(

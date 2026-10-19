@@ -16,10 +16,13 @@
 package com.android254.presentation.feed
 
 import androidx.compose.runtime.Composable
+import com.android254.domain.models.ScheduleUpdate
 import com.android254.presentation.feed.view.FeedScreen
 import com.android254.presentation.feed.view.FeedUIState
+import com.android254.presentation.feed.view.UpdateItem
 import com.android254.presentation.models.FeedUI
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
+import kotlinx.collections.immutable.persistentListOf
 import org.junit.Test
 
 class FeedScreenshotTest : ChaiScreenshotTest() {
@@ -39,25 +42,51 @@ private fun Feed() {
     FeedScreen(
         feedUIState =
             FeedUIState.Success(
-                feeds =
-                    listOf(
-                        FeedUI(
-                            title = "Call for speakers is open",
-                            body =
-                                "Submissions close at the end of the month. Talks, " +
-                                    "workshops and lightning sessions all welcome.",
-                            topic = "Announcement",
-                            url = "",
-                            image = "",
-                            createdAt = "2026-08-01",
+                items =
+                    persistentListOf(
+                        UpdateItem.Schedule(
+                            kind = ScheduleUpdate.Kind.Moved,
+                            sessionId = "compose",
+                            title = "Compose Animations That Don't Jank",
+                            count = 0,
+                            whenLabel = "Today",
+                            sessionTime = "Thu, 5 Nov · 10:15 AM",
+                            venue = "Opal",
+                            isStarred = true,
+                            atMillis = 4,
                         ),
-                        FeedUI(
-                            title = "Venue announced",
-                            body = "This year we are back at the Sarit Expo Centre.",
-                            topic = "Logistics",
-                            url = "",
-                            image = "",
-                            createdAt = "2026-08-02",
+                        UpdateItem.Schedule(
+                            kind = ScheduleUpdate.Kind.Added,
+                            sessionId = "kmp",
+                            title = "Kotlin Everywhere: KMP, Ktor, and ML in Production",
+                            count = 0,
+                            whenLabel = "Yesterday",
+                            sessionTime = "Fri, 6 Nov · 11:10 AM",
+                            venue = "Sapphire",
+                            isStarred = false,
+                            atMillis = 3,
+                        ),
+                        UpdateItem.Post(
+                            FeedUI(
+                                title = "Venue announced",
+                                body = "This year we are back at the Sarit Expo Centre.",
+                                topic = "Logistics",
+                                url = "",
+                                image = "",
+                                createdAt = "2 days ago",
+                            ),
+                            atMillis = 2,
+                        ),
+                        UpdateItem.Schedule(
+                            kind = ScheduleUpdate.Kind.ScheduleOut,
+                            sessionId = null,
+                            title = "",
+                            count = 20,
+                            whenLabel = "3 days ago",
+                            sessionTime = null,
+                            venue = "",
+                            isStarred = false,
+                            atMillis = 1,
                         ),
                     ),
             ),

@@ -25,30 +25,24 @@ import java.time.format.DateTimeParseException
 private val FEED_TIMESTAMP_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
-/**
- * Renders an ISO-like timestamp as a relative span, e.g. "2 days ago".
- *
- * Unparseable input falls back to the original string. Only [DateTimeParseException] is
- * caught, so genuine faults are not hidden.
- *
- * @param nowMillis current time, injectable so the output is testable.
- */
-fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String =
+/** When a feed post was made, or null when its timestamp does not parse. */
+fun String.feedPostedAtMillis(): Long? =
     try {
-        val postedAt =
-            LocalDateTime
-                .parse(this, FEED_TIMESTAMP_FORMAT)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
-
-        DateUtils
-            .getRelativeTimeSpanString(
-                postedAt,
-                nowMillis,
-                DateUtils.DAY_IN_MILLIS,
-            ).toString()
+        LocalDateTime
+            .parse(this, FEED_TIMESTAMP_FORMAT)
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable feed timestamp: %s", this)
-        this
+        null
     }
+
+/** A timestamp as a relative span, e.g. "2 days ago"; unparseable input comes back as it was. */
+fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String = feedPostedAtMillis()?.let { postedAt -> relativeDay(postedAt, nowMillis) } ?: this
+
+/** "Today", "Yesterday", "2 days ago": the day is the resolution Updates reads at. */
+fun relativeDay(
+    atMillis: Long,
+    nowMillis: Long,
+): String = DateUtils.getRelativeTimeSpanString(atMillis, nowMillis, DateUtils.DAY_IN_MILLIS).toString()

@@ -26,6 +26,7 @@ import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -59,4 +60,9 @@ object DaoModule {
     fun providesFeedDao(
         database: Database,
     ): FeedDao = database.feedDao()
+
+    @Provides
+    fun providesUpdatesDao(
+        database: Database,
+    ): UpdatesDao = database.updatesDao()
 }

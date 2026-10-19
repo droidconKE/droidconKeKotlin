@@ -93,6 +93,8 @@ fun droidconEntryProvider(
             entry<Screens.Feed>(metadata = mainPaneMetadata()) {
                 FeedRoute(
                     navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
+                    onSessionClick = { navController.navigate(Screens.SessionDetails(it)) },
+                    navigateToSessions = { navController.navigate(Screens.Sessions) },
                 )
             }
             entry<Screens.About>(metadata = mainPaneMetadata()) {

@@ -94,11 +94,33 @@ class DatabaseMigrationTest {
             "MIGRATION_5_6 is declared but not registered in ALL_MIGRATIONS",
             Database.MIGRATION_5_6 in Database.ALL_MIGRATIONS,
         )
+        assertTrue(
+            "MIGRATION_6_7 is declared but not registered in ALL_MIGRATIONS",
+            Database.MIGRATION_6_7 in Database.ALL_MIGRATIONS,
+        )
+    }
+
+    @Test
+    fun `migrating 6 to 7 adds an empty updates table and keeps sessions and bookmarks`() {
+        seedVersion(6) {
+            execSQL("INSERT INTO sessions VALUES ('a', 'd', 'f', 'l', 's', 'Kotlin', 'e', 'e', 0, 0, 0, NULL, 's', 's', 'r', '[]', 0, 0, 'u')")
+            execSQL("INSERT INTO bookmarks (sessionId) VALUES ('a')")
+        }
+
+        val database = DatabaseModule.buildDatabase(context, TEST_DB)
+        try {
+            val db = database.openHelper.writableDatabase
+            assertEquals(listOf("a|Kotlin"), db.rows("SELECT remote_id || '|' || title FROM sessions"))
+            assertEquals(listOf("a"), db.rows("SELECT sessionId FROM bookmarks"))
+            assertEquals(listOf("0"), db.rows("SELECT COUNT(*) FROM updates"))
+        } finally {
+            database.close()
+        }
     }
 
     @Test
     fun `migrating 5 to 6 collapses duplicated rows and keeps every bookmark`() {
-        seedVersion5 {
+        seedVersion(5) {
             // Session "a" was synced twice (ids 1 and 2). Session "1" has a remote id that
             // looks like a generated one, so its bookmark must not be rewritten.
             insertSession(id = 1, remoteId = "a", title = "old")
@@ -127,9 +149,12 @@ class DatabaseMigrationTest {
 
     // Not covered: the SQL inside MIGRATION_4_5, because no v4 schema was ever exported.
 
-    /** Creates a database exactly as Room left it at version 5, from the exported schema. */
-    private fun seedVersion5(seed: android.database.sqlite.SQLiteDatabase.() -> Unit) {
-        val schema = JSONObject(File(SCHEMA_DIR, "5.json").readText()).getJSONObject("database")
+    /** Creates a database exactly as Room left it at [version], from the exported schema. */
+    private fun seedVersion(
+        version: Int,
+        seed: android.database.sqlite.SQLiteDatabase.() -> Unit,
+    ) {
+        val schema = JSONObject(File(SCHEMA_DIR, "$version.json").readText()).getJSONObject("database")
         val db = openRawDatabase()
         try {
             val entities = schema.getJSONArray("entities")
@@ -145,7 +170,7 @@ class DatabaseMigrationTest {
             val setup = schema.getJSONArray("setupQueries")
             for (i in 0 until setup.length()) db.execSQL(setup.getString(i))
             db.seed()
-            db.version = 5
+            db.version = version
         } finally {
             db.close()
         }

@@ -23,8 +23,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
+import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
+import ke.droidcon.kotlin.datasource.local.model.UpdateEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.model.SessionDTO
@@ -38,6 +40,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
@@ -45,6 +49,11 @@ class SessionsManagerTest {
     private val mockLocalSessionsDataSource = mockk<LocalSessionsDataSource>()
     private val mockRemoteSessionsDataSource = mockk<RemoteSessionsDataSource>()
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val updatesDao = mockk<UpdatesDao>(relaxed = true)
+    private val clock =
+        object : Clock {
+            override fun now() = Instant.parse("2026-10-20T09:00:00+03:00")
+        }
 
     @Test
     fun `test it fetches from the local cache`() =
@@ -66,7 +75,7 @@ class SessionsManagerTest {
             every { bookmarkDao.getBookmarkIds() } returns flowOf(listOf(BookmarkEntity(session.remote_id)))
             every { mockLocalSessionsDataSource.getCachedSessions() } returns flowOf(listOf(session))
             every { mockLocalSessionsDataSource.fetchSessionWithFilters(any()) } returns flowOf(listOf(session))
-            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, bookmarkDao, ioDispatcher)
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, bookmarkDao, ioDispatcher, updatesDao, clock)
 
             val all = manager.fetchSessions().first().single()
             val starred = manager.fetchFilteredSessions(SessionFilter(bookmarked = true)).first().single()
@@ -81,11 +90,13 @@ class SessionsManagerTest {
         runTest {
             coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(emptyList())
             coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1")
+            coEvery { mockLocalSessionsDataSource.getAllCachedSessions() } returns listOf(sessionEntity)
 
-            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher)
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher, updatesDao, clock)
 
             assert(manager.syncWith(object : Synchronizer {}))
             coVerify(exactly = 0) { mockLocalSessionsDataSource.deleteByRemoteIds(any()) }
+            coVerify(exactly = 0) { updatesDao.upsert(any<List<UpdateEntity>>()) }
         }
 
     @Test
@@ -99,13 +110,19 @@ class SessionsManagerTest {
             coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1", "remote_id_2")
             coEvery { mockLocalSessionsDataSource.saveCachedSessions(any()) } returns Unit
             coEvery { mockLocalSessionsDataSource.deleteByRemoteIds(any()) } returns Unit
+            coEvery { mockLocalSessionsDataSource.getAllCachedSessions() } returns emptyList()
 
-            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher)
+            val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher, updatesDao, clock)
             val result = manager.syncWith(object : Synchronizer {})
 
             assert(result)
             coVerify { mockLocalSessionsDataSource.deleteByRemoteIds(listOf("remote_id_2")) }
             coVerify { mockLocalSessionsDataSource.saveCachedSessions(any()) }
+            coVerify {
+                updatesDao.upsert(
+                    listOf(UpdateEntity(kind = "ScheduleOut", sessionId = null, title = "", count = 1, createdAt = clock.now().toEpochMilliseconds())),
+                )
+            }
         }
 }
 

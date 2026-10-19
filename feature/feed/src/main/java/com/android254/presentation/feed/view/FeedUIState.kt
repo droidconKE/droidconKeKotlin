@@ -15,7 +15,7 @@
  */
 package com.android254.presentation.feed.view
 
-import com.android254.presentation.models.FeedUI
+import kotlinx.collections.immutable.ImmutableList
 
 sealed interface FeedUIState {
     object Loading : FeedUIState
@@ -27,6 +27,6 @@ sealed interface FeedUIState {
     ) : FeedUIState
 
     data class Success(
-        val feeds: List<FeedUI>,
+        val items: ImmutableList<UpdateItem>,
     ) : FeedUIState
 }

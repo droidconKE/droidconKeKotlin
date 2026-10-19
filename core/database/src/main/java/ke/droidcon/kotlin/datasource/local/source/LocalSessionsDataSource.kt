@@ -31,6 +31,8 @@ interface LocalSessionsDataSource {
 
     suspend fun getRemoteIds(): List<String>
 
+    suspend fun getAllCachedSessions(): List<SessionEntity>
+
     suspend fun deleteByRemoteIds(ids: List<String>)
 
     fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>>

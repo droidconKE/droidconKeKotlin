@@ -192,6 +192,14 @@ call stays outside the transaction. An empty sessions response is treated as a f
 schedule is kept and a warning is logged. The feed endpoint answers 404 when an event has no
 posts; `FeedApi` reads that as an empty list rather than a failed sync.
 
+The sessions sync also records what it changed, for the Updates tab. `SessionsManager` reads the
+cached schedule before it syncs and, inside the same transaction as the upsert, writes one row to
+the `updates` table per new talk, dropped talk, time change and room change (`scheduleChange`).
+Breaks coming and going are not recorded; breaks moving are. A first sync, or one that shares no
+session with the last (a new event year), records a single "the schedule is out" instead, and a
+sync that changes more than twelve things records one "the schedule changed". The table keeps the
+newest hundred rows. Updates merges them with organiser posts on one timeline, newest first.
+
 `isSyncing` is true while either the one-time job (`sync_data`) or the daily job
 (`sync_data_periodic`) is running. `startSync()` is expedited, so the worker posts a foreground
 notification while it runs on API 30 and below.

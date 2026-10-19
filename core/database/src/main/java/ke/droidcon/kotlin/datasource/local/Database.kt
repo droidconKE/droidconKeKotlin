@@ -26,12 +26,14 @@ import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
 import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
+import ke.droidcon.kotlin.datasource.local.model.UpdateEntity
 import ke.droidcon.kotlin.datasource.local.util.InstantConverter
 
 @Database(
@@ -42,8 +44,9 @@ import ke.droidcon.kotlin.datasource.local.util.InstantConverter
         OrganizerEntity::class,
         SponsorEntity::class,
         FeedEntity::class,
+        UpdateEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(
@@ -61,6 +64,8 @@ abstract class Database : RoomDatabase() {
     abstract fun sponsorsDao(): SponsorsDao
 
     abstract fun feedDao(): FeedDao
+
+    abstract fun updatesDao(): UpdatesDao
 
     companion object {
         val MIGRATION_4_5 =
@@ -129,11 +134,21 @@ abstract class Database : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_6_7 =
+            object : Migration(6, 7) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `updates` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `kind` TEXT NOT NULL, " +
+                            "`sessionId` TEXT, `title` TEXT NOT NULL, `count` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL)",
+                    )
+                }
+            }
+
         /**
          * Every migration the database can perform. New migrations must be added here as
          * well as declared above; an unregistered migration is the same as none.
          */
-        val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_4_5, MIGRATION_5_6)
+        val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
 
         /** Rebuilds [table] with [key] as its primary key, keeping the newest row per key. */
         private fun SupportSQLiteDatabase.rekey(
