@@ -125,7 +125,7 @@ camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-comp
 
 Two things tie the app to one conference year.
 
-**The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2025-898"` lives in
+**The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2026-731"` lives in
 `core/network/.../remote/Constants.kt`. Move it into Remote Config, so a new conference year does
 not need an app release:
 
@@ -139,7 +139,7 @@ val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 <!-- core/network/src/main/res/xml/remote_config_defaults.xml -->
 <entry>
     <key>event_slug</key>
-    <value>droidconke-2025-898</value>
+    <value>droidconke-2026-731</value>
 </entry>
 <entry>
     <key>organizer_slug</key>
