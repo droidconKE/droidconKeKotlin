@@ -15,17 +15,26 @@
  */
 package com.android254.presentation.activity
 
+import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.presentation.notifications.NotificationPermission
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
@@ -36,6 +45,7 @@ import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import kotlin.time.Clock
@@ -47,6 +57,16 @@ class MainViewModelTest {
     private val clock = mockk<Clock>()
     private val remoteFeatureToggle = mockk<RemoteFeatureToggle>(relaxed = true)
     private val syncDataWorkManager = mockk<SyncDataWorkManager>(relaxed = true)
+    private val notificationPermission = mockk<NotificationPermission>()
+    private val preferences = MutableStateFlow(NotificationPreferences())
+    private val preferencesStore =
+        mockk<NotificationPreferencesStore> {
+            every { preferences } returns this@MainViewModelTest.preferences
+            coEvery { markPermissionPrompted() } answers {
+                this@MainViewModelTest.preferences.value =
+                    this@MainViewModelTest.preferences.value.copy(permissionPrompted = true)
+            }
+        }
     private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
@@ -56,6 +76,7 @@ class MainViewModelTest {
         // The init block reads cached sessions and kicks off config fetch plus sync.
         coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
         coEvery { remoteFeatureToggle.syncNowIfEmpty() } returns false
+        every { notificationPermission.needsRuntimeRequest() } returns true
     }
 
     @After
@@ -73,7 +94,7 @@ class MainViewModelTest {
             coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
+            val viewModel = viewModel()
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -106,7 +127,7 @@ class MainViewModelTest {
                 )
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
+            val viewModel = viewModel()
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -129,9 +150,156 @@ class MainViewModelTest {
             job.cancel()
         }
 
+    @Test
+    fun `starring a session without permission asks once`() =
+        runTest {
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = listOf(createSession(id = "1", title = "A", isBookmarked = true))
+            runCurrent()
+
+            assertEquals(1, requests.size)
+        }
+
+    @Test
+    fun `existing stars at startup do not prompt`() =
+        runTest {
+            val sessions = MutableStateFlow(starred(3))
+            val requests = collectRequests(sessions)
+
+            runCurrent()
+
+            assertEquals(0, requests.size)
+        }
+
+    @Test
+    fun `a star after existing stars at startup prompts`() =
+        runTest {
+            val sessions = MutableStateFlow(starred(3))
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(4)
+            runCurrent()
+
+            assertEquals(1, requests.size)
+        }
+
+    @Test
+    fun `a second new star does not prompt again`() =
+        runTest {
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+            viewModel.onNotificationPermissionPrompted()
+            runCurrent()
+            sessions.value = starred(2)
+            runCurrent()
+
+            assertEquals(1, requests.size)
+            coVerify(exactly = 1) { preferencesStore.markPermissionPrompted() }
+        }
+
+    @Test
+    fun `leaving the screen while the prompt is being recorded still records it`() =
+        runTest {
+            val saved = CompletableDeferred<Unit>()
+            coEvery { preferencesStore.markPermissionPrompted() } coAnswers {
+                saved.await()
+                preferences.value = preferences.value.copy(permissionPrompted = true)
+            }
+            val viewModel = viewModel()
+
+            viewModel.onNotificationPermissionPrompted()
+            viewModel.viewModelScope.cancel()
+            saved.complete(Unit)
+            runCurrent()
+
+            assertEquals(true, preferences.value.permissionPrompted)
+        }
+
+    @Test
+    fun `a second star before the first prompt is handled does not queue another`() =
+        runTest {
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+            sessions.value = starred(2)
+            runCurrent()
+
+            assertEquals(1, requests.size)
+        }
+
+    @Test
+    fun `unstarring does not prompt`() =
+        runTest {
+            val sessions = MutableStateFlow(starred(2))
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+
+            assertEquals(0, requests.size)
+        }
+
+    @Test
+    fun `no prompt when permission is already granted`() =
+        runTest {
+            every { notificationPermission.needsRuntimeRequest() } returns false
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+
+            assertEquals(0, requests.size)
+        }
+
+    @Test
+    fun `no prompt once a previous launch asked`() =
+        runTest {
+            preferences.value = NotificationPreferences(permissionPrompted = true)
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+
+            assertEquals(0, requests.size)
+        }
+
+    private lateinit var viewModel: MainViewModel
+
+    private fun kotlinx.coroutines.test.TestScope.collectRequests(sessions: MutableStateFlow<List<Session>>): List<Unit> {
+        coEvery { sessionsRepo.fetchSessions() } returns sessions
+        viewModel = viewModel()
+        val requests = mutableListOf<Unit>()
+        backgroundScope.launch { viewModel.notificationPermissionRequests.toList(requests) }
+        runCurrent()
+        return requests
+    }
+
+    private fun viewModel() =
+        MainViewModel(
+            sessionsRepo,
+            clock,
+            remoteFeatureToggle,
+            syncDataWorkManager,
+            notificationPermission,
+            preferencesStore,
+            testDispatcher,
+        )
+
+    private fun starred(count: Int) = (1..count).map { createSession(id = "$it", title = "S$it", isBookmarked = true) }
+
     private fun createSession(
         id: String,
         title: String,
+        isBookmarked: Boolean = false,
     ) = Session(
         id = id,
         description = "Description",
@@ -141,7 +309,7 @@ class MainViewModelTest {
         title = title,
         endDateTime = "2023-11-17 10:00:00",
         endTime = "10:00 AM",
-        isBookmarked = false,
+        isBookmarked = isBookmarked,
         isKeynote = false,
         isServiceSession = false,
         sessionImage = "",

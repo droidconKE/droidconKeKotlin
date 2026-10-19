@@ -47,7 +47,11 @@ class SyncDataWorkManagerImpl
                 .distinctUntilChanged()
                 .conflate()
 
-        override fun startSync() {
+        override fun startSync() = enqueueSync(ExistingWorkPolicy.KEEP)
+
+        override fun startFreshSync() = enqueueSync(ExistingWorkPolicy.APPEND_OR_REPLACE)
+
+        private fun enqueueSync(policy: ExistingWorkPolicy) {
             val syncDataRequest =
                 OneTimeWorkRequestBuilder<SyncDataWorker>()
                     .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
@@ -57,7 +61,7 @@ class SyncDataWorkManagerImpl
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build(),
                     ).build()
-            workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, syncDataRequest)
+            workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, policy, syncDataRequest)
         }
 
         override fun setupPeriodicSync() {

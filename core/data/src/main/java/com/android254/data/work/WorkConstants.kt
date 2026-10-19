@@ -16,7 +16,7 @@
 package com.android254.data.work
 
 object WorkConstants {
-    const val NOTIFICATION_CHANNEL = "notification_channel"
+    const val NOTIFICATION_CHANNEL = "sync"
     const val SYNC_DATA_WORKER_NAME = "sync_data"
     const val PERIODIC_SYNC_DATA_WORKER_NAME = "sync_data_periodic"
     const val SYNC_NOTIFICATION_ID = 1

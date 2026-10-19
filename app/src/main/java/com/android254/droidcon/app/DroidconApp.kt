@@ -16,13 +16,20 @@
 package com.android254.droidcon.app
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import com.android254.data.work.WorkConstants
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
+import com.android254.presentation.notifications.SessionReminderScheduler
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
+import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,14 +38,29 @@ class DroidconApp : Application() {
     @Inject
     lateinit var syncDataWorkManager: SyncDataWorkManager
 
+    @Inject
+    lateinit var sessionsRepository: SessionsRepo
+
+    @Inject
+    lateinit var sessionReminderScheduler: SessionReminderScheduler
+
     override fun onCreate() {
         super.onCreate()
         initTimber()
-        setUpWorkerManagerNotificationChannel()
+        NotificationChannelSpec.createAll(this)
 
         syncDataWorkManager.setupPeriodicSync()
 
         syncDataWorkManager.startSync()
+
+        // Reschedule reminders whenever starred sessions change
+        sessionsRepository
+            .fetchSessions()
+            .map { sessions -> sessions.filter { it.isBookmarked } }
+            .distinctUntilChanged()
+            .onEach { starredSessions ->
+                sessionReminderScheduler.rescheduleAll(starredSessions)
+            }.launchIn(CoroutineScope(Dispatchers.Default + Job()))
     }
 
     private fun initTimber() =
@@ -55,15 +77,4 @@ class DroidconApp : Application() {
                 Timber.plant(CrashlyticsTree())
             }
         }
-
-    private fun setUpWorkerManagerNotificationChannel() {
-        val channel =
-            NotificationChannel(
-                WorkConstants.NOTIFICATION_CHANNEL,
-                WorkConstants.SYNC_DATA_WORKER_NAME,
-                NotificationManager.IMPORTANCE_HIGH,
-            )
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(channel)
-    }
 }
