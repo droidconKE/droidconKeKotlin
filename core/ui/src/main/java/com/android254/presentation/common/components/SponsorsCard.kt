@@ -64,7 +64,7 @@ fun SponsorsCard(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
-        AdaptiveEvenGrid(items = others.toImmutableList(), minColumns = 2, minCellWidth = 240.dp) { sponsor, cellModifier ->
+        AdaptiveEvenGrid(items = others.toImmutableList(), minColumns = 2, minCellWidth = 240.dp, centreShortRow = true) { sponsor, cellModifier ->
             LogoTile(logos = sponsor.logosFor(isDark), name = sponsor.name, modifier = cellModifier)
         }
     }

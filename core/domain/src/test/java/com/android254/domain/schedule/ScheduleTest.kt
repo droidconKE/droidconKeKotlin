@@ -74,6 +74,20 @@ class ScheduleTest {
     }
 
     @Test
+    fun `the event runs from its first session's day to its last`() {
+        assertEquals(LocalDate(2026, 11, 6)..LocalDate(2026, 11, 7), schedule.eventDates(nairobi))
+        assertNull(emptyList<Session>().eventDates(nairobi))
+    }
+
+    @Test
+    fun `only sessions later today are up next`() {
+        assertEquals(emptyList<Session>(), schedule.upNextToday(at("2026-10-19T09:00"), nairobi))
+        assertEquals(listOf("day 1 last"), schedule.upNextToday(at("2026-11-06T09:30"), nairobi).map { it.id })
+        assertEquals(emptyList<Session>(), schedule.upNextToday(at("2026-11-06T23:00"), nairobi))
+        assertEquals(listOf("day 2"), schedule.upNextToday(at("2026-11-07T00:30"), nairobi).map { it.id })
+    }
+
+    @Test
     fun `starred sessions on a day come in start order`() {
         val day =
             listOf(

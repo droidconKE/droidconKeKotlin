@@ -51,7 +51,6 @@ import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
-import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 
@@ -64,8 +63,6 @@ fun HomeRoute(
     navigateToSessionScreen: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
-    liveSession: SessionPresentationModel? = null,
-    nextSession: SessionPresentationModel? = null,
 ) {
     val homeState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
@@ -79,8 +76,6 @@ fun HomeRoute(
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
         onRefresh = { homeViewModel.startRefresh() },
-        liveSession = liveSession,
-        nextSession = nextSession,
     )
 }
 
@@ -95,8 +90,6 @@ internal fun HomeScreen(
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
-    liveSession: SessionPresentationModel? = null,
-    nextSession: SessionPresentationModel? = null,
     animateCube: Boolean = true,
 ) {
     val showSessionsSkeleton = isSyncing || viewState.sessions.isEmpty()
@@ -132,9 +125,6 @@ internal fun HomeScreen(
             ) {
                 HomeHeaderSectionComponent(
                     hero = viewState.hero,
-                    liveSession = liveSession,
-                    nextSession = nextSession,
-                    onSessionClick = onSessionClicked,
                     onFeedbackClick = navigateToFeedbackScreen,
                     showCube = viewState.showCube,
                     animateCube = animateCube && !isSyncing,
@@ -142,30 +132,30 @@ internal fun HomeScreen(
                 HomeBannerSection(viewState)
                 HomeSpacer()
 
-                viewState.agenda?.let { agenda ->
+                val agenda = viewState.agenda
+                if (agenda != null) {
                     HomeAgendaSection(
                         agenda = agenda,
                         onSessionClick = onSessionClicked,
                         onBrowseSessions = navigateToSessionScreen,
                     )
-                    HomeSpacer()
-                }
-
-                AnimatedContent(
-                    targetState = showSessionsSkeleton,
-                    transitionSpec = {
-                        fadeIn().togetherWith(fadeOut())
-                    },
-                    label = "sessions_section",
-                ) { isLoading ->
-                    if (isLoading) {
-                        HomeSessionLoadingComponent()
-                    } else {
-                        HomeSessionSection(
-                            sessions = viewState.sessions,
-                            onSessionClick = onSessionClicked,
-                            onViewAllSessionClicked = navigateToSessionScreen,
-                        )
+                } else {
+                    AnimatedContent(
+                        targetState = showSessionsSkeleton,
+                        transitionSpec = {
+                            fadeIn().togetherWith(fadeOut())
+                        },
+                        label = "sessions_section",
+                    ) { isLoading ->
+                        if (isLoading) {
+                            HomeSessionLoadingComponent()
+                        } else {
+                            HomeSessionSection(
+                                sessions = viewState.sessions,
+                                onSessionClick = onSessionClicked,
+                                onViewAllSessionClicked = navigateToSessionScreen,
+                            )
+                        }
                     }
                 }
                 HomeSpacer()

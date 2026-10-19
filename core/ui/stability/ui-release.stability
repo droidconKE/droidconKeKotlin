@@ -55,7 +55,7 @@ public fun com.android254.presentation.common.adaptive.rememberShowsNavigationDr
   params:
 
 @Composable
-public fun com.android254.presentation.common.components.AdaptiveEvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.AdaptiveEvenGrid>, minColumns: kotlin.Int, minCellWidth: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.AdaptiveEvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.AdaptiveEvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.AdaptiveEvenGrid>, minColumns: kotlin.Int, minCellWidth: androidx.compose.ui.unit.Dp, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, centreShortRow: kotlin.Boolean, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.AdaptiveEvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -65,6 +65,7 @@ public fun com.android254.presentation.common.components.AdaptiveEvenGrid(items:
     - modifier: STABLE (marked @Stable or @Immutable)
     - spacing: STABLE (marked @Stable or @Immutable)
     - rowSpacing: STABLE (marked @Stable or @Immutable)
+    - centreShortRow: STABLE (primitive type)
     - cell: STABLE (composable function type)
 
 @Composable
@@ -168,7 +169,7 @@ public fun com.android254.presentation.common.components.EmptyStatePanel(icon: a
     - iconColor: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.EvenGrid>, columns: kotlin.Int, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.EvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.EvenGrid>, columns: kotlin.Int, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, centreShortRow: kotlin.Boolean, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.EvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -177,6 +178,7 @@ public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx
     - modifier: STABLE (marked @Stable or @Immutable)
     - spacing: STABLE (marked @Stable or @Immutable)
     - rowSpacing: STABLE (marked @Stable or @Immutable)
+    - centreShortRow: STABLE (primitive type)
     - cell: STABLE (composable function type)
 
 @Composable

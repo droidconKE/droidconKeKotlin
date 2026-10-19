@@ -36,6 +36,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
@@ -106,12 +107,12 @@ class HomeViewModelTest {
             val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.of("Africa/Nairobi"), testDispatcher)
             val job = launch { viewModel.viewState.collect() }
             runCurrent()
-            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 2) as HomeHero))
+            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 2, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 6)) as HomeHero))
 
             now = Instant.parse("2026-11-05T00:00:31+03:00")
             advanceTimeBy(60_001)
             runCurrent()
-            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 1) as HomeHero))
+            assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 1, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 6)) as HomeHero))
             job.cancel()
         }
 

@@ -42,6 +42,8 @@ sealed interface HomeHero {
 
     data class Countdown(
         val daysUntil: Int,
+        val firstDay: LocalDate? = null,
+        val lastDay: LocalDate? = null,
     ) : HomeHero
 
     data object ThankYou : HomeHero

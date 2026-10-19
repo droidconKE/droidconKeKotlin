@@ -38,7 +38,7 @@ class HomeAgendaMappingTest {
     fun `before the event the hero counts down and the agenda shows day one`() {
         val state = home.toHomeState(isSyncing = false, now = at("2026-10-25T12:00"), zone = nairobi)
 
-        assertEquals(HomeHero.Countdown(daysUntil = 12), state.hero)
+        assertEquals(HomeHero.Countdown(daysUntil = 12, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 7)), state.hero)
         assertEquals(listOf("keynote", "compose", "kotlin"), state.agenda?.items?.map { it.session.id })
         assertEquals(AgendaDay.On(LocalDate(2026, 11, 6)), state.agenda?.day)
     }

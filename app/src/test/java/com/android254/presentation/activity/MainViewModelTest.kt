@@ -33,12 +33,14 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.TimeZone
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -48,6 +50,7 @@ class MainViewModelTest {
     private val remoteFeatureToggle = mockk<RemoteFeatureToggle>(relaxed = true)
     private val syncDataWorkManager = mockk<SyncDataWorkManager>(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
+    private val nairobi = TimeZone.of("Africa/Nairobi")
 
     @Before
     fun setup() {
@@ -68,12 +71,12 @@ class MainViewModelTest {
         runTest {
             val session = createSession(id = "1", title = "Title")
             val currentSessions = listOf(session)
-            val upNextSessions = listOf(session)
+            val upNextSessions = listOf(createSession(id = "2", title = "Title", start = Instant.fromEpochMilliseconds(0) + 1.hours))
 
             coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(upNextSessions)
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, nairobi, testDispatcher)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -106,7 +109,7 @@ class MainViewModelTest {
                 )
             coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns flowOf(emptyList())
 
-            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, testDispatcher)
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, nairobi, testDispatcher)
 
             val job = launch { viewModel.sessionState.collect() }
             runCurrent()
@@ -129,9 +132,48 @@ class MainViewModelTest {
             job.cancel()
         }
 
+    @Test
+    fun `nothing is up next before the event day`() =
+        runTest {
+            every { clock.now() } returns Instant.parse("2026-10-19T10:00:00+03:00")
+            coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(emptyList())
+            coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns
+                flowOf(listOf(createSession(id = "1", title = "Kickoff", start = Instant.parse("2026-11-05T09:30:00+03:00"))))
+
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, nairobi, testDispatcher)
+
+            val job = launch { viewModel.sessionState.collect() }
+            runCurrent()
+
+            assertThat(viewModel.sessionState.value.upNext.size, `is`(0))
+            job.cancel()
+        }
+
+    @Test
+    fun `the morning's first session is up next on the event day`() =
+        runTest {
+            every { clock.now() } returns Instant.parse("2026-11-05T08:00:00+03:00")
+            coEvery { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(emptyList())
+            coEvery { sessionsRepo.fetchUpNextSessions(any()) } returns
+                flowOf(listOf(createSession(id = "1", title = "Kickoff", start = Instant.parse("2026-11-05T09:30:00+03:00"))))
+
+            val viewModel = MainViewModel(sessionsRepo, clock, remoteFeatureToggle, syncDataWorkManager, nairobi, testDispatcher)
+
+            val job = launch { viewModel.sessionState.collect() }
+            runCurrent()
+
+            assertThat(
+                viewModel.sessionState.value.upNext
+                    .map { it.title },
+                `is`(listOf("Kickoff")),
+            )
+            job.cancel()
+        }
+
     private fun createSession(
         id: String,
         title: String,
+        start: Instant? = null,
     ) = Session(
         id = id,
         description = "Description",
@@ -151,5 +193,6 @@ class MainViewModelTest {
         speakers = listOf(),
         remoteId = id,
         eventDay = "1",
+        startInstant = start,
     )
 }

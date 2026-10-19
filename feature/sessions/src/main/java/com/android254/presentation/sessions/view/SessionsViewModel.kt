@@ -170,6 +170,8 @@ class SessionsViewModel
                     .sorted()
                     .map { SessionsFilterOption(type = category, label = it, value = it) }
                     .toList()
+                    .takeIf { it.size > 1 }
+                    .orEmpty()
 
             return options(SessionsFilterCategory.Room, sessions.asSequence().flatMap { it.roomList }) +
                 options(SessionsFilterCategory.SessionType, sessions.asSequence().map { it.sessionFormat }) +

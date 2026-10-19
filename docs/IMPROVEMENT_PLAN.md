@@ -123,7 +123,7 @@ camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-comp
 
 ### 3.6 One year, one name
 
-Two things tie the app to one conference year.
+One thing still ties the app to one conference year.
 
 **The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2026-731"` lives in
 `core/network/.../remote/Constants.kt`. Move it into Remote Config, so a new conference year does
@@ -148,10 +148,6 @@ val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 ```
 
 `UrlProvider` then composes URLs at call time rather than as compile-time constants. **This one change means the 2027 app is a config edit, not a release.**
-
-**The About copy names 2023.** `about_droidcon` in `core/ui`'s `strings.xml` says the conference
-"will be held in Nairobi, Kenya on November 8th to 10th 2023". Rewrite it without a date, or fill
-the dates from the same Remote Config values.
 
 **Packages are still split** between `com.android254.*` and `ke.droidcon.kotlin.*`. Renaming them
 is one mechanical PR that invalidates every open PR (§17.1). Do it in a quiet period, or decide
@@ -359,7 +355,7 @@ private val AUTOSAVE_DEBOUNCE = 800.milliseconds
 The conventions the app follows are in [`docs/architecture.md`](architecture.md#accessibility).
 Two pieces are missing:
 
-- **A live region on the Now/Next hero**, so TalkBack announces a change of session without the
+- **A live region on the Now/Next rail**, so TalkBack announces a change of session without the
   user moving focus: `Modifier.semantics { liveRegion = LiveRegionMode.Polite }`.
 - **An automated gate**, so it doesn't rot:
 
@@ -3263,8 +3259,8 @@ needs new art.
 ### 12.2 Easter eggs and play
 
 The cube is a Rubik's cube; people will want to touch it. These build on each other in order.
-None goes on Home, where the hero card is one button that opens the live session; all go on About,
-whose stage is not clickable.
+None goes on Home, where the hero card is one button that opens feedback after the event; all go on
+About, whose stage is not clickable.
 
 1. **Drag to spin, tap to twist (M).** A horizontal drag on the stage spins the whole cube
    (`orientation + Orientation.about(Y, dx)`); vertical drags stay with the scroll. A tap on a sticker

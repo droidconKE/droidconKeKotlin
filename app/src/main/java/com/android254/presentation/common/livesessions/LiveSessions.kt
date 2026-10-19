@@ -27,14 +27,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -84,37 +82,27 @@ fun HappeningNowRoute(
     )
 }
 
-/** The live and up-next rail. As the bottom-most element it pays the bottom inset. */
+/** Yours first: a starred live or next session beats whatever else is on. Live sessions lead the list. */
+internal fun ImmutableList<SessionPresentationModel>.featured(): SessionPresentationModel? = firstOrNull { it.isStarred } ?: firstOrNull()
+
+/** One nudge above the navigation bar. As the bottom-most element it pays the bottom inset. */
 @Composable
 fun LiveSessionsRail(
     sessions: ImmutableList<SessionPresentationModel>,
     onSessionClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyRow(
+    val session = sessions.featured() ?: return
+    CurrentSessionComponent(
+        session = session,
+        onClicked = onSessionClick,
         modifier =
             modifier
                 .testTag(LIVE_SESSIONS_RAIL_TEST_TAG)
-                .fillMaxWidth()
-                // Sides scroll under a cutout via contentPadding; the bottom lifts the row.
                 .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
-                .padding(bottom = 8.dp),
-        contentPadding =
-            WindowInsets.safeDrawing
-                .only(WindowInsetsSides.Horizontal)
-                .asPaddingValues()
-                .plus(horizontal = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        items(sessions, key = { it.id }) { session ->
-            CurrentSessionComponent(
-                modifier = Modifier.fillParentMaxWidth(0.85f),
-                session = session,
-                onClicked = onSessionClick,
-            )
-        }
-    }
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
+    )
 }
 
 /** The same sessions stacked, for the pane. */

@@ -67,6 +67,14 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionBan
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+internal fun com.android254.presentation.sessionDetails.view.components.SessionDescription(description: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - description: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.sessionDetails.view.components.SessionLevel(sessionLevel: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
@@ -219,6 +227,16 @@ public fun com.android254.presentation.sessions.components.SessionsCardWithBanne
     - session: STABLE (class with no mutable properties)
     - navigateToSessionDetails: STABLE (function type)
     - onBookmark: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.sessions.components.SessionsEmptyState(showMySessionsOnly: kotlin.Boolean, isFilterActive: kotlin.Boolean, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - showMySessionsOnly: STABLE (primitive type)
+    - isFilterActive: STABLE (primitive type)
+    - onEvent: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable

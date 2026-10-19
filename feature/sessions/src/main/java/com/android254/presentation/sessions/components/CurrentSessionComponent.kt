@@ -15,53 +15,34 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.android254.presentation.common.components.LiveBadge
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
 import com.droidconke.chai.ChaiTheme
-import com.droidconke.chai.colors.venueAccentColor
-import com.droidconke.chai.components.ChaiBodyLargeBold
-import com.droidconke.chai.components.ChaiBodyMedium
-import com.droidconke.chai.components.ChaiBodySmallBold
+import com.droidconke.chai.atoms.LARGE_FONT_SCALE
+import com.droidconke.chai.chaiColorsPalette
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 
+/** A nudge, not a summary: what is on, when, and one tap to it. Your own session wears a star. */
 @Composable
 fun CurrentSessionComponent(
     session: SessionPresentationModel,
@@ -69,108 +50,59 @@ fun CurrentSessionComponent(
     onClicked: (String) -> Unit = {},
 ) {
     val isNow = session.sessionStatus == SessionStatus.Ongoing
+    val palette = MaterialTheme.chaiColorsPalette
+    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
+    val time = if (isNow) stringResource(R.string.rail_until, session.endTime) else "${session.startTime} ${session.amOrPm}"
 
-    val venueAccent = venueAccentColor(session.venue)
-
-    val infiniteTransition = rememberInfiniteTransition(label = "throbbingColor")
-    val pulse by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1f,
-        animationSpec =
-            infiniteRepeatable(
-                animation = tween(1000, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "alpha",
-    )
-
-    val alpha = if (isNow) pulse else 1f
-
-    Card(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        shape = RoundedCornerShape(12.dp),
+    Surface(
         onClick = { onClicked(session.id) },
-        colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            ),
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge,
+        color = palette.heroContainerColor,
+        contentColor = palette.heroOnContainerColor,
+        shadowElevation = 3.dp,
     ) {
         Row(
-            modifier =
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Box {
-                AsyncImage(
-                    model = session.speakers.firstOrNull()?.speakerImage,
-                    contentDescription = "Speaker image",
-                    modifier =
-                        Modifier
-                            .size(54.dp)
-                            .clip(CircleShape)
-                            .border(1.dp, Color.Gray.copy(alpha = 0.5f), CircleShape),
-                    contentScale = ContentScale.Crop,
-                )
-                if (isNow) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .size(14.dp)
-                                .align(Alignment.BottomStart)
-                                .offset(x = 2.dp, y = (-2).dp)
-                                .background(venueAccent.copy(alpha), CircleShape)
-                                .border(2.dp, MaterialTheme.colorScheme.surfaceContainerLow, CircleShape),
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    ChaiBodyLargeBold(
-                        bodyText = session.title,
-                        textColor = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                    )
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
                     if (isNow) {
                         LiveBadge()
                     } else {
-                        Box(
-                            modifier =
-                                Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(
-                                        venueAccent.copy(alpha = 0.15f),
-                                    ).padding(horizontal = 10.dp, vertical = 4.dp),
-                        ) {
-                            ChaiBodySmallBold(
-                                bodyText = stringResource(R.string.up_next).uppercase(),
-                                textColor = venueAccent,
-                            )
-                        }
+                        Text(
+                            text = stringResource(R.string.up_next).uppercase(),
+                            style = MaterialTheme.typography.labelSmallEmphasized,
+                            color = palette.heroContentColor,
+                        )
                     }
+                    Text(
+                        text = time,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = palette.heroOnContainerColor.copy(alpha = 0.78f),
+                        maxLines = 1,
+                    )
                 }
-                val speakerInfo = session.speakers.joinToString(", ") { it.name }
-                ChaiBodyMedium(
-                    bodyText = "$speakerInfo • ${session.venue}",
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
+                Text(
+                    text = session.title,
+                    style = MaterialTheme.typography.titleSmallEmphasized,
+                    maxLines = if (largeFont) 4 else 3,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            if (session.isStarred) {
+                Icon(
+                    imageVector = ChaiIcons.StarRounded,
+                    contentDescription = stringResource(R.string.rail_your_session),
+                    tint = palette.heroContentColor,
                 )
             }
         }

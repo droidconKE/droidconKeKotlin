@@ -54,14 +54,14 @@ fun shouldShowSupportingPane(
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
 
-/** Home hides the rail only for a single live session, which its hero already shows. */
+/** The "now" nudge, on every tab; on Home only when your agenda is not already showing that session. */
 fun shouldShowLiveSessionsRail(
     route: NavKey,
     isMultiPaneWindow: Boolean,
     liveSessionCount: Int,
-    liveNowCount: Int,
+    featuredIsStarred: Boolean = false,
 ): Boolean =
     shouldShowNavigation(route, isMultiPaneWindow) &&
         !isMultiPaneWindow &&
         liveSessionCount > 0 &&
-        !(route == Screens.Home && liveNowCount == 1)
+        !(route == Screens.Home && featuredIsStarred)

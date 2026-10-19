@@ -30,6 +30,7 @@ fun SessionLevel(
     sessionLevel: String,
     modifier: Modifier = Modifier,
 ) {
+    if (sessionLevel.isBlank()) return
     ChaiBodySmall(
         modifier =
             modifier

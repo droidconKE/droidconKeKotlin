@@ -28,7 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.BookmarkButton
 import com.android254.presentation.models.SessionDetailsPresentationModel
@@ -44,27 +44,30 @@ fun SessionSpeakerNameAndFavouriteIcon(
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val speakers = sessionDetails.speakers
     Column(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                imageVector = ChaiIcons.Android,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .height(14.dp)
-                        .width(15.dp),
-                tint = MaterialTheme.colorScheme.secondary,
-            )
+        if (speakers.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = ChaiIcons.Android,
+                    contentDescription = null,
+                    modifier =
+                        Modifier
+                            .height(14.dp)
+                            .width(15.dp),
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
 
-            Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(6.dp))
 
-            ChaiTextLabelLarge(
-                bodyText = stringResource(id = R.string.speaker_label),
-                textColor = MaterialTheme.colorScheme.secondary,
-            )
+                ChaiTextLabelLarge(
+                    bodyText = pluralStringResource(id = R.plurals.speaker_label, count = speakers.size),
+                    textColor = MaterialTheme.colorScheme.secondary,
+                )
+            }
         }
 
         Row(
@@ -72,13 +75,15 @@ fun SessionSpeakerNameAndFavouriteIcon(
                 Modifier
                     .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = if (speakers.isEmpty()) Arrangement.End else Arrangement.SpaceBetween,
         ) {
-            ChaiTitle(
-                modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
-                titleText = sessionDetails.speakers.joinToString(" & ") { it.name },
-                titleColor = MaterialTheme.colorScheme.primary,
-            )
+            if (speakers.isNotEmpty()) {
+                ChaiTitle(
+                    modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
+                    titleText = speakers.joinToString(" & ") { it.name },
+                    titleColor = MaterialTheme.colorScheme.primary,
+                )
+            }
 
             BookmarkButton(
                 isBookmarked = sessionDetails.isStarred,
