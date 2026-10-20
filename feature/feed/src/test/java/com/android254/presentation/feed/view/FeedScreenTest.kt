@@ -135,9 +135,29 @@ class FeedScreenTest {
     }
 
     @Test
+    fun `two sessions dropped in the same sync both show`() {
+        composeTestRule.setContent {
+            ChaiTheme {
+                FeedScreen(
+                    feedUIState =
+                        FeedUIState.Success(
+                            persistentListOf(
+                                schedule(ScheduleUpdate.Kind.Removed, sessionId = null, title = "Old talk", id = 1),
+                                schedule(ScheduleUpdate.Kind.Removed, sessionId = null, title = "Older talk", id = 2),
+                            ),
+                        ),
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("Old talk").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Older talk").assertIsDisplayed()
+    }
+
+    @Test
     fun `a schedule change opens its session, and the schedule coming out opens sessions`() {
-        val moved = schedule(ScheduleUpdate.Kind.Moved, sessionId = "kotlin", title = "Kotlin Everywhere")
-        val out = schedule(ScheduleUpdate.Kind.ScheduleOut, sessionId = null, title = "", count = 20)
+        val moved = schedule(ScheduleUpdate.Kind.Moved, sessionId = "kotlin", title = "Kotlin Everywhere", id = 1)
+        val out = schedule(ScheduleUpdate.Kind.ScheduleOut, sessionId = null, title = "", count = 20, id = 2)
         var opened: String? = null
         var browsed = false
         composeTestRule.setContent {
@@ -161,5 +181,6 @@ class FeedScreenTest {
         sessionId: String?,
         title: String,
         count: Int = 0,
-    ) = UpdateItem.Schedule(kind, sessionId, title, count, "Today", "Thu, 5 Nov · 10:15 AM", "Opal", isStarred = false, atMillis = 1)
+        id: Long = 1,
+    ) = UpdateItem.Schedule(id, kind, sessionId, title, count, "Today", "Thu, 5 Nov · 10:15 AM", "Opal", isStarred = false, atMillis = 1)
 }

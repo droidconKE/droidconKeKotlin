@@ -25,11 +25,13 @@ interface LocalSessionsDataSource {
 
     fun getCachedSessionById(id: String): Flow<SessionEntity?>
 
-    fun fetchSessionWithFilters(query: String): Flow<List<SessionEntity>>
+    fun fetchSessionWithFilters(
+        rooms: List<String>,
+        levels: List<String>,
+        formats: List<String>,
+    ): Flow<List<SessionEntity>>
 
     suspend fun saveCachedSessions(sessions: List<SessionEntity>)
-
-    suspend fun getRemoteIds(): List<String>
 
     suspend fun getAllCachedSessions(): List<SessionEntity>
 

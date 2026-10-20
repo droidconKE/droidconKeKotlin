@@ -158,15 +158,17 @@ public fun com.android254.presentation.common.components.DroidconAppBarWithFilte
     - onFilterButtonClick: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.EmptyStatePanel(icon: androidx.compose.ui.graphics.painter.Painter, message: kotlin.String, modifier: androidx.compose.ui.Modifier, badgeColor: androidx.compose.ui.graphics.Color, iconColor: androidx.compose.ui.graphics.Color): kotlin.Unit
+public fun com.android254.presentation.common.components.EmptyStatePanel(icon: androidx.compose.ui.graphics.painter.Painter, message: kotlin.String, modifier: androidx.compose.ui.Modifier, body: kotlin.String?, badgeColor: androidx.compose.ui.graphics.Color, iconColor: androidx.compose.ui.graphics.Color, action: @[Composable] androidx.compose.runtime.internal.ComposableFunction0<kotlin.Unit>?): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - icon: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - message: STABLE (String is immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - body: STABLE (class with no mutable properties)
     - badgeColor: STABLE (marked @Stable or @Immutable)
     - iconColor: STABLE (marked @Stable or @Immutable)
+    - action: STABLE (composable function type)
 
 @Composable
 public fun com.android254.presentation.common.components.EvenGrid(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.EvenGrid>, columns: kotlin.Int, modifier: androidx.compose.ui.Modifier, spacing: androidx.compose.ui.unit.Dp, rowSpacing: androidx.compose.ui.unit.Dp, centreShortRow: kotlin.Boolean, cell: @[Composable] androidx.compose.runtime.internal.ComposableFunction2<T of com.android254.presentation.common.components.EvenGrid, androidx.compose.ui.Modifier, kotlin.Unit>): kotlin.Unit

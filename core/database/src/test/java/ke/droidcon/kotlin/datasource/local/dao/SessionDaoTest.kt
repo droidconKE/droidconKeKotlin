@@ -139,14 +139,14 @@ class SessionDaoTest {
         }
 
     @Test
-    fun `test getRemoteIds returns all remote ids`() =
+    fun `test getAll returns every session`() =
         runTest {
             val session1 = createSession(id = 1, title = "Session 1", startTimestamp = 0L, endTimestamp = 1000L)
             val session2 = createSession(id = 2, title = "Session 2", startTimestamp = 0L, endTimestamp = 1000L)
             sessionDao.upsert(session1)
             sessionDao.upsert(session2)
 
-            val result = sessionDao.getRemoteIds()
+            val result = sessionDao.getAll().map { it.remote_id }
             assertThat(result.size, `is`(2))
             assertThat(result.containsAll(listOf("1", "2")), `is`(true))
         }

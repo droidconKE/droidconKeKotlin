@@ -31,14 +31,14 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.time.Instant
 
-fun Feed.toPresentation() =
+fun Feed.toPresentation(nowMillis: Long) =
     FeedUI(
         title = title,
         body = body,
         topic = topic,
         url = url,
         image = image,
-        createdAt = createdAt.getTimeDifference(),
+        createdAt = createdAt.getTimeDifference(nowMillis),
     )
 
 /** Organiser posts and schedule changes on one timeline, newest first; a post with no readable time sinks. */
@@ -51,17 +51,19 @@ internal fun updateItems(
 ): List<UpdateItem> {
     val byId = sessions.associateBy { it.remoteId }
     val nowMillis = now.toEpochMilliseconds()
-    val postItems = posts.map { UpdateItem.Post(it.toPresentation(), it.createdAt.feedPostedAtMillis()) }
+    val startLabel = sessionStartLabel(zone)
+    val postItems = posts.map { UpdateItem.Post(it.toPresentation(nowMillis), it.createdAt.feedPostedAtMillis()) }
     val scheduleItems =
         updates.map { update ->
             val session = update.sessionId?.let(byId::get)
             UpdateItem.Schedule(
+                id = update.id,
                 kind = update.kind,
                 sessionId = session?.remoteId,
                 title = session?.title ?: update.title,
                 count = update.count,
                 whenLabel = relativeDay(update.at.toEpochMilliseconds(), nowMillis),
-                sessionTime = session?.startInstant?.whenLabel(zone),
+                sessionTime = session?.startInstant?.let(startLabel),
                 venue = session?.roomList?.joinToString(", ").orEmpty(),
                 isStarred = session?.isBookmarked == true,
                 atMillis = update.at.toEpochMilliseconds(),
@@ -71,10 +73,12 @@ internal fun updateItems(
 }
 
 /** "Thu, 5 Nov · 10:15 AM" in the venue's time, the way the agenda writes a session's start. */
-private fun Instant.whenLabel(zone: TimeZone): String {
+private fun sessionStartLabel(zone: TimeZone): (Instant) -> String {
     val locale = Locale.getDefault()
-    val local = toLocalDateTime(zone)
-    val day = local.date.toJavaLocalDate().format(DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale))
-    val time = local.time.toJavaLocalTime().format(DateTimeFormatter.ofPattern("hh:mm a", locale))
-    return "$day · $time"
+    val day = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale)
+    val time = DateTimeFormatter.ofPattern("hh:mm a", locale)
+    return { start ->
+        val local = start.toLocalDateTime(zone)
+        "${local.date.toJavaLocalDate().format(day)} · ${local.time.toJavaLocalTime().format(time)}"
+    }
 }

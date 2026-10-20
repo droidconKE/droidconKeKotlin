@@ -45,6 +45,7 @@ private fun Feed() {
                 items =
                     persistentListOf(
                         UpdateItem.Schedule(
+                            id = 1,
                             kind = ScheduleUpdate.Kind.Moved,
                             sessionId = "compose",
                             title = "Compose Animations That Don't Jank",
@@ -56,6 +57,7 @@ private fun Feed() {
                             atMillis = 4,
                         ),
                         UpdateItem.Schedule(
+                            id = 2,
                             kind = ScheduleUpdate.Kind.Added,
                             sessionId = "kmp",
                             title = "Kotlin Everywhere: KMP, Ktor, and ML in Production",
@@ -78,6 +80,7 @@ private fun Feed() {
                             atMillis = 2,
                         ),
                         UpdateItem.Schedule(
+                            id = 3,
                             kind = ScheduleUpdate.Kind.ScheduleOut,
                             sessionId = null,
                             title = "",

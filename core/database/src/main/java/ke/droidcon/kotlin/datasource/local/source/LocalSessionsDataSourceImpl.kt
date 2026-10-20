@@ -50,19 +50,28 @@ class LocalSessionsDataSourceImpl
 
         override fun getCachedSessionById(id: String): Flow<SessionEntity?> = sessionDao.getSessionById(id = id).flowOn(localSourceIoDispatcher)
 
-        override fun fetchSessionWithFilters(query: String): Flow<List<SessionEntity>> =
-            sessionDao
-                .fetchSessionsWithFilters(SimpleSQLiteQuery(query))
+        /** A session matches any of its rooms; rooms are stored comma-joined. */
+        override fun fetchSessionWithFilters(
+            rooms: List<String>,
+            levels: List<String>,
+            formats: List<String>,
+        ): Flow<List<SessionEntity>> {
+            val clauses =
+                listOfNotNull(
+                    rooms.takeIf { it.isNotEmpty() }?.joinToString(" OR ", "(", ")") { "instr(',' || rooms || ',', ?) > 0" },
+                    levels.takeIf { it.isNotEmpty() }?.joinToString(",", "sessionLevel IN (", ")") { "?" },
+                    formats.takeIf { it.isNotEmpty() }?.joinToString(",", "sessionFormat IN (", ")") { "?" },
+                )
+            val query = (listOf("SELECT * FROM sessions WHERE 1") + clauses).joinToString(" AND ")
+            val args = rooms.map { ",$it," } + levels + formats
+            return sessionDao
+                .fetchSessionsWithFilters(SimpleSQLiteQuery(query, args.toTypedArray()))
                 .flowOn(localSourceIoDispatcher)
+        }
 
         override fun fetchCurrentSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchCurrentSessions(currentTime)
 
         override fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>> = sessionDao.fetchUpNextSessions(currentTime)
-
-        override suspend fun getRemoteIds(): List<String> =
-            withContext(localSourceIoDispatcher) {
-                sessionDao.getRemoteIds()
-            }
 
         override suspend fun getAllCachedSessions(): List<SessionEntity> =
             withContext(localSourceIoDispatcher) {

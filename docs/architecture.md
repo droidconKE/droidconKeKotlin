@@ -193,9 +193,10 @@ schedule is kept and a warning is logged. The feed endpoint answers 404 when an 
 posts; `FeedApi` reads that as an empty list rather than a failed sync.
 
 The sessions sync also records what it changed, for the Updates tab. `SessionsManager` reads the
-cached schedule before it syncs and, inside the same transaction as the upsert, writes one row to
-the `updates` table per new talk, dropped talk, time change and room change (`scheduleChange`).
-Breaks coming and going are not recorded; breaks moving are. A first sync, or one that shares no
+cached schedule inside the sync's transaction, before the deletes, so the one-time and daily jobs
+starting together cannot record a change twice. It then writes one row to the `updates` table per
+new talk, dropped talk, time change and room change (`scheduleChanges`); rooms compare as a set, so
+the API reordering them is not a move. Breaks coming and going are not recorded; breaks moving are. A first sync, or one that shares no
 session with the last (a new event year), records a single "the schedule is out" instead, and a
 sync that changes more than twelve things records one "the schedule changed". The table keeps the
 newest hundred rows. Updates merges them with organiser posts on one timeline, newest first.

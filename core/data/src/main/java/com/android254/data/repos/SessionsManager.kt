@@ -28,6 +28,7 @@ import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.datasource.local.dao.BookmarkDao
 import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
+import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.model.UpdateEntity
 import ke.droidcon.kotlin.datasource.local.source.LocalSessionsDataSource
 import ke.droidcon.kotlin.datasource.remote.sessions.RemoteSessionsDataSource
@@ -100,17 +101,7 @@ class SessionsManager
                 .padStart(2, '0')
 
         override fun fetchFilteredSessions(filter: SessionFilter): Flow<List<Session>> {
-            var query = "SELECT * FROM sessions WHERE 1 "
-            if (filter.rooms.isNotEmpty()) {
-                query += " AND (${filter.rooms.joinToString(" OR ") { "rooms = '$it'" }})"
-            }
-            if (filter.levels.isNotEmpty()) {
-                query += " AND (${filter.levels.joinToString(" OR ") { "sessionLevel = '$it'" }})"
-            }
-            if (filter.sessionFormats.isNotEmpty()) {
-                query += " AND (${filter.sessionFormats.joinToString(" OR ") { "sessionFormat = '$it'" }})"
-            }
-            val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(query.trim())
+            val filteredSessions = localSessionsDataSource.fetchSessionWithFilters(filter.rooms, filter.levels, filter.sessionFormats)
             val bookmarksFlow = bookmarkDao.getBookmarkIds()
             return combine(filteredSessions, bookmarksFlow) { sessions, bookmarks ->
                 if (filter.bookmarked) {
@@ -154,7 +145,7 @@ class SessionsManager
         }
 
         override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
-            val previous = localSessionsDataSource.getAllCachedSessions()
+            var previous = emptyList<SessionEntity>()
             return synchronizer
                 .sync(
                     remoteItemFetcher = {
@@ -164,7 +155,10 @@ class SessionsManager
                             else -> throw SyncException("Sync sessions failed")
                         }
                     },
-                    localIdFetcher = { localSessionsDataSource.getRemoteIds() },
+                    localIdFetcher = {
+                        previous = localSessionsDataSource.getAllCachedSessions()
+                        previous.map { it.remote_id }
+                    },
                     localItemUpserter = { remoteItems ->
                         val incoming = remoteItems.map { it.toEntity() }
                         localSessionsDataSource.saveCachedSessions(sessions = incoming)

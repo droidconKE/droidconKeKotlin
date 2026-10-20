@@ -15,6 +15,7 @@
  */
 package com.android254.data.repos
 
+import com.android254.data.repos.mappers.headline
 import com.android254.domain.models.ScheduleUpdate.Kind
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 
@@ -42,19 +43,27 @@ internal fun scheduleChanges(
         buildList {
             incoming
                 .filter { it.remote_id !in before && !it.isServiceSession }
-                .forEach { add(ScheduleChange(Kind.Added, it.remote_id, it.title)) }
+                .forEach { add(ScheduleChange(Kind.Added, it.remote_id, it.headline)) }
             previous
                 .filter { it.remote_id !in after && !it.isServiceSession }
-                .forEach { add(ScheduleChange(Kind.Removed, title = it.title)) }
+                .forEach { add(ScheduleChange(Kind.Removed, title = it.headline)) }
             incoming.forEach { new ->
                 val old = before[new.remote_id] ?: return@forEach
                 if (old.startTimestamp != new.startTimestamp || old.endTimeStamp != new.endTimeStamp) {
-                    add(ScheduleChange(Kind.Rescheduled, new.remote_id, new.title))
+                    add(ScheduleChange(Kind.Rescheduled, new.remote_id, new.headline))
                 }
-                if (old.rooms != new.rooms) add(ScheduleChange(Kind.Moved, new.remote_id, new.title))
+                if (old.roomSet != new.roomSet) add(ScheduleChange(Kind.Moved, new.remote_id, new.headline))
             }
         }
     return if (changes.size > MAX_SEPARATE_CHANGES) listOf(ScheduleChange(Kind.ManyChanges, count = changes.size)) else changes
 }
+
+private val SessionEntity.roomSet: Set<String>
+    get() =
+        rooms
+            .split(',')
+            .map(String::trim)
+            .filter(String::isNotEmpty)
+            .toSet()
 
 private const val MAX_SEPARATE_CHANGES = 12

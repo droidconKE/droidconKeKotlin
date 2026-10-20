@@ -180,7 +180,7 @@ class SessionsViewModel
 
         private fun getResultStatus(sessions: List<SessionPresentationModel>): ResultStatus =
             if (sessions.isEmpty()) {
-                ResultStatus.Empty("No sessions found")
+                ResultStatus.Empty
             } else {
                 ResultStatus.Success
             }

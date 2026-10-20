@@ -58,6 +58,20 @@ class ScheduleChangesTest {
     }
 
     @Test
+    fun `the same rooms in a different order are not a move`() {
+        val twoRooms = talk.copy(rooms = "Opal,Sapphire")
+
+        assertEquals(emptyList<ScheduleChange>(), scheduleChanges(listOf(twoRooms), listOf(twoRooms.copy(rooms = "Sapphire, Opal"))))
+    }
+
+    @Test
+    fun `a change is recorded under the session's title, not the blurb that follows it`() {
+        val withBlurb = talk.copy(title = "Compose\r\nHow to animate without jank")
+
+        assertEquals(listOf(ScheduleChange(Kind.Removed, title = "Compose")), scheduleChanges(listOf(withBlurb, lunch), listOf(lunch)))
+    }
+
+    @Test
     fun `nothing changed is nothing to say, and neither is an empty response`() {
         assertEquals(emptyList<ScheduleChange>(), scheduleChanges(listOf(talk, lunch), listOf(talk, lunch)))
         assertEquals(emptyList<ScheduleChange>(), scheduleChanges(listOf(talk, lunch), emptyList()))

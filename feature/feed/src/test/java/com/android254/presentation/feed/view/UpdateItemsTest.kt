@@ -43,8 +43,8 @@ class UpdateItemsTest {
                 posts = listOf(Feed("Venue announced", "", "", "", null, "2026-10-19T08:00:00")),
                 updates =
                     listOf(
-                        update(Kind.Moved, "compose", at = "2026-10-20T08:00:00+03:00"),
-                        update(Kind.ScheduleOut, null, at = "2026-10-01T08:00:00+03:00", count = 20),
+                        update(Kind.Moved, "compose", at = "2026-10-20T08:00:00+03:00", id = 2),
+                        update(Kind.ScheduleOut, null, at = "2026-10-01T08:00:00+03:00", count = 20, id = 1),
                     ),
                 sessions = listOf(compose),
                 now = now,
@@ -71,11 +71,19 @@ class UpdateItemsTest {
         assertNull(item.sessionId)
     }
 
+    @Test
+    fun `two sessions dropped in one sync are two rows, not one key twice`() {
+        val items = updateItems(emptyList(), listOf(update(Kind.Removed, null, title = "A", id = 1), update(Kind.Removed, null, title = "B", id = 2)), emptyList(), now, nairobi)
+
+        assertEquals(2, items.map { it.key }.distinct().size)
+    }
+
     private fun update(
         kind: Kind,
         sessionId: String?,
         at: String = "2026-10-20T08:00:00+03:00",
         title: String = "",
         count: Int = 0,
-    ) = ScheduleUpdate(kind, sessionId, title, count, Instant.parse(at))
+        id: Long = 1,
+    ) = ScheduleUpdate(id, kind, sessionId, title, count, Instant.parse(at))
 }

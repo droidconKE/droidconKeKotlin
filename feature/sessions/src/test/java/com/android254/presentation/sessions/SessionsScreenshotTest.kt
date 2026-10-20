@@ -157,7 +157,7 @@ private fun Sessions(
         sessionsUiState =
             SessionsUiState(
                 sessions = if (isEmpty) persistentMapOf() else persistentMapOf("09:00 AM" to fakeSessions),
-                sessionStatus = if (isEmpty) ResultStatus.Empty("") else ResultStatus.Success,
+                sessionStatus = if (isEmpty) ResultStatus.Empty else ResultStatus.Success,
                 eventDays = persistentListOf(EventDate("5", day = 1), EventDate("6", day = 2), EventDate("7", day = 3)),
                 showMySessionsOnly = showMySessionsOnly,
                 clashes = clashes,

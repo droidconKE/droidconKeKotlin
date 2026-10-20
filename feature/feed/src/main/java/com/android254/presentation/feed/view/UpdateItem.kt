@@ -27,10 +27,11 @@ sealed interface UpdateItem {
         val feed: FeedUI,
         override val atMillis: Long?,
     ) : UpdateItem {
-        override val key: String = "post:${feed.title}"
+        override val key: String = "post:$atMillis:${feed.title}"
     }
 
     data class Schedule(
+        val id: Long,
         val kind: ScheduleUpdate.Kind,
         val sessionId: String?,
         val title: String,
@@ -41,6 +42,6 @@ sealed interface UpdateItem {
         val isStarred: Boolean,
         override val atMillis: Long?,
     ) : UpdateItem {
-        override val key: String = "update:$kind:$sessionId:$atMillis"
+        override val key: String = "update:$id"
     }
 }

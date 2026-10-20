@@ -20,9 +20,7 @@ sealed interface ResultStatus {
 
     object Success : ResultStatus
 
-    data class Empty(
-        val message: String,
-    ) : ResultStatus
+    object Empty : ResultStatus
 
     data class Error(
         val message: String,
@@ -40,9 +38,6 @@ val ResultStatus.isSuccess: Boolean
 
 val ResultStatus.isError: Boolean
     get() = this is ResultStatus.Error
-
-val ResultStatus.emptyMessage: String
-    get() = (this as? ResultStatus.Empty)?.message ?: ""
 
 val ResultStatus.errorMessage: String
     get() = (this as? ResultStatus.Error)?.message ?: ""

@@ -74,7 +74,7 @@ class SessionsManagerTest {
             val bookmarkDao = mockk<BookmarkDao>()
             every { bookmarkDao.getBookmarkIds() } returns flowOf(listOf(BookmarkEntity(session.remote_id)))
             every { mockLocalSessionsDataSource.getCachedSessions() } returns flowOf(listOf(session))
-            every { mockLocalSessionsDataSource.fetchSessionWithFilters(any()) } returns flowOf(listOf(session))
+            every { mockLocalSessionsDataSource.fetchSessionWithFilters(any(), any(), any()) } returns flowOf(listOf(session))
             val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, bookmarkDao, ioDispatcher, updatesDao, clock)
 
             val all = manager.fetchSessions().first().single()
@@ -89,12 +89,11 @@ class SessionsManagerTest {
     fun `an empty sessions response keeps the cached schedule`() =
         runTest {
             coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(emptyList())
-            coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1")
-            coEvery { mockLocalSessionsDataSource.getAllCachedSessions() } returns listOf(sessionEntity)
 
             val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher, updatesDao, clock)
 
             assert(manager.syncWith(object : Synchronizer {}))
+            coVerify(exactly = 0) { mockLocalSessionsDataSource.getAllCachedSessions() }
             coVerify(exactly = 0) { mockLocalSessionsDataSource.deleteByRemoteIds(any()) }
             coVerify(exactly = 0) { updatesDao.upsert(any<List<UpdateEntity>>()) }
         }
@@ -107,13 +106,23 @@ class SessionsManagerTest {
             every { remoteSession.startDateTime } returns "2023-11-17 09:00:00"
             every { remoteSession.endDateTime } returns "2023-11-17 10:00:00"
             coEvery { mockRemoteSessionsDataSource.getAllSessionsRemote() } returns DataResult.Success(listOf(remoteSession))
-            coEvery { mockLocalSessionsDataSource.getRemoteIds() } returns listOf("remote_id_1", "remote_id_2")
             coEvery { mockLocalSessionsDataSource.saveCachedSessions(any()) } returns Unit
             coEvery { mockLocalSessionsDataSource.deleteByRemoteIds(any()) } returns Unit
-            coEvery { mockLocalSessionsDataSource.getAllCachedSessions() } returns emptyList()
+            var inTransaction = false
+            coEvery { mockLocalSessionsDataSource.getAllCachedSessions() } answers {
+                check(inTransaction) { "The snapshot must be read inside the sync's transaction" }
+                listOf(sessionEntity.copy(remote_id = "remote_id_2"))
+            }
+            val synchronizer =
+                object : Synchronizer {
+                    override suspend fun <R> inTransaction(block: suspend () -> R): R {
+                        inTransaction = true
+                        return block().also { inTransaction = false }
+                    }
+                }
 
             val manager = SessionsManager(mockLocalSessionsDataSource, mockRemoteSessionsDataSource, mockk(), ioDispatcher, updatesDao, clock)
-            val result = manager.syncWith(object : Synchronizer {})
+            val result = manager.syncWith(synchronizer)
 
             assert(result)
             coVerify { mockLocalSessionsDataSource.deleteByRemoteIds(listOf("remote_id_2")) }

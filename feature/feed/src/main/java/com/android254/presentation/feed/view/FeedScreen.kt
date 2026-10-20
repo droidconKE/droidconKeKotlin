@@ -203,6 +203,7 @@ private fun FeedScreenPreview() {
                         items =
                             persistentListOf(
                                 UpdateItem.Schedule(
+                                    id = 1,
                                     kind = ScheduleUpdate.Kind.Moved,
                                     sessionId = "1",
                                     title = "Compose Animations That Don't Jank",
