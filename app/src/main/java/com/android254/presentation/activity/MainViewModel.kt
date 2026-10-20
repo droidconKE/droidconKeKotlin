@@ -18,10 +18,12 @@ package com.android254.presentation.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.schedule.upNextToday
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.core.common.di.ConferenceTimeZone
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.core.common.time.ticks
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
@@ -38,6 +40,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.datetime.TimeZone
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -50,6 +53,7 @@ class MainViewModel
         private val clock: Clock,
         private val remoteFeatureToggle: RemoteFeatureToggle,
         private val syncDataWorkManager: SyncDataWorkManager,
+        @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _isInitialising = MutableStateFlow(true)
@@ -93,6 +97,7 @@ class MainViewModel
                                     .toImmutableList(),
                             upNext =
                                 upNext
+                                    .upNextToday(now, conferenceTimeZone)
                                     .map { it.toPresentationModel(now) }
                                     .toImmutableList(),
                         )

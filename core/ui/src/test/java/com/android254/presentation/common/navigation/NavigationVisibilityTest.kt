@@ -109,21 +109,17 @@ class NavigationVisibilityTest {
     }
 
     @Test
-    fun `home hides the rail when its hero shows the one live session`() {
-        assertFalse(shouldShowLiveSessionsRail(Screens.Home, isMultiPaneWindow = false, liveSessionCount = 3, liveNowCount = 1))
+    fun `home shows the rail unless your agenda there already shows that session`() {
+        assertTrue(shouldShowLiveSessionsRail(Screens.Home, isMultiPaneWindow = false, liveSessionCount = 2))
+        assertFalse(shouldShowLiveSessionsRail(Screens.Home, isMultiPaneWindow = false, liveSessionCount = 2, featuredIsStarred = true))
+        assertTrue(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = false, liveSessionCount = 2, featuredIsStarred = true))
     }
 
     @Test
-    fun `home keeps the rail for parallel live sessions or when only up next is known`() {
-        assertTrue(shouldShowLiveSessionsRail(Screens.Home, isMultiPaneWindow = false, liveSessionCount = 4, liveNowCount = 2))
-        assertTrue(shouldShowLiveSessionsRail(Screens.Home, isMultiPaneWindow = false, liveSessionCount = 2, liveNowCount = 0))
-    }
-
-    @Test
-    fun `the rail shows elsewhere on a single pane and never beside a pane or when empty`() {
-        assertTrue(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = false, liveSessionCount = 1, liveNowCount = 1))
-        assertFalse(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = true, liveSessionCount = 1, liveNowCount = 1))
-        assertFalse(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = false, liveSessionCount = 0, liveNowCount = 0))
-        assertFalse(shouldShowLiveSessionsRail(Screens.FeedBack, isMultiPaneWindow = false, liveSessionCount = 1, liveNowCount = 1))
+    fun `the rail shows on a single pane and never beside a pane or when empty`() {
+        assertTrue(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = false, liveSessionCount = 1))
+        assertFalse(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = true, liveSessionCount = 1))
+        assertFalse(shouldShowLiveSessionsRail(Screens.Sessions, isMultiPaneWindow = false, liveSessionCount = 0))
+        assertFalse(shouldShowLiveSessionsRail(Screens.FeedBack, isMultiPaneWindow = false, liveSessionCount = 1))
     }
 }

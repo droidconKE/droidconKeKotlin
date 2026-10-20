@@ -29,6 +29,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,10 +39,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.domain.models.ScheduleUpdate
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton
 import com.android254.presentation.common.components.EmptyStatePanel
@@ -53,12 +57,15 @@ import com.android254.presentation.models.FeedUI
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
+import kotlinx.collections.immutable.persistentListOf
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
 fun FeedRoute(
     feedViewModel: FeedViewModel = hiltViewModel(),
     navigateToFeedbackScreen: () -> Unit = {},
+    onSessionClick: (String) -> Unit = {},
+    navigateToSessions: () -> Unit = {},
 ) {
     val feedUIState by feedViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -67,6 +74,8 @@ fun FeedRoute(
         feedUIState = feedUIState,
         navigateToFeedbackScreen = navigateToFeedbackScreen,
         onShare = { feed -> context.startActivity(shareIntent(feed)) },
+        onSessionClick = onSessionClick,
+        navigateToSessions = navigateToSessions,
     )
 }
 
@@ -81,6 +90,8 @@ internal fun FeedScreen(
     feedUIState: FeedUIState,
     navigateToFeedbackScreen: () -> Unit = {},
     onShare: (FeedUI) -> Unit = {},
+    onSessionClick: (String) -> Unit = {},
+    navigateToSessions: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -124,29 +135,45 @@ internal fun FeedScreen(
                 }
 
                 is FeedUIState.Success -> {
-                    if (feedUIState.feeds.isEmpty()) {
-                        FeedEmptyState(Modifier.padding(paddingValues))
-                    } else {
-                        LazyColumn(
-                            modifier =
-                                Modifier
-                                    .testTag("feeds_lazy_column")
-                                    .fillMaxSize()
-                                    .readablePaneWidth(),
-                            contentPadding = paddingValues.plus(bottom = 16.dp),
-                        ) {
-                            itemsIndexed(feedUIState.feeds, key = { _, feed -> feed.title }) { index, feedPresentationModel ->
-                                if (index > 0) {
-                                    HorizontalDivider(
-                                        modifier = Modifier.padding(horizontal = 20.dp),
-                                        color = MaterialTheme.colorScheme.outlineVariant,
-                                    )
-                                }
-                                FeedComponent(
-                                    feed = feedPresentationModel,
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onShare = { onShare(feedPresentationModel) },
+                    LazyColumn(
+                        modifier =
+                            Modifier
+                                .testTag("feeds_lazy_column")
+                                .fillMaxSize()
+                                .readablePaneWidth(),
+                        contentPadding = paddingValues.plus(bottom = 16.dp),
+                    ) {
+                        item(key = "updates-title") {
+                            Text(
+                                text = stringResource(R.string.updates_title),
+                                style = MaterialTheme.typography.headlineSmallEmphasized,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier =
+                                    Modifier
+                                        .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 4.dp)
+                                        .semantics { heading() },
+                            )
+                        }
+                        itemsIndexed(feedUIState.items, key = { _, item -> item.key }) { index, item ->
+                            if (index > 0) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant,
                                 )
+                            }
+                            when (item) {
+                                is UpdateItem.Post ->
+                                    FeedComponent(
+                                        feed = item.feed,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onShare = { onShare(item.feed) },
+                                    )
+                                is UpdateItem.Schedule ->
+                                    ScheduleUpdateRow(
+                                        item = item,
+                                        onSessionClick = onSessionClick,
+                                        onBrowseSessions = navigateToSessions,
+                                    )
                             }
                         }
                     }
@@ -173,23 +200,30 @@ private fun FeedScreenPreview() {
             FeedScreen(
                 feedUIState =
                     FeedUIState.Success(
-                        feeds =
-                            listOf(
-                                FeedUI(
-                                    title = "Feed item 1",
-                                    body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
-                                    topic = "Lorem ipsum",
-                                    url = "",
-                                    image = "",
-                                    createdAt = "2021-10-10",
+                        items =
+                            persistentListOf(
+                                UpdateItem.Schedule(
+                                    id = 1,
+                                    kind = ScheduleUpdate.Kind.Moved,
+                                    sessionId = "1",
+                                    title = "Compose Animations That Don't Jank",
+                                    count = 0,
+                                    whenLabel = "Today",
+                                    sessionTime = "Thu, 5 Nov · 10:15 AM",
+                                    venue = "Opal",
+                                    isStarred = true,
+                                    atMillis = 2,
                                 ),
-                                FeedUI(
-                                    title = "Feed item 2",
-                                    body = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl. Donec euismod, nisl eget aliquam ultricies, nisl nisl aliquet nisl, eget aliquam nisl nisl eget nisl.",
-                                    topic = "Lorem ipsum",
-                                    url = "",
-                                    image = "",
-                                    createdAt = "2021-10-10",
+                                UpdateItem.Post(
+                                    FeedUI(
+                                        title = "Doors open at 8:00",
+                                        body = "Registration is at the main entrance. Bring your ticket.",
+                                        topic = "Venue",
+                                        url = "",
+                                        image = null,
+                                        createdAt = "Yesterday",
+                                    ),
+                                    atMillis = 1,
                                 ),
                             ),
                     ),

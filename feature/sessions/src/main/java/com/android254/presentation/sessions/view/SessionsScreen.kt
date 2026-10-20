@@ -252,7 +252,7 @@ class SessionsUiStateProvider : PreviewParameterProvider<SessionsUiState> {
                 sessionStatus = ResultStatus.Loading,
             ),
             SessionsUiState(
-                sessionStatus = ResultStatus.Empty("No sessions found"),
+                sessionStatus = ResultStatus.Empty,
             ),
             SessionsUiState(
                 sessionStatus = ResultStatus.Error("Something went wrong"),

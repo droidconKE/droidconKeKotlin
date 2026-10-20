@@ -13,7 +13,7 @@
     <string name="feedback_label">Feedback</string>
     <string name="feedback_button">Submit feedback</string>
     <string name="about">About</string>
-    <string name="about_droidcon">Droidcon is a global conference focused on the engineering of Android applications. Droidcon provides a forum for developers to network with other developers, share techniques, announce apps and products, and to learn and teach.\n\nThis three-day developer focused gathering will be held in Nairobi, Kenya on November 8th to 10th 2023 and will be the largest of its kind in Africa.\n\nIt will have workshops and codelabs focused on the building of Android applications and will give participants an excellent chance to learn about the local Android development ecosystem, opportunities and services as well as meet the engineers and companies who work on them.</string>
+    <string name="about_droidcon">Droidcon is a global conference about building Android apps, and a place for developers to meet, share techniques, show what they have built, and learn from each other.\n\ndroidconKenya brings that to Nairobi. It is the largest gathering of its kind in Africa: talks, workshops and codelabs on building Android apps, and a chance to get to know the local developer community, its opportunities, and the engineers and companies behind them.</string>
     <string name="about_organizing_team">Organising team</string>
     <string name="organized_by">Organizers</string>
     <string name="logo">Logo</string>
@@ -50,7 +50,6 @@
     <string name="title_filter_room">Room</string>
 
     <string name="session_details_label">Session details</string>
-    <string name="speaker_label">Speaker:</string>
     <string name="twitter_handle_label">Twitter handle</string>
     <string name="sessions_label">Sessions</string>
     <string name="session_image">Session image</string>
@@ -61,7 +60,6 @@
     <string name="session_starred">In my sessions</string>
     <string name="session_not_starred">Not in my sessions</string>
     <string name="retry_label">Retry</string>
-    <string name="sessions_icon_description">sessions icon</string>
 
     <string name="Bad">Bad</string>
     <string name="Okay">Okay</string>
@@ -74,18 +72,36 @@
     <string name="my_sessions_off">Showing all sessions</string>
     <string name="up_next">Up next</string>
     <string name="live_badge">Live</string>
+    <string name="rail_your_session">In your agenda</string>
+    <string name="rail_until">until %1$s</string>
     <string name="session_ended">Ended</string>
-    <string name="open_session">open session</string>
-    <string name="hero_live_room_until">%1$s · until %2$s</string>
-    <string name="hero_up_next">Next at %1$s · %2$s</string>
 
     <string name="nav_home">Home</string>
-    <string name="nav_feed">Feed</string>
+    <string name="nav_feed">Updates</string>
     <string name="nav_sessions">Sessions</string>
     <string name="nav_about">About</string>
 
     <string name="happening_now">Happening now</string>
-    <string name="feed_empty">No posts yet. Updates from the organisers will show up here.</string>
+    <string name="feed_empty">New sessions, schedule changes and news from the organisers show up here.</string>
+    <string name="updates_title">Updates</string>
+    <string name="update_schedule_label">Schedule</string>
+    <string name="update_added_label">New session</string>
+    <string name="update_rescheduled_label">Time changed</string>
+    <string name="update_moved_label">Room changed</string>
+    <string name="update_removed_label">Removed</string>
+    <string name="update_schedule_out_headline">The schedule is out</string>
+    <string name="update_many_headline">The schedule changed</string>
+    <plurals name="update_schedule_out_detail">
+        <item quantity="one">%d session is on the schedule. Star the ones you want.</item>
+        <item quantity="other">%d sessions are on the schedule. Star the ones you want.</item>
+    </plurals>
+    <plurals name="update_many_detail">
+        <item quantity="one">%d change, so check the sessions you starred.</item>
+        <item quantity="other">%d changes, so check the sessions you starred.</item>
+    </plurals>
+    <string name="update_now">Now %1$s</string>
+    <string name="update_now_in">Now in %1$s</string>
+    <string name="update_removed_detail">No longer on the schedule</string>
     <string name="happening_now_empty">Nothing on right now. The next session will show up here.</string>
     <string name="select_a_session">Pick a session to see the details</string>
     <string name="select_a_speaker">Pick a speaker to see their profile</string>
@@ -96,11 +112,15 @@
     <string name="filter_clear">Clear</string>
     <string name="filter_show_sessions">Show sessions</string>
     <string name="hero_starts_today">droidconKenya starts today</string>
+    <plurals name="speaker_label">
+        <item quantity="one">Speaker:</item>
+        <item quantity="other">Speakers:</item>
+    </plurals>
     <plurals name="hero_days_to_go">
         <item quantity="one">%d day to go</item>
         <item quantity="other">%d days to go</item>
     </plurals>
-    <string name="hero_countdown_label">Star the sessions you want and build your agenda</string>
+    <string name="hero_event_dates">%1$s · Nairobi</string>
     <string name="hero_thank_you">Thanks for coming to droidconKenya</string>
     <string name="hero_thank_you_action">Tell us how it went</string>
     <string name="agenda_title">Your agenda</string>
@@ -108,6 +128,14 @@
     <string name="agenda_tomorrow">Tomorrow</string>
     <string name="agenda_empty">Star sessions and they show up here, with any clashes flagged.</string>
     <string name="agenda_browse_sessions">Browse sessions</string>
+    <string name="sessions_empty_starred_title">Nothing starred for this day</string>
+    <string name="sessions_empty_starred_body">Star the sessions you want to catch and they show up here.</string>
+    <string name="sessions_show_all">Show all sessions</string>
+    <string name="sessions_empty_filtered_title">No sessions match these filters</string>
+    <string name="sessions_empty_filtered_body">Try fewer filters, or clear them to see the whole day.</string>
+    <string name="sessions_clear_filters">Clear filters</string>
+    <string name="sessions_empty_title">The schedule is on its way</string>
+    <string name="sessions_empty_body">Sessions show up here as soon as they are announced.</string>
     <string name="agenda_clashes_with">Clashes with %1$s</string>
     <string name="clash_banner_title">Some of your sessions overlap</string>
     <plurals name="clash_banner_more">

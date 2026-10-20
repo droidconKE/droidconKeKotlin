@@ -85,10 +85,25 @@ class SessionsFilterOptionsTest {
                     session(remoteId = "1", sessionLevel = "Advanced"),
                     session(remoteId = "2", sessionLevel = "advanced"),
                     session(remoteId = "3", sessionLevel = "ADVANCED"),
+                    session(remoteId = "4", sessionLevel = "Beginner"),
                 ),
             )
 
-        assertEquals(1, options.count { it.type == SessionsFilterCategory.Level })
+        assertEquals(2, options.count { it.type == SessionsFilterCategory.Level })
+    }
+
+    @Test
+    fun `a category with a single value is not offered, since choosing it filters nothing`() {
+        val options =
+            viewModel.buildFilterOptions(
+                listOf(
+                    session(remoteId = "1", rooms = "droidcon", sessionLevel = "Advanced"),
+                    session(remoteId = "2", rooms = "droidcon", sessionLevel = "Beginner"),
+                ),
+            )
+
+        assertEquals(0, options.count { it.type == SessionsFilterCategory.Room })
+        assertEquals(2, options.count { it.type == SessionsFilterCategory.Level })
     }
 
     @Test

@@ -26,11 +26,27 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.time.Instant
 
-fun SessionEntity.toDomainModel() =
-    Session(
+/** Some titles carry their blurb after a line break; the first line is the title. */
+internal val SessionEntity.headline: String
+    get() =
+        title
+            .trim()
+            .lines()
+            .first()
+            .trim()
+
+fun SessionEntity.toDomainModel(): Session {
+    val blurb =
+        title
+            .trim()
+            .lines()
+            .drop(1)
+            .joinToString("\n")
+            .trim()
+    return Session(
         id = this.remote_id,
-        description = this.description,
-        title = this.title,
+        description = description.ifBlank { blurb },
+        title = headline,
         sessionFormat = this.sessionFormat,
         sessionLevel = this.sessionLevel,
         slug = this.slug,
@@ -49,6 +65,7 @@ fun SessionEntity.toDomainModel() =
         startInstant = Instant.fromEpochMilliseconds(startTimestamp),
         endInstant = Instant.fromEpochMilliseconds(endTimeStamp),
     )
+}
 
 fun SessionDTO.toEntity(): SessionEntity =
     SessionEntity(

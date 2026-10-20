@@ -22,6 +22,7 @@ import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
 import com.android254.domain.schedule.agendaDay
 import com.android254.domain.schedule.conferencePhase
+import com.android254.domain.schedule.eventDates
 import com.android254.domain.schedule.scheduleConflicts
 import com.android254.domain.schedule.starredOn
 import com.android254.presentation.home.viewstate.AgendaDay
@@ -76,7 +77,8 @@ fun Home.toHomeState(
         isSyncing = isSyncing,
         hero =
             when (val phase = sessions.conferencePhase(now, zone)) {
-                is ConferencePhase.BeforeEvent -> HomeHero.Countdown(phase.daysUntil)
+                is ConferencePhase.BeforeEvent ->
+                    sessions.eventDates(zone).let { dates -> HomeHero.Countdown(phase.daysUntil, dates?.start, dates?.endInclusive) }
                 ConferencePhase.AfterEvent -> HomeHero.ThankYou
                 ConferencePhase.DuringEvent, null -> HomeHero.Welcome
             },

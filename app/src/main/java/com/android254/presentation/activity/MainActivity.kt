@@ -25,6 +25,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -57,6 +63,7 @@ import com.android254.presentation.common.adaptive.rememberIsMultiPaneWindow
 import com.android254.presentation.common.adaptive.rememberIsPhoneOnItsSide
 import com.android254.presentation.common.adaptive.rememberShowsNavigationDrawer
 import com.android254.presentation.common.livesessions.LiveSessionsRail
+import com.android254.presentation.common.livesessions.featured
 import com.android254.presentation.common.livesessions.rememberLiveSessions
 import com.android254.presentation.common.navigation.DroidconDrawerHeader
 import com.android254.presentation.common.navigation.DroidconNavigationItems
@@ -178,7 +185,7 @@ fun MainScreen(
             route = currentRoute,
             isMultiPaneWindow = isMultiPaneWindow,
             liveSessionCount = liveSessions.size,
-            liveNowCount = sessionsState.current.size,
+            featuredIsStarred = liveSessions.featured()?.isStarred == true,
         )
 
     NavigationSuiteScaffold(
@@ -229,7 +236,16 @@ fun MainScreen(
                         onActionClicked = { showAuthDialog = !showAuthDialog },
                     ),
             )
-            if (showLiveSessionsRail) {
+            AnimatedVisibility(
+                visible = showLiveSessionsRail,
+                enter =
+                    expandVertically(MaterialTheme.motionScheme.defaultSpatialSpec()) +
+                        slideInVertically(MaterialTheme.motionScheme.defaultSpatialSpec()) { it / 2 } +
+                        fadeIn(MaterialTheme.motionScheme.defaultEffectsSpec()),
+                exit =
+                    shrinkVertically(MaterialTheme.motionScheme.fastSpatialSpec()) +
+                        fadeOut(MaterialTheme.motionScheme.fastEffectsSpec()),
+            ) {
                 LiveSessionsRail(
                     sessions = liveSessions,
                     onSessionClick = { navController.navigate(Screens.SessionDetails(it)) },

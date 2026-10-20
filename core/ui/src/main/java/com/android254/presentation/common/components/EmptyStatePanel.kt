@@ -41,8 +41,10 @@ fun EmptyStatePanel(
     icon: Painter,
     message: String,
     modifier: Modifier = Modifier,
+    body: String? = null,
     badgeColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     iconColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    action: (@Composable () -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -62,11 +64,25 @@ fun EmptyStatePanel(
         ) {
             Icon(painter = icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(32.dp))
         }
-        Text(
-            text = message,
-            style = MaterialTheme.typography.titleMediumEmphasized,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMediumEmphasized,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+            )
+            if (body != null) {
+                Text(
+                    text = body,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+        action?.invoke()
     }
 }

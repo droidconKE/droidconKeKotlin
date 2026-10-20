@@ -18,15 +18,13 @@ package com.android254.presentation.sessions.components
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -34,10 +32,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
@@ -45,15 +45,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.common.resultstatus.ResultStatus
-import com.android254.presentation.common.resultstatus.emptyMessage
 import com.android254.presentation.common.resultstatus.errorMessage
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionStatus
@@ -62,15 +63,67 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyLargeBold
-import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.components.ChaiPullToRefreshBox
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import ke.droidcon.kotlin.chai.R as ChaiR
+
+/** Says why the list is empty and offers the one tap that fills it again. */
+@Composable
+private fun SessionsEmptyState(
+    showMySessionsOnly: Boolean,
+    isFilterActive: Boolean,
+    onEvent: (SessionsIntentHandler) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        EmptyStatePanel(
+            icon = if (showMySessionsOnly) rememberVectorPainter(ChaiIcons.StarOutlineRounded) else painterResource(ChaiR.drawable.sessions_icon),
+            message =
+                stringResource(
+                    when {
+                        showMySessionsOnly -> R.string.sessions_empty_starred_title
+                        isFilterActive -> R.string.sessions_empty_filtered_title
+                        else -> R.string.sessions_empty_title
+                    },
+                ),
+            body =
+                stringResource(
+                    when {
+                        showMySessionsOnly -> R.string.sessions_empty_starred_body
+                        isFilterActive -> R.string.sessions_empty_filtered_body
+                        else -> R.string.sessions_empty_body
+                    },
+                ),
+            action =
+                if (showMySessionsOnly || isFilterActive) {
+                    {
+                        FilledTonalButton(
+                            onClick = {
+                                onEvent(
+                                    if (showMySessionsOnly) SessionsIntentHandler.ToggleBookmarkFilter else SessionsIntentHandler.ClearSelectedFilterList,
+                                )
+                            },
+                            colors =
+                                ButtonDefaults.filledTonalButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    contentColor = MaterialTheme.colorScheme.onSurface,
+                                ),
+                        ) {
+                            Text(stringResource(if (showMySessionsOnly) R.string.sessions_show_all else R.string.sessions_clear_filters))
+                        }
+                    }
+                } else {
+                    null
+                },
+        )
+    }
+}
 
 @Composable
 fun SessionsStateComponent(
@@ -90,27 +143,15 @@ fun SessionsStateComponent(
     AnimatedContent(sessionsUiState.sessionStatus, label = "session_status") { status ->
         when (status) {
             is ResultStatus.Empty -> {
-                Column(
+                SessionsEmptyState(
+                    showMySessionsOnly = sessionsUiState.showMySessionsOnly,
+                    isFilterActive = sessionsUiState.isFilterActive,
+                    onEvent = onEvent,
                     modifier =
                         modifier
                             .fillMaxSize()
                             .padding(contentPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(70.dp),
-                        painter = painterResource(id = ChaiR.drawable.sessions_icon),
-                        contentDescription = stringResource(id = R.string.sessions_icon_description),
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    ChaiBodyMediumBold(
-                        bodyText = sessionsUiState.sessionStatus.emptyMessage,
-                        textColor = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
+                )
             }
 
             is ResultStatus.Error -> {

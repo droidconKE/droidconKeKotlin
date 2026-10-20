@@ -22,12 +22,10 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import com.android254.presentation.about.view.AboutRoute
-import com.android254.presentation.activity.MainViewModel
 import com.android254.presentation.common.components.DetailPanePlaceholder
 import com.android254.presentation.common.livesessions.HappeningNowRoute
 import com.android254.presentation.feed.view.FeedRoute
@@ -51,10 +49,7 @@ fun droidconEntryProvider(
     val entryProvider =
         entryProvider<NavKey> {
             entry<Screens.Home>(metadata = mainPaneMetadata()) {
-                val sessionState by hiltViewModel<MainViewModel>().sessionState.collectAsStateWithLifecycle()
                 HomeRoute(
-                    liveSession = sessionState.current.firstOrNull(),
-                    nextSession = sessionState.upNext.firstOrNull(),
                     navigateToSpeakers = { navController.navigate(Screens.Speakers) },
                     navigateToSpeaker = { speakerName ->
                         navController.navigate(
@@ -98,6 +93,8 @@ fun droidconEntryProvider(
             entry<Screens.Feed>(metadata = mainPaneMetadata()) {
                 FeedRoute(
                     navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
+                    onSessionClick = { navController.navigate(Screens.SessionDetails(it)) },
+                    navigateToSessions = { navController.navigate(Screens.Sessions) },
                 )
             }
             entry<Screens.About>(metadata = mainPaneMetadata()) {

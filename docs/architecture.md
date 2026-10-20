@@ -192,6 +192,15 @@ call stays outside the transaction. An empty sessions response is treated as a f
 schedule is kept and a warning is logged. The feed endpoint answers 404 when an event has no
 posts; `FeedApi` reads that as an empty list rather than a failed sync.
 
+The sessions sync also records what it changed, for the Updates tab. `SessionsManager` reads the
+cached schedule inside the sync's transaction, before the deletes, so the one-time and daily jobs
+starting together cannot record a change twice. It then writes one row to the `updates` table per
+new talk, dropped talk, time change and room change (`scheduleChanges`); rooms compare as a set, so
+the API reordering them is not a move. Breaks coming and going are not recorded; breaks moving are. A first sync, or one that shares no
+session with the last (a new event year), records a single "the schedule is out" instead, and a
+sync that changes more than twelve things records one "the schedule changed". The table keeps the
+newest hundred rows. Updates merges them with organiser posts on one timeline, newest first.
+
 `isSyncing` is true while either the one-time job (`sync_data`) or the daily job
 (`sync_data_periodic`) is running. `startSync()` is expedited, so the worker posts a foreground
 notification while it runs on API 30 and below.
@@ -315,12 +324,18 @@ presentation-layer models.
 
 Home follows the conference. `core/domain`'s `schedule` package holds the pure functions it uses:
 `conferencePhase` (before, during or after, from the first start and last end), `agendaDay` (today
-until its last session ends, then the next event day) and `scheduleConflicts` (every pair of
-starred sessions overlapping by five minutes or more). Days are counted in the conference time
+until its last session ends, then the next event day), `scheduleConflicts` (every pair of
+starred sessions overlapping by five minutes or more) and `upNextToday` (the live rail's "up next",
+which waits for the event day so it does not sit on every tab for weeks). Days are counted in the conference time
 zone, which Hilt provides as `@ConferenceTimeZone`. `HomeViewModel` ticks once a minute, so the
-hero and the agenda move on without new data. Before the event the hero counts down; after it, it
-thanks people and opens feedback; while a session is live it shows Now and Next. With nothing
-synced yet there is no phase, and the hero welcomes. With the "My sessions" switch on, the
+hero and the agenda move on without new data. The hero is about the event, not its sessions:
+before the event it counts down, during it it welcomes, after it it thanks people and opens
+feedback; the countdown names the dates and the city. Below it Home shows one sessions block: your
+agenda for the day, or a prompt to browse sessions until you star some, and after the event, when
+there is no agenda day, the sessions carousel. Now and Next live in the rail above the
+navigation bar: one nudge, your starred session first, on every tab; on Home it stays out of the
+way when your agenda already shows that session. With nothing synced yet there is no phase, and
+the hero welcomes. With the "My sessions" switch on, the
 sessions screen lists the selected day's clashes above the sessions.
 
 The rules that matter:

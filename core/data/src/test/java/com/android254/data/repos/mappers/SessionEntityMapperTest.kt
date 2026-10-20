@@ -33,16 +33,34 @@ class SessionEntityMapperTest {
         assertEquals(end, session.endInstant)
     }
 
+    @Test
+    fun `a blurb typed into the title moves to an empty description`() {
+        val session = entity(title = "Speaker Open Forum\nA moderated session with this year's speakers.").toDomainModel()
+
+        assertEquals("Speaker Open Forum", session.title)
+        assertEquals("A moderated session with this year's speakers.", session.description)
+    }
+
+    @Test
+    fun `a real description wins over a blurb in the title`() {
+        val session = entity(title = "Open Forum\nBlurb", description = "The abstract").toDomainModel()
+
+        assertEquals("Open Forum", session.title)
+        assertEquals("The abstract", session.description)
+    }
+
     private fun entity(
-        startTimestamp: Long,
-        endTimeStamp: Long,
+        startTimestamp: Long = 0,
+        endTimeStamp: Long = 0,
+        title: String = "",
+        description: String = "",
     ) = SessionEntity(
         remote_id = "1",
-        description = "",
+        description = description,
         sessionFormat = "",
         sessionLevel = "",
         slug = "",
-        title = "",
+        title = title,
         endDateTime = "",
         endTime = "",
         isBookmarked = false,

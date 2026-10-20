@@ -39,16 +39,13 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
     fun `home across form factors`() = captureFormFactors("form_factors/home") { Home() }
 
     @Test
-    fun `home agenda across form factors`() = captureFormFactors("form_factors/home_agenda") { Home(liveIndex = 4, nextIndex = 6, agenda = clashingAgenda) }
-
-    @Test
-    fun `home during a session`() = captureScreen("screens/home_live") { Home(liveIndex = 1, nextIndex = 2) }
+    fun `home agenda across form factors`() = captureFormFactors("form_factors/home_agenda") { Home(agenda = clashingAgenda) }
 
     @Test
     fun `home before the event, nothing starred`() =
         captureScreen("screens/home_before") {
             Home(
-                hero = HomeHero.Countdown(daysUntil = 12),
+                hero = HomeHero.Countdown(daysUntil = 12, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 7)),
                 agenda = HomeAgenda(AgendaDay.On(LocalDate(2026, 11, 6)), persistentListOf()),
             )
         }
@@ -57,8 +54,6 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
     fun `home during the event, with a clash`() =
         captureScreen("screens/home_agenda") {
             Home(
-                liveIndex = 4,
-                nextIndex = 6,
                 hero = HomeHero.Welcome,
                 agenda = clashingAgenda,
             )
@@ -70,8 +65,6 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
 
 @Composable
 private fun Home(
-    liveIndex: Int? = null,
-    nextIndex: Int? = null,
     hero: HomeHero = HomeHero.Welcome,
     agenda: HomeAgenda? = null,
 ) {
@@ -86,8 +79,6 @@ private fun Home(
                 showCube = true,
             ),
         isSyncing = false,
-        liveSession = liveIndex?.let(fakeSessions::get),
-        nextSession = nextIndex?.let(fakeSessions::get),
         animateCube = false,
     )
 }

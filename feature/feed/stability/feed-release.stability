@@ -28,19 +28,65 @@ public fun com.android254.presentation.feed.view.FeedLoadingComponent(modifier: 
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.feed.view.FeedRoute(feedViewModel: com.android254.presentation.feed.FeedViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.feed.view.FeedRoute(feedViewModel: com.android254.presentation.feed.FeedViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToSessions: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - feedViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToFeedbackScreen: STABLE (function type)
+    - onSessionClick: STABLE (function type)
+    - navigateToSessions: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.feed.view.FeedScreen(feedUIState: com.android254.presentation.feed.view.FeedUIState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, onShare: kotlin.Function1<com.android254.presentation.models.FeedUI, kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.feed.view.FeedScreen(feedUIState: com.android254.presentation.feed.view.FeedUIState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, onShare: kotlin.Function1<com.android254.presentation.models.FeedUI, kotlin.Unit>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToSessions: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - feedUIState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
     - onShare: STABLE (function type)
+    - onSessionClick: STABLE (function type)
+    - navigateToSessions: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.feed.view.KindTile(kind: com.android254.domain.models.ScheduleUpdate.Kind, isStarred: kotlin.Boolean): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - kind: STABLE (class with no mutable properties)
+    - isStarred: STABLE (primitive type)
+
+@Composable
+internal fun com.android254.presentation.feed.view.ScheduleUpdateRow(item: com.android254.presentation.feed.view.UpdateItem.Schedule, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, onBrowseSessions: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - item: STABLE (class with no mutable properties)
+    - onSessionClick: STABLE (function type)
+    - onBrowseSessions: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.feed.view.detail(): kotlin.String?
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+private fun com.android254.presentation.feed.view.headline(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+private fun com.android254.presentation.feed.view.icon(): androidx.compose.ui.graphics.painter.Painter
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+private fun com.android254.presentation.feed.view.label(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
 

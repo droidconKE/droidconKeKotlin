@@ -19,34 +19,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android254.domain.models.Feed
 import com.android254.domain.repos.FeedRepo
+import com.android254.domain.repos.SessionsRepo
+import com.android254.domain.repos.UpdatesRepo
 import com.android254.presentation.feed.view.FeedUIState
-import com.android254.presentation.feed.view.toPresentation
+import com.android254.presentation.feed.view.updateItems
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ke.droidcon.kotlin.core.common.di.ConferenceTimeZone
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.TimeZone
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 class FeedViewModel
     @Inject
     constructor(
-        private val feedRepo: FeedRepo,
-        @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+        feedRepo: FeedRepo,
+        updatesRepo: UpdatesRepo,
+        sessionsRepo: SessionsRepo,
+        clock: Clock,
+        @ConferenceTimeZone conferenceTimeZone: TimeZone,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
-        val uiState =
-            feedRepo
-                .fetchFeed()
-                .map<List<Feed>, FeedUIState> { feeds ->
-                    FeedUIState.Success(feeds = feeds.map { it.toPresentation() })
-                }.onStart { emit(FeedUIState.Loading) }
+        val uiState: StateFlow<FeedUIState> =
+            combine(feedRepo.fetchFeed(), updatesRepo.scheduleUpdates(), sessionsRepo.fetchSessions()) { posts, updates, sessions ->
+                val items = updateItems(posts, updates, sessions, clock.now(), conferenceTimeZone)
+                if (items.isEmpty()) FeedUIState.Empty else FeedUIState.Success(items.toImmutableList())
+            }.onStart { emit(FeedUIState.Loading) }
                 .catch { emit(FeedUIState.Error(message = "An unexpected error occurred")) }
                 .flowOn(ioDispatcher)
                 .stateIn(

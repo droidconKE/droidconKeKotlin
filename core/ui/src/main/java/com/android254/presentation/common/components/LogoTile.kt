@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -123,13 +124,27 @@ fun <T> EvenGrid(
     modifier: Modifier = Modifier,
     spacing: Dp = 12.dp,
     rowSpacing: Dp = spacing,
+    centreShortRow: Boolean = false,
     cell: @Composable (T, Modifier) -> Unit,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(rowSpacing)) {
         items.chunked(columns).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                row.forEach { item -> cell(item, Modifier.weight(1f)) }
-                repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
+            val gap = columns - row.size
+            if (centreShortRow && gap > 0) {
+                BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+                    val cellWidth = (maxWidth - spacing * (columns - 1)) / columns
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(spacing, Alignment.CenterHorizontally),
+                    ) {
+                        row.forEach { item -> cell(item, Modifier.width(cellWidth)) }
+                    }
+                }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                    row.forEach { item -> cell(item, Modifier.weight(1f)) }
+                    repeat(gap) { Spacer(Modifier.weight(1f)) }
+                }
             }
         }
     }
@@ -143,11 +158,12 @@ fun <T> AdaptiveEvenGrid(
     modifier: Modifier = Modifier,
     spacing: Dp = 12.dp,
     rowSpacing: Dp = spacing,
+    centreShortRow: Boolean = false,
     cell: @Composable (T, Modifier) -> Unit,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val columns = ((maxWidth + spacing) / (minCellWidth + spacing)).toInt().coerceAtLeast(minColumns)
-        EvenGrid(items = items, columns = columns, spacing = spacing, rowSpacing = rowSpacing, cell = cell)
+        EvenGrid(items = items, columns = columns, spacing = spacing, rowSpacing = rowSpacing, centreShortRow = centreShortRow, cell = cell)
     }
 }
 

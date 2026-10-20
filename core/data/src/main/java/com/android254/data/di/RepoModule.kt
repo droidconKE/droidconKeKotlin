@@ -23,6 +23,7 @@ import com.android254.data.repos.OrganizersManager
 import com.android254.data.repos.SessionsManager
 import com.android254.data.repos.SpeakersManager
 import com.android254.data.repos.SponsorsManager
+import com.android254.data.repos.UpdatesManager
 import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.repos.AuthRepo
 import com.android254.domain.repos.FeedRepo
@@ -31,6 +32,7 @@ import com.android254.domain.repos.OrganizersRepo
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.repos.SponsorsRepo
+import com.android254.domain.repos.UpdatesRepo
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -67,6 +69,10 @@ abstract class RepoModule {
     @Binds
     @Singleton
     abstract fun provideFeedRepo(manager: FeedManager): FeedRepo
+
+    @Binds
+    @Singleton
+    abstract fun provideUpdatesRepo(manager: UpdatesManager): UpdatesRepo
 
     @Binds
     @Singleton

@@ -25,12 +25,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.viewstate.HomeHero
-import com.android254.presentation.models.SessionPresentationModel
 import com.droidconke.chai.ChaiTheme
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,7 +44,6 @@ class HomeHeaderSectionComponentTest {
     val rule = createComposeRule()
 
     private var large = TextUnit.Unspecified
-    private var medium = TextUnit.Unspecified
 
     @Test
     fun `the welcome title keeps the hero role beside the cube`() {
@@ -57,29 +53,32 @@ class HomeHeaderSectionComponentTest {
     }
 
     @Test
-    fun `a live title that would run past three lines steps down a role`() {
-        val session = fakeSessions.first().copy(title = LONG_TITLE)
-        show(liveSession = session)
+    fun `the countdown keeps the hero role beside the cube`() {
+        show(HomeHero.Countdown(17))
 
-        assertEquals(medium, fontSizeOf(session.title))
+        assertEquals(large, fontSizeOf("17 days to go"))
     }
 
     @Test
-    fun `a short live title keeps the hero role`() {
-        val session = fakeSessions.minBy { it.title.length }
-        assertTrue(session.title.length < SHORT_TITLE)
-        show(liveSession = session)
+    fun `the morning of day one keeps the hero role beside the cube`() {
+        show(HomeHero.Countdown(0))
 
-        assertEquals(large, fontSizeOf(session.title))
+        assertEquals(large, fontSizeOf("droidconKenya starts today"))
     }
 
-    private fun show(liveSession: SessionPresentationModel? = null) {
+    @Test
+    fun `the thank-you keeps the hero role beside the cube`() {
+        show(HomeHero.ThankYou)
+
+        assertEquals(large, fontSizeOf("Thanks for coming to droidconKenya"))
+    }
+
+    private fun show(hero: HomeHero = HomeHero.Welcome) {
         rule.setContent {
             ChaiTheme {
                 large = MaterialTheme.typography.titleLargeEmphasized.fontSize
-                medium = MaterialTheme.typography.titleMediumEmphasized.fontSize
                 Box(Modifier.width(PHONE_WIDTH)) {
-                    HomeHeaderSectionComponent(hero = HomeHero.Welcome, liveSession = liveSession, showCube = true, animateCube = false)
+                    HomeHeaderSectionComponent(hero = hero, showCube = true, animateCube = false)
                 }
             }
         }
@@ -99,7 +98,5 @@ class HomeHeaderSectionComponentTest {
 
     private companion object {
         val PHONE_WIDTH = 360.dp
-        const val LONG_TITLE = "Architecture at Scale: From MVVM to Event-Driven Patterns - A Production Journey"
-        const val SHORT_TITLE = 30
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
@@ -137,6 +138,42 @@ class SessionDetailsScreenTest {
     }
 
     @Test
+    fun `a session with no speakers or level shows no speaker label and no level chip`() {
+        composeTestRule.setContent {
+            ChaiTheme {
+                Body(
+                    paddingValues = PaddingValues(10.dp),
+                    sessionDetails = mockSession.copy(speakers = emptyList(), sessionLevel = "").toSessionDetailsPresentationModal(),
+                    bookmarkSession = { },
+                    unBookmarkSession = { },
+                )
+            }
+        }
+        composeTestRule.onNodeWithText("Speaker:").assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.SPEAKER_NAME).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.LEVEL).assertDoesNotExist()
+        composeTestRule.onNodeWithTag(TestTag.FAVOURITE_ICON, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `two speakers are labelled in the plural`() {
+        composeTestRule.setContent {
+            ChaiTheme {
+                Body(
+                    paddingValues = PaddingValues(10.dp),
+                    sessionDetails =
+                        mockSession
+                            .copy(speakers = mockSession.speakers + Speaker("", "", "", "", "", "", "", "Jane Roe"))
+                            .toSessionDetailsPresentationModal(),
+                    bookmarkSession = { },
+                    unBookmarkSession = { },
+                )
+            }
+        }
+        composeTestRule.onNodeWithText("Speakers:").assertExists()
+    }
+
+    @Test
     fun `test if twitter handle is shown`() {
         composeTestRule.setContent {
             ChaiTheme {
@@ -165,7 +202,7 @@ class SessionDetailsScreenTest {
                 isKeynote = true,
                 isServiceSession = true,
                 remoteId = "",
-                sessionLevel = "",
+                sessionLevel = "Beginner",
                 endDateTime = "",
                 sessionImage = "",
                 sessionFormat = "",

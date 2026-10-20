@@ -15,16 +15,70 @@
  */
 package com.android254.presentation.feed.view
 
+import android.text.format.DateFormat
 import com.android254.domain.models.Feed
+import com.android254.domain.models.ScheduleUpdate
+import com.android254.domain.models.Session
 import com.android254.presentation.models.FeedUI
+import com.android254.presentation.utils.feedPostedAtMillis
 import com.android254.presentation.utils.getTimeDifference
+import com.android254.presentation.utils.relativeDay
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import kotlin.time.Instant
 
-fun Feed.toPresentation() =
+fun Feed.toPresentation(nowMillis: Long) =
     FeedUI(
         title = title,
         body = body,
         topic = topic,
         url = url,
         image = image,
-        createdAt = createdAt.getTimeDifference(),
+        createdAt = createdAt.getTimeDifference(nowMillis),
     )
+
+/** Organiser posts and schedule changes on one timeline, newest first; a post with no readable time sinks. */
+internal fun updateItems(
+    posts: List<Feed>,
+    updates: List<ScheduleUpdate>,
+    sessions: List<Session>,
+    now: Instant,
+    zone: TimeZone,
+): List<UpdateItem> {
+    val byId = sessions.associateBy { it.remoteId }
+    val nowMillis = now.toEpochMilliseconds()
+    val startLabel = sessionStartLabel(zone)
+    val postItems = posts.map { UpdateItem.Post(it.toPresentation(nowMillis), it.createdAt.feedPostedAtMillis()) }
+    val scheduleItems =
+        updates.map { update ->
+            val session = update.sessionId?.let(byId::get)
+            UpdateItem.Schedule(
+                id = update.id,
+                kind = update.kind,
+                sessionId = session?.remoteId,
+                title = session?.title ?: update.title,
+                count = update.count,
+                whenLabel = relativeDay(update.at.toEpochMilliseconds(), nowMillis),
+                sessionTime = session?.startInstant?.let(startLabel),
+                venue = session?.roomList?.joinToString(", ").orEmpty(),
+                isStarred = session?.isBookmarked == true,
+                atMillis = update.at.toEpochMilliseconds(),
+            )
+        }
+    return (postItems + scheduleItems).sortedByDescending { it.atMillis ?: Long.MIN_VALUE }
+}
+
+/** "Thu, 5 Nov · 10:15 AM" in the venue's time, the way the agenda writes a session's start. */
+private fun sessionStartLabel(zone: TimeZone): (Instant) -> String {
+    val locale = Locale.getDefault()
+    val day = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale)
+    val time = DateTimeFormatter.ofPattern("hh:mm a", locale)
+    return { start ->
+        val local = start.toLocalDateTime(zone)
+        "${local.date.toJavaLocalDate().format(day)} · ${local.time.toJavaLocalTime().format(time)}"
+    }
+}

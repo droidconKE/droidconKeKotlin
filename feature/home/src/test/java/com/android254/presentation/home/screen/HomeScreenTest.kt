@@ -30,13 +30,13 @@ import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeToolbarComponent
+import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -72,36 +72,28 @@ class HomeScreenTest {
     }
 
     @Test
-    fun `the hero leads with the live session and opens it`() {
-        val live = fakeSessions[1]
-        var opened: String? = null
+    fun `during the event the hero welcomes and leaves the sessions to the rail`() {
         composeTestRule.setContent {
             ChaiTheme {
-                HomeHeaderSectionComponent(liveSession = live, nextSession = fakeSessions[2], onSessionClick = { opened = it })
-            }
-        }
-
-        composeTestRule.onNodeWithText(live.title).assertIsDisplayed()
-        composeTestRule.onNodeWithText("LIVE").assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText("${fakeSessions[2].startTime} ${fakeSessions[2].amOrPm}", substring = true)
-            .assertIsDisplayed()
-        composeTestRule.onNodeWithTag("home_header").performClick()
-        assertEquals(live.id, opened)
-    }
-
-    @Test
-    fun `with nothing live the hero welcomes, even when a session is up next`() {
-        val next = fakeSessions[2]
-        composeTestRule.setContent {
-            ChaiTheme {
-                HomeHeaderSectionComponent(nextSession = next)
+                HomeHeaderSectionComponent(hero = HomeHero.Welcome)
             }
         }
 
         composeTestRule.onNodeWithText("Welcome", substring = true).assertIsDisplayed()
-        composeTestRule.onNodeWithText(next.title).assertDoesNotExist()
         composeTestRule.onNodeWithText("LIVE").assertDoesNotExist()
+    }
+
+    @Test
+    fun `the thank-you hero opens feedback`() {
+        var opened = false
+        composeTestRule.setContent {
+            ChaiTheme {
+                HomeHeaderSectionComponent(hero = HomeHero.ThankYou, onFeedbackClick = { opened = true })
+            }
+        }
+
+        composeTestRule.onNodeWithTag("home_header").performClick()
+        assertTrue(opened)
     }
 
     @Test

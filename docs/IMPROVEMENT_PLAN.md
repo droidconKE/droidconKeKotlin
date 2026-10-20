@@ -123,9 +123,9 @@ camerax = ["camerax-core", "camerax-camera2", "camerax-lifecycle", "camerax-comp
 
 ### 3.6 One year, one name
 
-Two things tie the app to one conference year.
+One thing still ties the app to one conference year.
 
-**The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2025-898"` lives in
+**The event slug is a compiled constant.** `EVENT_SLUG = "droidconke-2026-731"` lives in
 `core/network/.../remote/Constants.kt`. Move it into Remote Config, so a new conference year does
 not need an app release:
 
@@ -139,7 +139,7 @@ val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 <!-- core/network/src/main/res/xml/remote_config_defaults.xml -->
 <entry>
     <key>event_slug</key>
-    <value>droidconke-2025-898</value>
+    <value>droidconke-2026-731</value>
 </entry>
 <entry>
     <key>organizer_slug</key>
@@ -148,10 +148,6 @@ val organizerSlug: String get() = remoteConfig.getString(KEY_ORG_SLUG)
 ```
 
 `UrlProvider` then composes URLs at call time rather than as compile-time constants. **This one change means the 2027 app is a config edit, not a release.**
-
-**The About copy names 2023.** `about_droidcon` in `core/ui`'s `strings.xml` says the conference
-"will be held in Nairobi, Kenya on November 8th to 10th 2023". Rewrite it without a date, or fill
-the dates from the same Remote Config values.
 
 **Packages are still split** between `com.android254.*` and `ke.droidcon.kotlin.*`. Renaming them
 is one mechanical PR that invalidates every open PR (§17.1). Do it in a quiet period, or decide
@@ -359,7 +355,7 @@ private val AUTOSAVE_DEBOUNCE = 800.milliseconds
 The conventions the app follows are in [`docs/architecture.md`](architecture.md#accessibility).
 Two pieces are missing:
 
-- **A live region on the Now/Next hero**, so TalkBack announces a change of session without the
+- **A live region on the Now/Next rail**, so TalkBack announces a change of session without the
   user moving focus: `Modifier.semantics { liveRegion = LiveRegionMode.Polite }`.
 - **An automated gate**, so it doesn't rot:
 
@@ -396,6 +392,13 @@ This is the section most likely to produce a demo that impresses at a talk and a
 4. **Every feature behind a Remote Config flag.** `RemoteFeatureToggle` already exists. Use it as a kill switch, a per-feature rollout percentage, and a cost cap.
 
 And one product rule: **AI must answer a question the user actually has.** "Summarise this session description" is not a real need — the description is three paragraphs and they can read it. "Which of my 14 starred sessions should I actually go to, given they clash and I care about Compose?" *is* a real need, and it's not answerable without a model.
+
+**Where each feature surfaces.** AI that *arrives on a schedule* is an Updates moment: the
+morning summary of your starred sessions (§6.7) and the recap after the event (§6.11), each a card
+on the timeline that opens its full view. AI that is *a tool you reach for* lives where you reach for
+it: the assistant (§6.8) from a persistent entry on Home and Sessions, captions and translation
+(§6.10) and photo check-in (§6.9) on session details. Updates may announce a tool ("captions are on
+for this talk") but never hosts one, so the timeline stays a record of what happened.
 
 ### 6.2 The `:core:ai` abstraction
 
@@ -792,7 +795,7 @@ class GemmaModelStore @Inject constructor(
 
 ### 6.5 Cloud via Firebase AI Logic
 
-The workhorse. Multimodal, structured output, function calling, streaming, generous free tier through the Gemini Developer API backend.
+The workhorse. Multimodal, structured output, function calling, streaming, through the Gemini Developer API backend. Its free tier is for development and the internal track; the conference days need the paid tier (§6.12).
 
 ```kotlin
 // core/ai/src/main/kotlin/ke/droidcon/kotlin/core/ai/engines/CloudGeminiEngine.kt
@@ -816,7 +819,7 @@ class CloudGeminiEngine @Inject constructor(
     }
 
     private fun model(request: InferenceRequest): GenerativeModel = ai.generativeModel(
-        modelName = featureToggle.cloudModelName,   // Remote Config, e.g. "gemini-2.5-flash"
+        modelName = featureToggle.cloudModelName,   // Remote Config, e.g. "gemini-3.5-flash-lite"
         systemInstruction = request.systemInstruction?.let { content { text(it) } },
         generationConfig = generationConfig {
             temperature = request.temperature
@@ -894,7 +897,7 @@ class CloudGeminiEngine @Inject constructor(
 }
 ```
 
-**App Check is mandatory before this ships.** `google-services.json` is public in this repo, so without App Check anyone can burn the project's Gemini quota:
+**App Check is mandatory before this ships.** `google-services.json` is public in this repo, so without App Check anyone can burn the project's Gemini quota. Firebase also makes App Check enforcement *required* for Firebase AI Logic from 2 November 2026, so it is a prerequisite rather than hardening:
 
 ```kotlin
 // app/src/main/java/com/android254/droidcon/app/DroidconApp.kt
@@ -1602,6 +1605,50 @@ Deliver it as a **notification 2 days after the conference** linking to a sharea
 
 ### 6.12 Cost, privacy, safety, and kill switches
 
+**Free tier or paid, at 350 attendees.** Checked against Google's docs on 2026-10-19 — re-check
+before the event, because Google changes these.
+
+- **Limits are per project, not per user.** Every installed app draws on one allowance
+  ([Firebase AI Logic quotas](https://firebase.google.com/docs/ai-logic/quotas)). Google no longer
+  publishes the free numbers; they show per project in
+  [AI Studio](https://aistudio.google.com/rate-limit). Third-party trackers report roughly 10–15
+  requests a minute and 500–1,500 a day for Flash-Lite.
+- **Day one is over that.** About 350 morning summaries, 1,500 assistant calls (four per question)
+  and 750 check-ins, the check-ins bunched into the minutes after each session starts — around
+  30 a minute. That passes the free daily allowance and well passes the per-minute one.
+- **Daily quotas reset at midnight Pacific, which is 11:00 in Nairobi in November.** A quota spent
+  by 09:30 stays spent until late morning.
+- **Free-tier prompts are "used to improve our products"; paid-tier ones are not**
+  ([pricing](https://ai.google.dev/gemini-api/docs/pricing)). On the free tier the promise below
+  that check-in photos are never stored server-side does not hold.
+- **Gemini 2.5 models are limited to projects that already used them**, so the default cloud model
+  is `gemini-3.5-flash-lite`, set in Remote Config.
+
+Cost on the paid tier, at Gemini 3.5 Flash-Lite's $0.30 per million input tokens and $2.50 per
+million output:
+
+| Feature | Assumed use over the two days | Tokens per use (in / out) | Cost |
+| --- | --- | --- | --- |
+| §6.7 starred-session summary | 350 people × 2 days | 3,000 / 800 | ~$2 |
+| §6.8 assistant | 150 people × 5 questions, 4 calls each | 8,000 / 1,000 per question | ~$4 |
+| §6.9 photo check-in | 250 people × 6 check-ins | 1,500 / 100 | ~$1 |
+| §6.11 recap | 350 people × 1 | 6,000 / 800 | ~$1 |
+| §6.10 translation | On device (ML Kit) | — | $0 |
+| **Total** | | | **~$8** |
+
+The quota guard's defaults below — 30 calls and 60,000 tokens per device per day — cap the worst
+case at about $15 a day: 350 devices × 60,000 tokens at the table's four-to-one input-to-output
+mix. The one thing that would change the order of magnitude is cloud live captioning, at about
+$0.04 a minute per listener: keep §6.10 on device.
+
+**Decision.** Develop and run the internal track on the free tier. Before the 10% step (§16), move
+the project to Blaze with a $30 Google Cloud budget alert, and lower the Firebase AI Logic per-user
+limit from its default 100 requests a minute to 5. A budget alert only warns; the caps are the
+per-device guard, the per-user limit and the Remote Config kill switch. If no budget is approved,
+ship §6.7 alone on the free tier — 350 summaries a day fit, its prompts carry only public session
+titles, and a random delay of up to an hour spreads them under the per-minute limit — and keep
+§6.8 and §6.9 off.
+
 **Quota guard** — a client-side circuit breaker so no single device (or a bug) can drain the project's quota:
 
 ```kotlin
@@ -1702,7 +1749,7 @@ Note `cloudInferenceEnabled` and `onDeviceInferenceEnabled` both `&&` with `aiEn
 <entry><key>ai_enabled</key><value>false</value></entry>
 <entry><key>ai_cloud_inference_enabled</key><value>false</value></entry>
 <entry><key>ai_on_device_enabled</key><value>true</value></entry>
-<entry><key>ai_cloud_model_name</key><value>gemini-2.5-flash</value></entry>
+<entry><key>ai_cloud_model_name</key><value>gemini-3.5-flash-lite</value></entry>
 <entry><key>ai_agenda_summary_enabled</key><value>false</value></entry>
 <entry><key>ai_assistant_enabled</key><value>false</value></entry>
 <entry><key>ai_photo_checkin_enabled</key><value>false</value></entry>
@@ -1756,6 +1803,19 @@ Log the thumbs-down rate per feature to analytics. **If a feature's thumbs-down 
 - [ ] Cost projection recorded here: `expected DAU × calls/user × tokens/call × price/token`
 
 ---
+
+## 6A. Updates — what is left
+
+Updates replaced the organiser-only feed: one timeline of organiser posts and the schedule changes
+each sync records (see [`docs/architecture.md`](architecture.md#sync)). In order:
+
+1. **Pushes land on the timeline (needs #448).** Every typed push payload — schedule change,
+   announcement, feed post — also writes an Updates row, so a dismissed notification is not lost.
+2. **Speakers joining the line-up.** The speakers sync records a "new speaker" moment the way the
+   sessions sync records new talks; before the event that is most of the news.
+3. **"How was it?" after a starred session ends**, opening session feedback (§11.5).
+4. **The AI moments of §6** — the morning summary and the recap — as cards, behind their flags.
+5. **Unread state.** A dot on the Updates tab for rows newer than the last visit.
 
 ## 7. Phase 4 — Ticketing and QR
 
@@ -2514,7 +2574,7 @@ class MessagingService : FirebaseMessagingService() {
 }
 ```
 
-**Topic strategy:** subscribe everyone to `all_attendees`; subscribe to `session_<id>` on star, so schedule changes for *your* sessions are targeted rather than broadcast. This keeps the "cancelled talk" notification from going to 3,000 people who weren't going anyway.
+**Topic strategy:** subscribe everyone to `all_attendees`; subscribe to `session_<id>` on star, so schedule changes for *your* sessions are targeted rather than broadcast. This keeps the "cancelled talk" notification from going to all 350 attendees when only the people who starred it were going.
 
 ### 8.6 A preferences screen
 
@@ -3263,8 +3323,8 @@ needs new art.
 ### 12.2 Easter eggs and play
 
 The cube is a Rubik's cube; people will want to touch it. These build on each other in order.
-None goes on Home, where the hero card is one button that opens the live session; all go on About,
-whose stage is not clickable.
+None goes on Home, where the hero card is one button that opens feedback after the event; all go on
+About, whose stage is not clickable.
 
 1. **Drag to spin, tap to twist (M).** A horizontal drag on the stage spins the whole cube
    (`orientation + Orientation.about(Y, dx)`); vertical drags stay with the scroll. A tap on a sticker
@@ -3699,7 +3759,7 @@ Non-negotiable for every PR in every phase:
 | Risk | Likelihood | Impact | Mitigation |
 | --- | --- | --- | --- |
 | **Half-migrated state.** Volunteer capacity evaporates mid-phase, leaving two design systems and three navigation patterns coexisting. | **High** | **High** | Every phase must be independently completable and shippable. Never start Phase N+1 with Phase N half-done. Prefer deprecated shims over big-bang rewrites. |
-| **AI cost blowout.** A retry bug or a bot burns the Gemini quota during the conference. | Medium | High | App Check enforced (§6.5), client quota guard (§6.12), Remote Config kill switch, budget alerts in GCP. Test the kill switch before the conference. |
+| **AI cost blowout.** A retry bug or a bot burns the Gemini quota during the conference. | Medium | High | App Check enforced (§6.5), client quota guard (§6.12), Remote Config kill switch, a $30 budget alert in GCP and a per-user limit of 5 requests a minute. Test the kill switch before the conference. |
 | **Gate failure on day 1.** Ticketing ships untested at scale and the queue backs up. | Medium | **Severe** | Offline-first by design (§7.2). Rehearse with real staff a week out. Keep the paper/email fallback for year one — do not make the app the only path. |
 | **Model hallucination in a user-visible place.** The agenda summary invents a session. | Medium | Medium | Structured output constrained to provided ids, deterministic path always shown alongside (§6.7), thumbs-down monitoring with a 25% kill threshold. |
 | **Package rename invalidates every open PR.** | High | Medium | Announce two weeks ahead, do it in one mechanical PR, merge everything outstanding first, do it during a quiet period. |
@@ -3718,7 +3778,7 @@ Non-negotiable for every PR in every phase:
 4. Can we get a **venue floor plan as SVG**? Unlocks §11.6, which is one of the cheapest high-value features.
 5. Who **moderates** the social feed during the conference? Currently read-only, and it should probably stay that way unless someone owns moderation.
 6. Are session **recordings** published, and where? Determines whether timestamped notes (§5.5) can deep-link into video.
-7. Is there budget for **Gemini API usage** beyond the free tier, and what's the ceiling? Sets `ai_max_daily_tokens`.
+7. Will the organisers approve a **Gemini API budget**? The free tier will not carry the conference days (§6.12). At 350 attendees the expected cost is about $8 for the event, and the quota guard caps it near $30; ask for a $30 ceiling. Sets `ai_max_daily_tokens`.
 
 **For engineering to decide:**
 

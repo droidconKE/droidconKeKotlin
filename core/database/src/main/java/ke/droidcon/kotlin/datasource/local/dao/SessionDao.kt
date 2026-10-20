@@ -42,8 +42,8 @@ interface SessionDao : BaseDao<SessionEntity> {
     @Query("SELECT * FROM sessions WHERE startTimestamp > :currentTime ORDER BY startTimestamp ASC LIMIT 5")
     fun fetchUpNextSessions(currentTime: Long): Flow<List<SessionEntity>>
 
-    @Query("SELECT remote_id FROM sessions")
-    suspend fun getRemoteIds(): List<String>
+    @Query("SELECT * FROM sessions")
+    suspend fun getAll(): List<SessionEntity>
 
     @Query("DELETE FROM sessions WHERE remote_id IN (:ids)")
     suspend fun deleteByRemoteIds(ids: List<String>)
