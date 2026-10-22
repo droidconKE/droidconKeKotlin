@@ -48,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -62,7 +61,6 @@ import com.android254.presentation.ticket.TicketAction
 import com.android254.presentation.ticket.TicketUi
 import com.android254.presentation.ticket.TicketUiState
 import com.android254.presentation.ticket.TicketViewModel
-import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -157,7 +155,7 @@ private fun TicketTopBar(
     )
 }
 
-/** A short window or large text scrolls instead of shrinking the code. */
+/** The pass fills the screen; past a scannable code size it scrolls rather than shrinking further. */
 @Composable
 private fun Pass(
     ticket: TicketUi,
@@ -165,11 +163,10 @@ private fun Pass(
 ) {
     if (ticket.status.showsCode) GateScreenMode()
     val entrance = remember { MutableTransitionState(false).apply { targetState = true } }
-    val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
     BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
-        val fits = !largeFont && maxHeight >= PASS_FITS_ABOVE
+        val viewport = maxHeight - PASS_BOTTOM_PADDING
         AnimatedVisibility(
-            modifier = if (fits) Modifier else Modifier.verticalScroll(rememberScrollState()),
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             visibleState = entrance,
             enter =
                 slideInVertically(MaterialTheme.motionScheme.defaultSpatialSpec()) { it / 4 } +
@@ -177,12 +174,12 @@ private fun Pass(
         ) {
             TicketPass(
                 ticket = ticket,
-                fitHeight = fits,
+                viewportHeight = viewport,
                 modifier =
                     Modifier
                         .readablePaneWidth()
-                        .then(if (fits) Modifier.fillMaxSize() else Modifier.fillMaxWidth())
-                        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, bottom = PASS_BOTTOM_PADDING),
             )
         }
     }
@@ -215,4 +212,4 @@ private fun AddFirstTicket(
     }
 }
 
-private val PASS_FITS_ABOVE = 560.dp
+private val PASS_BOTTOM_PADDING = 20.dp

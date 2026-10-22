@@ -106,7 +106,7 @@ class TicketScreenTest {
         show(ready(ticket = testTicket()))
 
         composeTestRule.onNodeWithText("TIC-70235").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("Entry code for ticket TIC-70235").assertHeightIsAtLeast(200.dp)
+        composeTestRule.onNodeWithContentDescription("Entry code for ticket TIC-70235").assertHeightIsAtLeast(160.dp)
     }
 
     @Test

@@ -165,8 +165,8 @@
     <string name="ticket_status_checked_in">Checked in today</string>
     <string name="ticket_status_refunded">Refunded</string>
     <string name="ticket_status_revoked">Cancelled</string>
-    <string name="ticket_refunded_body">This ticket was refunded, so it won’t scan. Questions? hello@droidcon.co.ke</string>
-    <string name="ticket_revoked_body">This ticket was cancelled, so it won’t scan. Questions? hello@droidcon.co.ke</string>
+    <string name="ticket_refunded_body">Refunded, so it won’t scan. Questions? hello@droidcon.co.ke</string>
+    <string name="ticket_revoked_body">Cancelled, so it won’t scan. Questions? hello@droidcon.co.ke</string>
     <string name="ticket_remove">Remove</string>
     <string name="ticket_remove_ticket">Remove ticket</string>
     <string name="ticket_more_actions">More</string>

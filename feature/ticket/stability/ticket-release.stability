@@ -30,12 +30,11 @@ private fun com.android254.presentation.ticket.view.Attendee(ticket: com.android
     - ticket: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.ticket.view.CodeStub(ticket: com.android254.presentation.ticket.TicketUi, fitHeight: kotlin.Boolean, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.ticket.view.CodeStub(ticket: com.android254.presentation.ticket.TicketUi, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - ticket: STABLE (marked @Stable or @Immutable)
-    - fitHeight: STABLE (primitive type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
@@ -85,13 +84,13 @@ private fun com.android254.presentation.ticket.view.Perforation(): kotlin.Unit
   params:
 
 @Composable
-internal fun com.android254.presentation.ticket.view.TicketPass(ticket: com.android254.presentation.ticket.TicketUi, modifier: androidx.compose.ui.Modifier, fitHeight: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.ticket.view.TicketPass(ticket: com.android254.presentation.ticket.TicketUi, modifier: androidx.compose.ui.Modifier, viewportHeight: androidx.compose.ui.unit.Dp): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - ticket: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
-    - fitHeight: STABLE (primitive type)
+    - viewportHeight: STABLE (marked @Stable or @Immutable)
 
 @Composable
 public fun com.android254.presentation.ticket.view.TicketRoute(navigateBack: kotlin.Function0<kotlin.Unit>, viewModel: com.android254.presentation.ticket.TicketViewModel): kotlin.Unit
@@ -118,4 +117,11 @@ private fun com.android254.presentation.ticket.view.TicketTopBar(onBack: kotlin.
   params:
     - onBack: STABLE (function type)
     - onRemove: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.ticket.view.VoidStamp(status: com.android254.domain.models.Ticket.Status): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - status: STABLE (class with no mutable properties)
 
