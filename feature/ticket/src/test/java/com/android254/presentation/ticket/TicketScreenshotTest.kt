@@ -36,6 +36,9 @@ class TicketScreenshotTest : ChaiScreenshotTest() {
         }
 
     @Test
+    fun `looking a ticket up`() = captureScreen("screens/ticket_adding") { Ticket(form = AddTicketForm(number = "TIC-70235", email = "magak@example.com", isAdding = true)) }
+
+    @Test
     fun `a ticket ready for the door`() = captureScreen("screens/ticket") { Ticket(testTicket()) }
 
     @Test

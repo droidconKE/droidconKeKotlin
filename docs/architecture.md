@@ -250,6 +250,9 @@ should not be — it is not thread-safe.
 check-in address, the same one the emailed PDF carries, so the gate needs no change.
 `TicketsManager` adds the attendee's ticket from its number plus the email it was bought with, or
 from a code scanned off a printed ticket, and keeps it in `tickets` so it shows with no signal.
+The scanner is Google's, hosted by Play services, so the app needs no camera permission; its UI
+is a Play services module that the manifest asks for at install time, and a scan on a phone that
+has not fetched it yet asks again and says so, rather than reporting the scanner missing.
 One ticket per phone: adding another replaces it. Opening the ticket screen refreshes status and
 check-ins; a failure keeps what is saved. A 429 — the lookup
 allows 30 a minute per IP, and a venue shares one — reads as "busy", which `DataResult.Error`

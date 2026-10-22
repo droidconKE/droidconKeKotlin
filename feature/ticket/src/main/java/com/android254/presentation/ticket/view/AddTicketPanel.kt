@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.error
@@ -59,6 +60,7 @@ internal fun AddTicketPanel(
     onAction: (TicketAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboard = LocalSoftwareKeyboardController.current
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -70,6 +72,7 @@ internal fun AddTicketPanel(
             label = { Text(stringResource(R.string.ticket_number_label)) },
             placeholder = { Text(stringResource(R.string.ticket_number_placeholder)) },
             singleLine = true,
+            enabled = !form.isAdding,
             isError = noMatch != null,
             keyboardOptions =
                 KeyboardOptions(
@@ -85,9 +88,16 @@ internal fun AddTicketPanel(
             onValueChange = { onAction(TicketAction.EmailChanged(it)) },
             label = { Text(stringResource(R.string.ticket_email_label)) },
             singleLine = true,
+            enabled = !form.isAdding,
             isError = noMatch != null,
             keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { onAction(TicketAction.Add) }),
+            keyboardActions =
+                KeyboardActions(
+                    onDone = {
+                        keyboard?.hide()
+                        onAction(TicketAction.Add)
+                    },
+                ),
             modifier = Modifier.fillMaxWidth().fieldError(noMatch),
         )
         form.error?.let { error ->
@@ -99,13 +109,19 @@ internal fun AddTicketPanel(
             )
         }
         Button(
-            onClick = { onAction(TicketAction.Add) },
-            enabled = form.canSubmit,
+            onClick = {
+                keyboard?.hide()
+                onAction(TicketAction.Add)
+            },
+            enabled = form.canSubmit || form.isAdding,
             shapes = ButtonDefaults.shapes(),
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (form.isAdding) {
-                LoadingIndicator(modifier = Modifier.size(ButtonDefaults.IconSize))
+                LoadingIndicator(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                )
                 Text(
                     text = stringResource(R.string.ticket_adding),
                     modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
@@ -154,6 +170,7 @@ private fun AddTicketError.message(): Int =
         AddTicketError.Offline -> R.string.ticket_error_offline
         AddTicketError.Busy -> R.string.ticket_error_busy
         AddTicketError.Failed -> R.string.ticket_error_failed
+        AddTicketError.ScannerInstalling -> R.string.ticket_error_scanner_installing
         AddTicketError.ScannerUnavailable -> R.string.ticket_error_scanner
     }
 

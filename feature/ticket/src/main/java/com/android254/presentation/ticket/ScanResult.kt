@@ -22,5 +22,7 @@ sealed interface ScanResult {
 
     data object Cancelled : ScanResult
 
+    data object Installing : ScanResult
+
     data object Unavailable : ScanResult
 }

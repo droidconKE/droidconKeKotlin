@@ -74,6 +74,7 @@ class TicketViewModel
                             when (val scanned = scanner.scan()) {
                                 is ScanResult.Code -> ticketsRepo.addScanned(scanned.value)
                                 ScanResult.Cancelled -> null
+                                ScanResult.Installing -> AddTicketResult.ScannerInstalling
                                 ScanResult.Unavailable -> AddTicketResult.ScannerUnavailable
                             }
                         }
@@ -121,6 +122,7 @@ private fun AddTicketResult.toError(): AddTicketError =
         AddTicketResult.NotATicket -> AddTicketError.NotATicket
         AddTicketResult.Offline -> AddTicketError.Offline
         AddTicketResult.Busy -> AddTicketError.Busy
+        AddTicketResult.ScannerInstalling -> AddTicketError.ScannerInstalling
         AddTicketResult.ScannerUnavailable -> AddTicketError.ScannerUnavailable
         AddTicketResult.Failed, is AddTicketResult.Added -> AddTicketError.Failed
     }

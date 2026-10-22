@@ -147,6 +147,10 @@ class TicketViewModelTest {
             scanner.next = ScanResult.Unavailable
             viewModel.onAction(TicketAction.Scan)
             assertEquals(AddTicketError.ScannerUnavailable, ready(viewModel).form.error)
+
+            scanner.next = ScanResult.Installing
+            viewModel.onAction(TicketAction.Scan)
+            assertEquals(AddTicketError.ScannerInstalling, ready(viewModel).form.error)
         }
 
     @Test

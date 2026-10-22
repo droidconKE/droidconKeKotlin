@@ -24,6 +24,7 @@ android {
 
 dependencies {
     implementation(libs.play.services.code.scanner)
+    implementation(libs.kotlin.coroutines.play.services)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.kotlin.coroutines.test)

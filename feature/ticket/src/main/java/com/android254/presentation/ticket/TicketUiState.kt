@@ -54,7 +54,7 @@ data class AddTicketForm(
     val canSubmit: Boolean get() = number.isNotBlank() && email.contains('@') && !isAdding
 }
 
-enum class AddTicketError { NoMatch, NotATicket, Offline, Busy, Failed, ScannerUnavailable }
+enum class AddTicketError { NoMatch, NotATicket, Offline, Busy, Failed, ScannerInstalling, ScannerUnavailable }
 
 sealed interface TicketAction {
     data class NumberChanged(

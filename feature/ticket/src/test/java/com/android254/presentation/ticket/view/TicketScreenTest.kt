@@ -59,6 +59,14 @@ class TicketScreenTest {
     }
 
     @Test
+    fun `while a ticket is looked up the fields wait and the button says so`() {
+        show(ready(form = AddTicketForm(number = "TIC-70235", email = "magak@example.com", isAdding = true)))
+
+        composeTestRule.onNodeWithText("Looking up your ticket").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Scan a printed ticket").assertIsNotEnabled()
+    }
+
+    @Test
     fun `a failed lookup says why`() {
         show(ready(form = AddTicketForm(number = "TIC-1", email = "a@b.c", error = AddTicketError.Offline)))
 

@@ -1838,8 +1838,9 @@ backend chose a read-only lookup and kept the gate as it is.
 - **Adding a ticket.** `GET /v1/events/{slug}/tickets?ticket_no=`, behind the app's API key. An
   attendee types the number from their ticket email plus the email it was bought with; the email
   stops a mistyped number landing on somebody else's ticket. Or they scan a printed ticket with
-  Google's code scanner, which needs no camera permission. A phone can't scan a PDF that is open
-  on itself, so typing is the common path.
+  Google's code scanner, which needs no camera permission; its UI is a Play services module the
+  manifest asks for at install, fetched on first use where it is missing. A phone can't scan a
+  PDF that is open on itself, so typing is the common path.
 - **Offline.** The `tickets` table (Room 8) keeps each ticket with the backend's PNG of the code,
   so the pass shows with no signal and is byte for byte what the gate reads. Opening the ticket
   refreshes its status and check-ins; a failure keeps what is saved.

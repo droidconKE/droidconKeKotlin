@@ -159,6 +159,7 @@
     <string name="ticket_error_busy">Lots of people are adding tickets on this network. Try again in a minute.</string>
     <string name="ticket_error_failed">Something went wrong on our side. Try again in a moment.</string>
     <string name="ticket_error_scanner">The scanner isn’t available on this phone. Type the number instead.</string>
+    <string name="ticket_error_scanner_installing">Setting up the scanner. Try again in a moment, or type the number.</string>
     <string name="ticket_attendee">Attendee</string>
     <string name="ticket_number_heading">Ticket no.</string>
     <string name="ticket_show_at_entrance">Show this at the entrance</string>

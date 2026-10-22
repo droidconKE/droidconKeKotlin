@@ -48,6 +48,8 @@ sealed interface AddTicketResult {
 
     data object Busy : AddTicketResult
 
+    data object ScannerInstalling : AddTicketResult
+
     data object ScannerUnavailable : AddTicketResult
 
     data object Failed : AddTicketResult
