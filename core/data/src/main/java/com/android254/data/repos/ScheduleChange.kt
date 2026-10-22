@@ -26,10 +26,7 @@ internal data class ScheduleChange(
     val count: Int = 0,
 )
 
-/**
- * What a sync changed. A first sync, or one with no session in common with the last (a new
- * event year), is one "schedule is out"; breaks coming and going are not news, moving them is.
- */
+/** A first sync, or one sharing no session with the last, is one "schedule is out"; breaks coming and going are not news. */
 internal fun scheduleChanges(
     previous: List<SessionEntity>,
     incoming: List<SessionEntity>,

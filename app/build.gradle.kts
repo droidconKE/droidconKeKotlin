@@ -106,6 +106,7 @@ dependencies {
     implementation(projects.feature.home)
     implementation(projects.feature.sessions)
     implementation(projects.feature.speakers)
+    implementation(projects.feature.ticket)
     implementation(projects.widget)
 
     implementation(libs.androidx.profileinstaller)

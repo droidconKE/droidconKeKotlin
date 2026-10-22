@@ -444,6 +444,7 @@ baseline.
 | 2026-10-12 | main before the size pass | 4,678,844 B — 4.46 MiB | 8,708,023 B — 8.30 MiB | After the APK pass, the rebrand and Expressive |
 | 2026-10-12 | size pass | 4,334,173 B — 4.13 MiB | 8,305,630 B — 7.92 MiB | Icons into `ChaiIcons`, one variable font, no ConstraintLayout |
 | 2026-10-20 | 2026 polish and Updates | 4,387,684 B — 4.18 MiB | 8,416,243 B — 8.03 MiB | `main` had grown 36,615 B since the size pass; this adds about 11.7 KB for Updates, the schedule-change recording and the abstract parser |
+| 2026-10-21 | Tickets | 4,498,576 B — 4.29 MiB | 8,670,701 B — 8.27 MiB | +110.9 KB: about 60 KB is `play-services-code-scanner`, kept so a printed ticket scans with no camera permission and no bundled ML Kit model; the rest is the ticket feature, its Room table and the code-scanner's Play-services glue |
 
 ## Still open
 

@@ -35,7 +35,7 @@ fun shouldShowNavigation(
     isMultiPaneWindow: Boolean,
 ): Boolean =
     when {
-        route == Screens.FeedBack -> false
+        route == Screens.FeedBack || route == Screens.Ticket -> false
         route is Screens && route.listPaneRoute != null -> isMultiPaneWindow
         else -> true
     }
@@ -54,7 +54,7 @@ fun shouldShowSupportingPane(
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
 
-/** The "now" nudge, on every tab; on Home only when your agenda is not already showing that session. */
+/** On Home, only when the agenda is not already showing that session. */
 fun shouldShowLiveSessionsRail(
     route: NavKey,
     isMultiPaneWindow: Boolean,

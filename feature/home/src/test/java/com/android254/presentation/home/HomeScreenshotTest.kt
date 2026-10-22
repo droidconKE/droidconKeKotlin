@@ -16,6 +16,7 @@
 package com.android254.presentation.home
 
 import androidx.compose.runtime.Composable
+import com.android254.domain.models.Ticket
 import com.android254.presentation.common.fakedata.fakeSessions
 import com.android254.presentation.home.screen.HomeScreen
 import com.android254.presentation.home.viewstate.AgendaDay
@@ -23,6 +24,7 @@ import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.home.viewstate.HomeTicket
 import com.android254.presentation.models.speakersDummyData
 import ke.droidcon.kotlin.screenshot.ChaiScreenshotTest
 import kotlinx.collections.immutable.persistentListOf
@@ -47,6 +49,28 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
             Home(
                 hero = HomeHero.Countdown(daysUntil = 12, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 7)),
                 agenda = HomeAgenda(AgendaDay.On(LocalDate(2026, 11, 6)), persistentListOf()),
+                ticket = HomeTicket.Add,
+            )
+        }
+
+    @Test
+    fun `home on the day, with a ticket saved`() =
+        captureScreen("screens/home_ticket") {
+            Home(
+                hero = HomeHero.Welcome,
+                agenda = clashingAgenda,
+                ticket = HomeTicket.Saved("Magak Emmanuel", "Regular", "TIC-70235", Ticket.Status.Active),
+                isEventDay = true,
+            )
+        }
+
+    @Test
+    fun `home before the event, with a ticket saved`() =
+        captureScreen("screens/home_before_ticket") {
+            Home(
+                hero = HomeHero.Countdown(daysUntil = 12, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 7)),
+                agenda = HomeAgenda(AgendaDay.On(LocalDate(2026, 11, 6)), persistentListOf()),
+                ticket = HomeTicket.Saved("Magak Emmanuel", "Regular", "TIC-70235", Ticket.Status.Active),
             )
         }
 
@@ -67,6 +91,8 @@ class HomeScreenshotTest : ChaiScreenshotTest() {
 private fun Home(
     hero: HomeHero = HomeHero.Welcome,
     agenda: HomeAgenda? = null,
+    ticket: HomeTicket = HomeTicket.Hidden,
+    isEventDay: Boolean = false,
 ) {
     HomeScreen(
         viewState =
@@ -77,6 +103,8 @@ private fun Home(
                 hero = hero,
                 agenda = agenda,
                 showCube = true,
+                ticket = ticket,
+                isEventDay = isEventDay,
             ),
         isSyncing = false,
         animateCube = false,

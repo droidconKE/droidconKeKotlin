@@ -41,7 +41,7 @@ fun Feed.toPresentation(nowMillis: Long) =
         createdAt = createdAt.getTimeDifference(nowMillis),
     )
 
-/** Organiser posts and schedule changes on one timeline, newest first; a post with no readable time sinks. */
+/** Newest first; a post with no readable time sinks. */
 internal fun updateItems(
     posts: List<Feed>,
     updates: List<ScheduleUpdate>,
@@ -72,7 +72,7 @@ internal fun updateItems(
     return (postItems + scheduleItems).sortedByDescending { it.atMillis ?: Long.MIN_VALUE }
 }
 
-/** "Thu, 5 Nov · 10:15 AM" in the venue's time, the way the agenda writes a session's start. */
+/** "Thu, 5 Nov · 10:15 AM", in the venue's time. */
 private fun sessionStartLabel(zone: TimeZone): (Instant) -> String {
     val locale = Locale.getDefault()
     val day = DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale)

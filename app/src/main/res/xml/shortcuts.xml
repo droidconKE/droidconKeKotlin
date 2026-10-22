@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_ticket"
+        android:shortcutId="ticket"
+        android:shortcutLongLabel="@string/shortcut_ticket_long"
+        android:shortcutShortLabel="@string/shortcut_ticket_short">
+        <intent
+            android:action="ke.droidcon.kotlin.action.SHOW_TICKET"
+            android:targetClass="com.android254.presentation.activity.MainActivity"
+            android:targetPackage="ke.droidcon.kotlin" />
+    </shortcut>
+</shortcuts>

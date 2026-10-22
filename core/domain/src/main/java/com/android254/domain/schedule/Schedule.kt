@@ -41,7 +41,7 @@ fun List<Session>.conferencePhase(
     }
 }
 
-/** The first and last days with a session, in [zone]; null before anything timed has synced. */
+/** Null before anything timed has synced. */
 fun List<Session>.eventDates(zone: TimeZone): ClosedRange<LocalDate>? {
     val days = timed().map { it.start.dateIn(zone) }
     return if (days.isEmpty()) null else days.min()..days.max()
@@ -58,7 +58,6 @@ fun List<Session>.agendaDay(
         ?.dateIn(zone)
         ?.let { maxOf(it, now.dateIn(zone)) }
 
-/** Before the event day, Home's countdown says what is coming; a rail weeks early is noise. */
 fun List<Session>.upNextToday(
     now: Instant,
     zone: TimeZone,

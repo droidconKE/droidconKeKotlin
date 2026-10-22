@@ -17,7 +17,6 @@ package com.android254.domain.models
 
 import kotlin.time.Instant
 
-/** Something a sync noticed about the schedule, kept so Updates can tell people later. */
 data class ScheduleUpdate(
     val id: Long,
     val kind: Kind,

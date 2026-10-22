@@ -82,10 +82,10 @@ fun HappeningNowRoute(
     )
 }
 
-/** Yours first: a starred live or next session beats whatever else is on. Live sessions lead the list. */
+/** A starred session first; otherwise the first, where live sessions lead. */
 internal fun ImmutableList<SessionPresentationModel>.featured(): SessionPresentationModel? = firstOrNull { it.isStarred } ?: firstOrNull()
 
-/** One nudge above the navigation bar. As the bottom-most element it pays the bottom inset. */
+/** The bottom-most element, so it pays the bottom inset. */
 @Composable
 fun LiveSessionsRail(
     sessions: ImmutableList<SessionPresentationModel>,

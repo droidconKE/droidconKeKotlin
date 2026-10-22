@@ -42,7 +42,6 @@ import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
 
-/** A change the schedule went through, said once: what kind, which session, where it stands now. */
 @Composable
 internal fun ScheduleUpdateRow(
     item: UpdateItem.Schedule,

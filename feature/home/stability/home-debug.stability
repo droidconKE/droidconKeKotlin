@@ -5,6 +5,14 @@
 //   ./gradlew :home:stabilityDump
 
 @Composable
+private fun com.android254.presentation.home.components.AddTicketCard(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 private fun com.android254.presentation.home.components.AgendaDetails(item: com.android254.presentation.home.viewstate.AgendaItem, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
@@ -184,6 +192,16 @@ public fun com.android254.presentation.home.components.HomeSpeakersSection(speak
     - navigateToSpeaker: STABLE (function type)
 
 @Composable
+internal fun com.android254.presentation.home.components.HomeTicketCard(ticket: com.android254.presentation.home.viewstate.HomeTicket, prominent: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - ticket: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - prominent: STABLE (primitive type)
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.home.components.HomeToolbarComponent(isSignedIn: kotlin.Boolean, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
@@ -191,6 +209,24 @@ public fun com.android254.presentation.home.components.HomeToolbarComponent(isSi
     - isSignedIn: STABLE (primitive type)
     - navigateToFeedbackScreen: STABLE (function type)
     - onActionClicked: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.home.components.SavedTicketCard(ticket: com.android254.presentation.home.viewstate.HomeTicket.Saved, prominent: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - ticket: STABLE (class with no mutable properties)
+    - prominent: STABLE (primitive type)
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.components.TicketBadge(container: androidx.compose.ui.graphics.Color, content: androidx.compose.ui.graphics.Color): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - container: STABLE (marked @Stable or @Immutable)
+    - content: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.home.components.TimePill(time: kotlin.String, isLive: kotlin.Boolean): kotlin.Unit
@@ -237,13 +273,19 @@ private fun com.android254.presentation.home.components.subtitle(): kotlin.Strin
   params:
 
 @Composable
+private fun com.android254.presentation.home.components.summary(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 private fun com.android254.presentation.home.components.title(): kotlin.String
   skippable: false
   restartable: false
   params:
 
 @Composable
-public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \): kotlin.Unit
+public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -252,11 +294,12 @@ public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.
     - navigateToSpeaker: STABLE (function type)
     - navigateToFeedbackScreen: STABLE (function type)
     - navigateToSessionScreen: STABLE (function type)
+    - navigateToTicket: STABLE (function type)
     - onActionClicked: STABLE (function type)
     - onSessionClicked: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -266,6 +309,7 @@ internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.a
     - navigateToSpeaker: STABLE (function type)
     - navigateToFeedbackScreen: STABLE (function type)
     - navigateToSessionScreen: STABLE (function type)
+    - navigateToTicket: STABLE (function type)
     - onActionClicked: STABLE (function type)
     - onSessionClicked: STABLE (function type)
     - onRefresh: STABLE (function type)

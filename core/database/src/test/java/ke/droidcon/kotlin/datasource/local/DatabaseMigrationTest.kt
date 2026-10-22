@@ -98,6 +98,10 @@ class DatabaseMigrationTest {
             "MIGRATION_6_7 is declared but not registered in ALL_MIGRATIONS",
             Database.MIGRATION_6_7 in Database.ALL_MIGRATIONS,
         )
+        assertTrue(
+            "MIGRATION_7_8 is declared but not registered in ALL_MIGRATIONS",
+            Database.MIGRATION_7_8 in Database.ALL_MIGRATIONS,
+        )
     }
 
     @Test
@@ -113,6 +117,22 @@ class DatabaseMigrationTest {
             assertEquals(listOf("a|Kotlin"), db.rows("SELECT remote_id || '|' || title FROM sessions"))
             assertEquals(listOf("a"), db.rows("SELECT sessionId FROM bookmarks"))
             assertEquals(listOf("0"), db.rows("SELECT COUNT(*) FROM updates"))
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun `migrating 7 to 8 adds an empty tickets table and keeps the schedule's updates`() {
+        seedVersion(7) {
+            execSQL("INSERT INTO updates (kind, sessionId, title, count, createdAt) VALUES ('Added', 'a', 'Kotlin', 0, 1)")
+        }
+
+        val database = DatabaseModule.buildDatabase(context, TEST_DB)
+        try {
+            val db = database.openHelper.writableDatabase
+            assertEquals(listOf("Kotlin"), db.rows("SELECT title FROM updates"))
+            assertEquals(listOf("0"), db.rows("SELECT COUNT(*) FROM tickets"))
         } finally {
             database.close()
         }

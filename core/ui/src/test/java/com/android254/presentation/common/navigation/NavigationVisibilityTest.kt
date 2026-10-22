@@ -60,6 +60,13 @@ class NavigationVisibilityTest {
     }
 
     @Test
+    fun `the ticket owns the window, with nothing over the code`() {
+        assertFalse(shouldShowNavigation(Screens.Ticket, isMultiPaneWindow = false))
+        assertFalse(shouldShowNavigation(Screens.Ticket, isMultiPaneWindow = true))
+        assertFalse(shouldShowLiveSessionsRail(Screens.Ticket, isMultiPaneWindow = false, liveSessionCount = 1))
+    }
+
+    @Test
     fun `the supporting pane stands beside content, never beside a detail or a focused task`() {
         assertTrue(supportingPaneFor(Screens.Home))
         assertTrue(supportingPaneFor(Screens.Sessions))

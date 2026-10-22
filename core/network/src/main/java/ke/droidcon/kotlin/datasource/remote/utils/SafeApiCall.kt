@@ -18,8 +18,10 @@ package ke.droidcon.kotlin.datasource.remote.utils
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.network.sockets.SocketTimeoutException
+import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.plugins.ServerResponseException
+import io.ktor.http.HttpStatusCode
 import timber.log.Timber
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
@@ -29,6 +31,14 @@ suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResul
         DataResult.Success(apiCall.invoke())
     } catch (e: ServerResponseException) {
         serverError(e)
+    } catch (e: ClientRequestException) {
+        if (e.response.status == HttpStatusCode.TooManyRequests) {
+            Timber.d("Rate limited")
+            DataResult.Error("Too many requests", exc = e, rateLimited = true)
+        } else {
+            Timber.e(e)
+            DataResult.Error("Client error", exc = e)
+        }
     } catch (e: NoTransformationFoundException) {
         serverError(e)
     } catch (e: UnresolvedAddressException) {

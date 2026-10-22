@@ -48,6 +48,7 @@ import com.android254.presentation.home.components.HomeSessionSection
 import com.android254.presentation.home.components.HomeSpacer
 import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
+import com.android254.presentation.home.components.HomeTicketCard
 import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
@@ -61,6 +62,7 @@ fun HomeRoute(
     navigateToSpeaker: (String) -> Unit = {},
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
+    navigateToTicket: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
 ) {
@@ -73,6 +75,7 @@ fun HomeRoute(
         navigateToSpeaker = navigateToSpeaker,
         navigateToFeedbackScreen = navigateToFeedbackScreen,
         navigateToSessionScreen = navigateToSessionScreen,
+        navigateToTicket = navigateToTicket,
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
         onRefresh = { homeViewModel.startRefresh() },
@@ -87,6 +90,7 @@ internal fun HomeScreen(
     navigateToSpeaker: (String) -> Unit = {},
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
+    navigateToTicket: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
@@ -123,6 +127,14 @@ internal fun HomeScreen(
                         .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                if (viewState.isEventDay) {
+                    HomeTicketCard(
+                        ticket = viewState.ticket,
+                        prominent = true,
+                        onClick = navigateToTicket,
+                        modifier = Modifier.padding(bottom = 16.dp),
+                    )
+                }
                 HomeHeaderSectionComponent(
                     hero = viewState.hero,
                     onFeedbackClick = navigateToFeedbackScreen,
@@ -130,6 +142,14 @@ internal fun HomeScreen(
                     animateCube = animateCube && !isSyncing,
                 )
                 HomeBannerSection(viewState)
+                if (!viewState.isEventDay) {
+                    HomeTicketCard(
+                        ticket = viewState.ticket,
+                        prominent = false,
+                        onClick = navigateToTicket,
+                        modifier = Modifier.padding(top = 16.dp),
+                    )
+                }
                 HomeSpacer()
 
                 val agenda = viewState.agenda

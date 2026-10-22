@@ -23,6 +23,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import ke.droidcon.kotlin.core.testing.FakeFeatureFlags
 import ke.droidcon.kotlin.core.testing.FakeSyncWorkManager
+import ke.droidcon.kotlin.core.testing.FakeTicketsRepo
 import ke.droidcon.kotlin.core.testing.testSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,7 +66,7 @@ class HomeViewModelTest {
             val home = Home()
             coEvery { homeRepo.fetchHomeDetails() } returns flowOf(home)
 
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, FakeTicketsRepo(), syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
 
             val job = launch { viewModel.viewState.collect() }
             runCurrent()
@@ -83,7 +84,7 @@ class HomeViewModelTest {
             val clock = mockk<Clock>(relaxed = true)
 
             val syncDataWorkManagerMock = mockk<FakeSyncWorkManager>(relaxed = true)
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManagerMock, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, FakeTicketsRepo(), syncDataWorkManagerMock, clock, FakeFeatureFlags(), TimeZone.UTC, testDispatcher)
 
             viewModel.startRefresh()
             advanceUntilIdle()
@@ -104,7 +105,7 @@ class HomeViewModelTest {
             val keynote = testSession("keynote", Instant.parse("2026-11-06T09:00:00+03:00"), Instant.parse("2026-11-06T10:00:00+03:00"))
             coEvery { homeRepo.fetchHomeDetails() } returns flowOf(Home(sessions = listOf(keynote)))
 
-            val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.of("Africa/Nairobi"), testDispatcher)
+            val viewModel = HomeViewModel(homeRepo, FakeTicketsRepo(), syncDataWorkManager, clock, FakeFeatureFlags(), TimeZone.of("Africa/Nairobi"), testDispatcher)
             val job = launch { viewModel.viewState.collect() }
             runCurrent()
             assertThat(viewModel.viewState.value.hero, `is`(HomeHero.Countdown(daysUntil = 2, firstDay = LocalDate(2026, 11, 6), lastDay = LocalDate(2026, 11, 6)) as HomeHero))
@@ -125,7 +126,7 @@ class HomeViewModelTest {
 
             for (enabled in listOf(true, false)) {
                 val flags = FakeFeatureFlags(cubeHero = enabled)
-                val viewModel = HomeViewModel(homeRepo, syncDataWorkManager, mockk(relaxed = true), flags, TimeZone.UTC, testDispatcher)
+                val viewModel = HomeViewModel(homeRepo, FakeTicketsRepo(), syncDataWorkManager, mockk(relaxed = true), flags, TimeZone.UTC, testDispatcher)
                 val job = launch { viewModel.viewState.collect() }
                 runCurrent()
 
