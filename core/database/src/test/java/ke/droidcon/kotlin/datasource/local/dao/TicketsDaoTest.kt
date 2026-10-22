@@ -59,12 +59,25 @@ class TicketsDaoTest {
         }
 
     @Test
+    fun `a refresh changes status and check-ins and nothing else`() =
+        runTest {
+            ticketsDao.replace(ticket("TIC-1"))
+
+            ticketsDao.updateStatus("TIC-1", status = "refunded", checkIns = "[x]")
+
+            val saved = ticketsDao.current()
+            assertEquals("refunded", saved?.status)
+            assertEquals("[x]", saved?.checkIns)
+            assertEquals("Ada Lovelace", saved?.attendeeName)
+        }
+
+    @Test
     fun `updating a ticket that was removed does not bring it back`() =
         runTest {
             ticketsDao.replace(ticket("TIC-1"))
             ticketsDao.clear()
 
-            ticketsDao.update(ticket("TIC-1", status = "refunded"))
+            ticketsDao.updateStatus("TIC-1", status = "refunded", checkIns = "[]")
 
             assertNull(ticketsDao.current())
         }

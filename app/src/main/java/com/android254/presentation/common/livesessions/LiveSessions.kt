@@ -82,7 +82,6 @@ fun HappeningNowRoute(
     )
 }
 
-/** A starred session first; otherwise the first, where live sessions lead. */
 internal fun ImmutableList<SessionPresentationModel>.featured(): SessionPresentationModel? = firstOrNull { it.isStarred } ?: firstOrNull()
 
 /** The bottom-most element, so it pays the bottom inset. */

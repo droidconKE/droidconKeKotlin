@@ -37,13 +37,12 @@ data class IssuedTicketDTO(
 
 @Serializable
 data class TicketTypeDTO(
-    val title: String,
+    val title: String = "",
 )
 
 @Serializable
 data class TicketEventDTO(
-    val title: String,
-    val slug: String,
+    val title: String = "",
     @SerialName("start_date") val startDate: String? = null,
     @SerialName("end_date") val endDate: String? = null,
     @SerialName("venue_name") val venueName: String? = null,

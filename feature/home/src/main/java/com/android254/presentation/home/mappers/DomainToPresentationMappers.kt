@@ -95,7 +95,7 @@ fun Home.toHomeState(
                 ticket == null -> HomeTicket.Add
                 else -> HomeTicket.Saved(ticket.attendeeName, ticket.type, ticket.number, ticket.status)
             },
-        isEventDay = phase == ConferencePhase.DuringEvent,
+        isEventDay = sessions.eventDates(zone)?.contains(now.toLocalDateTime(zone).date) == true,
     )
 }
 

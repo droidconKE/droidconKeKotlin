@@ -42,9 +42,9 @@ class HomeTicketMappingTest {
     }
 
     @Test
-    fun `the ticket leads Home only while the event is on`() {
-        assertEquals(false, home.toHomeState(isSyncing = false, now = at("2026-11-05T08:00"), zone = nairobi).isEventDay)
-        assertEquals(true, home.toHomeState(isSyncing = false, now = at("2026-11-05T09:30"), zone = nairobi).isEventDay)
+    fun `the ticket leads Home from the morning of day one`() {
+        assertEquals(false, home.toHomeState(isSyncing = false, now = at("2026-11-04T23:00"), zone = nairobi).isEventDay)
+        assertEquals(true, home.toHomeState(isSyncing = false, now = at("2026-11-05T08:00"), zone = nairobi).isEventDay)
     }
 
     @Test

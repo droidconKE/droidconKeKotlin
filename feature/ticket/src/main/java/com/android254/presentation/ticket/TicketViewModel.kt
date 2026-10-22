@@ -39,16 +39,21 @@ class TicketViewModel
     @Inject
     constructor(
         private val ticketsRepo: TicketsRepo,
+        private val scanner: TicketScanner,
         clock: Clock,
         @ConferenceTimeZone private val zone: TimeZone,
         private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val form =
-            MutableStateFlow(AddTicketForm(number = savedStateHandle[TYPED_NUMBER] ?: "", email = savedStateHandle[TYPED_EMAIL] ?: ""))
+        private val typedNumber = savedStateHandle.getStateFlow(TYPED_NUMBER, "")
+        private val typedEmail = savedStateHandle.getStateFlow(TYPED_EMAIL, "")
+        private val lookUp = MutableStateFlow(LookUp())
 
         val uiState: StateFlow<TicketUiState> =
-            combine(ticketsRepo.ticket(), form, clock.ticks()) { ticket, form, now ->
-                TicketUiState.Ready(ticket = ticket?.toUi(now, zone), form = form)
+            combine(ticketsRepo.ticket(), typedNumber, typedEmail, lookUp, clock.ticks()) { ticket, number, email, lookUp, now ->
+                TicketUiState.Ready(
+                    ticket = ticket?.toUi(now, zone),
+                    form = AddTicketForm(number = number, email = email, isAdding = lookUp.inProgress, error = lookUp.error),
+                )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TicketUiState.Loading)
 
         init {
@@ -57,37 +62,54 @@ class TicketViewModel
 
         fun onAction(action: TicketAction) {
             when (action) {
-                is TicketAction.NumberChanged -> {
-                    savedStateHandle[TYPED_NUMBER] = action.value
-                    form.update { it.copy(number = action.value, error = null) }
+                is TicketAction.NumberChanged -> type(TYPED_NUMBER, action.value)
+                is TicketAction.EmailChanged -> type(TYPED_EMAIL, action.value)
+                TicketAction.Add -> {
+                    val form = AddTicketForm(typedNumber.value, typedEmail.value, lookUp.value.inProgress)
+                    if (form.canSubmit) add { ticketsRepo.add(form.number, form.email) }
                 }
-                is TicketAction.EmailChanged -> {
-                    savedStateHandle[TYPED_EMAIL] = action.value
-                    form.update { it.copy(email = action.value, error = null) }
-                }
-                TicketAction.Add -> form.value.takeIf { it.canSubmit }?.let { add { ticketsRepo.add(it.number, it.email) } }
+                TicketAction.Scan ->
+                    if (!lookUp.value.inProgress) {
+                        add {
+                            when (val scanned = scanner.scan()) {
+                                is ScanResult.Code -> ticketsRepo.addScanned(scanned.value)
+                                ScanResult.Cancelled -> null
+                                ScanResult.Unavailable -> AddTicketResult.ScannerUnavailable
+                            }
+                        }
+                    }
                 TicketAction.Remove -> viewModelScope.launch { ticketsRepo.remove() }
-                TicketAction.Scan -> Unit
             }
         }
 
-        fun onScanned(code: String) = add { ticketsRepo.addScanned(code) }
+        private fun type(
+            key: String,
+            value: String,
+        ) {
+            savedStateHandle[key] = value
+            lookUp.update { it.copy(error = null) }
+        }
 
-        fun onScannerUnavailable() = form.update { it.copy(error = AddTicketError.ScannerUnavailable) }
-
-        private fun add(lookUp: suspend () -> AddTicketResult) {
-            form.update { it.copy(isAdding = true, error = null) }
+        /** Null: a scan the attendee backed out of. */
+        private fun add(lookUpTicket: suspend () -> AddTicketResult?) {
+            lookUp.value = LookUp(inProgress = true)
             viewModelScope.launch {
-                when (val result = lookUp()) {
+                when (val result = lookUpTicket()) {
                     is AddTicketResult.Added -> {
                         savedStateHandle[TYPED_NUMBER] = ""
                         savedStateHandle[TYPED_EMAIL] = ""
-                        form.value = AddTicketForm()
+                        lookUp.value = LookUp()
                     }
-                    else -> form.update { it.copy(isAdding = false, error = result.toError()) }
+                    null -> lookUp.value = LookUp()
+                    else -> lookUp.value = LookUp(error = result.toError())
                 }
             }
         }
+
+        private data class LookUp(
+            val inProgress: Boolean = false,
+            val error: AddTicketError? = null,
+        )
     }
 
 private const val TYPED_NUMBER = "typed_number"
@@ -99,5 +121,6 @@ private fun AddTicketResult.toError(): AddTicketError =
         AddTicketResult.NotATicket -> AddTicketError.NotATicket
         AddTicketResult.Offline -> AddTicketError.Offline
         AddTicketResult.Busy -> AddTicketError.Busy
+        AddTicketResult.ScannerUnavailable -> AddTicketError.ScannerUnavailable
         AddTicketResult.Failed, is AddTicketResult.Added -> AddTicketError.Failed
     }

@@ -15,13 +15,6 @@
  */
 package com.android254.presentation.ticket
 
-import android.content.Context
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
-import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-
 sealed interface ScanResult {
     data class Code(
         val value: String,
@@ -31,20 +24,3 @@ sealed interface ScanResult {
 
     data object Unavailable : ScanResult
 }
-
-/** Play services hosts the camera UI, so the app needs no camera permission. */
-internal suspend fun scanTicketCode(context: Context): ScanResult =
-    suspendCancellableCoroutine { continuation ->
-        val options =
-            GmsBarcodeScannerOptions
-                .Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                .enableAutoZoom()
-                .build()
-        GmsBarcodeScanning
-            .getClient(context, options)
-            .startScan()
-            .addOnSuccessListener { barcode -> continuation.resume(ScanResult.Code(barcode.rawValue.orEmpty())) }
-            .addOnCanceledListener { continuation.resume(ScanResult.Cancelled) }
-            .addOnFailureListener { continuation.resume(ScanResult.Unavailable) }
-    }

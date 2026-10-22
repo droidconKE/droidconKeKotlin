@@ -54,7 +54,6 @@ fun shouldShowSupportingPane(
         shouldShowNavigation(route, isMultiPaneWindow) &&
         (route as? Screens)?.listPaneRoute == null
 
-/** On Home, only when the agenda is not already showing that session. */
 fun shouldShowLiveSessionsRail(
     route: NavKey,
     isMultiPaneWindow: Boolean,

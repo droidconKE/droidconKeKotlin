@@ -36,7 +36,7 @@ suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResul
             Timber.d("Rate limited")
             DataResult.Error("Too many requests", exc = e, rateLimited = true)
         } else {
-            Timber.e(e)
+            Timber.e("%s: %s", e::class.simpleName, e.message?.withoutQuery())
             DataResult.Error("Client error", exc = e)
         }
     } catch (e: NoTransformationFoundException) {
@@ -56,8 +56,9 @@ suspend fun <T : Any> dataResultSafeApiCall(apiCall: suspend () -> T): DataResul
         DataResult.Error("Client error", exc = e)
     }
 
+/** Ktor puts the full URL in these messages, and a ticket lookup's query names the ticket. */
 private fun serverError(e: Throwable): DataResult<Nothing> {
-    Timber.e(e)
+    Timber.e("%s: %s", e::class.simpleName, e.message?.withoutQuery())
     return DataResult.Error("Server error", exc = e)
 }
 
@@ -65,3 +66,7 @@ private fun networkError(e: Throwable): DataResult<Nothing> {
     Timber.e(e)
     return DataResult.Error("Network error", exc = e, networkError = true)
 }
+
+internal fun String.withoutQuery(): String = replace(QUERY_STRING, "")
+
+private val QUERY_STRING = Regex("""\?[^\s"')]*""")

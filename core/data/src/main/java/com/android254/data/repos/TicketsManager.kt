@@ -66,15 +66,23 @@ class TicketsManager
             return lookUp(number) { true }
         }
 
-        /** At most every few minutes: the lookup allows 30 a minute per IP, and a venue shares one. */
+        /** The lookup allows 30 a minute per IP, and a venue shares one. */
         override suspend fun refresh() {
             val now = clock.now()
             if (refreshedAt?.let { now - it < REFRESH_INTERVAL } == true) return
             withContext(ioDispatcher) {
                 val saved = ticketsDao.current() ?: return@withContext
-                val result = ticketsApi.findByNumber(saved.number) as? DataResult.Success ?: return@withContext
-                result.data.issued(saved.number)?.let { ticketsDao.update(it.toEntity()) }
-                refreshedAt = now
+                when (val result = ticketsApi.findByNumber(saved.number)) {
+                    is DataResult.Success -> {
+                        result.data
+                            .issued(saved.number)
+                            ?.toEntity()
+                            ?.let { ticketsDao.updateStatus(it.number, it.status, it.checkIns) }
+                        refreshedAt = now
+                    }
+                    is DataResult.Error -> if (result.rateLimited) refreshedAt = now
+                    else -> Unit
+                }
             }
         }
 

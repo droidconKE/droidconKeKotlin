@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -62,13 +63,14 @@ internal fun AddTicketPanel(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        val noMatch = form.error?.takeIf { it == AddTicketError.NoMatch }?.let { stringResource(it.message()) }
         OutlinedTextField(
             value = form.number,
             onValueChange = { onAction(TicketAction.NumberChanged(it)) },
             label = { Text(stringResource(R.string.ticket_number_label)) },
             placeholder = { Text(stringResource(R.string.ticket_number_placeholder)) },
             singleLine = true,
-            isError = form.error == AddTicketError.NoMatch,
+            isError = noMatch != null,
             keyboardOptions =
                 KeyboardOptions(
                     capitalization = KeyboardCapitalization.Characters,
@@ -76,17 +78,17 @@ internal fun AddTicketPanel(
                     keyboardType = KeyboardType.Ascii,
                     imeAction = ImeAction.Next,
                 ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().fieldError(noMatch),
         )
         OutlinedTextField(
             value = form.email,
             onValueChange = { onAction(TicketAction.EmailChanged(it)) },
             label = { Text(stringResource(R.string.ticket_email_label)) },
             singleLine = true,
-            isError = form.error == AddTicketError.NoMatch,
+            isError = noMatch != null,
             keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { onAction(TicketAction.Add) }),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().fieldError(noMatch),
         )
         form.error?.let { error ->
             Text(
@@ -103,7 +105,11 @@ internal fun AddTicketPanel(
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (form.isAdding) {
-                LoadingIndicator(modifier = Modifier.size(24.dp))
+                LoadingIndicator(modifier = Modifier.size(ButtonDefaults.IconSize))
+                Text(
+                    text = stringResource(R.string.ticket_adding),
+                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
+                )
             } else {
                 Text(stringResource(R.string.ticket_add_action))
             }
@@ -138,6 +144,8 @@ internal fun AddTicketPanel(
         }
     }
 }
+
+private fun Modifier.fieldError(message: String?): Modifier = if (message == null) this else semantics { error(message) }
 
 private fun AddTicketError.message(): Int =
     when (this) {

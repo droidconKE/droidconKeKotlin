@@ -43,6 +43,7 @@ import kotlin.time.Instant
 @OptIn(ExperimentalCoroutinesApi::class)
 class TicketViewModelTest {
     private val nairobi = TimeZone.of("Africa/Nairobi")
+    private val scanner = FakeTicketScanner()
     private val dayOne =
         object : Clock {
             override fun now() = Instant.parse("2026-11-05T10:00:00+03:00")
@@ -63,7 +64,7 @@ class TicketViewModelTest {
         runTest {
             val repo = FakeTicketsRepo(testTicket())
 
-            TicketViewModel(repo, dayOne, nairobi, SavedStateHandle())
+            TicketViewModel(repo, scanner, dayOne, nairobi, SavedStateHandle())
 
             assertEquals(1, repo.refreshes)
         }
@@ -74,15 +75,15 @@ class TicketViewModelTest {
             val today = testTicket(checkIns = listOf(Ticket.CheckIn(LocalDate(2026, 11, 5), Instant.parse("2026-11-05T08:41:00+03:00"))))
             val yesterday = testTicket(checkIns = listOf(Ticket.CheckIn(LocalDate(2026, 11, 4), Instant.parse("2026-11-04T08:41:00+03:00"))))
 
-            assertEquals(true, ready(TicketViewModel(FakeTicketsRepo(today), dayOne, nairobi, SavedStateHandle())).ticket?.checkedInToday)
-            assertEquals(false, ready(TicketViewModel(FakeTicketsRepo(yesterday), dayOne, nairobi, SavedStateHandle())).ticket?.checkedInToday)
+            assertEquals(true, ready(TicketViewModel(FakeTicketsRepo(today), scanner, dayOne, nairobi, SavedStateHandle())).ticket?.checkedInToday)
+            assertEquals(false, ready(TicketViewModel(FakeTicketsRepo(yesterday), scanner, dayOne, nairobi, SavedStateHandle())).ticket?.checkedInToday)
         }
 
     @Test
     fun `adding needs a number and an email, then clears the form`() =
         runTest {
             val repo = FakeTicketsRepo()
-            val viewModel = TicketViewModel(repo, dayOne, nairobi, SavedStateHandle())
+            val viewModel = TicketViewModel(repo, scanner, dayOne, nairobi, SavedStateHandle())
             collect(viewModel)
 
             viewModel.onAction(TicketAction.NumberChanged("tic-70235"))
@@ -101,12 +102,12 @@ class TicketViewModelTest {
     fun `what was typed survives the app being killed in the background`() =
         runTest {
             val saved = SavedStateHandle()
-            TicketViewModel(FakeTicketsRepo(), dayOne, nairobi, saved).apply {
+            TicketViewModel(FakeTicketsRepo(), scanner, dayOne, nairobi, saved).apply {
                 onAction(TicketAction.NumberChanged("TIC-70235"))
                 onAction(TicketAction.EmailChanged("magak@example.com"))
             }
 
-            val restored = TicketViewModel(FakeTicketsRepo(), dayOne, nairobi, SavedStateHandle(saved.keys().associateWith { saved.get<String>(it) }))
+            val restored = TicketViewModel(FakeTicketsRepo(), scanner, dayOne, nairobi, SavedStateHandle(saved.keys().associateWith { saved.get<String>(it) }))
 
             assertEquals(AddTicketForm(number = "TIC-70235", email = "magak@example.com"), ready(restored).form)
         }
@@ -114,7 +115,7 @@ class TicketViewModelTest {
     @Test
     fun `a failed lookup keeps what was typed and says why`() =
         runTest {
-            val viewModel = TicketViewModel(FakeTicketsRepo(nextResult = AddTicketResult.Busy), dayOne, nairobi, SavedStateHandle())
+            val viewModel = TicketViewModel(FakeTicketsRepo(nextResult = AddTicketResult.Busy), scanner, dayOne, nairobi, SavedStateHandle())
             collect(viewModel)
 
             viewModel.onAction(TicketAction.NumberChanged("TIC-1"))
@@ -128,20 +129,30 @@ class TicketViewModelTest {
         }
 
     @Test
-    fun `a scanned ticket needs no typing`() =
+    fun `a scanned code goes straight to the lookup, and backing out of the scanner says nothing`() =
         runTest {
-            val viewModel = TicketViewModel(FakeTicketsRepo(), dayOne, nairobi, SavedStateHandle())
+            val repo = FakeTicketsRepo()
+            val viewModel = TicketViewModel(repo, scanner, dayOne, nairobi, SavedStateHandle())
             collect(viewModel)
 
-            viewModel.onScanned("https://events.droidcon.co.ke/checkin/droidconke-2026-731/attendee/TIC-2")
+            scanner.next = ScanResult.Code("https://events.droidcon.co.ke/checkin/droidconke-2026-731/attendee/TIC-2")
+            viewModel.onAction(TicketAction.Scan)
+            assertEquals("https://events.droidcon.co.ke/checkin/droidconke-2026-731/attendee/TIC-2" to null, repo.lastLookUp)
+            assertNull(ready(viewModel).form.error)
 
-            assertEquals("https://events.droidcon.co.ke/checkin/droidconke-2026-731/attendee/TIC-2", ready(viewModel).ticket?.number)
+            scanner.next = ScanResult.Cancelled
+            viewModel.onAction(TicketAction.Scan)
+            assertEquals(AddTicketForm(), ready(viewModel).form)
+
+            scanner.next = ScanResult.Unavailable
+            viewModel.onAction(TicketAction.Scan)
+            assertEquals(AddTicketError.ScannerUnavailable, ready(viewModel).form.error)
         }
 
     @Test
     fun `removing takes the ticket off the phone`() =
         runTest {
-            val viewModel = TicketViewModel(FakeTicketsRepo(testTicket()), dayOne, nairobi, SavedStateHandle())
+            val viewModel = TicketViewModel(FakeTicketsRepo(testTicket()), scanner, dayOne, nairobi, SavedStateHandle())
             collect(viewModel)
 
             viewModel.onAction(TicketAction.Remove)
@@ -157,4 +168,10 @@ class TicketViewModelTest {
         collect(viewModel)
         return viewModel.uiState.value as TicketUiState.Ready
     }
+}
+
+private class FakeTicketScanner : TicketScanner {
+    var next: ScanResult = ScanResult.Cancelled
+
+    override suspend fun scan(): ScanResult = next
 }

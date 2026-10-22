@@ -22,6 +22,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.mockk.mockk
 import ke.droidcon.kotlin.datasource.remote.tickets.model.CheckInDTO
+import ke.droidcon.kotlin.datasource.remote.tickets.model.IssuedTicketDTO
 import ke.droidcon.kotlin.datasource.remote.utils.DataResult
 import ke.droidcon.kotlin.datasource.remote.utils.HttpClientFactory
 import ke.droidcon.kotlin.datasource.remote.utils.MockTokenProvider
@@ -65,6 +66,16 @@ class TicketsApiTest {
             assertEquals("paid", ticket.orderStatus)
             assertEquals(listOf(CheckInDTO("2026-11-05", "2026-11-05T08:41:12+03:00")), ticket.checkIns)
             assertEquals("iVBORw0KGgo=", ticket.qrBase64)
+        }
+
+    @Test
+    fun `a ticket with nothing but its number still reads`() =
+        runTest {
+            val engine = MockEngine { respondJson("""{"data": [{"ticket_no": "TIC-1"}]}""") }
+
+            val result = TicketsApi(HttpClientFactory(MockTokenProvider(), toggle).create(engine)).findByNumber("TIC-1")
+
+            assertEquals(listOf(IssuedTicketDTO(ticketNo = "TIC-1")), (result as DataResult.Success).data)
         }
 
     @Test

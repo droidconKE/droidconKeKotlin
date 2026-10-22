@@ -26,6 +26,5 @@ dependencies {
     implementation(libs.play.services.code.scanner)
 
     testImplementation(projects.core.testing)
-    testImplementation(libs.test.mockk)
     testImplementation(libs.kotlin.coroutines.test)
 }

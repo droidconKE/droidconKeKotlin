@@ -62,7 +62,7 @@ import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.datetime.LocalDate
 
-/** Laid out like the emailed PDF; the code's stub stays light in dark theme, where a dark ground scans badly. */
+/** The code's stub stays light in dark theme; a dark ground scans badly. */
 @Composable
 internal fun TicketPass(
     ticket: TicketUi,
@@ -115,7 +115,7 @@ private fun PassHeader(ticket: TicketUi) {
         val place = listOfNotNull(dates, ticket.venue.takeIf(String::isNotBlank))
         if (place.isNotEmpty()) {
             Text(
-                text = if (place.size == 2) stringResource(R.string.ticket_dates_and_venue, place[0], place[1]) else place[0],
+                text = place.joinToString(stringResource(R.string.detail_separator)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = palette.heroOnContainerColor,
                 maxLines = 2,
@@ -183,7 +183,6 @@ private fun PassChip(
     }
 }
 
-/** The tear line, with a notch either side cut in the colour of whatever the pass sits on. */
 @Composable
 private fun Perforation() {
     val notch = MaterialTheme.colorScheme.background

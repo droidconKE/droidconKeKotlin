@@ -20,11 +20,11 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,13 +43,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,16 +58,13 @@ import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.ticket.AddTicketForm
-import com.android254.presentation.ticket.ScanResult
 import com.android254.presentation.ticket.TicketAction
 import com.android254.presentation.ticket.TicketUi
 import com.android254.presentation.ticket.TicketUiState
 import com.android254.presentation.ticket.TicketViewModel
-import com.android254.presentation.ticket.scanTicketCode
 import com.droidconke.chai.atoms.LARGE_FONT_SCALE
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
-import kotlinx.coroutines.launch
 import ke.droidcon.kotlin.chai.R as ChaiR
 
 @Composable
@@ -78,25 +73,7 @@ fun TicketRoute(
     viewModel: TicketViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    TicketScreen(
-        state = state,
-        onBack = navigateBack,
-        onAction = { action ->
-            if (action == TicketAction.Scan) {
-                scope.launch {
-                    when (val result = scanTicketCode(context)) {
-                        is ScanResult.Code -> viewModel.onScanned(result.value)
-                        ScanResult.Unavailable -> viewModel.onScannerUnavailable()
-                        ScanResult.Cancelled -> Unit
-                    }
-                }
-            } else {
-                viewModel.onAction(action)
-            }
-        },
-    )
+    TicketScreen(state = state, onBack = navigateBack, onAction = viewModel::onAction)
 }
 
 @Composable
@@ -180,7 +157,7 @@ private fun TicketTopBar(
     )
 }
 
-/** The pass fills the screen, as a ticket does; nothing to scroll past at the door. Large text gets a scrolling pass instead of a tiny code. */
+/** A short window or large text scrolls instead of shrinking the code. */
 @Composable
 private fun Pass(
     ticket: TicketUi,
@@ -189,11 +166,10 @@ private fun Pass(
     if (ticket.status.showsCode) GateScreenMode()
     val entrance = remember { MutableTransitionState(false).apply { targetState = true } }
     val largeFont = LocalDensity.current.fontScale > LARGE_FONT_SCALE
-    Box(
-        modifier = if (largeFont) modifier.verticalScroll(rememberScrollState()) else modifier,
-        contentAlignment = Alignment.TopCenter,
-    ) {
+    BoxWithConstraints(modifier, contentAlignment = Alignment.TopCenter) {
+        val fits = !largeFont && maxHeight >= PASS_FITS_ABOVE
         AnimatedVisibility(
+            modifier = if (fits) Modifier else Modifier.verticalScroll(rememberScrollState()),
             visibleState = entrance,
             enter =
                 slideInVertically(MaterialTheme.motionScheme.defaultSpatialSpec()) { it / 4 } +
@@ -201,11 +177,11 @@ private fun Pass(
         ) {
             TicketPass(
                 ticket = ticket,
-                fitHeight = !largeFont,
+                fitHeight = fits,
                 modifier =
                     Modifier
                         .readablePaneWidth()
-                        .then(if (largeFont) Modifier.fillMaxWidth() else Modifier.fillMaxSize())
+                        .then(if (fits) Modifier.fillMaxSize() else Modifier.fillMaxWidth())
                         .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
             )
         }
@@ -219,10 +195,7 @@ private fun AddFirstTicket(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier =
-            modifier
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
@@ -241,3 +214,5 @@ private fun AddFirstTicket(
         }
     }
 }
+
+private val PASS_FITS_ABOVE = 560.dp

@@ -26,7 +26,7 @@ internal data class ScheduleChange(
     val count: Int = 0,
 )
 
-/** A first sync, or one sharing no session with the last, is one "schedule is out"; breaks coming and going are not news. */
+/** A first sync, or one sharing no session with the last, is one "schedule is out". */
 internal fun scheduleChanges(
     previous: List<SessionEntity>,
     incoming: List<SessionEntity>,

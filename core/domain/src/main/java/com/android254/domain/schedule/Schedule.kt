@@ -41,7 +41,6 @@ fun List<Session>.conferencePhase(
     }
 }
 
-/** Null before anything timed has synced. */
 fun List<Session>.eventDates(zone: TimeZone): ClosedRange<LocalDate>? {
     val days = timed().map { it.start.dateIn(zone) }
     return if (days.isEmpty()) null else days.min()..days.max()

@@ -37,14 +37,16 @@ import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 class TicketsManagerTest {
     private val api = mockk<TicketsApi>()
     private val dao = mockk<TicketsDao>(relaxed = true)
+    private var now = Instant.fromEpochMilliseconds(42)
     private val clock =
         object : Clock {
-            override fun now() = Instant.fromEpochMilliseconds(42)
+            override fun now() = now
         }
     private val manager = TicketsManager(api, dao, Dispatchers.Unconfined, clock)
 
@@ -102,40 +104,44 @@ class TicketsManagerTest {
     fun `refreshing updates the saved ticket in place`() =
         runTest {
             coEvery { dao.current() } returns issued.toEntity()
-            coEvery { api.findByNumber("TIC-70235") } returns DataResult.Success(listOf(issued.copy(orderStatus = "refunded")))
-            val saved = slot<TicketEntity>()
-            coEvery { dao.update(capture(saved)) } returns Unit
+            coEvery { api.findByNumber("TIC-70235") } returns DataResult.Success(listOf(issued.copy(orderStatus = "refunded", attendeeName = "")))
 
             manager.refresh()
 
-            assertEquals("refunded", saved.captured.status)
+            coVerify { dao.updateStatus("TIC-70235", "refunded", any()) }
             coVerify(exactly = 0) { dao.replace(any()) }
         }
 
     @Test
-    fun `a refresh that went through is not repeated for a few minutes, and a ticket the server no longer returns is kept`() =
+    fun `a refresh that went through waits five minutes before the next, and a ticket the server no longer returns is kept`() =
         runTest {
             coEvery { dao.current() } returns issued.toEntity()
             coEvery { api.findByNumber("TIC-70235") } returns DataResult.Success(emptyList())
 
             manager.refresh()
+            now += 4.minutes
+            manager.refresh()
+            now += 2.minutes
             manager.refresh()
 
-            coVerify(exactly = 1) { api.findByNumber(any()) }
-            coVerify(exactly = 0) { dao.update(any()) }
+            coVerify(exactly = 2) { api.findByNumber(any()) }
+            coVerify(exactly = 0) { dao.updateStatus(any(), any(), any()) }
             coVerify(exactly = 0) { dao.clear() }
         }
 
     @Test
-    fun `a failed refresh is tried again next time`() =
+    fun `no signal is tried again next time, a busy network is not`() =
         runTest {
             coEvery { dao.current() } returns issued.toEntity()
             coEvery { api.findByNumber("TIC-70235") } returns DataResult.Error("Network error", networkError = true)
-
             manager.refresh()
             manager.refresh()
-
             coVerify(exactly = 2) { api.findByNumber(any()) }
+
+            coEvery { api.findByNumber("TIC-70235") } returns DataResult.Error("Too many requests", rateLimited = true)
+            manager.refresh()
+            manager.refresh()
+            coVerify(exactly = 3) { api.findByNumber(any()) }
         }
 
     @Test
@@ -180,7 +186,7 @@ class TicketsManagerTest {
             attendeeName = "Magak Emmanuel",
             attendeeEmail = "magak@example.com",
             ticket = TicketTypeDTO("Regular"),
-            event = TicketEventDTO("DroidconKe & FlutterconKe 2026", "droidconke-2026-731", "2026-11-05T00:00:00+03:00", "2026-11-06", "PrideInn Azure", "Westlands, Nairobi"),
+            event = TicketEventDTO("DroidconKe & FlutterconKe 2026", "2026-11-05T00:00:00+03:00", "2026-11-06", "PrideInn Azure", "Westlands, Nairobi"),
             orderStatus = "active",
             checkIns = listOf(CheckInDTO("2026-11-05", "2026-11-05T08:41:12+03:00")),
             qrBase64 = "iVBORw0KGgo=",

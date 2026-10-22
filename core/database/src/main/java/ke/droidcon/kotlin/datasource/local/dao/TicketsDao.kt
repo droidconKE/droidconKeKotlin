@@ -18,11 +18,9 @@ package ke.droidcon.kotlin.datasource.local.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import ke.droidcon.kotlin.datasource.local.model.TicketEntity
 import kotlinx.coroutines.flow.Flow
 
-/** One ticket per phone: the attendee's own. */
 @Dao
 interface TicketsDao : BaseDao<TicketEntity> {
     @Query("SELECT * FROM tickets LIMIT 1")
@@ -38,8 +36,12 @@ interface TicketsDao : BaseDao<TicketEntity> {
     }
 
     /** A no-op once the row is gone, so a refresh cannot bring back a removed ticket. */
-    @Update
-    suspend fun update(ticket: TicketEntity)
+    @Query("UPDATE tickets SET status = :status, checkIns = :checkIns WHERE number = :number")
+    suspend fun updateStatus(
+        number: String,
+        status: String,
+        checkIns: String,
+    )
 
     @Query("DELETE FROM tickets")
     suspend fun clear()

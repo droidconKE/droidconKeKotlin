@@ -45,7 +45,6 @@ fun String.feedPostedAtMillis(): Long? =
         null
     }
 
-/** Unparseable input comes back as it was. */
 fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String = feedPostedAtMillis()?.let { postedAt -> relativeDay(postedAt, nowMillis) } ?: this
 
 fun relativeDay(

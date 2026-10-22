@@ -63,7 +63,7 @@ fun TicketEntity.toDomain() =
         qrBase64 = qrBase64,
     )
 
-/** A ticket with no order, such as a sponsor's guest, has no status and is valid. */
+/** No order, such as a sponsor's guest, is valid. */
 private fun String.toTicketStatus(): Ticket.Status =
     when (lowercase()) {
         "", "active", "paid" -> Ticket.Status.Active

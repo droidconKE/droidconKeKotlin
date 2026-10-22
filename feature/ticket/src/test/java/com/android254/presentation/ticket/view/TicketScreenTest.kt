@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.ticket.view
 
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
@@ -26,6 +27,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import com.android254.domain.models.Ticket
 import com.android254.presentation.ticket.AddTicketError
 import com.android254.presentation.ticket.AddTicketForm
@@ -96,6 +98,15 @@ class TicketScreenTest {
         show(ready(ticket = testTicket().copy(qrBase64 = "")))
 
         composeTestRule.onNodeWithText("Read your ticket number", substring = true).assertIsDisplayed()
+    }
+
+    @Test
+    @Config(qualifiers = "w780dp-h360dp-xxhdpi")
+    fun `a phone on its side scrolls to the code rather than squashing it`() {
+        show(ready(ticket = testTicket()))
+
+        composeTestRule.onNodeWithText("TIC-70235").performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Entry code for ticket TIC-70235").assertHeightIsAtLeast(200.dp)
     }
 
     @Test

@@ -34,7 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import ke.droidcon.kotlin.core.ui.R
 
-/** The backend's own PNG, so it is what the gate reads; unfiltered, because blurred module edges scan badly. */
+/** Unfiltered: blurred module edges scan badly. */
 @Composable
 internal fun EntryCode(
     qrBase64: String,

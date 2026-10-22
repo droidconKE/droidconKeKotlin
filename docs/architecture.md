@@ -262,7 +262,10 @@ the light theme whatever the app's theme, and a refunded or cancelled ticket kee
 under a stamp, so it reads as void rather than broken. Removing is behind the overflow menu. Home
 has a calm card for the ticket under the hero, which moves to the top in hero blue while the event
 is on; the launcher shortcut `ke.droidcon.kotlin.action.SHOW_TICKET` opens it from cold. A refresh
-runs at most every five minutes and only rewrites a row that is still there.
+runs at most every five minutes, rewrites only status and check-ins, and only on a row that is
+still there. The ticket is in the same database as the bookmarks, so Android's backup carries it
+to a restored phone; that is accepted, because the number is also in the attendee's email and the
+gate turns away a code it has already let in.
 
 ---
 
