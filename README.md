@@ -322,17 +322,17 @@ We would endlessly like to thank the following contributors
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/chepsi">
-                    <img src="https://avatars.githubusercontent.com/u/61404564?v=4" width="100;" alt="chepsi"/>
-                    <br />
-                    <sub><b>Evans Chepsiror</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/wangerekaharun">
                     <img src="https://avatars.githubusercontent.com/u/15122455?v=4" width="100;" alt="wangerekaharun"/>
                     <br />
                     <sub><b>Harun Wangereka</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/chepsi">
+                    <img src="https://avatars.githubusercontent.com/u/61404564?v=4" width="100;" alt="chepsi"/>
+                    <br />
+                    <sub><b>Evans Chepsiror</b></sub>
                 </a>
             </td>
             <td align="center">
