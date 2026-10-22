@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.notifications
+package ke.droidcon.kotlin.core.notifications
 
 import android.Manifest
 import android.content.Context
@@ -30,6 +30,9 @@ interface NotificationPermission {
 
     /** NotificationManagerCompat.areNotificationsEnabled(), any API. */
     fun areNotificationsEnabled(): Boolean
+
+    /** The user switched this channel off in system settings. */
+    fun isChannelBlocked(channel: NotificationChannelSpec): Boolean
 }
 
 class AndroidNotificationPermission
@@ -43,4 +46,8 @@ class AndroidNotificationPermission
                 PackageManager.PERMISSION_GRANTED
 
         override fun areNotificationsEnabled(): Boolean = NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+        override fun isChannelBlocked(channel: NotificationChannelSpec): Boolean =
+            NotificationManagerCompat.from(context).getNotificationChannel(channel.id)?.importance ==
+                NotificationManagerCompat.IMPORTANCE_NONE
     }

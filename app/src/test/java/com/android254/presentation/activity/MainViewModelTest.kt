@@ -19,11 +19,11 @@ import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.presentation.notifications.NotificationPermission
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
@@ -77,6 +77,7 @@ class MainViewModelTest {
         coEvery { sessionsRepo.fetchSessions() } returns flowOf(emptyList())
         coEvery { remoteFeatureToggle.syncNowIfEmpty() } returns false
         every { notificationPermission.needsRuntimeRequest() } returns true
+        every { notificationPermission.areNotificationsEnabled() } returns false
     }
 
     @After
@@ -272,7 +273,90 @@ class MainViewModelTest {
             assertEquals(0, requests.size)
         }
 
+    @Test
+    fun `starring a session that has already started does not prompt`() =
+        runTest {
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val requests = collectRequests(sessions)
+
+            sessions.value = listOf(createSession(id = "1", title = "A", isBookmarked = true, startsAt = -1))
+            runCurrent()
+
+            assertEquals(0, requests.size)
+        }
+
+    @Test
+    fun `starring while notifications are blocked after a previous prompt points at settings`() =
+        runTest {
+            preferences.value = NotificationPreferences(permissionPrompted = true)
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val events = collectRemindersOff(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+
+            assertEquals(1, events.size)
+        }
+
+    @Test
+    fun `starring a session that has already started does not point at settings`() =
+        runTest {
+            preferences.value = NotificationPreferences(permissionPrompted = true)
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val events = collectRemindersOff(sessions)
+
+            sessions.value = listOf(createSession(id = "1", title = "A", isBookmarked = true, startsAt = -1))
+            runCurrent()
+
+            assertEquals(0, events.size)
+        }
+
+    @Test
+    fun `starring while notifications are allowed says nothing`() =
+        runTest {
+            every { notificationPermission.areNotificationsEnabled() } returns true
+            every { notificationPermission.needsRuntimeRequest() } returns false
+            val sessions = MutableStateFlow(emptyList<Session>())
+            val events = collectRemindersOff(sessions)
+
+            sessions.value = starred(1)
+            runCurrent()
+
+            assertEquals(0, events.size)
+        }
+
+    @Test
+    fun `declining the system prompt points at settings`() =
+        runTest {
+            val events = collectRemindersOff(MutableStateFlow(emptyList()))
+
+            viewModel.onNotificationPermissionResult(granted = false)
+            runCurrent()
+
+            assertEquals(1, events.size)
+        }
+
+    @Test
+    fun `allowing the system prompt says nothing`() =
+        runTest {
+            val events = collectRemindersOff(MutableStateFlow(emptyList()))
+
+            viewModel.onNotificationPermissionResult(granted = true)
+            runCurrent()
+
+            assertEquals(0, events.size)
+        }
+
     private lateinit var viewModel: MainViewModel
+
+    private fun kotlinx.coroutines.test.TestScope.collectRemindersOff(sessions: MutableStateFlow<List<Session>>): List<Unit> {
+        coEvery { sessionsRepo.fetchSessions() } returns sessions
+        viewModel = viewModel()
+        val events = mutableListOf<Unit>()
+        backgroundScope.launch { viewModel.remindersOffEvents.toList(events) }
+        runCurrent()
+        return events
+    }
 
     private fun kotlinx.coroutines.test.TestScope.collectRequests(sessions: MutableStateFlow<List<Session>>): List<Unit> {
         coEvery { sessionsRepo.fetchSessions() } returns sessions
@@ -300,6 +384,7 @@ class MainViewModelTest {
         id: String,
         title: String,
         isBookmarked: Boolean = false,
+        startsAt: Long = 1,
     ) = Session(
         id = id,
         description = "Description",
@@ -319,5 +404,6 @@ class MainViewModelTest {
         speakers = listOf(),
         remoteId = id,
         eventDay = "1",
+        startInstant = Instant.fromEpochMilliseconds(startsAt * 3_600_000),
     )
 }

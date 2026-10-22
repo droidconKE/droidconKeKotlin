@@ -18,6 +18,7 @@ package com.droidconke.chai.icons
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
@@ -487,6 +488,29 @@ object ChaiIcons {
                 lineTo(6.0f, 10.0f)
                 close()
             }
+        }
+    }
+    val NotificationsOutlined: ImageVector by lazy {
+        icon(name = "NotificationsOutlined") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M12,22c1.1,0 2,-0.9 2,-2h-4c0,1.1 0.89,2 2,2zM18,16v-5c0,-3.07 -1.64,-5.64 -4.5,-6.32V4c0,-0.83 -0.67,-1.5 -1.5,-1.5s-1.5,0.67 -1.5,1.5v0.68C7.63,5.36 6,7.92 6,11v5l-2,2v1h16v-1l-2,-2zM16,17H8v-6c0,-2.48 1.51,-4.5 4,-4.5s4,2.02 4,4.5v6z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
+
+    val OpenInNew: ImageVector by lazy {
+        icon(name = "OpenInNew") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M19,19H5V5h7V3H5c-1.11,0 -2,0.9 -2,2v14c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2v-7h-2v7zM14,3v2h3.59l-9.83,9.83 1.41,1.41L19,6.41V10h2V3h-7z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
         }
     }
 }

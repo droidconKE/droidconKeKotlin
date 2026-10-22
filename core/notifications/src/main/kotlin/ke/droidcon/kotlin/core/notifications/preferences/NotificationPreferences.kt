@@ -16,53 +16,29 @@
 package ke.droidcon.kotlin.core.notifications.preferences
 
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
-import kotlinx.serialization.Serializable
 
-/**
- * User's notification preferences with master control and per-channel toggles.
- *
- * The master [masterEnabled] switch acts as an override for all notifications.
- * Individual channels are controlled by their respective toggles, but only take effect
- * if the master switch is enabled.
- */
-@Serializable
 data class NotificationPreferences(
-    val masterEnabled: Boolean = true,
     val sessionRemindersEnabled: Boolean = true,
     val scheduleChangesEnabled: Boolean = true,
     val announcementsEnabled: Boolean = true,
     val socialFeedEnabled: Boolean = true,
     val milestonesEnabled: Boolean = true,
-    val syncEnabled: Boolean = false,
-    val reminderLeadTimeMinutes: Int = 10,
+    val reminderLeadTimeMinutes: Int = ReminderLeadTime.Ten.minutes,
     /** Whether the app has already shown the system notification prompt from a star. */
     val permissionPrompted: Boolean = false,
 ) {
-    /**
-     * Checks if a notification channel is enabled.
-     *
-     * A channel is enabled only if the master switch is on AND the channel's individual toggle is on.
-     *
-     * @param channel The notification channel to check
-     * @return true if the channel should receive notifications, false otherwise
-     */
+    /** The sync channel only carries the foreground notification of a running sync, so it is never off. */
     fun isChannelEnabled(channel: NotificationChannelSpec): Boolean =
-        masterEnabled &&
-            when (channel) {
-                NotificationChannelSpec.SessionReminders -> sessionRemindersEnabled
-                NotificationChannelSpec.ScheduleChanges -> scheduleChangesEnabled
-                NotificationChannelSpec.Announcements -> announcementsEnabled
-                NotificationChannelSpec.SocialFeed -> socialFeedEnabled
-                NotificationChannelSpec.Milestones -> milestonesEnabled
-                NotificationChannelSpec.Sync -> syncEnabled
-            }
+        when (channel) {
+            NotificationChannelSpec.SessionReminders -> sessionRemindersEnabled
+            NotificationChannelSpec.ScheduleChanges -> scheduleChangesEnabled
+            NotificationChannelSpec.Announcements -> announcementsEnabled
+            NotificationChannelSpec.SocialFeed -> socialFeedEnabled
+            NotificationChannelSpec.Milestones -> milestonesEnabled
+            NotificationChannelSpec.Sync -> true
+        }
 }
 
-/**
- * Enumeration of available reminder lead times.
- *
- * Specifies how many minutes before a session start a reminder should be sent.
- */
 enum class ReminderLeadTime(
     val minutes: Int,
 ) {

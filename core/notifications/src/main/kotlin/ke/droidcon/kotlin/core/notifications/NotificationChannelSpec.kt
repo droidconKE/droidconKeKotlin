@@ -72,20 +72,14 @@ enum class NotificationChannelSpec(
     ;
 
     companion object {
+        /** The channels people can switch off; sync only backs a running sync's own notification. */
+        val configurable: List<NotificationChannelSpec> = entries.filter { it != Sync }
+
         private const val CHANNEL_GROUP_ID = "conference"
 
         /** Channels earlier versions created; left behind, they still show in system settings. */
-        private val LEGACY_CHANNEL_IDS = listOf("DROIDCON_CHANNEL_ID")
+        private val LEGACY_CHANNEL_IDS = listOf("DROIDCON_CHANNEL_ID", "notification_channel")
 
-        /**
-         * Creates all notification channels and their group in the NotificationManager.
-         *
-         * This should be called during app initialization to set up the notification infrastructure.
-         * It creates a channel group and adds all six notification channels to it, and deletes
-         * the channels older versions of the app created.
-         *
-         * @param context The Android application context
-         */
         fun createAll(context: Context) {
             val notificationManager =
                 context.getSystemService<NotificationManager>()
@@ -93,39 +87,15 @@ enum class NotificationChannelSpec(
 
             LEGACY_CHANNEL_IDS.forEach(notificationManager::deleteNotificationChannel)
 
-            // Create the channel group
             val channelGroup = NotificationChannelGroup(CHANNEL_GROUP_ID, context.getString(R.string.channel_group_conference))
             notificationManager.createNotificationChannelGroup(channelGroup)
 
-            // Create all notification channels
             entries.forEach { spec ->
-                val channel = NotificationChannel(spec.id, getChannelName(context, spec), spec.importance)
-                channel.description = getChannelDescription(context, spec)
+                val channel = NotificationChannel(spec.id, context.getString(spec.nameResId), spec.importance)
+                channel.description = context.getString(spec.descriptionResId)
                 channel.group = CHANNEL_GROUP_ID
                 notificationManager.createNotificationChannel(channel)
             }
         }
-
-        private fun getChannelName(
-            context: Context,
-            spec: NotificationChannelSpec,
-        ): CharSequence =
-            if (spec.nameResId != 0) {
-                context.getString(spec.nameResId)
-            } else {
-                // Fallback to the enum name until string resources are available (Task 1.5)
-                spec.name
-            }
-
-        private fun getChannelDescription(
-            context: Context,
-            spec: NotificationChannelSpec,
-        ): String =
-            if (spec.descriptionResId != 0) {
-                context.getString(spec.descriptionResId)
-            } else {
-                // Fallback to empty string until string resources are available (Task 1.5)
-                ""
-            }
     }
 }

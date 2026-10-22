@@ -133,12 +133,13 @@ public fun com.android254.presentation.common.components.DroidconAppBar(modifier
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, onNotificationsClick: kotlin.Function0<kotlin.Unit>?, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onButtonClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - onNotificationsClick: STABLE (function type)
     - windowInsets: STABLE (marked @Stable or @Immutable)
     - showLogo: STABLE (primitive type)
 

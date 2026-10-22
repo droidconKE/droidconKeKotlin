@@ -29,6 +29,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.core.notifications.AndroidNotificationPermission
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.core.notifications.push.PushPayload
@@ -187,9 +189,16 @@ class PushPayloadHandlerTest {
         }
 
     @Test
-    fun `a sync request still syncs when every notification is off`() =
+    fun `a sync request still syncs when every channel is off`() =
         runTest {
-            preferences.value = NotificationPreferences(masterEnabled = false)
+            preferences.value =
+                NotificationPreferences(
+                    sessionRemindersEnabled = false,
+                    scheduleChangesEnabled = false,
+                    announcementsEnabled = false,
+                    socialFeedEnabled = false,
+                    milestonesEnabled = false,
+                )
 
             handler.handle(PushPayload.SyncRequest)
 
@@ -208,9 +217,14 @@ class PushPayloadHandlerTest {
         }
 
     @Test
-    fun `the master switch off posts nothing`() =
+    fun `every channel off posts nothing`() =
         runTest {
-            preferences.value = NotificationPreferences(masterEnabled = false)
+            preferences.value =
+                NotificationPreferences(
+                    announcementsEnabled = false,
+                    socialFeedEnabled = false,
+                    milestonesEnabled = false,
+                )
 
             handler.handle(PushPayload.Announcement("Lunch", "Served"))
             handler.handle(PushPayload.NewFeedPost("p1", "hi"))

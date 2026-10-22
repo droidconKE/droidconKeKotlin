@@ -55,7 +55,7 @@ The stack and module layout are in [`AGENTS.md`](../AGENTS.md), and how the piec
 
 **A6 — No end-to-end tests.** The only instrumented test is `SessionMapperInstrumentedTest`. Nothing launches the app and walks a user journey. (§10.3)
 
-**A8 — Notifications are receive-only.** `MessagingService` handles FCM; `DroidconNotificationManager` posts. There are no local session reminders, no notification channels per category, no user preference surface, and the permission request fires unconditionally on first launch with no rationale (`MainActivity.askNotificationPermission` logs a rationale to Timber instead of showing one). (§8)
+**A8 — Notifications.** Done except topic subscriptions and reminder actions. (§8)
 
 ### 1.6 Findings — build & developer experience
 
@@ -179,19 +179,14 @@ B6 and B10 protect user data, so do those first.
 
 Measured against `android/nowinandroid` (`a49ed25`, 2026-09-22). In order:
 
-1. **The sync notification channel is loud and badly named.** `DroidconApp` creates it with
-   `IMPORTANCE_HIGH` and the raw id `sync_data` as its user-visible name. On API 30 and below an
-   expedited sync posts a heads-up. Importance cannot be lowered for existing installs, so this
-   needs a new channel id at `IMPORTANCE_LOW` with a string-resource name, and the old channel
-   deleted.
-2. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
+1. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
    worker when content changes. Ours syncs on start and every 24 hours, so a room change on
    conference day can take a day to arrive. A topic message that calls `startSync()` fixes that.
-3. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
+2. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
    (`getTopicChangeList(after = version)`) and fetches only what changed. The droidcon API returns
    full lists and has no change-list endpoint, so this does not port. If the backend adds `ETag`
    or an `updated_since` parameter, adopt it then.
-4. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver`. `SyncDataWorker` has
+3. **A worker test.** NiA tests `SyncWorker` with WorkManager's `TestDriver`. `SyncDataWorker` has
    no test; the sync helper and `isSyncing` do.
 
 ## 4. Phase 1 — Adaptive follow-ups
@@ -2205,366 +2200,34 @@ See §11.2 for the connections surface this feeds.
 
 **Depends on: Phase 0**
 
-### 8.1 Current state
+Landed: six channels in one group, a permission prompt that waits for the first star and explains
+itself first, local session reminders, deep links from every notification, a typed push payload
+and a notification settings screen. How they fit together is in
+[`docs/architecture.md`](architecture.md), and the payload the backend sends is in
+[`docs/push-payload.md`](push-payload.md). What is left:
 
-`MessagingService` receives FCM; `DroidconNotificationManager` posts to one catch-all channel, "All". There are no per-category channels, no local reminders, no user preferences, and the permission prompt fires on first launch with a rationale that is written to Timber instead of shown to the user.
+### 8.4 Reminder actions
 
-The result: users deny the permission on launch (because they have no idea what they'd be getting) and then never get session reminders — which is the one notification a conference app genuinely needs.
+A reminder could carry **Directions** (the room, from the venue map once §11.6 lands) and **Notes**
+actions. Neither is built.
 
-### 8.2 Ask at the right moment
+### 8.5 Topic subscriptions and token handling
 
-Never on first launch. Ask when the user does something that *implies* they want a reminder:
-
-```kotlin
-// The first time a user stars a session, that is the moment to ask.
-@Composable
-fun BookmarkButton(/* … */) {
-    val notificationPermission = rememberNotificationPermissionState()
-    var showRationale by remember { mutableStateOf(false) }
-
-    FilledIconToggleButton(
-        checked = isBookmarked,
-        onCheckedChange = { checked ->
-            onToggle()
-            if (checked && notificationPermission.shouldAsk) showRationale = true
-        },
-    ) { /* … */ }
-
-    if (showRationale) {
-        NotificationRationaleDialog(
-            // "Get a nudge 10 minutes before the sessions you've starred."
-            // Concrete benefit, tied to the action they just took.
-            onAllow = { showRationale = false; notificationPermission.request() },
-            onDismiss = { showRationale = false },
-        )
-    }
-}
-```
-
-Delete the unconditional `askNotificationPermission()` from `MainActivity`.
-
-### 8.3 Channels, so users can tune rather than mute
-
-One channel means one choice: all or nothing. Users choose nothing.
-
-```kotlin
-// app/src/main/java/com/android254/presentation/notifications/NotificationChannels.kt
-
-enum class NotificationChannelSpec(
-    val id: String,
-    @StringRes val nameRes: Int,
-    @StringRes val descriptionRes: Int,
-    val importance: Int,
-) {
-    /** "Your talk starts in 10 minutes." The one people actually want. */
-    SessionReminders(
-        "session_reminders", R.string.channel_session_reminders,
-        R.string.channel_session_reminders_desc, NotificationManager.IMPORTANCE_HIGH,
-    ),
-
-    /** Room changes, delays, cancellations. Must be high importance. */
-    ScheduleChanges(
-        "schedule_changes", R.string.channel_schedule_changes,
-        R.string.channel_schedule_changes_desc, NotificationManager.IMPORTANCE_HIGH,
-    ),
-
-    /** "Lunch is served", "keynote starting in the main hall". */
-    Announcements(
-        "announcements", R.string.channel_announcements,
-        R.string.channel_announcements_desc, NotificationManager.IMPORTANCE_DEFAULT,
-    ),
-
-    /** Feed posts, new speaker announcements. Low — this is browsable content. */
-    SocialFeed(
-        "social_feed", R.string.channel_social_feed,
-        R.string.channel_social_feed_desc, NotificationManager.IMPORTANCE_LOW,
-    ),
-
-    /** Post-conference recap, next year's CFP. */
-    Milestones(
-        "milestones", R.string.channel_milestones,
-        R.string.channel_milestones_desc, NotificationManager.IMPORTANCE_DEFAULT,
-    ),
-
-    /** Sync progress. MIN so it never interrupts. */
-    Sync(
-        "sync", R.string.channel_sync,
-        R.string.channel_sync_desc, NotificationManager.IMPORTANCE_MIN,
-    ),
-    ;
-
-    companion object {
-        fun createAll(context: Context) {
-            val manager = context.getSystemService<NotificationManager>() ?: return
-            val group = NotificationChannelGroup(GROUP_CONFERENCE, context.getString(R.string.channel_group_conference))
-            manager.createNotificationChannelGroup(group)
-
-            manager.createNotificationChannels(
-                entries.map { spec ->
-                    NotificationChannel(spec.id, context.getString(spec.nameRes), spec.importance).apply {
-                        description = context.getString(spec.descriptionRes)
-                        this.group = GROUP_CONFERENCE
-                    }
-                },
-            )
-        }
-
-        const val GROUP_CONFERENCE = "conference"
-    }
-}
-```
-
-Note `WorkConstants.NOTIFICATION_CHANNEL` currently used by `SyncDataWorker` — point it at `Sync.id` and fix the placeholder icon (`androidx.core.R.drawable.notification_bg_low` is not an icon; it's a nine-patch background, and it renders as a grey blob).
-
-### 8.4 Local session reminders
-
-The core feature, and it must work offline — a push-based reminder is useless when the venue wifi dies.
-
-```kotlin
-// data/src/main/java/com/android254/data/notifications/SessionReminderScheduler.kt
-
-/**
- * Schedules a local notification before each starred session.
- *
- * WorkManager, not AlarmManager: reminders are not exact-alarm-worthy (a 10-minute
- * warning arriving at 9 or 11 minutes is fine), and `SCHEDULE_EXACT_ALARM` is a
- * restricted permission we should not be asking a conference app to hold.
- */
-@Singleton
-class SessionReminderScheduler @Inject constructor(
-    private val workManager: WorkManager,
-    private val preferences: NotificationPreferences,
-    private val clock: Clock,
-) {
-    suspend fun rescheduleAll(starredSessions: List<Session>) {
-        workManager.cancelAllWorkByTag(TAG_SESSION_REMINDER)
-        if (!preferences.sessionRemindersEnabled()) return
-
-        val lead = preferences.reminderLeadTime()      // user-configurable: 5/10/15/30 min
-        val now = clock.now()
-
-        starredSessions
-            .mapNotNull { session ->
-                val fireAt = session.startInstant - lead
-                if (fireAt <= now) return@mapNotNull null   // already started
-                session to (fireAt - now)
-            }
-            .forEach { (session, delay) ->
-                workManager.enqueueUniqueWork(
-                    "$WORK_PREFIX${session.remoteId}",
-                    ExistingWorkPolicy.REPLACE,
-                    OneTimeWorkRequestBuilder<SessionReminderWorker>()
-                        .setInitialDelay(delay.toJavaDuration())
-                        .addTag(TAG_SESSION_REMINDER)
-                        .setInputData(
-                            workDataOf(
-                                SessionReminderWorker.KEY_SESSION_ID to session.remoteId,
-                                SessionReminderWorker.KEY_TITLE to session.title,
-                                SessionReminderWorker.KEY_ROOM to session.rooms,
-                                SessionReminderWorker.KEY_SPEAKERS to session.speakers.joinToString { it.name },
-                            ),
-                        )
-                        .build(),
-                )
-            }
-    }
-
-    private companion object {
-        const val TAG_SESSION_REMINDER = "session_reminder"
-        const val WORK_PREFIX = "session_reminder_"
-    }
-}
-```
-
-```kotlin
-@HiltWorker
-class SessionReminderWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted params: WorkerParameters,
-) : CoroutineWorker(appContext, params) {
-
-    override suspend fun doWork(): Result {
-        val sessionId = inputData.getString(KEY_SESSION_ID) ?: return Result.failure()
-        val title = inputData.getString(KEY_TITLE) ?: return Result.failure()
-        val room = inputData.getString(KEY_ROOM).orEmpty()
-        val speakers = inputData.getString(KEY_SPEAKERS).orEmpty()
-
-        if (!applicationContext.canPostNotifications()) return Result.success()
-
-        val deepLink = "droidconke://session/$sessionId".toUri()
-        val contentIntent = PendingIntent.getActivity(
-            applicationContext,
-            sessionId.hashCode(),
-            Intent(Intent.ACTION_VIEW, deepLink).setPackage(applicationContext.packageName),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
-
-        val notification = NotificationCompat.Builder(
-            applicationContext,
-            NotificationChannelSpec.SessionReminders.id,
-        )
-            .setSmallIcon(R.drawable.ic_notification_droidcon)
-            .setContentTitle(applicationContext.getString(R.string.reminder_title, title))
-            .setContentText(applicationContext.getString(R.string.reminder_body, room, speakers))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(
-                applicationContext.getString(R.string.reminder_big_text, title, room, speakers),
-            ))
-            .setContentIntent(contentIntent)
-            .setAutoCancel(true)
-            .setCategory(NotificationCompat.CATEGORY_EVENT)
-            .addAction(
-                R.drawable.ic_directions,
-                applicationContext.getString(R.string.reminder_action_directions),
-                directionsIntent(room),
-            )
-            .addAction(
-                R.drawable.ic_notes,
-                applicationContext.getString(R.string.reminder_action_notes),
-                notesIntent(sessionId),
-            )
-            .build()
-
-        NotificationManagerCompat.from(applicationContext)
-            .notify(sessionId.hashCode(), notification)
-
-        return Result.success()
-    }
-
-    companion object {
-        const val KEY_SESSION_ID = "session_id"
-        const val KEY_TITLE = "title"
-        const val KEY_ROOM = "room"
-        const val KEY_SPEAKERS = "speakers"
-    }
-}
-```
-
-Hook the scheduler to bookmark changes so it's never stale:
-
-```kotlin
-// In the app-level coordinator, observing bookmarks
-sessionsRepo.fetchSessions()
-    .map { sessions -> sessions.filter { it.isBookmarked } }
-    .distinctUntilChanged()
-    .onEach { starred -> reminderScheduler.rescheduleAll(starred) }
-    .launchIn(applicationScope)
-```
-
-And reschedule after a reboot and after each sync (a room change moves a session's start time):
-
-```xml
-<receiver android:name=".notifications.BootReceiver" android:exported="false">
-    <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED" />
-        <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-    </intent-filter>
-</receiver>
-```
-
-### 8.5 Push, with a payload contract
-
-Untyped FCM data maps are how notification bugs happen. Define a contract:
-
-```kotlin
-@Serializable
-sealed interface PushPayload {
-    @Serializable @SerialName("schedule_change")
-    data class ScheduleChange(
-        val sessionId: String,
-        val changeType: ChangeType,
-        val message: String,
-    ) : PushPayload {
-        enum class ChangeType { RoomChanged, TimeChanged, Cancelled, SpeakerChanged }
-    }
-
-    @Serializable @SerialName("announcement")
-    data class Announcement(val title: String, val body: String, val deepLink: String? = null) : PushPayload
-
-    /** Silent — triggers a sync, posts nothing. */
-    @Serializable @SerialName("sync")
-    data object SyncRequest : PushPayload
-
-    @Serializable @SerialName("feed")
-    data class NewFeedPost(val postId: String, val preview: String) : PushPayload
-}
-```
-
-```kotlin
-class MessagingService : FirebaseMessagingService() {
-
-    @Inject lateinit var handler: PushPayloadHandler
-
-    override fun onMessageReceived(message: RemoteMessage) {
-        val payload = runCatching {
-            Json.decodeFromString<PushPayload>(message.data["payload"] ?: return)
-        }.getOrElse {
-            Timber.w(it, "Unrecognised push payload: ${message.data}")
-            return
-        }
-
-        // A schedule change is the one push that must reach a user who has muted
-        // everything else — it is why they are in the wrong room.
-        handler.handle(payload)
-    }
-
-    override fun onNewToken(token: String) {
-        // Topic subscriptions, so the backend can target by day/track/room.
-        Firebase.messaging.subscribeToTopic(TOPIC_ALL_ATTENDEES)
-    }
-}
-```
-
-**Topic strategy:** subscribe everyone to `all_attendees`; subscribe to `session_<id>` on star, so schedule changes for *your* sessions are targeted rather than broadcast. This keeps the "cancelled talk" notification from going to 3,000 people who weren't going anyway.
-
-### 8.6 A preferences screen
-
-There isn't one. Users need it, and Play policy expects it:
-
-```kotlin
-@Composable
-fun NotificationSettingsScreen(viewModel: NotificationSettingsViewModel = hiltViewModel()) {
-    val prefs by viewModel.preferences.collectAsStateWithLifecycle()
-
-    Column {
-        SwitchPreference(
-            title = stringResource(R.string.pref_session_reminders),
-            summary = stringResource(R.string.pref_session_reminders_summary),
-            checked = prefs.sessionRemindersEnabled,
-            onCheckedChange = viewModel::setSessionRemindersEnabled,
-        )
-
-        AnimatedVisibility(prefs.sessionRemindersEnabled) {
-            SingleChoicePreference(
-                title = stringResource(R.string.pref_reminder_lead_time),
-                options = ReminderLeadTime.entries,
-                selected = prefs.reminderLeadTime,
-                onSelect = viewModel::setReminderLeadTime,
-                optionLabel = { stringResource(it.labelRes) },
-            )
-        }
-
-        SwitchPreference(/* announcements */)
-        SwitchPreference(/* feed */)
-
-        // Deep-link into system settings for per-channel control.
-        ListItem(
-            headlineContent = { Text(stringResource(R.string.pref_system_notification_settings)) },
-            trailingContent = { Icon(ChaiIcons.OpenInNew, null) },
-            modifier = Modifier.clickable { viewModel.openSystemNotificationSettings() },
-        )
-    }
-}
-```
+Waiting on the backend. Subscribe everyone to `all_attendees` and each starred session to
+`session_<id>`, so a cancelled talk reaches the people who starred it rather than everyone.
+`MessagingService.onNewToken` is where that goes.
 
 **Definition of done:**
-- [ ] Six channels created, in a group; sync channel is `IMPORTANCE_MIN` with a real icon
-- [ ] Permission requested contextually on first star, never on launch
-- [ ] Local reminders fire offline; verified in airplane mode
-- [ ] Reminders survive reboot and app update
-- [ ] Reminders reschedule when a sync changes a session time
-- [ ] Deep links from every notification land on the right screen from a cold start
-- [ ] Preferences screen ships
-- [ ] Typed push payload with a `PushPayload` contract documented for the backend team
+- [x] Six channels created, in a group; sync channel is `IMPORTANCE_MIN` with a real icon
+- [x] Permission requested contextually on first star, never on launch
+- [x] Local reminders fire offline
+- [x] Reminders survive reboot and app update
+- [x] Reminders reschedule when a sync changes a session time
+- [x] Deep links from every notification land on the right screen from a cold start
+- [x] Preferences screen ships
+- [x] Typed push payload with a `PushPayload` contract documented for the backend team
+- [ ] Topic subscriptions and token handling (§8.5)
+- [ ] Reminder actions (§8.4)
 
 ---
 

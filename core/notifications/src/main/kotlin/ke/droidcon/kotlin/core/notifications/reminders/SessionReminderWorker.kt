@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android254.presentation.notifications
+package ke.droidcon.kotlin.core.notifications.reminders
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,29 +21,38 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
-import ke.droidcon.kotlin.core.ui.R
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
+import ke.droidcon.kotlin.core.notifications.R
+import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import ke.droidcon.kotlin.core.common.R as CommonR
 
-/**
- * WorkManager worker that posts session reminder notifications.
- */
+@HiltWorker
 class SessionReminderWorker
     @AssistedInject
     constructor(
         @Assisted private val appContext: Context,
         @Assisted private val params: WorkerParameters,
+        private val preferencesStore: NotificationPreferencesStore,
+        private val notificationPermission: NotificationPermission,
     ) : CoroutineWorker(appContext, params) {
         @SuppressLint("MissingPermission")
         override suspend fun doWork(): Result =
             try {
-                // Built here rather than injected: the worker is created by reflection, not by Hilt.
-                if (AndroidNotificationPermission(appContext).needsRuntimeRequest()) {
+                if (!preferencesStore.preferences.first().isChannelEnabled(NotificationChannelSpec.SessionReminders)) {
+                    Timber.d("Session reminders disabled; skipping notification")
+                    return Result.success()
+                }
+
+                if (notificationPermission.needsRuntimeRequest()) {
                     Timber.d("POST_NOTIFICATIONS permission not granted; skipping notification")
                     return Result.success()
                 }
@@ -71,12 +80,22 @@ class SessionReminderWorker
                         .Builder(
                             appContext,
                             NotificationChannelSpec.SessionReminders.id,
-                        ).setSmallIcon(android.R.drawable.ic_dialog_info)
+                        ).setSmallIcon(CommonR.drawable.ic_notification)
                         .setContentTitle(appContext.getString(R.string.reminder_title, title))
-                        .setContentText(appContext.getString(R.string.reminder_body, room, speakers))
+                        .setContentText(
+                            if (speakers.isEmpty()) {
+                                appContext.getString(R.string.reminder_body, room)
+                            } else {
+                                appContext.getString(R.string.reminder_body_with_speakers, room, speakers)
+                            },
+                        )
                         .setStyle(
                             NotificationCompat.BigTextStyle().bigText(
-                                appContext.getString(R.string.reminder_big_text, title, room, speakers),
+                                if (speakers.isEmpty()) {
+                                    appContext.getString(R.string.reminder_big_text, title, room)
+                                } else {
+                                    appContext.getString(R.string.reminder_big_text_with_speakers, title, room, speakers)
+                                },
                             ),
                         ).setContentIntent(contentIntent)
                         .setAutoCancel(true)

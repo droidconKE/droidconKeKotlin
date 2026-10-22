@@ -16,7 +16,6 @@
 package com.android254.presentation.about.view
 
 import android.content.res.Configuration
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -30,8 +29,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -100,6 +97,7 @@ internal fun AboutScreen(
                 onButtonClick = {
                     navigateToFeedbackScreen()
                 },
+                onNotificationsClick = navigateToNotificationsSettings,
             )
         },
         contentWindowInsets = DroidconWindowInsets.screenContent,
@@ -178,14 +176,6 @@ internal fun AboutScreen(
 
                     Spacer(modifier = Modifier.height(40.dp))
 
-                    HorizontalDivider()
-
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.settings_notifications_title)) },
-                        modifier = Modifier.clickable { navigateToNotificationsSettings() },
-                    )
-
-                    Spacer(modifier = Modifier.height(40.dp))
                 }
             }
         }

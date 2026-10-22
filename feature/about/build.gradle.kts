@@ -23,6 +23,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.notifications)
+
     testImplementation(projects.core.testing)
     testImplementation(libs.test.mockk)
     testImplementation(libs.kotlin.coroutines.test)

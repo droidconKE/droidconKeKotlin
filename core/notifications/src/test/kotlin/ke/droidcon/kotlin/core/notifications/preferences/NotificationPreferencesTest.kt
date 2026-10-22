@@ -16,49 +16,31 @@
 package ke.droidcon.kotlin.core.notifications.preferences
 
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
-import kotlinx.serialization.json.Json
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NotificationPreferencesTest {
     @Test
-    fun isChannelEnabled_respectsMasterSwitch() {
-        val preferences =
-            NotificationPreferences(
-                masterEnabled = false,
-                sessionRemindersEnabled = true,
-            )
-
-        assertFalse(preferences.isChannelEnabled(NotificationChannelSpec.SessionReminders))
-    }
-
-    @Test
-    fun isChannelEnabled_respectsChannelToggle() {
-        val preferences =
-            NotificationPreferences(
-                masterEnabled = true,
-                sessionRemindersEnabled = false,
-                announcementsEnabled = true,
-            )
+    fun `each channel follows its own switch`() {
+        val preferences = NotificationPreferences(sessionRemindersEnabled = false, announcementsEnabled = true)
 
         assertFalse(preferences.isChannelEnabled(NotificationChannelSpec.SessionReminders))
         assertTrue(preferences.isChannelEnabled(NotificationChannelSpec.Announcements))
     }
 
     @Test
-    fun defaults_sessionRemindersOn_syncOff() {
-        val preferences = NotificationPreferences()
-
-        assertTrue(preferences.sessionRemindersEnabled)
-        assertFalse(preferences.syncEnabled)
-        assertTrue(preferences.reminderLeadTimeMinutes == 10)
+    fun `the sync channel is never switched off`() {
+        assertTrue(NotificationPreferences().isChannelEnabled(NotificationChannelSpec.Sync))
     }
 
     @Test
-    fun `preferences saved before phase 5 read as never prompted`() {
-        val old = """{"masterEnabled":true,"reminderLeadTimeMinutes":10}"""
+    fun `defaults remind ten minutes ahead and have never prompted`() {
+        val preferences = NotificationPreferences()
 
-        assertFalse(Json.decodeFromString<NotificationPreferences>(old).permissionPrompted)
+        assertTrue(preferences.sessionRemindersEnabled)
+        assertEquals(10, preferences.reminderLeadTimeMinutes)
+        assertFalse(preferences.permissionPrompted)
     }
 }

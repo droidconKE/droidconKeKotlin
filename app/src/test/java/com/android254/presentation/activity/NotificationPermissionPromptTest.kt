@@ -16,7 +16,10 @@
 package com.android254.presentation.activity
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -54,13 +57,37 @@ class NotificationPermissionPromptTest {
     }
 
     @Test
-    fun `the prompt is marked as asked before the system dialog opens`() {
+    fun `reminders are explained before the system dialog opens`() {
         setPrompt()
 
         requests.tryEmit(Unit)
         composeTestRule.waitForIdle()
 
+        composeTestRule.onNodeWithText("Get a nudge before the sessions you've starred.").assertIsDisplayed()
+        assertEquals(emptyList<String>(), calls)
+    }
+
+    @Test
+    fun `continuing marks the prompt as asked before the system dialog opens`() {
+        setPrompt()
+        requests.tryEmit(Unit)
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Continue").performClick()
+
         assertEquals(listOf("prompted", "launch"), calls)
+    }
+
+    @Test
+    fun `not now marks the prompt as asked without opening the system dialog`() {
+        setPrompt()
+        requests.tryEmit(Unit)
+        composeTestRule.waitForIdle()
+
+        composeTestRule.onNodeWithText("Not now").performClick()
+
+        assertEquals(listOf("prompted"), calls)
+        composeTestRule.onNodeWithText("Continue").assertDoesNotExist()
     }
 
     @Test
@@ -89,6 +116,7 @@ class NotificationPermissionPromptTest {
 
         composeTestRule.runOnIdle { owner.registry.currentState = Lifecycle.State.STARTED }
         composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Continue").performClick()
         assertEquals(listOf("prompted", "launch"), calls)
     }
 

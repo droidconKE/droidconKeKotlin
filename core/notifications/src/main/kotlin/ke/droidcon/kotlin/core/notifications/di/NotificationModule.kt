@@ -19,6 +19,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import ke.droidcon.kotlin.core.notifications.AndroidNotificationPermission
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesImpl
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import javax.inject.Singleton
@@ -36,4 +38,7 @@ abstract class NotificationModule {
     abstract fun bindNotificationPreferencesStore(
         impl: NotificationPreferencesImpl,
     ): NotificationPreferencesStore
+
+    @Binds
+    abstract fun bindNotificationPermission(impl: AndroidNotificationPermission): NotificationPermission
 }

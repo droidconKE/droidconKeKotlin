@@ -19,12 +19,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
-import com.android254.presentation.notifications.NotificationPermission
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.core.common.time.ticks
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
@@ -75,14 +75,19 @@ class MainViewModel
 
         private val permissionRequests = Channel<Unit>(Channel.CONFLATED)
 
+        private val remindersOff = Channel<Unit>(Channel.CONFLATED)
+
         /**
-         * One-shot requests to show the system notification prompt.
+         * One-shot requests to explain reminders and then show the system notification prompt.
          *
-         * Emitted once, when the user stars a session while the app cannot post and has never
-         * asked from a star. Stars already present when the app starts never count, so the first
-         * launch after an update does not prompt.
+         * Emitted once, when the user stars a session that has yet to start while the app cannot
+         * post and has never asked from a star. Stars already present when the app starts never
+         * count, so the first launch after an update does not prompt.
          */
         val notificationPermissionRequests: Flow<Unit> = permissionRequests.receiveAsFlow()
+
+        /** Emitted when reminders cannot reach the user: they declined, or starred while blocked. */
+        val remindersOffEvents: Flow<Unit> = remindersOff.receiveAsFlow()
 
         private var permissionRequested = false
 
@@ -101,17 +106,28 @@ class MainViewModel
             }
 
             viewModelScope.launch {
-                var previous: Int? = null
+                var previous: Set<String>? = null
                 sessionsRepo
                     .fetchSessions()
-                    .map { sessions -> sessions.count { it.isBookmarked } }
-                    .distinctUntilChanged()
+                    .map { sessions -> sessions.filter { it.isBookmarked } }
+                    .distinctUntilChanged { old, new -> old.map { it.remoteId } == new.map { it.remoteId } }
                     .collect { starred ->
-                        val starredOneMore = previous?.let { starred > it } ?: false
-                        previous = starred
-                        if (starredOneMore && shouldRequestPermission()) {
-                            permissionRequested = true
-                            permissionRequests.trySend(Unit)
+                        val known = previous
+                        previous = starred.mapTo(mutableSetOf()) { it.remoteId }
+                        val now = clock.now()
+                        // A session that has started can never produce a reminder.
+                        val starredUpcoming =
+                            known != null &&
+                                starred.any { it.remoteId !in known && (it.startInstant ?: return@any false) > now }
+                        if (!starredUpcoming) return@collect
+
+                        when {
+                            shouldRequestPermission() -> {
+                                permissionRequested = true
+                                permissionRequests.trySend(Unit)
+                            }
+
+                            !notificationPermission.areNotificationsEnabled() -> remindersOff.trySend(Unit)
                         }
                     }
             }
@@ -121,6 +137,11 @@ class MainViewModel
         fun onNotificationPermissionPrompted() {
             // The dialog is already opening; leaving the screen must not drop the record of it.
             viewModelScope.launch { withContext(NonCancellable) { notificationPreferences.markPermissionPrompted() } }
+        }
+
+        /** The outcome of the system prompt; a refusal is the moment to point at settings. */
+        fun onNotificationPermissionResult(granted: Boolean) {
+            if (!granted) remindersOff.trySend(Unit)
         }
 
         private suspend fun shouldRequestPermission(): Boolean =

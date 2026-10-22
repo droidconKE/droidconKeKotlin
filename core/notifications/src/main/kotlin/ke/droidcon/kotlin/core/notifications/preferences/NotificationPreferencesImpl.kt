@@ -15,94 +15,84 @@
  */
 package ke.droidcon.kotlin.core.notifications.preferences
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * DataStore-backed implementation of NotificationPreferencesStore.
- *
- * Persists notification preferences to a JSON file on disk and provides
- * reactive updates via Flow.
- */
 @Singleton
 class NotificationPreferencesImpl
     @Inject
     constructor(
-        @ApplicationContext context: Context,
+        private val dataStore: DataStore<Preferences>,
     ) : NotificationPreferencesStore {
-        private val dataStore: DataStore<NotificationPreferences> =
-            DataStoreFactory.create(
-                serializer = NotificationPreferencesSerializer,
-                scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-                produceFile = {
-                    context.filesDir.resolve("notification_preferences.json")
-                },
-                corruptionHandler = ReplaceFileCorruptionHandler { NotificationPreferences() },
-            )
-
         override val preferences: Flow<NotificationPreferences> =
-            dataStore.data.catch { error ->
-                Timber.e(error, "Error reading notification preferences")
-                emit(NotificationPreferences())
-            }
-
-        override suspend fun setMasterEnabled(enabled: Boolean) {
-            updatePreferences { it.copy(masterEnabled = enabled) }
-        }
+            dataStore.data
+                .map { stored ->
+                    val defaults = NotificationPreferences()
+                    NotificationPreferences(
+                        sessionRemindersEnabled = stored[SESSION_REMINDERS] ?: defaults.sessionRemindersEnabled,
+                        scheduleChangesEnabled = stored[SCHEDULE_CHANGES] ?: defaults.scheduleChangesEnabled,
+                        announcementsEnabled = stored[ANNOUNCEMENTS] ?: defaults.announcementsEnabled,
+                        socialFeedEnabled = stored[SOCIAL_FEED] ?: defaults.socialFeedEnabled,
+                        milestonesEnabled = stored[MILESTONES] ?: defaults.milestonesEnabled,
+                        reminderLeadTimeMinutes = stored[LEAD_TIME] ?: defaults.reminderLeadTimeMinutes,
+                        permissionPrompted = stored[PERMISSION_PROMPTED] ?: defaults.permissionPrompted,
+                    )
+                }.catch { error ->
+                    Timber.e(error, "Error reading notification preferences")
+                    emit(NotificationPreferences())
+                }
 
         override suspend fun setChannelEnabled(
             channel: NotificationChannelSpec,
             enabled: Boolean,
         ) {
-            updatePreferences { prefs ->
-                when (channel) {
-                    NotificationChannelSpec.SessionReminders ->
-                        prefs.copy(sessionRemindersEnabled = enabled)
-
-                    NotificationChannelSpec.ScheduleChanges ->
-                        prefs.copy(scheduleChangesEnabled = enabled)
-
-                    NotificationChannelSpec.Announcements ->
-                        prefs.copy(announcementsEnabled = enabled)
-
-                    NotificationChannelSpec.SocialFeed ->
-                        prefs.copy(socialFeedEnabled = enabled)
-
-                    NotificationChannelSpec.Milestones ->
-                        prefs.copy(milestonesEnabled = enabled)
-
-                    NotificationChannelSpec.Sync -> prefs.copy(syncEnabled = enabled)
-                }
-            }
+            val key = channelKey(channel) ?: return
+            update { it[key] = enabled }
         }
 
         override suspend fun setReminderLeadTime(minutes: Int) {
-            updatePreferences { it.copy(reminderLeadTimeMinutes = minutes) }
+            update { it[LEAD_TIME] = minutes }
         }
 
         override suspend fun markPermissionPrompted() {
-            updatePreferences { it.copy(permissionPrompted = true) }
+            update { it[PERMISSION_PROMPTED] = true }
         }
 
-        private suspend fun updatePreferences(
-            transform: suspend (NotificationPreferences) -> NotificationPreferences,
-        ) {
+        private suspend fun update(transform: (androidx.datastore.preferences.core.MutablePreferences) -> Unit) {
             try {
-                dataStore.updateData { transform(it) }
+                dataStore.edit(transform)
             } catch (e: Exception) {
                 Timber.e(e, "Error updating notification preferences")
             }
+        }
+
+        private fun channelKey(channel: NotificationChannelSpec) =
+            when (channel) {
+                NotificationChannelSpec.SessionReminders -> SESSION_REMINDERS
+                NotificationChannelSpec.ScheduleChanges -> SCHEDULE_CHANGES
+                NotificationChannelSpec.Announcements -> ANNOUNCEMENTS
+                NotificationChannelSpec.SocialFeed -> SOCIAL_FEED
+                NotificationChannelSpec.Milestones -> MILESTONES
+                NotificationChannelSpec.Sync -> null
+            }
+
+        private companion object {
+            val SESSION_REMINDERS = booleanPreferencesKey("notifications_session_reminders")
+            val SCHEDULE_CHANGES = booleanPreferencesKey("notifications_schedule_changes")
+            val ANNOUNCEMENTS = booleanPreferencesKey("notifications_announcements")
+            val SOCIAL_FEED = booleanPreferencesKey("notifications_social_feed")
+            val MILESTONES = booleanPreferencesKey("notifications_milestones")
+            val LEAD_TIME = intPreferencesKey("notifications_reminder_lead_time_minutes")
+            val PERMISSION_PROMPTED = booleanPreferencesKey("notifications_permission_prompted")
         }
     }

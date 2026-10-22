@@ -26,6 +26,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
+import ke.droidcon.kotlin.core.ui.R
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -128,6 +140,7 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission(),
         ) { isGranted: Boolean ->
             Timber.i("Notification permission %s", if (isGranted) "granted" else "denied")
+            viewModel.onNotificationPermissionResult(isGranted)
         }
 
     private fun launchNotificationPermissionRequest() {
@@ -139,11 +152,12 @@ class MainActivity : ComponentActivity() {
 }
 
 /**
- * Opens the system notification prompt for each of [requests].
+ * Explains reminders and then opens the system notification prompt for each of [requests].
  *
  * [onPrompted] runs before [launch], so the prompt counts as asked even if the process dies
- * while the dialog is up. Requests are only taken while the activity is started, so one that
- * arrives in the background opens when the user returns rather than out of sight.
+ * while the dialog is up; declining the explanation counts too, and settings stay one tap away.
+ * Requests are only taken while the activity is started, so one that arrives in the background
+ * opens when the user returns rather than out of sight.
  */
 @Composable
 fun NotificationPermissionPrompt(
@@ -154,14 +168,41 @@ fun NotificationPermissionPrompt(
     val currentOnPrompted by rememberUpdatedState(onPrompted)
     val currentLaunch by rememberUpdatedState(launch)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var showRationale by rememberSaveable { mutableStateOf(false) }
+
     LaunchedEffect(requests, lifecycle) {
         // A star can rise from a background sync; the one prompt waits for the user to be here.
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            requests.collect {
-                currentOnPrompted()
-                currentLaunch()
-            }
+            requests.collect { showRationale = true }
         }
+    }
+
+    if (showRationale) {
+        AlertDialog(
+            onDismissRequest = {
+                showRationale = false
+                currentOnPrompted()
+            },
+            title = { Text(stringResource(R.string.notification_rationale_title)) },
+            text = { Text(stringResource(R.string.notification_rationale_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRationale = false
+                        currentOnPrompted()
+                        currentLaunch()
+                    },
+                ) { Text(stringResource(R.string.notification_rationale_allow)) }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showRationale = false
+                        currentOnPrompted()
+                    },
+                ) { Text(stringResource(R.string.notification_rationale_dismiss)) }
+            },
+        )
     }
 }
 
@@ -208,6 +249,19 @@ fun MainScreen(
 
     val liveSessions = rememberLiveSessions(sessionsState)
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val remindersOffMessage = stringResource(R.string.reminders_off_message)
+    val remindersOffAction = stringResource(R.string.reminders_off_action)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    LaunchedEffect(viewModel, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.remindersOffEvents.collect {
+                val result = snackbarHostState.showSnackbar(message = remindersOffMessage, actionLabel = remindersOffAction)
+                if (result == SnackbarResult.ActionPerformed) navController.navigate(Screens.NotificationsSettings)
+            }
+        }
+    }
+
     // A pane where there is a column, a rail elsewhere.
     val showSupportingPane =
         shouldShowSupportingPane(
@@ -246,31 +300,46 @@ fun MainScreen(
         },
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Navigation(
-                // With the supporting pane listed, NavDisplay intercepts back even at the start destination.
-                onBack = { if (!navController.goBack()) activity?.finish() },
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .then(
-                            // The rail below pays the bottom inset, so the screens must not.
-                            if (showLiveSessionsRail) {
-                                Modifier.consumeWindowInsets(
-                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
-                                )
-                            } else {
-                                Modifier
-                            },
+            Box(modifier = Modifier.weight(1f)) {
+                Navigation(
+                    // With the supporting pane listed, NavDisplay intercepts back even at the start destination.
+                    onBack = { if (!navController.goBack()) activity?.finish() },
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .then(
+                                // The rail below pays the bottom inset, so the screens must not.
+                                if (showLiveSessionsRail) {
+                                    Modifier.consumeWindowInsets(
+                                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                                    )
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                    navController = navController,
+                    navigationState = navigationState,
+                    supportingRoute = Screens.HappeningNow.takeIf { showSupportingPane },
+                    entryProvider =
+                        droidconEntryProvider(
+                            navController = navController,
+                            onActionClicked = { showAuthDialog = !showAuthDialog },
                         ),
-                navController = navController,
-                navigationState = navigationState,
-                supportingRoute = Screens.HappeningNow.takeIf { showSupportingPane },
-                entryProvider =
-                    droidconEntryProvider(
-                        navController = navController,
-                        onActionClicked = { showAuthDialog = !showAuthDialog },
-                    ),
-            )
+                )
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .then(
+                                if (showLiveSessionsRail) {
+                                    Modifier
+                                } else {
+                                    Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+                                },
+                            ),
+                )
+            }
             if (showLiveSessionsRail) {
                 LiveSessionsRail(
                     sessions = liveSessions,

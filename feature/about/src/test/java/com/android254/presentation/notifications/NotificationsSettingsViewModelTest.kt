@@ -21,8 +21,10 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
+import ke.droidcon.kotlin.core.notifications.reminders.SessionReminderScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +33,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -55,6 +58,7 @@ class NotificationsSettingsViewModelTest {
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         every { notificationPermission.areNotificationsEnabled() } returns true
+        every { notificationPermission.isChannelBlocked(any()) } returns false
     }
 
     @After
@@ -90,10 +94,39 @@ class NotificationsSettingsViewModelTest {
     }
 
     @Test
-    fun `with the master switch off, changing the lead time reschedules nothing`() {
-        preferences.value = NotificationPreferences(masterEnabled = false)
+    fun `switching session reminders off reschedules so the scheduler cancels the reminders`() {
+        viewModel().setChannelEnabled(NotificationChannelSpec.SessionReminders, false)
 
-        viewModel().setReminderLeadTime(30)
+        coVerify(exactly = 1) { scheduler.rescheduleAll(listOf(starred)) }
+    }
+
+    @Test
+    fun `only the channels people can switch are listed`() {
+        val channels = viewModel().uiState.value.channels.map { it.channel }
+
+        assertEquals(NotificationChannelSpec.configurable, channels)
+        assertFalse(NotificationChannelSpec.Sync in channels)
+    }
+
+    @Test
+    fun `a channel switched off in system settings is reported as blocked`() {
+        every { notificationPermission.isChannelBlocked(NotificationChannelSpec.Announcements) } returns true
+
+        val announcements = viewModel().uiState.value.channels.first { it.channel == NotificationChannelSpec.Announcements }
+
+        assertTrue(announcements.blockedInSystem)
+    }
+
+    @Test
+    fun `a switched off reminder channel hides the lead time choice`() {
+        preferences.value = NotificationPreferences(sessionRemindersEnabled = false)
+
+        assertFalse(viewModel().uiState.value.sessionRemindersEnabled)
+    }
+
+    @Test
+    fun `switching another channel off leaves the reminders alone`() {
+        viewModel().setChannelEnabled(NotificationChannelSpec.Announcements, false)
 
         coVerify(exactly = 0) { scheduler.rescheduleAll(any()) }
     }

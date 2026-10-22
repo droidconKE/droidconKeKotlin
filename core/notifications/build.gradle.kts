@@ -26,15 +26,20 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
     implementation(projects.core.model)
     implementation(projects.core.domain)
 
     implementation(libs.androidx.core)
     implementation(libs.bundles.serialization)
     implementation(libs.datastore)
+    implementation(libs.work.runtime)
+    implementation(libs.kotlin.coroutines.datetime)
     implementation(libs.timber)
 
     testImplementation(libs.junit4)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.kotlin.coroutines.test)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.test.androidx.core)
     testImplementation(libs.test.robolectric)

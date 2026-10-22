@@ -35,7 +35,7 @@ fun shouldShowNavigation(
     isMultiPaneWindow: Boolean,
 ): Boolean =
     when {
-        route == Screens.FeedBack -> false
+        route == Screens.FeedBack || route == Screens.NotificationsSettings -> false
         route is Screens && route.listPaneRoute != null -> isMultiPaneWindow
         else -> true
     }
