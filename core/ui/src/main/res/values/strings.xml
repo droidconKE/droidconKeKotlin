@@ -145,7 +145,7 @@
     <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
     <string name="ticket_title">Your ticket</string>
     <string name="ticket_add_title">Add your ticket</string>
-    <string name="ticket_add_body">Find the number in your ticket email. Once added, it works at the door even with no signal.</string>
+    <string name="ticket_add_body">Find the number in your ticket email.</string>
     <string name="ticket_number_label">Ticket number</string>
     <string name="ticket_number_placeholder">TIC-12345</string>
     <string name="ticket_email_label">Email you bought it with</string>
@@ -153,7 +153,7 @@
     <string name="ticket_adding">Looking up your ticket</string>
     <string name="ticket_or">or</string>
     <string name="ticket_scan_action">Scan a printed ticket</string>
-    <string name="ticket_error_no_match">No ticket matches that number and email. Check both against your ticket email.</string>
+    <string name="ticket_error_no_match">No ticket matches that number and email.</string>
     <string name="ticket_error_not_a_ticket">That code isn’t a droidcon ticket. Scan the code on your ticket.</string>
     <string name="ticket_error_offline">You’re offline. Connect once to add your ticket; after that it works without signal.</string>
     <string name="ticket_error_busy">Lots of people are adding tickets on this network. Try again in a minute.</string>
