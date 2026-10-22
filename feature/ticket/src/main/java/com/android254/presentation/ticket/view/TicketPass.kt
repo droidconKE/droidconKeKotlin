@@ -129,10 +129,9 @@ private fun PassHeader(ticket: TicketUi) {
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.semantics { heading() },
         )
-        val place = listOfNotNull(dates, ticket.venue.takeIf(String::isNotBlank))
-        if (place.isNotEmpty()) {
+        listOfNotNull(dates, ticket.venue.takeIf(String::isNotBlank)).forEach { line ->
             Text(
-                text = place.joinToString(stringResource(R.string.detail_separator)),
+                text = line,
                 style = MaterialTheme.typography.bodyMedium,
                 color = palette.heroOnContainerColor,
                 maxLines = 1,
@@ -162,9 +161,9 @@ private fun Attendee(ticket: TicketUi) {
             overflow = TextOverflow.Ellipsis,
         )
         FlowRow(
-            modifier = Modifier.padding(top = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(top = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             if (ticket.type.isNotBlank()) {
                 PassChip(ticket.type, colors.surfaceContainerHighest, colors.onSurface)
@@ -190,12 +189,12 @@ private fun PassChip(
 ) {
     Surface(color = container, contentColor = content, shape = CircleShape) {
         FlowRow(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             itemVerticalAlignment = Alignment.CenterVertically,
         ) {
-            if (icon != null) Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(16.dp))
-            Text(text = text, style = MaterialTheme.typography.labelLarge)
+            if (icon != null) Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(14.dp))
+            Text(text = text, style = MaterialTheme.typography.labelMedium)
         }
     }
 }
