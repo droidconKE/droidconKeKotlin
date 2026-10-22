@@ -26,6 +26,7 @@ import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import ke.droidcon.kotlin.datasource.local.dao.TicketsDao
 import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 import ke.droidcon.kotlin.datasource.local.model.BookmarkEntity
 import ke.droidcon.kotlin.datasource.local.model.FeedEntity
@@ -33,6 +34,7 @@ import ke.droidcon.kotlin.datasource.local.model.OrganizerEntity
 import ke.droidcon.kotlin.datasource.local.model.SessionEntity
 import ke.droidcon.kotlin.datasource.local.model.SpeakerEntity
 import ke.droidcon.kotlin.datasource.local.model.SponsorEntity
+import ke.droidcon.kotlin.datasource.local.model.TicketEntity
 import ke.droidcon.kotlin.datasource.local.model.UpdateEntity
 import ke.droidcon.kotlin.datasource.local.util.InstantConverter
 
@@ -45,8 +47,9 @@ import ke.droidcon.kotlin.datasource.local.util.InstantConverter
         SponsorEntity::class,
         FeedEntity::class,
         UpdateEntity::class,
+        TicketEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 @TypeConverters(
@@ -66,6 +69,8 @@ abstract class Database : RoomDatabase() {
     abstract fun feedDao(): FeedDao
 
     abstract fun updatesDao(): UpdatesDao
+
+    abstract fun ticketsDao(): TicketsDao
 
     companion object {
         val MIGRATION_4_5 =
@@ -144,11 +149,23 @@ abstract class Database : RoomDatabase() {
                 }
             }
 
+        val MIGRATION_7_8 =
+            object : Migration(7, 8) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        "CREATE TABLE IF NOT EXISTS `tickets` (`number` TEXT NOT NULL, `attendeeName` TEXT NOT NULL, " +
+                            "`attendeeEmail` TEXT NOT NULL, `type` TEXT NOT NULL, `event` TEXT NOT NULL, `firstDay` TEXT, " +
+                            "`lastDay` TEXT, `venue` TEXT NOT NULL, `venueAddress` TEXT NOT NULL, `status` TEXT NOT NULL, " +
+                            "`checkIns` TEXT NOT NULL, `qrBase64` TEXT NOT NULL, PRIMARY KEY(`number`))",
+                    )
+                }
+            }
+
         /**
          * Every migration the database can perform. New migrations must be added here as
          * well as declared above; an unregistered migration is the same as none.
          */
-        val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+        val ALL_MIGRATIONS: Array<Migration> = arrayOf(MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
 
         /** Rebuilds [table] with [key] as its primary key, keeping the newest row per key. */
         private fun SupportSQLiteDatabase.rekey(

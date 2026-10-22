@@ -36,6 +36,7 @@ import com.android254.presentation.sessionDetails.view.SessionDetailsRoute
 import com.android254.presentation.sessions.view.SessionsRoute
 import com.android254.presentation.speakers.view.SpeakerDetailsRoute
 import com.android254.presentation.speakers.view.SpeakersRoute
+import com.android254.presentation.ticket.view.TicketRoute
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -58,6 +59,7 @@ fun droidconEntryProvider(
                     },
                     navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
                     navigateToSessionScreen = { navController.navigate(Screens.Sessions) },
+                    navigateToTicket = { navController.navigate(Screens.Ticket) },
                     onActionClicked = onActionClicked,
                     onSessionClicked = { sessionId ->
                         navController.navigate(Screens.SessionDetails(sessionId))
@@ -124,6 +126,9 @@ fun droidconEntryProvider(
                 FeedBackRoute(
                     navigateBack = { navController.navigateUp() },
                 )
+            }
+            entry<Screens.Ticket> {
+                TicketRoute(navigateBack = { navController.navigateUp() })
             }
             entry<Screens.SpeakerDetails>(
                 metadata = detailPaneMetadata(DroidconPaneScene.Speakers),

@@ -94,15 +94,15 @@ The `:core:*` renames of the data tier changed Gradle paths only. `:core:databas
 `com.droidconke.chai`.
 
 There is no `core:datastore`. The preferences code is two files in `core:data`, too little to be a
-module of its own. Modules the roadmap still needs, such as `core:ai` and `feature:ticket`, are
-created with the work that needs them rather than ahead of it.
+module of its own. Modules the roadmap still needs, such as `core:ai`, are created with the work
+that needs them rather than ahead of it.
 
 `core:database` and `core:network` do not depend on `core:domain`. They own their own DTOs and
 Room entities. `core:data` is the only module that sees both representations, and the mappers
 there are the seam between them.
 
-Seven repository interfaces live in `core/domain`'s `repos` package: `AuthRepo`, `FeedRepo`, `HomeRepo`,
-`OrganizersRepo`, `SessionsRepo`, `SpeakersRepo`, `SponsorsRepo`. Their implementations in
+Nine repository interfaces live in `core/domain`'s `repos` package: `AuthRepo`, `FeedRepo`, `HomeRepo`,
+`OrganizersRepo`, `SessionsRepo`, `SpeakersRepo`, `SponsorsRepo`, `TicketsRepo`, `UpdatesRepo`. Their implementations in
 `data/repos` are named `*Manager` for historical reasons rather than `*RepoImpl`.
 
 ---
@@ -209,7 +209,7 @@ notification while it runs on API 30 and below.
 
 ## Persistence
 
-Room 2.8, six entities and their DAOs:
+Room 2.8, eight entities and their DAOs:
 
 | Entity            | DAO              | Primary key | Notes                                        |
 |-------------------|------------------|-------------|----------------------------------------------|
@@ -219,6 +219,8 @@ Room 2.8, six entities and their DAOs:
 | `OrganizerEntity` | `OrganizersDao`  | `name`      |                                              |
 | `FeedEntity`      | `FeedDao`        | `title`     |                                              |
 | `BookmarkEntity`  | `BookmarkDao`    | `sessionId` | **User-owned data. Never destructively migrated.** Holds the session's `remote_id`. |
+| `UpdateEntity`    | `UpdatesDao`     | `id`        | Schedule changes a sync found, for Updates. The newest hundred are kept |
+| `TicketEntity`    | `TicketsDao`     | `number`    | **User-owned data.** An attendee's ticket with the backend's PNG of its code, for showing offline |
 
 `BaseDao` holds the shared upsert and delete surface.
 
@@ -240,6 +242,33 @@ offset, which means `Africa/Nairobi`, and ISO-8601 `2025-11-05T08:00:00+03:00`; 
 mapper, the feed serializer and the presentation formatter all read both. Use `@ConferenceTimeZone` for absolute times and the device clock only for
 relative ones ("in 20 minutes"). There is no `SimpleDateFormat` in production code and there
 should not be — it is not thread-safe.
+
+## Tickets
+
+`:feature:ticket` shows an attendee's ticket at the door. The backend's lookup,
+`/tickets?ticket_no=`, returns the ticket with a PNG of its code; the code is the gate's own
+check-in address, the same one the emailed PDF carries, so the gate needs no change.
+`TicketsManager` adds the attendee's ticket from its number plus the email it was bought with, or
+from a code scanned off a printed ticket, and keeps it in `tickets` so it shows with no signal.
+The scanner is Google's, hosted by Play services, so the app needs no camera permission; its UI
+is a Play services module that the manifest asks for at install time, and a scan on a phone that
+has not fetched it yet asks again and says so, rather than reporting the scanner missing.
+One ticket per phone: adding another replaces it. Opening the ticket screen refreshes status and
+check-ins; a failure keeps what is saved. A 429 — the lookup
+allows 30 a minute per IP, and a venue shares one — reads as "busy", which `DataResult.Error`
+carries as `rateLimited`.
+
+The pass fills the screen with nothing to scroll past, the code sized to what is left under the
+event and attendee; only large text gets a scrolling pass, so the code never shrinks below use.
+Brightness goes to full and the screen stays on while a code shows, the code's stub is drawn in
+the light theme whatever the app's theme, and a refunded or cancelled ticket keeps its code dimmed
+under a stamp, so it reads as void rather than broken. Removing is behind the overflow menu. Home
+has a calm card for the ticket under the hero, which moves to the top in hero blue while the event
+is on; the launcher shortcut `ke.droidcon.kotlin.action.SHOW_TICKET` opens it from cold. A refresh
+runs at most every five minutes, rewrites only status and check-ins, and only on a row that is
+still there. The ticket is in the same database as the bookmarks, so Android's backup carries it
+to a restored phone; that is accepted, because the number is also in the attendee's email and the
+gate turns away a code it has already let in.
 
 ---
 

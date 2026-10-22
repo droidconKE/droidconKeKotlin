@@ -15,8 +15,6 @@
  */
 package com.android254.presentation.home.components
 
-import android.icu.text.DateIntervalFormat
-import android.icu.util.DateInterval
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -38,21 +36,15 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.android254.presentation.utils.eventDatesLabel
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.hero.CubeHeroBanner
 import ke.droidcon.kotlin.core.ui.R
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import java.text.FieldPosition
-import android.icu.util.TimeZone as IcuTimeZone
-import java.util.Locale as JavaLocale
 
 /** A title runs to this many lines at the hero role before it steps down one. */
 private const val HERO_TITLE_LINES = 3
 
-/** The event at a glance: a countdown before it, a welcome during it, thanks after it. The rail below carries the sessions. */
 @Composable
 fun HomeHeaderSectionComponent(
     modifier: Modifier = Modifier,
@@ -113,21 +105,6 @@ private fun HomeHero.subtitle(): String =
             }
         }
     }
-
-/** "5–6 November", or the locale's own way of writing a range. */
-private fun eventDatesLabel(
-    first: LocalDate,
-    last: LocalDate,
-    locale: JavaLocale,
-): String {
-    val format = DateIntervalFormat.getInstance("dMMMM", locale).apply { timeZone = IcuTimeZone.GMT_ZONE }
-    val interval =
-        DateInterval(
-            first.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
-            last.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
-        )
-    return format.format(interval, StringBuffer(), FieldPosition(0)).toString()
-}
 
 @Composable
 private fun HomeHero.title(): String =

@@ -17,3 +17,6 @@ plugins {
     alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.jvm.library)
 }
+dependencies {
+    api(libs.kotlin.coroutines.datetime)
+}

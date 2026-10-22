@@ -17,6 +17,7 @@ package com.android254.presentation.home.viewstate
 
 import androidx.compose.runtime.Immutable
 import com.android254.domain.models.HomeBanner
+import com.android254.domain.models.Ticket
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
@@ -34,6 +35,8 @@ data class HomeState(
     val hero: HomeHero = HomeHero.Welcome,
     val agenda: HomeAgenda? = null,
     val showCube: Boolean = false,
+    val ticket: HomeTicket = HomeTicket.Hidden,
+    val isEventDay: Boolean = false,
 )
 
 /** What the hero says when no session is live. */
@@ -47,6 +50,19 @@ sealed interface HomeHero {
     ) : HomeHero
 
     data object ThankYou : HomeHero
+}
+
+sealed interface HomeTicket {
+    data object Hidden : HomeTicket
+
+    data object Add : HomeTicket
+
+    data class Saved(
+        val attendeeName: String,
+        val type: String,
+        val number: String,
+        val status: Ticket.Status,
+    ) : HomeTicket
 }
 
 data class HomeAgenda(

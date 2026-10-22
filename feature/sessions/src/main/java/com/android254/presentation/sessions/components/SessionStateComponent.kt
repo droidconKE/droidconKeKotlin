@@ -73,7 +73,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import ke.droidcon.kotlin.chai.R as ChaiR
 
-/** Says why the list is empty and offers the one tap that fills it again. */
 @Composable
 private fun SessionsEmptyState(
     showMySessionsOnly: Boolean,

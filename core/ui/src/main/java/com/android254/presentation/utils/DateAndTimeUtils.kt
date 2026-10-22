@@ -15,17 +15,24 @@
  */
 package com.android254.presentation.utils
 
+import android.icu.text.DateIntervalFormat
+import android.icu.util.DateInterval
 import android.text.format.DateUtils
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import timber.log.Timber
+import java.text.FieldPosition
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import android.icu.util.TimeZone as IcuTimeZone
+import java.util.Locale as JavaLocale
 
 private val FEED_TIMESTAMP_FORMAT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
-/** When a feed post was made, or null when its timestamp does not parse. */
 fun String.feedPostedAtMillis(): Long? =
     try {
         LocalDateTime
@@ -38,11 +45,23 @@ fun String.feedPostedAtMillis(): Long? =
         null
     }
 
-/** A timestamp as a relative span, e.g. "2 days ago"; unparseable input comes back as it was. */
 fun String.getTimeDifference(nowMillis: Long = System.currentTimeMillis()): String = feedPostedAtMillis()?.let { postedAt -> relativeDay(postedAt, nowMillis) } ?: this
 
-/** "Today", "Yesterday", "2 days ago": the day is the resolution Updates reads at. */
 fun relativeDay(
     atMillis: Long,
     nowMillis: Long,
 ): String = DateUtils.getRelativeTimeSpanString(atMillis, nowMillis, DateUtils.DAY_IN_MILLIS).toString()
+
+fun eventDatesLabel(
+    first: LocalDate,
+    last: LocalDate,
+    locale: JavaLocale,
+): String {
+    val format = DateIntervalFormat.getInstance("dMMMM", locale).apply { timeZone = IcuTimeZone.GMT_ZONE }
+    val interval =
+        DateInterval(
+            first.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
+            last.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
+        )
+    return format.format(interval, StringBuffer(), FieldPosition(0)).toString()
+}

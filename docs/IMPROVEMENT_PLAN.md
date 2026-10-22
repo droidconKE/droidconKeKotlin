@@ -251,7 +251,8 @@ Not more animation. The conference apps people remember are the ones that answer
 Everything in this phase serves one of those four. Anything that doesn't is decoration, and decoration is what makes conference apps feel like brochures.
 
 Home's Now/Next hero answers question 1, and home's agenda and the sessions screen's clash
-banner answer question 2. Questions 3 and 4 are open: speaker cross-links, and the ticket (§7).
+banner answer question 2. Home's ticket card answers question 4 (§7). Question 3 is open:
+speaker cross-links.
 
 ### 5.2 Material 3 Expressive — what is left
 
@@ -1819,411 +1820,63 @@ each sync records (see [`docs/architecture.md`](architecture.md#sync)). In order
 
 ## 7. Phase 4 — Ticketing and QR
 
-**Depends on: Phase 0 · Requires backend coordination — start that conversation before the code**
+**The attendee side shipped in October 2026**, on the backend's issued-ticket lookup
+(droidconEventsBanckend #220). What is left is in §7.3.
 
 ### 7.1 What this replaces
 
 Today attendees screenshot a confirmation email, then hunt for it at the door with 300 people behind them. Registration desk throughput is the single worst experience at most conferences. The app can fix it — but only if it works with no network, because the venue wifi will not survive 500 simultaneous check-ins.
 
-### 7.2 Design: offline-verifiable tickets
+### 7.2 What shipped
 
-The critical constraint: **the scanner must verify a ticket without a network call.** So the ticket must carry its own proof.
+**The code is the gate's own.** A ticket's QR encodes the check-in address,
+`https://events.…/checkin/{event}/attendee/{ticket_no}`, the same code the emailed PDF carries,
+so the gate's existing web check-in reads a phone with no change. The earlier design for this
+section, Ed25519-signed payloads verified offline by an organiser scanner, was not built: the
+backend chose a read-only lookup and kept the gate as it is.
 
-```
-Ticket payload (compact, signed, offline-verifiable)
+- **Adding a ticket.** `GET /v1/events/{slug}/tickets?ticket_no=`, behind the app's API key. An
+  attendee types the number from their ticket email plus the email it was bought with; the email
+  stops a mistyped number landing on somebody else's ticket. Or they scan a printed ticket with
+  Google's code scanner, which needs no camera permission; its UI is a Play services module the
+  manifest asks for at install, fetched on first use where it is missing. A phone can't scan a
+  PDF that is open on itself, so typing is the common path.
+- **Offline.** The `tickets` table (Room 8) keeps each ticket with the backend's PNG of the code,
+  so the pass shows with no signal and is byte for byte what the gate reads. Opening the ticket
+  refreshes its status and check-ins; a failure keeps what is saved.
+- **Status.** A refunded or cancelled ticket stays, its code dimmed under a stamp and a line
+  saying why it will not scan, because the API returns it for exactly that; a status the app does
+  not know shows its code and leaves it to the gate. "Checked in today" once the gate has scanned
+  it today.
+- **At the door.** The pass fills the screen and follows the PDF's layout so staff recognise it:
+  event, attendee and ticket type on top, a tear line, then the code on a stub that stays light in
+  dark theme, with the number in large monospace to type if a scan fails. Nothing to scroll past;
+  full brightness and no screen timeout while it shows. One ticket per phone, the attendee's own;
+  adding another replaces it, and removing is behind the overflow menu.
+- **Reaching it.** A calm card on Home under the hero: "Add your ticket" until there is one, then
+  the attendee's name and number. While the event is on it moves to the top of Home in hero blue;
+  after the event it goes. A launcher shortcut opens the ticket from cold.
+- **Rate limit.** The lookup allows 30 requests a minute per IP. At the venue everybody shares
+  the Wi-Fi's address, so the app says "busy, try again in a minute" on a 429; tell attendees to
+  add their ticket before the day.
+- **Access.** The key comes from Remote Config, which anyone with the repo's Firebase config can
+  read, so anyone can look a ticket up by number or email. The organisers accept that; the
+  payload is the minimum needed to draw a ticket.
 
-  v1.<base64url(payload)>.<base64url(signature)>
+### 7.3 What is left
 
-  payload = {
-    "t": "<ticket id>",         // opaque, server-issued
-    "e": "<event slug>",
-    "n": "<attendee name>",
-    "y": "<ticket type>",       // "regular" | "student" | "speaker" | "sponsor" | "organiser"
-    "x": <expiry epoch seconds>
-  }
+- **Open the PDF in the app.** Share or open the ticket PDF into the app and read its code with
+  `PdfRenderer` and a barcode decoder. It is the commonest case — the PDF is on the same phone —
+  and it removes the typing.
+- **`droidconke://ticket`.** The shortcut uses its own intent action until the notifications
+  work's deep links land; then it becomes a link like the others.
+- **Google Wallet.** An event ticket pass needs a Wallet issuer account and passes the backend
+  signs. Worth it for a lock-screen ticket; not without the backend.
+- **An organiser scanner.** Only if the web check-in cannot keep up at the gate: a continuous
+  CameraX scanner with a count, a torch and haptics, reading the same address.
+- **Rehearse the door** a week out with real staff and a phone at minimum brightness.
 
-  signature = Ed25519(payload, conference private key)
-```
-
-The **public** key ships in the app (and in Remote Config, so it can be rotated). The private key never leaves the backend. A scanner verifies the signature locally, offline, in microseconds — and cannot forge a ticket even with the app's full source, which matters because the source is public.
-
-```kotlin
-// core/model/src/main/kotlin/ke/droidcon/kotlin/core/model/Ticket.kt
-
-data class Ticket(
-    val ticketId: String,
-    val eventSlug: String,
-    val attendeeName: String,
-    val type: TicketType,
-    val expiresAt: Instant,
-    /** The full signed string, exactly as it goes into the QR code. */
-    val signedPayload: String,
-) {
-    fun isExpired(now: Instant): Boolean = now > expiresAt
-}
-
-enum class TicketType(val displayNameRes: Int, val badgeColor: Long) {
-    Regular(R.string.ticket_type_regular, 0xFF1D6FB8),
-    Student(R.string.ticket_type_student, 0xFF00A5A5),
-    Speaker(R.string.ticket_type_speaker, 0xFFE8544E),
-    Sponsor(R.string.ticket_type_sponsor, 0xFFF5A623),
-    Organiser(R.string.ticket_type_organiser, 0xFF2E2E2E),
-}
-```
-
-```kotlin
-// feature/ticket/src/main/kotlin/.../TicketVerifier.kt
-
-/**
- * Verifies a scanned ticket entirely offline.
- *
- * The signing key is asymmetric on purpose: this app's source is public, so a
- * shared secret would let anyone mint tickets. With Ed25519, a compromised client
- * can verify but never forge.
- */
-@Singleton
-class TicketVerifier @Inject constructor(
-    private val keyProvider: TicketPublicKeyProvider,
-    private val scanLog: ScanLogRepository,
-    private val clock: Clock,
-) {
-    suspend fun verify(scanned: String): VerificationResult {
-        val parts = scanned.split('.')
-        if (parts.size != 3 || parts[0] != FORMAT_VERSION) {
-            return VerificationResult.Invalid(Reason.MalformedPayload)
-        }
-
-        val (_, payloadB64, signatureB64) = parts
-        val payloadBytes = runCatching { Base64.UrlSafe.decode(payloadB64) }
-            .getOrElse { return VerificationResult.Invalid(Reason.MalformedPayload) }
-        val signature = runCatching { Base64.UrlSafe.decode(signatureB64) }
-            .getOrElse { return VerificationResult.Invalid(Reason.MalformedPayload) }
-
-        // 1. Signature — is this ticket genuine?
-        if (!keyProvider.verify(payloadBytes, signature)) {
-            return VerificationResult.Invalid(Reason.BadSignature)
-        }
-
-        val ticket = Json.decodeFromString<TicketPayload>(payloadBytes.decodeToString())
-
-        // 2. Event — is it for *this* conference?
-        if (ticket.eventSlug != keyProvider.currentEventSlug) {
-            return VerificationResult.Invalid(Reason.WrongEvent)
-        }
-
-        // 3. Expiry
-        if (clock.now() > Instant.fromEpochSeconds(ticket.expiresAt)) {
-            return VerificationResult.Invalid(Reason.Expired)
-        }
-
-        // 4. Replay — has this ticket already been scanned on this device?
-        //    Devices reconcile their scan logs when a network is available, so a
-        //    duplicate across two gates is caught after sync, not at the gate.
-        //    That is the right trade: never block a legitimate attendee offline.
-        val previousScan = scanLog.findScan(ticket.ticketId)
-        if (previousScan != null) {
-            return VerificationResult.AlreadyScanned(ticket.toTicket(scanned), previousScan.scannedAt)
-        }
-
-        scanLog.record(ticket.ticketId, clock.now())
-        return VerificationResult.Valid(ticket.toTicket(scanned))
-    }
-
-    sealed interface VerificationResult {
-        data class Valid(val ticket: Ticket) : VerificationResult
-        data class AlreadyScanned(val ticket: Ticket, val previouslyAt: Instant) : VerificationResult
-        data class Invalid(val reason: Reason) : VerificationResult
-    }
-
-    enum class Reason { MalformedPayload, BadSignature, WrongEvent, Expired }
-
-    private companion object { const val FORMAT_VERSION = "v1" }
-}
-```
-
-> **Backend dependency.** This design needs `api.droidcon.co.ke` to issue signed tickets. If that isn't available for this cycle, ship a **degraded v0**: the QR carries only the ticket id, the scanner verifies against a downloaded attendee list (refreshed hourly, cached), and un-listed ids are flagged rather than rejected. Note it as v0 in the code so nobody mistakes it for the real thing.
-
-### 7.3 Displaying the ticket
-
-```kotlin
-// feature/ticket/src/main/kotlin/.../QrCodeImage.kt
-
-/**
- * Renders [content] as a QR code. Generation is off the main thread and cached
- * by (content, size) — regenerating a QR on every recomposition drops frames.
- */
-@Composable
-fun QrCodeImage(
-    content: String,
-    modifier: Modifier = Modifier,
-    foreground: Color = Color.Black,
-    background: Color = Color.White,
-) {
-    val density = LocalDensity.current
-    val sizePx = with(density) { QrSize.roundToPx() }
-
-    val bitmap by produceState<ImageBitmap?>(initialValue = null, content, sizePx) {
-        value = withContext(Dispatchers.Default) {
-            generateQrBitmap(content, sizePx, foreground.toArgb(), background.toArgb())
-        }
-    }
-
-    Box(modifier.size(QrSize), contentAlignment = Alignment.Center) {
-        when (val bmp = bitmap) {
-            null -> LoadingIndicator()
-            else -> Image(
-                bitmap = bmp,
-                // Announce what it is, not what it looks like.
-                contentDescription = stringResource(R.string.ticket_qr_content_description),
-                modifier = Modifier.fillMaxSize(),
-                filterQuality = FilterQuality.None,   // crisp module edges, no blur
-            )
-        }
-    }
-}
-
-private fun generateQrBitmap(content: String, size: Int, fg: Int, bg: Int): ImageBitmap {
-    val matrix = QRCodeWriter().encode(
-        content,
-        BarcodeFormat.QR_CODE,
-        size,
-        size,
-        mapOf(
-            EncodeHintType.MARGIN to 1,
-            // High correction: the code will be scanned off a scratched, glare-lit
-            // screen in a dim room, sometimes with a cracked protector.
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.H,
-            EncodeHintType.CHARACTER_SET to "UTF-8",
-        ),
-    )
-
-    val pixels = IntArray(size * size)
-    for (y in 0 until size) {
-        val offset = y * size
-        for (x in 0 until size) {
-            pixels[offset + x] = if (matrix[x, y]) fg else bg
-        }
-    }
-    return Bitmap.createBitmap(pixels, size, size, Bitmap.Config.ARGB_8888).asImageBitmap()
-}
-
-private val QrSize = 280.dp
-```
-
-The ticket screen has to work at a gate, which means solving physical problems:
-
-```kotlin
-@Composable
-fun TicketScreen(viewModel: TicketViewModel = hiltViewModel()) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val activity = LocalActivity.current
-
-    // A dim screen is the #1 reason QR scans fail. Force max brightness while
-    // the ticket is visible, and restore it on the way out.
-    DisposableEffect(activity) {
-        val window = activity?.window
-        val previous = window?.attributes?.screenBrightness
-        window?.attributes = window.attributes?.apply {
-            screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL
-        }
-        // Also keep the screen awake — queues are slow.
-        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        onDispose {
-            window?.attributes = window.attributes?.apply {
-                screenBrightness = previous ?: WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-            }
-            window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
-    }
-
-    when (val s = state) {
-        TicketUiState.NoTicket -> AddTicketPrompt(onAddTicket = viewModel::startTicketEntry)
-        is TicketUiState.HasTicket -> TicketCard(
-            ticket = s.ticket,
-            // A light QR on white scans best regardless of app theme — do not
-            // theme the code itself.
-            onAddToCalendar = viewModel::addEventToCalendar,
-            onShowBadge = viewModel::showBadge,
-        )
-    }
-}
-```
-
-Also: **the ticket must be reachable in one tap from cold start.** Add it as a top-level destination *and* an app shortcut:
-
-```xml
-<!-- app/src/main/res/xml/shortcuts.xml -->
-<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <shortcut
-        android:shortcutId="ticket"
-        android:enabled="true"
-        android:icon="@drawable/ic_shortcut_ticket"
-        android:shortcutShortLabel="@string/shortcut_ticket_short"
-        android:shortcutLongLabel="@string/shortcut_ticket_long">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:targetPackage="ke.droidcon.kotlin"
-            android:targetClass="com.android254.presentation.activity.MainActivity"
-            android:data="droidconke://ticket" />
-        <categories android:name="android.shortcut.conversation" />
-    </shortcut>
-    <shortcut android:shortcutId="agenda" ... android:data="droidconke://sessions?filter=starred" />
-    <shortcut android:shortcutId="now" ... android:data="droidconke://now" />
-</shortcuts>
-```
-
-### 7.4 Scanning
-
-Two paths, and the choice matters:
-
-**Path A — Google code scanner (recommended for attendee-to-attendee badge scanning).** No camera permission needed, Google-provided UI, and the scanning module is delivered by Play services rather than bundled:
-
-```kotlin
-@Singleton
-class CodeScanner @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
-    private val scanner = GmsBarcodeScanning.getClient(
-        context,
-        GmsBarcodeScannerOptions.Builder()
-            .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-            .enableAutoZoom()
-            .build(),
-    )
-
-    /** No CAMERA permission required — the scanning UI is hosted by Play services. */
-    suspend fun scan(): Result<String> = suspendCancellableCoroutine { cont ->
-        scanner.startScan()
-            .addOnSuccessListener { barcode ->
-                barcode.rawValue
-                    ?.let { cont.resume(Result.success(it)) }
-                    ?: cont.resume(Result.failure(IllegalStateException("Empty barcode")))
-            }
-            .addOnCanceledListener { cont.cancel() }
-            .addOnFailureListener { cont.resume(Result.failure(it)) }
-    }
-}
-```
-
-**Path B — custom CameraX scanner (for the registration desk).** Organisers scan hundreds of tickets in a row; they need continuous scanning with no per-scan UI dismissal, plus a running count and a torch:
-
-```kotlin
-// feature/ticket/src/main/kotlin/.../ContinuousScannerScreen.kt
-
-@Composable
-fun ContinuousScannerScreen(viewModel: ScannerViewModel = hiltViewModel()) {
-    val cameraPermission = rememberPermissionState(Manifest.permission.CAMERA)
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-    if (!cameraPermission.status.isGranted) {
-        CameraPermissionRationale(onRequest = cameraPermission::launchPermissionRequest)
-        return
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
-    val surfaceRequest by viewModel.surfaceRequest.collectAsStateWithLifecycle()
-
-    LaunchedEffect(lifecycleOwner) {
-        viewModel.bindToCamera(context.applicationContext, lifecycleOwner)
-    }
-
-    Box(Modifier.fillMaxSize()) {
-        surfaceRequest?.let { request ->
-            CameraXViewfinder(surfaceRequest = request, modifier = Modifier.fillMaxSize())
-        }
-
-        ScannerOverlay(
-            scanCount = state.scanCount,
-            lastResult = state.lastResult,
-            isTorchOn = state.isTorchOn,
-            onToggleTorch = viewModel::toggleTorch,
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
-}
-```
-
-```kotlin
-@HiltViewModel
-class ScannerViewModel @Inject constructor(
-    private val verifier: TicketVerifier,
-    private val haptics: HapticsPlayer,
-) : ViewModel() {
-
-    private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
-    val surfaceRequest = _surfaceRequest.asStateFlow()
-
-    private val barcodeScanner = BarcodeScanning.getClient(
-        BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build(),
-    )
-
-    /** De-dupes the same code across consecutive frames — one scan, one result. */
-    private var lastScanned: String? = null
-    private var lastScannedAt: Instant = Instant.DISTANT_PAST
-
-    private val preview = Preview.Builder().build().apply {
-        setSurfaceProvider { _surfaceRequest.value = it }
-    }
-
-    private val analysis = ImageAnalysis.Builder()
-        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-        .setResolutionSelector(
-            ResolutionSelector.Builder()
-                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_16_9_FALLBACK_AUTO_STRATEGY)
-                .build(),
-        )
-        .build()
-        .apply { setAnalyzer(Dispatchers.Default.asExecutor(), ::analyze) }
-
-    suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
-        val provider = ProcessCameraProvider.awaitInstance(appContext)
-        provider.bindToLifecycle(
-            lifecycleOwner,
-            CameraSelector.DEFAULT_BACK_CAMERA,
-            preview,
-            analysis,
-        )
-        try { awaitCancellation() } finally { provider.unbindAll() }
-    }
-
-    @OptIn(ExperimentalGetImage::class)
-    private fun analyze(imageProxy: ImageProxy) {
-        val mediaImage = imageProxy.image ?: return imageProxy.close()
-        val input = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-
-        barcodeScanner.process(input)
-            .addOnSuccessListener { barcodes ->
-                barcodes.firstNotNullOfOrNull { it.rawValue }?.let(::onCodeScanned)
-            }
-            .addOnCompleteListener { imageProxy.close() }
-    }
-
-    private fun onCodeScanned(raw: String) {
-        val now = Clock.System.now()
-        if (raw == lastScanned && now - lastScannedAt < DEDUPE_WINDOW) return
-        lastScanned = raw
-        lastScannedAt = now
-
-        viewModelScope.launch {
-            val result = verifier.verify(raw)
-            // Haptics + distinct tones: at a busy gate, staff scan by feel, not by
-            // reading the screen.
-            when (result) {
-                is VerificationResult.Valid -> haptics.success()
-                is VerificationResult.AlreadyScanned -> haptics.warning()
-                is VerificationResult.Invalid -> haptics.error()
-            }
-            _uiState.update { it.copy(lastResult = result, scanCount = it.scanCount + 1) }
-        }
-    }
-
-    private companion object { val DEDUPE_WINDOW = 2.seconds }
-}
-```
-
-### 7.5 Attendee-to-attendee: the digital badge
+### 7.4 Attendee-to-attendee: the digital badge
 
 Scanning another person's QR to exchange details is a networking feature, not a ticketing one, and the privacy model must be different: **a badge is not a ticket.** Two separate QR payloads:
 
@@ -3010,7 +2663,7 @@ Deriving interests from **starred sessions** rather than asking the user to fill
 
 ### 11.2 Connections and networking
 
-Builds directly on §7.5's badge QR. The single highest-value networking feature is not a chat system — it's **remembering who you met and why**.
+Builds directly on §7.4's badge QR. The single highest-value networking feature is not a chat system — it's **remembering who you met and why**.
 
 ```kotlin
 data class Connection(
@@ -3760,7 +3413,7 @@ Non-negotiable for every PR in every phase:
 | --- | --- | --- | --- |
 | **Half-migrated state.** Volunteer capacity evaporates mid-phase, leaving two design systems and three navigation patterns coexisting. | **High** | **High** | Every phase must be independently completable and shippable. Never start Phase N+1 with Phase N half-done. Prefer deprecated shims over big-bang rewrites. |
 | **AI cost blowout.** A retry bug or a bot burns the Gemini quota during the conference. | Medium | High | App Check enforced (§6.5), client quota guard (§6.12), Remote Config kill switch, a $30 budget alert in GCP and a per-user limit of 5 requests a minute. Test the kill switch before the conference. |
-| **Gate failure on day 1.** Ticketing ships untested at scale and the queue backs up. | Medium | **Severe** | Offline-first by design (§7.2). Rehearse with real staff a week out. Keep the paper/email fallback for year one — do not make the app the only path. |
+| **Gate failure on day 1.** Ticketing ships untested at scale and the queue backs up. | Medium | **Severe** | Tickets are saved on the phone and show the PDF's own code (§7.2). Rehearse with real staff a week out. Keep the paper/email fallback for year one — do not make the app the only path. |
 | **Model hallucination in a user-visible place.** The agenda summary invents a session. | Medium | Medium | Structured output constrained to provided ids, deterministic path always shown alongside (§6.7), thumbs-down monitoring with a 25% kill threshold. |
 | **Package rename invalidates every open PR.** | High | Medium | Announce two weeks ahead, do it in one mechanical PR, merge everything outstanding first, do it during a quiet period. |
 | **Gemma model download over mobile data.** A user pays for 500 MB by accident. | Medium | High | Unmetered-only default, explicit size in the UI, opt-in with a confirmation, cancellable (§6.4). |

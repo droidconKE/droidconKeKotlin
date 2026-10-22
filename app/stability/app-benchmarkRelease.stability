@@ -5,11 +5,12 @@
 //   ./gradlew :app:stabilityDump
 
 @Composable
-public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
+public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, openTicket: kotlin.Boolean, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+    - openTicket: STABLE (primitive type)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
     - authViewModel: UNSTABLE (has mutable properties or unstable members)
 

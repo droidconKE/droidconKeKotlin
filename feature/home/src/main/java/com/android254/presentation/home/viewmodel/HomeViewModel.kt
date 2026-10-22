@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.repos.HomeRepo
+import com.android254.domain.repos.TicketsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.presentation.home.mappers.toHomeState
 import com.android254.presentation.home.viewstate.HomeState
@@ -42,6 +43,7 @@ class HomeViewModel
     @Inject
     constructor(
         homeRepo: HomeRepo,
+        ticketsRepo: TicketsRepo,
         private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
         private val featureFlags: FeatureFlags,
@@ -62,8 +64,9 @@ class HomeViewModel
                 homeRepo.fetchHomeDetails(),
                 isSyncing,
                 clock.ticks(),
-            ) { home, syncing, now ->
-                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled())
+                ticketsRepo.ticket(),
+            ) { home, syncing, now, ticket ->
+                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled(), ticket)
             }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,

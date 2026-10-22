@@ -18,7 +18,6 @@ package ke.droidcon.kotlin.datasource.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/** A moment on the Updates tab, recorded when a sync changes the schedule. */
 @Entity(tableName = "updates")
 data class UpdateEntity(
     @PrimaryKey(autoGenerate = true)

@@ -26,6 +26,7 @@ import ke.droidcon.kotlin.datasource.local.dao.OrganizersDao
 import ke.droidcon.kotlin.datasource.local.dao.SessionDao
 import ke.droidcon.kotlin.datasource.local.dao.SpeakerDao
 import ke.droidcon.kotlin.datasource.local.dao.SponsorsDao
+import ke.droidcon.kotlin.datasource.local.dao.TicketsDao
 import ke.droidcon.kotlin.datasource.local.dao.UpdatesDao
 
 @Module
@@ -65,4 +66,9 @@ object DaoModule {
     fun providesUpdatesDao(
         database: Database,
     ): UpdatesDao = database.updatesDao()
+
+    @Provides
+    fun providesTicketsDao(
+        database: Database,
+    ): TicketsDao = database.ticketsDao()
 }

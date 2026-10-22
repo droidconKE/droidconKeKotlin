@@ -40,7 +40,6 @@ class UpdatesManager
                 .flowOn(ioDispatcher)
     }
 
-/** A kind this version does not know, written by a newer one, is skipped rather than guessed at. */
 internal fun UpdateEntity.toDomain(): ScheduleUpdate? =
     ScheduleUpdate.Kind.entries.firstOrNull { it.name == kind }?.let { known ->
         ScheduleUpdate(id, known, sessionId, title, count, Instant.fromEpochMilliseconds(createdAt))

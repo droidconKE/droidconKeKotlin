@@ -42,7 +42,6 @@ import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 
-/** A nudge, not a summary: what is on, when, and one tap to it. Your own session wears a star. */
 @Composable
 fun CurrentSessionComponent(
     session: SessionPresentationModel,

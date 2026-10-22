@@ -18,6 +18,7 @@ package com.droidconke.chai.icons
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
@@ -452,6 +453,49 @@ object ChaiIcons {
                 curveToRelative(3.9f, -3.89f, 3.91f, -9.95f, 0.0f, -14.0f)
                 close()
             }
+        }
+    }
+
+    val ConfirmationNumber: ImageVector by lazy {
+        icon(name = "ConfirmationNumber") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M22,10V6c0,-1.11 -0.9,-2 -2,-2H4c-1.1,0 -1.99,0.89 -1.99,2v4c1.1,0 1.99,0.9 1.99,2s-0.89,2 -2,2v4" +
+                            "c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2v-4c-1.1,0 -2,-0.9 -2,-2s0.9,-2 2,-2zM13,17.5h-2v-2h2v2z" +
+                            "M13,13h-2v-2h2v2zM13,8.5h-2v-2h2v2z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
+
+    val QrCodeScanner: ImageVector by lazy {
+        icon(name = "QrCodeScanner") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M9.5,6.5v3h-3v-3H9.5M11,5H5v6h6V5L11,5zM9.5,14.5v3h-3v-3H9.5M11,13H5v6h6V13L11,13z" +
+                            "M17.5,6.5v3h-3v-3H17.5M19,5h-6v6h6V5L19,5zM13,13h1.5v1.5H13V13zM14.5,14.5H16V16h-1.5V14.5z" +
+                            "M16,13h1.5v1.5H16V13zM13,16h1.5v1.5H13V16zM14.5,17.5H16V19h-1.5V17.5zM16,16h1.5v1.5H16V16z" +
+                            "M17.5,14.5H19V16h-1.5V14.5zM17.5,17.5H19V19h-1.5V17.5zM22,7h-2V4h-3V2h5V7zM22,22v-5h-2v3h-3v2H22z" +
+                            "M2,22h5v-2H4v-3H2V22zM2,2v5h2V4h3V2H2z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
+
+    val MoreVert: ImageVector by lazy {
+        icon(name = "MoreVert") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M12,8c1.1,0 2,-0.9 2,-2s-0.9,-2 -2,-2 -2,0.9 -2,2 0.9,2 2,2zM12,10c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2" +
+                            " -0.9,-2 -2,-2zM12,16c-1.1,0 -2,0.9 -2,2s0.9,2 2,2 2,-0.9 2,-2 -0.9,-2 -2,-2z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
         }
     }
 

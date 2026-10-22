@@ -97,9 +97,10 @@ class MainActivity : ComponentActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.isInitialising.value }
 
+        val openTicket = savedInstanceState == null && intent?.action == ACTION_SHOW_TICKET
         setContent {
             ChaiTheme {
-                MainScreen(viewModel = viewModel)
+                MainScreen(viewModel = viewModel, openTicket = openTicket)
             }
         }
 
@@ -136,6 +137,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
+    openTicket: Boolean = false,
     viewModel: MainViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
@@ -145,6 +147,9 @@ fun MainScreen(
             topLevelRoutes = bottomNavigationSet,
         )
     val navController = remember { NavigationController(navigationState) }
+    LaunchedEffect(Unit) {
+        if (openTicket) navController.navigate(Screens.Ticket)
+    }
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
     var showAuthDialog by remember {
         mutableStateOf(false)
@@ -254,3 +259,5 @@ fun MainScreen(
         }
     }
 }
+
+const val ACTION_SHOW_TICKET = "ke.droidcon.kotlin.action.SHOW_TICKET"

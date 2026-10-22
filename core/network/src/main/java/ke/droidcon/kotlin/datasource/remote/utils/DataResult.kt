@@ -24,6 +24,7 @@ sealed interface DataResult<out T : Any> {
         val message: String,
         val networkError: Boolean = false,
         val exc: Throwable? = null,
+        val rateLimited: Boolean = false,
     ) : DataResult<Nothing>
 
     data class Loading<out T : Any>(

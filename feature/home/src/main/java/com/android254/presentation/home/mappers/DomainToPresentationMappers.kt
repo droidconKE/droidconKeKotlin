@@ -20,6 +20,7 @@ import com.android254.domain.models.Home
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.models.Sponsors
+import com.android254.domain.models.Ticket
 import com.android254.domain.schedule.agendaDay
 import com.android254.domain.schedule.conferencePhase
 import com.android254.domain.schedule.eventDates
@@ -30,6 +31,7 @@ import com.android254.presentation.home.viewstate.AgendaItem
 import com.android254.presentation.home.viewstate.HomeAgenda
 import com.android254.presentation.home.viewstate.HomeHero
 import com.android254.presentation.home.viewstate.HomeState
+import com.android254.presentation.home.viewstate.HomeTicket
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.models.SponsorPresentationModel
@@ -65,9 +67,18 @@ fun Home.toHomeState(
     now: Instant,
     zone: TimeZone,
     showCube: Boolean = false,
+    ticket: Ticket? = null,
 ): HomeState {
     val mapped = sessions.map { it.toPresentationModel(now) }
     val presented = sessions.zip(mapped).associate { (session, model) -> session.id to model }
+    val phase = sessions.conferencePhase(now, zone)
+    val hero =
+        when (phase) {
+            is ConferencePhase.BeforeEvent ->
+                sessions.eventDates(zone).let { dates -> HomeHero.Countdown(phase.daysUntil, dates?.start, dates?.endInclusive) }
+            ConferencePhase.AfterEvent -> HomeHero.ThankYou
+            ConferencePhase.DuringEvent, null -> HomeHero.Welcome
+        }
     return HomeState(
         banner = banner,
         speakers = speakers.toSpeakersPresentation().toImmutableList(),
@@ -75,15 +86,16 @@ fun Home.toHomeState(
         organizerLogos = organizerLogos.toImmutableList(),
         sessions = mapped.toImmutableList(),
         isSyncing = isSyncing,
-        hero =
-            when (val phase = sessions.conferencePhase(now, zone)) {
-                is ConferencePhase.BeforeEvent ->
-                    sessions.eventDates(zone).let { dates -> HomeHero.Countdown(phase.daysUntil, dates?.start, dates?.endInclusive) }
-                ConferencePhase.AfterEvent -> HomeHero.ThankYou
-                ConferencePhase.DuringEvent, null -> HomeHero.Welcome
-            },
+        hero = hero,
         agenda = sessions.agenda(now, zone, presented),
         showCube = showCube,
+        ticket =
+            when {
+                hero == HomeHero.ThankYou -> HomeTicket.Hidden
+                ticket == null -> HomeTicket.Add
+                else -> HomeTicket.Saved(ticket.attendeeName, ticket.type, ticket.number, ticket.status)
+            },
+        isEventDay = sessions.eventDates(zone)?.contains(now.toLocalDateTime(zone).date) == true,
     )
 }
 

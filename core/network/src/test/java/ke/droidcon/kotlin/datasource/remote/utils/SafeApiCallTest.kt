@@ -27,6 +27,14 @@ import java.nio.channels.UnresolvedAddressException
 /** Failure classification: connectivity vs server vs client. */
 class SafeApiCallTest {
     @Test
+    fun `a logged message loses its query string, which can name a ticket`() {
+        assertEquals(
+            "Client request(GET https://api.droidcon.co.ke/v1/events/x/tickets) invalid: 401",
+            "Client request(GET https://api.droidcon.co.ke/v1/events/x/tickets?ticket_no=TIC-70235) invalid: 401".withoutQuery(),
+        )
+    }
+
+    @Test
     fun `unresolved address is a network failure`() =
         runTest {
             // What Ktor throws when DNS cannot resolve: airplane mode, no signal.

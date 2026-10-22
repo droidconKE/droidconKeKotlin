@@ -44,6 +44,7 @@ activity = "1.13.0"
 preview_customview = "1.2.0"
 poolingcontainer = "1.1.0"
 credentials = "1.6.0"
+codeScanner = "16.1.0"
 googleid = "1.2.1"
 datastore = "1.2.1"
 timber = "5.0.1"
@@ -118,6 +119,7 @@ kotlin-coroutines-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime"
 kotlin-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "codeScanner" }
 google-identity-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 lifecycle-runtimeKtx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }

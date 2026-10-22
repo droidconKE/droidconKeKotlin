@@ -18,7 +18,6 @@ package com.android254.presentation.feed.view
 import com.android254.domain.models.ScheduleUpdate
 import com.android254.presentation.models.FeedUI
 
-/** One row of Updates: news from the organisers, or a change a sync found in the schedule. */
 sealed interface UpdateItem {
     val key: String
     val atMillis: Long?
