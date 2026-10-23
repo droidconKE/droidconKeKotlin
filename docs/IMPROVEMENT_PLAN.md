@@ -8,13 +8,12 @@
 
 ---
 
-## Next up — §14, then §8
+## Next up — §14, then §7
 
 What is left of the accessibility audit (§14) is a listening pass by a person: TalkBack, Switch
 Access and a keyboard, on a phone and in two panes. It can run alongside anything else.
 
-The next engineering item is notifications (§8): channels, local session reminders and a
-preferences screen need no backend. Ticketing (§7) waits on the backend question in §17.2.
+The next engineering item is ticketing (§7), which waits on the backend question in §17.2.
 
 ---
 
@@ -179,9 +178,10 @@ B6 and B10 protect user data, so do those first.
 
 Measured against `android/nowinandroid` (`a49ed25`, 2026-09-22). In order:
 
-1. **Push-triggered sync (needs backend).** NiA subscribes to an FCM `sync` topic and enqueues the
-   worker when content changes. Ours syncs on start and every 24 hours, so a room change on
-   conference day can take a day to arrive. A topic message that calls `startSync()` fixes that.
+1. **Push-triggered sync (done in the app; waits on the backend).** A `sync_request` data message
+   starts a fresh sync and posts nothing (see [`docs/push-payload.md`](push-payload.md)). Until the
+   backend sends it, the app syncs only on start and every 24 hours, so a room change on conference
+   day can take a day to arrive.
 2. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
    (`getTopicChangeList(after = version)`) and fetches only what changed. The droidcon API returns
    full lists and has no change-list endpoint, so this does not port. If the backend adds `ETag`
@@ -3289,7 +3289,7 @@ Ranked. Higher items are either prerequisites for lower ones, or buy more per un
 | # | Do this | Section | Why here |
 | --- | --- | --- | --- |
 | **1** | Accessibility listening pass | §14 | Needs a person, not a contributor slot; can run in parallel with anything. |
-| **2** | Notifications: channels, local reminders, preferences | §8 | Reminders are the one notification a conference app needs, and none of it waits on the backend. |
+| **2** | Notifications: done; topic subscriptions and reminder actions remain | §8.4, §8.5 | Channels, local reminders, preferences and deep links have landed. The subscriptions wait on the backend. |
 
 Then the other product surfaces — ticketing (§7), calendar export (§11.4a), venue map (§11.6) — and only after those, the AI work (§6).
 
@@ -3306,7 +3306,7 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 **Stage 3 — Make it worth installing**
 - §6 intelligent experiences, every flag default-off
 - §7 ticketing + QR — **the backend conversation must have started during Stage 2**
-- §8 notifications
+- §8.4 reminder actions · §8.5 topic subscriptions (the rest of §8 has landed)
 - §5.5 notes · §11.4a calendar export · §11.6 venue map
 - **Milestone:** the app does things no other conference app does, all behind flags that have been tested in the off position
 
