@@ -102,7 +102,10 @@ class NotificationsSettingsViewModelTest {
 
     @Test
     fun `only the channels people can switch are listed`() {
-        val channels = viewModel().uiState.value.channels.map { it.channel }
+        val channels =
+            viewModel()
+                .uiState.value.channels
+                .map { it.channel }
 
         assertEquals(NotificationChannelSpec.configurable, channels)
         assertFalse(NotificationChannelSpec.Sync in channels)
@@ -112,7 +115,10 @@ class NotificationsSettingsViewModelTest {
     fun `a channel switched off in system settings is reported as blocked`() {
         every { notificationPermission.isChannelBlocked(NotificationChannelSpec.Announcements) } returns true
 
-        val announcements = viewModel().uiState.value.channels.first { it.channel == NotificationChannelSpec.Announcements }
+        val announcements =
+            viewModel()
+                .uiState.value.channels
+                .first { it.channel == NotificationChannelSpec.Announcements }
 
         assertTrue(announcements.blockedInSystem)
     }

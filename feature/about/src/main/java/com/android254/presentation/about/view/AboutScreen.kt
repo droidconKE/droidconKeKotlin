@@ -175,7 +175,6 @@ internal fun AboutScreen(
                     )
 
                     Spacer(modifier = Modifier.height(40.dp))
-
                 }
             }
         }

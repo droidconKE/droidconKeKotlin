@@ -41,7 +41,6 @@ class SessionReminderWorkerTest {
     @Test
     fun `a reminder that fires after session reminders were switched off is not posted`() = assertNotPosted(NotificationPreferences(sessionRemindersEnabled = false))
 
-
     private fun assertNotPosted(preferences: NotificationPreferences) =
         runTest {
             mockkStatic(NotificationManagerCompat::class)

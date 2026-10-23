@@ -28,9 +28,8 @@ import com.android254.presentation.common.navigation.Screens
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.notifications.AndroidNotificationPermission
-import ke.droidcon.kotlin.core.notifications.NotificationPermission
+import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.core.notifications.push.PushPayload

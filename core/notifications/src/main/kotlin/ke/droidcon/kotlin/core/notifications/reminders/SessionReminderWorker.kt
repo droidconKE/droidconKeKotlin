@@ -28,9 +28,9 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
-import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.R
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
 import ke.droidcon.kotlin.core.common.R as CommonR
@@ -88,8 +88,7 @@ class SessionReminderWorker
                             } else {
                                 appContext.getString(R.string.reminder_body_with_speakers, room, speakers)
                             },
-                        )
-                        .setStyle(
+                        ).setStyle(
                             NotificationCompat.BigTextStyle().bigText(
                                 if (speakers.isEmpty()) {
                                     appContext.getString(R.string.reminder_big_text, title, room)

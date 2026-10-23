@@ -24,8 +24,8 @@ import ke.droidcon.kotlin.BuildConfig
 import ke.droidcon.kotlin.core.common.di.DefaultDispatcher
 import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
 import ke.droidcon.kotlin.core.notifications.reminders.SessionReminderScheduler
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
