@@ -66,8 +66,6 @@ class MainViewModel
         private val _isInitialising = MutableStateFlow(true)
 
         /**
-         * True while the splash screen should stay up.
-         *
          * Waits on locally cached data with a hard ceiling, never on the network; config
          * fetch and sync are fire-and-forget.
          */
@@ -78,15 +76,12 @@ class MainViewModel
         private val remindersOff = Channel<Unit>(Channel.CONFLATED)
 
         /**
-         * One-shot requests to explain reminders and then show the system notification prompt.
-         *
          * Emitted once, when the user stars a session that has yet to start while the app cannot
          * post and has never asked from a star. Stars already present when the app starts never
          * count, so the first launch after an update does not prompt.
          */
         val notificationPermissionRequests: Flow<Unit> = permissionRequests.receiveAsFlow()
 
-        /** Emitted when reminders cannot reach the user: they declined, or starred while blocked. */
         val remindersOffEvents: Flow<Unit> = remindersOff.receiveAsFlow()
 
         private var permissionRequested = false

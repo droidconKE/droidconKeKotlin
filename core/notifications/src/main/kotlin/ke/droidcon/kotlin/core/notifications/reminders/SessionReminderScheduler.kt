@@ -44,8 +44,6 @@ class SessionReminderScheduler
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) {
         /**
-         * Brings scheduled reminders in line with [starredSessions] and the preferences.
-         *
          * Reminders already due are left alone: they may be running in the process that is
          * calling this, and replacing them would cancel the notification being posted.
          */

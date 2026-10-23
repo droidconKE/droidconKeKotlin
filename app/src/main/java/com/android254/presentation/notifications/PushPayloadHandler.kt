@@ -38,15 +38,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import ke.droidcon.kotlin.core.common.R as CommonR
 
-/** Turns a decoded FCM [PushPayload] into what the user sees, or into a sync. */
 interface PushPayloadHandler {
     suspend fun handle(payload: PushPayload)
 }
 
-/** The key in an FCM data message that carries the JSON-encoded [PushPayload]. */
 const val PAYLOAD_KEY = "payload"
 
-/** Decodes the payload in an FCM message's [data] and handles it; drops what it cannot read. */
 suspend fun PushPayloadHandler.dispatch(data: Map<String, String>) {
     val json = data[PAYLOAD_KEY]
     val payload =
@@ -74,8 +71,6 @@ private fun legacyAnnouncement(data: Map<String, String>): PushPayload.Announcem
     }
 
 /**
- * Posts each payload on its own channel, honouring the user's notification preferences.
- *
  * A sync request is not a notification, so it syncs whatever the preferences say. A schedule
  * change syncs the same way, so the reminders of a moved session move too.
  */

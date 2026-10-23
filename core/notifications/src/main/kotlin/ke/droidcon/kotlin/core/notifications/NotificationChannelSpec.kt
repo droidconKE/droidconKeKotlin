@@ -21,12 +21,6 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.content.getSystemService
 
-/**
- * Specification for notification channels used by the droidcon Kenya app.
- *
- * Each channel defines a separate category of notifications with distinct importance levels
- * and user preferences. Channels are grouped under the "droidcon Kenya" channel group.
- */
 enum class NotificationChannelSpec(
     val id: String,
     val nameResId: Int,

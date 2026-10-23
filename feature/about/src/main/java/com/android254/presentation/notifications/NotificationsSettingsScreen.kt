@@ -80,6 +80,9 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 
 private val ContentPadding = 20.dp
 private val RowSpacing = 12.dp
+private val TightSpacing = 4.dp
+private val ControlSpacing = 8.dp
+private val ListBottomPadding = 24.dp
 
 @Composable
 fun NotificationsSettingsScreen(
@@ -143,7 +146,7 @@ internal fun NotificationsSettingsContent(
                     .padding(paddingValues)
                     .consumeWindowInsets(paddingValues)
                     .readablePaneWidth(),
-            contentPadding = PaddingValues(bottom = 24.dp),
+            contentPadding = PaddingValues(bottom = ListBottomPadding),
         ) {
             item {
                 AnimatedVisibility(visible = uiState.notificationsBlocked) {
@@ -241,8 +244,8 @@ private fun LeadTimeChoice(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(horizontal = ContentPadding, vertical = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(horizontal = ContentPadding, vertical = TightSpacing),
+        verticalArrangement = Arrangement.spacedBy(ControlSpacing),
     ) {
         Text(
             text = stringResource(R.string.settings_reminder_lead_time),
@@ -260,7 +263,7 @@ private fun LeadTimeChoice(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(TightSpacing))
     }
 }
 
@@ -326,7 +329,7 @@ private fun NotificationsBlockedBanner(
             modifier = Modifier.padding(ContentPadding),
             verticalArrangement = Arrangement.spacedBy(RowSpacing),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(TightSpacing)) {
                 Text(
                     text = stringResource(R.string.settings_notifications_blocked),
                     style = MaterialTheme.typography.titleMedium,
