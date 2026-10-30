@@ -54,6 +54,12 @@ class NavigationVisibilityTest {
     }
 
     @Test
+    fun `notification settings own the window at every size`() {
+        assertFalse(shouldShowNavigation(Screens.NotificationsSettings, isMultiPaneWindow = false))
+        assertFalse(shouldShowNavigation(Screens.NotificationsSettings, isMultiPaneWindow = true))
+    }
+
+    @Test
     fun `feedback owns the window at every size`() {
         assertFalse(shouldShowNavigation(Screens.FeedBack, isMultiPaneWindow = false))
         assertFalse(shouldShowNavigation(Screens.FeedBack, isMultiPaneWindow = true))

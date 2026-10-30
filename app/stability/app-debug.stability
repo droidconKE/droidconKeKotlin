@@ -5,14 +5,24 @@
 //   ./gradlew :app:stabilityDump
 
 @Composable
-public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, openTicket: kotlin.Boolean, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel): kotlin.Unit
+public fun com.android254.presentation.activity.MainScreen(modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.activity.MainViewModel, authViewModel: com.android254.presentation.auth.AuthViewModel, deepLink: com.android254.presentation.common.navigation.Screens?, onDeepLinkHandled: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
-    - openTicket: STABLE (primitive type)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
     - authViewModel: UNSTABLE (has mutable properties or unstable members)
+    - deepLink: STABLE (marked @Stable or @Immutable)
+    - onDeepLinkHandled: STABLE (function type)
+
+@Composable
+public fun com.android254.presentation.activity.NotificationPermissionPrompt(requests: kotlinx.coroutines.flow.Flow<kotlin.Unit>, onPrompted: kotlin.Function0<kotlin.Unit>, launch: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - requests: UNKNOWN (interface or non-final class; concrete implementation unknown)
+    - onPrompted: STABLE (function type)
+    - launch: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.common.livesessions.HappeningNowPane(sessions: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>, onSessionClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -46,6 +56,15 @@ public fun com.android254.presentation.common.livesessions.rememberLiveSessions(
   restartable: false
   params:
     - state: STABLE (class with no mutable properties)
+
+@Composable
+public fun com.android254.presentation.common.navigation.DeepLinkEffect(deepLink: com.android254.presentation.common.navigation.Screens?, navController: com.android254.presentation.common.navigation.NavigationController, onHandled: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - deepLink: STABLE (marked @Stable or @Immutable)
+    - navController: UNSTABLE (has mutable properties or unstable members)
+    - onHandled: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.common.navigation.DroidconDrawerHeader(modifier: androidx.compose.ui.Modifier): kotlin.Unit

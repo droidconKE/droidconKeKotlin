@@ -99,6 +99,7 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.core.network)
     implementation(projects.core.domain)
+    implementation(projects.core.notifications)
 
     implementation(projects.feature.about)
     implementation(projects.feature.auth)

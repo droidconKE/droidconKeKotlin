@@ -143,6 +143,25 @@
         <item quantity="other">and %d more</item>
     </plurals>
     <string name="clash_banner_pair">“%1$s” and “%2$s”</string>
+
+    <!-- Notification Settings Screen -->
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_open">Notification settings</string>
+    <string name="settings_notification_types">Notify me about</string>
+    <string name="settings_reminder_lead_time">Remind me</string>
+    <string name="settings_lead_time_option">%1$d min</string>
+    <string name="settings_notifications_blocked">Notifications are off for droidconKenya</string>
+    <string name="settings_notifications_blocked_detail">You won\'t get reminders for sessions you star.</string>
+    <string name="settings_open_system_settings">Turn on</string>
+    <string name="settings_system_notifications">System notification settings</string>
+    <string name="settings_channel_off_in_system">Off in system settings</string>
+    <string name="reminders_off_message">Reminders are off</string>
+    <string name="reminders_off_action">Settings</string>
+    <string name="notification_rationale_title">Get reminders</string>
+    <string name="notification_rationale_body">Get a nudge before the sessions you\'ve starred.</string>
+    <string name="notification_rationale_allow">Continue</string>
+    <string name="notification_rationale_dismiss">Not now</string>
+
     <string name="ticket_title">Your ticket</string>
     <string name="ticket_add_title">Add your ticket</string>
     <string name="ticket_add_body">Find the number in your ticket email.</string>

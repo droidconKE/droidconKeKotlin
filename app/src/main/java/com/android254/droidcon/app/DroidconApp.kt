@@ -16,13 +16,21 @@
 package com.android254.droidcon.app
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import com.android254.data.work.WorkConstants
+import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
+import ke.droidcon.kotlin.core.common.di.DefaultDispatcher
+import ke.droidcon.kotlin.core.notifications.NotificationChannelSpec
+import ke.droidcon.kotlin.core.notifications.reminders.SessionReminderScheduler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,14 +39,34 @@ class DroidconApp : Application() {
     @Inject
     lateinit var syncDataWorkManager: SyncDataWorkManager
 
+    @Inject
+    lateinit var sessionsRepository: SessionsRepo
+
+    @Inject
+    lateinit var sessionReminderScheduler: SessionReminderScheduler
+
+    @Inject
+    @DefaultDispatcher
+    lateinit var defaultDispatcher: CoroutineDispatcher
+
     override fun onCreate() {
         super.onCreate()
         initTimber()
-        setUpWorkerManagerNotificationChannel()
+        NotificationChannelSpec.createAll(this)
 
         syncDataWorkManager.setupPeriodicSync()
 
         syncDataWorkManager.startSync()
+
+        // Stars and syncs both land in the database, so this covers both. Rescheduling leaves
+        // reminders that are already due alone, so a background start can't cancel one mid-post.
+        sessionsRepository
+            .fetchSessions()
+            .map { sessions -> sessions.filter { it.isBookmarked } }
+            .distinctUntilChanged()
+            .onEach { starredSessions ->
+                sessionReminderScheduler.rescheduleAll(starredSessions)
+            }.launchIn(CoroutineScope(defaultDispatcher + SupervisorJob()))
     }
 
     private fun initTimber() =
@@ -55,15 +83,4 @@ class DroidconApp : Application() {
                 Timber.plant(CrashlyticsTree())
             }
         }
-
-    private fun setUpWorkerManagerNotificationChannel() {
-        val channel =
-            NotificationChannel(
-                WorkConstants.NOTIFICATION_CHANNEL,
-                WorkConstants.SYNC_DATA_WORKER_NAME,
-                NotificationManager.IMPORTANCE_HIGH,
-            )
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(channel)
-    }
 }

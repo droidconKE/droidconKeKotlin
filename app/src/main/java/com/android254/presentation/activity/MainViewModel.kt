@@ -26,19 +26,28 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.ConferenceTimeZone
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
 import ke.droidcon.kotlin.core.common.time.ticks
+import ke.droidcon.kotlin.core.notifications.NotificationPermission
+import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.datetime.TimeZone
 import timber.log.Timber
@@ -53,18 +62,33 @@ class MainViewModel
         private val clock: Clock,
         private val remoteFeatureToggle: RemoteFeatureToggle,
         private val syncDataWorkManager: SyncDataWorkManager,
+        private val notificationPermission: NotificationPermission,
+        private val notificationPreferences: NotificationPreferencesStore,
         @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val _isInitialising = MutableStateFlow(true)
 
         /**
-         * True while the splash screen should stay up.
-         *
          * Waits on locally cached data with a hard ceiling, never on the network; config
          * fetch and sync are fire-and-forget.
          */
         val isInitialising: StateFlow<Boolean> = _isInitialising.asStateFlow()
+
+        private val permissionRequests = Channel<Unit>(Channel.CONFLATED)
+
+        private val remindersOff = Channel<Unit>(Channel.CONFLATED)
+
+        /**
+         * Emitted once, when the user stars a session that has yet to start while the app cannot
+         * post and has never asked from a star. Stars already present when the app starts never
+         * count, so the first launch after an update does not prompt.
+         */
+        val notificationPermissionRequests: Flow<Unit> = permissionRequests.receiveAsFlow()
+
+        val remindersOffEvents: Flow<Unit> = remindersOff.receiveAsFlow()
+
+        private var permissionRequested = false
 
         init {
             viewModelScope.launch {
@@ -79,7 +103,50 @@ class MainViewModel
                     .onSuccess { shouldSync -> if (shouldSync) syncDataWorkManager.startSync() }
                     .onFailure { Timber.w(it, "Feature toggle fetch failed; using cached config") }
             }
+
+            viewModelScope.launch {
+                var previous: Set<String>? = null
+                sessionsRepo
+                    .fetchSessions()
+                    .map { sessions -> sessions.filter { it.isBookmarked } }
+                    .distinctUntilChanged { old, new -> old.map { it.remoteId } == new.map { it.remoteId } }
+                    .collect { starred ->
+                        val known = previous
+                        previous = starred.mapTo(mutableSetOf()) { it.remoteId }
+                        val now = clock.now()
+                        // A session that has started can never produce a reminder.
+                        val starredUpcoming =
+                            known != null &&
+                                starred.any { it.remoteId !in known && (it.startInstant ?: return@any false) > now }
+                        if (!starredUpcoming) return@collect
+
+                        when {
+                            shouldRequestPermission() -> {
+                                permissionRequested = true
+                                permissionRequests.trySend(Unit)
+                            }
+
+                            !notificationPermission.areNotificationsEnabled() -> remindersOff.trySend(Unit)
+                        }
+                    }
+            }
         }
+
+        /** Call when the system prompt is about to open, so a later star never asks again. */
+        fun onNotificationPermissionPrompted() {
+            // The dialog is already opening; leaving the screen must not drop the record of it.
+            viewModelScope.launch { withContext(NonCancellable) { notificationPreferences.markPermissionPrompted() } }
+        }
+
+        /** The outcome of the system prompt; a refusal is the moment to point at settings. */
+        fun onNotificationPermissionResult(granted: Boolean) {
+            if (!granted) remindersOff.trySend(Unit)
+        }
+
+        private suspend fun shouldRequestPermission(): Boolean =
+            !permissionRequested &&
+                notificationPermission.needsRuntimeRequest() &&
+                !notificationPreferences.preferences.first().permissionPrompted
 
         val sessionState: StateFlow<SessionUIState> =
             clock

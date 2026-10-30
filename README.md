@@ -76,7 +76,7 @@ it is a shared debug key, not a secret, and the release key is not in this repo.
 
 | Module                | What lives there                                                     |
 |-----------------------|----------------------------------------------------------------------|
-| `app`                 | `Application`, `MainActivity`, navigation, notifications, DI root     |
+| `app`                 | `Application`, `MainActivity`, navigation, push handling, DI root     |
 | `core:model`          | Pure Kotlin data classes. A JVM module — no Android on its classpath  |
 | `core:common`         | Dispatcher qualifiers and other cross-cutting plumbing                |
 | `core:designsystem`   | chai — colours, typography, shapes, shared components                 |
@@ -85,6 +85,7 @@ it is a shared debug key, not a secret, and the release key is not in this repo.
 | `core:data`           | Repository implementations, the sync worker, mappers                  |
 | `core:database`       | Room database, DAOs, entities                                         |
 | `core:network`        | Ktor client, DTOs, Remote Config                                      |
+| `core:notifications`  | Channels, preferences, session reminders, permission state            |
 | `core:screenshot`     | Roborazzi harness. Test-only                                          |
 | `core:testing`        | Shared test doubles. Test-only                                        |
 | `benchmarks`          | Macrobenchmark and baseline profile generation. Not shipped           |
@@ -102,13 +103,16 @@ graph TD
     data[":core:data"]
     database[":core:database"]
     network[":core:network"]
+    notifications[":core:notifications"]
 
     app --> feature
     app --> data
     app --> database
     app --> network
+    app --> notifications
 
     feature --> ui
+    feature --> notifications
     ui --> ds
     ui --> domain
     domain --> model
@@ -116,13 +120,14 @@ graph TD
     data --> domain
     data --> database
     data --> network
+    notifications --> domain
 
     classDef pure fill:#0b7285,stroke:#0b7285,color:#ffffff;
     classDef uic fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff;
     classDef io fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff;
     class domain,model pure;
     class app,feature,ui,ds uic;
-    class data,database,network io;
+    class data,database,network,notifications io;
 ```
 
 **The dependency rules:** `core:model` depends on nothing and has no Android on its

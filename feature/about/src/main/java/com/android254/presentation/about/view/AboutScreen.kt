@@ -73,12 +73,14 @@ import kotlinx.collections.immutable.toImmutableList
 fun AboutRoute(
     aboutViewModel: AboutViewModel = hiltViewModel(),
     navigateToFeedbackScreen: () -> Unit = {},
+    navigateToNotificationsSettings: () -> Unit = {},
 ) {
     val uiState by aboutViewModel.uiState.collectAsStateWithLifecycle()
 
     AboutScreen(
         uiState = uiState,
         navigateToFeedbackScreen = navigateToFeedbackScreen,
+        navigateToNotificationsSettings = navigateToNotificationsSettings,
     )
 }
 
@@ -86,6 +88,7 @@ fun AboutRoute(
 internal fun AboutScreen(
     uiState: AboutScreenUiState,
     navigateToFeedbackScreen: () -> Unit = {},
+    navigateToNotificationsSettings: () -> Unit = {},
     animateCube: Boolean = true,
 ) {
     Scaffold(
@@ -94,6 +97,7 @@ internal fun AboutScreen(
                 onButtonClick = {
                     navigateToFeedbackScreen()
                 },
+                onNotificationsClick = navigateToNotificationsSettings,
             )
         },
         contentWindowInsets = DroidconWindowInsets.screenContent,
