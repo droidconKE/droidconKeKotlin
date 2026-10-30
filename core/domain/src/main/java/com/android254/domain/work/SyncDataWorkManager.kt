@@ -22,5 +22,11 @@ interface SyncDataWorkManager {
 
     fun startSync()
 
+    /**
+     * Like [startSync], but when a sync is already running, queues another behind it rather
+     * than folding into it. The running one may have fetched before the server changed.
+     */
+    fun startFreshSync()
+
     fun setupPeriodicSync()
 }

@@ -77,7 +77,7 @@ core:testing         Shared test doubles. Test-only — consumed via testImpleme
 
 benchmarks           Macrobenchmark + baseline profile generation. Not shipped
 
-feature:about        about + feedback
+feature:about        about + feedback + notification settings
 feature:auth
 feature:feed
 feature:home
@@ -89,12 +89,13 @@ core:domain          Repository interfaces and sync contracts
 core:data            Repository implementations, sync, mappers
 core:database        Room database, DAOs, entities
 core:network         Ktor client, DTOs, Remote Config
+core:notifications   Channels, preferences, session reminders (scheduler + worker), permission state
 build-logic          Convention plugins
 ```
 
 The split is complete. Every code-backed feature is its own module, and `:presentation` is
 gone — its composition root (`MainActivity`, `Navigation`, `DroidconEntryProvider`, the navigation
-suite and scene strategies, notifications, DI) now lives in `app`, which is the only module
+suite and scene strategies, push handling, DI) now lives in `app`, which is the only module
 that depends on every feature.
 
 The `:core:*` renames kept each module's Kotlin package and Android namespace untouched — only

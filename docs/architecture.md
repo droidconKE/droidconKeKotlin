@@ -24,7 +24,7 @@ Three layers, in the usual order, with a strict rule about which way the arrows 
 ```mermaid
 graph TD
     subgraph L1["UI layer"]
-        APP["<b>:app</b><br/>composition root · navigation · notifications"]
+        APP["<b>:app</b><br/>composition root · navigation · push handling"]
         FEAT["<b>:feature:*</b><br/>about · auth · feed · home · sessions · speakers"]
         UIL["<b>:core:ui</b><br/>presentation models · shared composables · NavKeys"]
         CHAI["<b>:core:designsystem</b><br/>design system"]
@@ -37,6 +37,7 @@ graph TD
     subgraph L3["Data layer"]
         DATAL["<b>:core:data</b><br/>repository impls · mappers · sync"]
         SRC["<b>:core:database</b> · <b>:core:network</b><br/>Room · Ktor · DataStore"]
+        NOTIF["<b>:core:notifications</b><br/>channels · preferences · reminders"]
     end
 
     APP -->|"composes"| FEAT
@@ -45,6 +46,9 @@ graph TD
     UIL -.->|"styles with"| CHAI
     DATAL -->|"implements"| DOML
     DATAL -->|"reads and writes"| SRC
+    NOTIF -->|"reads starred sessions from"| DOML
+    APP -->|"schedules reminders with"| NOTIF
+    FEAT -->|"settings screen uses"| NOTIF
 
     style DOML fill:#0b7285,stroke:#0b7285,color:#ffffff
     style APP fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
@@ -53,6 +57,7 @@ graph TD
     style CHAI fill:#5f3dc4,stroke:#5f3dc4,color:#ffffff
     style DATAL fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff
     style SRC fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff
+    style NOTIF fill:#2b8a3e,stroke:#2b8a3e,color:#ffffff
     style L1 fill:#ffffff,stroke:#adb5bd,stroke-dasharray:4 4
     style L2 fill:#ffffff,stroke:#adb5bd,stroke-dasharray:4 4
     style L3 fill:#ffffff,stroke:#adb5bd,stroke-dasharray:4 4
@@ -73,7 +78,7 @@ of them need lives in `core:ui`, and `app` is the only module allowed to see the
 
 | Module               | Gradle plugins                                     | Contains                                        |
 |----------------------|----------------------------------------------------|-------------------------------------------------|
-| `app`                | application, compose, hilt, firebase, stability, roborazzi, jacoco | `DroidconApp`, `MainActivity`, navigation, notifications, DI root |
+| `app`                | application, compose, hilt, firebase, stability, roborazzi, jacoco | `DroidconApp`, `MainActivity`, navigation, push handling, DI root |
 | `feature:*`          | feature (+ roborazzi)                              | Screens, ViewModels, tests, goldens             |
 | `core:ui`            | library, compose, stability, jacoco                | Presentation models, shared composables, NavKeys |
 | `core:designsystem`  | library, compose, stability, jacoco                | Colours, typography, shared components          |
@@ -83,6 +88,7 @@ of them need lives in `core:ui`, and `app` is the only module allowed to see the
 | `core:data`          | library, hilt, firebase, jacoco                    | Repository impls, mappers, `SyncDataWorker`     |
 | `core:database`      | library, room, hilt, firebase, jacoco              | Room DB, DAOs, entities, DataStore              |
 | `core:network`       | library, hilt, firebase, jacoco                    | Ktor client, DTOs, Remote Config                |
+| `core:notifications` | library, hilt, serialization, jacoco               | Channels, preferences, reminder scheduler + worker, push payload types |
 | `core:screenshot`    | library, compose                                   | Roborazzi harness. Test-only                    |
 | `core:testing`       | library                                            | Shared test doubles. Test-only                  |
 | `widget`             | library, compose, hilt                             | Glance "what's on now" widget. Sync refreshes it |

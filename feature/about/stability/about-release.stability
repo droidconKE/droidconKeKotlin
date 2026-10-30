@@ -13,20 +13,22 @@ public fun com.android254.presentation.about.view.AboutDroidconSection(droidconD
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com.android254.presentation.about.view.AboutViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.about.view.AboutRoute(aboutViewModel: com.android254.presentation.about.view.AboutViewModel, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToNotificationsSettings: kotlin.Function0<kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - aboutViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToFeedbackScreen: STABLE (function type)
+    - navigateToNotificationsSettings: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.about.view.AboutScreen(uiState: com.android254.presentation.about.view.AboutScreenUiState, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToNotificationsSettings: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - uiState: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - navigateToFeedbackScreen: STABLE (function type)
+    - navigateToNotificationsSettings: STABLE (function type)
     - animateCube: STABLE (primitive type)
 
 @Composable
@@ -74,4 +76,82 @@ public fun com.android254.presentation.feedback.view.FeedbackTitle(modifier: and
   restartable: true
   params:
     - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.notifications.ChannelGroup(uiState: com.android254.presentation.notifications.NotificationsUiState, onChannelEnabledChange: kotlin.Function2<ke.droidcon.kotlin.core.notifications.NotificationChannelSpec, kotlin.Boolean, kotlin.Unit>, onReminderLeadTimeChange: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - uiState: STABLE (marked @Stable or @Immutable)
+    - onChannelEnabledChange: STABLE (function type)
+    - onReminderLeadTimeChange: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.notifications.ChannelItem(state: com.android254.presentation.notifications.ChannelUiState, notificationsBlocked: kotlin.Boolean, shapes: androidx.compose.material3.ListItemShapes, onCheckedChange: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - state: STABLE (marked @Stable or @Immutable)
+    - notificationsBlocked: STABLE (primitive type)
+    - shapes: STABLE (marked @Stable or @Immutable)
+    - onCheckedChange: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.notifications.LeadTimeItem(selectedMinutes: kotlin.Int, shapes: androidx.compose.material3.ListItemShapes, onSelected: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - selectedMinutes: STABLE (primitive type)
+    - shapes: STABLE (marked @Stable or @Immutable)
+    - onSelected: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.notifications.NotificationsBlockedBanner(onOpenSystemSettings: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onOpenSystemSettings: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+internal fun com.android254.presentation.notifications.NotificationsSettingsContent(uiState: com.android254.presentation.notifications.NotificationsUiState, onChannelEnabledChange: kotlin.Function2<ke.droidcon.kotlin.core.notifications.NotificationChannelSpec, kotlin.Boolean, kotlin.Unit>, onReminderLeadTimeChange: kotlin.Function1<kotlin.Int, kotlin.Unit>, onOpenSystemSettings: kotlin.Function0<kotlin.Unit>, onNavigateBack: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - uiState: STABLE (marked @Stable or @Immutable)
+    - onChannelEnabledChange: STABLE (function type)
+    - onReminderLeadTimeChange: STABLE (function type)
+    - onOpenSystemSettings: STABLE (function type)
+    - onNavigateBack: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+public fun com.android254.presentation.notifications.NotificationsSettingsScreen(onNavigateBack: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, viewModel: com.android254.presentation.notifications.NotificationsSettingsViewModel): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onNavigateBack: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - viewModel: UNSTABLE (has mutable properties or unstable members)
+
+@Composable
+private fun com.android254.presentation.notifications.NotificationsTopBar(onNavigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onNavigateBack: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.notifications.SystemSettingsItem(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.notifications.segmentColors(): androidx.compose.material3.ListItemColors
+  skippable: false
+  restartable: false
+  params:
 

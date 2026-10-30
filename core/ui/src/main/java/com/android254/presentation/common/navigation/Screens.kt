@@ -48,6 +48,9 @@ sealed interface Screens : NavKey {
     data object FeedBack : Screens
 
     @Serializable
+    data object NotificationsSettings : Screens
+
+    @Serializable
     data object Ticket : Screens
 
     /** The supporting pane. Never pushed; [toEntries] appends it when the window is wide enough. */

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification Channel Group -->
+    <string name="channel_group_conference">droidconKenya</string>
+
+    <!-- Notification Channels -->
+    <string name="channel_session_reminders">Session reminders</string>
+    <string name="channel_session_reminders_desc">Get a nudge before sessions you\'ve starred</string>
+    <string name="channel_schedule_changes">Schedule changes</string>
+    <string name="channel_schedule_changes_desc">Room changes, delays, and cancellations</string>
+    <string name="channel_announcements">Announcements</string>
+    <string name="channel_announcements_desc">Important updates and venue announcements</string>
+    <string name="channel_social_feed">Feed</string>
+    <string name="channel_social_feed_desc">Posts from attendees and organisers</string>
+    <string name="channel_milestones">Milestones</string>
+    <string name="channel_milestones_desc">Post-conference recap and next year\'s call for papers</string>
+    <string name="channel_sync">Sync progress</string>
+    <string name="channel_sync_desc">Background data synchronization</string>
+
+    <!-- Session Reminder Notifications -->
+    <string name="reminder_title">%s starts soon</string>
+    <string name="reminder_body">In %1$s</string>
+    <string name="reminder_body_with_speakers">In %1$s · %2$s</string>
+    <string name="reminder_big_text">%1$s\n\nRoom: %2$s</string>
+    <string name="reminder_big_text_with_speakers">%1$s\n\nRoom: %2$s\nSpeakers: %3$s</string>
+</resources>

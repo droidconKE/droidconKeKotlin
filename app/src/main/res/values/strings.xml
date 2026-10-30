@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DroidconKe</string>
+
+    <!-- Push Notifications -->
+    <string name="push_room_changed">Room changed</string>
+    <string name="push_time_changed">Time changed</string>
+    <string name="push_session_cancelled">Session cancelled</string>
+    <string name="push_speaker_changed">Speaker changed</string>
+    <string name="push_feed_post_title">New post</string>
 </resources>

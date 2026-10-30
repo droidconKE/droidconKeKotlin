@@ -37,6 +37,7 @@ fun <T> ConnectedToggleGroup(
     selected: T?,
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
+    fillWidth: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
     itemContent: @Composable (T) -> Unit,
 ) {
@@ -48,7 +49,7 @@ fun <T> ConnectedToggleGroup(
             ToggleButton(
                 checked = item == selected,
                 onCheckedChange = { checked -> if (checked) onSelect(item) },
-                modifier = Modifier.semantics { role = Role.RadioButton },
+                modifier = (if (fillWidth) Modifier.weight(1f) else Modifier).semantics { role = Role.RadioButton },
                 shapes =
                     when {
                         items.size == 1 -> ToggleButtonDefaults.shapesFor(ToggleButtonDefaults.size)

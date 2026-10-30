@@ -95,7 +95,7 @@ public fun com.android254.presentation.common.components.BookmarkButton(isBookma
     - size: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.common.components.ConnectedToggleGroup(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.ConnectedToggleGroup>, selected: T of com.android254.presentation.common.components.ConnectedToggleGroup?, onSelect: kotlin.Function1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, itemContent: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>): kotlin.Unit
+public fun com.android254.presentation.common.components.ConnectedToggleGroup(items: kotlinx.collections.immutable.ImmutableList<T of com.android254.presentation.common.components.ConnectedToggleGroup>, selected: T of com.android254.presentation.common.components.ConnectedToggleGroup?, onSelect: kotlin.Function1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, fillWidth: kotlin.Boolean, contentPadding: androidx.compose.foundation.layout.PaddingValues, itemContent: @[Composable] androidx.compose.runtime.internal.ComposableFunction1<T of com.android254.presentation.common.components.ConnectedToggleGroup, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -103,6 +103,7 @@ public fun com.android254.presentation.common.components.ConnectedToggleGroup(it
     - selected: RUNTIME (requires runtime check)
     - onSelect: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - fillWidth: STABLE (primitive type)
     - contentPadding: STABLE (marked @Stable or @Immutable)
     - itemContent: STABLE (composable function type)
 
@@ -134,12 +135,13 @@ public fun com.android254.presentation.common.components.DroidconAppBar(modifier
     - onActionClicked: STABLE (function type)
 
 @Composable
-public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean): kotlin.Unit
+public fun com.android254.presentation.common.components.DroidconAppBarWithFeedbackButton(onButtonClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, onNotificationsClick: kotlin.Function0<kotlin.Unit>?, windowInsets: androidx.compose.foundation.layout.WindowInsets, showLogo: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onButtonClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - onNotificationsClick: STABLE (function type)
     - windowInsets: STABLE (marked @Stable or @Immutable)
     - showLogo: STABLE (primitive type)
 

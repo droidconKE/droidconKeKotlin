@@ -24,10 +24,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,6 +44,7 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyXSmall
+import com.droidconke.chai.icons.ChaiIcons
 import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
 
@@ -49,6 +52,7 @@ import ke.droidcon.kotlin.core.ui.R
 fun DroidconAppBarWithFeedbackButton(
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onNotificationsClick: (() -> Unit)? = null,
     windowInsets: WindowInsets = DroidconWindowInsets.appBar,
     showLogo: Boolean = rememberShowsAppBarLogo(),
 ) {
@@ -59,17 +63,32 @@ fun DroidconAppBarWithFeedbackButton(
                 .fillMaxWidth()
                 .windowInsetsPadding(windowInsets)
                 .height(64.dp)
-                .padding(start = 20.dp, end = 20.dp, top = 19.dp, bottom = 15.dp)
-                .testTag("droidcon_topBar_with_Feedback"),
+                // The bell's 48dp target needs the room the 30dp pill row leaves.
+                .padding(
+                    start = 20.dp,
+                    end = 20.dp,
+                    top = if (onNotificationsClick == null) 19.dp else 8.dp,
+                    bottom = if (onNotificationsClick == null) 15.dp else 8.dp,
+                ).testTag("droidcon_topBar_with_Feedback"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showLogo) {
             Image(
+                modifier = Modifier.heightIn(max = 30.dp),
                 painter = painterResource(id = if (MaterialTheme.isDarkTheme) R.drawable.droidcon_logo_dark else R.drawable.droidcon_logo),
                 contentDescription = stringResource(id = R.string.logo),
             )
         }
         Spacer(modifier = Modifier.weight(1f))
+
+        if (onNotificationsClick != null) {
+            IconButton(onClick = onNotificationsClick) {
+                Icon(
+                    imageVector = ChaiIcons.NotificationsOutlined,
+                    contentDescription = stringResource(R.string.settings_notifications_open),
+                )
+            }
+        }
 
         FeedbackButton(onButtonClick = onButtonClick)
     }
@@ -114,6 +133,6 @@ fun FeedbackButton(
 @Composable
 private fun Preview() {
     ChaiTheme {
-        DroidconAppBarWithFeedbackButton(onButtonClick = {})
+        DroidconAppBarWithFeedbackButton(onButtonClick = {}, onNotificationsClick = {})
     }
 }
