@@ -2610,8 +2610,12 @@ measurement, one accessibility call, and the ideas below, which are not started.
   then draw each visible sticker as a textured quad under the same projective matrix, which the GPU
   does natively; keep the per-frame tint and sheen as a colour filter and one alpha quad. That is
   27–45 texture draws a frame instead of ~130 path fills. Measure with the same benchmark; a
-  p90-under-16 ms assertion goes in once it holds. Smaller wins to take on the way: skip the sheen
-  where `shine` rounds to zero, and the edge stroke on faces in shadow.
+  p90-under-16 ms assertion goes in once it holds, and do not ship it on emulator numbers: a
+  texture painter tried on 2026-10-31 (masks for the tile and edge, the sheen and each sticker's
+  piece of its mark as textures) and a narrower one (textures for the marks only) both drew
+  fewer frames than the path painter under the emulator's software renderer, which samples
+  textures on the CPU, so they were left out of the release. The sheen is already skipped where
+  `shine` rounds to zero; the edge stroke on faces in shadow is the other smaller win left.
 - **A way to pause it.** The loop runs for ever by design. WCAG 2.2.2 asks for a way to pause,
   stop or hide moving content that runs beside other content for more than five seconds; the OS
   "Remove animations" switch does rest it, but a control in the app would be the full answer. The
