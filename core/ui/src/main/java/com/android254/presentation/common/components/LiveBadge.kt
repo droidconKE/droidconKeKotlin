@@ -30,10 +30,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ke.droidcon.kotlin.core.ui.R
@@ -44,12 +43,13 @@ private const val PULSE_MIN_ALPHA = 0.35f
 /** Ends opaque so it rests visible with animations off. */
 @Composable
 fun LiveBadge(modifier: Modifier = Modifier) {
-    val pulse by rememberInfiniteTransition(label = "live-pulse").animateFloat(
-        initialValue = PULSE_MIN_ALPHA,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(PULSE_MILLIS), RepeatMode.Reverse),
-        label = "live-pulse-alpha",
-    )
+    val pulse =
+        rememberInfiniteTransition(label = "live-pulse").animateFloat(
+            initialValue = PULSE_MIN_ALPHA,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(tween(PULSE_MILLIS), RepeatMode.Reverse),
+            label = "live-pulse-alpha",
+        )
     Row(
         modifier =
             modifier
@@ -61,7 +61,7 @@ fun LiveBadge(modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .size(6.dp)
-                .alpha(pulse)
+                .graphicsLayer { alpha = pulse.value }
                 .background(MaterialTheme.colorScheme.onSecondaryContainer, CircleShape),
         )
         Text(

@@ -59,7 +59,7 @@ internal class CubePainter {
         drawPath(cell, CubeGapColor)
         drawPath(tile, lerp(CubeTileShadowColor, CubeTileLitColor, quad.light))
         val shine = quad.shine()
-        drawPath(tile, sheen, alpha = SHEEN_ALPHA * shine)
+        if (SHEEN_ALPHA * shine >= INVISIBLE_ALPHA) drawPath(tile, sheen, alpha = SHEEN_ALPHA * shine)
         CubeMarks.of(quad.face)?.layersIfCut?.let { drawPieces(quad, it) }
         drawPath(tile, CubeEdgeColor, alpha = EDGE_ALPHA + EDGE_SHINE_ALPHA * shine, style = edge)
         canvas.restoreToCount(checkpoint)
@@ -126,6 +126,7 @@ private val LightY = LIGHT_Y / LightLength
 private val LightZ = (LIGHT_Z + 1f) / LightLength
 
 private const val THIN = 1e-4f
+private const val INVISIBLE_ALPHA = 1f / 255
 private const val EDGE_WIDTH = 0.012f
 private const val EDGE_ALPHA = 0.18f
 private const val EDGE_SHINE_ALPHA = 0.6f
