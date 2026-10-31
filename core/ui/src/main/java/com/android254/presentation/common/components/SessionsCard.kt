@@ -41,12 +41,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -62,17 +68,36 @@ import com.droidconke.chai.components.ChaiBodyXSmall
 import com.droidconke.chai.components.ChaiSubTitle
 import ke.droidcon.kotlin.core.ui.R
 
-/** The venue accent while ongoing, a hairline otherwise, or none when [showBorder] is off. */
-private fun cardBorder(
-    showBorder: Boolean,
-    isOngoing: Boolean,
-    ongoingColor: Color,
-    defaultColor: Color,
-): BorderStroke? =
-    when {
-        !showBorder -> null
-        isOngoing -> BorderStroke(width = 1.5.dp, color = ongoingColor)
-        else -> BorderStroke(width = 1.dp, color = defaultColor)
+private val CardShape = RoundedCornerShape(8.dp)
+private val OngoingBorderWidth = 1.5.dp
+
+/** Read only when drawing, so a live card redraws its border without recomposing. */
+@Composable
+private fun rememberOngoingPulse(): State<Float> =
+    rememberInfiniteTransition(label = "ongoing_border").animateFloat(
+        initialValue = 0.3f,
+        targetValue = 1f,
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(durationMillis = 1200, easing = EaseInOut),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "border_alpha",
+    )
+
+private fun Modifier.ongoingBorder(
+    color: Color,
+    alpha: State<Float>,
+): Modifier =
+    drawWithCache {
+        val stroke = OngoingBorderWidth.toPx()
+        val outline = CardShape.createOutline(Size(size.width - stroke, size.height - stroke), layoutDirection, this)
+        onDrawWithContent {
+            drawContent()
+            translate(stroke / 2, stroke / 2) {
+                drawOutline(outline, color.copy(alpha = alpha.value), style = Stroke(stroke))
+            }
+        }
     }
 
 @Composable
@@ -84,31 +109,7 @@ fun SessionsCard(
     showBorder: Boolean = true,
 ) {
     val venueAccent = venueAccentColor(session.venue)
-
-    val transition = rememberInfiniteTransition(label = "ongoing_border")
-
-    val animatedBorderAlpha by transition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 1f,
-        animationSpec =
-            infiniteRepeatable(
-                animation =
-                    tween(
-                        durationMillis = 1200,
-                        easing = EaseInOut,
-                    ),
-                repeatMode = RepeatMode.Reverse,
-            ),
-        label = "border_alpha",
-    )
-
-    val border =
-        cardBorder(
-            showBorder = showBorder,
-            isOngoing = session.sessionStatus == SessionStatus.Ongoing,
-            ongoingColor = venueAccent.copy(alpha = animatedBorderAlpha),
-            defaultColor = MaterialTheme.colorScheme.outlineVariant,
-        )
+    val pulse = if (showBorder && session.sessionStatus == SessionStatus.Ongoing) rememberOngoingPulse() else null
 
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by rememberIsHovered(interactionSource)
@@ -119,11 +120,12 @@ fun SessionsCard(
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .then(if (pulse != null) Modifier.ongoingBorder(venueAccent, pulse) else Modifier)
                 .clickablePointer(),
-        shape = RoundedCornerShape(8.dp),
+        shape = CardShape,
         interactionSource = interactionSource,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        border = border,
+        border = if (showBorder && pulse == null) BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant) else null,
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,

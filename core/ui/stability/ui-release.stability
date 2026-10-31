@@ -344,6 +344,12 @@ public fun com.android254.presentation.common.components.TimeAndVenueComponent(s
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.common.components.rememberOngoingPulse(): androidx.compose.runtime.State<kotlin.Float>
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 public fun com.android254.presentation.common.components.rememberSpeakerAvatarShape(): androidx.compose.ui.graphics.Shape
   skippable: false
   restartable: false
