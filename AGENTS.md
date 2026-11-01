@@ -233,7 +233,9 @@ contract relies on. Drop the `version.ref` once a BOM manages a stable 1.5.0.
   bundle, uploads it to the production track at 100%, and ships `whatsnew/whatsnew-en-US` as
   the release notes — so update that file on the release branch and bring it back to `main`.
   The R8 mapping goes to Play and Crashlytics from that workflow only (`-PuploadCrashlyticsMapping`)
-  and is kept as a run artifact; PR builds never upload one.
+  and is kept as a run artifact; PR builds never upload one. The store listing itself (icon,
+  feature graphic, screenshots, descriptions) lives in `playstore/`, whose README says how to
+  regenerate each part; it is uploaded to Play Console by hand.
 - **R8 keep rules live in `app/src/main/keepRules/*.keep`**, not `proguard-rules.pro`. The
   release build stays on the legacy `isMinifyEnabled` DSL on purpose — AGP 9.3's
   `optimization {}` block breaks baseline profile generation, see

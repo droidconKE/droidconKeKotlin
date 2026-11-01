@@ -1,0 +1,35 @@
+The official app for DroidconKe & FlutterconKe 2026, Africa's largest mobile developer conference, on 5 and 6 November in Nairobi.
+
+Plan your conference
+• See every session by day, with its time, room and speakers
+• Filter by room, level and format, or show only the sessions you've starred
+• Star sessions to build your agenda, and see straight away when two overlap
+• Read the details of any session and share it
+
+Never miss a session
+• Get a reminder before each session you star, 5, 10, 15 or 30 minutes ahead
+• Hear about room changes, delays and cancellations
+• Get announcements from the organisers
+• Choose what you're notified about
+
+Your ticket, ready at the door
+• Add your ticket with its number and the email you bought it with, or scan your printed ticket
+• It works without a signal, and the screen brightens when you show it at the entrance
+
+Meet the speakers
+• Browse and search every speaker, and read their profiles
+• See the sessions each speaker is giving
+
+Stay in the loop
+• Home counts down to the conference, then shows your agenda for the day
+• Now and next shows the session that's on and the one coming up
+• Updates lists changes to the sessions in your agenda
+• Follow the conference feed
+• Add the home screen widget to see your next session at a glance
+
+Also
+• Light and dark themes, and support for large text
+• The schedule is saved on your phone, so it keeps working on a weak signal
+• Send feedback to the organisers from the app
+
+The app is built by the community and is open source: github.com/droidconKE/droidconKeKotlin
