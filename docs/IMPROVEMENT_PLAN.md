@@ -1,6 +1,6 @@
 # droidconKE Android — Modernization & Product Plan
 
-> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-12
+> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-31
 > **Repo:** `droidconKeKotlin`
 > **Scope:** What is left to build — the design system, adaptive follow-ups, intelligent (AI) experiences, ticketing, notifications, performance, testing, new product surfaces, and store presence.
 >
@@ -2675,70 +2675,15 @@ About, whose stage is not clickable.
 
 ## 13. Phase 10 — Play Store presence
 
-**Mostly design and copy work. Screenshot automation depends on §10.2.**
+**Screenshot automation depends on §10.2.**
 
 ### 13.1 Current state
 
-`fastlane/` has an `Appfile`, a `Fastfile` with lint/test/build lanes, and `whatsnew/whatsnew-en-US`. There is **no `fastlane/metadata/android/` directory**, which means the entire store listing — title, descriptions, screenshots, feature graphic — is managed by hand in the Play Console. It is not versioned, not reviewable, and not reproducible.
+The listing — descriptions, icon, feature graphic and phone screenshots — is versioned in [`playstore/`](../playstore/README.md) and uploaded to Play Console by hand. The icon and feature graphic are generated from the app's resources; the screenshots are taken by hand. Release notes ship from `whatsnew/whatsnew-en-US` with each release.
 
-### 13.2 Version the listing
+### 13.2 Staged rollout
 
-```
-fastlane/metadata/android/
-├── en-US/
-│   ├── title.txt                     (max 30 chars)
-│   ├── short_description.txt          (max 80 chars)
-│   ├── full_description.txt           (max 4000 chars)
-│   ├── video.txt
-│   ├── changelogs/
-│   │   └── default.txt
-│   └── images/
-│       ├── icon.png                   512×512
-│       ├── featureGraphic.png         1024×500
-│       ├── phoneScreenshots/          1–8, 16:9 or 9:16
-│       ├── sevenInchScreenshots/
-│       ├── tenInchScreenshots/
-│       └── tvScreenshots/
-```
-
-```ruby
-# fastlane/Fastfile — add
-desc "Upload store metadata and screenshots without shipping a binary"
-lane :update_listing do
-  upload_to_play_store(
-    skip_upload_apk: true,
-    skip_upload_aab: true,
-    skip_upload_changelogs: false,
-    skip_upload_images: false,
-    skip_upload_screenshots: false,
-    track: 'production',
-  )
-end
-
-desc "Ship to internal testing"
-lane :internal do
-  gradle(task: 'bundleRelease')
-  upload_to_play_store(
-    track: 'internal',
-    aab: 'app/build/outputs/bundle/release/app-release.aab',
-    skip_upload_metadata: true,
-    skip_upload_images: true,
-  )
-end
-
-desc "Promote internal → production with a staged rollout"
-lane :promote_to_production do |options|
-  upload_to_play_store(
-    track: 'internal',
-    track_promote_to: 'production',
-    rollout: options[:rollout] || '0.1',   # start at 10%
-    skip_upload_aab: true,
-    skip_upload_metadata: true,
-  )
-end
-```
-
-**Fix the release workflow while here.** `deploy-to-playstore.yml` currently pushes straight to `track: production` with `status: completed` — no staged rollout, no gate. One bad build reaches 100% of users with no brake:
+`deploy-to-playstore.yml` pushes straight to `track: production` with `status: completed` — no staged rollout, no gate. One bad build reaches 100% of users with no brake:
 
 ```yaml
 - name: Deploy to Production (staged)
@@ -2757,6 +2702,8 @@ end
 
 `mappingFile` is already uploaded. `debugSymbols` is not, so add it in the same change as the staged rollout.
 
+To go through an internal track first, as Stage 4 plans, upload with `track: internal` and promote the release to production in Play Console once it has been checked.
+
 ### 13.3 Automate screenshots
 
 Hand-taken screenshots go stale the moment the UI changes. Generate them from the screenshot-test harness (§10.2), so they're always current:
@@ -2768,7 +2715,7 @@ Hand-taken screenshots go stale the moment the UI changes. Generate them from th
  * Generates Play Store screenshots from the real UI with curated demo data.
  *
  * Run with: ./gradlew :core:screenshot:recordRoborazziDebug -Pstore-screenshots=true
- * Output:   fastlane/metadata/android/en-US/images/phoneScreenshots/
+ * Output:   playstore/en-US/images/phoneScreenshots/
  *
  * These are the same components users see — they can never drift from the app.
  */
@@ -2856,62 +2803,7 @@ private fun captureStoreShot(
 
 **Do generate tablet screenshots.** Play requires 7" and 10" screenshots to be eligible for large-screen promotion, and the app now deserves them.
 
-### 13.4 Listing copy
-
-The current listing (whatever it says) almost certainly describes the app as an agenda viewer. That undersells it and buries the differentiators.
-
-**Title** (30 chars): `droidcon Kenya` — leave room; don't pad with keywords.
-
-**Short description** (80 chars):
-> Your droidcon Kenya companion — agenda, tickets, and talks that fit your day.
-
-**Full description** — lead with the user's problem, not the feature list:
-
-```
-Three days. Five tracks. Sixty talks. One question: where should you be right now?
-
-droidcon Kenya's official app answers it.
-
-★ BUILD YOUR CONFERENCE
-Star the talks you care about and get a personal agenda that warns you when your
-picks clash. Bulk-export the whole thing to your calendar in one tap.
-
-★ NEVER MISS A TALK
-Reminders before every session you starred — and they work when the venue wifi
-doesn't. Everything is cached on your device.
-
-★ UNDERSTAND YOUR SCHEDULE
-See what your conference is actually about, which themes you've clustered around,
-and which talks you've overlooked. Powered by Google's Gemini models, with
-on-device processing where your device supports it.
-
-★ YOUR TICKET, ALWAYS READY
-Your QR ticket, offline, one tap from the home screen. No hunting for an email
-at the gate.
-
-★ REMEMBER WHO YOU MET
-Scan a badge, jot a note. Three days later you'll still know who was building
-what.
-
-★ TAKE NOTES THAT KEEP
-Notes attached to the talk they came from, timestamped, and yours — no account
-required.
-
-★ BUILT FOR EVERY SCREEN
-Phones, tablets, foldables, and Chromebooks. On a big screen you get the full
-room-by-time schedule grid.
-
-★ OPEN SOURCE
-Every line of this app is public, built by the Kenyan Android community.
-Read it, learn from it, contribute:
-https://github.com/droidconKE/droidconKeKotlin
-
-Built with Kotlin, Jetpack Compose, and Navigation 3.
-```
-
-That last section matters more than it looks: the app's audience is Android developers, so **"read the source" is a feature**, and it's the reason people who aren't attending will still install it.
-
-### 13.5 The rest of the Play Console
+### 13.4 The rest of the Play Console
 
 - **Data safety form** — must be updated once §6 ships. Declare exactly what the AI features send. A mismatch between the form and the code is a policy violation and can pull the listing.
 - **In-app review** — prompt after a good moment (a session rated, a day completed), never on launch:
@@ -3030,7 +2922,7 @@ Ordered, not scheduled. Each stage is a coherent unit that leaves the app shippa
 **Stage 4 — Ship it**
 - §9.3–9.5 perf & size pass, with before/after numbers
 - §10.3 E2E journeys green in CI
-- §13 store listing, generated screenshots, staged rollout
+- §13 generated screenshots, staged rollout
 - Internal track → 10% → 100%, each step gated on Crashlytics being clean
 - **Feature freeze well before the conference.** Fixes only. Pick the date early and hold it.
 - Gate rehearsal with the actual registration staff, on their actual devices, with time left to fix what it finds

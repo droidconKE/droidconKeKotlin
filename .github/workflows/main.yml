@@ -4,19 +4,10 @@ on:
   push:
     branches: [ main ]
 
-env:
-  APP_SIGN_KEYSTORE_PATH: /tmp/keystore
-  CACHE_BUNDLER: ~/.bundler
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Write key file
-        env:
-          AUTH: ${{ secrets.KEYSTORE }}
-        run: echo $AUTH | base64 --decode > /tmp/keystore
-
       - name: Checkout the Repository
         uses: actions/checkout@v7
 
@@ -34,26 +25,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Bundler cache
-        uses: actions/cache@v6
-        with:
-          path: $CACHE_BUNDLER
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-
-      - name: Install Dependencies
-        run: gem install bundler && bundle install
-
-      - name: Run Release Build
-        uses: maierj/fastlane-action@v3.2.0
-        with:
-          lane: main
-          options: '{ "conf": "release" }'
-          skip-tracking: false
-          subdirectory: fastlane
-          bundle-install-path: CACHE_BUNDLER
+      - name: Build the debug app
+        run: ./gradlew assembleDebug
