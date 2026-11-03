@@ -26,5 +26,5 @@ class NextSessionWidgetReceiver : GlanceAppWidgetReceiver() {
     @Inject lateinit var sessionsRepo: SessionsRepo
 
     override val glanceAppWidget: GlanceAppWidget
-        get() = NextSessionWidget(sessionsRepo)
+        get() = NextSessionWidget { sessionsRepo }
 }

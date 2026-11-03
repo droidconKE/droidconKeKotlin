@@ -15,6 +15,7 @@
  */
 package com.android254.data.work
 
+import android.util.Log
 import androidx.work.ListenableWorker
 import com.android254.domain.repos.FeedRepo
 import com.android254.domain.repos.OrganizersRepo
@@ -31,6 +32,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import timber.log.Timber
 
 class SyncDataWorkerTest {
     private val sessions = syncing<SessionsRepo>()
@@ -58,6 +60,35 @@ class SyncDataWorkerTest {
             coEvery { feed.syncWith(any()) } returns false
 
             assertEquals(ListenableWorker.Result.retry(), worker(StandardTestDispatcher(testScheduler)).doWork())
+        }
+
+    @Test
+    fun `a failed sync warns with the parts that failed`() =
+        runTest {
+            coEvery { toggle.syncNowIfEmpty() } returns false
+            coEvery { sessions.syncWith(any()) } returns false
+            coEvery { feed.syncWith(any()) } returns false
+            val warnings = mutableListOf<String>()
+            val tree =
+                object : Timber.Tree() {
+                    override fun log(
+                        priority: Int,
+                        tag: String?,
+                        message: String,
+                        t: Throwable?,
+                    ) {
+                        if (priority == Log.WARN) warnings += message
+                    }
+                }
+
+            Timber.plant(tree)
+            try {
+                worker(StandardTestDispatcher(testScheduler)).doWork()
+            } finally {
+                Timber.uproot(tree)
+            }
+
+            assertEquals(listOf("Sync failed for sessions, feed; retrying"), warnings)
         }
 
     private fun worker(dispatcher: kotlinx.coroutines.CoroutineDispatcher) =

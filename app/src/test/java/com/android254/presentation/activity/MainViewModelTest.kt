@@ -23,6 +23,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import ke.droidcon.kotlin.core.notifications.NotificationPermission
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferences
 import ke.droidcon.kotlin.core.notifications.preferences.NotificationPreferencesStore
@@ -299,6 +300,14 @@ class MainViewModelTest {
             runCurrent()
 
             assertEquals(0, requests.size)
+        }
+
+    @Test
+    fun `coming back to the app syncs if the last sync is stale`() =
+        runTest {
+            viewModel().onForeground()
+
+            verify(exactly = 1) { syncDataWorkManager.startSyncIfStale() }
         }
 
     @Test

@@ -28,5 +28,8 @@ interface SyncDataWorkManager {
      */
     fun startFreshSync()
 
+    /** Like [startSync], unless a sync was asked for in the last few minutes. */
+    fun startSyncIfStale()
+
     fun setupPeriodicSync()
 }

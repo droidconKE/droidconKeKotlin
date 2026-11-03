@@ -33,12 +33,22 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.distinctUntilChanged
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
+@Singleton
 class SyncDataWorkManagerImpl
     @Inject
     constructor(
         private val workManager: WorkManager,
+        private val clock: Clock,
     ) : SyncDataWorkManager {
+        @Volatile
+        private var lastRequestedAt: Instant? = null
+
         override val isSyncing: Flow<Boolean> =
             combine(
                 workManager.getWorkInfosForUniqueWorkFlow(SYNC_DATA_WORKER_NAME),
@@ -51,7 +61,14 @@ class SyncDataWorkManagerImpl
 
         override fun startFreshSync() = enqueueSync(ExistingWorkPolicy.APPEND_OR_REPLACE)
 
+        override fun startSyncIfStale() {
+            val last = lastRequestedAt
+            if (last != null && clock.now() - last in Duration.ZERO..<STALE_AFTER) return
+            startSync()
+        }
+
         private fun enqueueSync(policy: ExistingWorkPolicy) {
+            lastRequestedAt = clock.now()
             val syncDataRequest =
                 OneTimeWorkRequestBuilder<SyncDataWorker>()
                     .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
@@ -82,3 +99,5 @@ class SyncDataWorkManagerImpl
     }
 
 val List<WorkInfo>.anyRunning get() = any { it.state == WorkInfo.State.RUNNING }
+
+private val STALE_AFTER = 15.minutes

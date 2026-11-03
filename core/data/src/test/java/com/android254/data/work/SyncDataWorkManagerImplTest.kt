@@ -31,9 +31,24 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import java.util.UUID
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 
 class SyncDataWorkManagerImplTest {
     private val workManager = mockk<WorkManager>(relaxed = true)
+    private var now = Instant.parse("2026-11-05T09:00:00Z")
+    private val clock =
+        object : Clock {
+            override fun now() = now
+        }
+
+    private fun manager(): SyncDataWorkManagerImpl {
+        every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns flowOf(emptyList())
+        return SyncDataWorkManagerImpl(workManager, clock)
+    }
+
+    private fun verifySyncsQueued(count: Int) = verify(exactly = count) { workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, any<OneTimeWorkRequest>()) }
 
     private fun work(state: WorkInfo.State) = WorkInfo(UUID.randomUUID(), state, emptySet())
 
@@ -43,7 +58,7 @@ class SyncDataWorkManagerImplTest {
     ): Boolean {
         every { workManager.getWorkInfosForUniqueWorkFlow(SYNC_DATA_WORKER_NAME) } returns flowOf(oneTime)
         every { workManager.getWorkInfosForUniqueWorkFlow(PERIODIC_SYNC_DATA_WORKER_NAME) } returns flowOf(periodic)
-        return SyncDataWorkManagerImpl(workManager).isSyncing.first()
+        return SyncDataWorkManagerImpl(workManager, clock).isSyncing.first()
     }
 
     @Test
@@ -69,21 +84,68 @@ class SyncDataWorkManagerImplTest {
 
     @Test
     fun `an ordinary sync folds into one already running`() {
-        every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns flowOf(emptyList())
+        manager().startSync()
 
-        SyncDataWorkManagerImpl(workManager).startSync()
-
-        verify { workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.KEEP, any<OneTimeWorkRequest>()) }
+        verifySyncsQueued(1)
     }
 
     @Test
     fun `a fresh sync queues behind one already running`() {
-        every { workManager.getWorkInfosForUniqueWorkFlow(any()) } returns flowOf(emptyList())
-
-        SyncDataWorkManagerImpl(workManager).startFreshSync()
+        manager().startFreshSync()
 
         verify {
             workManager.enqueueUniqueWork(SYNC_DATA_WORKER_NAME, ExistingWorkPolicy.APPEND_OR_REPLACE, any<OneTimeWorkRequest>())
         }
+    }
+
+    @Test
+    fun `a stale check with no earlier sync syncs`() {
+        manager().startSyncIfStale()
+
+        verifySyncsQueued(1)
+    }
+
+    @Test
+    fun `coming back soon after a sync does not sync again`() {
+        val manager = manager()
+        manager.startSync()
+        now += 14.minutes
+
+        manager.startSyncIfStale()
+
+        verifySyncsQueued(1)
+    }
+
+    @Test
+    fun `coming back fifteen minutes after a sync syncs again`() {
+        val manager = manager()
+        manager.startSync()
+        now += 15.minutes
+
+        manager.startSyncIfStale()
+
+        verifySyncsQueued(2)
+    }
+
+    @Test
+    fun `a clock set back does not hold off syncs until it catches up`() {
+        val manager = manager()
+        manager.startSync()
+        now -= 60.minutes
+
+        manager.startSyncIfStale()
+
+        verifySyncsQueued(2)
+    }
+
+    @Test
+    fun `a push-requested sync counts as recent`() {
+        val manager = manager()
+        manager.startFreshSync()
+        now += 5.minutes
+
+        manager.startSyncIfStale()
+
+        verifySyncsQueued(0)
     }
 }

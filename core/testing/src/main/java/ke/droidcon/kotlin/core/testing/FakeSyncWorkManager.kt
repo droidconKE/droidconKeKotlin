@@ -29,6 +29,9 @@ class FakeSyncWorkManager : SyncDataWorkManager {
     override fun startFreshSync() {
     }
 
+    override fun startSyncIfStale() {
+    }
+
     override fun setupPeriodicSync() {
     }
 }

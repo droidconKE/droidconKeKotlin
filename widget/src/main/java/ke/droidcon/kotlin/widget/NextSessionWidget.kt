@@ -31,8 +31,12 @@ import com.android254.domain.repos.SessionsRepo
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Clock
 
+/**
+ * Takes the repo as a function because Glance also builds the receiver by reflection, with nothing
+ * injected, just to read this class's name; only [provideGlance] may touch the repo.
+ */
 class NextSessionWidget(
-    private val sessionsRepo: SessionsRepo,
+    private val sessionsRepo: () -> SessionsRepo,
 ) : GlanceAppWidget() {
     override val sizeMode =
         SizeMode.Responsive(
@@ -43,10 +47,11 @@ class NextSessionWidget(
         context: Context,
         id: GlanceId,
     ) {
+        val repo = sessionsRepo()
         provideContent {
             val now = remember { Clock.System.now().toEpochMilliseconds() }
-            val currentSessionsFlow = remember(now) { sessionsRepo.fetchCurrentSessions(now) }
-            val upNextSessionsFlow = remember(now) { sessionsRepo.fetchUpNextSessions(now) }
+            val currentSessionsFlow = remember(now) { repo.fetchCurrentSessions(now) }
+            val upNextSessionsFlow = remember(now) { repo.fetchUpNextSessions(now) }
             val current by currentSessionsFlow.collectAsState(emptyList())
             val next by upNextSessionsFlow.collectAsState(emptyList())
             val launchIntent = remember { context.packageManager.getLaunchIntentForPackage(context.packageName) }

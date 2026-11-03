@@ -30,6 +30,6 @@ class NextSessionWidgetRefresher
         private val sessionsRepo: SessionsRepo,
     ) : WidgetRefresher {
         override suspend fun refresh() {
-            NextSessionWidget(sessionsRepo).updateAll(context)
+            NextSessionWidget { sessionsRepo }.updateAll(context)
         }
     }
