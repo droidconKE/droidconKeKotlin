@@ -149,7 +149,10 @@ that already had data.
 ## Sync
 
 `SyncDataWorker` is a Hilt-injected `CoroutineWorker` that implements `domain.sync.Synchronizer`.
-It runs periodically and once on app start, from `DroidconApp.onCreate`.
+It runs daily, once when the process starts (`DroidconApp.onCreate`), and again when the user
+comes back to an app still in memory if nothing has asked for a sync in 15 minutes
+(`MainActivity.onStart` calls `startSyncIfStale()`). Pull-to-refresh and a `sync_request` push
+start one too.
 
 ```mermaid
 sequenceDiagram
@@ -187,9 +190,11 @@ next start. The defaults in `remote_config_defaults.xml` apply until then; they 
 thread, so `FeatureFlags` reads are `suspend` and wait for them (`RemoteFeatureToggle.awaitDefaults`),
 which keeps a cold start from reading a switch as off and growing the hero a moment later.
 
-The five run concurrently under `awaitAll` and the result is `.all { it }` — one failure
-retries the whole job. That is deliberate: a half-synced database, where the sessions are
-current but the speakers they reference are not, is worse than a slightly stale one.
+The five run concurrently, and one failure retries the whole job. That is deliberate: a
+half-synced database, where the sessions are current but the speakers they reference are not, is
+worse than a slightly stale one. A failed run logs a warning naming the parts that failed, and
+release builds send warnings to Crashlytics (`CrashlyticsTree`), so a sync that keeps failing shows
+up there. A successful run refreshes the home screen widget.
 
 Each repository fetches first, then deletes the rows the API no longer returns and upserts the
 rest inside one Room transaction (`Synchronizer.inTransaction`, backed by `SyncTransaction`), so
@@ -537,6 +542,9 @@ What the app relies on, so a change does not undo it:
   `stateDescription`, and section titles are `heading()`.
 - **Detail panes set `paneTitle`**, so TalkBack announces a session or speaker opening beside the
   list.
+- **The Now/Next rail is a polite live region**, so TalkBack announces a new session there without
+  the user moving focus. Its text changes only when the session or its status does, never by
+  the minute.
 - **Reduced motion.** With "Remove animations" on, Compose snaps every infinite transition to its
   end value and stops it. So a continuous animation (the live badge and border, the pulse, the
   shimmer) must end on a value that reads well at rest; `LiveBadge` ends opaque.

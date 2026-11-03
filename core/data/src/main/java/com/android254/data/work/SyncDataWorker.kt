@@ -37,7 +37,6 @@ import ke.droidcon.kotlin.datasource.local.SyncTransaction
 import ke.droidcon.kotlin.datasource.remote.utils.RemoteFeatureToggle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import ke.droidcon.kotlin.core.common.R as CommonR
@@ -75,20 +74,23 @@ class SyncDataWorker
             withContext(ioDispatcher) {
                 suspendRunCatching { remoteFeatureToggle.syncNowIfEmpty() }
                     .onFailure { Timber.w(it, "Feature toggle fetch failed; syncing with cached config") }
-                val syncedSuccessfully =
-                    awaitAll(
-                        async { sessionsRepo.sync() },
-                        async { speakersRepo.sync() },
-                        async { sponsorsRepo.sync() },
-                        async { organizersRepo.sync() },
-                        async { feedRepo.sync() },
-                    ).all { it }
+                val failed =
+                    listOf(
+                        "sessions" to async { sessionsRepo.sync() },
+                        "speakers" to async { speakersRepo.sync() },
+                        "sponsors" to async { sponsorsRepo.sync() },
+                        "organizers" to async { organizersRepo.sync() },
+                        "feed" to async { feedRepo.sync() },
+                    ).filterNot { (_, synced) -> synced.await() }
+                        .map { (part, _) -> part }
 
-                if (syncedSuccessfully) {
+                if (failed.isEmpty()) {
                     runCatching { widgetRefresher.refresh() }
                         .onFailure { Timber.e(it, "widget refresh failed") }
                     Result.success()
                 } else {
+                    // Warnings reach Crashlytics in release builds.
+                    Timber.w("Sync failed for %s; retrying", failed.joinToString())
                     Result.retry()
                 }
             }

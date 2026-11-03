@@ -138,6 +138,9 @@ class MainViewModel
             viewModelScope.launch { withContext(NonCancellable) { notificationPreferences.markPermissionPrompted() } }
         }
 
+        /** The startup sync only runs when the process starts, not when the user returns to it. */
+        fun onForeground() = syncDataWorkManager.startSyncIfStale()
+
         /** The outcome of the system prompt; a refusal is the moment to point at settings. */
         fun onNotificationPermissionResult(granted: Boolean) {
             if (!granted) remindersOff.trySend(Unit)

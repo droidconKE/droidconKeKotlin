@@ -176,8 +176,8 @@ Measured against `android/nowinandroid` (`a49ed25`, 2026-09-22). In order:
 
 1. **Push-triggered sync (done in the app; waits on the backend).** A `sync_request` data message
    starts a fresh sync and posts nothing (see [`docs/push-payload.md`](push-payload.md)). Until the
-   backend sends it, the app syncs only on start and every 24 hours, so a room change on conference
-   day can take a day to arrive.
+   backend sends it, a room change reaches a phone only on the next start, return to the app after
+   15 minutes, pull-to-refresh or daily sync.
 2. **Delta sync (needs backend).** NiA's `changeListSync` reads versioned change lists
    (`getTopicChangeList(after = version)`) and fetches only what changed. The droidcon API returns
    full lists and has no change-list endpoint, so this does not port. If the backend adds `ETag`
@@ -349,10 +349,8 @@ private val AUTOSAVE_DEBOUNCE = 800.milliseconds
 ### 5.6 Accessibility — what is left
 
 The conventions the app follows are in [`docs/architecture.md`](architecture.md#accessibility).
-Two pieces are missing:
+One piece is missing:
 
-- **A live region on the Now/Next rail**, so TalkBack announces a change of session without the
-  user moving focus: `Modifier.semantics { liveRegion = LiveRegionMode.Polite }`.
 - **An automated gate**, so it doesn't rot:
 
 ```kotlin
@@ -2874,16 +2872,6 @@ Firebase.crashlytics.apply {
     setCustomKey("last_sync_ago_minutes", lastSyncAgo.inWholeMinutes)
     setCustomKey("ai_engine_available", availableEngines.joinToString())
     setCustomKey("conference_phase", conferencePhase::class.simpleName ?: "unknown")
-}
-```
-
-Non-fatal reporting for the failures that currently vanish into Timber:
-
-```kotlin
-// SyncDataWorker: a sync that always fails is invisible today
-if (!syncedSuccessfully) {
-    Firebase.crashlytics.recordException(SyncFailedException(failedRepos))
-    Result.retry()
 }
 ```
 

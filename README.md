@@ -175,7 +175,7 @@ sequenceDiagram
     Repo->>Room: query, returns a Flow
     Room-->>UI: cached data, immediately
 
-    Note over Work: periodic + on app start
+    Note over Work: daily, on app start, and on return after 15 min
     Work->>Repo: sync() for sessions, speakers,<br/>sponsors, organisers, feed
     Repo->>Ktor: fetch
     Ktor-->>Repo: DTOs
