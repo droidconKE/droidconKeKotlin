@@ -32,8 +32,8 @@ android {
 
     defaultConfig {
         applicationId = "ke.droidcon.kotlin"
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = providers.gradleProperty("versionCode").map(String::toInt).getOrElse(1)
+        versionName = providers.gradleProperty("versionName").getOrElse("1.0.0")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -53,6 +53,14 @@ android {
             keyPassword = "droidconkenya"
             storePassword = "droidconkenya"
         }
+        providers.gradleProperty("releaseStoreFile").orNull?.let { releaseStoreFile ->
+            create("release") {
+                storeFile = file(releaseStoreFile)
+                storePassword = providers.gradleProperty("releaseStorePassword").get()
+                keyAlias = providers.gradleProperty("releaseKeyAlias").get()
+                keyPassword = providers.gradleProperty("releaseKeyPassword").get()
+            }
+        }
     }
 
     buildTypes {
@@ -61,6 +69,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
+            signingConfig = signingConfigs.findByName("release")
             // Legacy DSL on purpose: the baseline profile plugin ignores optimization {}, so its
             // nonMinifiedRelease variant would be minified. See docs/performance.md#r8.
             isMinifyEnabled = true
