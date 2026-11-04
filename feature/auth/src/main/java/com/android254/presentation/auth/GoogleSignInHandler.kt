@@ -34,91 +34,91 @@ import java.security.SecureRandom
 import javax.inject.Inject
 
 class GoogleSignInHandler
-@Inject
-constructor(
-    @ApplicationContext private val context: Context,
-) {
-    private val credentialManager = CredentialManager.create(context)
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) {
+        private val credentialManager = CredentialManager.create(context)
 
-    /** [activityContext] must be an Activity: Credential Manager renders the picker over it. */
-    suspend fun signIn(activityContext: Context): Result<String> =
-        runCatching {
-            val nonce = generateNonce()
+        /** [activityContext] must be an Activity: Credential Manager renders the picker over it. */
+        suspend fun signIn(activityContext: Context): Result<String> =
+            runCatching {
+                val nonce = generateNonce()
 
-            suspend fun getCredential(option: androidx.credentials.CredentialOption): GetCredentialResponse =
-                credentialManager.getCredential(
-                    context = activityContext,
-                    request = GetCredentialRequest.Builder().addCredentialOption(option).build(),
-                )
+                suspend fun getCredential(option: androidx.credentials.CredentialOption): GetCredentialResponse =
+                    credentialManager.getCredential(
+                        context = activityContext,
+                        request = GetCredentialRequest.Builder().addCredentialOption(option).build(),
+                    )
 
-            val googleIdAuthorizedOption =
-                GetGoogleIdOption
-                    .Builder()
-                    .setServerClientId(context.getString(R.string.default_web_client_id))
-                    .setFilterByAuthorizedAccounts(true)
-                    .setAutoSelectEnabled(true)
-                    .setNonce(nonce)
-                    .build()
+                val googleIdAuthorizedOption =
+                    GetGoogleIdOption
+                        .Builder()
+                        .setServerClientId(context.getString(R.string.default_web_client_id))
+                        .setFilterByAuthorizedAccounts(true)
+                        .setAutoSelectEnabled(true)
+                        .setNonce(nonce)
+                        .build()
 
-            val googleIdAllAccountsOption =
-                GetGoogleIdOption
-                    .Builder()
-                    .setServerClientId(context.getString(R.string.default_web_client_id))
-                    .setFilterByAuthorizedAccounts(false)
-                    .setAutoSelectEnabled(false)
-                    .setNonce(nonce)
-                    .build()
+                val googleIdAllAccountsOption =
+                    GetGoogleIdOption
+                        .Builder()
+                        .setServerClientId(context.getString(R.string.default_web_client_id))
+                        .setFilterByAuthorizedAccounts(false)
+                        .setAutoSelectEnabled(false)
+                        .setNonce(nonce)
+                        .build()
 
-            val signInWithGoogleOption =
-                GetSignInWithGoogleOption
-                    .Builder(serverClientId = context.getString(R.string.default_web_client_id))
-                    .setNonce(nonce)
-                    .build()
+                val signInWithGoogleOption =
+                    GetSignInWithGoogleOption
+                        .Builder(serverClientId = context.getString(R.string.default_web_client_id))
+                        .setNonce(nonce)
+                        .build()
 
-            val response =
-                try {
-                    getCredential(googleIdAuthorizedOption)
-                } catch (e: NoCredentialException) {
-                    Timber.d(e, "No previously authorized account; trying full bottom sheet picker")
+                val response =
                     try {
-                        getCredential(googleIdAllAccountsOption)
-                    } catch (e2: NoCredentialException) {
-                        Timber.d(e2, "One Tap bottom sheet failed; falling back to explicit Sign in with Google")
-                        getCredential(signInWithGoogleOption)
+                        getCredential(googleIdAuthorizedOption)
+                    } catch (e: NoCredentialException) {
+                        Timber.d(e, "No previously authorized account; trying full bottom sheet picker")
+                        try {
+                            getCredential(googleIdAllAccountsOption)
+                        } catch (e2: NoCredentialException) {
+                            Timber.d(e2, "One Tap bottom sheet failed; falling back to explicit Sign in with Google")
+                            getCredential(signInWithGoogleOption)
+                        }
                     }
-                }
 
-            val credential = response.credential
-            require(
-                credential is CustomCredential &&
+                val credential = response.credential
+                require(
+                    credential is CustomCredential &&
                         (
-                                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL ||
-                                        credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_SIWG_CREDENTIAL
-                                ),
-            ) { "Unexpected credential type: ${credential.type}" }
+                            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL ||
+                                credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_SIWG_CREDENTIAL
+                        ),
+                ) { "Unexpected credential type: ${credential.type}" }
 
-            GoogleIdTokenCredential.createFrom(credential.data).idToken
-        }.onFailure { e ->
-            when (e) {
-                is GetCredentialCancellationException -> Timber.d("User cancelled sign-in")
-                else -> Timber.e(e, "Google sign-in failed")
+                GoogleIdTokenCredential.createFrom(credential.data).idToken
+            }.onFailure { e ->
+                when (e) {
+                    is GetCredentialCancellationException -> Timber.d("User cancelled sign-in")
+                    else -> Timber.e(e, "Google sign-in failed")
+                }
             }
+
+        suspend fun signOut() {
+            runCatching {
+                credentialManager.clearCredentialState(ClearCredentialStateRequest())
+            }.onFailure { Timber.e(it, "Clearing the credential state failed") }
         }
 
-    suspend fun signOut() {
-        runCatching {
-            credentialManager.clearCredentialState(ClearCredentialStateRequest())
-        }.onFailure { Timber.e(it, "Clearing the credential state failed") }
-    }
+        // Client-generated: the backend does not verify a nonce yet, so this only prevents
+        // replay across this app's own sessions.
+        private fun generateNonce(): String =
+            ByteArray(NONCE_BYTES)
+                .also { SecureRandom().nextBytes(it) }
+                .let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
 
-    // Client-generated: the backend does not verify a nonce yet, so this only prevents
-    // replay across this app's own sessions.
-    private fun generateNonce(): String =
-        ByteArray(NONCE_BYTES)
-            .also { SecureRandom().nextBytes(it) }
-            .let { Base64.encodeToString(it, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING) }
-
-    private companion object {
-        const val NONCE_BYTES = 32
+        private companion object {
+            const val NONCE_BYTES = 32
+        }
     }
-}
