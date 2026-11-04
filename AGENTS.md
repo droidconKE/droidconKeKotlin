@@ -228,10 +228,12 @@ contract relies on. Drop the `version.ref` once a BOM manages a stable 1.5.0.
   the work that clears it. Counts are in
   [`docs/static-analysis.md`](docs/static-analysis.md).
 - **Strings live in `strings.xml`.** No user-visible text in Kotlin.
-- **A push to `releases/<yyyy-mon-d>` is a production release.** The deploy workflow sets
-  `versionCode` to its own run number and `versionName` to `1.0.<run>`, builds and signs the
-  bundle, uploads it to the production track at 100%, and ships `whatsnew/whatsnew-en-US` as
-  the release notes — so update that file on the release branch and bring it back to `main`.
+- **A push to `releases/<yyyy-mon-d>` is a production release.** The deploy workflow passes
+  `versionCode` (its own run number), `versionName` (`1.0.<run>`) and the upload key to Gradle
+  as properties, so `bundleRelease` builds and signs the bundle; anywhere else the release
+  build is unsigned. It uploads the bundle to the production track at 100% and ships
+  `whatsnew/whatsnew-en-US` as the release notes — so update that file on the release branch
+  and bring it back to `main`.
   The R8 mapping goes to Play and Crashlytics from that workflow only (`-PuploadCrashlyticsMapping`)
   and is kept as a run artifact; PR builds never upload one. The store listing itself (icon,
   feature graphic, screenshots, descriptions) lives in `playstore/`, whose README says how to

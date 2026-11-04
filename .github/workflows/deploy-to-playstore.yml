@@ -16,14 +16,19 @@ jobs:
           distribution: 'zulu'
           java-version: '21'
 
-      - name: Bump version
-        uses: chkfung/android-version-actions@v1.2
-        with:
-          gradlePath: app/build.gradle.kts
-          versionCode: ${{github.run_number}}
-          versionName: ${{ format('1.0.{0}', github.run_number ) }}
+      - name: Write the signing key
+        env:
+          PLAYSTORE_SIGNING_KEY: ${{ secrets.PLAYSTORE_SIGNING_KEY }}
+        run: echo "$PLAYSTORE_SIGNING_KEY" | base64 --decode --ignore-garbage > "$RUNNER_TEMP/release.jks"
 
-      - name: Assemble Release Bundle
+      - name: Build and sign the release bundle
+        env:
+          ORG_GRADLE_PROJECT_versionCode: ${{ github.run_number }}
+          ORG_GRADLE_PROJECT_versionName: 1.0.${{ github.run_number }}
+          ORG_GRADLE_PROJECT_releaseStoreFile: ${{ runner.temp }}/release.jks
+          ORG_GRADLE_PROJECT_releaseStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_releaseKeyAlias: ${{ secrets.KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_releaseKeyPassword: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew bundleRelease -PuploadCrashlyticsMapping=true
 
       - name: Keep the R8 mapping with the run
@@ -32,15 +37,6 @@ jobs:
           name: mapping-${{ github.run_number }}
           path: app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: error
-
-      - name: Sign Release
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.PLAYSTORE_SIGNING_KEY }}
-          alias: ${{ secrets.KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Deploy to Production
         uses: r0adkll/upload-google-play@v1.1.5
