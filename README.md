@@ -540,13 +540,6 @@ We would endlessly like to thank the following contributors
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/bensalcie">
-                    <img src="https://avatars.githubusercontent.com/u/17502827?v=4" width="100;" alt="bensalcie"/>
-                    <br />
-                    <sub><b>Benard Ngoda</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/mog-rn">
                     <img src="https://avatars.githubusercontent.com/u/61131314?v=4" width="100;" alt="mog-rn"/>
                     <br />
@@ -581,8 +574,6 @@ We would endlessly like to thank the following contributors
                     <sub><b>Null</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/stephenWanjala">
                     <img src="https://avatars.githubusercontent.com/u/74505448?v=4" width="100;" alt="stephenWanjala"/>
@@ -590,6 +581,8 @@ We would endlessly like to thank the following contributors
                     <sub><b>Wanjala Stephen</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/josphatmwania">
                     <img src="https://avatars.githubusercontent.com/u/82445335?v=4" width="100;" alt="josphatmwania"/>
@@ -625,8 +618,6 @@ We would endlessly like to thank the following contributors
                     <sub><b>Beatrice Kinya</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/tamzi">
                     <img src="https://avatars.githubusercontent.com/u/3008932?v=4" width="100;" alt="tamzi"/>
