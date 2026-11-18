@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import com.android.build.api.variant.HostTestBuilder
+
 plugins {
     alias(libs.plugins.droidconke.quality)
     alias(libs.plugins.droidconke.android.application)
@@ -92,6 +94,9 @@ android {
 }
 
 androidComponents {
+    beforeVariants { variant ->
+        variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = true
+    }
     onVariants { variant ->
         if (variant.buildType != "debug") {
             variant.packaging.resources.excludes
