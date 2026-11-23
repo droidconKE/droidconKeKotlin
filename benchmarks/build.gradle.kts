@@ -23,10 +23,20 @@ plugins {
 
 android {
     namespace = "ke.droidcon.kotlin.benchmarks"
-    compileSdk =
-        libs.versions.android.compile.sdk
-            .get()
-            .toInt()
+    compileSdk {
+        version =
+            release(
+                libs.versions.android.compile.sdk
+                    .asProvider()
+                    .get()
+                    .toInt(),
+            ) {
+                minorApiLevel =
+                    libs.versions.android.compile.sdk.minor
+                        .get()
+                        .toInt()
+            }
+    }
 
     defaultConfig {
         minSdk = 28 // ART profiles need API 28+

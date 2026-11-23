@@ -1,5 +1,6 @@
 [versions]
 android-compile-sdk = "37"
+android-compile-sdk-minor = "1"
 android-min-sdk = "26"
 # Shared by the application and library convention plugins so they cannot diverge.
 android-target-sdk = "37"
