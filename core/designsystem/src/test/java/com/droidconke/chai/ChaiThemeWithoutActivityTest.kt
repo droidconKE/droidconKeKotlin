@@ -25,9 +25,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/**
- * Verifies ChaiTheme renders in both themes without touching Activity/window APIs (closes B5).
- */
 @RunWith(RobolectricTestRunner::class)
 class ChaiThemeWithoutActivityTest {
     @get:Rule

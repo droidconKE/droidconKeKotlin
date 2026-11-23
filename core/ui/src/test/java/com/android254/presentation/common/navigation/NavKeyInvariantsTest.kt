@@ -24,10 +24,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.lang.reflect.Modifier
 
-/**
- * Navigation keys are serialized into `SavedState`: they must stay immutable, `@Serializable`, and
- * free of Android resource IDs (which change between builds). Closes B10.
- */
 class NavKeyInvariantsTest {
     private val resourceAnnotations =
         setOf(

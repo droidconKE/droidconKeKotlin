@@ -75,7 +75,7 @@ class SessionReminderWorkerTest {
             assertEquals(1, context.getSystemService(NotificationManager::class.java).activeNotifications.size)
         }
 
-    // Stubbing notify() on a mock to simulate a runtime SecurityException; no real notification is posted.
+    // MockK stub; no notification posted.
     @SuppressLint("MissingPermission")
     @Test
     fun `a security exception during notify completes without retrying`() =

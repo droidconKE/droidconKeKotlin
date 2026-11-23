@@ -57,7 +57,6 @@ class DroidconApp : Application() {
         NotificationChannelSpec.createAll(this)
 
         val appScope = CoroutineScope(defaultDispatcher + SupervisorJob())
-        // Initialize WorkManager and enqueue sync off the main thread to avoid cold-start stalls.
         appScope.launch {
             val workManager = syncDataWorkManager.get()
             workManager.setupPeriodicSync()
