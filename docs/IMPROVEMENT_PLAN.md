@@ -1,6 +1,6 @@
 # droidconKE Android — Modernization & Product Plan
 
-> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-10-31
+> **Status:** Living roadmap — pending work only · **Last pruned:** 2026-11-23
 > **Repo:** `droidconKeKotlin`
 > **Scope:** What is left to build — the design system, adaptive follow-ups, intelligent (AI) experiences, ticketing, notifications, performance, testing, new product surfaces, and store presence.
 >
@@ -157,16 +157,14 @@ users their bookmarks, for a cosmetic gain.
 
 ### 3.9 Phase 0 — what is left
 
-Four fixed defects have no test, so nothing stops them coming back:
+Two fixed defects still have no test, so nothing stops them coming back:
 
 | Finding | What a test would assert |
 | --- | --- |
-| B5 — the theme threw outside an Activity | `ChaiTheme` renders with no Activity behind it. It no longer touches `LocalView`, so this is a small Robolectric test |
 | B6 — the "My sessions" switch reset on rotation while the list stayed filtered | The switch survives recreation. Needs a `SavedStateHandle` / process-death test, which the suite has no harness for yet |
 | B7 — the splash screen waited on a network call | The splash releases on cached data, never on Remote Config. Needs a startup test |
-| B10 — mutable state and resource IDs in navigation keys | Every `NavKey` is immutable and holds no resource ID. A reflection test over the implementations would close it |
 
-B6 and B10 protect user data, so do those first.
+B6 protects user state, so do that first.
 
 ---
 
