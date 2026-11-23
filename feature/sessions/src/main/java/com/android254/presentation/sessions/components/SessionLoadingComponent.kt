@@ -56,7 +56,7 @@ fun SessionLoadingComponent(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(key = "loading_title", span = { GridItemSpan(maxLineSpan) }, contentType = "title") {
             Spacer(modifier = Modifier.height(20.dp))
 
             ChaiSubTitle(
@@ -72,13 +72,25 @@ fun SessionLoadingComponent(
 
         if (isSessionLayoutList) {
             repeat(3) { index ->
-                item(key = "loading_header_$index", span = { GridItemSpan(maxLineSpan) }) {
+                item(
+                    key = "loading_header_$index",
+                    span = { GridItemSpan(maxLineSpan) },
+                    contentType = "loading_header",
+                ) {
                     LoadingTimeHeader()
                 }
-                items(3) { SessionsLoadingCard() }
+                items(
+                    count = 3,
+                    key = { cardIndex -> "loading_card_${index}_$cardIndex" },
+                    contentType = { "loading_card" },
+                ) { SessionsLoadingCard() }
             }
         } else {
-            items(4) { SessionsLoadingCardWithBannerImage() }
+            items(
+                count = 4,
+                key = { cardIndex -> "loading_banner_$cardIndex" },
+                contentType = { "loading_banner" },
+            ) { SessionsLoadingCardWithBannerImage() }
         }
     }
 }

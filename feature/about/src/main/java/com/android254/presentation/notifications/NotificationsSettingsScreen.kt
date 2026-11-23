@@ -146,7 +146,7 @@ internal fun NotificationsSettingsContent(
                     .readablePaneWidth(),
             contentPadding = PaddingValues(start = ContentPadding, end = ContentPadding, bottom = GroupSpacing),
         ) {
-            item {
+            item(key = "blocked_banner", contentType = "banner") {
                 AnimatedVisibility(
                     visible = uiState.notificationsBlocked,
                     enter =
@@ -163,7 +163,7 @@ internal fun NotificationsSettingsContent(
                 }
             }
 
-            item {
+            item(key = "notification_types_header", contentType = "section_header") {
                 Text(
                     text = stringResource(R.string.settings_notification_types),
                     style = MaterialTheme.typography.titleSmallEmphasized,
@@ -178,7 +178,7 @@ internal fun NotificationsSettingsContent(
                 )
             }
 
-            item {
+            item(key = "channel_group", contentType = "channel_group") {
                 ChannelGroup(
                     uiState = uiState,
                     onChannelEnabledChange = onChannelEnabledChange,
@@ -186,7 +186,7 @@ internal fun NotificationsSettingsContent(
                 )
             }
 
-            item {
+            item(key = "system_settings", contentType = "system_settings") {
                 SystemSettingsItem(
                     onClick = onOpenSystemSettings,
                     modifier = Modifier.padding(top = GroupSpacing),

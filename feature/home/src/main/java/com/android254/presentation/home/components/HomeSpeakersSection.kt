@@ -57,7 +57,7 @@ fun HomeSpeakersSection(
                     .padding(top = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(featuredSpeakers, key = { it.name }) { speaker ->
+            items(featuredSpeakers, key = { it.name }, contentType = { "speaker" }) { speaker ->
                 HomeSpeakerComponent(speaker = speaker, onClick = {
                     navigateToSpeaker(speaker.name)
                 })

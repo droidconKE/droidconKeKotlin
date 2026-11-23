@@ -87,7 +87,13 @@ fun FullscreenDialog(
 
     Dialog(
         onDismissRequest = { coroutineScope.launch { startDismissWithExitAnimation(animateContentBackTrigger, onDismissRequest) } },
-        properties = DialogProperties(usePlatformDefaultWidth = false, dismissOnBackPress = dismissOnBackPress, dismissOnClickOutside = false),
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+                decorFitsSystemWindows = false,
+                dismissOnBackPress = dismissOnBackPress,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Box(
             modifier.fillMaxSize(),

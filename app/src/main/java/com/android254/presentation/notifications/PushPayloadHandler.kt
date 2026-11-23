@@ -170,7 +170,11 @@ class PushPayloadHandlerImpl
                     .setAutoCancel(true)
                     .build()
 
-            NotificationManagerCompat.from(context).notify(id, notification)
+            try {
+                NotificationManagerCompat.from(context).notify(id, notification)
+            } catch (e: SecurityException) {
+                Timber.w(e, "Push on ${channel.id} dropped: POST_NOTIFICATIONS revoked before notify")
+            }
         }
 
         private fun viewIntent(deepLink: String): Intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink)).setPackage(context.packageName)

@@ -119,13 +119,14 @@ public fun com.android254.presentation.home.components.HomeSectionTitle(text: ko
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.home.components.HomeSessionContent(session: com.android254.presentation.models.SessionPresentationModel, onSessionClick: kotlin.Function1<@[ParameterName(name = \, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.home.components.HomeSessionContent(session: com.android254.presentation.models.SessionPresentationModel, onSessionClick: kotlin.Function1<@[ParameterName(name = \, modifier: androidx.compose.ui.Modifier, fontScale: kotlin.Float): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - session: STABLE (class with no mutable properties)
     - onSessionClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - fontScale: STABLE (primitive type)
 
 @Composable
 public fun com.android254.presentation.home.components.HomeSessionLoadingComponent(modifier: androidx.compose.ui.Modifier): kotlin.Unit

@@ -108,6 +108,9 @@ class SessionReminderWorker
 
                 Timber.d("Posted reminder notification for session $sessionId")
                 Result.success(workDataOf(KEY_REMINDED_START to inputData.getLong(KEY_SESSION_START, 0L)))
+            } catch (e: SecurityException) {
+                Timber.w(e, "POST_NOTIFICATIONS permission revoked before notify; skipping reminder")
+                Result.success()
             } catch (e: Exception) {
                 Timber.e(e, "Error posting session reminder")
                 Result.retry()

@@ -62,14 +62,16 @@ fun HomeSessionSection(
             onViewAllClicked = onViewAllSessionClicked,
         )
         Spacer(modifier = Modifier.height(16.dp))
+        val fontScale = LocalDensity.current.fontScale
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.testTag("sessions"),
         ) {
-            items(sessions, key = { it.id }) { session ->
+            items(sessions, key = { it.id }, contentType = { "session" }) { session ->
                 HomeSessionContent(
                     session = session,
                     onSessionClick = { onSessionClick(session.id) },
+                    fontScale = fontScale,
                 )
             }
         }
@@ -81,8 +83,8 @@ fun HomeSessionContent(
     session: SessionPresentationModel,
     onSessionClick: (sessionId: String) -> Unit,
     modifier: Modifier = Modifier,
+    fontScale: Float = LocalDensity.current.fontScale,
 ) {
-    val fontScale = LocalDensity.current.fontScale
     Card(
         modifier = modifier.width(SessionCardWidth * fontScale.coerceAtLeast(1f)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),

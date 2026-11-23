@@ -15,7 +15,10 @@
  */
 package ke.droidcon.kotlin.widget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.util.Log
+import android.widget.RemoteViews
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -48,13 +51,13 @@ class NextSessionWidget(
         id: GlanceId,
     ) {
         val repo = sessionsRepo()
+        val now = Clock.System.now().toEpochMilliseconds()
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
         provideContent {
-            val now = remember { Clock.System.now().toEpochMilliseconds() }
             val currentSessionsFlow = remember(now) { repo.fetchCurrentSessions(now) }
             val upNextSessionsFlow = remember(now) { repo.fetchUpNextSessions(now) }
             val current by currentSessionsFlow.collectAsState(emptyList())
             val next by upNextSessionsFlow.collectAsState(emptyList())
-            val launchIntent = remember { context.packageManager.getLaunchIntentForPackage(context.packageName) }
 
             GlanceTheme {
                 WidgetContent(
@@ -67,7 +70,22 @@ class NextSessionWidget(
         }
     }
 
+    override fun onCompositionError(
+        context: Context,
+        glanceId: GlanceId,
+        appWidgetId: Int,
+        throwable: Throwable,
+    ) {
+        Log.e(TAG, "Failed to compose NextSessionWidget (appWidgetId=$appWidgetId)", throwable)
+        val fallback =
+            RemoteViews(context.packageName, android.R.layout.simple_list_item_1).apply {
+                setTextViewText(android.R.id.text1, context.getString(R.string.widget_error_fallback))
+            }
+        AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, fallback)
+    }
+
     private companion object {
+        const val TAG = "NextSessionWidget"
         val SmallWidget = DpSize(140.dp, 100.dp)
         val MediumWidget = DpSize(250.dp, 100.dp)
         val LargeWidget = DpSize(250.dp, 200.dp)

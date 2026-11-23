@@ -232,7 +232,7 @@ internal fun SpeakersScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            items(items = uiState.speakers, key = { it.name }) { speaker ->
+                            items(items = uiState.speakers, key = { it.name }, contentType = { "speaker" }) { speaker ->
                                 SpeakerComponent(
                                     speaker = speaker,
                                     onClick = {
