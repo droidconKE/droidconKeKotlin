@@ -32,7 +32,11 @@ internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        compileSdk = libs.findVersion("android-compile-sdk").get().toString().toInt()
+        compileSdk {
+            version = release(libs.findVersion("android-compile-sdk").get().toString().toInt()) {
+                minorApiLevel = libs.findVersion("android-compile-sdk-minor").get().toString().toInt()
+            }
+        }
 
         defaultConfig.minSdk = libs.findVersion("android-min-sdk").get().toString().toInt()
         // Omitting this silently discovers no tests rather than failing.
