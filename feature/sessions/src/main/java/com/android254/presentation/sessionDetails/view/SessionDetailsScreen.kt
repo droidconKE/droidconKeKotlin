@@ -40,12 +40,15 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +73,8 @@ import com.android254.presentation.common.adaptive.paneStartDivider
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.adaptive.rememberHorizontalHingeBounds
 import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
+import com.android254.presentation.common.calendar.CalendarEvent
+import com.android254.presentation.common.calendar.launchAddToCalendar
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarProtection
@@ -86,12 +91,14 @@ import com.android254.presentation.sessionDetails.view.components.SessionTitleAn
 import com.android254.presentation.sessionDetails.view.components.SpeakerTwitterHandle
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
+import com.android254.presentation.sessions.mappers.toCalendarEventOrNull
 import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
@@ -103,13 +110,22 @@ fun SessionDetailsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val noCalendarAppMessage = stringResource(R.string.calendar_no_app_available)
     SessionDetailsScreen(
         uiState = uiState,
         bookmarkSession = viewModel::bookmarkSession,
         unBookmarkSession = viewModel::unBookmarkSession,
         onNavigationIconClick = onNavigationIconClick,
         showTopBar = showTopBar,
+        snackbarHostState = snackbarHostState,
         onShare = { session -> context.startActivity(shareIntent(session)) },
+        onAddToCalendar = { event ->
+            if (!launchAddToCalendar(context, event)) {
+                coroutineScope.launch { snackbarHostState.showSnackbar(noCalendarAppMessage) }
+            }
+        },
     )
 }
 
@@ -135,6 +151,8 @@ internal fun SessionDetailsScreen(
     isTabletop: Boolean = rememberIsTabletopPosture(),
     hingeBoundsInWindow: Rect? = rememberHorizontalHingeBounds(),
     onShare: (SessionDetailsPresentationModel) -> Unit = {},
+    onAddToCalendar: ((CalendarEvent) -> Unit)? = null,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val paneTitle = (uiState as? SessionDetailsUiState.Success)?.data?.title ?: stringResource(R.string.session_details_label)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -151,6 +169,7 @@ internal fun SessionDetailsScreen(
             modifier = if (showTopBar) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier,
             // As a pane the bar repeats the title and offers a back arrow out of a visible list.
             topBar = { if (showTopBar) TopBar(onNavigationIconClick = onNavigationIconClick, scrollBehavior = scrollBehavior) },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButton = {
                 if (uiState is SessionDetailsUiState.Success) {
                     val shareLabel = stringResource(R.string.share_session)
@@ -199,6 +218,12 @@ internal fun SessionDetailsScreen(
                 }
 
                 is SessionDetailsUiState.Success -> {
+                    val calendarAction =
+                        remember(uiState.data, onAddToCalendar) {
+                            uiState.data.toCalendarEventOrNull()?.let { event ->
+                                onAddToCalendar?.let { handler -> { handler(event) } }
+                            }
+                        }
                     if (isTabletop) {
                         TabletopBody(
                             paddingValues = paddingValues,
@@ -206,6 +231,7 @@ internal fun SessionDetailsScreen(
                             bookmarkSession = bookmarkSession,
                             unBookmarkSession = unBookmarkSession,
                             hingeBoundsInWindow = hingeBoundsInWindow,
+                            onAddToCalendar = calendarAction,
                         )
                     } else {
                         Body(
@@ -214,6 +240,7 @@ internal fun SessionDetailsScreen(
                             bookmarkSession = bookmarkSession,
                             unBookmarkSession = unBookmarkSession,
                             drawsUnderStatusBar = !showTopBar,
+                            onAddToCalendar = calendarAction,
                         )
                     }
                 }
@@ -234,6 +261,7 @@ private fun TabletopBody(
     unBookmarkSession: (String) -> Unit,
     hingeBoundsInWindow: Rect?,
     modifier: Modifier = Modifier,
+    onAddToCalendar: (() -> Unit)? = null,
 ) {
     var localHingeBounds by remember(hingeBoundsInWindow) { mutableStateOf<Pair<Int, Int>?>(null) }
 
@@ -277,6 +305,7 @@ private fun TabletopBody(
                     sessionDetails = sessionDetails,
                     bookmarkSession = bookmarkSession,
                     unBookmarkSession = unBookmarkSession,
+                    onAddToCalendar = onAddToCalendar,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SessionTitleAndDescription(sessionDetails)
@@ -318,6 +347,7 @@ fun Body(
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
     drawsUnderStatusBar: Boolean = false,
+    onAddToCalendar: (() -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -342,6 +372,7 @@ fun Body(
                 sessionDetails = sessionDetails,
                 bookmarkSession = bookmarkSession,
                 unBookmarkSession = unBookmarkSession,
+                onAddToCalendar = onAddToCalendar,
             )
 
             Spacer(modifier = Modifier.height(25.dp))
@@ -416,10 +447,16 @@ private fun SessionDetailsScreenPreview() {
                                         twitterHandle = "",
                                     ),
                                 ),
+                            startEpochMillis = PREVIEW_START_EPOCH_MILLIS,
+                            endEpochMillis = PREVIEW_END_EPOCH_MILLIS,
                         ),
                 ),
             bookmarkSession = {},
             unBookmarkSession = {},
+            onAddToCalendar = {},
         )
     }
 }
+
+private const val PREVIEW_START_EPOCH_MILLIS = 1_793_862_000_000L
+private const val PREVIEW_END_EPOCH_MILLIS = 1_793_865_600_000L

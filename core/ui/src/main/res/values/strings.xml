@@ -206,4 +206,8 @@
     <string name="shortcut_refresh">Refresh</string>
     <string name="shortcut_dismiss">Close search or sheet</string>
     <string name="search_speakers_tooltip">Search speakers (Ctrl+F)</string>
+
+    <string name="add_to_calendar">Add to calendar</string>
+    <string name="calendar_no_app_available">No calendar app found on this device</string>
+    <string name="calendar_event_speakers">Speakers: %1$s</string>
 </resources>

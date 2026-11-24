@@ -5,7 +5,7 @@
 //   ./gradlew :sessions:stabilityDump
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.Body(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, drawsUnderStatusBar: kotlin.Boolean): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.Body(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, drawsUnderStatusBar: kotlin.Boolean, onAddToCalendar: kotlin.Function0<kotlin.Unit>?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -15,6 +15,7 @@ public fun com.android254.presentation.sessionDetails.view.Body(paddingValues: a
     - unBookmarkSession: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - drawsUnderStatusBar: STABLE (primitive type)
+    - onAddToCalendar: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(viewModel: com.android254.presentation.sessionDetails.SessionDetailsViewModel, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean): kotlin.Unit
@@ -26,7 +27,7 @@ public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(v
     - showTopBar: STABLE (primitive type)
 
 @Composable
-internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>, onAddToCalendar: kotlin.Function1<com.android254.presentation.common.calendar.CalendarEvent, kotlin.Unit>?, snackbarHostState: androidx.compose.material3.SnackbarHostState): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -38,9 +39,11 @@ internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScree
     - isTabletop: STABLE (primitive type)
     - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - onShare: STABLE (function type)
+    - onAddToCalendar: STABLE (function type)
+    - snackbarHostState: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, modifier: androidx.compose.ui.Modifier, onAddToCalendar: kotlin.Function0<kotlin.Unit>?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -50,6 +53,14 @@ private fun com.android254.presentation.sessionDetails.view.TabletopBody(padding
     - unBookmarkSession: STABLE (function type)
     - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - onAddToCalendar: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.sessionDetails.view.components.CalendarActionButton(onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onClick: STABLE (function type)
 
 @Composable
 private fun com.android254.presentation.sessionDetails.view.components.DetailPill(text: kotlin.String, color: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -86,7 +97,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionLev
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.components.SessionSpeakerNameAndFavouriteIcon(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.components.SessionSpeakerNameAndFavouriteIcon(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, onAddToCalendar: kotlin.Function0<kotlin.Unit>?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -94,6 +105,7 @@ public fun com.android254.presentation.sessionDetails.view.components.SessionSpe
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - onAddToCalendar: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.sessionDetails.view.components.SessionTimeAndRoom(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, modifier: androidx.compose.ui.Modifier): kotlin.Unit

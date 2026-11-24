@@ -8,11 +8,11 @@
 
 ---
 
-## Next up — §11.4a & §4.4, then §3.6 / §9.5 / §11.7
+## Next up — §4.4, then §3.6 / §9.5 / §11.7
 
-1. **Calendar export** (§11.4a) — single-session `CalendarContract` insert + one-tap `.ics` bulk export of starred sessions.
-2. **Speakers two-pane polish & pull-to-refresh fix** (§4.4) — selected state on speaker cards matching `SessionsCard`, plus wiring the currently no-op `onRefresh = { /*TODO*/ }` in `SpeakersScreen.kt`.
-3. **Production hygiene quick wins** (§3.6, §9.5, §11.7, §13.2, §15.4) — Remote Config `event_slug`, Coil offline disk cache, conference-day-only widget refresh, staged Play rollout + native symbols, and Crashlytics custom keys.
+1. **Speakers two-pane polish & pull-to-refresh fix** (§4.4) — selected state on speaker cards matching `SessionsCard`, plus wiring the currently no-op `onRefresh = { /*TODO*/ }` in `SpeakersScreen.kt`.
+2. **Production hygiene quick wins** (§3.6, §9.5, §11.7, §13.2, §15.4) — Remote Config `event_slug`, Coil offline disk cache, conference-day-only widget refresh, staged Play rollout + native symbols, and Crashlytics custom keys.
+3. **Testing safety nets** (§3.9, §5.6, §10) — B7 splash test, automated Compose accessibility checks, edge-case screenshot fixtures, and core `:app` E2E journeys.
 
 ---
 
@@ -116,13 +116,6 @@ Add Hilt instrumentation tests on the existing Gradle Managed Devices (`api30`, 
 
 ## 11. Phase 8 — High-value standalone features
 
-### 11.4a Calendar export
-
-Highest value-to-effort ratio in this plan. Zero new dependencies, works offline with any calendar app:
-
-1. **Single session:** "Add to calendar" action on `SessionDetails` launching `Intent(Intent.ACTION_INSERT)` with `CalendarContract.Events` (`Africa/Nairobi` timezone, room, speakers, 10-minute reminder, and `droidconke://session/{id}` link).
-2. **Bulk starred agenda export (`.ics`):** One-tap export from "My sessions" emitting an RFC 5545 `.ics` file shared via `FileProvider`.
-
 ### 11.7 Widget battery hygiene
 
 `widget/src/main/res/xml/next_session_widget_info.xml` sets `android:updatePeriodMillis="1800000"`, waking devices every 30 minutes all year. Set `updatePeriodMillis="0"` and refresh only after syncs and during conference days.
@@ -163,11 +156,10 @@ Set lightweight state keys directly in `:app` (`window_size_class`, `is_signed_i
 
 | # | Work item | Section | Why here |
 | --- | --- | --- | --- |
-| **1** | Calendar export (`CalendarContract` + `.ics` bulk export) | §11.4a | Highest attendee value-to-effort ratio; zero dependencies, works offline |
-| **2** | Speaker card selected state + fix Speakers `onRefresh` no-op + internal deep links (`ticket`, `sessions`, `speaker`) | §4.4, §11.8 | Fixes a real dead control, completes two-pane parity, unifies URI routing |
-| **3** | Production hygiene batch (Remote Config `event_slug`, Coil 50 MB offline cache, widget `updatePeriodMillis="0"`, staged Play rollout + `debugSymbols`, Crashlytics custom keys, Firebase Perf removal decision) | §3.6, §9.5, §11.7, §13.2, §15.4 | High reliability, battery, offline UX, and release safety in small clean PRs |
-| **4** | Testing safety nets (B7 splash test, automated Compose accessibility checks, edge-case screenshot fixtures, core `:app` E2E journeys) | §3.9, §5.6, §10 | Prevents regressions before conference day |
-| **5** | Tech debt & local polish (A5 `Session` `Instant` cleanup, loading skeleton consolidation, Updates unread dot + new speakers, optional offline session notes, optional Reno4 cube 60 Hz fix) | §1.5, §5.2, §5.5, §6A, §12 | Clean codebase & nice-to-have attendee polish |
+| **1** | Speaker card selected state + fix Speakers `onRefresh` no-op + internal deep links (`ticket`, `sessions`, `speaker`) | §4.4, §11.8 | Fixes a real dead control, completes two-pane parity, unifies URI routing |
+| **2** | Production hygiene batch (Remote Config `event_slug`, Coil 50 MB offline cache, widget `updatePeriodMillis="0"`, staged Play rollout + `debugSymbols`, Crashlytics custom keys, Firebase Perf removal decision) | §3.6, §9.5, §11.7, §13.2, §15.4 | High reliability, battery, offline UX, and release safety in small clean PRs |
+| **3** | Testing safety nets (B7 splash test, automated Compose accessibility checks, edge-case screenshot fixtures, core `:app` E2E journeys) | §3.9, §5.6, §10 | Prevents regressions before conference day |
+| **4** | Tech debt & local polish (A5 `Session` `Instant` cleanup, loading skeleton consolidation, Updates unread dot + new speakers, optional offline session notes, optional Reno4 cube 60 Hz fix) | §1.5, §5.2, §5.5, §6A, §12 | Clean codebase & nice-to-have attendee polish |
 
 ### 16.4 Definition of done, per PR
 

@@ -31,6 +31,8 @@ data class SessionDetailsPresentationModel(
     val sessionImageUrl: String?,
     val timeSlot: String,
     val speakers: ImmutableList<SessionDetailsSpeakerPresentationModel>,
+    val startEpochMillis: Long? = null,
+    val endEpochMillis: Long? = null,
 )
 
 data class SessionDetailsSpeakerPresentationModel(
