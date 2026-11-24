@@ -43,7 +43,9 @@ import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.adaptive.DroidconWindowSize
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.adaptive.rememberDroidconWindowSize
+import com.android254.presentation.common.calendar.CalendarEvent
+import com.android254.presentation.common.calendar.shareAgendaIcs
 import com.android254.presentation.common.components.DroidconAppBarWithFilter
 import com.android254.presentation.common.fakedata.DAY_TODAY
 import com.android254.presentation.common.fakedata.DAY_TOMORROW
@@ -72,6 +76,7 @@ import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -89,6 +94,8 @@ fun SessionsRoute(
     val selectedEventDate by sessionsViewModel.selectedEventDay.collectAsStateWithLifecycle()
 
     val onEvent = sessionsViewModel::handleEvent
+    val context = LocalContext.current
+    val exportChooserTitle = stringResource(R.string.export_agenda_chooser_title)
 
     SessionsScreen(
         sessionsUiState = sessionsUiState,
@@ -98,6 +105,13 @@ fun SessionsRoute(
         currentSelections = currentSelections,
         onEvent = onEvent,
         selectedSessionId = selectedSessionId,
+        onExportAgenda = { events ->
+            shareAgendaIcs(
+                context = context,
+                events = events,
+                chooserTitle = exportChooserTitle,
+            )
+        },
     )
 }
 
@@ -111,6 +125,7 @@ fun SessionsScreen(
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
     selectedSessionId: String? = null,
+    onExportAgenda: ((ImmutableList<CalendarEvent>) -> Unit)? = null,
 ) {
     // Derived, not mirrored, so rotation cannot desync the switch and the filter.
     val showMySessions = sessionsUiState.showMySessionsOnly
@@ -228,6 +243,7 @@ fun SessionsScreen(
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
                 selectedSessionId = selectedSessionId,
+                onExportAgenda = onExportAgenda,
             )
             // Our own flag: `bottomSheetState.isVisible` would skip the enter animation.
             if (showFilterSheet) {

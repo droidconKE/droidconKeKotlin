@@ -27,6 +27,7 @@ import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionsFilterCategory
 import com.android254.presentation.models.SessionsFilterOption
+import com.android254.presentation.sessions.mappers.toCalendarEventOrNull
 import com.android254.presentation.sessions.mappers.toPresentationModel
 import com.android254.presentation.sessions.models.SessionClash
 import com.android254.presentation.sessions.models.SessionsIntentHandler
@@ -124,6 +125,14 @@ class SessionsViewModel
                                 .scheduleConflicts()
                                 .filter { _selectedEventDay.value.value in setOf(it.first.eventDay, it.second.eventDay) }
                                 .map { SessionClash(it.first.title, it.second.title) }
+                                .toImmutableList(),
+                        starredCalendarEvents =
+                            sessionsInformation.sessions
+                                .asSequence()
+                                .filter { it.isBookmarked }
+                                .distinctBy { it.remoteId }
+                                .mapNotNull { it.toCalendarEventOrNull() }
+                                .sortedBy { it.startEpochMillis }
                                 .toImmutableList(),
                     )
                 }

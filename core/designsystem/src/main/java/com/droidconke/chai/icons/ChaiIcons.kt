@@ -568,6 +568,18 @@ object ChaiIcons {
             )
         }
     }
+
+    val EventOutlined: ImageVector by lazy {
+        icon(name = "EventOutlined") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M19,4h-1V2h-2v2H8V2H6v2H5c-1.11,0 -1.99,0.9 -1.99,2L3,20c0,1.1 0.89,2 2,2h14c1.1,0 2,-0.9 2,-2V6c0,-1.1 -0.9,-2 -2,-2zM19,20H5V10h14v10zM19,8H5V6h14v2zM12,13h5v5h-5v-5z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
 }
 
 private inline fun icon(

@@ -17,6 +17,7 @@ package com.android254.presentation.sessions.mappers
 
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
+import com.android254.presentation.common.calendar.CalendarEvent
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
@@ -75,6 +76,8 @@ fun Session.toPresentationModel(now: Instant): SessionPresentationModel {
 fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel {
     val startTime = getTimePeriod(this.startDateTime)
     val endTime = getTimePeriod(this.endDateTime)
+    val startMillis = (this.startInstant ?: this.startDateTime.toInstant())?.toEpochMilliseconds()
+    val endMillis = (this.endInstant ?: this.endDateTime.toInstant())?.toEpochMilliseconds()
     return SessionDetailsPresentationModel(
         id = this.id,
         title = this.title,
@@ -89,6 +92,40 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
         sessionImageUrl = this.sessionImage.toString(),
         timeSlot = "${startTime.time} - ${endTime.time} ${endTime.period}",
         speakers = speakers.toSessionDetailsSpeaker(),
+        startEpochMillis = startMillis,
+        endEpochMillis = endMillis,
+    )
+}
+
+/** Converts a domain session to an exportable [CalendarEvent], or null if timestamps are invalid. */
+fun Session.toCalendarEventOrNull(): CalendarEvent? {
+    val startMillis = (this.startInstant ?: this.startDateTime.toInstant())?.toEpochMilliseconds() ?: return null
+    val endMillis = (this.endInstant ?: this.endDateTime.toInstant())?.toEpochMilliseconds() ?: return null
+    if (endMillis <= startMillis) return null
+    return CalendarEvent(
+        id = this.remoteId.ifBlank { this.id },
+        title = this.title,
+        description = this.description,
+        venue = this.roomList.joinToString(", "),
+        speakers = this.speakers.map { it.name }.toImmutableList(),
+        startEpochMillis = startMillis,
+        endEpochMillis = endMillis,
+    )
+}
+
+/** Converts presentation details to an exportable [CalendarEvent], or null if timestamps are invalid. */
+fun SessionDetailsPresentationModel.toCalendarEventOrNull(): CalendarEvent? {
+    val startMillis = startEpochMillis ?: return null
+    val endMillis = endEpochMillis ?: return null
+    if (endMillis <= startMillis) return null
+    return CalendarEvent(
+        id = id,
+        title = title,
+        description = description,
+        venue = venue,
+        speakers = speakers.map { it.name }.toImmutableList(),
+        startEpochMillis = startMillis,
+        endEpochMillis = endMillis,
     )
 }
 

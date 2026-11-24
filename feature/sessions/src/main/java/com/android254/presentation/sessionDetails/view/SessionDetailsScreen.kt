@@ -70,6 +70,8 @@ import com.android254.presentation.common.adaptive.paneStartDivider
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.adaptive.rememberHorizontalHingeBounds
 import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
+import com.android254.presentation.common.calendar.CalendarEvent
+import com.android254.presentation.common.calendar.launchAddToCalendar
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarProtection
@@ -86,6 +88,7 @@ import com.android254.presentation.sessionDetails.view.components.SessionTitleAn
 import com.android254.presentation.sessionDetails.view.components.SpeakerTwitterHandle
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
+import com.android254.presentation.sessions.mappers.toCalendarEventOrNull
 import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
@@ -110,6 +113,7 @@ fun SessionDetailsRoute(
         onNavigationIconClick = onNavigationIconClick,
         showTopBar = showTopBar,
         onShare = { session -> context.startActivity(shareIntent(session)) },
+        onAddToCalendar = { event -> launchAddToCalendar(context, event) },
     )
 }
 
@@ -135,6 +139,7 @@ internal fun SessionDetailsScreen(
     isTabletop: Boolean = rememberIsTabletopPosture(),
     hingeBoundsInWindow: Rect? = rememberHorizontalHingeBounds(),
     onShare: (SessionDetailsPresentationModel) -> Unit = {},
+    onAddToCalendar: ((CalendarEvent) -> Unit)? = null,
 ) {
     val paneTitle = (uiState as? SessionDetailsUiState.Success)?.data?.title ?: stringResource(R.string.session_details_label)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -199,6 +204,10 @@ internal fun SessionDetailsScreen(
                 }
 
                 is SessionDetailsUiState.Success -> {
+                    val calendarAction =
+                        uiState.data.toCalendarEventOrNull()?.let { event ->
+                            onAddToCalendar?.let { handler -> { handler(event) } }
+                        }
                     if (isTabletop) {
                         TabletopBody(
                             paddingValues = paddingValues,
@@ -206,6 +215,7 @@ internal fun SessionDetailsScreen(
                             bookmarkSession = bookmarkSession,
                             unBookmarkSession = unBookmarkSession,
                             hingeBoundsInWindow = hingeBoundsInWindow,
+                            onAddToCalendar = calendarAction,
                         )
                     } else {
                         Body(
@@ -214,6 +224,7 @@ internal fun SessionDetailsScreen(
                             bookmarkSession = bookmarkSession,
                             unBookmarkSession = unBookmarkSession,
                             drawsUnderStatusBar = !showTopBar,
+                            onAddToCalendar = calendarAction,
                         )
                     }
                 }
@@ -234,6 +245,7 @@ private fun TabletopBody(
     unBookmarkSession: (String) -> Unit,
     hingeBoundsInWindow: Rect?,
     modifier: Modifier = Modifier,
+    onAddToCalendar: (() -> Unit)? = null,
 ) {
     var localHingeBounds by remember(hingeBoundsInWindow) { mutableStateOf<Pair<Int, Int>?>(null) }
 
@@ -277,6 +289,7 @@ private fun TabletopBody(
                     sessionDetails = sessionDetails,
                     bookmarkSession = bookmarkSession,
                     unBookmarkSession = unBookmarkSession,
+                    onAddToCalendar = onAddToCalendar,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 SessionTitleAndDescription(sessionDetails)
@@ -318,6 +331,7 @@ fun Body(
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
     drawsUnderStatusBar: Boolean = false,
+    onAddToCalendar: (() -> Unit)? = null,
 ) {
     Column(
         modifier =
@@ -342,6 +356,7 @@ fun Body(
                 sessionDetails = sessionDetails,
                 bookmarkSession = bookmarkSession,
                 unBookmarkSession = unBookmarkSession,
+                onAddToCalendar = onAddToCalendar,
             )
 
             Spacer(modifier = Modifier.height(25.dp))

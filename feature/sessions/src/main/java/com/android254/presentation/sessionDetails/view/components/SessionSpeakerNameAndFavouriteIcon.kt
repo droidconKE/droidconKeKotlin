@@ -23,13 +23,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.components.BookmarkButton
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.droidconke.chai.components.ChaiTextLabelLarge
@@ -43,6 +47,7 @@ fun SessionSpeakerNameAndFavouriteIcon(
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onAddToCalendar: (() -> Unit)? = null,
 ) {
     val speakers = sessionDetails.speakers
     Column(modifier = modifier) {
@@ -79,23 +84,43 @@ fun SessionSpeakerNameAndFavouriteIcon(
         ) {
             if (speakers.isNotEmpty()) {
                 ChaiTitle(
-                    modifier = Modifier.testTag(TestTag.SPEAKER_NAME),
+                    modifier = Modifier.weight(1f).testTag(TestTag.SPEAKER_NAME),
                     titleText = speakers.joinToString(" & ") { it.name },
                     titleColor = MaterialTheme.colorScheme.primary,
                 )
             }
 
-            BookmarkButton(
-                isBookmarked = sessionDetails.isStarred,
-                onToggle = {
-                    if (sessionDetails.isStarred) {
-                        unBookmarkSession(sessionDetails.id)
-                    } else {
-                        bookmarkSession(sessionDetails.id)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (onAddToCalendar != null) {
+                    val calendarLabel = stringResource(R.string.add_to_calendar)
+                    DroidconTooltip(text = calendarLabel) {
+                        IconButton(
+                            onClick = onAddToCalendar,
+                            modifier = Modifier.testTag("add_to_calendar_button").clickablePointer(),
+                        ) {
+                            Icon(
+                                imageVector = ChaiIcons.EventOutlined,
+                                contentDescription = calendarLabel,
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     }
-                },
-                modifier = Modifier.testTag(TestTag.FAVOURITE_ICON),
-            )
+                }
+                BookmarkButton(
+                    isBookmarked = sessionDetails.isStarred,
+                    onToggle = {
+                        if (sessionDetails.isStarred) {
+                            unBookmarkSession(sessionDetails.id)
+                        } else {
+                            bookmarkSession(sessionDetails.id)
+                        }
+                    },
+                    modifier = Modifier.testTag(TestTag.FAVOURITE_ICON),
+                )
+            }
         }
     }
 }

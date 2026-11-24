@@ -206,4 +206,8 @@
     <string name="shortcut_refresh">Refresh</string>
     <string name="shortcut_dismiss">Close search or sheet</string>
     <string name="search_speakers_tooltip">Search speakers (Ctrl+F)</string>
+
+    <string name="add_to_calendar">Add to calendar</string>
+    <string name="export_agenda_ics">Export .ics</string>
+    <string name="export_agenda_chooser_title">Export starred agenda</string>
 </resources>
