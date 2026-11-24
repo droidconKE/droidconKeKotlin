@@ -157,14 +157,11 @@ users their bookmarks, for a cosmetic gain.
 
 ### 3.9 Phase 0 — what is left
 
-Two fixed defects still have no test, so nothing stops them coming back:
+One fixed defect still has no test, so nothing stops it coming back:
 
 | Finding | What a test would assert |
 | --- | --- |
-| B6 — the "My sessions" switch reset on rotation while the list stayed filtered | The switch survives recreation. Needs a `SavedStateHandle` / process-death test, which the suite has no harness for yet |
 | B7 — the splash screen waited on a network call | The splash releases on cached data, never on Remote Config. Needs a startup test |
-
-B6 protects user state, so do that first.
 
 ---
 

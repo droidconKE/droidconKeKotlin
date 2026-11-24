@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions.view
 
+import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.presentation.models.SessionsFilterCategory
 import io.mockk.mockk
@@ -39,6 +40,7 @@ class SessionsFilterOptionsTest {
             clock = Clock.System,
             conferenceTimeZone = TimeZone.of("Africa/Nairobi"),
             ioDispatcher = UnconfinedTestDispatcher(),
+            savedStateHandle = SavedStateHandle(),
         )
 
     private val sessions =

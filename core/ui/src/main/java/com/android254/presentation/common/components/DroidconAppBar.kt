@@ -34,6 +34,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.droidconke.chai.ChaiTheme
@@ -66,15 +68,18 @@ fun DroidconAppBar(
         }
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(
-            onClick = onActionClicked,
-            modifier = Modifier.testTag("sign_in_action"),
-        ) {
-            Icon(
-                imageVector = ChaiIcons.AccountCircleOutlined,
-                contentDescription = stringResource(id = R.string.sign_in),
-                tint = MaterialTheme.colorScheme.onBackground,
-            )
+        val signInLabel = stringResource(id = R.string.sign_in)
+        DroidconTooltip(text = signInLabel) {
+            IconButton(
+                onClick = onActionClicked,
+                modifier = Modifier.testTag("sign_in_action").clickablePointer(),
+            ) {
+                Icon(
+                    imageVector = ChaiIcons.AccountCircleOutlined,
+                    contentDescription = signInLabel,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
         }
     }
 }

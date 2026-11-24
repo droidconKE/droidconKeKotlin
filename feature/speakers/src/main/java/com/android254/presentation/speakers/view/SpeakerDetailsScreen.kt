@@ -44,12 +44,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -65,6 +67,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.adaptive.paneStartDivider
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -74,6 +79,7 @@ import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakerDetailsScreenUiState
 import com.android254.presentation.speakers.SpeakerDetailsScreenViewModel
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.CButton
 import com.droidconke.chai.components.ChaiBodyLargeBold
@@ -118,13 +124,23 @@ internal fun SpeakerDetailsScreen(
     showTopBar: Boolean = true,
 ) {
     val paneTitle = (uiState as? SpeakerDetailsScreenUiState.Success)?.speaker?.name ?: stringResource(R.string.speaker_details_label)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val paneDividerColor = MaterialTheme.colorScheme.outlineVariant
     // The scrim draws over the content, so stack it here rather than rely on the caller.
-    Box(modifier = Modifier.fillMaxSize().semantics { this.paneTitle = paneTitle }) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .then(if (!showTopBar) Modifier.paneStartDivider(paneDividerColor) else Modifier)
+                .semantics { this.paneTitle = paneTitle },
+    ) {
         Scaffold(
+            modifier = if (showTopBar) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier,
             // As a pane the bar repeats the name and offers a back arrow out of a visible list.
             topBar = {
                 if (showTopBar) {
                     CenterAlignedTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         title = {
                             ChaiBodyLargeBold(
                                 bodyText = stringResource(id = R.string.speaker_details_label),
@@ -132,17 +148,24 @@ internal fun SpeakerDetailsScreen(
                             )
                         },
                         navigationIcon = {
-                            IconButton(onClick = navigateBack) {
-                                Icon(
-                                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
+                            val backLabel = stringResource(R.string.back_arrow_icon_description)
+                            DroidconTooltip(text = backLabel) {
+                                IconButton(
+                                    onClick = navigateBack,
+                                    modifier = Modifier.clickablePointer(),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                                        contentDescription = backLabel,
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                }
                             }
                         },
                         colors =
                             TopAppBarDefaults.topAppBarColors(
                                 containerColor = Color.Transparent,
+                                scrolledContainerColor = Color.Transparent,
                                 titleContentColor = MaterialTheme.colorScheme.onSurface,
                                 navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
                             ),
@@ -318,7 +341,7 @@ private fun TwitterHandleRow(
         )
 
         CButton(
-            modifier = Modifier.testTag("twitter_button"),
+            modifier = Modifier.testTag("twitter_button").clickablePointer(),
             onClick = { uriHandler.openUri(twitterHandle) },
             colors =
                 ButtonDefaults.buttonColors(
@@ -354,6 +377,7 @@ private fun CenteredMessage(message: String) {
     }
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     showBackground = true,

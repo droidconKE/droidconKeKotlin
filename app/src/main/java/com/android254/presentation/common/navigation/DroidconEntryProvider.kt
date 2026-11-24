@@ -77,9 +77,18 @@ fun droidconEntryProvider(
                         )
                     },
             ) {
-                SessionsRoute(navigateToSessionDetails = { sessionId ->
-                    navController.navigate(Screens.SessionDetails(sessionId))
-                })
+                val selectedSessionId =
+                    if (LocalListDetailSceneScope.current != null) {
+                        (navController.state.currentRoute as? Screens.SessionDetails)?.sessionId
+                    } else {
+                        null
+                    }
+                SessionsRoute(
+                    selectedSessionId = selectedSessionId,
+                    navigateToSessionDetails = { sessionId ->
+                        navController.navigate(Screens.SessionDetails(sessionId))
+                    },
+                )
             }
             entry<Screens.SessionDetails>(
                 metadata = detailPaneMetadata(DroidconPaneScene.Sessions),

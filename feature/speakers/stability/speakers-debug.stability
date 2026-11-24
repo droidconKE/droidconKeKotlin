@@ -83,6 +83,20 @@ private fun com.android254.presentation.speakers.view.SpeakersSearchField(query:
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.speakers.view.SpeakersTopBar(isSearchActive: kotlin.Boolean, searchQuery: kotlin.String, focusRequester: androidx.compose.ui.focus.FocusRequester, scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior, onSearchQueryChanged: kotlin.Function1<kotlin.String, kotlin.Unit>, onOpenSearch: kotlin.Function0<kotlin.Unit>, onCloseSearch: kotlin.Function0<kotlin.Unit>, onNavigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - isSearchActive: STABLE (primitive type)
+    - searchQuery: STABLE (String is immutable)
+    - focusRequester: STABLE (marked @Stable or @Immutable)
+    - scrollBehavior: STABLE (marked @Stable or @Immutable)
+    - onSearchQueryChanged: STABLE (function type)
+    - onOpenSearch: STABLE (function type)
+    - onCloseSearch: STABLE (function type)
+    - onNavigateBack: STABLE (function type)
+
+@Composable
 private fun com.android254.presentation.speakers.view.SpeakingNowBadge(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

@@ -200,4 +200,10 @@
     <string name="home_ticket_show">Show ticket</string>
     <string name="shortcut_ticket_short">Ticket</string>
     <string name="shortcut_ticket_long">Show my ticket</string>
+
+    <string name="shortcuts_group_navigation">Navigation</string>
+    <string name="shortcuts_group_actions">Actions</string>
+    <string name="shortcut_refresh">Refresh</string>
+    <string name="shortcut_dismiss">Close search or sheet</string>
+    <string name="search_speakers_tooltip">Search speakers (Ctrl+F)</string>
 </resources>

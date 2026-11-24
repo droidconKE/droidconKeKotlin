@@ -35,6 +35,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -48,6 +49,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
@@ -84,20 +87,36 @@ fun DroidconAppBarWithFilter(
                 contentDescription = stringResource(id = R.string.logo),
                 modifier = Modifier.weight(1f, fill = false),
             )
+            LayoutIconButtons(
+                isListActive = isListActive,
+                onListIconClick = onListIconClick,
+                onAgendaIconClick = onAgendaIconClick,
+            )
+            FilterButton(
+                isActive = isFilterActive,
+                onButtonClick = onFilterButtonClick,
+            )
         } else {
-            Spacer(modifier = Modifier)
+            Text(
+                text = stringResource(id = R.string.sessions_label),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LayoutIconButtons(
+                    isListActive = isListActive,
+                    onListIconClick = onListIconClick,
+                    onAgendaIconClick = onAgendaIconClick,
+                )
+                FilterButton(
+                    isActive = isFilterActive,
+                    onButtonClick = onFilterButtonClick,
+                )
+            }
         }
-
-        LayoutIconButtons(
-            isListActive = isListActive,
-            onListIconClick = onListIconClick,
-            onAgendaIconClick = onAgendaIconClick,
-        )
-
-        FilterButton(
-            isActive = isFilterActive,
-            onButtonClick = onFilterButtonClick,
-        )
     }
 }
 
@@ -144,20 +163,23 @@ private fun LayoutIcon(
     contentDescription: String,
     tint: Color,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .minimumInteractiveComponentSize()
-                .selectable(
-                    selected = selected,
-                    interactionSource = null,
-                    indication = ripple(bounded = false, radius = 24.dp),
-                    role = Role.RadioButton,
-                    onClick = onClick,
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
+    DroidconTooltip(text = contentDescription) {
+        Box(
+            modifier =
+                Modifier
+                    .minimumInteractiveComponentSize()
+                    .clickablePointer()
+                    .selectable(
+                        selected = selected,
+                        interactionSource = null,
+                        indication = ripple(bounded = false, radius = 24.dp),
+                        role = Role.RadioButton,
+                        onClick = onClick,
+                    ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
+        }
     }
 }
 
@@ -174,6 +196,7 @@ fun FilterButton(
         modifier =
             modifier
                 .minimumInteractiveComponentSize()
+                .clickablePointer()
                 .clickable(role = Role.Button, onClick = onButtonClick)
                 .semantics { if (isActive) stateDescription = activeState },
         horizontalArrangement = Arrangement.Center,

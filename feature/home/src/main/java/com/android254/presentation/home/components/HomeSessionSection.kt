@@ -91,8 +91,15 @@ fun HomeSessionContent(
         onClick = { onSessionClick(session.id) },
     ) {
         AsyncImage(
-            model = if (session.isService) R.drawable.all else session.sessionImage,
+            model =
+                if (session.isService || session.sessionImage.isBlank()) {
+                    R.drawable.all
+                } else {
+                    session.sessionImage
+                },
             placeholder = painterResource(R.drawable.all),
+            error = painterResource(R.drawable.all),
+            fallback = painterResource(R.drawable.all),
             contentDescription = stringResource(id = R.string.session_image),
             modifier =
                 Modifier

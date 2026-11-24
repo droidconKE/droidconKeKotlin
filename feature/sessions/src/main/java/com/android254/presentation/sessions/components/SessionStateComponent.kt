@@ -51,6 +51,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.fakedata.fakeSessions
@@ -135,6 +136,7 @@ fun SessionsStateComponent(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     showAgendaGrid: Boolean = false,
+    selectedSessionId: String? = null,
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -193,6 +195,7 @@ fun SessionsStateComponent(
                     sessionScreenState = sessionScreenState,
                     isSessionLayoutList = isSessionLayoutList,
                     onEvent = onEvent,
+                    selectedSessionId = selectedSessionId,
                 )
             }
         }
@@ -210,6 +213,7 @@ fun SessionListComponent(
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    selectedSessionId: String? = null,
 ) {
     val listState = rememberLazyGridState()
 
@@ -268,6 +272,7 @@ fun SessionListComponent(
                             onBookmark = {
                                 onEvent(SessionsIntentHandler.BookmarkSession(it))
                             },
+                            isSelected = session.id == selectedSessionId,
                         )
                     }
                 }
@@ -281,6 +286,7 @@ fun SessionListComponent(
                         session = session,
                         navigateToSessionDetails = navigateToSessionDetails,
                         onBookmark = { onEvent(SessionsIntentHandler.BookmarkSession(it)) },
+                        isSelected = session.id == selectedSessionId,
                     )
                 }
             }
@@ -297,6 +303,7 @@ fun TimeHeader(time: String) {
         verticalAlignment = Alignment.CenterVertically,
         modifier =
             Modifier
+                .zIndex(1f)
                 .background(
                     color = MaterialTheme.colorScheme.background,
                 ).fillMaxWidth()

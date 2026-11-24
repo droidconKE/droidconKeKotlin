@@ -39,6 +39,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,11 +50,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -83,9 +88,16 @@ internal fun TicketScreen(
 ) {
     val ticket = (state as? TicketUiState.Ready)?.ticket
     var confirmingRemoval by rememberSaveable { mutableStateOf(false) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     Scaffold(
-        modifier = modifier,
-        topBar = { TicketTopBar(onBack = onBack, onRemove = { confirmingRemoval = true }.takeIf { ticket != null }) },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TicketTopBar(
+                onBack = onBack,
+                onRemove = { confirmingRemoval = true }.takeIf { ticket != null },
+                scrollBehavior = scrollBehavior,
+            )
+        },
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { padding ->
         val content =
@@ -123,23 +135,41 @@ internal fun TicketScreen(
 private fun TicketTopBar(
     onBack: () -> Unit,
     onRemove: (() -> Unit)?,
+    scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    var menuOpen by remember { mutableStateOf(false) }
+    var menuOpen by rememberSaveable { mutableStateOf(false) }
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+        scrollBehavior = scrollBehavior,
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                scrolledContainerColor = MaterialTheme.colorScheme.background,
+            ),
         title = { Text(stringResource(R.string.ticket_title), style = MaterialTheme.typography.titleLarge) },
         navigationIcon = {
-            IconButton(onClick = onBack) {
-                Icon(
-                    painter = painterResource(ChaiR.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.back_arrow_icon_description),
-                )
+            val backLabel = stringResource(R.string.back_arrow_icon_description)
+            DroidconTooltip(text = backLabel) {
+                IconButton(
+                    onClick = onBack,
+                    modifier = Modifier.clickablePointer(),
+                ) {
+                    Icon(
+                        painter = painterResource(ChaiR.drawable.ic_back_arrow),
+                        contentDescription = backLabel,
+                    )
+                }
             }
         },
         actions = {
             if (onRemove != null) {
-                IconButton(onClick = { menuOpen = true }) {
-                    Icon(imageVector = ChaiIcons.MoreVert, contentDescription = stringResource(R.string.ticket_more_actions))
+                val moreLabel = stringResource(R.string.ticket_more_actions)
+                DroidconTooltip(text = moreLabel) {
+                    IconButton(
+                        onClick = { menuOpen = true },
+                        modifier = Modifier.clickablePointer(),
+                    ) {
+                        Icon(imageVector = ChaiIcons.MoreVert, contentDescription = moreLabel)
+                    }
                 }
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                     DropdownMenuItem(

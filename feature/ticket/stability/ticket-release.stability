@@ -111,12 +111,13 @@ internal fun com.android254.presentation.ticket.view.TicketScreen(state: com.and
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.ticket.view.TicketTopBar(onBack: kotlin.Function0<kotlin.Unit>, onRemove: kotlin.Function0<kotlin.Unit>?): kotlin.Unit
+private fun com.android254.presentation.ticket.view.TicketTopBar(onBack: kotlin.Function0<kotlin.Unit>, onRemove: kotlin.Function0<kotlin.Unit>?, scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onBack: STABLE (function type)
     - onRemove: STABLE (function type)
+    - scrollBehavior: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.ticket.view.VoidStamp(status: com.android254.domain.models.Ticket.Status): kotlin.Unit

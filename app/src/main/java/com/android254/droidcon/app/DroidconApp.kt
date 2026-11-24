@@ -16,6 +16,8 @@
 package com.android254.droidcon.app
 
 import android.app.Application
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
@@ -51,7 +53,9 @@ class DroidconApp : Application() {
     @DefaultDispatcher
     lateinit var defaultDispatcher: CoroutineDispatcher
 
+    @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate() {
+        ComposeUiFlags.isMediaQueryIntegrationEnabled = true
         super.onCreate()
         initTimber()
         NotificationChannelSpec.createAll(this)

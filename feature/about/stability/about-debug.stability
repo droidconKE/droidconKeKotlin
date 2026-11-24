@@ -57,11 +57,12 @@ public fun com.android254.presentation.feedback.view.FeedBackRoute(navigateBack:
     - navigateBack: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.feedback.view.FeedBackScreen(navigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.feedback.view.FeedBackScreen(navigateBack: kotlin.Function0<kotlin.Unit>, onSubmitFeedback: kotlin.Function1<kotlin.String, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - navigateBack: STABLE (function type)
+    - onSubmitFeedback: STABLE (function type)
 
 @Composable
 private fun com.android254.presentation.feedback.view.FeedbackRating(modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -135,11 +136,12 @@ public fun com.android254.presentation.notifications.NotificationsSettingsScreen
     - viewModel: UNSTABLE (has mutable properties or unstable members)
 
 @Composable
-private fun com.android254.presentation.notifications.NotificationsTopBar(onNavigateBack: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+private fun com.android254.presentation.notifications.NotificationsTopBar(onNavigateBack: kotlin.Function0<kotlin.Unit>, scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onNavigateBack: STABLE (function type)
+    - scrollBehavior: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.notifications.SystemSettingsItem(onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit

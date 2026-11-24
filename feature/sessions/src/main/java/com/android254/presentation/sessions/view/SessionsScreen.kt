@@ -37,6 +37,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -64,6 +70,7 @@ import com.android254.presentation.sessions.components.SessionsStateComponent
 import com.android254.presentation.sessions.models.SessionsIntentHandler
 import com.android254.presentation.sessions.models.SessionsUiState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -74,6 +81,7 @@ import kotlinx.collections.immutable.toImmutableMap
 fun SessionsRoute(
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
     navigateToSessionDetails: (sessionId: String) -> Unit = {},
+    selectedSessionId: String? = null,
 ) {
     val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
@@ -89,6 +97,7 @@ fun SessionsRoute(
         selectedEventDate = selectedEventDate,
         currentSelections = currentSelections,
         onEvent = onEvent,
+        selectedSessionId = selectedSessionId,
     )
 }
 
@@ -101,6 +110,7 @@ fun SessionsScreen(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
+    selectedSessionId: String? = null,
 ) {
     // Derived, not mirrored, so rotation cannot desync the switch and the filter.
     val showMySessions = sessionsUiState.showMySessionsOnly
@@ -122,7 +132,21 @@ fun SessionsScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier =
+            modifier.onPreviewKeyEvent { event ->
+                if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return@onPreviewKeyEvent false
+                when {
+                    event.key == Key.Escape && showFilterSheet -> {
+                        showFilterSheet = false
+                        true
+                    }
+                    event.key == Key.F5 || (event.isCtrlPressed && event.key == Key.R) -> {
+                        onEvent(SessionsIntentHandler.RefreshSessions)
+                        true
+                    }
+                    else -> false
+                }
+            },
         topBar = {
             DroidconAppBarWithFilter(
                 isListActive = isSessionLayoutList.value,
@@ -203,6 +227,7 @@ fun SessionsScreen(
                     if (showMySessions) SessionScreenState.MYSESSIONS else SessionScreenState.ALL,
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
+                selectedSessionId = selectedSessionId,
             )
             // Our own flag: `bottomSheetState.isVisible` would skip the enter animation.
             if (showFilterSheet) {
@@ -228,6 +253,7 @@ fun SessionsScreen(
     }
 }
 
+@FormFactorPreviews
 @ChaiLightAndDarkComposePreviews
 @Composable
 private fun SessionsScreenPreview(

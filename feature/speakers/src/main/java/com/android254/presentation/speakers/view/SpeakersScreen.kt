@@ -37,6 +37,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +51,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -58,12 +68,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.plus
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyLargeBold
 import com.droidconke.chai.components.ChaiBodyMedium
@@ -113,72 +126,32 @@ internal fun SpeakersScreen(
         onSearchQueryChanged("")
     }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     BackHandler(enabled = isSearchActive) { closeSearch() }
 
     Scaffold(
+        modifier =
+            Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .onPreviewKeyEvent {
+                    handleSpeakersKeyEvent(
+                        event = it,
+                        isSearchActive = isSearchActive,
+                        onOpenSearch = { isSearchActive = true },
+                        onCloseSearch = ::closeSearch,
+                    )
+                },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    if (isSearchActive) {
-                        SpeakersSearchField(
-                            query = searchQuery,
-                            onQueryChanged = onSearchQueryChanged,
-                            modifier = Modifier.focusRequester(focusRequester),
-                        )
-                    } else {
-                        ChaiBodyLargeBold(
-                            bodyText = stringResource(id = R.string.speakers_label),
-                            textColor = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            if (isSearchActive) closeSearch() else navigateToHomeScreen()
-                        },
-                    ) {
-                        Icon(
-                            painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                            contentDescription =
-                                stringResource(
-                                    if (isSearchActive) {
-                                        R.string.close_search_icon_description
-                                    } else {
-                                        R.string.back_arrow_icon_description
-                                    },
-                                ),
-                            tint = MaterialTheme.colorScheme.onSurface,
-                        )
-                    }
-                },
-                actions = {
-                    if (isSearchActive) {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { onSearchQueryChanged("") }) {
-                                Icon(
-                                    imageVector = ChaiIcons.Clear,
-                                    contentDescription = stringResource(R.string.clear_search_icon_description),
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
-                        }
-                    } else {
-                        IconButton(onClick = { isSearchActive = true }) {
-                            Icon(
-                                imageVector = ChaiIcons.Search,
-                                contentDescription = stringResource(R.string.search_speakers_icon_description),
-                                tint = MaterialTheme.colorScheme.onSurface,
-                            )
-                        }
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
-                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
+            SpeakersTopBar(
+                isSearchActive = isSearchActive,
+                searchQuery = searchQuery,
+                focusRequester = focusRequester,
+                scrollBehavior = scrollBehavior,
+                onSearchQueryChanged = onSearchQueryChanged,
+                onOpenSearch = { isSearchActive = true },
+                onCloseSearch = ::closeSearch,
+                onNavigateBack = navigateToHomeScreen,
             )
         },
         contentWindowInsets = DroidconWindowInsets.screenContent,
@@ -249,6 +222,117 @@ internal fun SpeakersScreen(
 }
 
 @Composable
+private fun SpeakersTopBar(
+    isSearchActive: Boolean,
+    searchQuery: String,
+    focusRequester: FocusRequester,
+    scrollBehavior: TopAppBarScrollBehavior,
+    onSearchQueryChanged: (String) -> Unit,
+    onOpenSearch: () -> Unit,
+    onCloseSearch: () -> Unit,
+    onNavigateBack: () -> Unit,
+) {
+    CenterAlignedTopAppBar(
+        scrollBehavior = scrollBehavior,
+        title = {
+            if (isSearchActive) {
+                SpeakersSearchField(
+                    query = searchQuery,
+                    onQueryChanged = onSearchQueryChanged,
+                    modifier = Modifier.focusRequester(focusRequester),
+                )
+            } else {
+                ChaiBodyLargeBold(
+                    bodyText = stringResource(id = R.string.speakers_label),
+                    textColor = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        },
+        navigationIcon = {
+            val navLabel =
+                stringResource(
+                    if (isSearchActive) {
+                        R.string.close_search_icon_description
+                    } else {
+                        R.string.back_arrow_icon_description
+                    },
+                )
+            DroidconTooltip(text = navLabel) {
+                IconButton(
+                    onClick = { if (isSearchActive) onCloseSearch() else onNavigateBack() },
+                    modifier = Modifier.clickablePointer(),
+                ) {
+                    Icon(
+                        painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                        contentDescription = navLabel,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            }
+        },
+        actions = {
+            if (isSearchActive) {
+                if (searchQuery.isNotEmpty()) {
+                    val clearLabel = stringResource(R.string.clear_search_icon_description)
+                    DroidconTooltip(text = clearLabel) {
+                        IconButton(
+                            onClick = { onSearchQueryChanged("") },
+                            modifier = Modifier.clickablePointer(),
+                        ) {
+                            Icon(
+                                imageVector = ChaiIcons.Clear,
+                                contentDescription = clearLabel,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
+                    }
+                }
+            } else {
+                DroidconTooltip(text = stringResource(R.string.search_speakers_tooltip)) {
+                    IconButton(
+                        onClick = onOpenSearch,
+                        modifier = Modifier.clickablePointer(),
+                    ) {
+                        Icon(
+                            imageVector = ChaiIcons.Search,
+                            contentDescription = stringResource(R.string.search_speakers_icon_description),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+            }
+        },
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent,
+                scrolledContainerColor = Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+            ),
+    )
+}
+
+private fun handleSpeakersKeyEvent(
+    event: KeyEvent,
+    isSearchActive: Boolean,
+    onOpenSearch: () -> Unit,
+    onCloseSearch: () -> Unit,
+): Boolean {
+    if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
+    return when {
+        event.isCtrlPressed && event.key == Key.F -> {
+            onOpenSearch()
+            true
+        }
+        event.key == Key.Escape && isSearchActive -> {
+            onCloseSearch()
+            true
+        }
+        else -> false
+    }
+}
+
+@Composable
 private fun SpeakersSearchField(
     query: String,
     onQueryChanged: (String) -> Unit,
@@ -282,6 +366,7 @@ private fun SpeakersSearchField(
     )
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,

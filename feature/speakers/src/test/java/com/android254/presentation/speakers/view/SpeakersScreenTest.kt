@@ -24,6 +24,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
@@ -62,7 +63,10 @@ class SpeakersScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun viewModel(currentSessions: List<Session> = emptyList()): SpeakersScreenViewModel {
+    private fun viewModel(
+        currentSessions: List<Session> = emptyList(),
+        savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    ): SpeakersScreenViewModel {
         every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
         coEvery { mockSyncDataWorkManager.startSync() } just runs
         every { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
@@ -72,6 +76,7 @@ class SpeakersScreenTest {
             syncDataWorkManager = mockSyncDataWorkManager,
             clock = fixedClock,
             ioDispatcher = testDispatcher,
+            savedStateHandle = savedStateHandle,
         )
     }
 
@@ -262,5 +267,17 @@ class SpeakersScreenTest {
             onNodeWithText("John Doe").assertIsDisplayed()
             onNodeWithText("Jane Smith").assertIsDisplayed()
         }
+    }
+
+    @Test
+    fun `should preserve speaker search query across SavedStateHandle recreation`() {
+        val savedStateHandle = SavedStateHandle()
+        coEvery { speakersRepo.fetchSpeakers() } returns flowOf(speakers())
+        val first = viewModel(savedStateHandle = savedStateHandle)
+        first.onSearchQueryChanged("jane")
+
+        val recreated = viewModel(savedStateHandle = savedStateHandle)
+
+        org.junit.Assert.assertEquals("jane", recreated.searchQuery.value)
     }
 }
