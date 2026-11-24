@@ -230,6 +230,22 @@ median frame finishes 3.6 ms early, but from P90 up frames run over by 2.7–4.1
 P99 frame duration of 16.5 ms sits right on the 60 Hz budget. Scrolling is broadly smooth
 with the worst ~10% of frames missing. That is the baseline to improve against.
 
+### Re-measured on 2026-11-23 (Compose BOM 2026.11.01, AGP 9.5.1)
+
+Same OPPO Reno4 (`CPH2113`, API 31, 60 Hz), `benchmarkRelease`, `CompilationMode.Ignore()`,
+15 iterations, median 275 frames per iteration (4,025 frames total; the live 2026 schedule is
+now fuller than the ~146-frame September run), after adding `contentType` and stable `key`s
+across lazy layouts:
+
+| Metric | P50 | P90 | P95 | P99 |
+| --- | --- | --- | --- | --- |
+| `frameDurationCpuMs` | 8.7 | 11.5 | 14.8 | 20.8 |
+| `frameOverrunMs` | +0.1 | +3.2 | +3.8 | +7.9 |
+
+As with startup, treat this as a fresh baseline for the Compose 1.13 / 2026-schedule build
+rather than a cross-session A/B against September — the list is nearly twice as long and the
+UI toolkit moved up two BOM releases in between.
+
 ## Jank between tabs and on the cube
 
 `NavigationBenchmark` measures frame timing in two journeys: `switchTabs` taps About, Feed,
@@ -311,8 +327,10 @@ Inside `bindApplication`, one profiled iteration splits as:
 - Firebase's content-provider initialisation: **82 ms** — `fire-cls` 38, `fire-sessions` 25,
   `Firebase` 8, `fire-perf-early` 6, `fire-fcm` 3, `fire-rc` 2.
 
-So the "heavy `Application.onCreate`" item on the startup checklist does not apply here;
-deferring the WorkManager enqueue would buy single-digit milliseconds and was not done. The
+So the "heavy `Application.onCreate`" item on the startup checklist was already small here;
+`DroidconApp` now injects `SyncDataWorkManager`, `SessionsRepo` and `SessionReminderScheduler`
+via `dagger.Lazy` and runs WorkManager initialization and sync enqueues on `@DefaultDispatcher`
+to keep cold-start work off the main thread. The
 one app-controlled cost of note is Firebase, and that is a product decision rather than a
 code fix: Crashlytics and Sessions install early to catch startup crashes, and Performance
 Monitoring's early hook is what produces its app-start trace. Dropping Performance Monitoring
@@ -445,6 +463,7 @@ baseline.
 | 2026-10-12 | size pass | 4,334,173 B — 4.13 MiB | 8,305,630 B — 7.92 MiB | Icons into `ChaiIcons`, one variable font, no ConstraintLayout |
 | 2026-10-20 | 2026 polish and Updates | 4,387,684 B — 4.18 MiB | 8,416,243 B — 8.03 MiB | `main` had grown 36,615 B since the size pass; this adds about 11.7 KB for Updates, the schedule-change recording and the abstract parser |
 | 2026-10-21 | Tickets | 4,498,576 B — 4.29 MiB | 8,670,701 B — 8.27 MiB | +110.9 KB: about 60 KB is `play-services-code-scanner`, kept so a printed ticket scans with no camera permission and no bundled ML Kit model; the rest is the ticket feature, its Room table and the code-scanner's Play-services glue |
+| 2026-11-23 | Android skills audit (PR #487) | 4,594,261 B — 4.38 MiB | 8,860,742 B — 8.45 MiB | +46.7 KB over the previous `4,547,598 B` baseline: cumulative growth from Compose BOM `2026.11.01` on `main` plus widget `onCompositionError` fallback, `SecurityException` guards, and `Lazy*` `contentType` metadata |
 
 ## Still open
 
@@ -517,14 +536,14 @@ have been removed.
 scripts read — protobuf bindings plus `convert.py`, `analyze.py` and `report.py` from its
 reference doc, which need a Python venv with `protobuf`. Run over this branch's release build:
 
-| | Before | After |
-|---|---|---|
-| Optimization score | 98.09% | 98.17% |
-| Obfuscation score | 98.41% | 98.48% |
-| Shrinking score | 98.33% | 98.40% |
-| Keep rules with impact | 144 | 137 |
-| Global rules (`-dontobfuscate`, `-keep class ** { *; }` …) | 0 | 0 |
-| Live classes / methods | 17,593 / 92,923 | 17,344 / 91,284 |
+| | Before | After (AGP 9.4) | 2026-11-23 (AGP 9.5.1) |
+|---|---|---|---|
+| Optimization score | 98.09% | 98.17% | **98.29%** |
+| Obfuscation score | 98.41% | 98.48% | **98.57%** |
+| Shrinking score | 98.33% | 98.40% | **98.50%** |
+| Keep rules with impact | 144 | 137 | 146 |
+| Global rules (`-dontobfuscate`, `-keep class ** { *; }` …) | 0 | 0 | 0 |
+| Live classes / methods | 17,593 / 92,923 | 17,344 / 91,284 | 20,933 / 107,898 |
 
 What it found: the five most expensive rules are all AGP defaults or library consumer rules —
 enum `values()`/`valueOf`, Play Services `zzadu` fields, `@Keep`, protobuf

@@ -115,4 +115,59 @@ class SpeakerApiTest {
             assertThat(response, `is`(DataResult.Success(expectedResponse)))
         }
     }
+
+    @Test
+    fun `test speakers fetch tolerates null biography tagline and avatar`() {
+        val rawJson =
+            """
+            {
+              "data": [
+                {
+                  "name": "Jane Doe",
+                  "biography": null,
+                  "tagline": null,
+                  "avatar": null,
+                  "twitter": null
+                }
+              ],
+              "meta": {
+                "paginator": {
+                  "count": 0,
+                  "per_page": 20,
+                  "current_page": 1,
+                  "next_page": null,
+                  "has_more_pages": false,
+                  "next_page_url": null,
+                  "previous_page_url": null
+                }
+              }
+            }
+            """.trimIndent()
+        val mockHttpEngine =
+            MockEngine {
+                respond(
+                    content = rawJson,
+                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                )
+            }
+        val httpClient =
+            HttpClientFactory(MockTokenProvider(), remoteFeatureToggleTest)
+                .create(mockHttpEngine)
+
+        runBlocking {
+            val response = SpeakersApi(httpClient).fetchSpeakers()
+
+            assertThat(
+                response,
+                `is`(
+                    DataResult.Success(
+                        SpeakersPagedResponse(
+                            data = listOf(SpeakerDTO(name = "Jane Doe")),
+                            meta = SamplePaginationMetaData,
+                        ),
+                    ),
+                ),
+            )
+        }
+    }
 }

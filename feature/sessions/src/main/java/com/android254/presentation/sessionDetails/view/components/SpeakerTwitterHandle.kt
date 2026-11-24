@@ -15,7 +15,9 @@
  */
 package com.android254.presentation.sessionDetails.view.components
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +30,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,10 +37,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.droidconke.chai.components.ChaiBodyMedium
 import ke.droidcon.kotlin.core.ui.R
+import timber.log.Timber
 
 @Composable
 fun SpeakerTwitterHandle(
@@ -47,13 +48,6 @@ fun SpeakerTwitterHandle(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val intent =
-        remember {
-            Intent(
-                Intent.ACTION_VIEW,
-                "https://www.twitter.com/${speaker.twitterHandle}".toUri(),
-            )
-        }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -66,7 +60,14 @@ fun SpeakerTwitterHandle(
         )
 
         Button(
-            onClick = { context.startActivity(intent) },
+            onClick = {
+                val uri = twitterProfileUri(speaker.twitterHandle) ?: return@Button
+                try {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                } catch (e: ActivityNotFoundException) {
+                    Timber.w(e, "No activity available to open speaker profile")
+                }
+            },
             shape = CircleShape,
             colors =
                 ButtonDefaults.buttonColors(
@@ -93,4 +94,15 @@ fun SpeakerTwitterHandle(
             )
         }
     }
+}
+
+internal fun twitterProfileUri(handle: String): Uri? {
+    val cleaned = handle.trim().removePrefix("@")
+    if (cleaned.isEmpty()) return null
+    return Uri
+        .Builder()
+        .scheme("https")
+        .authority("www.twitter.com")
+        .appendPath(cleaned)
+        .build()
 }

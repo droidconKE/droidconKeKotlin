@@ -127,21 +127,21 @@ fun HappeningNowPane(
                     .plus(horizontal = 20.dp, top = 24.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item(key = "happening-now-title") {
+            item(key = "happening-now-title", contentType = "title") {
                 ChaiSubTitle(
                     titleText = stringResource(R.string.happening_now),
                     titleColor = MaterialTheme.colorScheme.primary,
                 )
             }
             if (sessions.isEmpty()) {
-                item(key = "happening-now-empty") {
+                item(key = "happening-now-empty", contentType = "empty") {
                     ChaiBodyMedium(
                         bodyText = stringResource(R.string.happening_now_empty),
                         textColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
-            items(sessions, key = { it.id }) { session ->
+            items(sessions, key = { it.id }, contentType = { "session" }) { session ->
                 CurrentSessionComponent(
                     modifier = Modifier.fillMaxWidth(),
                     session = session,

@@ -25,7 +25,6 @@ junit4 = "4.13.2"
 benchmark = "1.5.0"
 uiautomator = "2.4.1"
 profileinstaller = "1.4.1"
-agp = "9.3.1"
 chucker = "4.3.1"
 androidxComposeBom = "2026.11.01"
 material3 = "1.5.0-rc01"
@@ -183,7 +182,7 @@ androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstall
 # Dependencies of the included build-logic
 firebase-crashlytics-gradlePlugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 firebase-performance-gradlePlugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerfPlugin" }
-android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "gradleplugin" }
 ktlint-gradlePlugin = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 spotless-gradlePlugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
@@ -223,9 +222,7 @@ gms = { id = "com.google.gms.google-services", version.ref = "gmsPlugin" }
 hilt-plugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 jlleitschuh = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 compose-stability = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

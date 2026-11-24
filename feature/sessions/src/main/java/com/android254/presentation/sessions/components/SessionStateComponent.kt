@@ -239,7 +239,7 @@ fun SessionListComponent(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            item(key = "sessions_title", span = { GridItemSpan(maxLineSpan) }) {
+            item(key = "sessions_title", span = { GridItemSpan(maxLineSpan) }, contentType = "title") {
                 ChaiSubTitle(
                     modifier = Modifier.padding(top = 20.dp),
                     titleText =
@@ -254,12 +254,13 @@ fun SessionListComponent(
                 sessions.entries.forEach { entry ->
                     val time = entry.key
                     val timeSessions = entry.value
-                    stickyHeader(key = "header_$time") {
+                    stickyHeader(key = "header_$time", contentType = "time_header") {
                         TimeHeader(time = time)
                     }
                     items(
                         items = timeSessions,
                         key = { it.id },
+                        contentType = { "session_card" },
                     ) { session ->
                         SessionsCard(
                             session = session,
@@ -274,6 +275,7 @@ fun SessionListComponent(
                 itemsIndexed(
                     items = flatSessions,
                     key = { _, session -> session.id },
+                    contentType = { _, _ -> "session_banner_card" },
                 ) { _, session ->
                     SessionsCardWithBannerImage(
                         session = session,

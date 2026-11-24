@@ -143,7 +143,7 @@ internal fun FeedScreen(
                                 .readablePaneWidth(),
                         contentPadding = paddingValues.plus(bottom = 16.dp),
                     ) {
-                        item(key = "updates-title") {
+                        item(key = "updates-title", contentType = "title") {
                             Text(
                                 text = stringResource(R.string.updates_title),
                                 style = MaterialTheme.typography.headlineSmallEmphasized,
@@ -154,7 +154,16 @@ internal fun FeedScreen(
                                         .semantics { heading() },
                             )
                         }
-                        itemsIndexed(feedUIState.items, key = { _, item -> item.key }) { index, item ->
+                        itemsIndexed(
+                            items = feedUIState.items,
+                            key = { _, item -> item.key },
+                            contentType = { _, item ->
+                                when (item) {
+                                    is UpdateItem.Post -> "post"
+                                    is UpdateItem.Schedule -> "schedule"
+                                }
+                            },
+                        ) { index, item ->
                             if (index > 0) {
                                 HorizontalDivider(
                                     modifier = Modifier.padding(horizontal = 20.dp),

@@ -16,10 +16,9 @@
 package com.android254.presentation.sessions.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,8 +60,8 @@ fun EventDaySelector(
                     MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.3f),
                 ),
         ) { brush ->
-            LazyRow(modifier = modifier) {
-                items(3) {
+            Row(modifier = modifier) {
+                repeat(3) {
                     LoadingBox(height = 48.dp, width = 64.dp, brush = brush, cornerRadius = 24.dp)
                     Spacer(Modifier.width(ButtonGroupDefaults.ConnectedSpaceBetween))
                 }

@@ -234,7 +234,7 @@ fun MainScreen(
     val navController = remember { NavigationController(navigationState) }
     DeepLinkEffect(deepLink = deepLink, navController = navController, onHandled = onDeepLinkHandled)
     val sessionsState by viewModel.sessionState.collectAsStateWithLifecycle()
-    var showAuthDialog by remember {
+    var showAuthDialog by rememberSaveable {
         mutableStateOf(false)
     }
 

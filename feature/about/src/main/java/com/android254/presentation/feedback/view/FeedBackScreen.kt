@@ -44,7 +44,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.computedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -88,14 +88,14 @@ internal fun FeedBackScreen(
     navigateBack: () -> Unit = {},
 ) {
     val darkTheme = MaterialTheme.isDarkTheme
-    var value by remember {
+    var value by rememberSaveable {
         mutableStateOf("")
     }
 
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
+    val isCollapsed = remember { computedStateOf { scrollBehavior.state.collapsedFraction > 0.7 } }
 
     StatusBarIconAppearance(darkIcons = isCollapsed.value && !darkTheme)
 

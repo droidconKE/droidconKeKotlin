@@ -48,7 +48,9 @@ abstract class WorkModule {
                     .setMinimumLoggingLevel(android.util.Log.DEBUG)
                     .setWorkerFactory(workerFactory)
                     .build()
-            WorkManager.initialize(context, configuration)
+            if (!WorkManager.isInitialized()) {
+                WorkManager.initialize(context, configuration)
+            }
             return WorkManager.getInstance(context)
         }
     }

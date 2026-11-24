@@ -19,6 +19,7 @@ import android.app.Application
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.work.SyncDataWorkManager
 import com.android254.droidcon.crashlytics.CrashlyticsTree
+import dagger.Lazy
 import dagger.hilt.android.HiltAndroidApp
 import ke.droidcon.kotlin.BuildConfig
 import ke.droidcon.kotlin.core.common.di.DefaultDispatcher
@@ -31,19 +32,20 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
 class DroidconApp : Application() {
     @Inject
-    lateinit var syncDataWorkManager: SyncDataWorkManager
+    lateinit var syncDataWorkManager: Lazy<SyncDataWorkManager>
 
     @Inject
-    lateinit var sessionsRepository: SessionsRepo
+    lateinit var sessionsRepository: Lazy<SessionsRepo>
 
     @Inject
-    lateinit var sessionReminderScheduler: SessionReminderScheduler
+    lateinit var sessionReminderScheduler: Lazy<SessionReminderScheduler>
 
     @Inject
     @DefaultDispatcher
@@ -54,19 +56,26 @@ class DroidconApp : Application() {
         initTimber()
         NotificationChannelSpec.createAll(this)
 
-        syncDataWorkManager.setupPeriodicSync()
-
-        syncDataWorkManager.startSync()
+        val appScope = CoroutineScope(defaultDispatcher + SupervisorJob())
+        appScope.launch {
+            val workManager = syncDataWorkManager.get()
+            workManager.setupPeriodicSync()
+            workManager.startSync()
+        }
 
         // Stars and syncs both land in the database, so this covers both. Rescheduling leaves
         // reminders that are already due alone, so a background start can't cancel one mid-post.
-        sessionsRepository
-            .fetchSessions()
-            .map { sessions -> sessions.filter { it.isBookmarked } }
-            .distinctUntilChanged()
-            .onEach { starredSessions ->
-                sessionReminderScheduler.rescheduleAll(starredSessions)
-            }.launchIn(CoroutineScope(defaultDispatcher + SupervisorJob()))
+        appScope.launch {
+            val reminderScheduler = sessionReminderScheduler.get()
+            sessionsRepository
+                .get()
+                .fetchSessions()
+                .map { sessions -> sessions.filter { it.isBookmarked } }
+                .distinctUntilChanged()
+                .onEach { starredSessions ->
+                    reminderScheduler.rescheduleAll(starredSessions)
+                }.launchIn(this)
+        }
     }
 
     private fun initTimber() =

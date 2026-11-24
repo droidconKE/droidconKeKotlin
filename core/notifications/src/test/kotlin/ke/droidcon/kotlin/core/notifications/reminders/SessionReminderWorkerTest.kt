@@ -15,6 +15,7 @@
  */
 package ke.droidcon.kotlin.core.notifications.reminders
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
@@ -72,6 +73,30 @@ class SessionReminderWorkerTest {
 
             assertEquals(ListenableWorker.Result.success(workDataOf(SessionReminderWorker.KEY_REMINDED_START to start)), result)
             assertEquals(1, context.getSystemService(NotificationManager::class.java).activeNotifications.size)
+        }
+
+    // MockK stub; no notification posted.
+    @SuppressLint("MissingPermission")
+    @Test
+    fun `a security exception during notify completes without retrying`() =
+        runTest {
+            val input =
+                workDataOf(
+                    SessionReminderWorker.KEY_SESSION_ID to "s1",
+                    SessionReminderWorker.KEY_TITLE to "Welcome",
+                    SessionReminderWorker.KEY_SESSION_START to 1_793_862_000_000L,
+                )
+            val mockedManager =
+                mockk<NotificationManagerCompat> {
+                    every { notify(any(), any()) } throws SecurityException("revoked")
+                }
+            mockkStatic(NotificationManagerCompat::class)
+            try {
+                every { NotificationManagerCompat.from(any()) } returns mockedManager
+                assertEquals(ListenableWorker.Result.success(), worker(NotificationPreferences(), input).doWork())
+            } finally {
+                unmockkStatic(NotificationManagerCompat::class)
+            }
         }
 
     private fun assertNotPosted(preferences: NotificationPreferences) =

@@ -22,10 +22,10 @@ import ke.droidcon.kotlin.datasource.remote.speakers.model.SpeakerDTO
 fun SpeakerDTO.toEntity() =
     SpeakerEntity(
         name = name,
-        tagline = tagline,
-        bio = bio,
-        avatar = avatar,
-        twitter = twitter ?: "",
+        tagline = tagline.orEmpty(),
+        bio = bio.orEmpty(),
+        avatar = avatar.orEmpty(),
+        twitter = twitter.orEmpty(),
     )
 
 fun SpeakerEntity.toDomainModel() =
@@ -44,10 +44,10 @@ fun SpeakerEntity.toDomainModel() =
 
 fun SpeakerDTO.toDomain() =
     Speaker(
-        avatar = avatar,
+        avatar = avatar.orEmpty(),
         name = name,
-        tagline = tagline,
-        biography = bio,
+        tagline = tagline.orEmpty(),
+        biography = bio.orEmpty(),
         twitter = twitter.orEmpty(),
         linkedin = "",
         instagram = "",

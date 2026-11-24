@@ -40,12 +40,12 @@ flowchart TD
 
 | Tool | Version | Scope | Config |
 |------|---------|-------|--------|
-| [spotless](https://github.com/diffplug/spotless) | 8.9.0 | `**/*.kt`, `**/*.kts` | root `build.gradle.kts` |
+| [spotless](https://github.com/diffplug/spotless) | 8.11.0 | `**/*.kt`, `**/*.kts` | root `build.gradle.kts` |
 | [ktlint](https://github.com/JLLeitschuh/ktlint-gradle) | 14.2.0 | every module | `.editorconfig` |
 | [detekt](https://detekt.dev) | 1.23.8 | every module | `detekt.yml` |
-| Android Lint | AGP 9.3.1 | every module | `config/lint/lint.xml`, `build-logic/.../Lint.kt` |
-| [compose-lints](https://slackhq.github.io/compose-lints/) | 1.5.4 | every module, via `lintChecks` | `config/lint/lint.xml` |
-| [compose-stability-analyzer](https://github.com/skydoves/compose-stability-analyzer) | 0.12.0 | `:app`, `:core:designsystem`, `:core:ui`, `:feature:*` | `*/stability/*.stability` |
+| Android Lint | AGP 9.5.1 | every module | `config/lint/lint.xml`, `build-logic/.../Lint.kt` |
+| [compose-lints](https://slackhq.github.io/compose-lints/) | 1.6.1 | every module, via `lintChecks` | `config/lint/lint.xml` |
+| [compose-stability-analyzer](https://github.com/skydoves/compose-stability-analyzer) | 0.15.0 | `:app`, `:core:designsystem`, `:core:ui`, `:feature:*` | `*/stability/*.stability` |
 
 Slack's Compose rules are on the `lintChecks` classpath of **every** Android module, not just
 the Compose ones. `config/lint/lint.xml` names those issue ids, and lint fails a module with
@@ -115,15 +115,16 @@ projects end up with baselines.
 From `:app`'s lint run, which has `checkDependencies = true` and therefore sees the whole
 module graph.
 
-**0 errors. 13 warnings. 29 informational.**
+**0 errors. 21 warnings. 45 informational.**
 
 | Rule | Count | What clearing it involves |
 |------|-------|---------------------------|
+| `UseKtx` | 7 | Use the KTX extension lint suggests |
 | `ComposeModifierMissing` | 5 | Add `modifier: Modifier = Modifier` and apply it to the root layout |
 | `UnusedResources` | 4 | Delete the resource, or use it |
+| `InlinedApi` | 2 | Guard API-level constants or raise the check |
 | `UnusedAttribute` | 2 | Attributes ignored below `minSdk`; harmless, or gate them by API level |
 | `MissingFirebaseInstanceTokenRefresh` | 1 | Handle `onNewToken` in the messaging service |
-| `UseKtx` | 1 | Use the KTX extension lint suggests |
 
 Cleared rules are promoted to `error` in `config/lint/lint.xml` so they stay at zero, among them
 `ComposePreviewPublic`, `ComposeUnstableCollections`, `ComposeModifierWithoutDefault` and
@@ -146,17 +147,17 @@ to be skippable stops being.
 
 | Module | Composables | Not skippable | Unstable or unknown params |
 |--------|-------------|---------------|----------------------------|
-| `core:designsystem` (chai) | 27 | 3 | 0 |
-| `core:ui` | 54 | 20 | 11 |
-| `app` | 12 | 5 | 10 |
-| `feature:*` | 79 | 3 | 17 |
+| `core:designsystem` (chai) | 31 | 3 | 0 |
+| `core:ui` | 56 | 22 | 3 |
+| `app` | 14 | 5 | 9 |
+| `feature:*` | 131 | 14 | 13 |
 
-Strong skipping is on by default, so every composable that returns `Unit` is skippable. The 31
+Strong skipping is on by default, so every composable that returns `Unit` is skippable. The 44
 that are not all return a value (`chaiColorsPalette()`, `rememberLiveSessions()`, the entry
 provider), and Compose never skips those. Skippability is therefore not the number to watch.
 
 An unstable or unknown parameter still matters: strong skipping compares it by instance rather
-than by `equals`, so an equal but new value recomposes. Most of the 38 are harmless. They are
+than by `equals`, so an equal but new value recomposes. Most of the 25 are harmless. They are
 ViewModels and the navigation controller, which keep one instance, or sealed UI states and
 `NavKey`s, whose implementations the compiler checks at runtime. The stability plugin also
 reports a class from another module as unstable when the compiler resolves it as stable at
