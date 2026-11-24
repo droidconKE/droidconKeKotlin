@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,22 +61,39 @@ fun SessionsCardWithBannerImage(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onBookmark: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
 ) {
     Card(
         modifier =
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        border = if (isSelected) BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary) else null,
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer
+                    },
+            ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
         AsyncImage(
             model =
                 ImageRequest
                     .Builder(LocalContext.current)
-                    .data(if (session.isService) R.drawable.all else session.sessionImage)
-                    .build(),
+                    .data(
+                        if (session.isService || session.sessionImage.isBlank()) {
+                            R.drawable.all
+                        } else {
+                            session.sessionImage
+                        },
+                    ).build(),
             placeholder = painterResource(R.drawable.all),
+            error = painterResource(R.drawable.all),
+            fallback = painterResource(R.drawable.all),
             contentDescription = stringResource(id = R.string.session_image),
             modifier =
                 Modifier

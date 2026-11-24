@@ -16,6 +16,8 @@
 package com.android254.presentation.common.navigation
 
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import com.android254.presentation.common.adaptive.DroidconWindowSize
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -42,5 +44,33 @@ class NavigationSuiteTypeTest {
     fun `other wider windows get the collapsed rail`() {
         assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Medium, showsDrawer = false, phoneOnItsSide = false))
         assertEquals(NavigationSuiteType.WideNavigationRailCollapsed, navigationSuiteTypeFor(DroidconWindowSize.Expanded, showsDrawer = false, phoneOnItsSide = false))
+    }
+
+    @Test
+    fun `expanded rail and drawer use onSecondaryContainer so selected labels stay legible on the green pill`() {
+        listOf(lightColorScheme(), darkColorScheme()).forEach { scheme ->
+            assertEquals(
+                scheme.onSecondaryContainer,
+                selectedNavigationLabelColor(NavigationSuiteType.WideNavigationRailExpanded, scheme),
+            )
+            assertEquals(
+                scheme.onSecondaryContainer,
+                selectedNavigationLabelColor(NavigationSuiteType.NavigationDrawer, scheme),
+            )
+        }
+    }
+
+    @Test
+    fun `compact bar and collapsed rail keep secondary for labels drawn outside the indicator pill`() {
+        listOf(lightColorScheme(), darkColorScheme()).forEach { scheme ->
+            assertEquals(
+                scheme.secondary,
+                selectedNavigationLabelColor(NavigationSuiteType.ShortNavigationBarCompact, scheme),
+            )
+            assertEquals(
+                scheme.secondary,
+                selectedNavigationLabelColor(NavigationSuiteType.WideNavigationRailCollapsed, scheme),
+            )
+        }
     }
 }

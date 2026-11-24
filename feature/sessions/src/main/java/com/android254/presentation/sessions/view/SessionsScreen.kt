@@ -81,6 +81,7 @@ import kotlinx.collections.immutable.toImmutableMap
 fun SessionsRoute(
     sessionsViewModel: SessionsViewModel = hiltViewModel(),
     navigateToSessionDetails: (sessionId: String) -> Unit = {},
+    selectedSessionId: String? = null,
 ) {
     val isRefreshing by sessionsViewModel.isRefreshing.collectAsStateWithLifecycle()
     val sessionsUiState by sessionsViewModel.sessionsUiState.collectAsStateWithLifecycle()
@@ -96,6 +97,7 @@ fun SessionsRoute(
         selectedEventDate = selectedEventDate,
         currentSelections = currentSelections,
         onEvent = onEvent,
+        selectedSessionId = selectedSessionId,
     )
 }
 
@@ -108,6 +110,7 @@ fun SessionsScreen(
     navigateToSessionDetails: (sessionId: String) -> Unit,
     onEvent: (SessionsIntentHandler) -> Unit,
     modifier: Modifier = Modifier,
+    selectedSessionId: String? = null,
 ) {
     // Derived, not mirrored, so rotation cannot desync the switch and the filter.
     val showMySessions = sessionsUiState.showMySessionsOnly
@@ -224,6 +227,7 @@ fun SessionsScreen(
                     if (showMySessions) SessionScreenState.MYSESSIONS else SessionScreenState.ALL,
                 isSessionLayoutList = isSessionLayoutList.value,
                 onEvent = onEvent,
+                selectedSessionId = selectedSessionId,
             )
             // Our own flag: `bottomSheetState.isVisible` would skip the enter animation.
             if (showFilterSheet) {

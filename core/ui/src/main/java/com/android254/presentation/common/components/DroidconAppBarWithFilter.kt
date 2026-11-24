@@ -35,6 +35,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -86,20 +87,36 @@ fun DroidconAppBarWithFilter(
                 contentDescription = stringResource(id = R.string.logo),
                 modifier = Modifier.weight(1f, fill = false),
             )
+            LayoutIconButtons(
+                isListActive = isListActive,
+                onListIconClick = onListIconClick,
+                onAgendaIconClick = onAgendaIconClick,
+            )
+            FilterButton(
+                isActive = isFilterActive,
+                onButtonClick = onFilterButtonClick,
+            )
         } else {
-            Spacer(modifier = Modifier)
+            Text(
+                text = stringResource(id = R.string.sessions_label),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                LayoutIconButtons(
+                    isListActive = isListActive,
+                    onListIconClick = onListIconClick,
+                    onAgendaIconClick = onAgendaIconClick,
+                )
+                FilterButton(
+                    isActive = isFilterActive,
+                    onButtonClick = onFilterButtonClick,
+                )
+            }
         }
-
-        LayoutIconButtons(
-            isListActive = isListActive,
-            onListIconClick = onListIconClick,
-            onAgendaIconClick = onAgendaIconClick,
-        )
-
-        FilterButton(
-            isActive = isFilterActive,
-            onButtonClick = onFilterButtonClick,
-        )
     }
 }
 

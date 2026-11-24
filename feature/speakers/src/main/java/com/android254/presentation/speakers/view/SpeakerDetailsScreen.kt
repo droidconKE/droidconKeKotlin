@@ -69,6 +69,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.DroidconTooltip
 import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.adaptive.paneStartDivider
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -124,8 +125,15 @@ internal fun SpeakerDetailsScreen(
 ) {
     val paneTitle = (uiState as? SpeakerDetailsScreenUiState.Success)?.speaker?.name ?: stringResource(R.string.speaker_details_label)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val paneDividerColor = MaterialTheme.colorScheme.outlineVariant
     // The scrim draws over the content, so stack it here rather than rely on the caller.
-    Box(modifier = Modifier.fillMaxSize().semantics { this.paneTitle = paneTitle }) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .then(if (!showTopBar) Modifier.paneStartDivider(paneDividerColor) else Modifier)
+                .semantics { this.paneTitle = paneTitle },
+    ) {
         Scaffold(
             modifier = if (showTopBar) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier,
             // As a pane the bar repeats the name and offers a back arrow out of a visible list.

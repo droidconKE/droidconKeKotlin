@@ -25,7 +25,10 @@ import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExperimentalMediaQueryApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.mediaQuery
 import androidx.compose.ui.unit.Dp
@@ -169,4 +172,17 @@ fun Modifier.readablePaneWidth(): Modifier =
         layout(constraints.maxWidth, placeable.height) {
             placeable.placeRelative((constraints.maxWidth - placeable.width) / 2, 0)
         }
+    }
+
+/** Hairline separator along the start edge of an inline detail pane in multi-pane layouts. */
+fun Modifier.paneStartDivider(color: Color): Modifier =
+    drawWithContent {
+        drawContent()
+        val stroke = 1.dp.toPx()
+        drawLine(
+            color = color,
+            start = Offset(stroke / 2f, 0f),
+            end = Offset(stroke / 2f, size.height),
+            strokeWidth = stroke,
+        )
     }

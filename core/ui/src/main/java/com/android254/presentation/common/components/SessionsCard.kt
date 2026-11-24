@@ -107,13 +107,34 @@ fun SessionsCard(
     onBookmark: (String) -> Unit,
     modifier: Modifier = Modifier,
     showBorder: Boolean = true,
+    isSelected: Boolean = false,
 ) {
     val venueAccent = venueAccentColor(session.venue)
-    val pulse = if (showBorder && session.sessionStatus == SessionStatus.Ongoing) rememberOngoingPulse() else null
+    val pulse = if (showBorder && !isSelected && session.sessionStatus == SessionStatus.Ongoing) rememberOngoingPulse() else null
 
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by rememberIsHovered(interactionSource)
-    val elevation by animateDpAsState(if (isHovered) 8.dp else 2.dp, label = "card_elevation")
+    val elevation by animateDpAsState(
+        targetValue =
+            when {
+                isHovered -> 8.dp
+                isSelected -> 0.dp
+                else -> 2.dp
+            },
+        label = "card_elevation",
+    )
+    val cardBorder =
+        when {
+            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            showBorder && pulse == null -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            else -> null
+        }
+    val containerColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+        } else {
+            MaterialTheme.colorScheme.surfaceContainerLow
+        }
 
     Card(
         modifier =
@@ -125,65 +146,73 @@ fun SessionsCard(
         shape = CardShape,
         interactionSource = interactionSource,
         elevation = CardDefaults.cardElevation(defaultElevation = elevation),
-        border = if (showBorder && pulse == null) BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant) else null,
+        border = cardBorder,
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor = containerColor,
             ),
         onClick = { navigateToSessionDetails(session.id) },
     ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            SessionTitleComponent(session, onBookmark)
-            if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus != SessionStatus.Upcoming) {
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (session.format.isNotBlank()) {
-                    SessionTag(tagText = session.format)
-                }
-                if (session.level.isNotBlank()) {
-                    SessionTag(tagText = session.level)
-                }
-                SessionStatusLabel(
-                    status = session.sessionStatus,
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                )
-            }
+        SessionCardBody(session = session, onBookmark = onBookmark)
+    }
+}
 
-            if (session.speakers.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-
-                session.speakers.forEach { speaker ->
-                    SessionPresenterComponents(speaker = speaker)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-
+@Composable
+private fun SessionCardBody(
+    session: SessionPresentationModel,
+    onBookmark: (String) -> Unit,
+) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+    ) {
+        SessionTitleComponent(session, onBookmark)
+        if (session.format.isNotBlank() || session.level.isNotBlank() || session.sessionStatus != SessionStatus.Upcoming) {
             Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(
-                modifier = Modifier.fillMaxWidth(),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant,
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (session.format.isNotBlank()) {
+                SessionTag(tagText = session.format)
+            }
+            if (session.level.isNotBlank()) {
+                SessionTag(tagText = session.level)
+            }
+            SessionStatusLabel(
+                status = session.sessionStatus,
+                modifier = Modifier.align(Alignment.CenterVertically),
             )
+        }
+
+        if (session.speakers.isNotEmpty()) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                ChaiBodyXSmall(
-                    bodyText = session.venue.uppercase(),
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                ChaiBodyXSmall(
-                    bodyText = "${session.startTime} ${session.amOrPm} - ${session.endTime}",
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            session.speakers.forEach { speaker ->
+                SessionPresenterComponents(speaker = speaker)
+                Spacer(modifier = Modifier.height(8.dp))
             }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            ChaiBodyXSmall(
+                bodyText = session.venue.uppercase(),
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            ChaiBodyXSmall(
+                bodyText = "${session.startTime} ${session.amOrPm} - ${session.endTime}",
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

@@ -15,23 +15,28 @@
  */
 package com.android254.presentation.common.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.paneStartDivider
 import com.droidconke.chai.components.ChaiBodyMedium
 
 const val DETAIL_PANE_PLACEHOLDER_TEST_TAG: String = "detail_pane_placeholder"
@@ -44,7 +49,11 @@ fun DetailPanePlaceholder(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier.testTag(DETAIL_PANE_PLACEHOLDER_TEST_TAG).fillMaxSize(),
+        modifier =
+            modifier
+                .testTag(DETAIL_PANE_PLACEHOLDER_TEST_TAG)
+                .fillMaxSize()
+                .paneStartDivider(MaterialTheme.colorScheme.outlineVariant),
         color = MaterialTheme.colorScheme.background,
     ) {
         Column(
@@ -52,13 +61,22 @@ fun DetailPanePlaceholder(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Icon(
-                modifier = Modifier.size(56.dp),
-                painter = icon,
-                // Decorative: the message carries the meaning.
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Box(
+                modifier =
+                    Modifier
+                        .size(88.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.size(40.dp),
+                    painter = icon,
+                    // Decorative: the message carries the meaning.
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
             ChaiBodyMedium(
                 bodyText = message,
