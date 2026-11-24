@@ -17,6 +17,12 @@ package com.android254.presentation.common.adaptive
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -24,8 +30,26 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 
 /** Marks a clickable as clickable to a mouse. Costs nothing on a touch screen. */
-fun Modifier.clickablePointer(): Modifier = pointerHoverIcon(PointerIcon.Hand)
+fun Modifier.clickablePointer(enabled: Boolean = true): Modifier = pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default)
 
 /** Whether a pointer is over the element driven by [interactionSource]. */
 @Composable
 fun rememberIsHovered(interactionSource: MutableInteractionSource): State<Boolean> = interactionSource.collectIsHoveredAsState()
+
+@Composable
+fun DroidconTooltip(
+    text: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    TooltipBox(
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                positioning = TooltipAnchorPosition.Above,
+            ),
+        tooltip = { PlainTooltip { Text(text) } },
+        state = rememberTooltipState(),
+        modifier = modifier,
+        content = content,
+    )
+}

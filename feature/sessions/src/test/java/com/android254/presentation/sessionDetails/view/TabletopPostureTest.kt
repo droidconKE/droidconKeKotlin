@@ -16,15 +16,19 @@
 package com.android254.presentation.sessionDetails.view
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.unit.dp
 import com.android254.presentation.models.SessionDetailsPresentationModel
 import com.android254.presentation.sessionDetails.SessionDetailsUiState
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.droidconke.chai.ChaiTheme
 import kotlinx.collections.immutable.persistentListOf
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,16 +56,36 @@ class TabletopPostureTest {
         composeTestRule.onNodeWithTag(TestTag.TABLETOP_BODY).assertDoesNotExist()
     }
 
-    private fun setContent(isTabletop: Boolean) {
+    @Test
+    fun `tabletop posture places banner above and controls below an asymmetric hinge`() {
+        val hinge = Rect(left = 0f, top = 260f, right = 400f, bottom = 300f)
+        setContent(isTabletop = true, hingeBoundsInWindow = hinge, showTopBar = false)
+
+        val bannerBounds = composeTestRule.onNodeWithTag("tabletop_banner").getUnclippedBoundsInRoot()
+        val controlsBounds = composeTestRule.onNodeWithTag("tabletop_controls").getUnclippedBoundsInRoot()
+
+        assertTrue(
+            "Expected banner bottom (${bannerBounds.bottom}) to sit above controls top (${controlsBounds.top})",
+            bannerBounds.bottom < controlsBounds.top,
+        )
+    }
+
+    private fun setContent(
+        isTabletop: Boolean,
+        hingeBoundsInWindow: Rect? = null,
+        showTopBar: Boolean = true,
+    ) {
         composeTestRule.setContent {
             ChaiTheme {
-                Box(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.size(width = 400.dp, height = 800.dp)) {
                     SessionDetailsScreen(
                         uiState = SessionDetailsUiState.Success(data = session),
                         bookmarkSession = {},
                         unBookmarkSession = {},
                         onNavigationIconClick = {},
+                        showTopBar = showTopBar,
                         isTabletop = isTabletop,
+                        hingeBoundsInWindow = hingeBoundsInWindow,
                     )
                 }
             }

@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.android254.presentation.common.adaptive.DroidconWindowSize
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.droidconke.chai.components.ChaiTextLabelSmall
 import com.droidconke.chai.isDarkTheme
 import ke.droidcon.kotlin.core.ui.R
@@ -74,7 +75,7 @@ fun DroidconNavigationItems(
             navigationSuiteType = navigationSuiteType,
             selected = isSelected,
             onClick = { onNavigate(destination.route) },
-            modifier = Modifier.testTag("nav_${destination.name.lowercase()}"),
+            modifier = Modifier.testTag("nav_${destination.name.lowercase()}").clickablePointer(),
             icon = {
                 Icon(
                     painter = painterResource(id = destination.icon),

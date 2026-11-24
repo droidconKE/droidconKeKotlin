@@ -58,6 +58,7 @@ import com.android254.presentation.common.components.OrganizedBySection
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.models.OrganizerLogo
 import com.android254.presentation.models.OrganizingTeamMember
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.colors.CubeStageTextColor
 import com.droidconke.chai.colors.CubeStageTitleColors
@@ -270,6 +271,7 @@ fun OrganizingTeamSection(
     }
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,

@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 
@@ -93,36 +95,39 @@ fun BookmarkButton(
     val label = stringResource(R.string.star_session_icon_description)
     val stateText = stringResource(if (isBookmarked) R.string.session_starred else R.string.session_not_starred)
 
-    Box(
-        modifier =
-            modifier
-                .sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
-                .clip(CircleShape)
-                .toggleable(value = isBookmarked, role = Role.Checkbox, onValueChange = { onToggle() })
-                .semantics {
-                    contentDescription = label
-                    stateDescription = stateText
-                },
-        contentAlignment = Alignment.Center,
-    ) {
+    DroidconTooltip(text = label, modifier = modifier) {
         Box(
             modifier =
                 Modifier
-                    .size(size)
-                    .graphicsLayer {
-                        scaleX = scale.value
-                        scaleY = scale.value
-                        shape = MorphShape(morph, progress.value)
-                        clip = true
-                    }.drawBehind { drawRect(container.value) },
+                    .sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
+                    .clip(CircleShape)
+                    .clickablePointer()
+                    .toggleable(value = isBookmarked, role = Role.Checkbox, onValueChange = { onToggle() })
+                    .semantics {
+                        contentDescription = label
+                        stateDescription = stateText
+                    },
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = if (isBookmarked) ChaiIcons.StarRounded else ChaiIcons.StarOutlineRounded,
-                contentDescription = null,
-                tint = if (isBookmarked) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(size * 0.55f),
-            )
+            Box(
+                modifier =
+                    Modifier
+                        .size(size)
+                        .graphicsLayer {
+                            scaleX = scale.value
+                            scaleY = scale.value
+                            shape = MorphShape(morph, progress.value)
+                            clip = true
+                        }.drawBehind { drawRect(container.value) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = if (isBookmarked) ChaiIcons.StarRounded else ChaiIcons.StarOutlineRounded,
+                    contentDescription = null,
+                    tint = if (isBookmarked) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(size * 0.55f),
+                )
+            }
         }
     }
 }

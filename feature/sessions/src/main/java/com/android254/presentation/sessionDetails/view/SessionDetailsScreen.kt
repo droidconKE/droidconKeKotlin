@@ -40,12 +40,22 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -54,7 +64,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.adaptive.rememberHorizontalHingeBounds
 import com.android254.presentation.common.adaptive.rememberIsTabletopPosture
 import com.android254.presentation.common.divider.CustomDivider
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -72,11 +85,13 @@ import com.android254.presentation.sessionDetails.view.components.SessionTitleAn
 import com.android254.presentation.sessionDetails.view.components.SpeakerTwitterHandle
 import com.android254.presentation.sessionDetails.view.components.TestTag
 import com.android254.presentation.sessionDetails.view.components.TopBar
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiBodyMediumBold
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.roundToInt
 
 @Composable
 fun SessionDetailsRoute(
@@ -117,31 +132,38 @@ internal fun SessionDetailsScreen(
     onNavigationIconClick: () -> Unit,
     showTopBar: Boolean = true,
     isTabletop: Boolean = rememberIsTabletopPosture(),
+    hingeBoundsInWindow: Rect? = rememberHorizontalHingeBounds(),
     onShare: (SessionDetailsPresentationModel) -> Unit = {},
 ) {
     val paneTitle = (uiState as? SessionDetailsUiState.Success)?.data?.title ?: stringResource(R.string.session_details_label)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     // The scrim draws over the content, so stack it here rather than rely on the caller.
     Box(modifier = Modifier.fillMaxSize().semantics { this.paneTitle = paneTitle }) {
         Scaffold(
+            modifier = if (showTopBar) Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else Modifier,
             // As a pane the bar repeats the title and offers a back arrow out of a visible list.
-            topBar = { if (showTopBar) TopBar(onNavigationIconClick) },
+            topBar = { if (showTopBar) TopBar(onNavigationIconClick = onNavigationIconClick, scrollBehavior = scrollBehavior) },
             floatingActionButton = {
                 if (uiState is SessionDetailsUiState.Success) {
-                    FloatingActionButton(
-                        onClick = { onShare(uiState.data) },
-                        modifier =
-                            Modifier
-                                .size(44.dp)
-                                .testTag(TestTag.FLOATING_ACTION_BUTTON),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = CircleShape,
-                    ) {
-                        Icon(
-                            modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
-                            imageVector = ChaiIcons.Reply,
-                            contentDescription = stringResource(R.string.share_session),
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
+                    val shareLabel = stringResource(R.string.share_session)
+                    DroidconTooltip(text = shareLabel) {
+                        FloatingActionButton(
+                            onClick = { onShare(uiState.data) },
+                            modifier =
+                                Modifier
+                                    .size(44.dp)
+                                    .clickablePointer()
+                                    .testTag(TestTag.FLOATING_ACTION_BUTTON),
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = CircleShape,
+                        ) {
+                            Icon(
+                                modifier = Modifier.scale(scaleX = -1f, scaleY = 1f),
+                                imageVector = ChaiIcons.Reply,
+                                contentDescription = shareLabel,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                        }
                     }
                 }
             },
@@ -175,6 +197,7 @@ internal fun SessionDetailsScreen(
                             sessionDetails = uiState.data,
                             bookmarkSession = bookmarkSession,
                             unBookmarkSession = unBookmarkSession,
+                            hingeBoundsInWindow = hingeBoundsInWindow,
                         )
                     } else {
                         Body(
@@ -201,39 +224,70 @@ private fun TabletopBody(
     sessionDetails: SessionDetailsPresentationModel,
     bookmarkSession: (String) -> Unit,
     unBookmarkSession: (String) -> Unit,
+    hingeBoundsInWindow: Rect?,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    var localHingeBounds by remember(hingeBoundsInWindow) { mutableStateOf<Pair<Int, Int>?>(null) }
+
+    Layout(
         modifier =
             modifier
                 .padding(paddingValues)
                 .consumeWindowInsets(paddingValues)
                 .fillMaxSize()
-                .testTag(TestTag.TABLETOP_BODY),
-    ) {
-        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-            SessionBannerImage(sessionDetails)
-        }
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 18.dp),
-        ) {
-            SessionSpeakerNameAndFavouriteIcon(
-                sessionDetails = sessionDetails,
-                bookmarkSession = bookmarkSession,
-                unBookmarkSession = unBookmarkSession,
+                .onGloballyPositioned { coordinates ->
+                    localHingeBounds =
+                        hingeBoundsInWindow?.let { hinge ->
+                            val top = coordinates.windowToLocal(Offset(0f, hinge.top)).y.roundToInt()
+                            val bottom = coordinates.windowToLocal(Offset(0f, hinge.bottom)).y.roundToInt()
+                            top to bottom
+                        }
+                }.testTag(TestTag.TABLETOP_BODY),
+        content = {
+            Box(modifier = Modifier.fillMaxWidth().testTag("tabletop_banner")) {
+                SessionBannerImage(sessionDetails)
+            }
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 18.dp)
+                        .testTag("tabletop_controls"),
+            ) {
+                SessionSpeakerNameAndFavouriteIcon(
+                    sessionDetails = sessionDetails,
+                    bookmarkSession = bookmarkSession,
+                    unBookmarkSession = unBookmarkSession,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                SessionTitleAndDescription(sessionDetails)
+                Spacer(modifier = Modifier.height(16.dp))
+                SessionTimeAndRoom(sessionDetails)
+                Spacer(modifier = Modifier.height(12.dp))
+                SessionLevel(sessionDetails.level)
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        },
+    ) { measurables, constraints ->
+        val totalHeight = constraints.maxHeight
+        val hinge = localHingeBounds
+        val hasValidHinge = hinge != null && hinge.first in 1 until totalHeight && hinge.second in hinge.first..totalHeight
+        val topHeight = if (hasValidHinge) hinge.first else totalHeight / 2
+        val bottomStart = if (hasValidHinge) hinge.second else topHeight
+        val bottomHeight = (totalHeight - bottomStart).coerceAtLeast(0)
+
+        val topPlaceable =
+            measurables[0].measure(
+                constraints.copy(minHeight = topHeight, maxHeight = topHeight),
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            SessionTitleAndDescription(sessionDetails)
-            Spacer(modifier = Modifier.height(16.dp))
-            SessionTimeAndRoom(sessionDetails)
-            Spacer(modifier = Modifier.height(12.dp))
-            SessionLevel(sessionDetails.level)
-            Spacer(modifier = Modifier.height(24.dp))
+        val bottomPlaceable =
+            measurables[1].measure(
+                constraints.copy(minHeight = bottomHeight, maxHeight = bottomHeight),
+            )
+        layout(constraints.maxWidth, totalHeight) {
+            topPlaceable.placeRelative(0, 0)
+            bottomPlaceable.placeRelative(0, bottomStart)
         }
     }
 }
@@ -306,6 +360,7 @@ fun Body(
     }
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,

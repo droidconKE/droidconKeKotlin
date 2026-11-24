@@ -53,6 +53,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -60,10 +66,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.ConnectedToggleGroup
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.common.insets.StatusBarIconAppearance
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.chaiColorsPalette
 import com.droidconke.chai.components.CButton
@@ -86,6 +95,7 @@ fun FeedBackRoute(
 @Composable
 internal fun FeedBackScreen(
     navigateBack: () -> Unit = {},
+    onSubmitFeedback: (String) -> Unit = {},
 ) {
     val darkTheme = MaterialTheme.isDarkTheme
     var value by rememberSaveable {
@@ -101,18 +111,22 @@ internal fun FeedBackScreen(
 
     Scaffold(
         topBar = {
+            val backLabel = stringResource(R.string.back_arrow_icon_description)
             Box {
                 if (isCollapsed.value) {
                     TopAppBar(
                         title = { FeedbackTitle() },
                         navigationIcon = {
-                            IconButton(
-                                onClick = { navigateBack() },
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                                    contentDescription = stringResource(R.string.back_arrow_icon_description),
-                                )
+                            DroidconTooltip(text = backLabel) {
+                                IconButton(
+                                    onClick = { navigateBack() },
+                                    modifier = Modifier.clickablePointer(),
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                                        contentDescription = backLabel,
+                                    )
+                                }
                             }
                         },
                         colors =
@@ -140,13 +154,16 @@ internal fun FeedBackScreen(
                 LargeTopAppBar(
                     title = { FeedbackTitle() },
                     navigationIcon = {
-                        IconButton(
-                            onClick = { navigateBack() },
-                        ) {
-                            Icon(
-                                painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                                contentDescription = stringResource(R.string.back_arrow_icon_description),
-                            )
+                        DroidconTooltip(text = backLabel) {
+                            IconButton(
+                                onClick = { navigateBack() },
+                                modifier = Modifier.clickablePointer(),
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                                    contentDescription = backLabel,
+                                )
+                            }
                         }
                     },
                     scrollBehavior = scrollBehavior,
@@ -160,7 +177,21 @@ internal fun FeedBackScreen(
             }
         },
         contentWindowInsets = DroidconWindowInsets.screenContent,
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier =
+            Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .onPreviewKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyDown &&
+                        event.nativeKeyEvent.repeatCount == 0 &&
+                        event.isCtrlPressed &&
+                        event.key == Key.Enter
+                    ) {
+                        onSubmitFeedback(value)
+                        true
+                    } else {
+                        false
+                    }
+                },
     ) { paddingValues ->
         Column(
             modifier =
@@ -223,7 +254,7 @@ internal fun FeedBackScreen(
             )
             Spacer(modifier = Modifier.height(10.dp))
             CButton(
-                onClick = { },
+                onClick = { onSubmitFeedback(value) },
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -254,6 +285,7 @@ fun FeedbackTitle(modifier: Modifier = Modifier) {
     )
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,

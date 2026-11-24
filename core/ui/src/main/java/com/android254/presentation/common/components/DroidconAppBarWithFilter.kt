@@ -48,6 +48,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
@@ -144,20 +146,23 @@ private fun LayoutIcon(
     contentDescription: String,
     tint: Color,
 ) {
-    Box(
-        modifier =
-            Modifier
-                .minimumInteractiveComponentSize()
-                .selectable(
-                    selected = selected,
-                    interactionSource = null,
-                    indication = ripple(bounded = false, radius = 24.dp),
-                    role = Role.RadioButton,
-                    onClick = onClick,
-                ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
+    DroidconTooltip(text = contentDescription) {
+        Box(
+            modifier =
+                Modifier
+                    .minimumInteractiveComponentSize()
+                    .clickablePointer()
+                    .selectable(
+                        selected = selected,
+                        interactionSource = null,
+                        indication = ripple(bounded = false, radius = 24.dp),
+                        role = Role.RadioButton,
+                        onClick = onClick,
+                    ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(painter = painterResource(id = icon), contentDescription = contentDescription, tint = tint)
+        }
     }
 }
 
@@ -174,6 +179,7 @@ fun FilterButton(
         modifier =
             modifier
                 .minimumInteractiveComponentSize()
+                .clickablePointer()
                 .clickable(role = Role.Button, onClick = onButtonClick)
                 .semantics { if (isActive) stateDescription = activeState },
         horizontalArrangement = Arrangement.Center,

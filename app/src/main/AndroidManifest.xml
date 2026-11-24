@@ -19,16 +19,10 @@
         android:theme="@style/Theme.Droidcon"
         tools:targetApi="33">
 
-        <!--
-            resizeableActivity and configChanges together are what make a fold, an unfold or a
-            drag of a freeform window a resize rather than a recreate: the layout re-reads the
-            window and the composition survives.
-        -->
         <activity
             android:name="com.android254.presentation.activity.MainActivity"
             android:exported="true"
             android:resizeableActivity="true"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden|density|uiMode"
             android:windowSoftInputMode="adjustResize"
             android:launchMode="singleTop"
             android:theme="@style/Theme.MySplash">

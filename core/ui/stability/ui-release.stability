@@ -5,6 +5,15 @@
 //   ./gradlew :ui:stabilityDump
 
 @Composable
+public fun com.android254.presentation.common.adaptive.DroidconTooltip(text: kotlin.String, modifier: androidx.compose.ui.Modifier, content: @[Composable] androidx.compose.runtime.internal.ComposableFunction0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+    - content: STABLE (composable function type)
+
+@Composable
 public fun com.android254.presentation.common.adaptive.rememberContentPaneDirective(contentSize: androidx.compose.ui.unit.DpSize): androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
   skippable: false
   restartable: false
@@ -13,6 +22,12 @@ public fun com.android254.presentation.common.adaptive.rememberContentPaneDirect
 
 @Composable
 public fun com.android254.presentation.common.adaptive.rememberDroidconWindowSize(): com.android254.presentation.common.adaptive.DroidconWindowSize
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.adaptive.rememberHorizontalHingeBounds(): androidx.compose.ui.geometry.Rect?
   skippable: false
   restartable: false
   params:

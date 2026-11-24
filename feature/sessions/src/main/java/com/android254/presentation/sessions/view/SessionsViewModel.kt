@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions.view
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.models.Session
@@ -64,15 +65,24 @@ class SessionsViewModel
         private val clock: Clock,
         @ConferenceTimeZone private val conferenceTimeZone: TimeZone,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
+        private val initialFilterState = restoreFilterState(savedStateHandle)
+
         private val _selectedFilterOptions: MutableStateFlow<PersistentList<SessionsFilterOption>> =
-            MutableStateFlow(persistentListOf())
+            MutableStateFlow(filterOptionsFromState(initialFilterState))
         val selectedFilterOptions = _selectedFilterOptions.asStateFlow()
 
-        private val _filterState = MutableStateFlow(SessionsFilterState())
+        private val _filterState = MutableStateFlow(initialFilterState)
         val filterState = _filterState.asStateFlow()
 
-        private val _selectedEventDay = MutableStateFlow(EventDate(UNSET_EVENT_DAY, 1))
+        private val _selectedEventDay =
+            MutableStateFlow(
+                EventDate(
+                    value = savedStateHandle[KEY_SELECTED_DAY_VALUE] ?: UNSET_EVENT_DAY,
+                    day = savedStateHandle[KEY_SELECTED_DAY_INDEX] ?: 1,
+                ),
+            )
         val selectedEventDay = _selectedEventDay.asStateFlow()
 
         val sessionsUiState =
@@ -221,22 +231,26 @@ class SessionsViewModel
             _selectedFilterOptions.update { selected ->
                 if (option in selected) selected.removing(option) else selected.adding(option)
             }
-            _filterState.update { it.toggle(option) }
+            _filterState.update { it.toggle(option).also(::persistFilterState) }
         }
 
         fun clearSelectedFilterList() {
             _selectedFilterOptions.value = persistentListOf()
-            _filterState.value = SessionsFilterState()
+            val cleared = SessionsFilterState()
+            _filterState.value = cleared
+            persistFilterState(cleared)
         }
 
         fun updateSelectedDay(date: EventDate) {
             _selectedEventDay.value = date
+            savedStateHandle[KEY_SELECTED_DAY_VALUE] = date.value
+            savedStateHandle[KEY_SELECTED_DAY_INDEX] = date.day
         }
 
         fun refreshSessionList() {
             _selectedFilterOptions.value = persistentListOf()
             _filterState.update {
-                SessionsFilterState(isBookmarked = it.isBookmarked)
+                SessionsFilterState(isBookmarked = it.isBookmarked).also(::persistFilterState)
             }
             viewModelScope.launch {
                 syncDataWorkManager.startSync()
@@ -257,10 +271,40 @@ class SessionsViewModel
 
         fun toggleBookmarkFilter() {
             _filterState.update {
-                it.copy(isBookmarked = !it.isBookmarked)
+                it.copy(isBookmarked = !it.isBookmarked).also(::persistFilterState)
             }
         }
+
+        private fun persistFilterState(state: SessionsFilterState) {
+            savedStateHandle[KEY_LEVELS] = ArrayList(state.levels)
+            savedStateHandle[KEY_ROOMS] = ArrayList(state.rooms)
+            savedStateHandle[KEY_SESSION_TYPES] = ArrayList(state.sessionTypes)
+            savedStateHandle[KEY_IS_BOOKMARKED] = state.isBookmarked
+        }
     }
+
+private fun restoreFilterState(savedStateHandle: SavedStateHandle): SessionsFilterState =
+    SessionsFilterState(
+        levels = savedStateHandle.get<List<String>>(KEY_LEVELS).orEmpty(),
+        rooms = savedStateHandle.get<List<String>>(KEY_ROOMS).orEmpty(),
+        sessionTypes = savedStateHandle.get<List<String>>(KEY_SESSION_TYPES).orEmpty(),
+        isBookmarked = savedStateHandle[KEY_IS_BOOKMARKED] ?: false,
+    )
+
+private fun filterOptionsFromState(state: SessionsFilterState): PersistentList<SessionsFilterOption> {
+    var result: PersistentList<SessionsFilterOption> = persistentListOf()
+    state.levels.forEach { result = result.adding(SessionsFilterOption(label = it, value = it, type = SessionsFilterCategory.Level)) }
+    state.rooms.forEach { result = result.adding(SessionsFilterOption(label = it, value = it, type = SessionsFilterCategory.Room)) }
+    state.sessionTypes.forEach { result = result.adding(SessionsFilterOption(label = it, value = it, type = SessionsFilterCategory.SessionType)) }
+    return result
+}
+
+private const val KEY_SELECTED_DAY_VALUE = "selected_day_value"
+private const val KEY_SELECTED_DAY_INDEX = "selected_day_index"
+private const val KEY_LEVELS = "filter_levels"
+private const val KEY_ROOMS = "filter_rooms"
+private const val KEY_SESSION_TYPES = "filter_session_types"
+private const val KEY_IS_BOOKMARKED = "filter_is_bookmarked"
 
 /** Sentinel for "no day chosen yet", replaced on first load by [EventDate]. */
 private const val UNSET_EVENT_DAY = "-1"

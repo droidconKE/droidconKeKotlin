@@ -21,8 +21,13 @@ import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.ExperimentalMediaQueryApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.mediaQuery
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -101,10 +106,23 @@ fun rememberIsPhoneOnItsSide(): Boolean {
 fun rememberShowsAppBarLogo(): Boolean = !rememberShowsNavigationDrawer()
 
 /** Half open, hinge horizontal: content belongs above the fold, controls below it. */
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMediaQueryApi::class)
 @Composable
 fun rememberIsTabletopPosture(): Boolean {
+    if (ComposeUiFlags.isMediaQueryIntegrationEnabled) {
+        return mediaQuery { windowPosture.isTabletop }
+    }
     val adaptiveInfo = currentWindowAdaptiveInfoV2()
     return remember(adaptiveInfo) { adaptiveInfo.windowPosture.isTabletop }
+}
+
+/** Physical bounds of an active horizontal hinge in window coordinates, or null when flat. */
+@Composable
+fun rememberHorizontalHingeBounds(): Rect? {
+    val posture = currentWindowAdaptiveInfoV2().windowPosture
+    return remember(posture) {
+        posture.hingeList.firstOrNull { !it.isFlat && !it.isVertical }?.bounds
+    }
 }
 
 /**

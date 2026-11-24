@@ -54,6 +54,7 @@ import com.android254.presentation.common.insets.plus
 import com.android254.presentation.common.share.shareTextIntent
 import com.android254.presentation.feed.FeedViewModel
 import com.android254.presentation.models.FeedUI
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
@@ -194,6 +195,7 @@ internal fun FeedScreen(
     }
 }
 
+@FormFactorPreviews
 @Preview(
     name = "Light",
     uiMode = Configuration.UI_MODE_NIGHT_NO,

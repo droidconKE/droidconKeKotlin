@@ -20,11 +20,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.droidconke.chai.components.ChaiBodyLarge
 import ke.droidcon.kotlin.core.ui.R
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -33,9 +36,11 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 fun TopBar(
     onNavigationIconClick: () -> Unit,
     modifier: Modifier = Modifier,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     TopAppBar(
         modifier = modifier.testTag(TestTag.TOP_BAR),
+        scrollBehavior = scrollBehavior,
         colors =
             TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background,
@@ -51,14 +56,18 @@ fun TopBar(
             )
         },
         navigationIcon = {
-            IconButton(
-                onClick = { onNavigationIconClick() },
-            ) {
-                Icon(
-                    painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.back_arrow_icon_description),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
+            val backLabel = stringResource(R.string.back_arrow_icon_description)
+            DroidconTooltip(text = backLabel) {
+                IconButton(
+                    onClick = { onNavigationIconClick() },
+                    modifier = Modifier.clickablePointer(),
+                ) {
+                    Icon(
+                        painter = painterResource(id = ChaiR.drawable.ic_back_arrow),
+                        contentDescription = backLabel,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
             }
         },
     )

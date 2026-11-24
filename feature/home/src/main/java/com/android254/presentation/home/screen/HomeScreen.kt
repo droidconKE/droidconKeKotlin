@@ -34,6 +34,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,6 +60,7 @@ import com.android254.presentation.home.components.HomeToolbarComponent
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.android254.presentation.utils.FormFactorPreviews
 import com.droidconke.chai.ChaiTheme
 
 @Composable
@@ -100,6 +108,7 @@ internal fun HomeScreen(
     val showSpeakersSkeleton = isSyncing || viewState.speakers.isEmpty()
     ReportDrawnWhen { !showSessionsSkeleton && !showSpeakersSkeleton }
     Scaffold(
+        modifier = Modifier.onPreviewKeyEvent { handleHomeRefreshKeyEvent(it, onRefresh) },
         topBar = {
             HomeToolbarComponent(
                 isSignedIn = false, // isSignedIn removed from HomeState
@@ -212,6 +221,7 @@ internal fun HomeScreen(
     }
 }
 
+@FormFactorPreviews
 @ChaiLightAndDarkComposePreviews
 @Composable
 private fun HomeScreenPreview() {
@@ -221,4 +231,16 @@ private fun HomeScreenPreview() {
             isSyncing = false,
         )
     }
+}
+
+private fun handleHomeRefreshKeyEvent(
+    event: KeyEvent,
+    onRefresh: () -> Unit,
+): Boolean {
+    if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
+    if (event.key == Key.F5 || (event.isCtrlPressed && event.key == Key.R)) {
+        onRefresh()
+        return true
+    }
+    return false
 }

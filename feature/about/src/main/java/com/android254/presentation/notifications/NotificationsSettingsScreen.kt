@@ -53,10 +53,13 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -73,6 +76,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.ConnectedToggleGroup
 import com.android254.presentation.common.insets.DroidconWindowInsets
@@ -132,9 +137,10 @@ internal fun NotificationsSettingsContent(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
     Scaffold(
-        modifier = modifier,
-        topBar = { NotificationsTopBar(onNavigateBack = onNavigateBack) },
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = { NotificationsTopBar(onNavigateBack = onNavigateBack, scrollBehavior = scrollBehavior) },
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         LazyColumn(
@@ -197,9 +203,17 @@ internal fun NotificationsSettingsContent(
 }
 
 @Composable
-private fun NotificationsTopBar(onNavigateBack: () -> Unit) {
+private fun NotificationsTopBar(
+    onNavigateBack: () -> Unit,
+    scrollBehavior: TopAppBarScrollBehavior,
+) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+        scrollBehavior = scrollBehavior,
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                scrolledContainerColor = MaterialTheme.colorScheme.background,
+            ),
         title = {
             Text(
                 text = stringResource(R.string.settings_notifications_title),
@@ -209,11 +223,17 @@ private fun NotificationsTopBar(onNavigateBack: () -> Unit) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = onNavigateBack) {
-                Icon(
-                    painter = painterResource(ChaiR.drawable.ic_back_arrow),
-                    contentDescription = stringResource(R.string.back_arrow_icon_description),
-                )
+            val backLabel = stringResource(R.string.back_arrow_icon_description)
+            DroidconTooltip(text = backLabel) {
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.clickablePointer(),
+                ) {
+                    Icon(
+                        painter = painterResource(ChaiR.drawable.ic_back_arrow),
+                        contentDescription = backLabel,
+                    )
+                }
             }
         },
     )

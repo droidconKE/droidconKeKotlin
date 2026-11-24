@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.sessions.view
 
+import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.SessionsInformationDomainModel
 import com.android254.domain.repos.SessionsRepo
 import com.android254.presentation.models.EventDate
@@ -93,7 +94,7 @@ class SessionsViewModelTest {
                     ),
                 )
 
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
 
             val job = launch { viewModel.sessionsUiState.collect() }
             advanceUntilIdle()
@@ -114,7 +115,7 @@ class SessionsViewModelTest {
                     ),
                 )
 
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
 
             val job = launch { viewModel.sessionsUiState.collect() }
             advanceUntilIdle()
@@ -126,7 +127,7 @@ class SessionsViewModelTest {
     @Test
     fun `should update selected day when UpdateSelectedDay intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val newDay = EventDate("17", 2)
 
             viewModel.handleEvent(SessionsIntentHandler.UpdateSelectedDay(newDay))
@@ -137,7 +138,7 @@ class SessionsViewModelTest {
     @Test
     fun `should call bookmarkSession in repo when BookmarkSession intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val sessionId = "session_id"
 
             viewModel.bookmarkSession(sessionId)
@@ -149,7 +150,7 @@ class SessionsViewModelTest {
     @Test
     fun `should call unBookmarkSession in repo when unBookmarkSession is called`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val sessionId = "session_id"
 
             viewModel.unBookmarkSession(sessionId)
@@ -161,7 +162,7 @@ class SessionsViewModelTest {
     @Test
     fun `should toggle bookmark filter when ToggleBookmarkFilter intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             assertThat(viewModel.filterState.value.isBookmarked, `is`(false))
 
             viewModel.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
@@ -174,7 +175,7 @@ class SessionsViewModelTest {
     @Test
     fun `should clear filters when ClearSelectedFilterList intent is handled`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val filterOption = SessionsFilterOption("Beginner", "beginner", SessionsFilterCategory.Level)
 
             viewModel.updateSelectedFilterOptionList(filterOption)
@@ -193,7 +194,7 @@ class SessionsViewModelTest {
     @Test
     fun `should update filter state when updateSelectedFilterOptionList is called`() =
         runTest {
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val levelFilter = SessionsFilterOption("Beginner", "Beginner", SessionsFilterCategory.Level)
             val roomFilter = SessionsFilterOption("Room 1", "Room 1", SessionsFilterCategory.Room)
 
@@ -226,12 +227,48 @@ class SessionsViewModelTest {
             coEvery { sessionsRepo.fetchSessionsInformation() } returns
                 flowOf(SessionsInformationDomainModel(sessions = sessions, eventDays = listOf("06", "07")))
 
-            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher)
+            val viewModel = SessionsViewModel(sessionsRepo, syncDataWorkManager, testClock, conferenceTimeZone, testDispatcher, SavedStateHandle())
             val job = launch { viewModel.sessionsUiState.collect() }
             advanceUntilIdle()
 
             assertThat(viewModel.sessionsUiState.value.clashes, `is`(persistentListOf(SessionClash("a", "b"))))
             job.cancel()
+        }
+
+    @Test
+    fun `restores selected day, filters, and bookmark toggle from SavedStateHandle`() =
+        runTest {
+            val savedStateHandle = SavedStateHandle()
+            val first =
+                SessionsViewModel(
+                    sessionsRepo,
+                    syncDataWorkManager,
+                    testClock,
+                    conferenceTimeZone,
+                    testDispatcher,
+                    savedStateHandle,
+                )
+            val chosenDay = EventDate("07", 2)
+            val roomFilter = SessionsFilterOption("Opal", "Opal", SessionsFilterCategory.Room)
+
+            first.handleEvent(SessionsIntentHandler.UpdateSelectedDay(chosenDay))
+            first.handleEvent(SessionsIntentHandler.ToggleBookmarkFilter)
+            first.updateSelectedFilterOptionList(roomFilter)
+
+            val recreated =
+                SessionsViewModel(
+                    sessionsRepo,
+                    syncDataWorkManager,
+                    testClock,
+                    conferenceTimeZone,
+                    testDispatcher,
+                    savedStateHandle,
+                )
+
+            assertThat(recreated.selectedEventDay.value, `is`(chosenDay))
+            assertThat(recreated.filterState.value.isBookmarked, `is`(true))
+            assertThat(recreated.filterState.value.rooms, `is`(listOf("Opal")))
+            assertThat(recreated.selectedFilterOptions.value.map { it.value }, `is`(listOf("Opal")))
         }
 
     private fun starred(

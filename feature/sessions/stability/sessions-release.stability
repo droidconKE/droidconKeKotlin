@@ -26,7 +26,7 @@ public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(v
     - showTopBar: STABLE (primitive type)
 
 @Composable
-internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>): kotlin.Unit
+internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -36,10 +36,11 @@ internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScree
     - onNavigationIconClick: STABLE (function type)
     - showTopBar: STABLE (primitive type)
     - isTabletop: STABLE (primitive type)
+    - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - onShare: STABLE (function type)
 
 @Composable
-private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -47,6 +48,7 @@ private fun com.android254.presentation.sessionDetails.view.TabletopBody(padding
     - sessionDetails: STABLE (class with no mutable properties)
     - bookmarkSession: STABLE (function type)
     - unBookmarkSession: STABLE (function type)
+    - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
@@ -117,12 +119,13 @@ public fun com.android254.presentation.sessionDetails.view.components.SpeakerTwi
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.components.TopBar(onNavigationIconClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.components.TopBar(onNavigationIconClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier, scrollBehavior: androidx.compose.material3.TopAppBarScrollBehavior?): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - onNavigationIconClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - scrollBehavior: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.sessions.components.AgendaCell(session: com.android254.presentation.models.SessionPresentationModel?, onClick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit

@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.droidconke.chai.components.ChaiBodyMedium
 import ke.droidcon.kotlin.core.ui.R
@@ -60,6 +61,7 @@ fun SpeakerTwitterHandle(
         )
 
         Button(
+            modifier = Modifier.clickablePointer(),
             onClick = {
                 val uri = twitterProfileUri(speaker.twitterHandle) ?: return@Button
                 try {

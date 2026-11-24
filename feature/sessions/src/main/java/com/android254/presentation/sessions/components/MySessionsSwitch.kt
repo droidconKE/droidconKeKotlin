@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiTextLabelSmall
@@ -47,6 +48,7 @@ fun MySessionsSwitch(
     Column(
         modifier =
             modifier
+                .clickablePointer()
                 .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
                 .semantics { stateDescription = stateText },
         verticalArrangement = Arrangement.spacedBy(4.dp),

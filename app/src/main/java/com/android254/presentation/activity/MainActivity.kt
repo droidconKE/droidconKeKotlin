@@ -19,6 +19,9 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyboardShortcutGroup
+import android.view.KeyboardShortcutInfo
+import android.view.Menu
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -60,6 +63,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.isCtrlPressed
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -84,6 +94,7 @@ import com.android254.presentation.common.navigation.DroidconNavigationItems
 import com.android254.presentation.common.navigation.Navigation
 import com.android254.presentation.common.navigation.NavigationController
 import com.android254.presentation.common.navigation.Screens
+import com.android254.presentation.common.navigation.TopLevelDestination
 import com.android254.presentation.common.navigation.bottomNavigationSet
 import com.android254.presentation.common.navigation.deepLinkFrom
 import com.android254.presentation.common.navigation.droidconEntryProvider
@@ -98,6 +109,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
+import android.view.KeyEvent as AndroidKeyEvent
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -145,6 +157,29 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         deepLinkFrom(intent)?.let { pendingDeepLink = it }
+    }
+
+    override fun onProvideKeyboardShortcuts(
+        data: MutableList<KeyboardShortcutGroup>,
+        menu: Menu?,
+        deviceId: Int,
+    ) {
+        val navigationShortcuts =
+            listOf(
+                KeyboardShortcutInfo(getString(R.string.nav_home), AndroidKeyEvent.KEYCODE_1, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.nav_feed), AndroidKeyEvent.KEYCODE_2, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.nav_sessions), AndroidKeyEvent.KEYCODE_3, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.nav_about), AndroidKeyEvent.KEYCODE_4, AndroidKeyEvent.META_CTRL_ON),
+            )
+        val actionShortcuts =
+            listOf(
+                KeyboardShortcutInfo(getString(R.string.search_speakers_icon_description), AndroidKeyEvent.KEYCODE_F, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.shortcut_refresh), AndroidKeyEvent.KEYCODE_R, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.feedback_button), AndroidKeyEvent.KEYCODE_ENTER, AndroidKeyEvent.META_CTRL_ON),
+                KeyboardShortcutInfo(getString(R.string.shortcut_dismiss), AndroidKeyEvent.KEYCODE_ESCAPE, 0),
+            )
+        data.add(KeyboardShortcutGroup(getString(R.string.shortcuts_group_navigation), navigationShortcuts))
+        data.add(KeyboardShortcutGroup(getString(R.string.shortcuts_group_actions), actionShortcuts))
     }
 
     private val requestPermissionLauncher =
@@ -293,6 +328,7 @@ fun MainScreen(
         modifier =
             modifier
                 .fillMaxSize()
+                .onPreviewKeyEvent { handleRootKeyEvent(it, navController::navigate) }
                 .semantics { testTagsAsResourceId = true },
         navigationItems = {
             DroidconNavigationItems(
@@ -369,6 +405,26 @@ fun MainScreen(
             }
         }
     }
+}
+
+internal fun handleRootKeyEvent(
+    event: KeyEvent,
+    onNavigate: (Screens) -> Unit,
+): Boolean {
+    if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0 || !event.isCtrlPressed) {
+        return false
+    }
+    val index =
+        when (event.key) {
+            Key.One -> 0
+            Key.Two -> 1
+            Key.Three -> 2
+            Key.Four -> 3
+            else -> return false
+        }
+    val destination = TopLevelDestination.entries.getOrNull(index) ?: return false
+    onNavigate(destination.route)
+    return true
 }
 
 const val ACTION_SHOW_TICKET = "ke.droidcon.kotlin.action.SHOW_TICKET"

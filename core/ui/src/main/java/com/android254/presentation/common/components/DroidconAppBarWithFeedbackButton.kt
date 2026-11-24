@@ -39,6 +39,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.rememberShowsAppBarLogo
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
@@ -82,11 +84,17 @@ fun DroidconAppBarWithFeedbackButton(
         Spacer(modifier = Modifier.weight(1f))
 
         if (onNotificationsClick != null) {
-            IconButton(onClick = onNotificationsClick) {
-                Icon(
-                    imageVector = ChaiIcons.NotificationsOutlined,
-                    contentDescription = stringResource(R.string.settings_notifications_open),
-                )
+            val notificationsLabel = stringResource(R.string.settings_notifications_open)
+            DroidconTooltip(text = notificationsLabel) {
+                IconButton(
+                    onClick = onNotificationsClick,
+                    modifier = Modifier.clickablePointer(),
+                ) {
+                    Icon(
+                        imageVector = ChaiIcons.NotificationsOutlined,
+                        contentDescription = notificationsLabel,
+                    )
+                }
             }
         }
 
@@ -106,6 +114,7 @@ fun FeedbackButton(
                 .background(
                     color = MaterialTheme.colorScheme.secondaryContainer,
                 ).clickable(onClick = onButtonClick)
+                .clickablePointer()
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,

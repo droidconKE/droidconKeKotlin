@@ -15,6 +15,7 @@
  */
 package com.android254.presentation.speakers
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.repos.SessionsRepo
@@ -28,10 +29,8 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -64,6 +63,7 @@ class SpeakersScreenViewModel
         private val syncDataWorkManager: SyncDataWorkManager,
         private val clock: Clock,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         val isSyncing =
             syncDataWorkManager.isSyncing
@@ -74,11 +74,10 @@ class SpeakersScreenViewModel
                     initialValue = false,
                 )
 
-        private val _searchQuery = MutableStateFlow("")
-        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+        val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(KEY_SEARCH_QUERY, "")
 
         fun onSearchQueryChanged(query: String) {
-            _searchQuery.value = query
+            savedStateHandle[KEY_SEARCH_QUERY] = query
         }
 
         private val speakingNowNames: Flow<Set<String>> =
@@ -98,7 +97,7 @@ class SpeakersScreenViewModel
         val speakersScreenUiState: StateFlow<SpeakersScreenUiState> =
             combine(
                 speakersRepo.fetchSpeakers(),
-                _searchQuery,
+                searchQuery,
                 speakingNowNames,
             ) { speakers, query, speakingNow ->
                 speakers
@@ -128,6 +127,7 @@ class SpeakersScreenViewModel
 
         private companion object {
             const val TICK_INTERVAL_MS = 60_000L
+            const val KEY_SEARCH_QUERY = "speakers_search_query"
         }
     }
 
