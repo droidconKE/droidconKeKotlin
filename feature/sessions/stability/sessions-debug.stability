@@ -27,7 +27,7 @@ public fun com.android254.presentation.sessionDetails.view.SessionDetailsRoute(v
     - showTopBar: STABLE (primitive type)
 
 @Composable
-internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>, onAddToCalendar: kotlin.Function1<com.android254.presentation.common.calendar.CalendarEvent, kotlin.Unit>?): kotlin.Unit
+internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScreen(uiState: com.android254.presentation.sessionDetails.SessionDetailsUiState, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, onNavigationIconClick: kotlin.Function0<kotlin.Unit>, showTopBar: kotlin.Boolean, isTabletop: kotlin.Boolean, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, onShare: kotlin.Function1<com.android254.presentation.models.SessionDetailsPresentationModel, kotlin.Unit>, onAddToCalendar: kotlin.Function1<com.android254.presentation.common.calendar.CalendarEvent, kotlin.Unit>?, snackbarHostState: androidx.compose.material3.SnackbarHostState): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -40,6 +40,7 @@ internal fun com.android254.presentation.sessionDetails.view.SessionDetailsScree
     - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - onShare: STABLE (function type)
     - onAddToCalendar: STABLE (function type)
+    - snackbarHostState: STABLE (marked @Stable or @Immutable)
 
 @Composable
 private fun com.android254.presentation.sessionDetails.view.TabletopBody(paddingValues: androidx.compose.foundation.layout.PaddingValues, sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, bookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, unBookmarkSession: kotlin.Function1<kotlin.String, kotlin.Unit>, hingeBoundsInWindow: androidx.compose.ui.geometry.Rect?, modifier: androidx.compose.ui.Modifier, onAddToCalendar: kotlin.Function0<kotlin.Unit>?): kotlin.Unit
@@ -53,6 +54,13 @@ private fun com.android254.presentation.sessionDetails.view.TabletopBody(padding
     - hingeBoundsInWindow: STABLE (marked @Stable or @Immutable)
     - modifier: STABLE (marked @Stable or @Immutable)
     - onAddToCalendar: STABLE (function type)
+
+@Composable
+private fun com.android254.presentation.sessionDetails.view.components.CalendarActionButton(onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onClick: STABLE (function type)
 
 @Composable
 private fun com.android254.presentation.sessionDetails.view.components.DetailPill(text: kotlin.String, color: androidx.compose.ui.graphics.Color, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -203,7 +211,7 @@ private fun com.android254.presentation.sessions.components.RoomHeader(room: kot
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlinx.collections.immutable.ImmutableMap<kotlin.String, kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, selectedSessionId: kotlin.String?, starredCalendarEvents: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.common.calendar.CalendarEvent>, onExportAgenda: kotlin.Function1<kotlinx.collections.immutable.ImmutableList<com.android254.presentation.common.calendar.CalendarEvent>, kotlin.Unit>?): kotlin.Unit
+public fun com.android254.presentation.sessions.components.SessionListComponent(isRefreshing: kotlin.Boolean, pullToRefreshState: androidx.compose.material3.pulltorefresh.PullToRefreshState, sessions: kotlinx.collections.immutable.ImmutableMap<kotlin.String, kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionPresentationModel>>, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, selectedSessionId: kotlin.String?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -217,8 +225,6 @@ public fun com.android254.presentation.sessions.components.SessionListComponent(
     - modifier: STABLE (marked @Stable or @Immutable)
     - contentPadding: STABLE (marked @Stable or @Immutable)
     - selectedSessionId: STABLE (class with no mutable properties)
-    - starredCalendarEvents: STABLE (known stable type)
-    - onExportAgenda: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.sessions.components.SessionLoadingComponent(modifier: androidx.compose.ui.Modifier, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, contentPadding: androidx.compose.foundation.layout.PaddingValues): kotlin.Unit
@@ -287,7 +293,7 @@ public fun com.android254.presentation.sessions.components.SessionsLoadingCardWi
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionsStateComponent(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, isRefreshing: kotlin.Boolean, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, showAgendaGrid: kotlin.Boolean, selectedSessionId: kotlin.String?, onExportAgenda: kotlin.Function1<kotlinx.collections.immutable.ImmutableList<com.android254.presentation.common.calendar.CalendarEvent>, kotlin.Unit>?): kotlin.Unit
+public fun com.android254.presentation.sessions.components.SessionsStateComponent(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, isRefreshing: kotlin.Boolean, sessionScreenState: com.android254.presentation.sessions.view.SessionScreenState, isSessionLayoutList: kotlin.Boolean, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, contentPadding: androidx.compose.foundation.layout.PaddingValues, showAgendaGrid: kotlin.Boolean, selectedSessionId: kotlin.String?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -301,7 +307,6 @@ public fun com.android254.presentation.sessions.components.SessionsStateComponen
     - contentPadding: STABLE (marked @Stable or @Immutable)
     - showAgendaGrid: STABLE (primitive type)
     - selectedSessionId: STABLE (class with no mutable properties)
-    - onExportAgenda: STABLE (function type)
 
 @Composable
 public fun com.android254.presentation.sessions.components.SpeakerDetailsAndLikeButtonComponent(onBookmarkClicked: kotlin.Function0<kotlin.Unit>, isSessionStarred: kotlin.Boolean, speakers: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionSpeakersPresentationModel>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
@@ -358,7 +363,7 @@ public fun com.android254.presentation.sessions.view.SessionsRoute(sessionsViewM
     - selectedSessionId: STABLE (class with no mutable properties)
 
 @Composable
-public fun com.android254.presentation.sessions.view.SessionsScreen(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, selectedEventDate: com.android254.presentation.models.EventDate, isRefreshing: kotlin.Boolean, currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, selectedSessionId: kotlin.String?, onExportAgenda: kotlin.Function1<kotlinx.collections.immutable.ImmutableList<com.android254.presentation.common.calendar.CalendarEvent>, kotlin.Unit>?): kotlin.Unit
+public fun com.android254.presentation.sessions.view.SessionsScreen(sessionsUiState: com.android254.presentation.sessions.models.SessionsUiState, selectedEventDate: com.android254.presentation.models.EventDate, isRefreshing: kotlin.Boolean, currentSelections: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SessionsFilterOption>, navigateToSessionDetails: kotlin.Function1<@[ParameterName(name = \, onEvent: kotlin.Function1<com.android254.presentation.sessions.models.SessionsIntentHandler, kotlin.Unit>, modifier: androidx.compose.ui.Modifier, selectedSessionId: kotlin.String?): kotlin.Unit
   skippable: true
   restartable: true
   params:
@@ -370,5 +375,4 @@ public fun com.android254.presentation.sessions.view.SessionsScreen(sessionsUiSt
     - onEvent: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
     - selectedSessionId: STABLE (class with no mutable properties)
-    - onExportAgenda: STABLE (function type)
 

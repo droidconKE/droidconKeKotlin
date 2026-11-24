@@ -19,14 +19,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -37,7 +35,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -55,8 +52,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.android254.presentation.common.adaptive.clickablePointer
-import com.android254.presentation.common.calendar.CalendarEvent
 import com.android254.presentation.common.components.EmptyStatePanel
 import com.android254.presentation.common.components.SessionsCard
 import com.android254.presentation.common.fakedata.fakeSessions
@@ -75,7 +70,6 @@ import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import ke.droidcon.kotlin.chai.R as ChaiR
@@ -143,7 +137,6 @@ fun SessionsStateComponent(
     contentPadding: PaddingValues = PaddingValues(),
     showAgendaGrid: Boolean = false,
     selectedSessionId: String? = null,
-    onExportAgenda: ((ImmutableList<CalendarEvent>) -> Unit)? = null,
 ) {
     // Hoisted above AnimatedContent so an in-flight pull survives a sessionStatus change.
     val pullToRefreshState = rememberPullToRefreshState()
@@ -203,8 +196,6 @@ fun SessionsStateComponent(
                     isSessionLayoutList = isSessionLayoutList,
                     onEvent = onEvent,
                     selectedSessionId = selectedSessionId,
-                    starredCalendarEvents = sessionsUiState.starredCalendarEvents,
-                    onExportAgenda = onExportAgenda,
                 )
             }
         }
@@ -223,8 +214,6 @@ fun SessionListComponent(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     selectedSessionId: String? = null,
-    starredCalendarEvents: ImmutableList<CalendarEvent> = persistentListOf(),
-    onExportAgenda: ((ImmutableList<CalendarEvent>) -> Unit)? = null,
 ) {
     val listState = rememberLazyGridState()
 
@@ -255,43 +244,15 @@ fun SessionListComponent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item(key = "sessions_title", span = { GridItemSpan(maxLineSpan) }, contentType = "title") {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    itemVerticalAlignment = Alignment.CenterVertically,
-                ) {
-                    ChaiSubTitle(
-                        titleText =
-                            when (sessionScreenState) {
-                                SessionScreenState.ALL -> stringResource(R.string.all_sessions)
-                                SessionScreenState.MYSESSIONS -> stringResource(R.string.my_sessions)
-                            },
-                        titleColor = MaterialTheme.colorScheme.primary,
-                    )
-                    if (sessionScreenState == SessionScreenState.MYSESSIONS &&
-                        starredCalendarEvents.isNotEmpty() &&
-                        onExportAgenda != null
-                    ) {
-                        FilledTonalButton(
-                            onClick = { onExportAgenda(starredCalendarEvents) },
-                            modifier = Modifier.testTag("export_agenda_button").clickablePointer(),
-                            colors =
-                                ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                ),
-                        ) {
-                            Icon(
-                                imageVector = ChaiIcons.EventOutlined,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp),
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(text = stringResource(R.string.export_agenda_ics))
-                        }
-                    }
-                }
+                ChaiSubTitle(
+                    modifier = Modifier.padding(top = 20.dp),
+                    titleText =
+                        when (sessionScreenState) {
+                            SessionScreenState.ALL -> stringResource(R.string.all_sessions)
+                            SessionScreenState.MYSESSIONS -> stringResource(R.string.my_sessions)
+                        },
+                    titleColor = MaterialTheme.colorScheme.primary,
+                )
             }
             if (isSessionLayoutList) {
                 sessions.entries.forEach { entry ->

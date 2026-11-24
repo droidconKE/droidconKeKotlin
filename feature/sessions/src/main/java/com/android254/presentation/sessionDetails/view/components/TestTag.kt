@@ -21,6 +21,7 @@ object TestTag {
     const val TOP_BAR = "$PREFIX topBar"
     const val FLOATING_ACTION_BUTTON = "$PREFIX floatingActionButton"
     const val SPEAKER_NAME = "$PREFIX speakerName"
+    const val ADD_TO_CALENDAR_BUTTON = "$PREFIX addToCalendarButton"
     const val FAVOURITE_ICON = "$PREFIX favouriteIcon"
     const val SESSION_TITLE = "$PREFIX sessionTitle"
     const val SESSION_DESCRIPTION = "$PREFIX sessionDescription"

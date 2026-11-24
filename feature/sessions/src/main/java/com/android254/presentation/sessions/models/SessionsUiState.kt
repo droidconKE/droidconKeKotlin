@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessions.models
 
-import com.android254.presentation.common.calendar.CalendarEvent
 import com.android254.presentation.common.resultstatus.ResultStatus
 import com.android254.presentation.models.EventDate
 import com.android254.presentation.models.SessionPresentationModel
@@ -34,7 +33,6 @@ data class SessionsUiState(
     val showMySessionsOnly: Boolean = false,
     val isFilterActive: Boolean = false,
     val clashes: ImmutableList<SessionClash> = persistentListOf(),
-    val starredCalendarEvents: ImmutableList<CalendarEvent> = persistentListOf(),
 )
 
 data class SessionClash(

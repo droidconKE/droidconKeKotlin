@@ -208,6 +208,6 @@
     <string name="search_speakers_tooltip">Search speakers (Ctrl+F)</string>
 
     <string name="add_to_calendar">Add to calendar</string>
-    <string name="export_agenda_ics">Export .ics</string>
-    <string name="export_agenda_chooser_title">Export starred agenda</string>
+    <string name="calendar_no_app_available">No calendar app found on this device</string>
+    <string name="calendar_event_speakers">Speakers: %1$s</string>
 </resources>

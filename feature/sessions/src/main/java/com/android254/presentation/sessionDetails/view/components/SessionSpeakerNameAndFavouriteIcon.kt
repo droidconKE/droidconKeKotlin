@@ -15,22 +15,31 @@
  */
 package com.android254.presentation.sessionDetails.view.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.adaptive.DroidconTooltip
 import com.android254.presentation.common.adaptive.clickablePointer
@@ -76,11 +85,9 @@ fun SessionSpeakerNameAndFavouriteIcon(
         }
 
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = if (speakers.isEmpty()) Arrangement.End else Arrangement.SpaceBetween,
+            horizontalArrangement = if (speakers.isEmpty()) Arrangement.End else Arrangement.spacedBy(8.dp),
         ) {
             if (speakers.isNotEmpty()) {
                 ChaiTitle(
@@ -95,19 +102,7 @@ fun SessionSpeakerNameAndFavouriteIcon(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (onAddToCalendar != null) {
-                    val calendarLabel = stringResource(R.string.add_to_calendar)
-                    DroidconTooltip(text = calendarLabel) {
-                        IconButton(
-                            onClick = onAddToCalendar,
-                            modifier = Modifier.testTag("add_to_calendar_button").clickablePointer(),
-                        ) {
-                            Icon(
-                                imageVector = ChaiIcons.EventOutlined,
-                                contentDescription = calendarLabel,
-                                tint = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
+                    CalendarActionButton(onClick = onAddToCalendar)
                 }
                 BookmarkButton(
                     isBookmarked = sessionDetails.isStarred,
@@ -124,3 +119,41 @@ fun SessionSpeakerNameAndFavouriteIcon(
         }
     }
 }
+
+/** Matches [BookmarkButton]'s 36dp circular tonal container inside a 48dp touch target. */
+@Composable
+private fun CalendarActionButton(onClick: () -> Unit) {
+    val label = stringResource(R.string.add_to_calendar)
+    DroidconTooltip(text = label, modifier = Modifier.testTag(TestTag.ADD_TO_CALENDAR_BUTTON)) {
+        Box(
+            modifier =
+                Modifier
+                    .sizeIn(minWidth = MIN_TOUCH_TARGET, minHeight = MIN_TOUCH_TARGET)
+                    .clip(CircleShape)
+                    .clickablePointer()
+                    .clickable(role = Role.Button, onClick = onClick)
+                    .semantics { contentDescription = label },
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(ACTION_CONTAINER_SIZE)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ChaiIcons.EventOutlined,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(ACTION_ICON_SIZE),
+                )
+            }
+        }
+    }
+}
+
+private val MIN_TOUCH_TARGET = 48.dp
+private val ACTION_CONTAINER_SIZE = 36.dp
+private val ACTION_ICON_SIZE = 20.dp

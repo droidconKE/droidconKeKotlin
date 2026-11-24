@@ -15,23 +15,18 @@
  */
 package com.android254.presentation.common.calendar
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.ClipData
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.provider.CalendarContract
 import androidx.compose.runtime.Immutable
-import androidx.core.content.FileProvider
 import com.android254.presentation.common.navigation.DeepLinks
 import ke.droidcon.kotlin.core.common.time.VenueZone
+import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import timber.log.Timber
-import java.io.File
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlin.time.Clock
-import kotlin.time.Instant
 
 @Immutable
 data class CalendarEvent(
@@ -44,143 +39,82 @@ data class CalendarEvent(
     val endEpochMillis: Long,
 )
 
-/** Builds a CalendarContract insert intent for a single conference session. */
-fun addSessionToCalendarIntent(event: CalendarEvent): Intent =
+/**
+ * Builds a [CalendarContract] insert intent for a single conference session.
+ * Reminder timing is intentionally left to the user's calendar app defaults because
+ * `ACTION_INSERT` ignores `CalendarContract.Reminders` extras without `WRITE_CALENDAR`.
+ */
+fun addSessionToCalendarIntent(
+    event: CalendarEvent,
+    speakersLine: String? = null,
+): Intent =
     Intent(Intent.ACTION_INSERT).apply {
         data = CalendarContract.Events.CONTENT_URI
         putExtra(CalendarContract.Events.TITLE, event.title)
         if (event.venue.isNotBlank()) {
             putExtra(CalendarContract.Events.EVENT_LOCATION, event.venue)
         }
-        putExtra(CalendarContract.Events.DESCRIPTION, buildEventDescription(event))
+        putExtra(CalendarContract.Events.DESCRIPTION, buildEventDescription(event, speakersLine))
         putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, event.startEpochMillis)
         putExtra(CalendarContract.EXTRA_EVENT_END_TIME, event.endEpochMillis)
         putExtra(CalendarContract.Events.EVENT_TIMEZONE, VenueZone.id)
-        putExtra(CalendarContract.Reminders.MINUTES, REMINDER_MINUTES)
     }
 
-/** Launches the device calendar app for [event], returning false if no calendar handler is installed. */
+/**
+ * Launches the device calendar app for [event], returning `false` if no calendar handler is
+ * installed. Adds [Intent.FLAG_ACTIVITY_NEW_TASK] when called from a non-[Activity] context.
+ */
 fun launchAddToCalendar(
     context: Context,
     event: CalendarEvent,
-): Boolean =
-    try {
-        context.startActivity(addSessionToCalendarIntent(event))
+): Boolean {
+    val speakersLine =
+        event.speakers
+            .takeIf { it.isNotEmpty() }
+            ?.let { context.getString(R.string.calendar_event_speakers, it.joinToString(", ")) }
+    val intent =
+        addSessionToCalendarIntent(event = event, speakersLine = speakersLine).apply {
+            if (context.findActivity() == null) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+    return try {
+        context.startActivity(intent)
         true
     } catch (e: ActivityNotFoundException) {
         Timber.w(e, "No calendar app available to insert session %s", event.id)
         false
     }
-
-/**
- * Emits an RFC 5545 `.ics` calendar containing every valid session in [events].
- * Stable UIDs let re-imports update existing entries instead of creating duplicates.
- */
-fun buildIcs(
-    events: List<CalendarEvent>,
-    generatedAt: Instant = Clock.System.now(),
-): String {
-    val dtStamp = formatIcsUtc(generatedAt.toEpochMilliseconds())
-    return buildString {
-        appendLineCrlf("BEGIN:VCALENDAR")
-        appendLineCrlf("VERSION:2.0")
-        appendLineCrlf("PRODID:-//droidcon Kenya//Android App//EN")
-        appendLineCrlf("CALSCALE:GREGORIAN")
-        appendLineCrlf("X-WR-CALNAME:droidcon Kenya — My Agenda")
-        appendLineCrlf("X-WR-TIMEZONE:${VenueZone.id}")
-
-        events
-            .filter { it.endEpochMillis > it.startEpochMillis }
-            .forEach { event ->
-                appendLineCrlf("BEGIN:VEVENT")
-                appendLineCrlf("UID:${event.id}@droidcon.co.ke")
-                appendLineCrlf("DTSTAMP:$dtStamp")
-                appendLineCrlf("DTSTART:${formatIcsUtc(event.startEpochMillis)}")
-                appendLineCrlf("DTEND:${formatIcsUtc(event.endEpochMillis)}")
-                appendLineCrlf("SUMMARY:${event.title.escapeIcs()}")
-                if (event.venue.isNotBlank()) {
-                    appendLineCrlf("LOCATION:${event.venue.escapeIcs()}")
-                }
-                appendLineCrlf("DESCRIPTION:${buildEventDescription(event).escapeIcs()}")
-                appendLineCrlf("BEGIN:VALARM")
-                appendLineCrlf("TRIGGER:-PT${REMINDER_MINUTES}M")
-                appendLineCrlf("ACTION:DISPLAY")
-                appendLineCrlf("DESCRIPTION:${event.title.escapeIcs()} starts in $REMINDER_MINUTES minutes")
-                appendLineCrlf("END:VALARM")
-                appendLineCrlf("END:VEVENT")
-            }
-
-        appendLineCrlf("END:VCALENDAR")
-    }
 }
 
-/** Writes [events] to a cached `.ics` file and opens a share sheet backed by [FileProvider]. */
-fun shareAgendaIcs(
-    context: Context,
-    events: List<CalendarEvent>,
-    chooserTitle: String,
-    generatedAt: Instant = Clock.System.now(),
-): Boolean {
-    if (events.isEmpty()) return false
-    val dir = File(context.cacheDir, CALENDAR_CACHE_DIR).apply { mkdirs() }
-    val file = File(dir, AGENDA_FILE_NAME)
-    file.writeText(buildIcs(events, generatedAt), Charsets.UTF_8)
-
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-    val send =
-        Intent(Intent.ACTION_SEND).apply {
-            type = ICS_MIME_TYPE
-            putExtra(Intent.EXTRA_SUBJECT, chooserTitle)
-            putExtra(Intent.EXTRA_STREAM, uri)
-            clipData = ClipData.newRawUri(AGENDA_FILE_NAME, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-    val chooser =
-        Intent.createChooser(send, chooserTitle).apply {
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-    return try {
-        context.startActivity(chooser)
-        true
-    } catch (e: ActivityNotFoundException) {
-        Timber.w(e, "No app available to handle exported .ics agenda")
-        false
-    }
-}
-
-private fun buildEventDescription(event: CalendarEvent): String =
+internal fun buildEventDescription(
+    event: CalendarEvent,
+    speakersLine: String? = null,
+): String =
     buildList {
-        val summary = event.description.trim().take(MAX_DESCRIPTION_LENGTH)
+        val summary = event.description.trim().truncateSafely(MAX_DESCRIPTION_LENGTH)
         if (summary.isNotEmpty()) add(summary)
-        if (event.speakers.isNotEmpty()) add("Speakers: ${event.speakers.joinToString(", ")}")
-        add(DeepLinks.session(event.id))
+        val formattedSpeakers = speakersLine?.trim().orEmpty()
+        if (formattedSpeakers.isNotEmpty()) add(formattedSpeakers)
+        val cleanId = event.id.trim()
+        if (cleanId.isNotEmpty()) add(DeepLinks.session(cleanId))
     }.joinToString("\n\n")
 
-private fun StringBuilder.appendLineCrlf(line: String) {
-    append(line)
-    append("\r\n")
+/** Truncates without splitting a UTF-16 surrogate pair and appends an ellipsis when shortened. */
+private fun String.truncateSafely(maxChars: Int): String {
+    if (length <= maxChars) return this
+    var end = maxChars
+    if (end > 0 && Character.isHighSurrogate(this[end - 1])) {
+        end -= 1
+    }
+    return substring(0, end).trimEnd() + "…"
 }
 
-private fun String.escapeIcs(): String =
-    replace("\\", "\\\\")
-        .replace("\r\n", "\n")
-        .replace("\r", "\n")
-        .replace("\n", "\\n")
-        .replace(";", "\\;")
-        .replace(",", "\\,")
+private tailrec fun Context.findActivity(): Activity? =
+    when (this) {
+        is Activity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
 
-private fun formatIcsUtc(epochMillis: Long): String =
-    ICS_UTC_FORMATTER.format(
-        java.time.Instant
-            .ofEpochMilli(epochMillis)
-            .atOffset(ZoneOffset.UTC),
-    )
-
-private val ICS_UTC_FORMATTER: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'", Locale.US)
-
-private const val REMINDER_MINUTES = 10
 private const val MAX_DESCRIPTION_LENGTH = 500
-private const val CALENDAR_CACHE_DIR = "calendar"
-private const val AGENDA_FILE_NAME = "droidconke-agenda.ics"
-private const val ICS_MIME_TYPE = "text/calendar"

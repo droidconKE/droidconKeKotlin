@@ -23,12 +23,11 @@ import com.android254.presentation.models.SessionDetailsSpeakerPresentationModel
 import com.android254.presentation.models.SessionPresentationModel
 import com.android254.presentation.models.SessionSpeakersPresentationModel
 import com.android254.presentation.models.SessionStatus
-import ke.droidcon.kotlin.core.common.time.VenueZone
 import ke.droidcon.kotlin.core.common.time.parseApiDateTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import timber.log.Timber
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -97,29 +96,15 @@ fun Session.toSessionDetailsPresentationModal(): SessionDetailsPresentationModel
     )
 }
 
-/** Converts a domain session to an exportable [CalendarEvent], or null if timestamps are invalid. */
-fun Session.toCalendarEventOrNull(): CalendarEvent? {
-    val startMillis = (this.startInstant ?: this.startDateTime.toInstant())?.toEpochMilliseconds() ?: return null
-    val endMillis = (this.endInstant ?: this.endDateTime.toInstant())?.toEpochMilliseconds() ?: return null
-    if (endMillis <= startMillis) return null
-    return CalendarEvent(
-        id = this.remoteId.ifBlank { this.id },
-        title = this.title,
-        description = this.description,
-        venue = this.roomList.joinToString(", "),
-        speakers = this.speakers.map { it.name }.toImmutableList(),
-        startEpochMillis = startMillis,
-        endEpochMillis = endMillis,
-    )
-}
-
-/** Converts presentation details to an exportable [CalendarEvent], or null if timestamps are invalid. */
+/** Converts presentation details to an exportable [CalendarEvent], or null if timestamps or ID are invalid. */
 fun SessionDetailsPresentationModel.toCalendarEventOrNull(): CalendarEvent? {
+    val resolvedId = id.trim()
+    if (resolvedId.isEmpty()) return null
     val startMillis = startEpochMillis ?: return null
     val endMillis = endEpochMillis ?: return null
     if (endMillis <= startMillis) return null
     return CalendarEvent(
-        id = id,
+        id = resolvedId,
         title = title,
         description = description,
         venue = venue,
@@ -152,7 +137,7 @@ fun List<Speaker>.toSessionSpeaker(): ImmutableList<SessionSpeakersPresentationM
     }.toImmutableList()
 
 fun getTimePeriod(time: String): FormattedTime {
-    val parsed = time.toLocalDateTimeOrNull() ?: return FormattedTime(time = time, period = "")
+    val parsed = time.parseApiDateTimeOrNull()?.toLocalDateTime() ?: return FormattedTime(time = time, period = "")
     return FormattedTime(
         time = parsed.format(CLOCK_TIME),
         period = parsed.format(MERIDIEM),
@@ -160,17 +145,16 @@ fun getTimePeriod(time: String): FormattedTime {
 }
 
 /** Venue-local time from either API form, or null rather than epoch zero when unreadable. */
-private fun String.toLocalDateTimeOrNull(): LocalDateTime? =
+private fun String.parseApiDateTimeOrNull(): ZonedDateTime? =
     try {
-        parseApiDateTime(this).toLocalDateTime()
+        parseApiDateTime(this)
     } catch (e: DateTimeParseException) {
         Timber.w(e, "Unparseable session time: %s", this)
         null
     }
 
 private fun String.toInstant(): Instant? =
-    toLocalDateTimeOrNull()
-        ?.atZone(VenueZone)
+    parseApiDateTimeOrNull()
         ?.toInstant()
         ?.toEpochMilli()
         ?.let(Instant::fromEpochMilliseconds)

@@ -194,6 +194,8 @@ private val keynote =
                     twitterHandle = "",
                 ),
             ),
+        startEpochMillis = 1_793_862_000_000L,
+        endEpochMillis = 1_793_865_600_000L,
     )
 
 @Composable
@@ -207,5 +209,6 @@ private fun SessionDetails(
         unBookmarkSession = {},
         onNavigationIconClick = {},
         showTopBar = showTopBar,
+        onAddToCalendar = {},
     )
 }
