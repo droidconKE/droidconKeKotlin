@@ -62,11 +62,30 @@ class TabletopPostureTest {
         setContent(isTabletop = true, hingeBoundsInWindow = hinge, showTopBar = false)
 
         val bannerBounds = composeTestRule.onNodeWithTag("tabletop_banner").getUnclippedBoundsInRoot()
+        val imageBounds = composeTestRule.onNodeWithTag(TestTag.IMAGE_BANNER).getUnclippedBoundsInRoot()
         val controlsBounds = composeTestRule.onNodeWithTag("tabletop_controls").getUnclippedBoundsInRoot()
 
         assertTrue(
             "Expected banner bottom (${bannerBounds.bottom}) to sit above controls top (${controlsBounds.top})",
             bannerBounds.bottom < controlsBounds.top,
+        )
+        assertTrue(
+            "Expected image bottom (${imageBounds.bottom}) to fit inside banner above controls (${controlsBounds.top})",
+            imageBounds.bottom <= controlsBounds.top,
+        )
+    }
+
+    @Test
+    fun `tabletop banner does not overflow into controls when top pane is shorter than 16 by 9`() {
+        val hinge = Rect(left = 0f, top = 160f, right = 400f, bottom = 180f)
+        setContent(isTabletop = true, hingeBoundsInWindow = hinge, showTopBar = false)
+
+        val imageBounds = composeTestRule.onNodeWithTag(TestTag.IMAGE_BANNER).getUnclippedBoundsInRoot()
+        val controlsBounds = composeTestRule.onNodeWithTag("tabletop_controls").getUnclippedBoundsInRoot()
+
+        assertTrue(
+            "Expected image bottom (${imageBounds.bottom}) not to overlap controls top (${controlsBounds.top})",
+            imageBounds.bottom <= controlsBounds.top,
         )
     }
 

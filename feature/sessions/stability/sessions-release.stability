@@ -61,12 +61,13 @@ private fun com.android254.presentation.sessionDetails.view.components.DetailPil
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessionDetails.view.components.SessionBannerImage(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+public fun com.android254.presentation.sessionDetails.view.components.SessionBannerImage(sessionDetails: com.android254.presentation.models.SessionDetailsPresentationModel, modifier: androidx.compose.ui.Modifier, fillAvailableBounds: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - sessionDetails: STABLE (class with no mutable properties)
     - modifier: STABLE (marked @Stable or @Immutable)
+    - fillAvailableBounds: STABLE (primitive type)
 
 @Composable
 internal fun com.android254.presentation.sessionDetails.view.components.SessionDescription(description: kotlin.String, modifier: androidx.compose.ui.Modifier): kotlin.Unit

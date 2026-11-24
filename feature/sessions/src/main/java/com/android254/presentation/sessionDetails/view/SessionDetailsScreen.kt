@@ -244,8 +244,17 @@ private fun TabletopBody(
                         }
                 }.testTag(TestTag.TABLETOP_BODY),
         content = {
-            Box(modifier = Modifier.fillMaxWidth().testTag("tabletop_banner")) {
-                SessionBannerImage(sessionDetails)
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp, vertical = 12.dp)
+                        .testTag("tabletop_banner"),
+            ) {
+                SessionBannerImage(
+                    sessionDetails = sessionDetails,
+                    fillAvailableBounds = true,
+                )
             }
             Column(
                 modifier =
@@ -255,6 +264,7 @@ private fun TabletopBody(
                         .padding(horizontal = 18.dp)
                         .testTag("tabletop_controls"),
             ) {
+                Spacer(modifier = Modifier.height(16.dp))
                 SessionSpeakerNameAndFavouriteIcon(
                     sessionDetails = sessionDetails,
                     bookmarkSession = bookmarkSession,

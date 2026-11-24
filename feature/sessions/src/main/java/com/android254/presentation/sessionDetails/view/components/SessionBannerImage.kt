@@ -17,6 +17,7 @@ package com.android254.presentation.sessionDetails.view.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +39,7 @@ import ke.droidcon.kotlin.core.ui.R
 fun SessionBannerImage(
     sessionDetails: SessionDetailsPresentationModel,
     modifier: Modifier = Modifier,
+    fillAvailableBounds: Boolean = false,
 ) {
     val context = LocalContext.current
     val model =
@@ -47,6 +49,12 @@ fun SessionBannerImage(
                 .data(sessionDetails.sessionImageUrl?.takeIf { it.isNotBlank() } ?: R.drawable.all)
                 .build()
         }
+    val sizeModifier =
+        if (fillAvailableBounds) {
+            Modifier.fillMaxSize()
+        } else {
+            Modifier.fillMaxWidth().aspectRatio(16f / 9f)
+        }
     AsyncImage(
         model = model,
         placeholder = painterResource(R.drawable.all),
@@ -55,8 +63,7 @@ fun SessionBannerImage(
         contentScale = ContentScale.Crop,
         modifier =
             modifier
-                .fillMaxWidth()
-                .aspectRatio(16f / 9f)
+                .then(sizeModifier)
                 .sessionSharedImage(sessionDetails.id, RoundedCornerShape(10.dp))
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
                 .testTag(TestTag.IMAGE_BANNER),
