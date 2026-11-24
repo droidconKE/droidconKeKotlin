@@ -27,6 +27,7 @@ decisions in here are written down rather than assumed — see [`docs/`](docs/) 
 ## Contents
 
 - [Designs](#designs)
+- [Adaptive & foldable layouts](#adaptive--foldable-layouts)
 - [Running the project](#running-the-project)
 - [Module layout](#module-layout)
 - [Architecture](#architecture)
@@ -45,6 +46,17 @@ decisions in here are written down rather than assumed — see [`docs/`](docs/) 
 This is the link to the app designs:  
 - [Light Theme](https://xd.adobe.com/view/dd5d0245-b92b-4678-9d4a-48b3a6f48191-880e/)
 - [Dark Theme](https://xd.adobe.com/view/5ec235b6-c3c6-49a9-b783-1f1303deb1a8-0b91/)
+
+---
+
+## Adaptive & foldable layouts
+
+The app adapts across folded cover screens, medium navigation rails, unfolded drawers, two-pane
+Navigation 3 list-detail layouts, and half-open foldable tabletop postures.
+
+![Foldable and adaptive states walkthrough](docs/images/foldable-states-demo.gif)
+
+Full state matrix and screenshots: **[docs/adaptive-foldable.md](docs/adaptive-foldable.md)**.
 
 ---
 
