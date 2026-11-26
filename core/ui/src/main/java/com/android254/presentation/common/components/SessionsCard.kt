@@ -125,13 +125,13 @@ fun SessionsCard(
     )
     val cardBorder =
         when {
-            isSelected -> BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary)
+            isSelected -> selectedCardBorder()
             showBorder && pulse == null -> BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
             else -> null
         }
     val containerColor =
         if (isSelected) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+            selectedCardContainerColor()
         } else {
             MaterialTheme.colorScheme.surfaceContainerLow
         }

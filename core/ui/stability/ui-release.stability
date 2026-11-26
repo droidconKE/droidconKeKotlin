@@ -380,6 +380,18 @@ public fun com.android254.presentation.common.components.rememberSpeakerAvatarSh
   params:
 
 @Composable
+public fun com.android254.presentation.common.components.selectedCardBorder(): androidx.compose.foundation.BorderStroke
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
+public fun com.android254.presentation.common.components.selectedCardContainerColor(): androidx.compose.ui.graphics.Color
+  skippable: false
+  restartable: false
+  params:
+
+@Composable
 public fun com.android254.presentation.common.divider.CustomDivider(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

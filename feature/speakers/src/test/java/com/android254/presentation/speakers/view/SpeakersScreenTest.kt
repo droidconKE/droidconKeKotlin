@@ -15,7 +15,9 @@
  */
 package com.android254.presentation.speakers.view
 
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
@@ -26,9 +28,12 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.withKeyDown
 import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
@@ -50,7 +55,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -297,15 +301,11 @@ class SpeakersScreenTest {
 
     @Test
     fun `marks only the selected speaker card as selected`() {
-        val speakerList =
-            persistentListOf(
-                SpeakerUI(id = 1, name = "John Doe", tagline = "kenya partner lead"),
-                SpeakerUI(id = 2, name = "Jane Smith", tagline = "GDE Android"),
-            )
+        val viewModel = viewModelWith(speakers())
         composeTestRule.setContent {
             ChaiTheme {
-                SpeakersScreen(
-                    uiState = SpeakersScreenUiState.Success(speakers = speakerList),
+                SpeakersRoute(
+                    speakersScreenViewModel = viewModel,
                     selectedSpeakerName = "Jane Smith",
                 )
             }
@@ -349,7 +349,7 @@ class SpeakersScreenTest {
         }
 
         composeTestRule.onNodeWithTag("speakersGrid").performTouchInput {
-            swipeDown(startY = height * 0.1f, endY = height * 0.95f)
+            swipeDown(startY = height * 0.35f, endY = height * 0.95f)
         }
         composeTestRule.waitForIdle()
 
@@ -365,19 +365,43 @@ class SpeakersScreenTest {
         coVerify(exactly = 1) { mockSyncDataWorkManager.startSync() }
     }
 
+    @OptIn(ExperimentalTestApi::class)
     @Test
-    fun `F5 and Ctrl plus R trigger speakers refresh`() {
+    fun `F5 and Ctrl plus R trigger speakers refresh through screen key handler`() {
         var refreshes = 0
-        val f5 = KeyEvent(AndroidKeyEvent(0, 0, AndroidKeyEvent.ACTION_DOWN, AndroidKeyEvent.KEYCODE_F5, 0, 0))
-        val ctrlR =
-            KeyEvent(
-                AndroidKeyEvent(0, 0, AndroidKeyEvent.ACTION_DOWN, AndroidKeyEvent.KEYCODE_R, 0, AndroidKeyEvent.META_CTRL_ON),
+        val speakerList =
+            persistentListOf(
+                SpeakerUI(id = 1, name = "John Doe", tagline = "kenya partner lead"),
             )
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersScreen(
+                    uiState = SpeakersScreenUiState.Success(speakers = speakerList),
+                    onRefresh = { refreshes++ },
+                )
+            }
+        }
+
+        // Open search so a focusable child inside Scaffold holds focus in touch mode.
+        composeTestRule.onNodeWithContentDescription("Search speakers").performClick()
+        composeTestRule
+            .onNodeWithTag("searchField")
+            .performKeyInput {
+                pressKey(Key.F5)
+                withKeyDown(Key.CtrlLeft) {
+                    pressKey(Key.R)
+                }
+            }
+
+        assertEquals(2, refreshes)
+    }
+
+    @Test
+    fun `repeated refresh key events are ignored`() {
+        var refreshes = 0
         val repeatF5 = KeyEvent(AndroidKeyEvent(0, 0, AndroidKeyEvent.ACTION_DOWN, AndroidKeyEvent.KEYCODE_F5, 1, 0))
 
-        assertTrue(handleSpeakersKeyEvent(f5, isSearchActive = false, onOpenSearch = {}, onCloseSearch = {}, onRefresh = { refreshes++ }))
-        assertTrue(handleSpeakersKeyEvent(ctrlR, isSearchActive = false, onOpenSearch = {}, onCloseSearch = {}, onRefresh = { refreshes++ }))
         assertFalse(handleSpeakersKeyEvent(repeatF5, isSearchActive = false, onOpenSearch = {}, onCloseSearch = {}, onRefresh = { refreshes++ }))
-        assertEquals(2, refreshes)
+        assertEquals(0, refreshes)
     }
 }

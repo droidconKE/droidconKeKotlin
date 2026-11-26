@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.speakers.view
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,14 +37,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.components.HeadshotRingWidth
 import com.android254.presentation.common.components.rememberSpeakerAvatarShape
+import com.android254.presentation.common.components.selectedCardBorder
+import com.android254.presentation.common.components.selectedCardContainerColor
 import com.android254.presentation.common.navigation.speakerSharedImage
 import com.android254.presentation.common.navigation.speakerSharedName
 import com.android254.presentation.models.SpeakerUI
@@ -57,8 +56,6 @@ import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
 
 private val SpeakerAvatarSize = 100.dp
-private val SelectedBorderWidth = 2.dp
-private const val SELECTED_CONTAINER_ALPHA = 0.22f
 
 /**
  * Speaker list item. Highlights the open speaker with a primary border and tonal fill when
@@ -71,32 +68,17 @@ fun SpeakerComponent(
     onClick: () -> Unit = {},
     isSelected: Boolean = false,
 ) {
-    val containerColor =
-        if (isSelected) {
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = SELECTED_CONTAINER_ALPHA)
-        } else {
-            Color.Transparent
-        }
-    val border =
-        if (isSelected) {
-            BorderStroke(width = SelectedBorderWidth, color = MaterialTheme.colorScheme.primary)
-        } else {
-            null
-        }
-
     Surface(
+        selected = isSelected,
         onClick = onClick,
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickablePointer()
-                .semantics(mergeDescendants = true) {
-                    selected = isSelected
-                },
+                .clickablePointer(),
         shape = MaterialTheme.shapes.medium,
-        color = containerColor,
+        color = if (isSelected) selectedCardContainerColor() else Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        border = border,
+        border = if (isSelected) selectedCardBorder() else null,
     ) {
         Row(
             modifier =
