@@ -16,6 +16,7 @@
 package com.droidconke.chai.components
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -24,14 +25,21 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-/** Pull to refresh in the brand accent. Hoist [state] if the box can recompose away mid-gesture. */
+/**
+ * Pull to refresh in the brand accent. Hoist [state] if the box can recompose away mid-gesture.
+ * Use [indicatorTopPadding] when the scrollable child owns the top bar inset through
+ * `contentPadding`, so the refresh indicator clears the top app bar without clipping the list.
+ */
 @Composable
 fun ChaiPullToRefreshBox(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     state: PullToRefreshState = rememberPullToRefreshState(),
+    indicatorTopPadding: Dp = 0.dp,
     content: @Composable BoxScope.() -> Unit,
 ) {
     PullToRefreshBox(
@@ -43,7 +51,10 @@ fun ChaiPullToRefreshBox(
             PullToRefreshDefaults.LoadingIndicator(
                 state = state,
                 isRefreshing = isRefreshing,
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = indicatorTopPadding),
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
                 color = MaterialTheme.colorScheme.primary,
             )

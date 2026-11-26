@@ -15,7 +15,6 @@
  */
 package com.android254.presentation.sessions.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,8 @@ import coil.request.ImageRequest
 import com.android254.presentation.common.components.BookmarkButton
 import com.android254.presentation.common.components.SessionStatusLabel
 import com.android254.presentation.common.components.TimeAndVenueComponent
+import com.android254.presentation.common.components.selectedCardBorder
+import com.android254.presentation.common.components.selectedCardContainerColor
 import com.android254.presentation.common.navigation.sessionSharedImage
 import com.android254.presentation.common.navigation.sessionSharedTitle
 import com.android254.presentation.models.SessionPresentationModel
@@ -68,12 +69,12 @@ fun SessionsCardWithBannerImage(
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-        border = if (isSelected) BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary) else null,
+        border = if (isSelected) selectedCardBorder() else null,
         colors =
             CardDefaults.cardColors(
                 containerColor =
                     if (isSelected) {
-                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+                        selectedCardContainerColor()
                     } else {
                         MaterialTheme.colorScheme.surfaceContainer
                     },

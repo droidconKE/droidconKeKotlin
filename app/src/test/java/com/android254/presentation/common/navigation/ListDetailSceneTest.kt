@@ -99,6 +99,38 @@ class ListDetailSceneTest {
         composeTestRule.onNodeWithTag(DETAIL_PANE_TAG).assertIsDisplayed()
     }
 
+    @Test
+    fun `selected speaker name is reported only inside a list-detail scene`() {
+        assertEquals(
+            SPEAKER_NAME,
+            selectedSpeakerNameInListDetail(
+                inListDetailScene = true,
+                currentRoute = Screens.SpeakerDetails(SPEAKER_NAME),
+            ),
+        )
+        assertEquals(
+            null,
+            selectedSpeakerNameInListDetail(
+                inListDetailScene = false,
+                currentRoute = Screens.SpeakerDetails(SPEAKER_NAME),
+            ),
+        )
+        assertEquals(
+            null,
+            selectedSpeakerNameInListDetail(
+                inListDetailScene = true,
+                currentRoute = Screens.Speakers,
+            ),
+        )
+        assertEquals(
+            null,
+            selectedSpeakerNameInListDetail(
+                inListDetailScene = true,
+                currentRoute = Screens.SessionDetails(SESSION_ID),
+            ),
+        )
+    }
+
     /** The case the guard exists for: a detail pushed from Home has no list behind it. */
     @Test
     fun `a session opened with no list behind it takes the whole window`() {

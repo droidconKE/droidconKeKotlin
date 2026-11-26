@@ -15,30 +15,46 @@
  */
 package com.android254.presentation.speakers.view
 
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.withKeyDown
 import androidx.lifecycle.SavedStateHandle
 import com.android254.domain.models.Session
 import com.android254.domain.models.Speaker
 import com.android254.domain.repos.SessionsRepo
 import com.android254.domain.repos.SpeakersRepo
 import com.android254.domain.work.SyncDataWorkManager
+import com.android254.presentation.models.SpeakerUI
+import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
 import com.droidconke.chai.ChaiTheme
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,6 +62,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.time.Clock
 import kotlin.time.Instant
+import android.view.KeyEvent as AndroidKeyEvent
 
 @RunWith(RobolectricTestRunner::class)
 @Config(instrumentedPackages = ["androidx.loader.content"], sdk = [33])
@@ -65,9 +82,10 @@ class SpeakersScreenTest {
 
     private fun viewModel(
         currentSessions: List<Session> = emptyList(),
+        isSyncing: Boolean = false,
         savedStateHandle: SavedStateHandle = SavedStateHandle(),
     ): SpeakersScreenViewModel {
-        every { mockSyncDataWorkManager.isSyncing } returns flowOf(true)
+        every { mockSyncDataWorkManager.isSyncing } returns flowOf(isSyncing)
         coEvery { mockSyncDataWorkManager.startSync() } just runs
         every { sessionsRepo.fetchCurrentSessions(any()) } returns flowOf(currentSessions)
         return SpeakersScreenViewModel(
@@ -278,6 +296,112 @@ class SpeakersScreenTest {
 
         val recreated = viewModel(savedStateHandle = savedStateHandle)
 
-        org.junit.Assert.assertEquals("jane", recreated.searchQuery.value)
+        assertEquals("jane", recreated.searchQuery.value)
+    }
+
+    @Test
+    fun `marks only the selected speaker card as selected`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(
+                    speakersScreenViewModel = viewModel,
+                    selectedSpeakerName = "Jane Smith",
+                )
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithText("Jane Smith").assertIsSelected()
+            onNodeWithText("John Doe").assertIsNotSelected()
+        }
+    }
+
+    @Test
+    fun `marks no speaker card as selected when no speaker is open`() {
+        val speakerList =
+            persistentListOf(
+                SpeakerUI(id = 1, name = "John Doe", tagline = "kenya partner lead"),
+                SpeakerUI(id = 2, name = "Jane Smith", tagline = "GDE Android"),
+            )
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersScreen(
+                    uiState = SpeakersScreenUiState.Success(speakers = speakerList),
+                    selectedSpeakerName = null,
+                )
+            }
+        }
+
+        with(composeTestRule) {
+            onNodeWithText("John Doe").assertIsNotSelected()
+            onNodeWithText("Jane Smith").assertIsNotSelected()
+        }
+    }
+
+    @Test
+    fun `pull to refresh triggers sync via viewModel`() {
+        val viewModel = viewModelWith(speakers())
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersRoute(speakersScreenViewModel = viewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithTag("speakersGrid").performTouchInput {
+            swipeDown(startY = height * 0.35f, endY = height * 0.95f)
+        }
+        composeTestRule.waitForIdle()
+
+        coVerify(exactly = 1) { mockSyncDataWorkManager.startSync() }
+    }
+
+    @Test
+    fun `refresh triggers sync via SyncDataWorkManager`() {
+        val viewModel = viewModelWith(speakers())
+
+        viewModel.refresh()
+
+        coVerify(exactly = 1) { mockSyncDataWorkManager.startSync() }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun `F5 and Ctrl plus R trigger speakers refresh through screen key handler`() {
+        var refreshes = 0
+        val speakerList =
+            persistentListOf(
+                SpeakerUI(id = 1, name = "John Doe", tagline = "kenya partner lead"),
+            )
+        composeTestRule.setContent {
+            ChaiTheme {
+                SpeakersScreen(
+                    uiState = SpeakersScreenUiState.Success(speakers = speakerList),
+                    onRefresh = { refreshes++ },
+                )
+            }
+        }
+
+        // Open search so a focusable child inside Scaffold holds focus in touch mode.
+        composeTestRule.onNodeWithContentDescription("Search speakers").performClick()
+        composeTestRule
+            .onNodeWithTag("searchField")
+            .performKeyInput {
+                pressKey(Key.F5)
+                withKeyDown(Key.CtrlLeft) {
+                    pressKey(Key.R)
+                }
+            }
+
+        assertEquals(2, refreshes)
+    }
+
+    @Test
+    fun `repeated refresh key events are ignored`() {
+        var refreshes = 0
+        val repeatF5 = KeyEvent(AndroidKeyEvent(0, 0, AndroidKeyEvent.ACTION_DOWN, AndroidKeyEvent.KEYCODE_F5, 1, 0))
+
+        assertFalse(handleSpeakersKeyEvent(repeatF5, isSearchActive = false, onOpenSearch = {}, onCloseSearch = {}, onRefresh = { refreshes++ }))
+        assertEquals(0, refreshes)
     }
 }

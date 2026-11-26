@@ -68,6 +68,26 @@ class SpeakersScreenshotTest : ChaiScreenshotTest() {
             SpeakersScreen(uiState = SpeakersScreenUiState.Success(speakers = speakers))
         }
 
+    /** Selected speaker highlight across light, dark, and 200% font scale. */
+    @Test
+    fun `speakers with selected speaker`() =
+        captureScreen("screens/speakers_selected") {
+            SpeakersScreen(
+                uiState = SpeakersScreenUiState.Success(speakers = speakers),
+                selectedSpeakerName = speakers.first().name,
+            )
+        }
+
+    /** Selected speaker highlight across phone, foldable, tablet, and desktop widths. */
+    @Test
+    fun `speakers with selected speaker across form factors`() =
+        captureFormFactors("form_factors/speakers_selected") {
+            SpeakersScreen(
+                uiState = SpeakersScreenUiState.Success(speakers = speakers),
+                selectedSpeakerName = speakers.first().name,
+            )
+        }
+
     /** A speaker as a pane: no app bar, no back arrow. */
     @Test
     fun `speaker details as a pane across form factors`() = captureFormFactors("form_factors/speaker_details_pane") { SpeakerDetails(speaker) }

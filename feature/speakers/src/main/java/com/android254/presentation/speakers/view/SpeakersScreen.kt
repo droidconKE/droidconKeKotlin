@@ -94,13 +94,18 @@ fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
+    selectedSpeakerName: String? = null,
 ) {
     val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
+    val isSyncing by speakersScreenViewModel.isSyncing.collectAsStateWithLifecycle()
     val searchQuery by speakersScreenViewModel.searchQuery.collectAsStateWithLifecycle()
     SpeakersScreen(
         uiState = uiState,
+        isRefreshing = isSyncing,
         searchQuery = searchQuery,
+        selectedSpeakerName = selectedSpeakerName,
         onSearchQueryChanged = speakersScreenViewModel::onSearchQueryChanged,
+        onRefresh = speakersScreenViewModel::refresh,
         navigateToHomeScreen = navigateToHomeScreen,
         navigateToSpeaker = navigateToSpeaker,
     )
@@ -109,8 +114,11 @@ fun SpeakersRoute(
 @Composable
 internal fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
+    isRefreshing: Boolean = false,
     searchQuery: String = "",
+    selectedSpeakerName: String? = null,
     onSearchQueryChanged: (String) -> Unit = {},
+    onRefresh: () -> Unit = {},
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
@@ -140,6 +148,7 @@ internal fun SpeakersScreen(
                         isSearchActive = isSearchActive,
                         onOpenSearch = { isSearchActive = true },
                         onCloseSearch = ::closeSearch,
+                        onRefresh = onRefresh,
                     )
                 },
         topBar = {
@@ -157,8 +166,9 @@ internal fun SpeakersScreen(
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
         ChaiPullToRefreshBox(
-            isRefreshing = uiState is SpeakersScreenUiState.Loading,
-            onRefresh = { /*TODO*/ },
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            indicatorTopPadding = paddingValues.calculateTopPadding(),
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -200,14 +210,15 @@ internal fun SpeakersScreen(
                     } else {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(minSize = SpeakerColumnMinWidth),
-                            modifier = Modifier.fillMaxSize().readablePaneWidth(),
-                            contentPadding = paddingValues.plus(horizontal = 16.dp, top = 8.dp, bottom = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxSize().readablePaneWidth().testTag("speakersGrid"),
+                            contentPadding = paddingValues.plus(horizontal = 8.dp, top = 8.dp, bottom = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             items(items = uiState.speakers, key = { it.name }, contentType = { "speaker" }) { speaker ->
                                 SpeakerComponent(
                                     speaker = speaker,
+                                    isSelected = speaker.name == selectedSpeakerName,
                                     onClick = {
                                         navigateToSpeaker.invoke(speaker.name)
                                     },
@@ -312,11 +323,12 @@ private fun SpeakersTopBar(
     )
 }
 
-private fun handleSpeakersKeyEvent(
+internal fun handleSpeakersKeyEvent(
     event: KeyEvent,
     isSearchActive: Boolean,
     onOpenSearch: () -> Unit,
     onCloseSearch: () -> Unit,
+    onRefresh: () -> Unit,
 ): Boolean {
     if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
     return when {
@@ -326,6 +338,10 @@ private fun handleSpeakersKeyEvent(
         }
         event.key == Key.Escape && isSearchActive -> {
             onCloseSearch()
+            true
+        }
+        event.key == Key.F5 || (event.isCtrlPressed && event.key == Key.R) -> {
+            onRefresh()
             true
         }
         else -> false
