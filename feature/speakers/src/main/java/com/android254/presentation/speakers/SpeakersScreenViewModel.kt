@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -78,6 +79,13 @@ class SpeakersScreenViewModel
 
         fun onSearchQueryChanged(query: String) {
             savedStateHandle[KEY_SEARCH_QUERY] = query
+        }
+
+        /** Triggers a background conference data sync on pull-to-refresh. */
+        fun refresh() {
+            viewModelScope.launch {
+                syncDataWorkManager.startSync()
+            }
         }
 
         private val speakingNowNames: Flow<Set<String>> =

@@ -15,9 +15,9 @@
  */
 package com.android254.presentation.speakers.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,14 +28,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -54,69 +57,101 @@ import com.droidconke.chai.components.ChaiBodyXSmallBold
 import ke.droidcon.kotlin.core.ui.R
 
 private val SpeakerAvatarSize = 100.dp
+private val SelectedBorderWidth = 2.dp
+private const val SELECTED_CONTAINER_ALPHA = 0.22f
 
+/**
+ * Speaker list item. Highlights the open speaker with a primary border and tonal fill when
+ * [isSelected] in two-pane list-detail layouts.
+ */
 @Composable
 fun SpeakerComponent(
     speaker: SpeakerUI,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
+    isSelected: Boolean = false,
 ) {
-    Row(
+    val containerColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = SELECTED_CONTAINER_ALPHA)
+        } else {
+            Color.Transparent
+        }
+    val border =
+        if (isSelected) {
+            BorderStroke(width = SelectedBorderWidth, color = MaterialTheme.colorScheme.primary)
+        } else {
+            null
+        }
+
+    Surface(
+        onClick = onClick,
         modifier =
             modifier
                 .fillMaxWidth()
                 .clickablePointer()
-                .clickable { onClick.invoke() }
-                .semantics(mergeDescendants = true) {}
-                .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+                .semantics(mergeDescendants = true) {
+                    selected = isSelected
+                },
+        shape = MaterialTheme.shapes.medium,
+        color = containerColor,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        border = border,
     ) {
-        val avatarShape = rememberSpeakerAvatarShape()
-        AsyncImage(
-            model =
-                ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(speaker.imageUrl)
-                    .build(),
-            placeholder = painterResource(R.drawable.smiling),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        Row(
             modifier =
                 Modifier
-                    .size(SpeakerAvatarSize)
-                    .speakerSharedImage(speaker.name, avatarShape)
-                    .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
-        )
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(start = 20.dp)
-                    .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            ChaiBodyLargeBold(
+            val avatarShape = rememberSpeakerAvatarShape()
+            AsyncImage(
+                model =
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(speaker.imageUrl)
+                        .build(),
+                placeholder = painterResource(R.drawable.smiling),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier =
                     Modifier
-                        .testTag("name")
-                        .speakerSharedName(speaker.name),
-                bodyText = speaker.name,
-                textColor = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
+                        .size(SpeakerAvatarSize)
+                        .speakerSharedImage(speaker.name, avatarShape)
+                        .border(HeadshotRingWidth, MaterialTheme.colorScheme.secondaryContainer, avatarShape),
             )
 
-            speaker.tagline?.takeIf(String::isNotBlank)?.let { tagline ->
-                ChaiBodyMedium(
-                    modifier = Modifier.testTag("bio"),
-                    bodyText = tagline,
-                    textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
+            Column(
+                modifier =
+                    Modifier
+                        .padding(start = 20.dp)
+                        .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                ChaiBodyLargeBold(
+                    modifier =
+                        Modifier
+                            .testTag("name")
+                            .speakerSharedName(speaker.name),
+                    bodyText = speaker.name,
+                    textColor = MaterialTheme.colorScheme.primary,
+                    maxLines = 1,
                 )
-            }
 
-            if (speaker.isSpeakingNow) {
-                Spacer(modifier = Modifier.height(2.dp))
-                SpeakingNowBadge()
+                speaker.tagline?.takeIf(String::isNotBlank)?.let { tagline ->
+                    ChaiBodyMedium(
+                        modifier = Modifier.testTag("bio"),
+                        bodyText = tagline,
+                        textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                    )
+                }
+
+                if (speaker.isSpeakingNow) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    SpeakingNowBadge()
+                }
             }
         }
     }
@@ -140,16 +175,18 @@ private fun SpeakingNowBadge(modifier: Modifier = Modifier) {
 @ChaiLightAndDarkComposePreviews
 @Composable
 private fun SpeakerComponentPreview() {
-    ChaiTheme {
-        SpeakerComponent(
-            speaker =
-                SpeakerUI(
-                    imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",
-                    name = "Ian Nthuli",
-                    bio = "Kenya Partner Lead at droidcon Berlin | Android | Kotlin | Flutter | C++",
-                    tagline = "Android Engineer",
-                    isSpeakingNow = true,
-                ),
+    val sampleSpeaker =
+        SpeakerUI(
+            imageUrl = "https://sessionize.com/image/09c1-400o400o2-cf-9587-423b-bd2e-415e6757286c.b33d8d6e-1f94-4765-a797-255efc34390d.jpg",
+            name = "Ian Nthuli",
+            bio = "Kenya Partner Lead at droidcon Berlin | Android | Kotlin | C++",
+            tagline = "Android Engineer",
+            isSpeakingNow = true,
         )
+    ChaiTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            SpeakerComponent(speaker = sampleSpeaker, isSelected = false)
+            SpeakerComponent(speaker = sampleSpeaker, isSelected = true)
+        }
     }
 }

@@ -19,6 +19,9 @@ import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,6 +62,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -72,7 +76,6 @@ import com.android254.presentation.common.adaptive.DroidconTooltip
 import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.insets.DroidconWindowInsets
-import com.android254.presentation.common.insets.plus
 import com.android254.presentation.models.SpeakerUI
 import com.android254.presentation.speakers.SpeakersScreenUiState
 import com.android254.presentation.speakers.SpeakersScreenViewModel
@@ -94,13 +97,18 @@ fun SpeakersRoute(
     speakersScreenViewModel: SpeakersScreenViewModel = hiltViewModel(),
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
+    selectedSpeakerName: String? = null,
 ) {
     val uiState by speakersScreenViewModel.speakersScreenUiState.collectAsStateWithLifecycle()
+    val isSyncing by speakersScreenViewModel.isSyncing.collectAsStateWithLifecycle()
     val searchQuery by speakersScreenViewModel.searchQuery.collectAsStateWithLifecycle()
     SpeakersScreen(
         uiState = uiState,
+        isRefreshing = isSyncing,
         searchQuery = searchQuery,
+        selectedSpeakerName = selectedSpeakerName,
         onSearchQueryChanged = speakersScreenViewModel::onSearchQueryChanged,
+        onRefresh = speakersScreenViewModel::refresh,
         navigateToHomeScreen = navigateToHomeScreen,
         navigateToSpeaker = navigateToSpeaker,
     )
@@ -109,8 +117,11 @@ fun SpeakersRoute(
 @Composable
 internal fun SpeakersScreen(
     uiState: SpeakersScreenUiState,
+    isRefreshing: Boolean = false,
     searchQuery: String = "",
+    selectedSpeakerName: String? = null,
     onSearchQueryChanged: (String) -> Unit = {},
+    onRefresh: () -> Unit = {},
     navigateToHomeScreen: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
 ) {
@@ -140,6 +151,7 @@ internal fun SpeakersScreen(
                         isSearchActive = isSearchActive,
                         onOpenSearch = { isSearchActive = true },
                         onCloseSearch = ::closeSearch,
+                        onRefresh = onRefresh,
                     )
                 },
         topBar = {
@@ -156,18 +168,33 @@ internal fun SpeakersScreen(
         },
         contentWindowInsets = DroidconWindowInsets.screenContent,
     ) { paddingValues ->
+        val layoutDirection = LocalLayoutDirection.current
+        val gridContentPadding =
+            PaddingValues(
+                start = paddingValues.calculateStartPadding(layoutDirection) + 8.dp,
+                end = paddingValues.calculateEndPadding(layoutDirection) + 8.dp,
+                top = 8.dp,
+                bottom = paddingValues.calculateBottomPadding() + 8.dp,
+            )
+        val nonListPadding =
+            PaddingValues(
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection),
+                bottom = paddingValues.calculateBottomPadding(),
+            )
         ChaiPullToRefreshBox(
-            isRefreshing = uiState is SpeakersScreenUiState.Loading,
-            onRefresh = { /*TODO*/ },
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
                     .consumeWindowInsets(paddingValues),
         ) {
             when (uiState) {
                 is SpeakersScreenUiState.Loading -> {
                     Box(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                        modifier = Modifier.fillMaxSize().padding(nonListPadding),
                     ) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
@@ -175,7 +202,7 @@ internal fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Error -> {
                     Box(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
+                        modifier = Modifier.fillMaxSize().padding(nonListPadding),
                     ) {
                         ChaiBodyMediumBold(
                             modifier = Modifier.align(Alignment.Center),
@@ -187,7 +214,7 @@ internal fun SpeakersScreen(
 
                 is SpeakersScreenUiState.Success -> {
                     if (uiState.speakers.isEmpty() && searchQuery.isNotBlank()) {
-                        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                        Box(modifier = Modifier.fillMaxSize().padding(nonListPadding)) {
                             ChaiBodyMedium(
                                 modifier =
                                     Modifier
@@ -200,14 +227,15 @@ internal fun SpeakersScreen(
                     } else {
                         LazyVerticalGrid(
                             columns = GridCells.Adaptive(minSize = SpeakerColumnMinWidth),
-                            modifier = Modifier.fillMaxSize().readablePaneWidth(),
-                            contentPadding = paddingValues.plus(horizontal = 16.dp, top = 8.dp, bottom = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxSize().readablePaneWidth().testTag("speakersGrid"),
+                            contentPadding = gridContentPadding,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             items(items = uiState.speakers, key = { it.name }, contentType = { "speaker" }) { speaker ->
                                 SpeakerComponent(
                                     speaker = speaker,
+                                    isSelected = speaker.name == selectedSpeakerName,
                                     onClick = {
                                         navigateToSpeaker.invoke(speaker.name)
                                     },
@@ -312,11 +340,12 @@ private fun SpeakersTopBar(
     )
 }
 
-private fun handleSpeakersKeyEvent(
+internal fun handleSpeakersKeyEvent(
     event: KeyEvent,
     isSearchActive: Boolean,
     onOpenSearch: () -> Unit,
     onCloseSearch: () -> Unit,
+    onRefresh: () -> Unit,
 ): Boolean {
     if (event.type != KeyEventType.KeyDown || event.nativeKeyEvent.repeatCount > 0) return false
     return when {
@@ -326,6 +355,10 @@ private fun handleSpeakersKeyEvent(
         }
         event.key == Key.Escape && isSearchActive -> {
             onCloseSearch()
+            true
+        }
+        event.key == Key.F5 || (event.isCtrlPressed && event.key == Key.R) -> {
+            onRefresh()
             true
         }
         else -> false

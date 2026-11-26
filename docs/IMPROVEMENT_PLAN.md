@@ -8,9 +8,9 @@
 
 ---
 
-## Next up — §4.4, then §3.6 / §9.5 / §11.7
+## Next up — §11.8, then §3.6 / §9.5 / §11.7
 
-1. **Speakers two-pane polish & pull-to-refresh fix** (§4.4) — selected state on speaker cards matching `SessionsCard`, plus wiring the currently no-op `onRefresh = { /*TODO*/ }` in `SpeakersScreen.kt`.
+1. **Internal deep links** (§11.8) — extend `DeepLinks` to cover `droidconke://ticket`, `droidconke://sessions`, and `droidconke://speaker/{name}` so launcher shortcuts, widgets, and calendar events share one URI router.
 2. **Production hygiene quick wins** (§3.6, §9.5, §11.7, §13.2, §15.4) — Remote Config `event_slug`, Coil offline disk cache, conference-day-only widget refresh, staged Play rollout + native symbols, and Crashlytics custom keys.
 3. **Testing safety nets** (§3.9, §5.6, §10) — B7 splash test, automated Compose accessibility checks, edge-case screenshot fixtures, and core `:app` E2E journeys.
 
@@ -37,15 +37,6 @@
 | Finding | What the test must assert |
 | --- | --- |
 | B7 — splash waited on network | `MainViewModel.isInitialising` releases on cached Room data (or timeout) and never waits on `remoteFeatureToggle.syncNowIfEmpty()` (`MainViewModelTest.kt`) |
-
----
-
-## 4. Phase 1 — Adaptive & screen follow-ups
-
-### 4.4 Two-pane Speakers selection & pull-to-refresh bug
-
-- **Speaker card selected state:** `SessionsCard` highlights the open session in two-pane mode. Apply the same `isSelected` pattern (`2.dp` `primary` border, subtle tonal container tint, and `semantics { selected = isSelected }`) to speaker cards in `:feature:speakers`.
-- **Wire Speakers pull-to-refresh:** `SpeakersScreen.kt` currently passes `onRefresh = { /*TODO*/ }` to `ChaiPullToRefreshBox`, making pull-to-refresh a no-op. Trigger a real sync via `SyncDataWorkManager` (matching `HomeScreen` and `SessionsScreen`).
 
 ---
 
@@ -156,7 +147,7 @@ Set lightweight state keys directly in `:app` (`window_size_class`, `is_signed_i
 
 | # | Work item | Section | Why here |
 | --- | --- | --- | --- |
-| **1** | Speaker card selected state + fix Speakers `onRefresh` no-op + internal deep links (`ticket`, `sessions`, `speaker`) | §4.4, §11.8 | Fixes a real dead control, completes two-pane parity, unifies URI routing |
+| **1** | Internal deep links (`ticket`, `sessions`, `speaker`) | §11.8 | Unifies URI routing across launcher shortcuts, widgets, and calendar events |
 | **2** | Production hygiene batch (Remote Config `event_slug`, Coil 50 MB offline cache, widget `updatePeriodMillis="0"`, staged Play rollout + `debugSymbols`, Crashlytics custom keys, Firebase Perf removal decision) | §3.6, §9.5, §11.7, §13.2, §15.4 | High reliability, battery, offline UX, and release safety in small clean PRs |
 | **3** | Testing safety nets (B7 splash test, automated Compose accessibility checks, edge-case screenshot fixtures, core `:app` E2E journeys) | §3.9, §5.6, §10 | Prevents regressions before conference day |
 | **4** | Tech debt & local polish (A5 `Session` `Instant` cleanup, loading skeleton consolidation, Updates unread dot + new speakers, optional offline session notes, optional Reno4 cube 60 Hz fix) | §1.5, §5.2, §5.5, §6A, §12 | Clean codebase & nice-to-have attendee polish |

@@ -125,7 +125,13 @@ fun droidconEntryProvider(
                         )
                     },
             ) {
+                val selectedSpeakerName =
+                    selectedSpeakerNameInListDetail(
+                        inListDetailScene = LocalListDetailSceneScope.current != null,
+                        currentRoute = navController.state.currentRoute,
+                    )
                 SpeakersRoute(
+                    selectedSpeakerName = selectedSpeakerName,
                     navigateToHomeScreen = { navController.navigateUp() },
                     navigateToSpeaker = { speakerName ->
                         navController.navigate(
@@ -171,6 +177,16 @@ fun droidconEntryProvider(
         }
     return entryProvider
 }
+
+internal fun selectedSpeakerNameInListDetail(
+    inListDetailScene: Boolean,
+    currentRoute: NavKey?,
+): String? =
+    if (inListDetailScene) {
+        (currentRoute as? Screens.SpeakerDetails)?.speakerName
+    } else {
+        null
+    }
 
 @Composable
 private fun sessionModel(
