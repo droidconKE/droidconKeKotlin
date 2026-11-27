@@ -165,6 +165,8 @@ firebase-performance = { module = "com.google.firebase:firebase-perf" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 firebase-remote-config = { module = "com.google.firebase:firebase-config" }
 firebase-common = { module = "com.google.firebase:firebase-common" }
+firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
+firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 

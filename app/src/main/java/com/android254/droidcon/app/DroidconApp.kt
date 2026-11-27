@@ -58,6 +58,7 @@ class DroidconApp : Application() {
         ComposeUiFlags.isMediaQueryIntegrationEnabled = true
         super.onCreate()
         initTimber()
+        AppCheckSetup.install()
         NotificationChannelSpec.createAll(this)
 
         val appScope = CoroutineScope(defaultDispatcher + SupervisorJob())
