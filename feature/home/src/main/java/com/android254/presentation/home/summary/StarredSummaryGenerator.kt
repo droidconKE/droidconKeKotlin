@@ -109,7 +109,7 @@ class HybridStarredSummaryGenerator
 
         private fun prompt(sessions: List<Session>) =
             buildString {
-                appendLine("Summarise what this conference attendee has starred. Be brief and concrete.")
+                appendLine("Summarise the conference sessions I have starred. Write to me as \"you\". Be brief and concrete.")
                 sessions.take(MAX_SESSIONS).forEach { appendLine("- ${it.title}: ${it.description.take(MAX_DESCRIPTION)}") }
             }
 

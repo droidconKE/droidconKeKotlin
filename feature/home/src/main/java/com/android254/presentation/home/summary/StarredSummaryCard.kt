@@ -15,9 +15,12 @@
  */
 package com.android254.presentation.home.summary
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -25,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.android254.presentation.common.components.SessionTag
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
@@ -40,27 +44,30 @@ internal fun StarredSummaryCard(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier.fillMaxWidth(),
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Text(
-                text = stringResource(R.string.home_starred_summary_title),
-                style = MaterialTheme.typography.titleMediumEmphasized,
-                color = MaterialTheme.colorScheme.onSurface,
+                text = stringResource(R.string.home_starred_summary_title).uppercase(),
+                style = MaterialTheme.typography.labelSmallEmphasized,
+                color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = state.bodyText(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 4.dp),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
             )
-            if (state is StarredSummaryState.Ready && state.summary.themes.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.home_starred_summary_themes, state.summary.themes.joinToString()),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
             if (state is StarredSummaryState.Ready) {
+                if (state.summary.themes.isNotEmpty()) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        state.summary.themes.forEach { theme -> SessionTag(tagText = theme.uppercase()) }
+                    }
+                }
+                HorizontalDivider(modifier = Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
                 Text(
                     text =
                         stringResource(
@@ -69,10 +76,9 @@ internal fun StarredSummaryCard(
                             } else {
                                 R.string.home_starred_summary_source_cloud
                             },
-                        ),
+                        ).uppercase(),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp),
                 )
             }
         }
