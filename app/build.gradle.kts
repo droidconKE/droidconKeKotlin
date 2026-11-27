@@ -116,6 +116,7 @@ dependencies {
     implementation(projects.core.notifications)
 
     implementation(projects.feature.about)
+    implementation(projects.feature.ask)
     implementation(projects.feature.auth)
     implementation(projects.feature.feed)
     implementation(projects.feature.home)

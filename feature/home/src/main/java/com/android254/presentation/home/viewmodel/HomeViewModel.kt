@@ -66,7 +66,9 @@ class HomeViewModel
                 clock.ticks(),
                 ticketsRepo.ticket(),
             ) { home, syncing, now, ticket ->
-                home.toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled(), ticket)
+                home
+                    .toHomeState(isSyncing = syncing, now, conferenceTimeZone, featureFlags.isCubeHeroEnabled(), ticket)
+                    .copy(showAsk = featureFlags.isAskConferenceEnabled())
             }.flowOn(ioDispatcher)
                 .stateIn(
                     scope = viewModelScope,

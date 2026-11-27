@@ -28,6 +28,7 @@ profileinstaller = "1.4.1"
 chucker = "4.3.1"
 androidxComposeBom = "2026.11.01"
 material3 = "1.5.0-rc01"
+a2ui = "1.0.0-alpha02"
 remote_config = "22.1.2"
 detekt = "1.23.8"
 ktlint = "14.2.0"
@@ -165,8 +166,12 @@ firebase-performance = { module = "com.google.firebase:firebase-perf" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
 firebase-remote-config = { module = "com.google.firebase:firebase-config" }
 firebase-common = { module = "com.google.firebase:firebase-common" }
+firebase-ai = { module = "com.google.firebase:firebase-ai" }
 firebase-appcheck-playintegrity = { module = "com.google.firebase:firebase-appcheck-playintegrity" }
 firebase-appcheck-debug = { module = "com.google.firebase:firebase-appcheck-debug" }
+a2ui-compose-ui = { module = "androidx.a2ui.compose:compose-ui", version.ref = "a2ui" }
+a2ui-compose-runtime = { module = "androidx.a2ui.compose:compose-runtime", version.ref = "a2ui" }
+a2ui-material3 = { module = "androidx.compose.material3:material3-a2ui", version.ref = "a2ui" }
 chucker-debug = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", version.ref = "chucker" }
 

@@ -53,6 +53,9 @@ sealed interface Screens : NavKey {
     @Serializable
     data object Ticket : Screens
 
+    @Serializable
+    data object Ask : Screens
+
     /** The supporting pane. Never pushed; [toEntries] appends it when the window is wide enough. */
     @Serializable
     data object HappeningNow : Screens

@@ -26,6 +26,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import com.android254.presentation.about.view.AboutRoute
+import com.android254.presentation.ask.AskRoute
 import com.android254.presentation.common.components.DetailPanePlaceholder
 import com.android254.presentation.common.livesessions.HappeningNowRoute
 import com.android254.presentation.feed.view.FeedRoute
@@ -62,6 +63,7 @@ fun droidconEntryProvider(
                     navigateToFeedbackScreen = { navController.navigate(Screens.FeedBack) },
                     navigateToSessionScreen = { navController.navigate(Screens.Sessions) },
                     navigateToTicket = { navController.navigate(Screens.Ticket) },
+                    navigateToAsk = { navController.navigate(Screens.Ask) },
                     onActionClicked = onActionClicked,
                     onSessionClicked = { sessionId ->
                         navController.navigate(Screens.SessionDetails(sessionId))
@@ -153,6 +155,9 @@ fun droidconEntryProvider(
             }
             entry<Screens.Ticket> {
                 TicketRoute(navigateBack = { navController.navigateUp() })
+            }
+            entry<Screens.Ask> {
+                AskRoute(navigateBack = { navController.navigateUp() })
             }
             entry<Screens.SpeakerDetails>(
                 metadata = detailPaneMetadata(DroidconPaneScene.Speakers),

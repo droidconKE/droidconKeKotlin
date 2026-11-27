@@ -48,6 +48,7 @@ import com.android254.presentation.common.adaptive.readablePaneWidth
 import com.android254.presentation.common.components.SponsorsCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.home.components.HomeAgendaSection
+import com.android254.presentation.home.components.HomeAskCard
 import com.android254.presentation.home.components.HomeBannerSection
 import com.android254.presentation.home.components.HomeHeaderSectionComponent
 import com.android254.presentation.home.components.HomeSessionLoadingComponent
@@ -71,6 +72,7 @@ fun HomeRoute(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     navigateToTicket: () -> Unit = {},
+    navigateToAsk: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
 ) {
@@ -84,6 +86,7 @@ fun HomeRoute(
         navigateToFeedbackScreen = navigateToFeedbackScreen,
         navigateToSessionScreen = navigateToSessionScreen,
         navigateToTicket = navigateToTicket,
+        navigateToAsk = navigateToAsk,
         onActionClicked = onActionClicked,
         onSessionClicked = onSessionClicked,
         onRefresh = { homeViewModel.startRefresh() },
@@ -99,6 +102,7 @@ internal fun HomeScreen(
     navigateToFeedbackScreen: () -> Unit = {},
     navigateToSessionScreen: () -> Unit = {},
     navigateToTicket: () -> Unit = {},
+    navigateToAsk: () -> Unit = {},
     onActionClicked: () -> Unit = {},
     onSessionClicked: (sessionId: String) -> Unit = {},
     onRefresh: () -> Unit = {},
@@ -151,6 +155,9 @@ internal fun HomeScreen(
                     animateCube = animateCube && !isSyncing,
                 )
                 HomeBannerSection(viewState)
+                if (viewState.showAsk) {
+                    HomeAskCard(onClick = navigateToAsk, modifier = Modifier.padding(top = 16.dp))
+                }
                 if (!viewState.isEventDay) {
                     HomeTicketCard(
                         ticket = viewState.ticket,
