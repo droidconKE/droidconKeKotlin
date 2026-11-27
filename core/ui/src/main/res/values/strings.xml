@@ -201,7 +201,6 @@
     <string name="home_starred_summary_unavailable">This phone can’t run Gemini Nano, so there’s no on-device summary.</string>
     <string name="home_starred_summary_failed">Couldn’t summarise your starred sessions right now.</string>
     <string name="home_starred_summary_empty">Star a few sessions and a summary will show up here.</string>
-    <string name="home_starred_summary_themes">Themes: %1$s</string>
     <string name="home_ticket_add_body">Keep it on your phone, ready at the door.</string>
     <string name="home_ticket_show">Show ticket</string>
     <string name="shortcut_ticket_short">Ticket</string>
