@@ -24,6 +24,8 @@ android {
 
 dependencies {
     implementation(libs.compose.activity)
+    implementation(libs.mlkit.genai.prompt)
+    ksp(libs.mlkit.genai.schema.compiler)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.test.mockk)

@@ -57,6 +57,9 @@ import com.android254.presentation.home.components.HomeSpeakersLoadingComponent
 import com.android254.presentation.home.components.HomeSpeakersSection
 import com.android254.presentation.home.components.HomeTicketCard
 import com.android254.presentation.home.components.HomeToolbarComponent
+import com.android254.presentation.home.summary.StarredSummaryCard
+import com.android254.presentation.home.summary.StarredSummaryState
+import com.android254.presentation.home.summary.StarredSummaryViewModel
 import com.android254.presentation.home.viewmodel.HomeViewModel
 import com.android254.presentation.home.viewstate.HomeState
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
@@ -66,6 +69,7 @@ import com.droidconke.chai.ChaiTheme
 @Composable
 fun HomeRoute(
     homeViewModel: HomeViewModel = hiltViewModel(),
+    summaryViewModel: StarredSummaryViewModel = hiltViewModel(),
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
     navigateToFeedbackScreen: () -> Unit = {},
@@ -76,9 +80,11 @@ fun HomeRoute(
 ) {
     val homeState by homeViewModel.viewState.collectAsStateWithLifecycle()
     val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
+    val starredSummary by summaryViewModel.state.collectAsStateWithLifecycle()
     HomeScreen(
         viewState = homeState,
         isSyncing = isSyncing,
+        starredSummary = starredSummary,
         navigateToSpeakers = navigateToSpeakers,
         navigateToSpeaker = navigateToSpeaker,
         navigateToFeedbackScreen = navigateToFeedbackScreen,
@@ -94,6 +100,7 @@ fun HomeRoute(
 internal fun HomeScreen(
     viewState: HomeState,
     isSyncing: Boolean,
+    starredSummary: StarredSummaryState = StarredSummaryState.Hidden,
     navigateToSpeakers: () -> Unit = {},
     navigateToSpeaker: (String) -> Unit = {},
     navigateToFeedbackScreen: () -> Unit = {},
@@ -160,6 +167,8 @@ internal fun HomeScreen(
                     )
                 }
                 HomeSpacer()
+
+                StarredSummaryCard(state = starredSummary, modifier = Modifier.padding(bottom = 16.dp))
 
                 val agenda = viewState.agenda
                 if (agenda != null) {

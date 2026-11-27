@@ -9,4 +9,8 @@
         <key>cube_hero_enabled</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>starred_summary_enabled</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

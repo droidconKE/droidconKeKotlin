@@ -19,6 +19,9 @@ import com.android254.domain.flags.FeatureFlags
 
 class FakeFeatureFlags(
     var cubeHero: Boolean = true,
+    var starredSummary: Boolean = false,
 ) : FeatureFlags {
     override suspend fun isCubeHeroEnabled() = cubeHero
+
+    override suspend fun isStarredSummaryEnabled() = starredSummary
 }

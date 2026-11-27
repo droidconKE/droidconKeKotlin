@@ -18,4 +18,6 @@ package com.android254.domain.flags
 /** Remote switches for features that may need turning off without a release. */
 interface FeatureFlags {
     suspend fun isCubeHeroEnabled(): Boolean
+
+    suspend fun isStarredSummaryEnabled(): Boolean
 }

@@ -29,7 +29,13 @@ class RemoteFeatureFlags
             return remoteFeatureToggle.getBoolean(CUBE_HERO_ENABLED)
         }
 
+        override suspend fun isStarredSummaryEnabled(): Boolean {
+            remoteFeatureToggle.awaitDefaults()
+            return remoteFeatureToggle.getBoolean(STARRED_SUMMARY_ENABLED)
+        }
+
         private companion object {
             const val CUBE_HERO_ENABLED = "cube_hero_enabled"
+            const val STARRED_SUMMARY_ENABLED = "starred_summary_enabled"
         }
     }

@@ -286,11 +286,12 @@ private fun com.android254.presentation.home.components.title(): kotlin.String
   params:
 
 @Composable
-public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \): kotlin.Unit
+public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.android254.presentation.home.viewmodel.HomeViewModel, summaryViewModel: com.android254.presentation.home.summary.StarredSummaryViewModel, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - homeViewModel: UNSTABLE (has mutable properties or unstable members)
+    - summaryViewModel: UNSTABLE (has mutable properties or unstable members)
     - navigateToSpeakers: STABLE (function type)
     - navigateToSpeaker: STABLE (function type)
     - navigateToFeedbackScreen: STABLE (function type)
@@ -300,12 +301,13 @@ public fun com.android254.presentation.home.screen.HomeRoute(homeViewModel: com.
     - onSessionClicked: STABLE (function type)
 
 @Composable
-internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
+internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.android254.presentation.home.viewstate.HomeState, isSyncing: kotlin.Boolean, starredSummary: com.android254.presentation.home.summary.StarredSummaryState, navigateToSpeakers: kotlin.Function0<kotlin.Unit>, navigateToSpeaker: kotlin.Function1<kotlin.String, kotlin.Unit>, navigateToFeedbackScreen: kotlin.Function0<kotlin.Unit>, navigateToSessionScreen: kotlin.Function0<kotlin.Unit>, navigateToTicket: kotlin.Function0<kotlin.Unit>, onActionClicked: kotlin.Function0<kotlin.Unit>, onSessionClicked: kotlin.Function1<@[ParameterName(name = \, onRefresh: kotlin.Function0<kotlin.Unit>, animateCube: kotlin.Boolean): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - viewState: UNSTABLE (has mutable properties or unstable members)
     - isSyncing: STABLE (primitive type)
+    - starredSummary: STABLE (marked @Stable or @Immutable)
     - navigateToSpeakers: STABLE (function type)
     - navigateToSpeaker: STABLE (function type)
     - navigateToFeedbackScreen: STABLE (function type)
@@ -315,4 +317,18 @@ internal fun com.android254.presentation.home.screen.HomeScreen(viewState: com.a
     - onSessionClicked: STABLE (function type)
     - onRefresh: STABLE (function type)
     - animateCube: STABLE (primitive type)
+
+@Composable
+internal fun com.android254.presentation.home.summary.StarredSummaryCard(state: com.android254.presentation.home.summary.StarredSummaryState, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - state: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.summary.bodyText(): kotlin.String
+  skippable: false
+  restartable: false
+  params:
 
