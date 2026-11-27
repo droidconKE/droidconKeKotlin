@@ -60,6 +60,21 @@ internal fun StarredSummaryCard(
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }
+            if (state is StarredSummaryState.Ready) {
+                Text(
+                    text =
+                        stringResource(
+                            if (state.source == SummarySource.OnDevice) {
+                                R.string.home_starred_summary_source_on_device
+                            } else {
+                                R.string.home_starred_summary_source_cloud
+                            },
+                        ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
         }
     }
 }
@@ -81,7 +96,7 @@ private fun StarredSummaryCardPreview() {
     ChaiTheme {
         Column {
             StarredSummaryCard(StarredSummaryState.Unavailable)
-            StarredSummaryCard(StarredSummaryState.Ready(StarredSummary("Compose and on-device AI.", listOf("Compose", "AI"))))
+            StarredSummaryCard(StarredSummaryState.Ready(StarredSummary("Compose and on-device AI.", listOf("Compose", "AI")), SummarySource.Cloud))
         }
     }
 }

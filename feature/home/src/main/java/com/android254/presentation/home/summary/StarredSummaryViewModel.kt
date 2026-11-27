@@ -58,7 +58,7 @@ class StarredSummaryViewModel
                     emit(StarredSummaryState.Loading)
                     emit(
                         when (val result = generator.summarise(starred)) {
-                            is SummaryResult.Success -> StarredSummaryState.Ready(result.summary)
+                            is SummaryResult.Success -> StarredSummaryState.Ready(result.summary, result.source)
                             SummaryResult.Unavailable -> StarredSummaryState.Unavailable
                             SummaryResult.Failed -> StarredSummaryState.Failed
                         },

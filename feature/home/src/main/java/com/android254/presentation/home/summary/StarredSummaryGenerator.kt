@@ -16,18 +16,33 @@
 package com.android254.presentation.home.summary
 
 import com.android254.domain.models.Session
-import com.google.mlkit.genai.common.FeatureStatus
-import com.google.mlkit.genai.prompt.GenerateContentRequest
-import com.google.mlkit.genai.prompt.Generation
-import com.google.mlkit.genai.prompt.TextPart
-import com.google.mlkit.genai.prompt.generateTypedContentRequest
+import com.google.firebase.Firebase
+import com.google.firebase.ai.InferenceMode
+import com.google.firebase.ai.InferenceSource
+import com.google.firebase.ai.OnDeviceConfig
+import com.google.firebase.ai.ai
+import com.google.firebase.ai.ondevice.FirebaseAIOnDevice
+import com.google.firebase.ai.ondevice.OnDeviceModelStatus
+import com.google.firebase.ai.type.GenerativeBackend
+import com.google.firebase.ai.type.PublicPreviewAPI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+
+enum class SummarySource { OnDevice, Cloud }
 
 sealed interface SummaryResult {
     data class Success(
         val summary: StarredSummary,
+        val source: SummarySource,
     ) : SummaryResult
 
     data object Unavailable : SummaryResult
@@ -39,47 +54,58 @@ fun interface StarredSummaryGenerator {
     suspend fun summarise(sessions: List<Session>): SummaryResult
 }
 
-class GeminiNanoStarredSummaryGenerator
+@OptIn(PublicPreviewAPI::class)
+class HybridStarredSummaryGenerator
     @Inject
     constructor() : StarredSummaryGenerator {
         @Suppress("TooGenericExceptionCaught")
-        override suspend fun summarise(sessions: List<Session>): SummaryResult {
-            val model = runCatching { Generation.getClient() }.getOrNull()
-            if (model == null) {
-                Timber.w("Starred summary unavailable: Generation.getClient() failed")
-                return SummaryResult.Unavailable
-            }
-            return try {
-                val status = model.checkStatus()
-                if (status == FeatureStatus.UNAVAILABLE) {
-                    Timber.w("Starred summary unavailable: Gemini Nano status=%s", status)
-                    return SummaryResult.Unavailable
-                }
-                if (status != FeatureStatus.AVAILABLE) {
-                    Timber.i("Starred summary not ready: Gemini Nano status=%s", status)
-                    return SummaryResult.Failed
-                }
-                if (!model.isStructuredOutputFeatureAvailable()) {
-                    Timber.w("Starred summary unavailable: structured output not supported")
-                    return SummaryResult.Unavailable
-                }
-                val request = GenerateContentRequest.Builder(TextPart(prompt(sessions))).build()
-                val response = model.generateContent(generateTypedContentRequest(request, StarredSummaryOutput::class))
-                response.candidates
-                    .firstOrNull()
-                    ?.response
-                    ?.toSummary()
-                    ?.let(SummaryResult::Success)
-                    ?: SummaryResult.Failed.also { Timber.w("Starred summary failed: empty response") }
+        override suspend fun summarise(sessions: List<Session>): SummaryResult =
+            try {
+                startNanoDownloadIfNeeded()
+                val model =
+                    Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(
+                        modelName = CLOUD_MODEL,
+                        onDeviceConfig = OnDeviceConfig(mode = InferenceMode.PREFER_ON_DEVICE),
+                    )
+                val response = model.generateObject(StarredSummaryOutput.firebaseAISchema(), prompt(sessions))
+                val source = if (response.response.inferenceSource == InferenceSource.ON_DEVICE) SummarySource.OnDevice else SummarySource.Cloud
+                response.getObject()?.let { SummaryResult.Success(it.toSummary(), source) } ?: SummaryResult.Failed
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
-                Timber.w(e, "Starred summary failed")
-                SummaryResult.Failed
-            } finally {
-                model.close()
+                if (e.isNetworkFailure()) {
+                    Timber.i("Starred summary unavailable offline: %s", e.javaClass.simpleName)
+                    SummaryResult.Unavailable
+                } else {
+                    Timber.w(e, "Starred summary failed")
+                    SummaryResult.Failed
+                }
+            }
+
+        @Suppress("TooGenericExceptionCaught")
+        private suspend fun startNanoDownloadIfNeeded() {
+            val status =
+                try {
+                    FirebaseAIOnDevice.checkStatus()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    Timber.w(e, "Gemini Nano status check failed; summarising in the cloud")
+                    return
+                }
+            Timber.d("Gemini Nano status=%s", status)
+            if (status == OnDeviceModelStatus.DOWNLOADABLE && downloading.compareAndSet(false, true)) {
+                downloadScope.launch {
+                    FirebaseAIOnDevice
+                        .download()
+                        .catch { Timber.w(it, "Gemini Nano download failed") }
+                        .onCompletion { downloading.set(false) }
+                        .collect { Timber.d("Gemini Nano download: %s", it) }
+                }
             }
         }
+
+        private fun Throwable.isNetworkFailure(): Boolean = generateSequence(this) { it.cause }.any { it is IOException }
 
         private fun prompt(sessions: List<Session>) =
             buildString {
@@ -88,6 +114,9 @@ class GeminiNanoStarredSummaryGenerator
             }
 
         private companion object {
+            val downloadScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+            val downloading = AtomicBoolean(false)
+            const val CLOUD_MODEL = "gemini-3.5-flash"
             const val MAX_SESSIONS = 20
             const val MAX_DESCRIPTION = 200
         }

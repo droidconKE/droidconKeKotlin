@@ -63,7 +63,7 @@ class StarredSummaryViewModelTest {
         }
 
     @Test
-    fun `says so when the phone cannot run Gemini Nano`() =
+    fun `says so when there is no Gemini Nano and no network`() =
         runTest {
             val vm = vm(true, SummaryResult.Unavailable)
             val job = launch { vm.state.collect() }
@@ -76,10 +76,10 @@ class StarredSummaryViewModelTest {
     fun `shows the summary when generation succeeds`() =
         runTest {
             val summary = StarredSummary("Compose talks", listOf("Compose"))
-            val vm = vm(true, SummaryResult.Success(summary))
+            val vm = vm(true, SummaryResult.Success(summary, SummarySource.Cloud))
             val job = launch { vm.state.collect() }
             runCurrent()
-            assertEquals(StarredSummaryState.Ready(summary), vm.state.value)
+            assertEquals(StarredSummaryState.Ready(summary, SummarySource.Cloud), vm.state.value)
             job.cancel()
         }
 }

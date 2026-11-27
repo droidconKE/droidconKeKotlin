@@ -16,16 +16,20 @@
 package com.android254.presentation.home.summary
 
 import androidx.compose.runtime.Immutable
-import com.google.mlkit.genai.schema.annotations.Generable
-import com.google.mlkit.genai.schema.annotations.Guide
+import com.google.firebase.ai.annotations.Generable
+import com.google.firebase.ai.annotations.Guide
+import kotlinx.serialization.Serializable
 
 @Generable
+@Serializable
 data class StarredSummaryOutput(
     @Guide(description = "One or two sentences describing what the attendee's starred sessions are about")
     var overview: String = "",
     @Guide(description = "Up to three short topic names that recur across the sessions")
     var themes: List<String> = emptyList(),
-)
+) {
+    companion object
+}
 
 @Immutable
 data class StarredSummary(
@@ -50,5 +54,6 @@ sealed interface StarredSummaryState {
     @Immutable
     data class Ready(
         val summary: StarredSummary,
+        val source: SummarySource,
     ) : StarredSummaryState
 }

@@ -16,6 +16,7 @@
 plugins {
     alias(libs.plugins.droidconke.android.feature)
     alias(libs.plugins.droidconke.android.library.roborazzi)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -24,8 +25,11 @@ android {
 
 dependencies {
     implementation(libs.compose.activity)
-    implementation(libs.mlkit.genai.prompt)
-    ksp(libs.mlkit.genai.schema.compiler)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
+    implementation(libs.firebase.ai.ondevice)
+    implementation(libs.bundles.serialization)
+    ksp(libs.firebase.ai.ksp)
 
     testImplementation(projects.core.testing)
     testImplementation(libs.test.mockk)

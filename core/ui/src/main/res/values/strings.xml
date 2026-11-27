@@ -197,10 +197,12 @@
     <string name="ticket_code_unavailable">The code can’t be shown. Read your ticket number to the staff at the door.</string>
     <string name="detail_separator">" · "</string>
     <string name="home_starred_summary_title">Your starred sessions</string>
-    <string name="home_starred_summary_loading">Summarising on your phone…</string>
-    <string name="home_starred_summary_unavailable">This phone can’t run Gemini Nano, so there’s no on-device summary.</string>
+    <string name="home_starred_summary_loading">Summarising your starred sessions…</string>
+    <string name="home_starred_summary_unavailable">No Gemini Nano on this phone and no internet connection, so there’s no summary right now.</string>
     <string name="home_starred_summary_failed">Couldn’t summarise your starred sessions right now.</string>
     <string name="home_starred_summary_empty">Star a few sessions and a summary will show up here.</string>
+    <string name="home_starred_summary_source_on_device">Summarised on this phone by Gemini Nano</string>
+    <string name="home_starred_summary_source_cloud">Summarised in the cloud by Gemini</string>
     <string name="home_starred_summary_themes">Themes: %1$s</string>
     <string name="home_ticket_add_body">Keep it on your phone, ready at the door.</string>
     <string name="home_ticket_show">Show ticket</string>

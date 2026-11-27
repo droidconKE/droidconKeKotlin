@@ -24,5 +24,5 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 internal abstract class StarredSummaryModule {
     @Binds
-    abstract fun bindGenerator(impl: GeminiNanoStarredSummaryGenerator): StarredSummaryGenerator
+    abstract fun bindGenerator(impl: HybridStarredSummaryGenerator): StarredSummaryGenerator
 }
