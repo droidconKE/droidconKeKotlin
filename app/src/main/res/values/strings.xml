@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">DroidconKe</string>
+    <string name="app_functions_description">Star conference sessions in your schedule</string>
 
     <!-- Push Notifications -->
     <string name="push_room_changed">Room changed</string>

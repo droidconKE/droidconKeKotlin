@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/androidx.appfunctions"
+    appfn:instructions="DroidconKE is the Droidcon Kenya conference app. It stars sessions in the user's personal schedule."
+    appfn:displayDescription="@string/app_functions_description" />
