@@ -157,7 +157,10 @@ fun droidconEntryProvider(
                 TicketRoute(navigateBack = { navController.navigateUp() })
             }
             entry<Screens.Ask> {
-                AskRoute(navigateBack = { navController.navigateUp() })
+                AskRoute(
+                    navigateBack = { navController.navigateUp() },
+                    navigateToSessionDetails = { sessionId -> navController.navigate(Screens.SessionDetails(sessionId)) },
+                )
             }
             entry<Screens.SpeakerDetails>(
                 metadata = detailPaneMetadata(DroidconPaneScene.Speakers),

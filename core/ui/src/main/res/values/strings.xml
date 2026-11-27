@@ -215,7 +215,5 @@
     <string name="ask_question_hint">What\'s on about Compose after lunch?</string>
     <string name="ask_button">Ask</string>
     <string name="ask_failed">No answer this time. Check your connection and try again.</string>
-    <string name="ask_session_star">Star</string>
-    <string name="ask_session_starred">Starred</string>
     <string name="home_ask_body">Ask about the schedule and get sessions back you can star.</string>
 </resources>

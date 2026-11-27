@@ -27,19 +27,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.repos.SessionsRepo
+import com.android254.presentation.models.SessionPresentationModel
+import com.android254.presentation.sessions.mappers.toPresentationModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ke.droidcon.kotlin.core.common.di.IoDispatcher
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Clock
 
 /** Holds the question, the agent's call and the A2UI surfaces it produces. */
 @HiltViewModel
@@ -49,6 +59,7 @@ class AskViewModel
         private val sessionsRepo: SessionsRepo,
         private val agent: AskAgent,
         private val featureFlags: FeatureFlags,
+        private val clock: Clock,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : ViewModel() {
         private val parser = A2uiMessageParser()
@@ -59,7 +70,10 @@ class AskViewModel
             A2uiActionInterceptor { action ->
                 val sessionId = (action as? A2uiEventAction)?.starredSessionId() ?: return@A2uiActionInterceptor action
                 if (sessionId in scheduleIds) {
-                    viewModelScope.launch { sessionsRepo.bookmarkSession(sessionId) }
+                    viewModelScope.launch {
+                        val starred = sessionsRepo.fetchSessionById(sessionId).first()?.isBookmarked == true
+                        if (starred) sessionsRepo.unBookmarkSession(sessionId) else sessionsRepo.bookmarkSession(sessionId)
+                    }
                 } else {
                     Timber.w("Ignored a star for a session id the schedule doesn't have: %s", sessionId)
                 }
@@ -69,6 +83,16 @@ class AskViewModel
         private val catalogSchema by lazy { AskCatalog.catalog.toJsonSchemaString() }
 
         val surfaces: StateFlow<List<A2uiSurfaceModel>> = processor.activeSurfaces
+
+        /** Every session the answer's cards can show, live from the database so stars stay current. */
+        val sessions: StateFlow<ImmutableMap<String, SessionPresentationModel>> =
+            sessionsRepo
+                .fetchSessions()
+                .map { sessions ->
+                    val now = clock.now()
+                    sessions.associate { it.id to it.toPresentationModel(now) }.toImmutableMap()
+                }.flowOn(ioDispatcher)
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), persistentMapOf())
 
         private val _state = MutableStateFlow(AskState())
         val state: StateFlow<AskState> = _state.asStateFlow()
@@ -127,6 +151,7 @@ class AskViewModel
     }
 
 private const val MAX_QUESTION_LENGTH = 300
+private const val STOP_TIMEOUT_MILLIS = 5_000L
 
 data class AskState(
     val question: String = "",

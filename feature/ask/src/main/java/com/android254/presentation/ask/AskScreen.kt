@@ -39,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.a2ui.A2uiSurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -59,11 +60,14 @@ import ke.droidcon.kotlin.chai.R as ChaiR
 @Composable
 fun AskRoute(
     navigateBack: () -> Unit,
+    navigateToSessionDetails: (String) -> Unit,
     viewModel: AskViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val surfaces by viewModel.surfaces.collectAsStateWithLifecycle()
+    val sessions by viewModel.sessions.collectAsStateWithLifecycle()
     AskScreen(
+        cards = AskSessionCards(sessions, navigateToSessionDetails),
         state = state,
         surfaces = surfaces.toImmutableList(),
         onBack = navigateBack,
@@ -75,6 +79,7 @@ fun AskRoute(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AskScreen(
+    cards: AskSessionCards,
     state: AskState,
     surfaces: ImmutableList<A2uiSurfaceModel>,
     onBack: () -> Unit,
@@ -138,7 +143,9 @@ internal fun AskScreen(
                 }
             }
             items(surfaces, key = { it.id }) { surface ->
-                A2uiSurface(surfaceModel = surface, modifier = Modifier.fillMaxWidth())
+                CompositionLocalProvider(LocalAskSessionCards provides cards) {
+                    A2uiSurface(surfaceModel = surface, modifier = Modifier.fillMaxWidth())
+                }
             }
         }
     }

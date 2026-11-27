@@ -42,8 +42,8 @@ internal object AskPrompt {
         Components are a flat list. Each has a unique "id" and a "component" type, plus that type's properties
         directly on the object. Exactly one component has the id "root"; make it a Column whose "children" lists
         the other ids in order. Start with one short Text that answers the question in a sentence, then one
-        SessionCard per matching session, at most five. Copy "sessionId" exactly from the schedule.
-        Set "starred" to true for sessions the schedule marks as starred. Write times as HH:mm, such as 16:00.
+        SessionCard per matching session, at most five. A SessionCard takes only "sessionId", copied exactly from the
+        schedule; the app fills in everything else. In the Text, write times as HH:mm, such as 16:00.
         If nothing matches, return only the Column and a Text saying so.
 
         The components you may use are defined by this JSON Schema catalog:

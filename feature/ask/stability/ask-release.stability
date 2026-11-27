@@ -5,18 +5,20 @@
 //   ./gradlew :ask:stabilityDump
 
 @Composable
-public fun com.android254.presentation.ask.AskRoute(navigateBack: kotlin.Function0<kotlin.Unit>, viewModel: com.android254.presentation.ask.AskViewModel): kotlin.Unit
+public fun com.android254.presentation.ask.AskRoute(navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, viewModel: com.android254.presentation.ask.AskViewModel): kotlin.Unit
   skippable: true
   restartable: true
   params:
     - navigateBack: STABLE (function type)
+    - navigateToSessionDetails: STABLE (function type)
     - viewModel: UNSTABLE (has mutable properties or unstable members)
 
 @Composable
-internal fun com.android254.presentation.ask.AskScreen(state: com.android254.presentation.ask.AskState, surfaces: kotlinx.collections.immutable.ImmutableList<androidx.a2ui.model.processor.A2uiSurfaceModel>, onBack: kotlin.Function0<kotlin.Unit>, onQuestionChange: kotlin.Function1<kotlin.String, kotlin.Unit>, onAsk: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+internal fun com.android254.presentation.ask.AskScreen(cards: com.android254.presentation.ask.AskSessionCards, state: com.android254.presentation.ask.AskState, surfaces: kotlinx.collections.immutable.ImmutableList<androidx.a2ui.model.processor.A2uiSurfaceModel>, onBack: kotlin.Function0<kotlin.Unit>, onQuestionChange: kotlin.Function1<kotlin.String, kotlin.Unit>, onAsk: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
+    - cards: STABLE (marked @Stable or @Immutable)
     - state: STABLE (class with no mutable properties)
     - surfaces: UNKNOWN (interface or non-final class; concrete implementation unknown)
     - onBack: STABLE (function type)
