@@ -25,7 +25,7 @@ Three layers, in the usual order, with a strict rule about which way the arrows 
 graph TD
     subgraph L1["UI layer"]
         APP["<b>:app</b><br/>composition root · navigation · push handling"]
-        FEAT["<b>:feature:*</b><br/>about · auth · feed · home · sessions · speakers"]
+        FEAT["<b>:feature:*</b><br/>about · ask · auth · feed · home · sessions · speakers · ticket"]
         UIL["<b>:core:ui</b><br/>presentation models · shared composables · NavKeys"]
         CHAI["<b>:core:designsystem</b><br/>design system"]
     end
@@ -417,6 +417,32 @@ The rules that matter:
   sessions.
 - **`Session.rooms` is comma-joined.** A session can run in two rooms. Compare against
   `Session.roomList`, not the joined string.
+
+## AI features
+
+Three features use Gemini. Each sits behind a Remote Config switch that defaults to off in
+`remote_config_defaults.xml`, so a release can ship them dark and turn them on later.
+
+| Feature | Where | Switch | Runs on |
+|---|---|---|---|
+| Starred summary card on Home | `feature/home/.../summary` | `starred_summary_enabled` | Gemini Nano when the phone has it, otherwise `gemini-3.5-flash` through Firebase AI Logic |
+| Ask the conference | `:feature:ask` | `ask_conference_enabled`, `ask_conference_model` | `gemini-3.5-flash` in the cloud |
+| Star a session for assistants | `app/.../appfunctions` | `star_session_function_enabled` | On the phone, Android 16 QPR2 and later |
+
+- **Summary.** `HybridStarredSummaryGenerator` asks for structured output (`generateObject`) and
+  reports whether the answer came from the phone or the cloud. With no network it returns
+  `Unavailable`, and the card says why instead of hiding.
+- **Ask the conference.** `AskPrompt` sends the schedule as one line per session and asks for an
+  A2UI JSON reply. `AskScreen` renders it with the app's own session cards, so the model can only
+  point at sessions the app already has.
+- **AppFunction.** `BaseStarSessionAppFunctionService` exposes `starSession(sessionId)`. Android
+  only lists it when the manifest declares `android.app.appfunctions.schema`.
+- **App Check.** `AppCheckSetup` installs Play Integrity in release builds and the debug provider
+  in debug builds, so only this app can call Gemini through the project.
+- **AI cube.** `AiCube` in `:core:designsystem` marks every AI surface and twists while a model
+  is thinking.
+
+[AI features plan](ai-features.md) lists what is left before these switches go on in production.
 
 ---
 

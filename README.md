@@ -101,13 +101,13 @@ it is a shared debug key, not a secret, and the release key is not in this repo.
 | `core:screenshot`     | Roborazzi harness. Test-only                                          |
 | `core:testing`        | Shared test doubles. Test-only                                        |
 | `benchmarks`          | Macrobenchmark and baseline profile generation. Not shipped           |
-| `feature:*`           | `about` `auth` `feed` `home` `sessions` `speakers` `ticket` — screens, view models, tests, goldens |
+| `feature:*`           | `about` `ask` `auth` `feed` `home` `sessions` `speakers` `ticket` — screens, view models, tests, goldens |
 | `build-logic`         | Convention plugins — every module's build config comes from here      |
 
 ```mermaid
 graph TD
     app[":app"]
-    feature["<b>:feature:*</b><br/>about · auth · feed<br/>home · sessions · speakers · ticket"]
+    feature["<b>:feature:*</b><br/>about · ask · auth · feed<br/>home · sessions · speakers · ticket"]
     ui[":core:ui"]
     ds[":core:designsystem"]
     domain[":core:domain"]
@@ -215,7 +215,8 @@ Fuller treatment, including the navigation model and the Room schema: **[docs/ar
 | Persistence        | Room 2.8, DataStore                                           |
 | Background work    | WorkManager                                                   |
 | Images             | Coil                                                          |
-| Firebase           | Crashlytics, Remote Config, Messaging, Performance            |
+| Firebase           | Crashlytics, Remote Config, Messaging, Performance, App Check |
+| AI                 | Firebase AI Logic (Gemini, with Gemini Nano on device), A2UI, AppFunctions |
 | Logging            | Timber                                                        |
 | Tests              | JUnit4, Robolectric, MockK, Turbine, Compose UI test          |
 
