@@ -13,4 +13,12 @@
         <key>starred_summary_enabled</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>ask_conference_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>ask_conference_model</key>
+        <value>gemini-3.5-flash</value>
+    </entry>
 </defaultsMap>

@@ -217,4 +217,17 @@
     <string name="add_to_calendar">Add to calendar</string>
     <string name="calendar_no_app_available">No calendar app found on this device</string>
     <string name="calendar_event_speakers">Speakers: %1$s</string>
+    <string name="ask_title">Ask the conference</string>
+    <string name="ask_question_label">Your question</string>
+    <string name="ask_question_hint">What\'s on about Compose after lunch?</string>
+    <string name="ask_button">Ask</string>
+    <string name="ask_asking">Asking…</string>
+    <string name="ask_suggestions_title">Try asking</string>
+    <string name="ask_suggestion_after_lunch">What is on after lunch on the last day?</string>
+    <string name="ask_suggestion_compose">Which sessions are about Compose?</string>
+    <string name="ask_suggestion_ai">Who is talking about AI?</string>
+    <string name="ask_intro_thinking">Gemini is reading the schedule…</string>
+    <string name="ask_intro_answered">Here\'s what\'s on. Star a session to save it.</string>
+    <string name="ask_failed">No answer this time. Check your connection and try again.</string>
+    <string name="home_ask_body">Ask about the schedule and get sessions back you can star.</string>
 </resources>

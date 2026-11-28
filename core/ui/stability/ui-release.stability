@@ -352,6 +352,13 @@ public fun com.android254.presentation.common.components.SessionsCard(session: c
     - isSelected: STABLE (primitive type)
 
 @Composable
+public fun com.android254.presentation.common.components.SessionsLoadingCard(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.common.components.SponsorsCard(sponsors: kotlinx.collections.immutable.ImmutableList<com.android254.presentation.models.SponsorPresentationModel>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

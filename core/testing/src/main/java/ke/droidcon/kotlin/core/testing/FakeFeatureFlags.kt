@@ -20,8 +20,14 @@ import com.android254.domain.flags.FeatureFlags
 class FakeFeatureFlags(
     var cubeHero: Boolean = true,
     var starredSummary: Boolean = false,
+    var askConference: Boolean = false,
+    var askConferenceModel: String = "gemini-3.5-flash",
 ) : FeatureFlags {
     override suspend fun isCubeHeroEnabled() = cubeHero
 
     override suspend fun isStarredSummaryEnabled() = starredSummary
+
+    override suspend fun isAskConferenceEnabled() = askConference
+
+    override suspend fun askConferenceModel() = askConferenceModel
 }

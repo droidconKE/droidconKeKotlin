@@ -1,0 +1,344 @@
+/*
+ * Copyright 2026 DroidconKE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.android254.presentation.ask
+
+import androidx.a2ui.model.processor.A2uiSurfaceModel
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.a2ui.A2uiSurface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android254.presentation.common.adaptive.DroidconTooltip
+import com.android254.presentation.common.adaptive.clickablePointer
+import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.components.SessionsLoadingCard
+import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.hero.AiCube
+import com.droidconke.chai.icons.ChaiIcons
+import ke.droidcon.kotlin.core.ui.R
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import ke.droidcon.kotlin.chai.R as ChaiR
+
+@Composable
+fun AskRoute(
+    navigateBack: () -> Unit,
+    navigateToSessionDetails: (String) -> Unit,
+    viewModel: AskViewModel = hiltViewModel(),
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val surfaces by viewModel.surfaces.collectAsStateWithLifecycle()
+    val sessions by viewModel.sessions.collectAsStateWithLifecycle()
+    AskScreen(
+        cards = AskSessionCards(sessions, navigateToSessionDetails),
+        state = state,
+        surfaces = surfaces.toImmutableList(),
+        onBack = navigateBack,
+        onQuestionChange = viewModel::onQuestionChange,
+        onAsk = viewModel::ask,
+    )
+}
+
+@Composable
+internal fun AskScreen(
+    cards: AskSessionCards,
+    state: AskState,
+    surfaces: ImmutableList<A2uiSurfaceModel>,
+    onBack: () -> Unit,
+    onQuestionChange: (String) -> Unit,
+    onAsk: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val keyboard = LocalSoftwareKeyboardController.current
+    val ask = {
+        keyboard?.hide()
+        onAsk()
+    }
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                title = { Text(stringResource(R.string.ask_title), style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    val backLabel = stringResource(R.string.back_arrow_icon_description)
+                    DroidconTooltip(text = backLabel) {
+                        IconButton(onClick = onBack, modifier = Modifier.clickablePointer()) {
+                            Icon(painter = painterResource(ChaiR.drawable.ic_back_arrow), contentDescription = backLabel)
+                        }
+                    }
+                },
+            )
+        },
+        contentWindowInsets = DroidconWindowInsets.screenContent,
+    ) { padding ->
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .consumeWindowInsets(padding)
+                    .readablePaneWidth(),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            item(key = "intro") {
+                AskIntro(isAsking = state.isAsking, answered = surfaces.isNotEmpty())
+            }
+            item(key = "question") {
+                OutlinedTextField(
+                    value = state.question,
+                    onValueChange = onQuestionChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isAsking,
+                    label = { Text(stringResource(R.string.ask_question_label)) },
+                    placeholder = { Text(stringResource(R.string.ask_question_hint)) },
+                    maxLines = 3,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { ask() }),
+                )
+            }
+            item(key = "ask") {
+                AskButton(isAsking = state.isAsking, canAsk = state.question.isNotBlank(), onAsk = ask)
+            }
+            if (state.failed) {
+                item(key = "failed") {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.animateItem().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                    ) {
+                        Icon(imageVector = ChaiIcons.ErrorRounded, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = stringResource(R.string.ask_failed),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+            }
+            when {
+                state.isAsking ->
+                    items(count = LOADING_CARDS, key = { "loading_$it" }, contentType = { "loading" }) {
+                        SessionsLoadingCard(modifier = Modifier.animateItem())
+                    }
+                surfaces.isEmpty() ->
+                    item(key = "suggestions") {
+                        AskSuggestions(
+                            onPick = { question ->
+                                onQuestionChange(question)
+                                ask()
+                            },
+                            modifier = Modifier.animateItem(),
+                        )
+                    }
+                else ->
+                    items(surfaces, key = { it.id }) { surface ->
+                        CompositionLocalProvider(LocalAskSessionCards provides cards) {
+                            A2uiSurface(surfaceModel = surface, modifier = Modifier.fillMaxWidth().animateItem())
+                        }
+                    }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AskIntro(
+    isAsking: Boolean,
+    answered: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        AiCube(thinking = isAsking, modifier = Modifier.size(72.dp))
+        val line =
+            when {
+                isAsking -> R.string.ask_intro_thinking
+                answered -> R.string.ask_intro_answered
+                else -> R.string.home_ask_body
+            }
+        AnimatedContent(
+            targetState = line,
+            transitionSpec = {
+                (fadeIn(tween(durationMillis = 220, delayMillis = 90)) + slideInVertically { it / 3 }) togetherWith fadeOut(tween(90))
+            },
+            modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+            label = "ask_intro",
+        ) { text ->
+            Text(text = stringResource(text), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+        }
+    }
+}
+
+@Composable
+private fun AskButton(
+    isAsking: Boolean,
+    canAsk: Boolean,
+    onAsk: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // Stays enabled while asking, like the ticket form, so the loading indicator keeps the button's colours.
+    Button(
+        onClick = { if (!isAsking) onAsk() },
+        enabled = isAsking || canAsk,
+        shapes = ButtonDefaults.shapes(),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        if (isAsking) {
+            LoadingIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(ButtonDefaults.IconSize))
+            Text(text = stringResource(R.string.ask_asking), modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+        } else {
+            Text(stringResource(R.string.ask_button))
+        }
+    }
+}
+
+@Composable
+private fun AskSuggestions(
+    onPick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val suggestions =
+        persistentListOf(
+            ChaiIcons.Coffee to stringResource(R.string.ask_suggestion_after_lunch),
+            ChaiIcons.Android to stringResource(R.string.ask_suggestion_compose),
+            ChaiIcons.MicExternalOn to stringResource(R.string.ask_suggestion_ai),
+        )
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ChaiSubTitle(
+            titleText = stringResource(R.string.ask_suggestions_title),
+            titleColor = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(top = 8.dp).semantics { heading() },
+        )
+        suggestions.forEach { (icon, suggestion) -> AskSuggestion(icon = icon, text = suggestion, onClick = { onPick(suggestion) }) }
+    }
+}
+
+@Composable
+private fun AskSuggestion(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.extraLarge,
+        modifier = modifier.fillMaxWidth().clickablePointer(),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+            }
+            Text(text = text, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+private const val LOADING_CARDS = 3
+
+@ChaiLightAndDarkComposePreviews
+@Composable
+private fun AskScreenAskingPreview() {
+    ChaiTheme {
+        AskScreen(
+            cards = AskSessionCards(),
+            state = AskState(question = "What is on after lunch on the last day?", isAsking = true),
+            surfaces = persistentListOf(),
+            onBack = {},
+            onQuestionChange = {},
+            onAsk = {},
+        )
+    }
+}
+
+@ChaiLightAndDarkComposePreviews
+@Composable
+private fun AskScreenEmptyPreview() {
+    ChaiTheme {
+        AskScreen(
+            cards = AskSessionCards(),
+            state = AskState(),
+            surfaces = persistentListOf(),
+            onBack = {},
+            onQuestionChange = {},
+            onAsk = {},
+        )
+    }
+}

@@ -34,8 +34,20 @@ class RemoteFeatureFlags
             return remoteFeatureToggle.getBoolean(STARRED_SUMMARY_ENABLED)
         }
 
+        override suspend fun isAskConferenceEnabled(): Boolean {
+            remoteFeatureToggle.awaitDefaults()
+            return remoteFeatureToggle.getBoolean(ASK_CONFERENCE_ENABLED)
+        }
+
+        override suspend fun askConferenceModel(): String {
+            remoteFeatureToggle.awaitDefaults()
+            return remoteFeatureToggle.getString(ASK_CONFERENCE_MODEL)
+        }
+
         private companion object {
             const val CUBE_HERO_ENABLED = "cube_hero_enabled"
             const val STARRED_SUMMARY_ENABLED = "starred_summary_enabled"
+            const val ASK_CONFERENCE_ENABLED = "ask_conference_enabled"
+            const val ASK_CONFERENCE_MODEL = "ask_conference_model"
         }
     }

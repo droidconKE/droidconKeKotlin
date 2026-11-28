@@ -37,6 +37,7 @@ data class HomeState(
     val showCube: Boolean = false,
     val ticket: HomeTicket = HomeTicket.Hidden,
     val isEventDay: Boolean = false,
+    val showAsk: Boolean = false,
 )
 
 /** What the hero says when no session is live. */
