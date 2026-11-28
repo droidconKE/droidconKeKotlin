@@ -279,13 +279,6 @@ public fun com.android254.presentation.sessions.components.SessionsFilterPanel(o
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-public fun com.android254.presentation.sessions.components.SessionsLoadingCard(modifier: androidx.compose.ui.Modifier): kotlin.Unit
-  skippable: true
-  restartable: true
-  params:
-    - modifier: STABLE (marked @Stable or @Immutable)
-
-@Composable
 public fun com.android254.presentation.sessions.components.SessionsLoadingCardWithBannerImage(modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

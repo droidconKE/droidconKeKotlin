@@ -17,23 +17,27 @@ package com.android254.presentation.ask
 
 import androidx.a2ui.model.processor.A2uiSurfaceModel
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -42,18 +46,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android254.presentation.common.adaptive.DroidconTooltip
 import com.android254.presentation.common.adaptive.clickablePointer
 import com.android254.presentation.common.adaptive.readablePaneWidth
+import com.android254.presentation.common.components.SessionsLoadingCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
+import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
+import com.droidconke.chai.ChaiTheme
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import ke.droidcon.kotlin.chai.R as ChaiR
 
@@ -76,7 +89,6 @@ fun AskRoute(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AskScreen(
     cards: AskSessionCards,
@@ -87,6 +99,11 @@ internal fun AskScreen(
     onAsk: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboard = LocalSoftwareKeyboardController.current
+    val ask = {
+        keyboard?.hide()
+        onAsk()
+    }
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -119,19 +136,16 @@ internal fun AskScreen(
                     value = state.question,
                     onValueChange = onQuestionChange,
                     modifier = Modifier.fillMaxWidth(),
+                    enabled = !state.isAsking,
                     label = { Text(stringResource(R.string.ask_question_label)) },
                     placeholder = { Text(stringResource(R.string.ask_question_hint)) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                    keyboardActions = KeyboardActions(onSend = { onAsk() }),
+                    maxLines = 3,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { ask() }),
                 )
             }
             item(key = "ask") {
-                Button(onClick = onAsk, enabled = !state.isAsking && state.question.isNotBlank()) {
-                    Text(stringResource(R.string.ask_button))
-                }
-            }
-            if (state.isAsking) {
-                item(key = "asking") { CircularProgressIndicator(modifier = Modifier.padding(8.dp)) }
+                AskButton(isAsking = state.isAsking, canAsk = state.question.isNotBlank(), onAsk = ask)
             }
             if (state.failed) {
                 item(key = "failed") {
@@ -139,14 +153,112 @@ internal fun AskScreen(
                         text = stringResource(R.string.ask_failed),
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                     )
                 }
             }
-            items(surfaces, key = { it.id }) { surface ->
-                CompositionLocalProvider(LocalAskSessionCards provides cards) {
-                    A2uiSurface(surfaceModel = surface, modifier = Modifier.fillMaxWidth())
-                }
+            when {
+                state.isAsking ->
+                    items(count = LOADING_CARDS, key = { "loading_$it" }, contentType = { "loading" }) {
+                        SessionsLoadingCard(modifier = Modifier.animateItem())
+                    }
+                surfaces.isEmpty() ->
+                    item(key = "suggestions") {
+                        AskSuggestions(
+                            onPick = { question ->
+                                onQuestionChange(question)
+                                ask()
+                            },
+                            modifier = Modifier.animateItem(),
+                        )
+                    }
+                else ->
+                    items(surfaces, key = { it.id }) { surface ->
+                        CompositionLocalProvider(LocalAskSessionCards provides cards) {
+                            A2uiSurface(surfaceModel = surface, modifier = Modifier.fillMaxWidth().animateItem())
+                        }
+                    }
             }
         }
+    }
+}
+
+@Composable
+private fun AskButton(
+    isAsking: Boolean,
+    canAsk: Boolean,
+    onAsk: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    // Stays enabled while asking, like the ticket form, so the loading indicator keeps the button's colours.
+    Button(
+        onClick = { if (!isAsking) onAsk() },
+        enabled = isAsking || canAsk,
+        shapes = ButtonDefaults.shapes(),
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        if (isAsking) {
+            LoadingIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(ButtonDefaults.IconSize))
+            Text(text = stringResource(R.string.ask_asking), modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+        } else {
+            Text(stringResource(R.string.ask_button))
+        }
+    }
+}
+
+@Composable
+private fun AskSuggestions(
+    onPick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val suggestions =
+        persistentListOf(
+            stringResource(R.string.ask_suggestion_after_lunch),
+            stringResource(R.string.ask_suggestion_compose),
+            stringResource(R.string.ask_suggestion_ai),
+        )
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.ask_suggestions_title),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            suggestions.forEach { suggestion ->
+                SuggestionChip(onClick = { onPick(suggestion) }, label = { Text(suggestion) })
+            }
+        }
+    }
+}
+
+private const val LOADING_CARDS = 3
+
+@ChaiLightAndDarkComposePreviews
+@Composable
+private fun AskScreenAskingPreview() {
+    ChaiTheme {
+        AskScreen(
+            cards = AskSessionCards(),
+            state = AskState(question = "What is on after lunch on the last day?", isAsking = true),
+            surfaces = persistentListOf(),
+            onBack = {},
+            onQuestionChange = {},
+            onAsk = {},
+        )
+    }
+}
+
+@ChaiLightAndDarkComposePreviews
+@Composable
+private fun AskScreenEmptyPreview() {
+    ChaiTheme {
+        AskScreen(
+            cards = AskSessionCards(),
+            state = AskState(),
+            surfaces = persistentListOf(),
+            onBack = {},
+            onQuestionChange = {},
+            onAsk = {},
+        )
     }
 }

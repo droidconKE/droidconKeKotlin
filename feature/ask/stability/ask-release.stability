@@ -5,6 +5,16 @@
 //   ./gradlew :ask:stabilityDump
 
 @Composable
+private fun com.android254.presentation.ask.AskButton(isAsking: kotlin.Boolean, canAsk: kotlin.Boolean, onAsk: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - isAsking: STABLE (primitive type)
+    - canAsk: STABLE (primitive type)
+    - onAsk: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.ask.AskRoute(navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, viewModel: com.android254.presentation.ask.AskViewModel): kotlin.Unit
   skippable: true
   restartable: true
@@ -24,6 +34,14 @@ internal fun com.android254.presentation.ask.AskScreen(cards: com.android254.pre
     - onBack: STABLE (function type)
     - onQuestionChange: STABLE (function type)
     - onAsk: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.ask.AskSuggestions(onPick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - onPick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable

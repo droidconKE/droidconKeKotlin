@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.android254.presentation.common.components.AnimatedShimmerEffect
 import com.android254.presentation.common.components.LoadingBox
+import com.android254.presentation.common.components.SessionsLoadingCard
 import com.android254.presentation.sessions.view.SessionScreenState
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiSubTitle
