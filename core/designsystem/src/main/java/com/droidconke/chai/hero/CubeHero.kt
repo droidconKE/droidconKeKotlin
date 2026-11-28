@@ -62,22 +62,30 @@ internal fun CubeHero(
             resumed && visible -> motion.run()
         }
     }
-    val painter = remember { CubePainter() }
-    Canvas(
+    CubeCanvas(
+        motion = motion,
         modifier =
             modifier
-                .graphicsLayer()
                 .testTag(CUBE_HERO_TAG)
-                .onVisibilityChanged(minFractionVisible = VISIBLE_FRACTION) { visible = it }
-                .semantics { hideFromAccessibility() },
-    ) {
+                .onVisibilityChanged(minFractionVisible = VISIBLE_FRACTION) { visible = it },
+    )
+}
+
+/** Draws [motion]'s cube to fit the canvas, hidden from accessibility because it is decoration. */
+@Composable
+internal fun CubeCanvas(
+    motion: CubeMotion,
+    modifier: Modifier = Modifier,
+) {
+    val painter = remember { CubePainter() }
+    Canvas(modifier = modifier.graphicsLayer().semantics { hideFromAccessibility() }) {
         val quads = motion.state.visibleQuads(motion.orientation, motion.turn)
         val scale = size.minDimension / (2 * MOVING_REACH * POP_SCALE) * motion.pop
         quads.fastForEach { with(painter) { drawFace(it, center, scale) } }
     }
 }
 
-private const val VISIBLE_FRACTION = 0.1f
+internal const val VISIBLE_FRACTION = 0.1f
 
 /** Screenshot tests compare loosely inside this tag. */
 const val CUBE_HERO_TAG = "cube_hero"
