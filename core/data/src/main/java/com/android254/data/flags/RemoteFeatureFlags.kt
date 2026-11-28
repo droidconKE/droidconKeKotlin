@@ -39,6 +39,11 @@ class RemoteFeatureFlags
             return remoteFeatureToggle.getBoolean(ASK_CONFERENCE_ENABLED)
         }
 
+        override suspend fun isStarSessionFunctionEnabled(): Boolean {
+            remoteFeatureToggle.awaitDefaults()
+            return remoteFeatureToggle.getBoolean(STAR_SESSION_FUNCTION_ENABLED)
+        }
+
         override suspend fun askConferenceModel(): String {
             remoteFeatureToggle.awaitDefaults()
             return remoteFeatureToggle.getString(ASK_CONFERENCE_MODEL)
@@ -49,5 +54,6 @@ class RemoteFeatureFlags
             const val STARRED_SUMMARY_ENABLED = "starred_summary_enabled"
             const val ASK_CONFERENCE_ENABLED = "ask_conference_enabled"
             const val ASK_CONFERENCE_MODEL = "ask_conference_model"
+            const val STAR_SESSION_FUNCTION_ENABLED = "star_session_function_enabled"
         }
     }

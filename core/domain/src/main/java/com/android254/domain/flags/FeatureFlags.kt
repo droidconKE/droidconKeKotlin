@@ -23,6 +23,8 @@ interface FeatureFlags {
 
     suspend fun isAskConferenceEnabled(): Boolean
 
+    suspend fun isStarSessionFunctionEnabled(): Boolean
+
     /** The cloud model "Ask the conference" calls, so it can change without a release. */
     suspend fun askConferenceModel(): String
 }

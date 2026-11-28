@@ -15,11 +15,14 @@
  */
 package com.android254.droidcon.appfunctions
 
+import androidx.appfunctions.AppFunctionDisabledException
 import androidx.appfunctions.AppFunctionElementNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.test.filters.SdkSuppress
+import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.models.Session
 import com.android254.domain.repos.SessionsRepo
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -36,8 +39,23 @@ import org.robolectric.annotation.Config
 @SdkSuppress(minSdkVersion = 36)
 class StarSessionAppFunctionServiceTest {
     private val repo = mockk<SessionsRepo>(relaxed = true)
+    private val flags = mockk<FeatureFlags> { coEvery { isStarSessionFunctionEnabled() } returns true }
     private val service =
-        StarSessionAppFunctionService().also { it.sessionsRepo = repo }
+        StarSessionAppFunctionService().also {
+            it.sessionsRepo = repo
+            it.featureFlags = flags
+        }
+
+    @Test
+    fun `starring is refused while the Remote Config switch is off`() =
+        runTest {
+            coEvery { flags.isStarSessionFunctionEnabled() } returns false
+
+            val failure = runCatching { service.starSession("1112") }.exceptionOrNull()
+
+            assertEquals(AppFunctionDisabledException::class, failure?.let { it::class })
+            coVerify(exactly = 0) { repo.bookmarkSession(any()) }
+        }
 
     @Test
     fun `starring a known session bookmarks it and returns its title`() =

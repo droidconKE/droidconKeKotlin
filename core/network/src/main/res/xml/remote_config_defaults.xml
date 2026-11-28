@@ -18,6 +18,10 @@
         <value>false</value>
     </entry>
     <entry>
+        <key>star_session_function_enabled</key>
+        <value>false</value>
+    </entry>
+    <entry>
         <key>ask_conference_model</key>
         <value>gemini-3.5-flash</value>
     </entry>

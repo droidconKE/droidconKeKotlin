@@ -22,12 +22,15 @@ class FakeFeatureFlags(
     var starredSummary: Boolean = false,
     var askConference: Boolean = false,
     var askConferenceModel: String = "gemini-3.5-flash",
+    var starSessionFunction: Boolean = false,
 ) : FeatureFlags {
     override suspend fun isCubeHeroEnabled() = cubeHero
 
     override suspend fun isStarredSummaryEnabled() = starredSummary
 
     override suspend fun isAskConferenceEnabled() = askConference
+
+    override suspend fun isStarSessionFunctionEnabled() = starSessionFunction
 
     override suspend fun askConferenceModel() = askConferenceModel
 }

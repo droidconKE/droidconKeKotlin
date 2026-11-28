@@ -18,11 +18,13 @@ package com.android254.droidcon.appfunctions
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.AppFunctionDeclaration
+import androidx.appfunctions.AppFunctionDisabledException
 import androidx.appfunctions.AppFunctionElementNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.AppFunctionService
 import androidx.appfunctions.AppFunctionServiceEntryPoint
+import com.android254.domain.flags.FeatureFlags
 import com.android254.domain.repos.SessionsRepo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
@@ -47,6 +49,8 @@ data class StarredSession(
 abstract class BaseStarSessionAppFunctionService : AppFunctionService() {
     @Inject internal lateinit var sessionsRepo: SessionsRepo
 
+    @Inject internal lateinit var featureFlags: FeatureFlags
+
     /**
      * Stars a conference session so it appears in the user's starred sessions.
      *
@@ -55,6 +59,7 @@ abstract class BaseStarSessionAppFunctionService : AppFunctionService() {
      */
     @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun starSession(sessionId: String): StarredSession {
+        if (!featureFlags.isStarSessionFunctionEnabled()) throw AppFunctionDisabledException("Starring sessions from assistants is turned off.")
         if (sessionId.isBlank()) throw AppFunctionInvalidArgumentException("sessionId must not be empty.")
         val session =
             sessionsRepo.fetchSessionById(sessionId).first()
