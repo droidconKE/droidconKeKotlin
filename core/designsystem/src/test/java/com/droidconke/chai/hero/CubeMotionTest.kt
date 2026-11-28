@@ -51,6 +51,23 @@ class CubeMotionTest {
         }
 
     @Test
+    fun `thinking twists the AI face and solves it again without leaving it`() =
+        runTest {
+            val ai = Showcase.indexOf(CubeFace.Down)
+            val motion = CubeMotion(mutableIntStateOf(ai))
+            val thinking = backgroundScope.launch(FakeFrameClock(testScheduler)) { motion.think() }
+            advanceTimeBy(500)
+            assertFalse(motion.state.isSolved)
+            advanceTimeBy(3_000)
+            assertEquals(CubeFace.Down, motion.facing())
+            thinking.cancel()
+            advanceTimeBy(100)
+            assertTrue(motion.state.isSolved)
+            assertNull(motion.turn)
+            assertEquals(CubeFace.Down, motion.facing())
+        }
+
+    @Test
     fun `the cube shows every logo in turn and comes back to the first`() =
         runTest {
             val motion = CubeMotion()
