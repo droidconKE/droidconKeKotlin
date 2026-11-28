@@ -15,6 +15,15 @@ private fun com.android254.presentation.ask.AskButton(isAsking: kotlin.Boolean, 
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.ask.AskIntro(isAsking: kotlin.Boolean, answered: kotlin.Boolean, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - isAsking: STABLE (primitive type)
+    - answered: STABLE (primitive type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 public fun com.android254.presentation.ask.AskRoute(navigateBack: kotlin.Function0<kotlin.Unit>, navigateToSessionDetails: kotlin.Function1<kotlin.String, kotlin.Unit>, viewModel: com.android254.presentation.ask.AskViewModel): kotlin.Unit
   skippable: true
   restartable: true
@@ -37,10 +46,11 @@ internal fun com.android254.presentation.ask.AskScreen(cards: com.android254.pre
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
-private fun com.android254.presentation.ask.AskSuggestion(text: kotlin.String, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+private fun com.android254.presentation.ask.AskSuggestion(icon: androidx.compose.ui.graphics.vector.ImageVector, text: kotlin.String, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true
   params:
+    - icon: STABLE (marked @Stable or @Immutable)
     - text: STABLE (String is immutable)
     - onClick: STABLE (function type)
     - modifier: STABLE (marked @Stable or @Immutable)

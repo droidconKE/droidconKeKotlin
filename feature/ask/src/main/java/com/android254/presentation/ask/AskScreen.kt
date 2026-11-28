@@ -16,6 +16,12 @@
 package com.android254.presentation.ask
 
 import androidx.a2ui.model.processor.A2uiSurfaceModel
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +56,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -70,6 +77,7 @@ import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
 import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.hero.AiCube
 import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -138,6 +146,9 @@ internal fun AskScreen(
             contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = padding.calculateTopPadding() + 8.dp, bottom = padding.calculateBottomPadding() + 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            item(key = "intro") {
+                AskIntro(isAsking = state.isAsking, answered = surfaces.isNotEmpty())
+            }
             item(key = "question") {
                 OutlinedTextField(
                     value = state.question,
@@ -156,12 +167,18 @@ internal fun AskScreen(
             }
             if (state.failed) {
                 item(key = "failed") {
-                    Text(
-                        text = stringResource(R.string.ask_failed),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.animateItem().semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                    ) {
+                        Icon(imageVector = ChaiIcons.ErrorRounded, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+                        Text(
+                            text = stringResource(R.string.ask_failed),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
             when {
@@ -186,6 +203,37 @@ internal fun AskScreen(
                         }
                     }
             }
+        }
+    }
+}
+
+@Composable
+private fun AskIntro(
+    isAsking: Boolean,
+    answered: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        AiCube(thinking = isAsking, modifier = Modifier.size(72.dp))
+        val line =
+            when {
+                isAsking -> R.string.ask_intro_thinking
+                answered -> R.string.ask_intro_answered
+                else -> R.string.home_ask_body
+            }
+        AnimatedContent(
+            targetState = line,
+            transitionSpec = {
+                (fadeIn(tween(durationMillis = 220, delayMillis = 90)) + slideInVertically { it / 3 }) togetherWith fadeOut(tween(90))
+            },
+            modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+            label = "ask_intro",
+        ) { text ->
+            Text(text = stringResource(text), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
@@ -220,9 +268,9 @@ private fun AskSuggestions(
 ) {
     val suggestions =
         persistentListOf(
-            stringResource(R.string.ask_suggestion_after_lunch),
-            stringResource(R.string.ask_suggestion_compose),
-            stringResource(R.string.ask_suggestion_ai),
+            ChaiIcons.Coffee to stringResource(R.string.ask_suggestion_after_lunch),
+            ChaiIcons.Android to stringResource(R.string.ask_suggestion_compose),
+            ChaiIcons.MicExternalOn to stringResource(R.string.ask_suggestion_ai),
         )
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ChaiSubTitle(
@@ -230,12 +278,13 @@ private fun AskSuggestions(
             titleColor = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(top = 8.dp).semantics { heading() },
         )
-        suggestions.forEach { suggestion -> AskSuggestion(text = suggestion, onClick = { onPick(suggestion) }) }
+        suggestions.forEach { (icon, suggestion) -> AskSuggestion(icon = icon, text = suggestion, onClick = { onPick(suggestion) }) }
     }
 }
 
 @Composable
 private fun AskSuggestion(
+    icon: ImageVector,
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -255,7 +304,7 @@ private fun AskSuggestion(
                 modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(imageVector = ChaiIcons.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             Text(text = text, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
         }
