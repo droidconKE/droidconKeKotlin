@@ -580,6 +580,30 @@ object ChaiIcons {
             )
         }
     }
+
+    val Cloud: ImageVector by lazy {
+        icon(name = "Cloud") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M19.35,10.04C18.67,6.59 15.64,4 12,4 9.11,4 6.6,5.64 5.35,8.04 2.34,8.36 0,10.91 0,14c0,3.31 2.69,6 6,6h13c2.76,0 5,-2.24 5,-5 0,-2.64 -2.05,-4.78 -4.65,-4.96z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
+
+    val Smartphone: ImageVector by lazy {
+        icon(name = "Smartphone") {
+            addPath(
+                pathData =
+                    addPathNodes(
+                        "M17,1.01L7,1c-1.1,0 -2,0.9 -2,2v18c0,1.1 0.9,2 2,2h10c1.1,0 2,-0.9 2,-2V3c0,-1.1 -0.9,-1.99 -2,-1.99zM17,19H7V5h10v14z",
+                    ),
+                fill = SolidColor(Color.Black),
+            )
+        }
+    }
 }
 
 private inline fun icon(
