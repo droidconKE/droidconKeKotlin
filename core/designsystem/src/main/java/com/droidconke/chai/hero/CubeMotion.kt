@@ -76,6 +76,37 @@ internal class CubeMotion(
         }
     }
 
+    /** Twists the layers across the face it shows and solves them again, clicking each time, until cancelled. */
+    suspend fun think() {
+        try {
+            settle()
+            while (true) {
+                if (animationsOff()) {
+                    delay(ANIMATIONS_OFF_POLL_MILLIS)
+                } else {
+                    val twist = scrambleTowards(Showcase[scene])
+                    playAll(twist, ScrambleSpec)
+                    playAll(twist.inverse(), SolveSpec)
+                    click()
+                }
+            }
+        } finally {
+            withContext(NonCancellable) { settle() }
+        }
+    }
+
+    /** Leans gently on the face it shows, until cancelled. */
+    suspend fun sway() {
+        try {
+            settle()
+            while (true) {
+                if (animationsOff()) delay(ANIMATIONS_OFF_POLL_MILLIS) else hold()
+            }
+        } finally {
+            withContext(NonCancellable) { settle() }
+        }
+    }
+
     private suspend fun stayAtRest() {
         if (state != Solved || turn != null || orientation != Poses[0]) rest()
         delay(ANIMATIONS_OFF_POLL_MILLIS)
