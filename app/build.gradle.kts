@@ -131,6 +131,8 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.work.runtime)
     implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.appfunctions)
+    ksp(libs.androidx.appfunctions.compiler)
     implementation(libs.kotlin.coroutines.play.services)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
@@ -157,6 +159,7 @@ dependencies {
     testImplementation(libs.test.robolectric)
     testImplementation(libs.test.navigation)
     testImplementation(libs.test.mockk)
+    testImplementation(libs.kotlin.coroutines.test)
 
     baselineProfile(projects.benchmarks)
 }
