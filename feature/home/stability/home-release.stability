@@ -327,6 +327,37 @@ internal fun com.android254.presentation.home.summary.StarredSummaryCard(state: 
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.home.summary.SummaryBody(state: com.android254.presentation.home.summary.StarredSummaryState, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - state: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.summary.SummaryShimmer(modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.summary.SummarySourceLabel(source: com.android254.presentation.home.summary.SummarySource, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - source: STABLE (class with no mutable properties)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
+private fun com.android254.presentation.home.summary.SummaryThemes(summary: com.android254.presentation.home.summary.StarredSummary, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - summary: STABLE (marked @Stable or @Immutable)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 private fun com.android254.presentation.home.summary.bodyText(): kotlin.String
   skippable: false
   restartable: false
