@@ -37,6 +37,15 @@ internal fun com.android254.presentation.ask.AskScreen(cards: com.android254.pre
     - modifier: STABLE (marked @Stable or @Immutable)
 
 @Composable
+private fun com.android254.presentation.ask.AskSuggestion(text: kotlin.String, onClick: kotlin.Function0<kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
+  skippable: true
+  restartable: true
+  params:
+    - text: STABLE (String is immutable)
+    - onClick: STABLE (function type)
+    - modifier: STABLE (marked @Stable or @Immutable)
+
+@Composable
 private fun com.android254.presentation.ask.AskSuggestions(onPick: kotlin.Function1<kotlin.String, kotlin.Unit>, modifier: androidx.compose.ui.Modifier): kotlin.Unit
   skippable: true
   restartable: true

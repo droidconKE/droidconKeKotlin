@@ -16,10 +16,12 @@
 package com.android254.presentation.ask
 
 import androidx.a2ui.model.processor.A2uiSurfaceModel
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -37,7 +40,7 @@ import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,11 +48,13 @@ import androidx.compose.material3.a2ui.A2uiSurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -64,6 +69,8 @@ import com.android254.presentation.common.components.SessionsLoadingCard
 import com.android254.presentation.common.insets.DroidconWindowInsets
 import com.android254.presentation.utils.ChaiLightAndDarkComposePreviews
 import com.droidconke.chai.ChaiTheme
+import com.droidconke.chai.components.ChaiSubTitle
+import com.droidconke.chai.icons.ChaiIcons
 import ke.droidcon.kotlin.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -217,16 +224,40 @@ private fun AskSuggestions(
             stringResource(R.string.ask_suggestion_compose),
             stringResource(R.string.ask_suggestion_ai),
         )
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = stringResource(R.string.ask_suggestions_title),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ChaiSubTitle(
+            titleText = stringResource(R.string.ask_suggestions_title),
+            titleColor = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(top = 8.dp).semantics { heading() },
         )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            suggestions.forEach { suggestion ->
-                SuggestionChip(onClick = { onPick(suggestion) }, label = { Text(suggestion) })
+        suggestions.forEach { suggestion -> AskSuggestion(text = suggestion, onClick = { onPick(suggestion) }) }
+    }
+}
+
+@Composable
+private fun AskSuggestion(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        shape = MaterialTheme.shapes.extraLarge,
+        modifier = modifier.fillMaxWidth().clickablePointer(),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Box(
+                modifier = Modifier.size(40.dp).background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(imageVector = ChaiIcons.Search, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
+            Text(text = text, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
         }
     }
 }
