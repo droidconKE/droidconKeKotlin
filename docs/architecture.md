@@ -420,8 +420,9 @@ The rules that matter:
 
 ## AI features
 
-Three features use Gemini. Each sits behind a Remote Config switch that defaults to off in
-`remote_config_defaults.xml`, so a release can ship them dark and turn them on later.
+Two features use Gemini, and a third lets assistants star a session. Each sits behind a Remote
+Config switch that defaults to off in `remote_config_defaults.xml`, so a release can ship them dark
+and turn them on later.
 
 | Feature | Where | Switch | Runs on |
 |---|---|---|---|
